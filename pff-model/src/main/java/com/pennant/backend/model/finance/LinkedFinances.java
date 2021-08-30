@@ -38,6 +38,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class LinkedFinances extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = null;
 	private String linkedReference = null;
 	private long iD = Long.MIN_VALUE;
@@ -95,6 +96,14 @@ public class LinkedFinances extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

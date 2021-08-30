@@ -8,18 +8,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.model.finance.FinWriteoffPayment;
 import com.pennant.backend.model.finance.FinanceWriteoff;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements FinanceWriteoffDAO {
 	private static Logger logger = LogManager.getLogger(FinanceWriteoffDAOImpl.class);
@@ -28,426 +26,383 @@ public class FinanceWriteoffDAOImpl extends BasicDao<FinanceWriteoff> implements
 		super();
 	}
 
-	/**
-	 * Fetch the Record FinanceWriteoff details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinanceWriteoff
-	 */
 	@Override
-	public FinanceWriteoff getFinanceWriteoffById(final String finReference, String type) {
-		logger.debug("Entering");
+	public FinanceWriteoff getFinanceWriteoffById(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, WriteoffDate, SeqNo, WrittenoffPri, WrittenoffPft, CurODPri");
+		sql.append(", CurODPft, UnPaidSchdPri, UnPaidSchdPft, PenaltyAmount, ProvisionedAmount, WriteoffPrincipal");
+		sql.append(", WriteoffProfit, AdjAmount, Remarks, WrittenoffSchFee, UnpaidSchFee, WriteoffSchFee");
+		sql.append(" From FinWriteoffDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		FinanceWriteoff financeWriteoff = new FinanceWriteoff();
-		financeWriteoff.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference , WriteoffDate , SeqNo , WrittenoffPri , WrittenoffPft , ");
-		selectSql.append(
-				" CurODPri , CurODPft , UnPaidSchdPri , UnPaidSchdPft , PenaltyAmount , ProvisionedAmount , WriteoffPrincipal , ");
-		selectSql.append(" WriteoffProfit , AdjAmount , Remarks, ");
-		selectSql.append(" WrittenoffSchFee, ");
-		selectSql.append(" UnpaidSchFee, ");
-		selectSql.append(" WriteoffSchFee ");
-		selectSql.append(" From FinWriteoffDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		RowMapper<FinanceWriteoff> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceWriteoff.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			financeWriteoff = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinanceWriteoff fwo = new FinanceWriteoff();
+
+				fwo.setFinID(rs.getLong("FinID"));
+				fwo.setFinReference(rs.getString("FinReference"));
+				fwo.setWriteoffDate(rs.getTimestamp("WriteoffDate"));
+				fwo.setSeqNo(rs.getInt("SeqNo"));
+				fwo.setWrittenoffPri(rs.getBigDecimal("WrittenoffPri"));
+				fwo.setWrittenoffPft(rs.getBigDecimal("WrittenoffPft"));
+				fwo.setCurODPri(rs.getBigDecimal("CurODPri"));
+				fwo.setCurODPft(rs.getBigDecimal("CurODPft"));
+				fwo.setUnPaidSchdPri(rs.getBigDecimal("UnPaidSchdPri"));
+				fwo.setUnPaidSchdPft(rs.getBigDecimal("UnPaidSchdPft"));
+				fwo.setPenaltyAmount(rs.getBigDecimal("PenaltyAmount"));
+				fwo.setProvisionedAmount(rs.getBigDecimal("ProvisionedAmount"));
+				fwo.setWriteoffPrincipal(rs.getBigDecimal("WriteoffPrincipal"));
+				fwo.setWriteoffProfit(rs.getBigDecimal("WriteoffProfit"));
+				fwo.setAdjAmount(rs.getBigDecimal("AdjAmount"));
+				fwo.setRemarks(rs.getString("Remarks"));
+				fwo.setWrittenoffSchFee(rs.getBigDecimal("WrittenoffSchFee"));
+				fwo.setUnpaidSchFee(rs.getBigDecimal("UnpaidSchFee"));
+				fwo.setWriteoffSchFee(rs.getBigDecimal("WriteoffSchFee"));
+
+				return fwo;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeWriteoff = null;
+			//
 		}
-		logger.debug("Leaving");
-		return financeWriteoff;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record FinanceWriteoff details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinanceWriteoff
-	 */
 	@Override
-	public int getMaxFinanceWriteoffSeq(final String finReference, Date writeoffDate, String type) {
-		logger.debug("Entering");
+	public int getMaxFinanceWriteoffSeq(long finID, Date writeoffDate, String type) {
+		StringBuilder sql = new StringBuilder("Select Coalesce(max(SeqNo), 0)");
+		sql.append(" From FinWriteoffDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and WriteoffDate = ?");
 
-		int seqNo = 0;
-		FinanceWriteoff financeWriteoff = new FinanceWriteoff();
-		financeWriteoff.setFinReference(finReference);
-		financeWriteoff.setWriteoffDate(writeoffDate);
-
-		StringBuilder selectSql = new StringBuilder("Select COALESCE( MAX(SeqNo),0) ");
-		selectSql.append(" From FinWriteoffDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference AND WriteoffDate=:WriteoffDate");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, writeoffDate);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			seqNo = 0;
+			//
 		}
-		logger.debug("Leaving");
-		return seqNo;
+
+		return 0;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinanceWriteoff or FinanceWriteoff_Temp. if Record not deleted then
-	 * throws DataAccessException with error 41003. delete FinanceWriteoff by key FinReference
-	 * 
-	 * @param FinanceWriteoff
-	 *            (financeWriteoff)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(String finReference, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinWriteoffDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		FinanceWriteoff financeWriteoff = new FinanceWriteoff();
-		financeWriteoff.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinWriteoffDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, finID);
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
-
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into FinanceWriteoff or FinanceWriteoff_Temp.
-	 *
-	 * save FinanceWriteoff
-	 * 
-	 * @param FinanceWriteoff
-	 *            (financeWriteoff)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public String save(FinanceWriteoff financeWriteoff, String type) {
-		logger.debug("Entering");
+	public String save(FinanceWriteoff fwo, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinWriteOffDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, WriteoffDate, SeqNo, WrittenoffPri, WrittenoffPft, CurODPri, CurODPft");
+		sql.append(", UnPaidSchdPri, UnPaidSchdPft, PenaltyAmount, ProvisionedAmount, WriteoffPrincipal");
+		sql.append(", WriteoffProfit, AdjAmount, Remarks, WrittenoffSchFee, UnpaidSchFee, WriteoffSchFee)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinWriteoffDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (FinReference , WriteoffDate , SeqNo , WrittenoffPri , WrittenoffPft , CurODPri , CurODPft , ");
-		insertSql.append(" UnPaidSchdPri , UnPaidSchdPft , PenaltyAmount , ProvisionedAmount , WriteoffPrincipal , ");
-		insertSql.append(" WriteoffProfit , AdjAmount , Remarks, ");
-		insertSql.append(" WrittenoffSchFee, ");
-		insertSql.append(" UnpaidSchFee,");
-		insertSql.append(" WriteoffSchFee)");
-		insertSql.append(
-				" Values(:FinReference , :WriteoffDate , :SeqNo , :WrittenoffPri , :WrittenoffPft , :CurODPri , :CurODPft , ");
-		insertSql.append(
-				" :UnPaidSchdPri , :UnPaidSchdPft , :PenaltyAmount , :ProvisionedAmount , :WriteoffPrincipal , ");
-		insertSql.append(" :WriteoffProfit , :AdjAmount , :Remarks, ");
-		insertSql.append(" :WrittenoffSchFee, ");
-		insertSql.append(" :UnpaidSchFee,");
-		insertSql.append(" :WriteoffSchFee)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return financeWriteoff.getFinReference();
+			ps.setLong(index++, fwo.getFinID());
+			ps.setString(index++, fwo.getFinReference());
+			ps.setDate(index++, JdbcUtil.getDate(fwo.getWriteoffDate()));
+			ps.setInt(index++, fwo.getSeqNo());
+			ps.setBigDecimal(index++, fwo.getWrittenoffPri());
+			ps.setBigDecimal(index++, fwo.getWrittenoffPft());
+			ps.setBigDecimal(index++, fwo.getCurODPri());
+			ps.setBigDecimal(index++, fwo.getCurODPft());
+			ps.setBigDecimal(index++, fwo.getUnPaidSchdPri());
+			ps.setBigDecimal(index++, fwo.getUnPaidSchdPft());
+			ps.setBigDecimal(index++, fwo.getPenaltyAmount());
+			ps.setBigDecimal(index++, fwo.getProvisionedAmount());
+			ps.setBigDecimal(index++, fwo.getWriteoffPrincipal());
+			ps.setBigDecimal(index++, fwo.getWriteoffProfit());
+			ps.setBigDecimal(index++, fwo.getAdjAmount());
+			ps.setString(index++, fwo.getRemarks());
+			ps.setBigDecimal(index++, fwo.getWrittenoffSchFee());
+			ps.setBigDecimal(index++, fwo.getUnpaidSchFee());
+			ps.setBigDecimal(index++, fwo.getWriteoffSchFee());
+		});
+
+		return fwo.getFinReference();
 	}
 
-	/**
-	 * This method updates the Record FinanceWriteoff or FinanceWriteoff_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update FinanceWriteoff by key FinReference and Version
-	 * 
-	 * @param FinanceWriteoff
-	 *            (financeWriteoff)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(FinanceWriteoff financeWriteoff, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinWriteoffDetail");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set WriteoffDate=:WriteoffDate , SeqNo=:SeqNo , WrittenoffPri=:WrittenoffPri , ");
-		updateSql.append(
-				" WrittenoffPft=:WrittenoffPft , CurODPri=:CurODPri , CurODPft=:CurODPft , UnPaidSchdPri=:UnPaidSchdPri , ");
-		updateSql.append(
-				" UnPaidSchdPft=:UnPaidSchdPft , PenaltyAmount=:PenaltyAmount , ProvisionedAmount=:ProvisionedAmount , ");
-		updateSql.append(
-				" WriteoffPrincipal=:WriteoffPrincipal , WriteoffProfit=:WriteoffProfit , AdjAmount=:AdjAmount , Remarks=:Remarks, ");
-		updateSql.append(" WrittenoffSchFee=:WrittenoffSchFee,");
-		updateSql.append("UnpaidSchFee=:UnpaidSchFee,");
-		updateSql.append(" WriteoffSchFee=:WriteoffSchFee");
-		updateSql.append(" Where FinReference =:FinReference");
+	public void update(FinanceWriteoff fwo, String type) {
+		StringBuilder sql = new StringBuilder("Update FinWriteoffDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set WriteoffDate = ?, SeqNo = ?, WrittenoffPri = ?, WrittenoffPft = ?, CurODPri = ?");
+		sql.append(", CurODPft = ?, UnPaidSchdPri = ?, UnPaidSchdPft = ?, PenaltyAmount = ?, ProvisionedAmount = ?");
+		sql.append(", WriteoffPrincipal = ?, WriteoffProfit = ?, AdjAmount = ?, Remarks = ?, WrittenoffSchFee = ?");
+		sql.append(", UnpaidSchFee = ?, WriteoffSchFee = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setDate(index++, JdbcUtil.getDate(fwo.getWriteoffDate()));
+			ps.setInt(index++, fwo.getSeqNo());
+			ps.setBigDecimal(index++, fwo.getWrittenoffPri());
+			ps.setBigDecimal(index++, fwo.getWrittenoffPft());
+			ps.setBigDecimal(index++, fwo.getCurODPri());
+			ps.setBigDecimal(index++, fwo.getCurODPft());
+			ps.setBigDecimal(index++, fwo.getUnPaidSchdPri());
+			ps.setBigDecimal(index++, fwo.getUnPaidSchdPft());
+			ps.setBigDecimal(index++, fwo.getPenaltyAmount());
+			ps.setBigDecimal(index++, fwo.getProvisionedAmount());
+			ps.setBigDecimal(index++, fwo.getWriteoffPrincipal());
+			ps.setBigDecimal(index++, fwo.getWriteoffProfit());
+			ps.setBigDecimal(index++, fwo.getAdjAmount());
+			ps.setString(index++, fwo.getRemarks());
+			ps.setBigDecimal(index++, fwo.getWrittenoffSchFee());
+			ps.setBigDecimal(index++, fwo.getUnpaidSchFee());
+			ps.setBigDecimal(index++, fwo.getWriteoffSchFee());
+
+			ps.setLong(index++, fwo.getFinID());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public FinWriteoffPayment getFinWriteoffPaymentById(String finReference, String type) {
+	public FinWriteoffPayment getFinWriteoffPaymentById(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, WriteoffPayAmount, WriteoffPayAccount, LinkedTranId, SeqNo");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinWriteoffPayment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		FinWriteoffPayment finWriteoffPayment = new FinWriteoffPayment();
-		finWriteoffPayment.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, WriteoffPayAmount, WriteoffPayAccount, LinkedTranId,SeqNo,");
-		selectSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinWriteoffPayment");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
-		RowMapper<FinWriteoffPayment> typeRowMapper = BeanPropertyRowMapper.newInstance(FinWriteoffPayment.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			finWriteoffPayment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinWriteoffPayment payment = new FinWriteoffPayment();
+
+				payment.setFinID(rs.getLong("FinID"));
+				payment.setFinReference(rs.getString("FinReference"));
+				payment.setWriteoffPayAmount(rs.getBigDecimal("WriteoffPayAmount"));
+				payment.setWriteoffPayAccount(rs.getString("WriteoffPayAccount"));
+				payment.setLinkedTranId(rs.getLong("LinkedTranId"));
+				payment.setSeqNo(rs.getInt("SeqNo"));
+				payment.setVersion(rs.getInt("Version"));
+				payment.setLastMntBy(rs.getLong("LastMntBy"));
+				payment.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				payment.setRecordStatus(rs.getString("RecordStatus"));
+				payment.setRoleCode(rs.getString("RoleCode"));
+				payment.setNextRoleCode(rs.getString("NextRoleCode"));
+				payment.setTaskId(rs.getString("TaskId"));
+				payment.setNextTaskId(rs.getString("NextTaskId"));
+				payment.setRecordType(rs.getString("RecordType"));
+				payment.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return payment;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finWriteoffPayment = null;
+			//
 		}
-		logger.debug("Leaving");
-		return finWriteoffPayment;
+
+		return null;
 	}
 
 	@Override
-	public void deletefinWriteoffPayment(String finReference, long seqNo, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void deletefinWriteoffPayment(long finID, long seqNo, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinWriteoffPayment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and SeqNo = ?");
 
-		FinWriteoffPayment finWriteoffPayment = new FinWriteoffPayment();
-		finWriteoffPayment.setFinReference(finReference);
-		finWriteoffPayment.setSeqNo(seqNo);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinWriteoffPayment");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference AND SeqNo =:SeqNo");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, finID);
+				ps.setLong(index++, seqNo);
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
-
 	}
 
 	@Override
-	public String saveFinWriteoffPayment(FinWriteoffPayment finWriteoffPayment, String type) {
-		logger.debug("Entering");
+	public String saveFinWriteoffPayment(FinWriteoffPayment payment, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinWriteoffPayment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, WriteoffPayAmount, WriteoffPayAccount, LinkedTranId, SeqNo");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinWriteoffPayment");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, WriteoffPayAmount, WriteoffPayAccount,LinkedTranId,SeqNo,");
-		insertSql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, :WriteoffPayAmount, :WriteoffPayAccount,:LinkedTranId,:SeqNo,");
-		insertSql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return finWriteoffPayment.getFinReference();
+			ps.setLong(index++, payment.getFinID());
+			ps.setString(index++, payment.getFinReference());
+			ps.setBigDecimal(index++, payment.getWriteoffPayAmount());
+			ps.setString(index++, payment.getWriteoffPayAccount());
+			ps.setLong(index++, payment.getLinkedTranId());
+			ps.setLong(index++, payment.getSeqNo());
+			ps.setInt(index++, payment.getVersion());
+			ps.setLong(index++, payment.getLastMntBy());
+			ps.setTimestamp(index++, payment.getLastMntOn());
+			ps.setString(index++, payment.getRecordStatus());
+			ps.setString(index++, payment.getRoleCode());
+			ps.setString(index++, payment.getNextRoleCode());
+			ps.setString(index++, payment.getTaskId());
+			ps.setString(index++, payment.getNextTaskId());
+			ps.setString(index++, payment.getRecordType());
+			ps.setLong(index++, payment.getWorkflowId());
+		});
+
+		return payment.getFinReference();
 	}
 
 	@Override
-	public void updateFinWriteoffPayment(FinWriteoffPayment finWriteoffPayment, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinWriteoffPayment");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set WriteoffPayAmount = :WriteoffPayAmount, WriteoffPayAccount = :WriteoffPayAccount,LinkedTranId=:LinkedTranId,SeqNo=:SeqNo,");
-		updateSql.append(
-				" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus,");
-		updateSql.append(
-				" RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where FinReference =:FinReference");
+	public void updateFinWriteoffPayment(FinWriteoffPayment Payment, String type) {
+		StringBuilder sql = new StringBuilder("Update FinWriteoffPayment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set WriteoffPayAmount = ?, WriteoffPayAccount = ?, LinkedTranId = ?, SeqNo = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finWriteoffPayment);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBigDecimal(index++, Payment.getWriteoffPayAmount());
+			ps.setString(index++, Payment.getWriteoffPayAccount());
+			ps.setLong(index++, Payment.getLinkedTranId());
+			ps.setLong(index++, Payment.getSeqNo());
+			ps.setInt(index++, Payment.getVersion());
+			ps.setLong(index++, Payment.getLastMntBy());
+			ps.setTimestamp(index++, Payment.getLastMntOn());
+			ps.setString(index++, Payment.getRecordStatus());
+			ps.setString(index++, Payment.getRoleCode());
+			ps.setString(index++, Payment.getNextRoleCode());
+			ps.setString(index++, Payment.getTaskId());
+			ps.setString(index++, Payment.getNextTaskId());
+			ps.setString(index++, Payment.getRecordType());
+			ps.setLong(index++, Payment.getWorkflowId());
+			ps.setLong(index++, Payment.getFinID());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
-
 	}
 
-	public BigDecimal getTotalFinWriteoffDetailAmt(String finReference) {
-		logger.debug("Entering");
+	public BigDecimal getTotalFinWriteoffDetailAmt(long finID) {
+		String sql = "Select sum(WriteoffPrincipal) + sum(WriteoffProfit) + sum(WriteoffSchFee) From FinWriteoffDetail Where FinID = ?";
 
-		FinanceWriteoff financeWriteoff = new FinanceWriteoff();
-		financeWriteoff.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql);
 
-		// Get Sum of Total Payment Amount(profits and Principals)
-		StringBuilder selectSql = new StringBuilder(
-				" select sum(WriteoffPrincipal )+sum(WriteoffProfit) + ");
-		selectSql.append(" sum(WriteoffSchFee) ");
-		selectSql.append(" from FinWriteoffDetail  where FinReference = :FinReference ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
-
-		BigDecimal writeoffAmount = BigDecimal.ZERO;
 		try {
-			writeoffAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			writeoffAmount = BigDecimal.ZERO;
+			//
 		}
 
-		logger.debug("Leaving");
-		return writeoffAmount;
-
+		return BigDecimal.ZERO;
 	}
 
-	public BigDecimal getTotalWriteoffPaymentAmount(String finReference) {
-		logger.debug("Entering");
+	public BigDecimal getTotalWriteoffPaymentAmount(long finID) {
+		String sql = "Select sum(WriteoffPayAmount) From FinWriteoffPayment Where FinID = ?";
 
-		FinWriteoffPayment finwriteoffPayment = new FinWriteoffPayment();
-		finwriteoffPayment.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql);
 
-		// Get Sum of Total Payment Amount(profits and Principals)
-		StringBuilder selectSql = new StringBuilder(" select sum(WriteoffPayAmount) ");
-		selectSql.append(" from FinWriteoffPayment  where FinReference = :FinReference ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finwriteoffPayment);
-
-		BigDecimal finwriteoffPayAmount = BigDecimal.ZERO;
 		try {
-			finwriteoffPayAmount = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters,
-					BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finwriteoffPayAmount = BigDecimal.ZERO;
+			//
 		}
-		if (finwriteoffPayAmount == null) {
-			finwriteoffPayAmount = BigDecimal.ZERO;
-		}
-		logger.debug("Leaving");
-		return finwriteoffPayAmount;
 
+		return BigDecimal.ZERO;
 	}
 
 	@Override
-	public Date getFinWriteoffDate(String finReference) {
-		logger.debug("Entering");
+	public Date getFinWriteoffDate(long finID) {
+		String sql = "Select WriteoffDate From FinWriteoffDetail Where FinID = ?";
 
-		FinanceWriteoff financeWriteoff = new FinanceWriteoff();
-		financeWriteoff.setFinReference(finReference);
-		StringBuilder selectSql = new StringBuilder(" select WriteoffDate ");
-		selectSql.append(" from FinWriteoffDetail  where FinReference = :FinReference ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeWriteoff);
+		logger.debug(Literal.SQL + sql);
 
-		Date finWriteoffDate = null;
 		try {
-			finWriteoffDate = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Date.class);
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			finWriteoffDate = DateUtility.getAppDate();
+			//
 		}
-		logger.debug("Leaving");
-		return finWriteoffDate;
+
+		return SysParamUtil.getAppDate();
 	}
 
-	public long getfinWriteoffPaySeqNo(String finreference, String type) {
-		logger.debug("Entering");
+	public long getfinWriteoffPaySeqNo(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Coalesce(max(SeqNo), 0) From FinWriteoffPayment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		long seqNo = 0;
-
-		FinWriteoffPayment finwriteoffPayment = new FinWriteoffPayment();
-		finwriteoffPayment.setFinReference(finreference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select COALESCE(max(SeqNo), 0)  From FinWriteoffPayment ");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finwriteoffPayment);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			seqNo = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
 		} catch (EmptyResultDataAccessException dae) {
-			seqNo = Long.MIN_VALUE;
+			//
 		}
 
-		logger.debug("Leaving");
-		return seqNo;
+		return Long.MIN_VALUE;
 	}
 
 	@Override
-	public boolean isWriteoffLoan(String finReference, String type) {
-		StringBuilder sql = new StringBuilder(" Select Count(1) ");
-		sql.append(" from FinWriteoffDetail");
+	public boolean isWriteoffLoan(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(FinID)");
+		sql.append(" From FinWriteoffDetail");
 		sql.append(type);
-		sql.append(" where Finreference = ?");
+		sql.append(" Where FinID = ?");
 
 		try {
-			Object[] object = new Object[] { finReference };
-			return this.jdbcOperations.queryForObject(sql.toString(), object, Integer.class) > 0 ? true : false;
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in FinWriteoffDetail {} table for the specified FinReference >> {}", type,
-					finReference);
+			//
 		}
+
 		return false;
 	}
 }

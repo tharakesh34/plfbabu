@@ -39,6 +39,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class HoldDisbursement extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference = "";
 	private boolean hold = false;
 	private BigDecimal totalLoanAmt = BigDecimal.ZERO;
@@ -61,6 +62,14 @@ public class HoldDisbursement extends AbstractWorkflowEntity {
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		return excludeFields;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getId() {

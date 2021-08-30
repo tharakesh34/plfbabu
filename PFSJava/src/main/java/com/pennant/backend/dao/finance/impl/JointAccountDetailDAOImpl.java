@@ -1,68 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  JointAccountDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-09-2013    														*
- *                                                                  						*
- * Modified Date    :  10-09-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : JointAccountDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-09-2013 * *
+ * Modified Date : 10-09-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-09-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-09-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -73,6 +49,7 @@ import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>JointAccountDetail model</b> class.<br>
@@ -86,272 +63,194 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new JointAccountDetail
-	 * 
-	 * @return JointAccountDetail
-	 */
-
 	@Override
 	public JointAccountDetail getJointAccountDetail() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("JointAccountDetail");
+
 		JointAccountDetail jointAccountDetail = new JointAccountDetail();
+
 		if (workFlowDetails != null) {
 			jointAccountDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return jointAccountDetail;
 	}
-
-	/**
-	 * This method get the module from method getJointAccountDetail() and set the new record flag as true and return
-	 * JointAccountDetail()
-	 * 
-	 * @return JointAccountDetail
-	 */
 
 	@Override
 	public JointAccountDetail getNewJointAccountDetail() {
-		logger.debug("Entering");
 		JointAccountDetail jointAccountDetail = getJointAccountDetail();
 		jointAccountDetail.setNewRecord(true);
-		logger.debug("Leaving");
+
 		return jointAccountDetail;
 	}
 
-	/**
-	 * Fetch the Record Joint Account Details details by key field
-	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return JointAccountDetail
-	 */
 	@Override
-	public JointAccountDetail getJointAccountDetailById(final long id, String type) {
-		logger.debug("Entering");
-		JointAccountDetail jointAccountDetail = new JointAccountDetail();
+	public JointAccountDetail getJointAccountDetailById(long id, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where JointAccountId = ?");
 
-		jointAccountDetail.setId(id);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID, lovCustDob ");
-		}
-		selectSql.append(" From FinJointAccountDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where JointAccountId =:JointAccountId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
+		JointAccountDetailRowMapper rowMapper = new JointAccountDetailRowMapper(type);
 
 		try {
-			jointAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jointAccountDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return jointAccountDetail;
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the FinJointAccountDetails or FinJointAccountDetails_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Joint Account Details by key JointAccountId
-	 * 
-	 * @param Joint
-	 *            Account Details (jointAccountDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(JointAccountDetail jointAccountDetail, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(JointAccountDetail jad, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinJointAccountDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where JointAccountId = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinJointAccountDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where JointAccountId =:JointAccountId");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				ps.setLong(1, jad.getJointAccountId());
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into FinJointAccountDetails or FinJointAccountDetails_Temp. it fetches the
-	 * available Sequence form SeqFinJointAccountDetails by using getNextidviewDAO().getNextId() method.
-	 *
-	 * save Joint Account Details
-	 * 
-	 * @param Joint
-	 *            Account Details (jointAccountDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public long save(JointAccountDetail jointAccountDetail, String type) {
-		logger.debug("Entering");
-		if (jointAccountDetail.getId() == Long.MIN_VALUE) {
-			jointAccountDetail.setId(getNextValue("SeqFinJointAccountDetails"));
-			logger.debug("get NextID:" + jointAccountDetail.getId());
+	public long save(JointAccountDetail jad, String type) {
+		if (jad.getId() == Long.MIN_VALUE) {
+			jad.setId(getNextValue("SeqFinJointAccountDetails"));
 		}
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinJointAccountDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId,CatOfcoApplicant,AuthoritySignatory, Sequence, IncludeIncome");
-		insertSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				" Values(:JointAccountId, :FinReference, :CustCIF, :IncludeRepay, :RepayAccountId, :CatOfcoApplicant, :AuthoritySignatory, :Sequence, :IncludeIncome");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder("Insert Into FinJointAccountDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (JointAccountId, FinID, FinReference, CustCIF, IncludeRepay, RepayAccountId");
+		sql.append(", CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return jointAccountDetail.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, jad.getJointAccountId());
+			ps.setLong(index++, jad.getFinID());
+			ps.setString(index++, jad.getFinReference());
+			ps.setString(index++, jad.getCustCIF());
+			ps.setBoolean(index++, jad.isIncludeRepay());
+			ps.setString(index++, jad.getRepayAccountId());
+			ps.setString(index++, jad.getCatOfcoApplicant());
+			ps.setBoolean(index++, jad.isAuthoritySignatory());
+			ps.setInt(index++, jad.getSequence());
+			ps.setBoolean(index++, jad.isIncludeIncome());
+			ps.setInt(index++, jad.getVersion());
+			ps.setLong(index++, jad.getLastMntBy());
+			ps.setTimestamp(index++, jad.getLastMntOn());
+			ps.setString(index++, jad.getRecordStatus());
+			ps.setString(index++, jad.getRoleCode());
+			ps.setString(index++, jad.getNextRoleCode());
+			ps.setString(index++, jad.getTaskId());
+			ps.setString(index++, jad.getNextTaskId());
+			ps.setString(index++, jad.getRecordType());
+			ps.setLong(index++, jad.getWorkflowId());
+		});
+
+		return jad.getId();
 	}
 
-	/**
-	 * This method updates the Record FinJointAccountDetails or FinJointAccountDetails_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Joint Account Details by key JointAccountId and Version
-	 * 
-	 * @param Joint
-	 *            Account Details (jointAccountDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void update(JointAccountDetail jointAccountDetail, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinJointAccountDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set FinReference = :FinReference, CustCIF = :CustCIF, IncludeRepay = :IncludeRepay, RepayAccountId = :RepayAccountId, CatOfcoApplicant = :CatOfcoApplicant");
-		updateSql.append(
-				",AuthoritySignatory = :AuthoritySignatory, Sequence = :Sequence, IncludeIncome = :IncludeIncome");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where JointAccountId =:JointAccountId");
+	public void update(JointAccountDetail jad, String type) {
+		StringBuilder sql = new StringBuilder("Update FinJointAccountDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FinID = ?, FinReference = ?, CustCIF = ?, IncludeRepay = ?, RepayAccountId = ?");
+		sql.append(", CatOfcoApplicant = ?, AuthoritySignatory = ?, Sequence = ?, IncludeIncome = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where JointAccountId = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append("  and Version = ? - 1");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, jad.getFinID());
+			ps.setString(index++, jad.getFinReference());
+			ps.setString(index++, jad.getCustCIF());
+			ps.setBoolean(index++, jad.isIncludeRepay());
+			ps.setString(index++, jad.getRepayAccountId());
+			ps.setString(index++, jad.getCatOfcoApplicant());
+			ps.setBoolean(index++, jad.isAuthoritySignatory());
+			ps.setInt(index++, jad.getSequence());
+			ps.setBoolean(index++, jad.isIncludeIncome());
+			ps.setInt(index++, jad.getVersion());
+			ps.setLong(index++, jad.getLastMntBy());
+			ps.setTimestamp(index++, jad.getLastMntOn());
+			ps.setString(index++, jad.getRecordStatus());
+			ps.setString(index++, jad.getRoleCode());
+			ps.setString(index++, jad.getNextRoleCode());
+			ps.setString(index++, jad.getTaskId());
+			ps.setString(index++, jad.getNextTaskId());
+			ps.setString(index++, jad.getRecordType());
+			ps.setLong(index++, jad.getWorkflowId());
+
+			ps.setLong(index++, jad.getJointAccountId());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, jad.getVersion() - 1);
+			}
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public JointAccountDetail getJointAccountDetailByRefId(String finReference, long jointAccountId, String type) {
-		logger.debug("Entering");
-		JointAccountDetail jointAccountDetail = new JointAccountDetail();
+	public JointAccountDetail getJointAccountDetailByRefId(long finID, long jointAccountId, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinID = ? and JointAccountId = ?");
 
-		jointAccountDetail.setFinReference(finReference);
-		jointAccountDetail.setJointAccountId(jointAccountId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID, lovCustDob ");
-		}
-		selectSql.append(" From FinJointAccountDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference and JointAccountId = :JointAccountId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
+		JointAccountDetailRowMapper rowMapper = new JointAccountDetailRowMapper(type);
 
 		try {
-			jointAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, jointAccountId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jointAccountDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return jointAccountDetail;
+
+		return null;
 	}
 
 	@Override
-	public void deleteByFinRef(String finReference, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		JointAccountDetail jointAccountDetail = new JointAccountDetail();
-		jointAccountDetail.setFinReference(finReference);
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(long finID) {
+		String sql = "Select JointAccountId, FinID, FinReference, CustCIF From FinJointAccountDetails Where FinID = ?";
 
-		StringBuilder deleteSql = new StringBuilder("Delete From FinJointAccountDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference = :FinReference");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" JointAccountId, FinReference, CustCIF");
-		sql.append(" from FinJointAccountDetails");
-		sql.append(" Where FinReference = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		return this.jdbcOperations.query(sql.toString(), ps -> {
+		return this.jdbcOperations.query(sql, ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(index++, finID);
 		}, (rs, rowNum) -> {
 			JointAccountDetail ad = new JointAccountDetail();
 
 			ad.setJointAccountId(rs.getLong("JointAccountId"));
+			ad.setFinID(rs.getLong("FinID"));
 			ad.setFinReference(rs.getString("FinReference"));
 			ad.setCustCIF(rs.getString("CustCIF"));
 
@@ -360,403 +259,399 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	@Override
-	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(long finID, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinID = ?");
 
+		logger.debug(Literal.SQL + sql.toString());
+
+		JointAccountDetailRowMapper rowMapper = new JointAccountDetailRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+		}, rowMapper);
+	}
+
+	@Override
+	public List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jad) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant");
-		sql.append(", AuthoritySignatory, Sequence, IncludeIncome, Version, LastMntBy, LastMntOn, RecordStatus");
-		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" T1.FinType, T6.FinTypeDesc, T1.FinID, T1.FinReference");
+		sql.append(", T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy FinCcy, T7.CcyEditField CcyEditField, T4.CustStsDescription Status");
+		sql.append(", T5.CustStsDescription WorstStatus, T3.CustCIF");
+		sql.append(" From  FinanceMain T1");
+		sql.append(" Inner Join FinPftDetails T2 on T1.FinID = T2.FinID");
+		sql.append(" Inner Join Customers T3 on T3.CustId = T1.CustID");
+		sql.append(" Left Join BMTCustStatusCodes T4 on T4.CustStsCode = T3.CustSts");
+		sql.append(" Left Join BMTCustStatusCodes T5 on T5.CustStsCode = T1.FinStatus");
+		sql.append(" Inner Join RMTFinanceTypes T6 on T6.FinType = T1.FinType");
+		sql.append(" Inner Join RMTCurrencies T7 on T7.CcyCode = T1.FinCcy");
+		sql.append(" Where T3.CustCIF= ? and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceExposure> feList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, jad.getCustCIF());
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setStatus(rs.getString("Status"));
+			fe.setWorstStatus(rs.getString("WorstStatus"));
+			fe.setCustCif(rs.getString("CustCIF"));
+
+			return fe;
+		});
+
+		return feList.stream().sorted((f1, f2) -> DateUtil.compare(f1.getFinStartDate(), f2.getFinStartDate()))
+				.collect(Collectors.toList());
+	}
+
+	private String commaJoin(List<String> listCIF) {
+		return listCIF.stream().map(e -> "?").collect(Collectors.joining(", "));
+	}
+
+	@Override
+	public List<FinanceExposure> getPrimaryExposureList(List<String> listCIF) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.FinType, T6.FinTypeDesc, T1.FinID, T1.FinReference");
+		sql.append(", T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy FinCcy, T7.CcyEditField CcyEditField, T4.CustStsDescription Status");
+		sql.append(", T5.CustStsDescription WorstStatus, T3.CustCIF");
+		sql.append(" From  FinanceMain T1");
+		sql.append(" Inner Join FinPftDetails T2 on T1.FinID = T2.FinID");
+		sql.append(" Inner Join Customers T3 on T3.CustId = T1.CustID");
+		sql.append(" Left Join BMTCustStatusCodes T4 on T4.CustStsCode = T3.CustSts");
+		sql.append(" Left Join BMTCustStatusCodes T5 on T5.CustStsCode = T1.FinStatus");
+		sql.append(" Inner Join RMTFinanceTypes T6 on T6.FinType = T1.FinType");
+		sql.append(" Inner Join RMTCurrencies T7 on T7.CcyCode = T1.FinCcy ");
+		sql.append(" Where T3.CustCIF IN (");
+		sql.append(commaJoin(listCIF));
+		sql.append(" )");
+		sql.append(" and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceExposure> feList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			for (String custCIF : listCIF) {
+				ps.setString(index++, custCIF);
+			}
+
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setStatus(rs.getString("Status"));
+			fe.setWorstStatus(rs.getString("WorstStatus"));
+			fe.setCustCif(rs.getString("CustCIF"));
+
+			return fe;
+		});
+
+		return feList.stream().sorted((f1, f2) -> DateUtil.compare(f1.getFinStartDate(), f2.getFinStartDate()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jad) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.FinType, T6.FinTypeDesc, T1.FinID, T1.FinReference");
+		sql.append(", T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy FinCcy, T8.CcyEditField CcyEditField, T4.custStsDescription Status");
+		sql.append(", T5.CustStsDescription WorstStatus, T3.CustCIF");
+		sql.append(" From  FinanceMain T1");
+		sql.append(" Inner Join FinPftDetails T2 on T1.FinID = T2.FinID");
+		sql.append(" Inner Join Customers T3 on T3.CustId = T1.CustID ");
+		sql.append(" Left Join BMTCustStatusCodes T4 on T4.CustStsCode = T3.CustSts");
+		sql.append(" Left Join BMTCustStatusCodes T5 on T5.CustStsCode = T1.FinStatus");
+		sql.append(" Inner Join RMTFinanceTypes T6 on T6.FinType = T1.FinType ");
+		sql.append(" Inner Join FinJointAccountDetails_View T7  on T7.FinID = T1.FinID");
+		sql.append(" Inner Join RMTCurrencies T8 ON T8.CcyCode = T1.FinCcy");
+		sql.append(" Where T7.CustCIF = ?  and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, jad.getCustCIF());
+			ps.setInt(index++, 1);
+
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setStatus(rs.getString("Status"));
+			fe.setWorstStatus(rs.getString("WorstStatus"));
+			fe.setCustCif(rs.getString("CustCIF"));
+
+			return fe;
+		});
+	}
+
+	@Override
+	public List<FinanceExposure> getSecondaryExposureList(List<String> listCIF) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.FinType, T6.FinTypeDesc, T1.FinID, T1.FinReference");
+		sql.append(", T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy FinCcy, T8.CcyEditField CcyEditField, T4.custStsDescription Status");
+		sql.append(", T5.CustStsDescription WorstStatus, T3.CustCIF");
+		sql.append(" From  FinanceMain T1");
+		sql.append(" Inner Join FinPftDetails T2 on T1.FinID = T2.FinID");
+		sql.append(" Inner Join Customers T3 on T3.CustId = T1.CustID ");
+		sql.append(" Left Join BMTCustStatusCodes T4 on T4.CustStsCode = T3.CustSts");
+		sql.append(" Left Join BMTCustStatusCodes T5 on T5.CustStsCode = T1.FinStatus ");
+		sql.append(" Inner Join RMTFinanceTypes T6 on T6.FinType = T1.FinType ");
+		sql.append(" Inner Join FinJointAccountDetails_View T7  on T7.FinID = T1.FinID");
+		sql.append(" Inner Join RMTCurrencies T8 on T8.CcyCode = T1.FinCcy ");
+		sql.append(" Where T7.CustCIF IN ( ");
+		sql.append(commaJoin(listCIF));
+		sql.append(" )");
+		sql.append(" and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			for (String custCIF : listCIF) {
+				ps.setString(index++, custCIF);
+			}
+
+			ps.setInt(index++, 1);
+
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setStatus(rs.getString("Status"));
+			fe.setWorstStatus(rs.getString("WorstStatus"));
+			fe.setCustCif(rs.getString("CustCIF"));
+
+			return fe;
+		});
+	}
+
+	@Override
+	public List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jad) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.FinType, T6.FinTypeDesc, T1.FinID, T1.FinReference");
+		sql.append(", T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt");
+		sql.append(", (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure");
+		sql.append(", T1.FinCcy FinCcy, T8.CcyEditField CcyEditField, T4.CustStsDescription Status");
+		sql.append(", T5.custStsDescription WorstStatus, T3.CustCIF");
+		sql.append(" From  FinanceMain T1");
+		sql.append(" Inner Join  FinPftDetails T2 on T1.FinID = T2.FinID");
+		sql.append(" Inner Join Customers T3 on T3.CustId = T1.CustID");
+		sql.append(" Left Join BMTCustStatusCodes T4 on T4.CustStsCode = T3.CustSts");
+		sql.append(" Left Join BMTCustStatusCodes T5 on T5.CustStsCode = T1.FinStatus");
+		sql.append(" Inner Join RMTFinanceTypes T6 on T6.FinType = T1.FinType");
+		sql.append(" Inner Join FinGuarantorsDetails_View T7  on T7.FinID = T1.FinID");
+		sql.append(" Inner Join RMTCurrencies T8 on T8.CcyCode = T1.FinCcy ");
+		sql.append(" Where T7.GuarantorCIF = ?  and T1.FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, jad.getCustCIF());
+			ps.setInt(index++, 1);
+		}, (rs, num) -> {
+			FinanceExposure fe = new FinanceExposure();
+
+			fe.setFinType(rs.getString("FinType"));
+			fe.setFinTypeDesc(rs.getString("FinTypeDesc"));
+			fe.setFinID(rs.getLong("FinID"));
+			fe.setFinReference(rs.getString("FinReference"));
+			fe.setFinStartDate(rs.getDate("FinStartDate"));
+			fe.setMaturityDate(rs.getDate("MaturityDate"));
+			fe.setFinanceAmt(rs.getBigDecimal("FinanceAmt"));
+			fe.setCurrentExpoSure(rs.getBigDecimal("CurrentExpoSure"));
+			fe.setFinCCY(rs.getString("FinCcy"));
+			fe.setCcyEditField(rs.getInt("CcyEditField"));
+			fe.setStatus(rs.getString("Status"));
+			fe.setWorstStatus(rs.getString("WorstStatus"));
+			fe.setCustCif(rs.getString("CustCIF"));
+
+			return fe;
+		});
+	}
+
+	@Override
+	public FinanceExposure getOverDueDetails(FinanceExposure exposer) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" sum(FinCurODAmt) OverdueAmt, max(FinCurODDays) PastdueDays");
+		sql.append(" From  FinanceMain FM");
+		sql.append(" Inner Join FinODDetails OD on OD.FinID = FM.FinID");
+		sql.append(" Where FM.FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				FinanceExposure fe = new FinanceExposure();
+
+				fe.setOverdueAmt(rs.getBigDecimal("OverdueAmt"));
+				fe.setPastdueDays(rs.getString("PastdueDays"));
+
+				return fe;
+			}, exposer.getFinID());
+		} catch (Exception e) {
+			//
+		} finally {
+			//
+		}
+		return null;
+	}
+
+	public JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinID = ? and CustCIF = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		JointAccountDetailRowMapper rowMapper = new JointAccountDetailRowMapper(type);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, custCIF);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public Map<String, Integer> getCustCtgCount(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Custctgcode, Count(*) Count");
+		sql.append(" From FinJointAccountDetails_View F");
+		sql.append(" Inner Join Customers C on C.CustCIF =  F.CustCIF Where FinID = ? group by CustCtgCode");
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		try {
+			map = this.jdbcTemplate.query(sql.toString(), new ResultSetExtractor<Map<String, Integer>>() {
+				Map<String, Integer> map = new HashMap<String, Integer>();
+
+				@Override
+				public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					while (rs.next()) {
+						map.put(rs.getString(1), rs.getInt(2));
+					}
+					return map;
+				}
+
+			});
+		} catch (Exception e) {
+			//
+		}
+
+		return map;
+	}
+
+	private StringBuilder sqlSelectQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" JointAccountId, FinID, FinReference, CustCIF, IncludeRepay, RepayAccountId");
+		sql.append(", CatOfcoApplicant, AuthoritySignatory, Sequence, IncludeIncome");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescCIFName, CustID, LovCustDob");
 		}
 
-		sql.append(" from FinJointAccountDetails");
+		sql.append(" From FinJointAccountDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-				}
-			}, new RowMapper<JointAccountDetail>() {
-				@Override
-				public JointAccountDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					JointAccountDetail jad = new JointAccountDetail();
-
-					jad.setJointAccountId(rs.getLong("JointAccountId"));
-					jad.setFinReference(rs.getString("FinReference"));
-					jad.setCustCIF(rs.getString("CustCIF"));
-					jad.setIncludeRepay(rs.getBoolean("IncludeRepay"));
-					jad.setRepayAccountId(rs.getString("RepayAccountId"));
-					jad.setCatOfcoApplicant(rs.getString("CatOfcoApplicant"));
-					jad.setAuthoritySignatory(rs.getBoolean("AuthoritySignatory"));
-					jad.setSequence(rs.getInt("Sequence"));
-					jad.setIncludeIncome(rs.getBoolean("IncludeIncome"));
-					jad.setVersion(rs.getInt("Version"));
-					jad.setLastMntBy(rs.getLong("LastMntBy"));
-					jad.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					jad.setRecordStatus(rs.getString("RecordStatus"));
-					jad.setRoleCode(rs.getString("RoleCode"));
-					jad.setNextRoleCode(rs.getString("NextRoleCode"));
-					jad.setTaskId(rs.getString("TaskId"));
-					jad.setNextTaskId(rs.getString("NextTaskId"));
-					jad.setRecordType(rs.getString("RecordType"));
-					jad.setWorkflowId(rs.getLong("WorkflowId"));
-
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						jad.setLovDescCIFName(rs.getString("LovDescCIFName"));
-						jad.setCustID(rs.getLong("CustID"));
-						jad.setLovCustDob(rs.getTimestamp("LovCustDob"));
-					}
-
-					return jad;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return sql;
 	}
 
-	@Override
-	public List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
+	private class JointAccountDetailRowMapper implements RowMapper<JointAccountDetail> {
+		private String type;
 
-		StringBuilder query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
-		query.append(" T1.FinCcy finCcy, T7.ccyEditField ccyEditField, T4.custStsDescription status,");
-		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
-		query.append(" FROM  FinanceMain T1");
-		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
-		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
-		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts");
-		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
-		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
-		query.append(" INNER JOIN RMTCurrencies T7 ON T7.CcyCode = T1.FinCcy ");
-		query.append(" WHERE T3.CustCIF=:custCIF AND T1.FinIsActive = 1");
-		query.append(" ORDER BY T1.FINSTARTDATE ASC");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
+		private JointAccountDetailRowMapper(String type) {
+			this.type = type;
 		}
-		return null;
+
+		@Override
+		public JointAccountDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			JointAccountDetail jad = new JointAccountDetail();
+
+			jad.setJointAccountId(rs.getLong("JointAccountId"));
+			jad.setFinID(rs.getLong("FinID"));
+			jad.setFinReference(rs.getString("FinReference"));
+			jad.setCustCIF(rs.getString("CustCIF"));
+			jad.setIncludeRepay(rs.getBoolean("IncludeRepay"));
+			jad.setRepayAccountId(rs.getString("RepayAccountId"));
+			jad.setCatOfcoApplicant(rs.getString("CatOfcoApplicant"));
+			jad.setAuthoritySignatory(rs.getBoolean("AuthoritySignatory"));
+			jad.setSequence(rs.getInt("Sequence"));
+			jad.setIncludeIncome(rs.getBoolean("IncludeIncome"));
+			jad.setVersion(rs.getInt("Version"));
+			jad.setLastMntBy(rs.getLong("LastMntBy"));
+			jad.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			jad.setRecordStatus(rs.getString("RecordStatus"));
+			jad.setRoleCode(rs.getString("RoleCode"));
+			jad.setNextRoleCode(rs.getString("NextRoleCode"));
+			jad.setTaskId(rs.getString("TaskId"));
+			jad.setNextTaskId(rs.getString("NextTaskId"));
+			jad.setRecordType(rs.getString("RecordType"));
+			jad.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				jad.setLovDescCIFName(rs.getString("LovDescCIFName"));
+				jad.setCustID(rs.getLong("CustID"));
+				jad.setLovCustDob(rs.getTimestamp("LovCustDob"));
+			}
+
+			return jad;
+		}
 	}
-
-	@Override
-	public List<FinanceExposure> getPrimaryExposureList(List<String> listCIF) {
-		logger.debug("Entering");
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CUSTCIF", listCIF);
-		paramSource.addValue("ACTIVE", true);
-
-		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-		;
-		StringBuilder query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
-		query.append(" T1.FinCcy finCcy, T7.ccyEditField ccyEditField, T4.custStsDescription status,");
-		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
-		query.append(" FROM  FinanceMain T1");
-		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
-		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
-		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts");
-		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
-		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
-		query.append(" INNER JOIN RMTCurrencies T7 ON T7.CcyCode = T1.FinCcy ");
-		query.append(" WHERE T3.CustCIF IN (:CUSTCIF) AND T1.FinIsActive = :ACTIVE");
-		query.append(" ORDER BY T1.FINSTARTDATE ASC");
-		logger.debug("selectSql: " + query.toString());
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), paramSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			typeRowMapper = null;
-			paramSource = null;
-			query = null;
-		}
-		return null;
-	}
-
-	@Override
-	public List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
-		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,");
-		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
-		query.append(" FROM  FinanceMain T1");
-		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
-		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
-		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts");
-		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
-		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
-		query.append(" INNER JOIN FinJointAccountDetails_View T7  ON T7.FinReference=T1.FinReference");
-		query.append(" INNER JOIN RMTCurrencies T8 ON T8.CcyCode = T1.FinCcy ");
-		query.append(" WHERE T7.CustCIF=:custCIF  AND T1.FinIsActive = 1");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return new ArrayList<>();
-	}
-
-	@Override
-	public List<FinanceExposure> getSecondaryExposureList(List<String> listCIF) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("CUSTCIF", listCIF);
-		paramSource.addValue("ACTIVE", true);
-		RowMapper<FinanceExposure> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-		;
-
-		StringBuilder query = null;
-		query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
-		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,");
-		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
-		query.append(" FROM  FinanceMain T1");
-		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
-		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
-		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts");
-		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
-		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
-		query.append(" INNER JOIN FinJointAccountDetails_View T7  ON T7.FinReference=T1.FinReference");
-		query.append(" INNER JOIN RMTCurrencies T8 ON T8.CcyCode = T1.FinCcy ");
-		query.append(" WHERE T7.CustCIF IN (:CUSTCIF) AND T1.FinIsActive = :ACTIVE");
-
-		logger.debug("selectSql: " + query.toString());
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), paramSource, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			paramSource = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return new ArrayList<>();
-	}
-
-	@Override
-	public List<FinanceExposure> getGuarantorExposureList(JointAccountDetail jointAccountDetail) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT T1.FinType, T6.FinTypeDesc, T1.FinReference,");
-		query.append(
-				" T1.FinStartDate, T1.MaturityDate, (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment) FinanceAmt,");
-		query.append(" (T1.FinAmount + T1.FeeChargeAmt - T1.DownPayment - T1.FinRepaymentAmount) CurrentExpoSure, ");
-		query.append(" T1.FinCcy finCcy, T8.ccyEditField ccyEditField, T4.custStsDescription status,");
-		query.append(" T5.custStsDescription WorstStatus, T3.CustCIF ");
-		query.append(" FROM  FinanceMain T1");
-		query.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
-		query.append(" INNER JOIN Customers T3 ON T3.CustId = T1.CustID ");
-		query.append(" LEFT JOIN BMTCustStatusCodes T4 ON T4.CustStsCode=T3.CustSts");
-		query.append(" LEFT JOIN BMTCustStatusCodes T5 ON T5.CustStsCode=T1.FinStatus ");
-		query.append(" INNER JOIN RMTFinanceTypes T6 ON T6.FinType = T1.FinType ");
-		query.append(" INNER JOIN FinGuarantorsDetails_View T7  ON T7.FinReference=T1.FinReference");
-		query.append(" INNER JOIN RMTCurrencies T8 ON T8.CcyCode = T1.FinCcy ");
-		query.append(" WHERE T7.GuarantorCIF=:custCIF  AND T1.FinIsActive = 1");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(query.toString(), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return null;
-	}
-
-	@Override
-	public FinanceExposure getOverDueDetails(FinanceExposure exposer) {
-		logger.debug("Entering");
-		SqlParameterSource beanParameters = null;
-		RowMapper<FinanceExposure> typeRowMapper = null;
-		StringBuilder query = null;
-
-		query = new StringBuilder();
-		query.append(" SELECT SUM(FinCurODAmt) OverdueAmt, MAX(FinCurODDays) PastdueDays");
-		query.append(" FROM  FinanceMain FM");
-		query.append(" INNER JOIN FinODDetails OD ON OD.FinReference = FM.FinReference");
-		query.append(" WHERE FM.FinReference=:FinReference ");
-
-		logger.debug("selectSql: " + query.toString());
-		beanParameters = new BeanPropertySqlParameterSource(exposer);
-		typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceExposure.class);
-
-		logger.debug("Leaving");
-		FinanceExposure exposure = null;
-		try {
-			exposure = this.jdbcTemplate.queryForObject(String.valueOf(query), beanParameters, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-			exposure = null;
-		} finally {
-			beanParameters = null;
-			typeRowMapper = null;
-			query = null;
-		}
-		return exposure;
-	}
-
-	public JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type) {
-		logger.debug("Entering");
-		JointAccountDetail jointAccountDetail = new JointAccountDetail();
-
-		jointAccountDetail.setFinReference(finReference);
-		jointAccountDetail.setCustCIF(custCIF);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select JointAccountId, FinReference, CustCIF, IncludeRepay, RepayAccountId, CatOfcoApplicant,AuthoritySignatory, Sequence, IncludeIncome");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",LovDescCIFName, custID, lovCustDob  ");
-		}
-		selectSql.append(" From FinJointAccountDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference and CustCIF = :CustCIF ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jointAccountDetail);
-		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
-
-		try {
-			jointAccountDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jointAccountDetail = null;
-		}
-		logger.debug("Leaving");
-		return jointAccountDetail;
-	}
-
-	@Override
-	public List<JointAccountDetail> getCustIdsByFinnRef(String finReference) {
-		logger.debug("Entering");
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("CustCtgCode", "RETAIL");
-		source.addValue("IncludeIncome", true);
-
-		StringBuilder selectSql = new StringBuilder("Select ");
-		selectSql.append(" C.CustID, C.CustCIF");
-		selectSql.append(" From FinJointAccountDetails_View F");
-		selectSql.append(" Inner Join Customers C on C.CustCIF =  F.CustCIF");
-		selectSql.append(" Left Join FinCreditReviewDetails FCRD on FCRD.CustomerId = C.CustId");
-		selectSql.append(
-				" Where F.FinReference =:FinReference and C.CustCtgCode !=:CustCtgCode and IncludeIncome =:IncludeIncome");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<JointAccountDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(JointAccountDetail.class);
-
-		logger.debug("Leaving");
-		try {
-			return this.jdbcTemplate.query(selectSql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
-		}
-		return null;
-	}
-
-	@Override
-	public Map<String, Integer> getCustCtgCount(String finRef) {
-		logger.trace(Literal.ENTERING);
-
-		MapSqlParameterSource sqlScource = new MapSqlParameterSource();
-		sqlScource.addValue("FinReference", finRef);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select custctgcode ,count(*) count ");
-		selectSql.append(" from FinJointAccountDetails_View F ");
-		selectSql.append(
-				" Inner Join Customers C on C.CustCIF =  F.CustCIF where finreference=:FinReference group by custctgcode  ");
-		Map<String, Integer> map = new HashMap<String, Integer>();
-		try {
-			map = this.jdbcTemplate.query(selectSql.toString(), sqlScource,
-					new ResultSetExtractor<Map<String, Integer>>() {
-						Map<String, Integer> map = new HashMap<String, Integer>();
-
-						@Override
-						public Map<String, Integer> extractData(ResultSet rs) throws SQLException, DataAccessException {
-							while (rs.next()) {
-								map.put(rs.getString(1), rs.getInt(2));
-							}
-							return map;
-						}
-
-					});
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
-		}
-		logger.debug(Literal.LEAVING);
-		return map;
-	}
-
 }

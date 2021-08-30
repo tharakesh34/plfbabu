@@ -31,8 +31,8 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 	@Override
 	public void save(InstBasedSchdDetails instBasedSchd) {
 		StringBuilder sql = new StringBuilder("Insert Into InstBasedSchdDetails");
-		sql.append(" (BatchId, FinID, FinReference, DisbId,  RealizedDate,  Status,  ErrorDesc,");
-		sql.append(" UserId, Downloaded_On, DisbAmount, LinkedTranId)");
+		sql.append(" (BatchId, FinID, FinReference, DisbId, RealizedDate, Status, ErrorDesc");
+		sql.append(", UserId, Downloaded_On, DisbAmount, LinkedTranId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -75,43 +75,47 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 
 	@Override
 	public void update(InstBasedSchdDetails instBasedSchd) {
-		String sql = "Update InstBasedSchdDetails Set Status = ?, ErrorDesc = ?  where Id =?";
+		String sql = "Update InstBasedSchdDetails Set Status = ?, ErrorDesc = ?  Where Id = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		jdbcOperations.update(sql, ps -> {
-			ps.setString(1, instBasedSchd.getStatus());
-			ps.setString(2, instBasedSchd.getErrorDesc());
-			ps.setLong(3, instBasedSchd.getId());
+			int index = 1;
+
+			ps.setString(index++, instBasedSchd.getStatus());
+			ps.setString(index++, instBasedSchd.getErrorDesc());
+			ps.setLong(index++, instBasedSchd.getId());
 		});
 	}
 
 	@Override
 	public void delete(InstBasedSchdDetails instBasedSchd) {
-		String sql = "delete from FinAutoApprovalDetails Where FinID = ? and DisbId = ?";
+		String sql = "Delete From FinAutoApprovalDetails Where FinID = ? and DisbId = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, instBasedSchd.getFinID());
-			ps.setLong(2, instBasedSchd.getDisbId());
+			int index = 1;
+
+			ps.setLong(index++, instBasedSchd.getFinID());
+			ps.setLong(index++, instBasedSchd.getDisbId());
 		});
 
 	}
 
 	@Override
 	public boolean getFinanceIfApproved(long finID) {
-		String sql = "Select FinReference from Financemain where FinID = ?";
+		String sql = "Select Count(FinID) From Financemain Where FinID = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcOperations.queryForObject(sql, String.class, finID);
+			return jdbcOperations.queryForObject(sql, Long.class, finID) > 0;
 		} catch (Exception e) {
-			return false;
+			//
 		}
 
-		return true;
+		return false;
 	}
 
 }

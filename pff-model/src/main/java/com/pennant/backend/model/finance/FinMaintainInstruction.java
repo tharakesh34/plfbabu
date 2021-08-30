@@ -28,6 +28,7 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long finMaintainId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private String event;
 	private String lovValue;
@@ -131,6 +132,14 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

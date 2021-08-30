@@ -10,6 +10,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 public class FinWriteoffPayment extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -1477748770396649402L;
 
+	private long finID;
 	private String finReference;
 	private long seqNo = Long.MIN_VALUE;
 	private BigDecimal writeoffPayAmount = BigDecimal.ZERO;
@@ -32,9 +33,14 @@ public class FinWriteoffPayment extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}

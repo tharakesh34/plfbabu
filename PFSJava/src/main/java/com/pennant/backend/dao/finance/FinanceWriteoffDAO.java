@@ -8,31 +8,31 @@ import com.pennant.backend.model.finance.FinanceWriteoff;
 
 public interface FinanceWriteoffDAO {
 
-	FinanceWriteoff getFinanceWriteoffById(String finReference, String type);
+	FinanceWriteoff getFinanceWriteoffById(long finID, String type);
 
-	void delete(String finReference, String type);
+	void delete(long finID, String type);
 
 	String save(FinanceWriteoff financeWriteoff, String type);
 
 	void update(FinanceWriteoff financeWriteoff, String type);
 
-	int getMaxFinanceWriteoffSeq(String finReference, Date writeoffDate, String type);
+	int getMaxFinanceWriteoffSeq(long finID, Date writeoffDate, String type);
 
-	FinWriteoffPayment getFinWriteoffPaymentById(String finReference, String type);
+	FinWriteoffPayment getFinWriteoffPaymentById(long finID, String type);
 
-	void deletefinWriteoffPayment(String finReference, long seqNo, String type);
+	void deletefinWriteoffPayment(long finID, long seqNo, String type);
 
 	String saveFinWriteoffPayment(FinWriteoffPayment finWriteoffPayment, String type);
 
 	void updateFinWriteoffPayment(FinWriteoffPayment finWriteoffPayment, String type);
 
-	BigDecimal getTotalFinWriteoffDetailAmt(String finReference);
+	BigDecimal getTotalFinWriteoffDetailAmt(long finID);
 
-	BigDecimal getTotalWriteoffPaymentAmount(String finReference);
+	BigDecimal getTotalWriteoffPaymentAmount(long finID);
 
-	Date getFinWriteoffDate(String finReference);
+	Date getFinWriteoffDate(long finID);
 
-	long getfinWriteoffPaySeqNo(String finreference, String type);
+	long getfinWriteoffPaySeqNo(long finID, String type);
 
-	boolean isWriteoffLoan(String reference, String type);
+	boolean isWriteoffLoan(long finID, String type);
 }

@@ -52,30 +52,33 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 	}
 
 	@Override
-	public void deleteByLinkedReference(String linkedFinReference, String finReference, String type) {
-		StringBuilder sql = new StringBuilder("Delete From");
-		sql.append(" LinkedFinances");
+	public void deleteByLinkedReference(String linkedFinReference, long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From LinkedFinances");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ? And LinkedReference = ?");
+		sql.append(" Where FinID = ? and LinkedReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, finReference);
-			ps.setString(2, linkedFinReference);
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setString(index++, linkedFinReference);
 		});
 	}
 
 	@Override
-	public void delete(String finRef, String type) {
+	public void delete(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Delete From LinkedFinances");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
-			ps.setString(1, finRef);
+			int index = 1;
+
+			ps.setLong(index++, finID);
 		});
 	}
 
@@ -159,13 +162,13 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 	@Override
 	public List<LinkedFinances> getFinIsLinkedActive(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" T1.FinIsActive, T2.LinkedReference,T2.FinReference, T2.Status");
+		sql.append(" T1.FinIsActive, T2.LinkedReference, T2.FinID, T2.FinReference, T2.Status");
 		sql.append(" From Financemain T1");
 		sql.append(" Inner Join Linkedfinances T2 on T1.FinReference = T2.LinkedReference");
 		sql.append(" Where T2.FinReference = ?");
 		sql.append(" UNION");
-		sql.append(" select");
-		sql.append(" T1.FinIsActive, T2.LinkedReference,T2.FinReference, T2.Status");
+		sql.append(" Select");
+		sql.append(" T1.FinIsActive, T2.LinkedReference, T2.FinID, T2.FinReference, T2.Status");
 		sql.append(" From Financemain T1");
 		sql.append(" Inner Join Linkedfinances T2 on T1.FinReference = T2.FinReference");
 		sql.append(" Where T2.LinkedReference = ?");
@@ -180,38 +183,40 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 			lf.setFinIsActive(rs.getBoolean(1));
 			lf.setLinkedReference(rs.getString(2));
-			lf.setFinReference(rs.getString(3));
-			lf.setStatus(rs.getString(4));
+			lf.setFinID(rs.getLong(3));
+			lf.setFinReference(rs.getString(4));
+			lf.setStatus(rs.getString(5));
 
 			return lf;
 		});
 	}
 
 	@Override
-	public List<LinkedFinances> getLinkedFinancesByFinRef(String finReference, String type) {
+	public List<LinkedFinances> getLinkedFinancesByFinRef(long finID, String type) {
 		StringBuilder sql = getSelectSqlQuery(type);
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			int index = 1;
+
+			ps.setLong(index++, finID);
 		}, (rs, i) -> {
 			return getRowMapper(type, rs);
 		});
 	}
 
 	@Override
-	public LinkedFinances getLinkedFinancesByLinkRef(String linkedReference, String finReference, String type) {
+	public LinkedFinances getLinkedFinancesByLinkRef(String linkedReference, long finID, String type) {
 		StringBuilder sql = getSelectSqlQuery(type);
-		sql.append(" Where FinReference = ? and LinkedReference = ?");
+		sql.append(" Where FinID = ? and LinkedReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, linkedReference },
-				(rs, i) -> {
-					return getRowMapper(type, rs);
-				});
+		return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+			return getRowMapper(type, rs);
+		}, finID, linkedReference);
 	}
 
 	@Override
@@ -233,7 +238,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Distinct LinkedReference From LinkedFinances");
 		sql.append(" Where FinReference = ?");
-		sql.append(" union");
+		sql.append(" Union");
 		sql.append(" Select");
 		sql.append(" Distinct FinReference From LinkedFinances");
 		sql.append(" Where LinkedReference = ?");
@@ -252,10 +257,10 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		StringBuilder sql = new StringBuilder("Insert Into");
 		sql.append(" LinkedFinances");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (ID, FinReference, LinkedReference, Status");
+		sql.append(" (ID, FinID, FinReference, LinkedReference, Status");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		return sql;
 	}
 
@@ -265,13 +270,13 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		sql.append(" Set");
 		sql.append(" Status = ?, Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
 		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId= ?, NextTaskId= ?, RecordType= ?, WorkflowId= ?");
-		sql.append(" Where FinReference = ? and LinkedReference = ?");
+		sql.append(" Where FinID = ? and LinkedReference = ?");
 		return sql;
 	}
 
 	private StringBuilder getSelectSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ID, FinReference, LinkedReference, Status");
+		sql.append(" ID, FinID, FinReference, LinkedReference, Status");
 		if (type.contains("View")) {
 			sql.append(", CustShrtName, LinkedFinType");
 		}
@@ -288,7 +293,9 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		if (lnkdFinance.getID() == 0 || lnkdFinance.getID() == Long.MIN_VALUE) {
 			lnkdFinance.setID(getNextValue("SeqLinkedFinances"));
 		}
+
 		ps.setLong(index++, lnkdFinance.getID());
+		ps.setLong(index++, lnkdFinance.getFinID());
 		ps.setString(index++, lnkdFinance.getFinReference());
 		ps.setString(index++, lnkdFinance.getLinkedReference());
 		ps.setString(index++, lnkdFinance.getStatus());
@@ -319,13 +326,14 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		ps.setString(index++, lnkdFinance.getRecordType());
 		ps.setLong(index++, JdbcUtil.setLong(lnkdFinance.getWorkflowId()));
 
-		ps.setString(index++, lnkdFinance.getFinReference());
+		ps.setLong(index++, lnkdFinance.getFinID());
 		ps.setString(index, lnkdFinance.getLinkedReference());
 	}
 
 	private LinkedFinances getRowMapper(String type, ResultSet rs) throws SQLException {
 		LinkedFinances lf = new LinkedFinances();
 		lf.setID(rs.getLong("ID"));
+		lf.setFinID(rs.getLong("FinID"));
 		lf.setFinReference(rs.getString("FinReference"));
 		lf.setLinkedReference(rs.getString("LinkedReference"));
 		lf.setStatus(rs.getString("Status"));

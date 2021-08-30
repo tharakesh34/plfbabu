@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeTypeDAOImpl.java                                                  * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-01-2017    														*
- *                                                                  						*
- * Modified Date    :  03-01-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-01-2017 * * Modified Date
+ * : 03-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-01-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-01-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -75,13 +57,6 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		super();
 	}
 
-	/**
-	 * Fetch the Record FinMaintainInstruction details by key field
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinMaintainInstruction
-	 */
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionById(long finMaintainId, String type) {
 		StringBuilder sql = getSqlQuery(type);
@@ -90,38 +65,29 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finMaintainId }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				return getRowMapper(rs);
-			});
+			}, finMaintainId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in FinMaintainInstructions{} for the specified FinMaintainId >> {}", type,
-					finMaintainId);
+			//
 		}
 
 		return null;
 	}
 
-	/**
-	 * Fetch the Record FinMaintainInstruction details by finReference and event
-	 * 
-	 * @param feeTypeCode (String)
-	 * @return FinMaintainInstruction
-	 */
 	@Override
-	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finReference, String event, String type) {
+	public FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event, String type) {
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinReference = ? and Event = ?");
+		sql.append(" Where FinID = ? and Event = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, event }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				return getRowMapper(rs);
-			});
+			}, finID, event);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Record is not found in FinMaintainInstructions{} for the specified FinReference >> {} and Event >> {}",
-					type, finReference, event);
+			//
 		}
 
 		return null;
@@ -129,14 +95,12 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate");
+		sql.append(" FinMaintainId, FinID, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate");
 		sql.append(", TdsEndDate, TdsLimit, Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append("");
-		}
 		sql.append(" From FinMaintainInstructions");
 		sql.append(StringUtils.trimToEmpty(type));
+
 		return sql;
 	}
 
@@ -144,6 +108,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		FinMaintainInstruction fmi = new FinMaintainInstruction();
 
 		fmi.setFinMaintainId(rs.getLong("FinMaintainId"));
+		fmi.setFinID(rs.getLong("FinID"));
 		fmi.setFinReference(rs.getString("FinReference"));
 		fmi.setEvent(rs.getString("Event"));
 		fmi.settDSApplicable(rs.getBoolean("TDSApplicable"));
@@ -152,8 +117,8 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		fmi.setTdsEndDate(JdbcUtil.getDate(rs.getDate("TdsEndDate")));
 		fmi.setTdsLimit(rs.getBigDecimal("TdsLimit"));
 		fmi.setVersion(rs.getInt("Version"));
-		fmi.setLastMntBy(rs.getLong("LastMntBy"));
 		fmi.setLastMntOn(rs.getTimestamp("LastMntOn"));
+		fmi.setLastMntBy(rs.getLong("LastMntBy"));
 		fmi.setRecordStatus(rs.getString("RecordStatus"));
 		fmi.setRoleCode(rs.getString("RoleCode"));
 		fmi.setNextRoleCode(rs.getString("NextRoleCode"));
@@ -166,15 +131,15 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 	}
 
 	@Override
-	public boolean isDuplicateKey(String event, String finReference, TableType tableType) {
+	public boolean isDuplicateKey(String event, long finID, TableType tableType) {
 		String sql;
-		String whereClause = "Event = ? and FinReference = ?";
-		Object[] args = new Object[] { event, finReference };
+		String whereClause = "Event = ? and FinID = ?";
+
+		Object[] args = new Object[] { event, finID };
 
 		switch (tableType) {
 		case MAIN_TAB:
 			sql = QueryUtil.getCountQuery("FinMaintainInstructions", whereClause);
-
 			break;
 		case TEMP_TAB:
 			sql = QueryUtil.getCountQuery("FinMaintainInstructions_Temp", whereClause);
@@ -183,13 +148,13 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 			sql = QueryUtil.getCountQuery(new String[] { "FinMaintainInstructions_Temp", "FinMaintainInstructions" },
 					whereClause);
 
-			args = new Object[] { event, finReference, event, finReference };
+			args = new Object[] { event, finID, event, finID };
 			break;
 		}
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql, args, Integer.class) > 0;
+		return jdbcOperations.queryForObject(sql, Integer.class, args) > 0;
 	}
 
 	@Override
@@ -200,17 +165,19 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 
 		StringBuilder sql = new StringBuilder("Insert into FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" (FinMaintainId, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate");
+		sql.append(" (FinMaintainId, FinID, FinReference, Event, TDSApplicable, TdsPercentage, TdsStartDate");
 		sql.append(", TdsEndDate, TdsLimit, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
+
 				ps.setLong(index++, fmi.getFinMaintainId());
+				ps.setLong(index++, fmi.getFinID());
 				ps.setString(index++, fmi.getFinReference());
 				ps.setString(index++, fmi.getEvent());
 				ps.setBoolean(index++, fmi.istDSApplicable());
@@ -237,24 +204,22 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		return String.valueOf(fmi.getFinMaintainId());
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public void update(FinMaintainInstruction fmi, TableType tableType) {
-		StringBuilder sql = new StringBuilder("update FinMaintainInstructions");
+		StringBuilder sql = new StringBuilder("Update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
-		sql.append(" set ");
-		sql.append(" FinReference = ?, Event = ?, TDSApplicable = ?, TdsPercentage = ?, TdsStartDate = ?");
-		sql.append(", TdsEndDate = ?, TdsLimit = ?, Version= ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?");
-		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Set FinID = ?, FinReference = ?, Event = ?, TDSApplicable = ?, TdsPercentage = ?");
+		sql.append(", TdsStartDate = ?, TdsEndDate = ?, TdsLimit = ?");
+		sql.append(", LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where FinMaintainId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
+			ps.setLong(index++, fmi.getFinID());
 			ps.setString(index++, fmi.getFinReference());
 			ps.setString(index++, fmi.getEvent());
 			ps.setBoolean(index++, fmi.istDSApplicable());
@@ -281,16 +246,13 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		}
 	}
 
-	/**
-	 * 
-	 */
 	@Override
 	public void delete(FinMaintainInstruction fmi, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Delete From FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where FinMaintainId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			int recordCount = jdbcOperations.update(sql.toString(), ps -> {

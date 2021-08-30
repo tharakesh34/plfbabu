@@ -45,13 +45,11 @@ public interface JointAccountDetailDAO {
 
 	long save(JointAccountDetail jointAccountDetail, String type);
 
-	JointAccountDetail getJointAccountDetailByRefId(String finReference, long jointAccountId, String type);
+	JointAccountDetail getJointAccountDetailByRefId(long finID, long jointAccountId, String type);
 
-	void deleteByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(long finID);
 
-	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference);
-
-	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(long finID, String type);
 
 	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
 
@@ -61,13 +59,11 @@ public interface JointAccountDetailDAO {
 
 	FinanceExposure getOverDueDetails(FinanceExposure exposure);
 
-	JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type);
+	JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type);
 
 	List<FinanceExposure> getPrimaryExposureList(List<String> listCIF);
 
 	List<FinanceExposure> getSecondaryExposureList(List<String> listCIF);
 
-	List<JointAccountDetail> getCustIdsByFinnRef(String finReference);
-
-	Map<String, Integer> getCustCtgCount(String finRef);
+	Map<String, Integer> getCustCtgCount(long finID);
 }

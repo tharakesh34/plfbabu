@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  HoldDisbursementDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-10-2018    														*
- *                                                                  						*
- * Modified Date    :  09-10-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : HoldDisbursementDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-10-2018 * *
+ * Modified Date : 09-10-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-10-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-10-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,11 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.model.finance.HoldDisbursement;
@@ -74,131 +51,170 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 	}
 
 	@Override
-	public HoldDisbursement getHoldDisbursement(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" finReference, hold, totalLoanAmt, disbursedAmount, holdLimitAmount, remarks, ");
-		sql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+	public HoldDisbursement getHoldDisbursement(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, Hold, TotalLoanAmt, DisbursedAmount, HoldLimitAmount, Remarks");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From HoldDisbursement");
 		sql.append(type);
-		sql.append("  where finReference = :finReference");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		HoldDisbursement holdDisbursement = new HoldDisbursement();
-		holdDisbursement.setFinReference(finReference);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(holdDisbursement);
-		RowMapper<HoldDisbursement> rowMapper = BeanPropertyRowMapper.newInstance(HoldDisbursement.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			holdDisbursement = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, num) -> {
+				HoldDisbursement hd = new HoldDisbursement();
+
+				hd.setFinID(rs.getLong("FinID"));
+				hd.setFinReference(rs.getString("FinReference"));
+				hd.setHold(rs.getBoolean("Hold"));
+				hd.setTotalLoanAmt(rs.getBigDecimal("TotalLoanAmt"));
+				hd.setDisbursedAmount(rs.getBigDecimal("DisbursedAmount"));
+				hd.setHoldLimitAmount(rs.getBigDecimal("HoldLimitAmount"));
+				hd.setRemarks(rs.getString("Remarks"));
+				hd.setVersion(rs.getInt("Version"));
+				hd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				hd.setLastMntBy(rs.getLong("LastMntBy"));
+				hd.setRecordStatus(rs.getString("RecordStatus"));
+				hd.setRoleCode(rs.getString("RoleCode"));
+				hd.setNextRoleCode(rs.getString("NextRoleCode"));
+				hd.setTaskId(rs.getString("TaskId"));
+				hd.setNextTaskId(rs.getString("NextTaskId"));
+				hd.setRecordType(rs.getString("RecordType"));
+				hd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return hd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			holdDisbursement = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return holdDisbursement;
+		return null;
 	}
 
 	@Override
-	public String save(HoldDisbursement holdDisbursement, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into HoldDisbursement");
+	public String save(HoldDisbursement hd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into HoldDisbursement");
 		sql.append(tableType.getSuffix());
-		sql.append("(finReference, hold, totalLoanAmt, disbursedAmount, holdLimitAmount, remarks, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" (FinID, FinReference, Hold, TotalLoanAmt, DisbursedAmount, HoldLimitAmount, Remarks");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" values(");
-		sql.append(" :finReference, :hold, :totalLoanAmt, :disbursedAmount, :holdLimitAmount, :remarks, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" )");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(holdDisbursement);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, hd.getFinID());
+				ps.setString(index++, hd.getFinReference());
+				ps.setBoolean(index++, hd.isHold());
+				ps.setBigDecimal(index++, hd.getTotalLoanAmt());
+				ps.setBigDecimal(index++, hd.getDisbursedAmount());
+				ps.setBigDecimal(index++, hd.getHoldLimitAmount());
+				ps.setString(index++, hd.getRemarks());
+				ps.setInt(index++, hd.getVersion());
+				ps.setLong(index++, hd.getLastMntBy());
+				ps.setTimestamp(index++, hd.getLastMntOn());
+				ps.setString(index++, hd.getRecordStatus());
+				ps.setString(index++, hd.getRoleCode());
+				ps.setString(index++, hd.getNextRoleCode());
+				ps.setString(index++, hd.getTaskId());
+				ps.setString(index++, hd.getNextTaskId());
+				ps.setString(index++, hd.getRecordType());
+				ps.setLong(index++, hd.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(holdDisbursement.getFinReference());
+		return String.valueOf(hd.getFinReference());
 	}
 
 	@Override
-	public void update(HoldDisbursement holdDisbursement, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update HoldDisbursement");
+	public void update(HoldDisbursement hd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update HoldDisbursement");
 		sql.append(tableType.getSuffix());
-		sql.append("  set hold = :hold, totalLoanAmt = :totalLoanAmt, disbursedAmount = :disbursedAmount, ");
-		sql.append(" holdLimitAmount = :holdLimitAmount, remarks = :remarks, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where finReference = :finReference ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set Hold = ?, TotalLoanAmt = ?, DisbursedAmount = ?, HoldLimitAmount = ?, Remarks = ?");
+		sql.append(" LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(holdDisbursement);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setBoolean(index++, hd.isHold());
+			ps.setBigDecimal(index++, hd.getTotalLoanAmt());
+			ps.setBigDecimal(index++, hd.getDisbursedAmount());
+			ps.setBigDecimal(index++, hd.getHoldLimitAmount());
+			ps.setString(index++, hd.getRemarks());
+			ps.setTimestamp(index++, hd.getLastMntOn());
+			ps.setString(index++, hd.getRecordStatus());
+			ps.setString(index++, hd.getRoleCode());
+			ps.setString(index++, hd.getNextRoleCode());
+			ps.setString(index++, hd.getTaskId());
+			ps.setString(index++, hd.getNextTaskId());
+			ps.setString(index++, hd.getRecordType());
+			ps.setLong(index++, hd.getWorkflowId());
+			ps.setLong(index++, hd.getFinID());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index++, hd.getPrevMntOn());
+			} else {
+				ps.setInt(index++, hd.getVersion() - 1);
+			}
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(HoldDisbursement holdDisbursement, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from HoldDisbursement");
+	public void delete(HoldDisbursement hd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From HoldDisbursement");
 		sql.append(tableType.getSuffix());
-		sql.append(" where finReference = :finReference ");
+		sql.append(" Where FinID = ?");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(holdDisbursement);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, hd.getFinID());
+
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(index++, hd.getPrevMntOn());
+				} else {
+					ps.setInt(index++, hd.getVersion() - 1);
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public boolean isDuplicateKey(String finReference, TableType tableType) {
-
-		// Prepare the SQL.
+	public boolean isDuplicateKey(long finID, TableType tableType) {
 		String sql;
-		String whereClause = "finReference = :finReference";
+		String whereClause = "FinID = ?";
+
+		Object[] obj = new Object[] { finID };
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -209,49 +225,36 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "HOLDDISBURSEMENT", "HOLDDISBURSEMENT_TEMP" }, whereClause);
+			obj = new Object[] { finID, finID };
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
+		logger.debug(Literal.SQL + sql);
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return false;
 	}
 
 	@Override
-	public boolean isholdDisbursementProcess(String finReference, String type) {
+	public boolean isholdDisbursementProcess(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(FinID) From HoldDisbursement");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? and Hold = ?");
 
-		logger.debug("Entering");
+		logger.debug(Literal.SQL + sql.toString());
 
-		int count = 0;
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("FinReference", finReference);
-		mapSqlParameterSource.addValue("Hold", true);
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(FinReference) FROM HOLDDISBURSEMENT");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference and Hold =:Hold");
-
-		logger.debug("selectSql: " + selectSql.toString());
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), mapSqlParameterSource, Integer.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, 1) > 0;
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
+			//
 		}
 
-		logger.debug("Leaving");
-
-		return count > 0 ? true : false;
+		return false;
 	}
 
 }

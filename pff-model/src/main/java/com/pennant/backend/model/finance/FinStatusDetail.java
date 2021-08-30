@@ -3,6 +3,8 @@ package com.pennant.backend.model.finance;
 import java.util.Date;
 
 public class FinStatusDetail {
+
+	private long finID;
 	private String finReference;
 	private Date valueDate;
 	private long custId;
@@ -11,6 +13,14 @@ public class FinStatusDetail {
 
 	public FinStatusDetail() {
 
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

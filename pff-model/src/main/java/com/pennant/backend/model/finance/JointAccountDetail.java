@@ -51,6 +51,7 @@ public class JointAccountDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long jointAccountId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "cif")
 	private String custCIF;
@@ -122,10 +123,6 @@ public class JointAccountDetail extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public long getId() {
 		return jointAccountId;
 	}
@@ -148,6 +145,14 @@ public class JointAccountDetail extends AbstractWorkflowEntity {
 
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getCustCIF() {

@@ -10,9 +10,9 @@ public interface FinanceStepDetailDAO {
 
 	FinanceStepPolicyDetail getNewFinStepPolicy();
 
-	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(final String finReference, String type, boolean isWIF);
+	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(long finID, String type, boolean isWIF);
 
 	void saveList(List<FinanceStepPolicyDetail> stepPolicyDetails, boolean isWIF, String tableType);
 
-	void deleteList(String finReference, boolean isWIF, String tableType);
+	void deleteList(long finID, boolean isWIF, String tableType);
 }

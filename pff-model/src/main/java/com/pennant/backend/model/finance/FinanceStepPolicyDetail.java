@@ -20,6 +20,7 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -2343217039719002642L;
 
+	private long finID;
 	private String finReference;
 	@XmlElement(name = "stepNumber")
 	private int stepNo;
@@ -56,16 +57,20 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 		return new HashSet<String>();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public String getId() {
 		return finReference;
 	}
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

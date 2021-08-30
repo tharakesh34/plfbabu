@@ -10,6 +10,7 @@ public class FinanceWriteoff implements Serializable {
 
 	private static final long serialVersionUID = -1477748770396649402L;
 
+	private long finID;
 	private String finReference;
 	private int seqNo = 0;
 	private BigDecimal writtenoffPri = BigDecimal.ZERO;
@@ -37,9 +38,13 @@ public class FinanceWriteoff implements Serializable {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
@@ -203,7 +208,8 @@ public class FinanceWriteoff implements Serializable {
 	public Map<String, Object> getDeclaredFieldValues(Map<String, Object> map) {
 		for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
 			try {
-				//"ae_" Should be in small case only, if we want to change the case we need to update the configuration fields as well.
+				// "ae_" Should be in small case only, if we want to change the case we need to update the configuration
+				// fields as well.
 				map.put("fw_" + this.getClass().getDeclaredFields()[i].getName(),
 						this.getClass().getDeclaredFields()[i].get(this));
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {

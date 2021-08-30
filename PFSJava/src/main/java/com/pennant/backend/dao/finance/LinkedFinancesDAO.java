@@ -30,17 +30,17 @@ import com.pennant.backend.model.finance.LinkedFinances;
 
 public interface LinkedFinancesDAO {
 
-	List<LinkedFinances> getLinkedFinancesByFinRef(String finReference, String type);
+	List<LinkedFinances> getLinkedFinancesByFinRef(long finID, String type);
 
-	LinkedFinances getLinkedFinancesByLinkRef(String linkedReference, String finReference, String type);
+	LinkedFinances getLinkedFinancesByLinkRef(String linkedReference, long finID, String type);
 
 	void update(LinkedFinances linkedFinances, String type);
 
 	void updateList(List<LinkedFinances> linFinList, String type);
 
-	void deleteByLinkedReference(String linkedFinReference, String finReference, String type);
+	void deleteByLinkedReference(String linkedFinReference, long finID, String type);
 
-	void delete(String finReference, String type);
+	void delete(long finID, String type);
 
 	long save(LinkedFinances linkedFinances, String type);
 

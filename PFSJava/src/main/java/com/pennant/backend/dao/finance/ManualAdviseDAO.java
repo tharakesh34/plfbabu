@@ -91,8 +91,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 
 	List<ManualAdvise> getManualAdvise(long finID);
 
-	void updateWaivedAmount(ManualAdvise advise, TableType tableType);
-
 	List<ManualAdvise> getManualAdvisesByFinRef(long finID, String type);
 
 	List<ManualAdviseMovements> getDMAdviseMovementsByFinRef(long finID, String type);
