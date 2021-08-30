@@ -55,69 +55,40 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 
 	@Override
 	public FinOCRHeader getFinOCRHeaderByRef(long finID, String type) {
-		FinOCRHeader finOCRHeader = null;
-		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finID, type);
+		FinOCRHeader finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finID, type);
+
 		if (finOCRHeader != null) {
-			// getting the OCR Step Details
 			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
-			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finReference, type));
+			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finID, type));
 		}
 
 		return finOCRHeader;
 	}
 
-	/**
-	 * This method is only in servicing option where definition will not be allowed maintain. other than validation
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinOCRHeader
-	 */
 	@Override
-	public FinOCRHeader getApprovedFinOCRHeaderByRef(String finReference, String type) {
-		FinOCRHeader finOCRHeader = null;
-		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finReference, type);
+	public FinOCRHeader getApprovedFinOCRHeaderByRef(long finID, String type) {
+		FinOCRHeader finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finID, type);
+
 		if (finOCRHeader != null) {
-			// getting the OCR Step Details
 			finOCRHeader.setDefinitionApproved(true);
 			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
-			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finReference, type));
+			finOCRHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(finID, type));
 		}
 
 		return finOCRHeader;
 	}
 
-	/**
-	 * getApprovedFinOCRHeaderById fetch the details by using FinOCRHeaderDAO's getApprovedFinOCRHeaderById method.
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FinOCRHeader
-	 */
 	@Override
 	public FinOCRHeader getFinOCRHeaderById(long headerId, String type) {
-		FinOCRHeader finOCRHeader = null;
-		finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderById(headerId, type);
+		FinOCRHeader finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderById(headerId, type);
+
 		if (finOCRHeader != null) {
-			// getting the OCR Step Details
 			finOCRHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(finOCRHeader.getHeaderID(), type));
 		}
+
 		return finOCRHeader;
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinOCRHeader/FinOCRHeader_temp
-	 * by using FinOCRHeaderDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using FinOCRHeaderDAO's update method 3) Audit the record in to AuditHeader and AdtFinOCRHeader
-	 * by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param financeDetail
-	 * 
-	 * @param AuditHeader   (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader, FinanceDetail financeDetail, boolean fromLoan) {
 		logger.debug(Literal.ENTERING);
@@ -182,9 +153,8 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	}
 
 	private AuditHeader deleteOCR(FinOCRHeader finOCRHeader, AuditHeader auditHeader) {
-
-		FinOCRHeader existingOCR = finOCRHeaderDAO.getFinOCRHeaderByRef(finOCRHeader.getFinReference(),
-				TableType.TEMP_TAB.getSuffix());
+		long finID = finOCRHeader.getFinID();
+		FinOCRHeader existingOCR = finOCRHeaderDAO.getFinOCRHeaderByRef(finID, TableType.TEMP_TAB.getSuffix());
 		if (existingOCR != null) {
 			String[] fields = null;
 			finOCRHeader.setBefImage(finOCRHeader);
@@ -221,7 +191,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 					auditDetails.add(new AuditDetail(PennantConstants.TRAN_DEL, i + 1, fields[0], fields[1],
 							finOCRCapture.getBefImage(), finOCRCapture));
 				}
-				finOCRCaptureDAO.deleteList(finOCRHeader.getFinReference(), TableType.TEMP_TAB.getSuffix());
+				finOCRCaptureDAO.deleteList(finID, TableType.TEMP_TAB.getSuffix());
 			}
 
 			finOCRHeaderDAO.delete(finOCRHeader, TableType.TEMP_TAB.getSuffix());
@@ -230,15 +200,6 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		return auditHeader;
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * LMTFinOCRHeader by using FinOCRHeaderDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtFinOCRHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -265,19 +226,6 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		return auditHeader;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions b) NEW Add new record in to main table by using finOCRHeaderDAO.save with parameters
-	 * FinOCRHeader,"" c) EDIT Update record in the main table by using finOCRHeaderDAO.update with parameters
-	 * FinOCRHeader,"" 3) Delete the record from the workFlow table by using finOCRHeaderDAO.delete with parameters
-	 * FinOCRHeader,"_Temp" 4) Audit the record in to AuditHeader and AdtLMTFinOCRHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLMTFinOCRHeader
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader, FinanceDetail financeDetail, boolean fromLoan) {
 		logger.debug(Literal.ENTERING);
@@ -366,15 +314,6 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using finOCRHeaderDAO.delete with parameters FinOCRHeader,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFinOCRHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -401,15 +340,6 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from finOCRHeaderDAO.getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 		auditHeader = doValidation(auditHeader, method);
@@ -862,7 +792,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finOCRCapture.getBefImage(),
 						finOCRCapture));
 			}
-			finOCRCaptureDAO.deleteList(finOCRHeader.getFinReference(), tableType);
+			finOCRCaptureDAO.deleteList(finOCRHeader.getFinID(), tableType);
 		}
 
 		logger.debug(Literal.LEAVING);

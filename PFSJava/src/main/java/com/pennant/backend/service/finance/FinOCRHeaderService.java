@@ -25,7 +25,7 @@ public interface FinOCRHeaderService {
 
 	AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage);
 
-	FinOCRHeader getApprovedFinOCRHeaderByRef(String finReference, String type);
+	FinOCRHeader getApprovedFinOCRHeaderByRef(long finID, String type);
 
 	byte[] getDocumentManImage(long doceRef);
 }
