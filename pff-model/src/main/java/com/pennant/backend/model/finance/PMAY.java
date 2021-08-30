@@ -20,9 +20,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class PMAY extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	private String custCif;
 	private String custShrtName;
@@ -55,6 +55,14 @@ public class PMAY extends AbstractWorkflowEntity {
 		excludeFields.add("custShrtName");
 		excludeFields.add("townName");
 		return excludeFields;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

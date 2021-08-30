@@ -1,26 +1,19 @@
 package com.pennant.backend.dao.systemmasters.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.systemmasters.PMAYDAO;
 import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.PmayEligibilityLog;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -34,39 +27,76 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 	}
 
 	@Override
-	public PMAY getPMAY(String finReference, String type) {
+	public PMAY getPMAY(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference ,NotifiedTown ,CentralAssistance ,OwnedHouse, TownCode,");
-		sql.append(" CarpetArea ,HouseholdAnnIncome ,BalanceTransfer ,PrimaryApplicant ,PrprtyOwnedByWomen ,");
-		sql.append(" TransactionFinType ,Product ,WaterSupply ,Drinage ,Electricity ,PmayCategory,");
+		sql.append(" FinID, FinReference, NotifiedTown, CentralAssistance, OwnedHouse, TownCode");
+		sql.append(", CarpetArea, HouseholdAnnIncome, BalanceTransfer, PrimaryApplicant, PrprtyOwnedByWomen");
+		sql.append(", TransactionFinType, Product, WaterSupply, Drinage, Electricity, PmayCategory");
+
 		if (type.contains("View")) {
-			sql.append(" CustCif , custShrtName ,TownName,");
+			sql.append(", CustCif, CustShrtName, TownName");
 		}
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		sql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From PMAY");
 		sql.append(type);
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<PMAY> rowMapper = BeanPropertyRowMapper.newInstance(PMAY.class);
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PMAY pmay = new PMAY();
+
+				pmay.setFinID(rs.getLong("FinID"));
+				pmay.setFinReference(rs.getString("FinReference"));
+				pmay.setNotifiedTown(rs.getBoolean("NotifiedTown"));
+				pmay.setCentralAssistance(rs.getBoolean("CentralAssistance"));
+				pmay.setOwnedHouse(rs.getBoolean("OwnedHouse"));
+				pmay.setTownCode(rs.getLong("TownCode"));
+				pmay.setCarpetArea(rs.getBigDecimal("CarpetArea"));
+				pmay.setHouseholdAnnIncome(rs.getBigDecimal("HouseholdAnnIncome"));
+				pmay.setBalanceTransfer(rs.getBoolean("BalanceTransfer"));
+				pmay.setPrimaryApplicant(rs.getBoolean("PrimaryApplicant"));
+				pmay.setPrprtyOwnedByWomen(rs.getBoolean("PrprtyOwnedByWomen"));
+				pmay.setTransactionFinType(rs.getString("TransactionFinType"));
+				pmay.setProduct(rs.getString("Product"));
+				pmay.setWaterSupply(rs.getBoolean("WaterSupply"));
+				pmay.setDrinage(rs.getBoolean("Drinage"));
+				pmay.setElectricity(rs.getBoolean("Electricity"));
+				pmay.setPmayCategory(rs.getString("PmayCategory"));
+
+				if (type.contains("View")) {
+					pmay.setCustCif(rs.getString("CustCif"));
+					pmay.setCustShrtName(rs.getString("CustShrtName"));
+					pmay.setTownName(rs.getString("TownName"));
+				}
+
+				pmay.setVersion(rs.getInt("Version"));
+				pmay.setLastMntBy(rs.getLong("LastMntBy"));
+				pmay.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				pmay.setRecordStatus(rs.getString("RecordStatus"));
+				pmay.setRoleCode(rs.getString("RoleCode"));
+				pmay.setNextRoleCode(rs.getString("NextRoleCode"));
+				pmay.setTaskId(rs.getString("TaskId"));
+				pmay.setNextTaskId(rs.getString("NextTaskId"));
+				pmay.setRecordType(rs.getString("RecordType"));
+				pmay.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return pmay;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public boolean isDuplicateKey(String finReference, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
+	public boolean isDuplicateKey(long finID, TableType tableType) {
 		String sql;
-		String whereClause = "finReference = :finReference";
+		String whereClause = "FinID = ?";
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -80,81 +110,121 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
+		logger.debug(Literal.SQL + sql);
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
+		Integer count = jdbcOperations.queryForObject(sql, Integer.class, finID);
 
 		boolean exists = false;
 		if (count > 0) {
 			exists = true;
 		}
 
-		logger.debug(Literal.LEAVING);
 		return exists;
 	}
 
 	@Override
 	public String save(PMAY pmay, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into PMAY");
+		StringBuilder sql = new StringBuilder("Insert into PMAY");
 		sql.append(tableType.getSuffix());
-		sql.append("(finReference , notifiedTown,TownCode, centralAssistance,ownedHouse, carpetArea,");
-		sql.append("householdAnnIncome, balanceTransfer, primaryApplicant, prprtyOwnedByWomen, ");
-		sql.append("transactionFinType, product, waterSupply, drinage, electricity , pmayCategory, ");
-		sql.append("Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
-		sql.append("NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId) ");
-		sql.append("values(");
-		sql.append(":FinReference , :NotifiedTown, :TownCode, :CentralAssistance ,:OwnedHouse, :CarpetArea, ");
-		sql.append(":HouseholdAnnIncome, :BalanceTransfer, :PrimaryApplicant, :PrprtyOwnedByWomen, ");
-		sql.append(":TransactionFinType, :Product, :WaterSupply, :Drinage, :Electricity, :PmayCategory, ");
-		sql.append(":Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
-		sql.append(":NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append("(FinID, FinReference, NotifiedTown, TownCode, CentralAssistance, OwnedHouse, CarpetArea");
+		sql.append(", HouseholdAnnIncome, BalanceTransfer, PrimaryApplicant, PrprtyOwnedByWomen");
+		sql.append(", TransactionFinType, Product, WaterSupply, Drinage, Electricity, PmayCategory");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(");
+		sql.append("?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pmay);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, pmay.getFinID());
+				ps.setString(index++, pmay.getFinReference());
+				ps.setBoolean(index++, pmay.isNotifiedTown());
+				ps.setLong(index++, pmay.getTownCode());
+				ps.setBoolean(index++, pmay.isCentralAssistance());
+				ps.setBoolean(index++, pmay.isOwnedHouse());
+				ps.setBigDecimal(index++, pmay.getCarpetArea());
+				ps.setBigDecimal(index++, pmay.getHouseholdAnnIncome());
+				ps.setBoolean(index++, pmay.isBalanceTransfer());
+				ps.setBoolean(index++, pmay.isPrimaryApplicant());
+				ps.setBoolean(index++, pmay.isPrprtyOwnedByWomen());
+				ps.setString(index++, pmay.getTransactionFinType());
+				ps.setString(index++, pmay.getProduct());
+				ps.setBoolean(index++, pmay.isWaterSupply());
+				ps.setBoolean(index++, pmay.isDrinage());
+				ps.setBoolean(index++, pmay.isElectricity());
+				ps.setString(index++, pmay.getPmayCategory());
+				ps.setInt(index++, pmay.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(pmay.getLastMntBy()));
+				ps.setTimestamp(index++, pmay.getLastMntOn());
+				ps.setString(index++, pmay.getRecordStatus());
+				ps.setString(index++, pmay.getRoleCode());
+				ps.setString(index++, pmay.getNextRoleCode());
+				ps.setString(index++, pmay.getTaskId());
+				ps.setString(index++, pmay.getNextTaskId());
+				ps.setString(index++, pmay.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(pmay.getWorkflowId()));
+
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return pmay.getFinReference();
 	}
 
 	@Override
 	public void update(PMAY pmay, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update PMAY");
+		StringBuilder sql = new StringBuilder("Update PMAY");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				" set NotifiedTown = :NotifiedTown, TownCode = :TownCode , CentralAssistance = :CentralAssistance, ");
-		sql.append(" OwnedHouse = :OwnedHouse,  CarpetArea = :CarpetArea,HouseholdAnnIncome = :HouseholdAnnIncome, ");
-		sql.append(" BalanceTransfer = :BalanceTransfer, PrimaryApplicant = :PrimaryApplicant, ");
-		sql.append(" TransactionFinType = :TransactionFinType, Product = :Product,  ");
-		sql.append(" PrprtyOwnedByWomen = :PrprtyOwnedByWomen,WaterSupply = :WaterSupply,");
-		sql.append(" Drinage = :Drinage, Electricity = :Electricity, PmayCategory = :PmayCategory, ");
-		sql.append(" Version = :Version, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, ");
-		sql.append(" RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		sql.append(" NextTaskId = :NextTaskId,RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" Where finReference = :FinReference");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set NotifiedTown = ?, TownCode = ?, CentralAssistance = ?, OwnedHouse = ?, CarpetArea = ?");
+		sql.append(", HouseholdAnnIncome = ?, BalanceTransfer = ?, PrimaryApplicant = ?");
+		sql.append(", PrprtyOwnedByWomen = ?, TransactionFinType = ?, Product = ?, WaterSupply = ?");
+		sql.append(", Drinage = ?, Electricity = ?, PmayCategory = ?");
+		sql.append(", Version = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pmay);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setBoolean(index++, pmay.isNotifiedTown());
+			ps.setLong(index++, pmay.getTownCode());
+			ps.setBoolean(index++, pmay.isCentralAssistance());
+			ps.setBoolean(index++, pmay.isOwnedHouse());
+			ps.setBigDecimal(index++, pmay.getCarpetArea());
+			ps.setBigDecimal(index++, pmay.getHouseholdAnnIncome());
+			ps.setBoolean(index++, pmay.isBalanceTransfer());
+			ps.setBoolean(index++, pmay.isPrimaryApplicant());
+			ps.setBoolean(index++, pmay.isPrprtyOwnedByWomen());
+			ps.setString(index++, pmay.getTransactionFinType());
+			ps.setString(index++, pmay.getProduct());
+			ps.setBoolean(index++, pmay.isWaterSupply());
+			ps.setBoolean(index++, pmay.isDrinage());
+			ps.setBoolean(index++, pmay.isElectricity());
+			ps.setString(index++, pmay.getPmayCategory());
+			ps.setInt(index++, pmay.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(pmay.getLastMntBy()));
+			ps.setTimestamp(index++, pmay.getLastMntOn());
+			ps.setString(index++, pmay.getRecordStatus());
+			ps.setString(index++, pmay.getRoleCode());
+			ps.setString(index++, pmay.getNextRoleCode());
+			ps.setString(index++, pmay.getTaskId());
+			ps.setString(index++, pmay.getNextTaskId());
+			ps.setString(index++, pmay.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(pmay.getWorkflowId()));
+
+			ps.setLong(index++, pmay.getFinID());
+
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
@@ -164,289 +234,238 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 
 	@Override
 	public void delete(PMAY pmay, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from PMAY");
+		StringBuilder sql = new StringBuilder("Delete From PMAY");
 		sql.append(tableType.getSuffix());
-		sql.append(" Where finReference = :finReference");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pmay);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), pmay.getFinID());
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public boolean isFinReferenceExists(String finReference) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
+	public boolean isFinReferenceExists(long finID) {
+		String sql = "Select count(FinID) From PMAY Where FinID = ?";
 
-		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from PMAY ");
-		sql.append(" Where FinReference = :FinReference ");
-		logger.debug("Sql: " + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class) > 0) {
-				return true;
-			}
-		} catch (Exception e) {
-			logger.error(e);
-		} finally {
-			source = null;
-			sql = null;
-			logger.debug(Literal.LEAVING);
-		}
-		return false;
-
+		return this.jdbcOperations.queryForObject(sql, Integer.class, finID) > 0;
 	}
 
 	@Override
 	public String save(PmayEligibilityLog pMaylog, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into PmayEligibilityLog");
+		StringBuilder sql = new StringBuilder("Insert into PmayEligibilityLog");
 		sql.append(tableType.getSuffix());
-		sql.append(" ( finReference , recordId, pmayStatus,");
-		sql.append(" errorCode, errorDesc, applicantId, remarks, RespJson ,ReqJson )");
+		sql.append("(FinID, FinReference, RecordId, PmayStatus");
+		sql.append(", ErrorCode, ErrorDesc, ApplicantId, Remarks, ReqJson, RespJson)");
+		sql.append(" Values (");
+		sql.append("?, ?, ?, ? , ?, ?, ?, ?, ?, ?)");
 
-		sql.append(" values(");
-		sql.append(" :FinReference , :RecordId, :PmayStatus,");
-		sql.append(" :ErrorCode, :ErrorDesc, :ApplicantId, :Remarks, :RespJson , :ReqJson )");
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pMaylog);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, pMaylog.getFinID());
+				ps.setString(index++, pMaylog.getFinReference());
+				ps.setLong(index++, pMaylog.getRecordId());
+				ps.setString(index++, pMaylog.getPmayStatus());
+				ps.setString(index++, pMaylog.getErrorCode());
+				ps.setString(index++, pMaylog.getErrorDesc());
+				ps.setString(index++, pMaylog.getApplicantId());
+				ps.setString(index++, pMaylog.getRemarks());
+				ps.setString(index++, pMaylog.getReqJson());
+				ps.setString(index++, pMaylog.getRespJson());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return pMaylog.getFinReference();
 	}
 
 	@Override
 	public void update(PmayEligibilityLog pMaylog, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		StringBuilder sql = new StringBuilder("update PmayEligibilityLog");
 		sql.append(tableType.getSuffix());
-		sql.append("  set  RecordId = :RecordId, ");
-		sql.append("  PmayStatus = :PmayStatus, ErrorCode = :ErrorCode, ErrorDesc = :ErrorDesc, ");
-		sql.append("  ApplicantId = :ApplicantId, Remarks = :Remarks, RespJson = :RespJson , ReqJson = :ReqJson");
-		sql.append("  Where finReference = :FinReference");
+		sql.append(" Set RecordId = ?, PmayStatus = ?, ErrorCode = ?, ErrorDesc = ?");
+		sql.append(", ApplicantId = ?, Remarks = ?, ReqJson = ?, RespJson = ?");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pMaylog);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, pMaylog.getRecordId());
+			ps.setString(index++, pMaylog.getPmayStatus());
+			ps.setString(index++, pMaylog.getErrorCode());
+			ps.setString(index++, pMaylog.getErrorDesc());
+			ps.setString(index++, pMaylog.getApplicantId());
+			ps.setString(index++, pMaylog.getRemarks());
+			ps.setString(index++, pMaylog.getReqJson());
+			ps.setString(index++, pMaylog.getRespJson());
+		});
 
-		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public PmayEligibilityLog getEligibilityLog(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" finReference , recordId, pmayStatus,");
-		sql.append(" errorCode, errorDesc, applicantId, remarks, RespJson ,ReqJson  ");
+	public PmayEligibilityLog getEligibilityLog(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RecordId, PmayStatus, ErrorCode, ErrorDesc, ApplicantId, Remarks, ReqJson, RespJson");
 		sql.append(" From PmayEligibilityLog");
 		sql.append(type);
-		sql.append(" Where finReference = :finReference");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		PmayEligibilityLog log = new PmayEligibilityLog();
-		log.setFinReference(finReference);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(log);
-		RowMapper<PmayEligibilityLog> rowMapper = BeanPropertyRowMapper.newInstance(PmayEligibilityLog.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			log = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PmayEligibilityLog pel = new PmayEligibilityLog();
+
+				pel.setRecordId(rs.getLong("RecordId"));
+				pel.setPmayStatus(rs.getString("PmayStatus"));
+				pel.setErrorCode(rs.getString("ErrorCode"));
+				pel.setErrorDesc(rs.getString("ErrorDesc"));
+				pel.setApplicantId(rs.getString("ApplicantId"));
+				pel.setRemarks(rs.getString("Remarks"));
+				pel.setReqJson(rs.getString("ReqJson"));
+				pel.setRespJson(rs.getString("RespJson"));
+
+				return pel;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			log = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return log;
+		return null;
 	}
 
 	@Override
 	public long generateDocSeq() {
-		logger.debug(Literal.ENTERING);
-		long pmayEligibilityLogId = getNextValue("SeqPmayEligibilityLog");
-		logger.debug("get NextID:" + pmayEligibilityLogId);
-		logger.debug(Literal.LEAVING);
-		return pmayEligibilityLogId;
+		return getNextValue("SeqPmayEligibilityLog");
 	}
 
 	@Override
-	public List<PmayEligibilityLog> getEligibilityLogList(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" finReference , recordId, pmayStatus,");
-		sql.append(" errorCode, errorDesc, applicantId, remarks, RespJson ,ReqJson ");
+	public List<PmayEligibilityLog> getEligibilityLogList(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, RecordId, PmayStatus");
+		sql.append(", ErrorCode, ErrorDesc, ApplicantId, Remarks, ReqJson, RespJson");
 		sql.append(" From PmayEligibilityLog");
 		sql.append(type);
-		sql.append(" Where finReference = :finReference Order by recordId Asc");
+		sql.append(" Where FinID = ? order by RecordId asc");
 
-		source.addValue("finReference", finReference);
-		RowMapper<PmayEligibilityLog> typeRowMapper = BeanPropertyRowMapper.newInstance(PmayEligibilityLog.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("sql: " + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			PmayEligibilityLog pel = new PmayEligibilityLog();
 
-		List<PmayEligibilityLog> pmayEligibilityLoglist = new ArrayList<>();
-		try {
-			pmayEligibilityLoglist = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			pmayEligibilityLoglist = new ArrayList<>();
-		}
+			pel.setFinID(rs.getLong("FinID"));
+			pel.setFinReference(rs.getString("FinReference"));
+			pel.setRecordId(rs.getLong("RecordId"));
+			pel.setPmayStatus(rs.getString("PmayStatus"));
+			pel.setErrorCode(rs.getString("ErrorCode"));
+			pel.setErrorDesc(rs.getString("ErrorDesc"));
+			pel.setApplicantId(rs.getString("ApplicantId"));
+			pel.setRemarks(rs.getString("Remarks"));
+			pel.setReqJson(rs.getString("ReqJson"));
+			pel.setRespJson(rs.getString("RespJson"));
 
-		logger.debug(Literal.LEAVING);
+			return pel;
 
-		return pmayEligibilityLoglist;
+		}, finID);
+
 	}
 
 	@Override
 	public List<PmayEligibilityLog> getAllRecordIdForPmay() {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pel.FinID, pel.FinReference, pel.RecordId, pel.PmayStatus, pel.ErrorCode, pel.ErrorDesc");
+		sql.append(" pel.ApplicantId, pel.Remarks, pel.ReqJson, pel.RespJson");
+		sql.append(" From Financemain_View fm ");
+		sql.append("Inner Join (Select FinID From PMAY_Temp Union all Select FinID From PMAY) p on p.FinID = fm.FinID");
+		sql.append(" Inner Join PmayEligibilityLog pel on p.FinID = pel.FinID");
+		sql.append(" Where fm.RecordStatus <> ? and  fm.ClosingStatus is null and");
+		sql.append(" fm.FinIsActive = ? and p.PmayCategory <> ? and pel.ErrorCode is null and ApplicantId is null");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" t3.FINREFERENCE,t3.RECORDID,t3.PMAYSTATUS,t3.ERRORCODE,t3.ERRORDESC,");
-		sql.append(" t3.APPLICANTID,t3.REMARKS,t3.RESPJSON,t3.REQJSON from financemain_view t1");
-		sql.append(" inner join ( select *  from PMAY_Temp ");
-		sql.append(" union  ");
-		sql.append(" select *  from PMAY ) t2 on t1.finreference = t2.finreference");
-		sql.append(" inner join PMAYELIGIBILITYLOG t3 on t2.finreference = t3.finreference");
-		sql.append(" where t1.recordstatus <> 'Rejected' and  t1.CLOSINGSTATUS is null and");
-		sql.append(" t1.finisactive= 1 and");
-		sql.append(" t2.PMAYCATEGORY <> 'NA' ");
-		sql.append(" and t3.ERRORCODE is null and APPLICANTID is null ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, "Rejected");
+			ps.setInt(index++, 1);
+			ps.setString(index++, "NA");
 
-		RowMapper<PmayEligibilityLog> typeRowMapper = BeanPropertyRowMapper.newInstance(PmayEligibilityLog.class);
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		}, (rs, rowNum) -> {
+			PmayEligibilityLog pel = new PmayEligibilityLog();
 
-		List<PmayEligibilityLog> pmayEligibilityLoglist = new ArrayList<>();
-		try {
-			pmayEligibilityLoglist = this.jdbcTemplate.query(sql.toString(), source, typeRowMapper);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			pmayEligibilityLoglist = new ArrayList<>();
-		}
-		logger.debug(Literal.LEAVING);
-		return pmayEligibilityLoglist;
+			return pel;
+		});
 	}
 
 	@Override
-	public void update(PmayEligibilityLog pmayEligibilityLog) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update PmayEligibilityLog");
-		sql.append("  set ");
-		//, ErrorCode = :ErrorCode, ErrorDesc = :ErrorDesc,Remarks = :Remarks
-		sql.append("  PmayStatus = :PmayStatus, ");
-		sql.append("  ApplicantId = :ApplicantId ");
-		sql.append("  Where RecordId = :RecordId ");
+	public void update(PmayEligibilityLog pel) {
+		String sql = "Update PmayEligibilityLog Set PmayStatus = ?, ApplicantId = ? Where RecordId = ?";
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(pmayEligibilityLog);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, pel.getPmayStatus());
+			ps.setString(index++, pel.getApplicantId());
+
+			ps.setLong(index++, pel.getRecordId());
+		});
+
 		if (recordCount == 0) {
-			logger.debug(Literal.LEAVING);
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public String getCustCif(String finreference) {
-		logger.debug(Literal.ENTERING);
+	public String getCustCif(long finID) {
+		StringBuilder sql = new StringBuilder("Select CustCif");
+		sql.append(" From PmayEligibilityLog pel Inner Ioin (");
+		sql.append(" Select FinID, CustId From Financemain_Temp Union all Select FinID, CustId From Financemain");
+		sql.append(" Where not exists (Select 1 From Financemain_Temp Where FinID = Financemain.FinID");
+		sql.append(")) fm on fm.finID= pel.finID");
+		sql.append(" Inner Join Customers c on c.CustId = fm.CustId");
+		sql.append(" Where pel.FinID = ?");
 
-		StringBuilder sql = new StringBuilder("select  t3.custcif from PMAYELIGIBILITYLOG t1 ");
-		sql.append(" inner join  ");
-		sql.append("(select finreference,custid  from FINANCEMAIN_temp ");
-		sql.append(" union select finreference,custid  from  FINANCEMAIN  ");
-		sql.append(" WHERE NOT EXISTS (SELECT 1 FROM FINANCEMAIN_temp WHERE finReference = FINANCEMAIN.finReference )");
-		sql.append(" t2 on t1.finreference= t2.finreference ");
-		sql.append(
-				" inner join CUSTOMERS t3 on t3.custid = t2.custid where  t1.finreference= :finreference  group by  t1.finreference,t3.custcif ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), String.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 
-		Map<String, String> mapVal = new HashMap<String, String>();
-		mapVal.put("finreference", finreference);
-		logger.debug(Literal.LEAVING);
-		return jdbcTemplate.queryForObject(sql.toString(), mapVal, String.class);
+		return null;
 	}
 
 	@Override
 	public void update(String reference, String applicantId) {
-		logger.debug(Literal.ENTERING);
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update customer_retail_ed");
-		sql.append("  set ");
-		sql.append("  ApplicantId = :ApplicantId ");
-		sql.append("  Where Reference = :Reference ");
+		String sql = "Update Customer_Retail_Ed Set ApplicantId = :ApplicantId Where Reference = ?";
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		Map<String, String> mapVal = new HashMap<String, String>();
-		mapVal.put("Reference", reference);
-		mapVal.put("ApplicantId", applicantId);
+		int recordCount = jdbcOperations.update(sql, applicantId, reference);
 
-		int recordCount = jdbcTemplate.update(sql.toString(), mapVal);
-
-		// Check for the concurrency failure.
 		if (recordCount == 0) {
-			logger.debug(Literal.LEAVING);
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 }

@@ -9,27 +9,27 @@ import com.pennanttech.pff.core.TableType;
 
 public interface PMAYDAO extends BasicCrudDao<PMAY> {
 
-	PMAY getPMAY(String finReference, String type);
+	PMAY getPMAY(long finID, String type);
 
-	boolean isDuplicateKey(String finReference, TableType tableType);
+	boolean isDuplicateKey(long finID, TableType tableType);
 
-	boolean isFinReferenceExists(String finReference);
+	boolean isFinReferenceExists(long finID);
 
 	String save(PmayEligibilityLog pMaylog, TableType tableType);
 
 	void update(PmayEligibilityLog pMaylog, TableType tableType);
 
-	PmayEligibilityLog getEligibilityLog(String finReference, String type);
+	PmayEligibilityLog getEligibilityLog(long finID, String type);
 
 	public long generateDocSeq();
 
-	List<PmayEligibilityLog> getEligibilityLogList(String finReference, String type);
+	List<PmayEligibilityLog> getEligibilityLogList(long finID, String type);
 
 	List<PmayEligibilityLog> getAllRecordIdForPmay();
 
 	void update(PmayEligibilityLog pmayEligibilityLog);
 
-	String getCustCif(String finreference);
+	String getCustCif(long finID);
 
 	void update(String reference, String applicantId);
 }

@@ -6,6 +6,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class PmayEligibilityLog extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	private long recordId;
 	private String pmayStatus;
@@ -18,6 +19,14 @@ public class PmayEligibilityLog extends AbstractWorkflowEntity {
 	private String reqJson;
 	private String respJson;
 	private LoggedInUser userDetails;
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
