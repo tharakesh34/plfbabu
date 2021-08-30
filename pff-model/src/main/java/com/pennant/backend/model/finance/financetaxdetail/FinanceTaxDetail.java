@@ -104,11 +104,6 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public FinanceTaxDetail(String id) {
-		super();
-		this.setId(id);
-	}
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("countryName");
@@ -120,14 +115,6 @@ public class FinanceTaxDetail extends AbstractWorkflowEntity {
 		excludeFields.add("custShrtName");
 		excludeFields.add("returnStatus");
 		return excludeFields;
-	}
-
-	public String getId() {
-		return finReference;
-	}
-
-	public void setId(String id) {
-		this.finReference = id;
 	}
 
 	public long getFinID() {
