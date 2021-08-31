@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinCovenantMaintanceServiceImpl.java                                 * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-06-2015    														*
- *                                                                  						*
- * Modified Date    :  11-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinCovenantMaintanceServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-06-2015 *
+ * * Modified Date : 11-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
@@ -95,47 +77,6 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinMaintainInstructionDAO getFinMaintainInstructionDAO() {
-		return finMaintainInstructionDAO;
-	}
-
-	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
-		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
-	}
-
-	public FinCovenantTypeDAO getFinCovenantTypeDAO() {
-		return finCovenantTypeDAO;
-	}
-
-	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
-		this.finCovenantTypeDAO = finCovenantTypeDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinMaintainInstructions/BMTFinMaintainInstructions_Temp by using FinMaintainInstructionDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow Configuration. by using FinMaintainInstructionDAO's
-	 * update method 3) Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -148,57 +89,45 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (finMaintainInstruction.isWorkflow()) {
+		if (fmi.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finMaintainInstruction.isNewRecord()) {
-			finMaintainInstruction.setFinMaintainId(
-					Long.parseLong(getFinMaintainInstructionDAO().save(finMaintainInstruction, tableType)));
-			auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
-			auditHeader.setAuditReference(String.valueOf(finMaintainInstruction.getFinMaintainId()));
+		if (fmi.isNewRecord()) {
+			fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
+			auditHeader.getAuditDetail().setModelData(fmi);
+			auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
 		} else {
-			getFinMaintainInstructionDAO().update(finMaintainInstruction, tableType);
+			finMaintainInstructionDAO.update(fmi, tableType);
 		}
 
-		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
-			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
-			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), "_Temp");
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinCovenants");
+			details = processingFinCovenantsList(details, fmi.getFinReference(), "_Temp");
 			auditDetails.addAll(details);
 		}
 
-		List<Covenant> covenants = finMaintainInstruction.getCovenants();
+		List<Covenant> covenants = fmi.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
 			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.TEMP_TAB,
 					auditHeader.getAuditTranType(), false, 0));
 		}
-		String rcdMaintainSts = FinServiceEvent.COVENANT;
-		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), rcdMaintainSts);
 
-		// Add Audit
+		String rcdMaintainSts = FinServiceEvent.COVENANT;
+		financeMainDAO.updateMaintainceStatus(fmi.getFinID(), rcdMaintainSts);
+
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinMaintainInstructions by using FinMaintainInstructionDAO's delete method with type as Blank 3) Audit the record
-	 * in to AuditHeader and AdtBMTFinMaintainInstructions by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -210,53 +139,26 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			return auditHeader;
 		}
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.MAIN_TAB);
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+		finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
 
-		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(finMaintainInstruction, "", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "", auditHeader.getAuditTranType())));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getFinMaintainInstructionByFinRef fetch the details by using FinMaintainInstructionDAO's
-	 * getFinMaintainInstructionById method . with parameter id and type as blank. it fetches the approved records from
-	 * the FinMaintainInstructions.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @return FinMaintainInstruction
-	 */
-	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
-
-		return getFinMaintainInstructionDAO().getFinMaintainInstructionByFinRef(finreference, event, "_Temp");
+	public FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event) {
+		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finID, event, "_Temp");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinMaintainInstructionDAO().delete
-	 * with parameters FinMaintainInstruction,"" b) NEW Add new record in to main table by using
-	 * getFinMaintainInstructionDAO().save with parameters FinMaintainInstruction,"" c) EDIT Update record in the main
-	 * table by using getFinMaintainInstructionDAO().update with parameters FinMaintainInstruction,"" 3) Delete the
-	 * record from the workFlow table by using getFinMaintainInstructionDAO().delete with parameters
-	 * FinMaintainInstruction,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTFinMaintainInstructions by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
 
 		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
@@ -266,112 +168,72 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
-		BeanUtils.copyProperties((FinMaintainInstruction) auditHeader.getAuditDetail().getModelData(),
-				finMaintainInstruction);
+		FinMaintainInstruction fmi = new FinMaintainInstruction();
+		long finMaintainId = fmi.getFinMaintainId();
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(finMaintainInstruction.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(finMaintainInstructionDAO
-					.getFinMaintainInstructionById(finMaintainInstruction.getFinMaintainId(), ""));
+		long finID = fmi.getFinID();
+
+		BeanUtils.copyProperties((FinMaintainInstruction) auditDetail.getModelData(), fmi);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(fmi.getRecordType())) {
+			auditDetail.setBefImage(finMaintainInstructionDAO.getFinMaintainInstructionById(finMaintainId, ""));
 		}
 
-		if (finMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 
 			tranType = PennantConstants.TRAN_DEL;
-			getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.MAIN_TAB);
-			auditDetails.addAll(listDeletion(finMaintainInstruction, "", auditHeader.getAuditTranType()));
+			finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
+			auditDetails.addAll(listDeletion(fmi, "", auditHeader.getAuditTranType()));
 
 		} else {
 
-			finMaintainInstruction.setRoleCode("");
-			finMaintainInstruction.setNextRoleCode("");
-			finMaintainInstruction.setTaskId("");
-			finMaintainInstruction.setNextTaskId("");
-			finMaintainInstruction.setWorkflowId(0);
+			fmi.setRoleCode("");
+			fmi.setNextRoleCode("");
+			fmi.setTaskId("");
+			fmi.setNextTaskId("");
+			fmi.setWorkflowId(0);
 
-			if (finMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				finMaintainInstruction.setRecordType("");
-				getFinMaintainInstructionDAO().save(finMaintainInstruction, TableType.MAIN_TAB);
+				fmi.setRecordType("");
+				finMaintainInstructionDAO.save(fmi, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				finMaintainInstruction.setRecordType("");
-				getFinMaintainInstructionDAO().update(finMaintainInstruction, TableType.MAIN_TAB);
+				fmi.setRecordType("");
+				finMaintainInstructionDAO.update(fmi, TableType.MAIN_TAB);
 			}
 		}
 
-		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
-			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
-			details = processingFinCovenantsList(details, finMaintainInstruction.getFinReference(), "");
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinCovenants");
+			details = processingFinCovenantsList(details, fmi.getFinReference(), "");
 			auditDetails.addAll(details);
 		}
 
-		List<Covenant> covenants = finMaintainInstruction.getCovenants();
+		List<Covenant> covenants = fmi.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
 			auditDetails.addAll(covenantsService.doProcess(covenants, TableType.MAIN_TAB, "", true, 0));
 		}
 
-		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
+		financeMainDAO.updateMaintainceStatus(finID, "");
 
 		if (auditHeader.getApiHeader() == null) {
-			getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+			finMaintainInstructionDAO.delete(fmi, TableType.TEMP_TAB);
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditHeader.getAuditTranType())));
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				auditHeader.getAuditDetail().getBefImage(), auditHeader.getAuditDetail().getModelData()));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, auditDetail.getBefImage(),
+				auditDetail.getModelData()));
 		covenantsService.delete(covenants, TableType.TEMP_TAB, auditHeader.getAuditTranType());
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		// Audit for Before And After Images
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
-		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				finMaintainInstruction.getBefImage(), finMaintainInstruction));
-
-		getAuditHeaderDAO().addAudit(auditHeader);
-
-		logger.debug(Literal.LEAVING);
-		return auditHeader;
-	}
-
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinMaintainInstructionDAO().delete with parameters FinMaintainInstruction,"_Temp" 3)
-	 * Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
-	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug(Literal.ENTERING);
-
-		auditHeader = businessValidation(auditHeader, "doReject");
-
-		if (!auditHeader.isNextProcess()) {
-			logger.debug(Literal.LEAVING);
-			return auditHeader;
-		}
-
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
-		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-
-		finMaintainInstructionDAO.delete(finMaintainInstruction, TableType.TEMP_TAB);
-		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
-
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				finMaintainInstruction.getBefImage(), finMaintainInstruction));
-		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditHeader.getAuditTranType())));
+		auditDetail.setAuditTranType(tranType);
+		auditDetail.setModelData(fmi);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fmi.getBefImage(), fmi));
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -379,14 +241,33 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
+	public AuditHeader doReject(AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
+
+		auditHeader = businessValidation(auditHeader, "doReject");
+		AuditDetail auditDetail = auditHeader.getAuditDetail();
+
+		if (!auditHeader.isNextProcess()) {
+			logger.debug(Literal.LEAVING);
+			return auditHeader;
+		}
+
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditDetail.getModelData();
+		long finID = fmi.getFinID();
+
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		finMaintainInstructionDAO.delete(fmi, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(finID, "");
+
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fmi.getBefImage(), fmi));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "_Temp", auditHeader.getAuditTranType())));
+
+		auditHeaderDAO.addAudit(auditHeader);
+
+		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -397,20 +278,19 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
-		String usrLanguage = finMaintainInstruction.getUserDetails().getLanguage();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = fmi.getUserDetails().getLanguage();
 
-		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
-			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinCovenants");
 			details = finCovenantListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
-		List<Covenant> covenants = finMaintainInstruction.getCovenants();
+		List<Covenant> covenants = fmi.getCovenants();
 		if (CollectionUtils.isNotEmpty(covenants)) {
-			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("Covenants");
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("Covenants");
 			auditDetails.addAll(covenantsService.validateCovenant(details, usrLanguage, method));
 		}
 
@@ -424,32 +304,18 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinMaintainInstructionDAO().getErrorDetail with Error ID and language as parameters. if any
-	 * error/Warnings then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
 			boolean isUniqueCheckReq) {
 		logger.debug(Literal.ENTERING);
 
-		// Get the model object.
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (isUniqueCheckReq && finMaintainInstruction.isNewRecord()
-				&& finMaintainInstructionDAO.isDuplicateKey(finMaintainInstruction.getEvent(),
-						finMaintainInstruction.getFinReference(),
-						finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (isUniqueCheckReq && fmi.isNewRecord() && finMaintainInstructionDAO.isDuplicateKey(fmi.getEvent(),
+				fmi.getFinID(), fmi.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": "
-					+ finMaintainInstruction.getEvent();
-			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : "
-					+ finMaintainInstruction.getFinReference();
+			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": " + fmi.getEvent();
+			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : " + fmi.getFinReference();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
@@ -731,20 +597,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		return auditHeader;
 	}
 
-	/**
-	 * 
-	 * @param finMaintainInstruction
-	 * @param tableType
-	 * @param auditTranType
-	 * @return
-	 */
-	public List<AuditDetail> listDeletion(FinMaintainInstruction finMaintainInstruction, String tableType,
-			String auditTranType) {
+	public List<AuditDetail> listDeletion(FinMaintainInstruction fmi, String tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			FinCovenantType finCovenantType = new FinCovenantType();
 			String[] fields = PennantJavaUtil.getFieldDetails(finCovenantType, finCovenantType.getExcludeFields());
@@ -753,57 +611,53 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
 						covenant.getBefImage(), covenant));
 			}
-			finCovenantTypeDAO.deleteByFinRef(finMaintainInstruction.getFinReference(), tableType);
+			finCovenantTypeDAO.deleteByFinRef(fmi.getFinID(), tableType);
 		}
 
 		logger.debug(Literal.LEAVING);
 		return auditList;
 	}
 
-	/**
-	 * 
-	 * @param list
-	 * @return
-	 */
-
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 
-		if (list != null && list.size() > 0) {
-			for (int i = 0; i < list.size(); i++) {
+		if (list == null) {
+			logger.debug(Literal.LEAVING);
+			return auditDetailsList;
+		}
 
-				String transType = "";
-				String rcdType = "";
-				Object object = ((AuditDetail) list.get(i)).getModelData();
-				try {
+		for (int i = 0; i < list.size(); i++) {
+			String transType = "";
+			String rcdType = "";
+			Object object = ((AuditDetail) list.get(i)).getModelData();
+			try {
 
-					rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
+				rcdType = object.getClass().getMethod("getRecordType").invoke(object).toString();
 
-					if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-						transType = PennantConstants.TRAN_ADD;
-					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-							|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-						transType = PennantConstants.TRAN_DEL;
-					} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-						transType = PennantConstants.TRAN_UPD;
-					} else {
-						auditDetailsList.remove(object);
-					}
-
-					if (StringUtils.isNotEmpty(transType)) {
-
-						// check and change below line for Complete code
-						Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
-								.invoke(object, object.getClass().getClasses());
-
-						auditDetailsList.add(
-								new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
-					}
-				} catch (Exception e) {
-					logger.error("Exception: ", e);
+				if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+					transType = PennantConstants.TRAN_ADD;
+				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+					transType = PennantConstants.TRAN_DEL;
+				} else if (rcdType.equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+					transType = PennantConstants.TRAN_UPD;
+				} else {
+					auditDetailsList.remove(object);
 				}
+
+				if (StringUtils.isNotEmpty(transType)) {
+
+					// check and change below line for Complete code
+					Object befImg = object.getClass().getMethod("getBefImage", object.getClass().getClasses())
+							.invoke(object, object.getClass().getClasses());
+
+					auditDetailsList
+							.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(), befImg, object));
+				}
+			} catch (Exception e) {
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 
@@ -811,13 +665,6 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		return auditDetailsList;
 	}
 
-	/**
-	 * 
-	 * @param auditDetails
-	 * @param method
-	 * @param usrLanguage
-	 * @return
-	 */
 	public List<AuditDetail> finCovenantListValidation(List<AuditDetail> auditDetails, String method,
 			String usrLanguage) {
 		logger.debug(Literal.ENTERING);
@@ -835,13 +682,6 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		return new ArrayList<AuditDetail>();
 	}
 
-	/**
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @param method
-	 * @return
-	 */
 	private AuditDetail validateFinCovenantType(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -850,9 +690,9 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		FinCovenantType tempFinCovenantPay = null;
 
 		if (covenantType.isWorkflow()) {
-			tempFinCovenantPay = getFinCovenantTypeDAO().getFinCovenantTypeById(covenantType, "_Temp");
+			tempFinCovenantPay = finCovenantTypeDAO.getFinCovenantTypeById(covenantType, "_Temp");
 		}
-		FinCovenantType befFinCovenant = getFinCovenantTypeDAO().getFinCovenantTypeById(covenantType, "");
+		FinCovenantType befFinCovenant = finCovenantTypeDAO.getFinCovenantTypeById(covenantType, "");
 		FinCovenantType oldFinAdvancePay = covenantType.getBefImage();
 
 		String[] errParm = new String[1];
@@ -861,12 +701,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
 		if (covenantType.isNewRecord()) { // for New record or new record into work
-										// flow
+											// flow
 
 			if (!covenantType.isWorkflow()) {// With out Work flow only new
-													// records
+												// records
 				if (befFinCovenant != null) { // Record Already Exists in the
-													// table then error
+												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
@@ -887,10 +727,10 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!covenantType.isWorkflow()) { // With out Work flow for update
-													// and delete
+												// and delete
 
 				if (befFinCovenant == null) { // if records not exists in the
-													// main table
+												// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -911,7 +751,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 			} else {
 
 				if (tempFinCovenantPay == null) { // if records not exists in
-														// the
+													// the
 													// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
@@ -937,4 +777,15 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
+		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
+	}
+
+	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
+		this.finCovenantTypeDAO = finCovenantTypeDAO;
+	}
 }

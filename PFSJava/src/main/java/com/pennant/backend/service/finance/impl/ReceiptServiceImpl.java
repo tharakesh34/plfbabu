@@ -5566,7 +5566,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				TaxAmountSplit taxSplit = new TaxAmountSplit();
 				taxSplit.setAmount(allocate.getWaivedAmount());
 				taxSplit.setTaxType(allocate.getTaxType());
-				taxSplit = getReceiptCalculator().getGST(receiptData.getFinanceDetail(), taxSplit);
+				taxSplit = receiptCalculator.getGST(receiptData.getFinanceDetail(), taxSplit);
 				bal = bal.subtract(taxSplit.gettGST());
 			}
 
@@ -5581,7 +5581,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		rch.setPrvReceiptPurpose(rch.getReceiptPurpose());
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
-				getFinanceScheduleDetailDAO().getFinScheduleDetails(rch.getReference(), "", false));
+				financeScheduleDetailDAO.getFinScheduleDetails(rch.getReference(), "", false));
 		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		List<FinReceiptDetail> recDtls = rch.getReceiptDetails();
 		List<FinReceiptDetail> newRecDtls = new ArrayList<>();
