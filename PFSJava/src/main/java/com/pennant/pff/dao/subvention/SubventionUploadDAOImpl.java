@@ -37,12 +37,12 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 	@Override
 	public long saveSubventionHeader(String batchRef, String entityCode) {
-		StringBuilder sql = new StringBuilder("Insert into");
+		StringBuilder sql = new StringBuilder("Insert Into");
 		sql.append(" Subvention_KnockOff_Header");
 		sql.append(" (BatchRef, EntityCode, TotalRecords, SucessRecords, FailureRecords)");
 		sql.append(" values(?, ?, ?, ?, ?) ");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -66,7 +66,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 			return keyHolder.getKey().longValue();
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
 		return 0;
@@ -74,21 +74,26 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 	public List<Subvention> getSubventionDetails(long batchId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, BatchId, FINREFERENCE, REFERENCECODE, AMOUNT, FinType, PostDate, ValueDate");
+		sql.append(" Id, BatchId, FinID, FinReference, ReferenceCode, Amount, FinType, PostDate, ValueDate");
 		sql.append(", PartnerBankId, PartnerAccNo");
-		sql.append(" FROM SUBVENTION_KNOCKOFF_DETAILS");
-		sql.append(" WHERE BATCHID = ?");
+		sql.append(" From Subvention_KnockOff_Details");
+		sql.append(" Where BatchId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { batchId }, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchId);
+		}, (rs, rowNum) -> {
 			Subvention sv = new Subvention();
 
 			sv.setId(rs.getLong("Id"));
 			sv.setBatchId(rs.getLong("BatchId"));
-			sv.setFinReference(rs.getString("FINREFERENCE"));
-			sv.setReferenceCode(rs.getString("REFERENCECODE"));
-			sv.setAmount(rs.getBigDecimal("AMOUNT"));
+			sv.setFinID(rs.getLong("FinID"));
+			sv.setFinReference(rs.getString("FinReference"));
+			sv.setReferenceCode(rs.getString("ReferenceCode"));
+			sv.setAmount(rs.getBigDecimal("Amount"));
 			sv.setFinType(rs.getString("FinType"));
 			sv.setPostDate(rs.getDate("PostDate"));
 			sv.setValueDate(rs.getDate("ValueDate"));
@@ -102,27 +107,27 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 	@Override
 	public List<FinanceMain> getFinanceMain(long batchId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID ");
-		sql.append(", FM.FinCcy, SubventionFrom, ManufacturerDealerId, AVD.Code MANUFACTURERDEALERCODE");
+		sql.append(" FM.FinID, FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID");
+		sql.append(", FM.FinCcy, SubventionFrom, ManufacturerDealerId, AVD.Code ManufacturerDealerCode");
 		sql.append(", FM.TdsApplicable, FM.FinIsActive");
 		sql.append(" From Financemain FM");
-		sql.append(" INNER JOIN Customers Cust on FM.CUSTID = Cust.CUSTID");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode");
-		sql.append(" LEFT JOIN AMTVEHICLEDEALER AVD ON FM.MANUFACTURERDEALERID = AVD.DEALERID");
-		sql.append(" Where FM.FinReference in");
-		sql.append(" (select FinReference from SUBVENTION_KNOCKOFF_DETAILS where BatchId = ?)");
+		sql.append(" Inner Join Customers Cust on FM.CustID = Cust.CustId");
+		sql.append(" Inner Join RMTFinanceTypes FT on FT.FinType = FM.FinType");
+		sql.append(" Inner Join SMTDivisiondetail SD on FT.FinDivision = SD.DivisionCode");
+		sql.append(" Left Join AMTVehicleDealer AVD on FM.ManufacturerDealerId = AVD.DealerId");
+		sql.append(" Where FM.FinID in");
+		sql.append(" (Select FinID From Subvention_Knockoff_Details Where BatchId = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { batchId }, FinanceMainRowMapper());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-	}
-
-	private RowMapper<FinanceMain> FinanceMainRowMapper() {
-		return (rs, rowNum) -> {
+			ps.setLong(index++, batchId);
+		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
+			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setEntityCode(rs.getString("EntityCode"));
@@ -135,13 +140,14 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			fm.settDSApplicable(rs.getBoolean("TdsApplicable"));
 			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 			return fm;
-		};
+		});
+
 	}
 
 	@Override
 	public List<FinFeeDetail> getFinFeeDetails(long batchId, String feeTypeCode) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FeeID, FinReference, FeeTypeID");
+		sql.append(" FeeID, FinID, FinReference, FeeTypeID");
 		sql.append(", CalculatedAmount, ActualAmount, WaivedAmount, PaidAmount");
 		sql.append(", RemainingFee, FixedAmount, Percentage, CalculateOn");
 		sql.append(", PaidAmountOriginal, PaidAmountGST, NetAmountOriginal, NetAmountGST");
@@ -151,14 +157,14 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 		sql.append(", NetTDS, PaidTDS, RemTDS, ActPercentage");
 		sql.append(", FeeTypeCode, TdsReq");
 		sql.append(" From FinFeeDetail_AView");
-		sql.append(" Where FeeTypeCode = ? and Finevent = 'ADDDBSP' ");
-		sql.append(" and FinReference in (select FinReference from SUBVENTION_KNOCKOFF_DETAILS where BatchId = ?)");
+		sql.append(" Where FeeTypeCode = ? and Finevent = ?");
+		sql.append(" and FinID in (Select FinID From Subvention_Knockoff_Details Where BatchId = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper();
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { feeTypeCode, batchId }, rowMapper);
+		return this.jdbcOperations.query(sql.toString(), rowMapper, new Object[] { feeTypeCode, "ADDDBSP", batchId });
 
 	}
 
@@ -172,6 +178,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			FinFeeDetail fd = new FinFeeDetail();
 
 			fd.setFeeID(rs.getLong("FeeID"));
+			fd.setFinID(rs.getLong("FinID"));
 			fd.setFinReference(rs.getString("FinReference"));
 			fd.setFeeTypeID(rs.getLong("FeeTypeID"));
 			fd.setCalculatedAmount(rs.getBigDecimal("CalculatedAmount"));
@@ -209,12 +216,11 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 	}
 
 	@Override
-	public void updateFinFeeDetails(String finReference, FinFeeDetail fee) {
+	public void updateFinFeeDetails(long finID, FinFeeDetail fee) {
 		StringBuilder sql = new StringBuilder("Update FinFeeDetail");
-		sql.append(" Set ");
-		sql.append("PaidAmount = ?, PaidAmountOriginal = ?, PaidAmountGST = ?, RemainingFee = ?");
+		sql.append(" Set PaidAmount = ?, PaidAmountOriginal = ?, PaidAmountGST = ?, RemainingFee = ?");
 		sql.append(", RemainingFeeOriginal = ?, RemainingFeeGST = ?, PaidTDS = ?, RemTDS = ?");
-		sql.append(" Where FeeID = ? and Finreference = ? ");
+		sql.append(" Where FeeID = ? and FinID = ? ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -229,24 +235,24 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 				ps.setBigDecimal(index++, fee.getRemainingFeeGST());
 				ps.setBigDecimal(index++, fee.getPaidTDS());
 				ps.setBigDecimal(index++, fee.getRemTDS());
+
 				ps.setLong(index++, fee.getFeeID());
-				ps.setString(index++, finReference);
+				ps.setLong(index++, finID);
 
 			});
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	@Override
 	public void updateSubventionDetails(Subvention subVention) {
-		StringBuilder sql = new StringBuilder("Update SUBVENTION_KNOCKOFF_DETAILS");
-		sql.append(" Set ");
-		sql.append("LINKEDTRANID = ?, REMARKS = ? , STATUS = ?, CGSTAMT = ?, SGSTAMT = ? ");
-		sql.append(", UGSTAMT = ?, IGSTAMT = ?, CESSAMT = ?, ProcFeeAmt = ?");
+		StringBuilder sql = new StringBuilder("Update Subvention_KnockOff_Details");
+		sql.append(" Set LinkedTranId = ?, Remarks = ? , Status = ?, CGSTAmt = ?, SGSTAmt = ? ");
+		sql.append(", UGSTAmt = ?, IGSTAmt = ?, CESSAmt = ?, ProcFeeAmt = ?");
 		sql.append(" Where Id = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -254,6 +260,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 		try {
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
+
 				ps.setObject(index++, subVention.getLinkedTranId());
 				ps.setString(index++, StringUtils.trimToEmpty(subVention.getRemarks()));
 				ps.setString(index++, subVention.getStatus());
@@ -263,29 +270,42 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 				ps.setBigDecimal(index++, subVention.getIgstAmt());
 				ps.setBigDecimal(index++, subVention.getCessAmt());
 				ps.setObject(index++, subVention.getProcFeeAmt());
+
 				ps.setLong(index++, subVention.getId());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
-	public int getSucessCount(String finRef, String status) {
-		String sql = "Select Coalesce(count(FinReference), 0) From SUBVENTION_KNOCKOFF_DETAILS Where FinReference = ? and status = ?";
+	public int getSucessCount(long finID, String status) {
+		String sql = "Select Coalesce(count(FinID), 0) From Subvention_KnockOff_Details Where FinID = ? and Status = ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, new Object[] { finRef, status }, Integer.class);
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID, status);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
 	}
 
 	@Override
 	public boolean isFileExists(String name) {
-		String sql = "Select Coalesce(count(ID), 0) From SUBVENTION_KNOCKOFF_HEADER Where BatchRef = ?";
+		String sql = "Select Coalesce(count(ID), 0) From Subvention_KnockOff_Header Where BatchRef = ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, new Object[] { name }, Integer.class) > 0;
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
 	}
 
 	public int logSubvention(List<ErrorDetail> errDetails, Long id) {
@@ -310,8 +330,8 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 		}).length;
 	}
 
-	public void updateRemarks(SubventionHeader subventionHeader) {
-		String sql = "UPDATE SUBVENTION_KNOCKOFF_HEADER Set TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? WHERE Id = ?";
+	public void updateRemarks(SubventionHeader sh) {
+		String sql = "Update Subvention_knockOff_Header Set TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -319,25 +339,25 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
 
-				ps.setInt(index++, subventionHeader.getTotalRecords());
-				ps.setInt(index++, subventionHeader.getSucessRecords());
-				ps.setInt(index++, subventionHeader.getFailureRecords());
-				ps.setString(index++, subventionHeader.getStatus());
-				ps.setLong(index++, subventionHeader.getId());
+				ps.setInt(index++, sh.getTotalRecords());
+				ps.setInt(index++, sh.getSucessRecords());
+				ps.setInt(index++, sh.getFailureRecords());
+				ps.setString(index++, sh.getStatus());
+				ps.setLong(index++, sh.getId());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	@Override
 	public int saveSubvention(List<Subvention> subventions, long id) {
-		StringBuilder sql = new StringBuilder("Insert into SUBVENTION_KNOCKOFF_DETAILS");
-		sql.append(" (BatchId, Finreference, Fintype, Amount, CustomerName, ReferenceCode");
-		sql.append(" , PostDate, ValueDate, Transref, PartnerBankId, PartnerAccNo)");
+		StringBuilder sql = new StringBuilder("Insert Into Subvention_Knockoff_Details");
+		sql.append(" (BatchId, FinID, Finreference, Fintype, Amount, CustomerName, ReferenceCode");
+		sql.append(", PostDate, ValueDate, Transref, PartnerBankId, PartnerAccNo)");
 		sql.append(" Values");
-		sql.append(" (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -348,6 +368,7 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 				Subvention subv = subventions.get(index);
 
 				ps.setLong(i++, id);
+				ps.setLong(i++, subv.getFinID());
 				ps.setString(i++, subv.getFinReference());
 				ps.setString(i++, subv.getFinType());
 				ps.setBigDecimal(i++, subv.getAmount());
@@ -376,14 +397,12 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 		deStatus.setRemarks(remarks.toString());
 
-		StringBuffer sql = new StringBuffer();
-		sql.append(" UPDATE DATA_ENGINE_STATUS set EndTime = ?, Remarks = ?, Status = ?");
-		sql.append(" WHERE Name = ?");
+		String sql = "Update Data_Engine_Status Set EndTime = ?, Remarks = ?, Status = ? Where Name = ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
+			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
 
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
@@ -393,36 +412,35 @@ public class SubventionUploadDAOImpl extends SequenceDao<Subvention> implements 
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	@Override
-	public Subvention getGstDetails(String finReference) {
+	public Subvention getGstDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Sum(CGSTAMT) CGSTAMT, Sum(SGSTAMT) SGSTAMT, Sum(UGSTAMT) UGSTAMT");
-		sql.append(", Sum(IGSTAMT) IGSTAMT, SUM(CESSAMT) CESSAMT");
-		sql.append(" from SUBVENTION_KNOCKOFF_DETAILS");
-		sql.append(" Where finreference = ? and Status = ?");
-		sql.append(" Group by FinReference");
+		sql.append(" sum(CGSTAmt) CGSTAmt, sum(SGSTAmt) SGSTAmt, sum(UGSTAmt) UGSTAmt");
+		sql.append(", sum(IGSTAmt) IGSTAmt, sum(CESSAmt) CESSAmt");
+		sql.append(" From Subvention_KnockOff_Details");
+		sql.append(" Where FinID = ? and Status = ?");
+		sql.append(" Group by FinID");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, "S" },
-					(rs, rowNum) -> {
-						Subvention sv = new Subvention();
-						sv.setCgstAmt(rs.getBigDecimal("CGSTAMT"));
-						sv.setSgstAmt(rs.getBigDecimal("SGSTAMT"));
-						sv.setIgstAmt(rs.getBigDecimal("IGSTAMT"));
-						sv.setUgstAmt(rs.getBigDecimal("UGSTAMT"));
-						sv.setCessAmt(rs.getBigDecimal("CESSAMT"));
-						return sv;
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Subvention sv = new Subvention();
+
+				sv.setCgstAmt(rs.getBigDecimal("CGSTAmt"));
+				sv.setSgstAmt(rs.getBigDecimal("SGSTAmt"));
+				sv.setUgstAmt(rs.getBigDecimal("UGSTAmt"));
+				sv.setIgstAmt(rs.getBigDecimal("IGSTAmt"));
+				sv.setCessAmt(rs.getBigDecimal("CESSAmt"));
+
+				return sv;
+			}, finID, "S");
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Record is not found in SUBVENTION_KNOCKOFF_DETAILS table for the specified finreference >> {} and Status >> 'S'",
-					finReference);
+			//
 		}
 
 		return null;

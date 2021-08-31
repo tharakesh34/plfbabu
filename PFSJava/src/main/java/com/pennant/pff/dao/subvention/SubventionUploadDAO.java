@@ -17,11 +17,11 @@ public interface SubventionUploadDAO {
 
 	List<FinFeeDetail> getFinFeeDetails(long batchId, String feeTypeCode);
 
-	void updateFinFeeDetails(String finReference, FinFeeDetail finFee);
+	void updateFinFeeDetails(long finID, FinFeeDetail finFee);
 
 	void updateSubventionDetails(Subvention subVention);
 
-	int getSucessCount(String finRef, String status);
+	int getSucessCount(long finID, String status);
 
 	boolean isFileExists(String name);
 
@@ -35,6 +35,6 @@ public interface SubventionUploadDAO {
 
 	void updateDeRemarks(SubventionHeader header, DataEngineStatus deStatus);
 
-	Subvention getGstDetails(String finReference);
+	Subvention getGstDetails(long finID);
 
 }

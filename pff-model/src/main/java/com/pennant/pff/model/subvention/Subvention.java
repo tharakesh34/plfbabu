@@ -20,6 +20,7 @@ public class Subvention implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private Long batchId;
@@ -66,6 +67,14 @@ public class Subvention implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
