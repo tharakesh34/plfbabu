@@ -25,9 +25,8 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.math.BigDecimal;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -35,18 +34,15 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.SubventionDetailDAO;
 import com.pennant.backend.model.finance.SubventionDetail;
 import com.pennant.backend.model.finance.SubventionScheduleDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -62,7 +58,7 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 	@Override
 	public SubventionDetail getSubventionDetail(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, Method, Type, Rate, PeriodRate, DiscountRate");
+		sql.append(" FinID, FinReference, Method, Type, Rate, PeriodRate, DiscountRate");
 		sql.append(", Tenure, StartDate, EndDate");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
@@ -70,262 +66,266 @@ public class SubventionDetailDAOImpl extends BasicDao<SubventionDetail> implemen
 		sql.append(StringUtils.trim(type));
 		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<SubventionDetail>() {
-				@Override
-				public SubventionDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					SubventionDetail sd = new SubventionDetail();
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				SubventionDetail sd = new SubventionDetail();
 
-					sd.setFinReference(rs.getString("FinReference"));
-					sd.setMethod(rs.getString("Method"));
-					sd.setType(rs.getString("Type"));
-					sd.setRate(rs.getBigDecimal("Rate"));
-					sd.setPeriodRate(rs.getBigDecimal("PeriodRate"));
-					sd.setDiscountRate(rs.getBigDecimal("DiscountRate"));
-					sd.setTenure(rs.getInt("Tenure"));
-					sd.setStartDate(rs.getTimestamp("StartDate"));
-					sd.setEndDate(rs.getTimestamp("EndDate"));
-					sd.setVersion(rs.getInt("Version"));
-					sd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					sd.setLastMntBy(rs.getLong("LastMntBy"));
-					sd.setRecordStatus(rs.getString("RecordStatus"));
-					sd.setRoleCode(rs.getString("RoleCode"));
-					sd.setNextRoleCode(rs.getString("NextRoleCode"));
-					sd.setTaskId(rs.getString("TaskId"));
-					sd.setNextTaskId(rs.getString("NextTaskId"));
-					sd.setRecordType(rs.getString("RecordType"));
-					sd.setWorkflowId(rs.getLong("WorkflowId"));
+				sd.setFinID(rs.getLong("FinID"));
+				sd.setFinReference(rs.getString("FinReference"));
+				sd.setMethod(rs.getString("Method"));
+				sd.setType(rs.getString("Type"));
+				sd.setRate(rs.getBigDecimal("Rate"));
+				sd.setPeriodRate(rs.getBigDecimal("PeriodRate"));
+				sd.setDiscountRate(rs.getBigDecimal("DiscountRate"));
+				sd.setTenure(rs.getInt("Tenure"));
+				sd.setStartDate(rs.getTimestamp("StartDate"));
+				sd.setEndDate(rs.getTimestamp("EndDate"));
+				sd.setVersion(rs.getInt("Version"));
+				sd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				sd.setLastMntBy(rs.getLong("LastMntBy"));
+				sd.setRecordStatus(rs.getString("RecordStatus"));
+				sd.setRoleCode(rs.getString("RoleCode"));
+				sd.setNextRoleCode(rs.getString("NextRoleCode"));
+				sd.setTaskId(rs.getString("TaskId"));
+				sd.setNextTaskId(rs.getString("NextTaskId"));
+				sd.setRecordType(rs.getString("RecordType"));
+				sd.setWorkflowId(rs.getLong("WorkflowId"));
 
-					return sd;
-				}
+				return sd;
 			}, finID);
 
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return null;
 	}
 
 	@Override
-	public String save(SubventionDetail subventionDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into SubventionDetails");
+	public String save(SubventionDetail sd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into SubventionDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("(finReference, method, type, rate, periodRate, discountRate, ");
-		sql.append(" tenure, startDate, endDate, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,SubVentionAmt)");
-		sql.append(" values(");
-		sql.append(" :finReference, :method, :type, :rate, :periodRate, :discountRate, ");
-		sql.append(" :tenure, :startDate, :endDate, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId,:SubVentionAmt)");
+		sql.append(" (FinID, FinReference, Method, Type, Rate, PeriodRate, DiscountRate, Tenure");
+		sql.append(", StartDate, EndDate, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, SubVentionAmt)");
+		sql.append(" Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(")");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subventionDetail);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, sd.getFinID());
+				ps.setString(index++, sd.getFinReference());
+				ps.setString(index++, sd.getMethod());
+				ps.setString(index++, sd.getType());
+				ps.setBigDecimal(index++, sd.getRate());
+				ps.setBigDecimal(index++, sd.getPeriodRate());
+				ps.setBigDecimal(index++, sd.getDiscountRate());
+				ps.setInt(index++, sd.getTenure());
+				ps.setDate(index++, JdbcUtil.getDate(sd.getStartDate()));
+				ps.setDate(index++, JdbcUtil.getDate(sd.getEndDate()));
+				ps.setInt(index++, sd.getVersion());
+				ps.setLong(index++, sd.getLastMntBy());
+				ps.setTimestamp(index++, sd.getLastMntOn());
+				ps.setString(index++, sd.getRecordStatus());
+				ps.setString(index++, sd.getRoleCode());
+				ps.setString(index++, sd.getNextRoleCode());
+				ps.setString(index++, sd.getTaskId());
+				ps.setString(index++, sd.getNextTaskId());
+				ps.setString(index++, sd.getRecordType());
+				ps.setLong(index++, sd.getWorkflowId());
+				ps.setBigDecimal(index++, sd.getSubVentionAmt());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(subventionDetail.getFinReference());
+		return String.valueOf(sd.getFinReference());
 	}
 
 	@Override
-	public void update(SubventionDetail subventionDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update SubventionDetails");
+	public void update(SubventionDetail sd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update SubventionDetails");
 		sql.append(tableType.getSuffix());
-		sql.append("  set method = :method, type = :type, rate = :rate, ");
-		sql.append(" periodRate = :periodRate, discountRate = :discountRate, tenure = :tenure, ");
-		sql.append(" startDate = :startDate, endDate = :endDate, ");
-		sql.append(" LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode,");
-		sql.append(" NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId,");
-		sql.append(" RecordType = :RecordType, WorkflowId = :WorkflowId,SubVentionAmt=:SubVentionAmt");
-		sql.append(" where finReference = :finReference ");
+		sql.append(" Set Method = ?, Type = ?, Rate = ?, PeriodRate = ?");
+		sql.append(", DiscountRate = ?, Tenure = ?, StartDate = ?, EndDate = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, , NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?, SubVentionAmt = ?");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subventionDetail);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, sd.getMethod());
+			ps.setString(index++, sd.getType());
+			ps.setBigDecimal(index++, sd.getRate());
+			ps.setBigDecimal(index++, sd.getPeriodRate());
+			ps.setBigDecimal(index++, sd.getDiscountRate());
+			ps.setInt(index++, sd.getTenure());
+			ps.setDate(index++, JdbcUtil.getDate(sd.getStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(sd.getEndDate()));
+			ps.setTimestamp(index++, sd.getLastMntOn());
+			ps.setString(index++, sd.getRecordStatus());
+			ps.setString(index++, sd.getRoleCode());
+			ps.setString(index++, sd.getNextRoleCode());
+			ps.setString(index++, sd.getTaskId());
+			ps.setString(index++, sd.getNextTaskId());
+			ps.setString(index++, sd.getRecordType());
+			ps.setLong(index++, sd.getWorkflowId());
+			ps.setBigDecimal(index++, sd.getSubVentionAmt());
+
+			ps.setLong(index++, sd.getFinID());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(SubventionDetail subventionDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from SubventionDetails");
+	public void delete(SubventionDetail sd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From SubventionDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" where finReference = :finReference ");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subventionDetail);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, sd.getFinID());
+			});
 		} catch (DataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public long save(SubventionScheduleDetail subVenscheduleDetail, String type) {
-
-		StringBuilder sql = new StringBuilder(" insert into SubventionScheduleDetail");
+	public long save(SubventionScheduleDetail ssd, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into SubventionScheduleDetail");
 		sql.append(type);
-		sql.append(
-				"(FinReference, DisbSeqID, SchDate, NoOfDays, DiscountedPft, PresentValue, FutureValue, ClosingBal)");
-		sql.append(" values(");
-		sql.append(
-				":FinReference, :DisbSeqID, :SchDate, :NoOfDays, :DiscountedPft, :PresentValue, :FutureValue, :ClosingBal)");
+		sql.append("(FinID, FinReference, DisbSeqID, SchDate, NoOfDays");
+		sql.append(", DiscountedPft, PresentValue, FutureValue, ClosingBal)");
+		sql.append(" Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subVenscheduleDetail);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		return subVenscheduleDetail.getDisbSeqID();
+			ps.setLong(index++, ssd.getFinID());
+			ps.setString(index++, ssd.getFinReference());
+			ps.setLong(index++, ssd.getDisbSeqID());
+			ps.setDate(index++, JdbcUtil.getDate(ssd.getSchDate()));
+			ps.setInt(index++, ssd.getNoOfDays());
+			ps.setBigDecimal(index++, ssd.getDiscountedPft());
+			ps.setBigDecimal(index++, ssd.getPresentValue());
+			ps.setBigDecimal(index++, ssd.getFutureValue());
+			ps.setBigDecimal(index++, ssd.getClosingBal());
+
+		});
+
+		return ssd.getDisbSeqID();
 	}
 
 	@Override
-	public void deleteByFinReference(String finReference, String type) {
-		SubventionScheduleDetail subventionScheduleDetail = new SubventionScheduleDetail();
-		subventionScheduleDetail.setFinReference(finReference);
+	public void deleteByFinReference(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Delete From SubventionScheduleDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From SubventionScheduleDetail");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("deleteSql: " + deleteSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subventionScheduleDetail);
-
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			ps.setLong(index++, finID);
+		});
 	}
 
 	@Override
-	public SubventionScheduleDetail getSubvenScheduleDetail(SubventionScheduleDetail subVenschedule, String type) {
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" FinReference, DisbSeqID, SchDate, NoOfDays, DiscountedPft, PresentValue, FutureValue, ClosingBal");
+	public List<SubventionScheduleDetail> getSubventionScheduleDetails(long finID, long disbSeqID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, DisbSeqID, SchDate, NoOfDays, DiscountedPft");
+		sql.append(", PresentValue, FutureValue, ClosingBal");
 		sql.append(" From SubventionScheduleDetail");
-		sql.append(type);
-		sql.append(" Where finReference = :finReference And DisbSeqID = :DisbSeqID And SchDate = :SchDate");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subVenschedule);
-		RowMapper<SubventionScheduleDetail> rowMapper = BeanPropertyRowMapper
-				.newInstance(SubventionScheduleDetail.class);
-
-		try {
-			subVenschedule = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			subVenschedule = null;
-		}
-
-		return subVenschedule;
-	}
-
-	@Override
-	public List<SubventionScheduleDetail> getSubventionScheduleDetails(final String finReference, long disbSeqID,
-			String type) {
-		SubventionScheduleDetail subventionScheduleDetail = new SubventionScheduleDetail();
-		subventionScheduleDetail.setFinReference(finReference);
-		subventionScheduleDetail.setDisbSeqID(disbSeqID);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select FinReference, DisbSeqID, SchDate, NoOfDays, DiscountedPft, PresentValue, FutureValue, ClosingBal");
-
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
-		}
-		selectSql.append(" From SubventionScheduleDetail");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference = :FinReference ");
 		if (disbSeqID != 0) {
-			selectSql.append(" And DisbSeqID = :DisbSeqID ");
+			sql.append(" and DisbSeqID = ?");
 		}
-		selectSql.append(" order by SchDate asc");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(subventionScheduleDetail);
-		RowMapper<SubventionScheduleDetail> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(SubventionScheduleDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		List<SubventionScheduleDetail> ssdList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+
+			if (disbSeqID != 0) {
+				ps.setLong(index++, disbSeqID);
+			}
+
+		}, (rs, rowNum) -> {
+			SubventionScheduleDetail ssd = new SubventionScheduleDetail();
+
+			ssd.setFinID(rs.getLong("FinID"));
+			ssd.setFinReference(rs.getString("FinReference"));
+			ssd.setDisbSeqID(rs.getLong("DisbSeqID"));
+			ssd.setSchDate(rs.getDate("SchDate"));
+			ssd.setNoOfDays(rs.getInt("NoOfDays"));
+			ssd.setDiscountedPft(rs.getBigDecimal("DiscountedPft"));
+			ssd.setPresentValue(rs.getBigDecimal("PresentValue"));
+			ssd.setFutureValue(rs.getBigDecimal("FutureValue"));
+			ssd.setClosingBal(rs.getBigDecimal("ClosingBal"));
+
+			return ssd;
+		});
+
+		return ssdList.stream().sorted((s1, s2) -> DateUtil.compare(s1.getSchDate(), s2.getSchDate()))
+				.collect(Collectors.toList());
 	}
 
-	public void updateSubVebtionAmt(String finrefence, BigDecimal totalSubVentionAmt) {
-		logger.debug(Literal.ENTERING);
+	public void updateSubVebtionAmt(long finID, BigDecimal totalSubVentionAmt) {
+		String sql = "Update SubventionDetails Set SubVentionAmt = ? Where FinID = ?";
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update SubventionDetails");
-		sql.append("  set SubVentionAmt=:SubVentionAmt");
-		sql.append(" where finReference = :finReference ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		SubventionDetail subVentionDetail = new SubventionDetail();
-		subVentionDetail.setFinReference(finrefence);
-		subVentionDetail.setSubVentionAmt(totalSubVentionAmt);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(subVentionDetail);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setBigDecimal(index++, totalSubVentionAmt);
+				ps.setLong(index++, finID);
+			});
 		} catch (DataAccessException e) {
-			logger.debug("Expection:" + e);
+			//
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
-	/***
-	 * Method to get the Total SubVention Amount
-	 */
 	@Override
-	public BigDecimal getTotalSubVentionAmt(String finReference) {
-		logger.debug("Entering");
+	public BigDecimal getTotalSubVentionAmt(long finID) {
+		String sql = "Select SubVentionAmt From SubventionDetails Where FinID = ?";
 
-		BigDecimal subVentionAmt = BigDecimal.ZERO;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-
-		StringBuilder selectSql = new StringBuilder(" SELECT SubVentionAmt From SubventionDetails");
-		selectSql.append(" Where FinReference = :FinReference");
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			subVentionAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
 		} catch (EmptyResultDataAccessException e) {
-			subVentionAmt = BigDecimal.ZERO;
+			//
 		}
-		return subVentionAmt;
+
+		return BigDecimal.ZERO;
 	}
 }

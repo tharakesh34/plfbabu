@@ -50,6 +50,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class SubventionDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
+	private long finID;
 	private String finReference;
 	@XmlElement
 	private String method;
@@ -73,6 +74,7 @@ public class SubventionDetail extends AbstractWorkflowEntity {
 
 	public SubventionDetail copyEntity() {
 		SubventionDetail entity = new SubventionDetail();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setMethod(this.method);
 		entity.setType(this.type);
@@ -121,6 +123,14 @@ public class SubventionDetail extends AbstractWorkflowEntity {
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -37,14 +37,12 @@ public interface SubventionDetailDAO extends BasicCrudDao<SubventionDetail> {
 
 	long save(SubventionScheduleDetail scheduleDetail, String type);
 
-	SubventionScheduleDetail getSubvenScheduleDetail(SubventionScheduleDetail subVenschedule, String type);
+	void deleteByFinReference(long finID, String type);
 
-	void deleteByFinReference(String finReference, String type);
+	List<SubventionScheduleDetail> getSubventionScheduleDetails(long finID, long disbSeqID, String type);
 
-	List<SubventionScheduleDetail> getSubventionScheduleDetails(String finReference, long disbSeqID, String type);
+	void updateSubVebtionAmt(long finID, BigDecimal totalSubVentionAmt);
 
-	void updateSubVebtionAmt(String finReference, BigDecimal totalSubVentionAmt);
-
-	public BigDecimal getTotalSubVentionAmt(String finReference);
+	public BigDecimal getTotalSubVentionAmt(long finID);
 
 }
