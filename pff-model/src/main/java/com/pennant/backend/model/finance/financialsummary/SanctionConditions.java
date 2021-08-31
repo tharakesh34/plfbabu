@@ -50,6 +50,7 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 	private String Status;
 	private SanctionConditions befImage;
 	private LoggedInUser userDetails;
+	private long finID;
 	private String finReference;
 
 	public SanctionConditions() {
@@ -89,6 +90,14 @@ public class SanctionConditions extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

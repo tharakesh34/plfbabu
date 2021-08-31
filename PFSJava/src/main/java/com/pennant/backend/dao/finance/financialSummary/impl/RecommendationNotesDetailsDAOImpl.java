@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
@@ -49,11 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.financialSummary.RecommendationNotesDetailsDAO;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
@@ -72,35 +50,37 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 	}
 
 	@Override
-	public List<RecommendationNotes> getRecommendationNotesDetails(String finReference) {
+	public List<RecommendationNotes> getRecommendationNotesDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append("  t1.Id, t1.FinReference, t1.ParticularId,t3.Particulars,t1.Remarks");
+		sql.append("  t1.Id, t2.FinID, t2.FinReference, t1.ParticularId, t3.Particulars, t1.Remarks");
 		sql.append(", t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
-		sql.append(" from  RECOMMENDATION_NOTES_TEMP t1");
-		sql.append(" LEFT JOIN FinanceMain_TEMP t2 ON t2.finreference =  t1.finreference");
-		sql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG t3 ON t3.id =  t1.ParticularId");
-		sql.append(" Where t1.finReference = ?");
+		sql.append(" From  Recommendation_Notes_Temp t1");
+		sql.append(" Left Join FinanceMain_TEMP t2 on t2.FinID =  t1.FinID");
+		sql.append(" Left Join RECOMMENDATION_NOTES_CONFIG t3 on t3.id =  t1.ParticularId");
+		sql.append(" Where t2.FinID = ?");
 		sql.append(" UNION ALL");
-		sql.append(" Select  t1.Id, t1.FinReference, t1.ParticularId,t3.Particulars,t1.Remarks");
+		sql.append(" Select t1.Id, t2.FinID, t2.FinReference, t1.ParticularId, t3.Particulars, t1.Remarks");
 		sql.append(", t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
-		sql.append(" from  RECOMMENDATION_NOTES t1");
-		sql.append(" LEFT JOIN FinanceMain_TEMP t2 ON t2.finreference =  t1.finreference");
-		sql.append(" LEFT JOIN RECOMMENDATION_NOTES_CONFIG t3 ON t3.id =  t1.ParticularId");
-		sql.append(" where NOT EXISTS (Select 1 from RECOMMENDATION_NOTES_TEMP where id = t1.id)");
-		sql.append(" and t1.finReference = ?");
+		sql.append(" From  Recommendation_Notes t1");
+		sql.append(" Left Join FinanceMain_TEMP t2 on t2.FinID =  t1.FinID");
+		sql.append(" Left Join Recommendation_Notes_Config t3 on t3.Id =  t1.ParticularId");
+		sql.append(" Where NOT Exists (Select 1 From Recommendation_Notes_Temp Where Id = t1.Id)");
+		sql.append(" and t2.FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
-			ps.setString(index++, finReference);
+
+			ps.setLong(index++, finID);
+			ps.setLong(index++, finID);
 		}, (rs, rowNum) -> {
 			RecommendationNotes rn = new RecommendationNotes();
 
 			rn.setId(rs.getLong("Id"));
+			rn.setFinID(rs.getLong("FinID"));
 			rn.setFinReference(rs.getString("FinReference"));
 			rn.setParticularId(rs.getLong("ParticularId"));
 			rn.setParticulars(rs.getString("Particulars"));
@@ -121,20 +101,20 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 	}
 
 	@Override
-	public void delete(RecommendationNotes recommendationNotesDetails, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(RecommendationNotes rn, String type) {
+		StringBuilder sql = new StringBuilder("Delete From Recommendation_Notes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Id = ? and FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From RECOMMENDATION_NOTES");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where id =:id and finReference =:finReference");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recommendationNotesDetails);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index, rn.getId());
+				ps.setLong(index, rn.getFinID());
+			});
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -142,116 +122,126 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public long save(RecommendationNotes recommendationNotesDetails, String type) {
-		logger.debug("Entering");
-
-		if (recommendationNotesDetails.getId() == Long.MIN_VALUE) {
-			recommendationNotesDetails.setId(getNextValue("SeqRECOMMENDATION_NOTE"));
-			logger.debug("get NextID:" + recommendationNotesDetails.getId());
+	public long save(RecommendationNotes rn, String type) {
+		if (rn.getId() == Long.MIN_VALUE) {
+			rn.setId(getNextValue("SeqRECOMMENDATION_NOTE"));
 		}
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append("Insert Into RECOMMENDATION_NOTES");
-		insertSql.append(type);
-		insertSql.append(" (id, FinReference, ParticularId,Remarks");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(" Values(:id,:FinReference, :ParticularId, :Remarks");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId");
-		insertSql.append(", :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder("Insert Into Recommendation_Notes");
+		sql.append(type);
+		sql.append(" (Id, FinID, FinReference, ParticularId, Remarks");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recommendationNotesDetails);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, rn.getId());
+				ps.setLong(index++, rn.getFinID());
+				ps.setString(index++, rn.getFinReference());
+				ps.setLong(index++, rn.getParticularId());
+				ps.setString(index++, rn.getRemarks());
+				ps.setInt(index++, rn.getVersion());
+				ps.setLong(index++, rn.getLastMntBy());
+				ps.setTimestamp(index++, rn.getLastMntOn());
+				ps.setString(index++, rn.getRecordStatus());
+				ps.setString(index++, rn.getRoleCode());
+				ps.setString(index++, rn.getNextRoleCode());
+				ps.setString(index++, rn.getTaskId());
+				ps.setString(index++, rn.getNextTaskId());
+				ps.setString(index++, rn.getRecordType());
+				ps.setLong(index++, rn.getWorkflowId());
+
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug("Leaving");
-		return recommendationNotesDetails.getId();
+		return rn.getId();
 	}
 
 	@Override
-	public void update(RecommendationNotes recommendationNotesDetails, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append("Update RECOMMENDATION_NOTES");
-		updateSql.append(type);
-		updateSql.append(" Set FinReference = :FinReference, ParticularId = :ParticularId");
-		updateSql.append(", Remarks = :Remarks");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		updateSql.append(
-				", RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId");
-		updateSql.append(", NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where id =:id and finReference =:finReference");
+	public void update(RecommendationNotes rn, String type) {
+		StringBuilder sql = new StringBuilder("Update Recommendation_Notes");
+		sql.append(type);
+		sql.append(" Set FinReference = ?, ParticularId = ?, Remarks = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ? and FinID = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recommendationNotesDetails);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, rn.getFinReference());
+			ps.setLong(index++, rn.getParticularId());
+			ps.setString(index++, rn.getRemarks());
+			ps.setInt(index++, rn.getVersion());
+			ps.setLong(index++, rn.getLastMntBy());
+			ps.setTimestamp(index++, rn.getLastMntOn());
+			ps.setString(index++, rn.getRecordStatus());
+			ps.setString(index++, rn.getRoleCode());
+			ps.setString(index++, rn.getNextRoleCode());
+			ps.setString(index++, rn.getTaskId());
+			ps.setString(index++, rn.getNextTaskId());
+			ps.setString(index++, rn.getRecordType());
+			ps.setLong(index++, rn.getWorkflowId());
+			ps.setLong(index++, rn.getId());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, rn.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Fetch current version of the record.
-	 * 
-	 * @param id
-	 * @param typeCode
-	 * @return Integer
-	 */
+	// FIXME:FinID seems method not using
 	@Override
 	public int getVersion(long id, String recommendationNotesDetails) {
-		logger.debug("Entering");
-
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("id", id);
 		source.addValue("recommendationNotesDetails", recommendationNotesDetails);
 
-		StringBuffer selectSql = new StringBuffer();
-		selectSql.append("SELECT Version FROM RECOMMENDATION_NOTES");
+		StringBuffer sql = new StringBuffer();
+		sql.append("Select Version From RECOMMENDATION_NOTES");
 
-		selectSql.append(" WHERE id = :id AND finReference = :finReference");
+		sql.append(" Where Id = :id and finReference = :finReference");
 
-		logger.debug("insertSql: " + selectSql.toString());
+		logger.debug("insertSql: " + sql.toString());
 
 		logger.debug("Leaving");
 
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+		return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 	}
 
 	public List<RecommendationNotesConfiguration> getRecommendationNotesConfigurationDetails() {
+		String sql = "Select Id, Particulars From Recommendation_Notes_Config";
 
-		RecommendationNotesConfiguration recommendationNotesConfigurationDetails = new RecommendationNotesConfiguration();
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append("select id, Particulars ");
-		selectSql.append(" FROM  RECOMMENDATION_NOTES_CONFIG");
+		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
+			RecommendationNotesConfiguration rnf = new RecommendationNotesConfiguration();
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(recommendationNotesConfigurationDetails);
-		RowMapper<RecommendationNotesConfiguration> typeRowMapper = BeanPropertyRowMapper
-				.newInstance(RecommendationNotesConfiguration.class);
+			rnf.setId(rs.getLong("Id"));
+			rnf.setParticulars(rs.getString("Particulars"));
 
-		List<RecommendationNotesConfiguration> recommendationNotesConfigurationList = this.jdbcTemplate
-				.query(selectSql.toString(), beanParameters, typeRowMapper);
-		logger.debug("Leaving ");
-		return recommendationNotesConfigurationList;
+			return rnf;
+		});
 
 	}
 

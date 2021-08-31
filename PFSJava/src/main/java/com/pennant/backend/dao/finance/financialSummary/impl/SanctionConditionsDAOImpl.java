@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPhoneNumberDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPhoneNumberDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
@@ -49,9 +31,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.financialSummary.SanctionConditionsDAO;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
@@ -71,30 +51,31 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 		super();
 	}
 
-	public List<SanctionConditions> getSanctionConditions(String finReference) {
+	public List<SanctionConditions> getSanctionConditions(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t1.FinReference, t1.Version");
+		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t2.FinID, t2.FinReference, t1.Version");
 		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
-		sql.append(" from SANCTION_CONDITIONS_TEMP t1");
-		sql.append(" LEFT JOIN FinanceMain t2 ON t2.finreference =  t1.finreference");
-		sql.append(" where t1.finReference = ?");
-		sql.append(" UNION ALL");
+		sql.append(" From Sanction_Conditions_Temp t1");
+		sql.append(" Left Join FinanceMain t2 on t2.FinID =  t1.FinID");
+		sql.append(" Where t2.FinID = ?");
+		sql.append(" Union All");
 		sql.append(" Select");
-		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t1.FinReference, t1.Version");
+		sql.append(" t1.Id, t1.SeqNo, t1.SanctionCondition, t1.Status, t2.FinID, t2.FinReference, t1.Version");
 		sql.append(", t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
 		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
-		sql.append(" from SANCTION_CONDITIONS t1");
-		sql.append(" LEFT JOIN FinanceMain t2 ON t2.finreference =  t1.finreference");
-		sql.append(" where NOT EXISTS ( SELECT 1 FROM SANCTION_CONDITIONS_TEMP where id = t1.id)");
-		sql.append(" and t1.finReference = ?");
+		sql.append(" From Sanction_Conditions t1");
+		sql.append(" Left Join FinanceMain t2 on t2.FinID =  t1.FinID");
+		sql.append(" Where not Exists ( Select 1 From Sanction_conditions_Temp Where Id = t1.Id)");
+		sql.append(" and t2.FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
-			ps.setString(index++, finReference);
+
+			ps.setLong(index++, finID);
+			ps.setLong(index++, finID);
 		}, (rs, rowNum) -> {
 			SanctionConditions sc = new SanctionConditions();
 
@@ -102,6 +83,7 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 			sc.setSeqNo(rs.getLong("SeqNo"));
 			sc.setSanctionCondition(rs.getString("SanctionCondition"));
 			sc.setStatus(rs.getString("Status"));
+			sc.setFinID(rs.getLong("FinID"));
 			sc.setFinReference(rs.getString("FinReference"));
 			sc.setVersion(rs.getInt("Version"));
 			sc.setLastMntBy(rs.getLong("LastMntBy"));
@@ -118,136 +100,120 @@ public class SanctionConditionsDAOImpl extends SequenceDao<SanctionConditions> i
 		});
 	}
 
-	/**
-	 * This method Deletes the Record from the CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Customer PhoneNumbers by key PhoneCustID
-	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(SanctionConditions sanctionConditions, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(SanctionConditions sc, String type) {
+		StringBuilder sql = new StringBuilder("Delete From Sanction_Conditions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Id = ? and FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From SANCTION_CONDITIONS");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where id =:id and finReference =:finReference");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sanctionConditions);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, sc.getId());
+				ps.setLong(index++, sc.getFinID());
+			});
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into CustomerPhoneNumbers or CustomerPhoneNumbers_Temp.
-	 *
-	 * save Customer PhoneNumbers
-	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(SanctionConditions sanctionConditions, String type) {
-		logger.debug("Entering");
+	public long save(SanctionConditions sc, String type) {
 
-		if (sanctionConditions.getId() == Long.MIN_VALUE) {
-			sanctionConditions.setId(getNextValue("SEQ_SANCTION_CONDITIONS"));
-			logger.debug("get NextID:" + sanctionConditions.getId());
+		if (sc.getId() == Long.MIN_VALUE) {
+			sc.setId(getNextValue("SEQ_SANCTION_CONDITIONS"));
 		}
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" Insert Into SANCTION_CONDITIONS");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (id, SeqNo, SanctionCondition,Status,FinReference");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		insertSql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append("Values(:id, :SeqNo, :SanctionCondition, :Status, :FinReference");
-		insertSql.append(", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode");
-		insertSql.append(", :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		StringBuilder sql = new StringBuilder("Insert Into SANCTION_CONDITIONS");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (Id, SeqNo, SanctionCondition, Status, FinID, FinReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sanctionConditions);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, sc.getId());
+				ps.setLong(index++, sc.getSeqNo());
+				ps.setString(index++, sc.getSanctionCondition());
+				ps.setString(index++, sc.getStatus());
+				ps.setLong(index++, sc.getFinID());
+				ps.setString(index++, sc.getFinReference());
+				ps.setInt(index++, sc.getVersion());
+				ps.setLong(index++, sc.getLastMntBy());
+				ps.setTimestamp(index++, sc.getLastMntOn());
+				ps.setString(index++, sc.getRecordStatus());
+				ps.setString(index++, sc.getRoleCode());
+				ps.setString(index++, sc.getNextRoleCode());
+				ps.setString(index++, sc.getTaskId());
+				ps.setString(index++, sc.getNextTaskId());
+				ps.setString(index++, sc.getRecordType());
+				ps.setLong(index++, sc.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug("Leaving");
-		return sanctionConditions.getId();
+		return sc.getId();
 	}
 
-	/**
-	 * This method updates the Record CustomerPhoneNumbers or CustomerPhoneNumbers_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Customer PhoneNumbers by key PhoneCustID and Version
-	 * 
-	 * @param Customer
-	 *            PhoneNumbers (customerPhoneNumber)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(SanctionConditions sanctionConditions, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder();
-		updateSql.append(" Update SANCTION_CONDITIONS");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set SanctionCondition = :SanctionCondition, Status = :Status");
-		updateSql.append(", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
-		updateSql.append(", RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode");
-		updateSql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType");
-		updateSql.append(", WorkflowId = :WorkflowId");
-		updateSql.append(" Where id =:id and finReference =:finReference");
+	public void update(SanctionConditions sc, String type) {
+		StringBuilder sql = new StringBuilder("Update Sanction_Conditions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set SanctionCondition = ?, Status = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where Id = ? and FinID = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append("  and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(sanctionConditions);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, sc.getSanctionCondition());
+			ps.setString(index++, sc.getStatus());
+			ps.setInt(index++, sc.getVersion());
+			ps.setLong(index++, sc.getLastMntBy());
+			ps.setTimestamp(index++, sc.getLastMntOn());
+			ps.setString(index++, sc.getRecordStatus());
+			ps.setString(index++, sc.getRoleCode());
+			ps.setString(index++, sc.getNextRoleCode());
+			ps.setString(index++, sc.getTaskId());
+			ps.setString(index++, sc.getNextTaskId());
+			ps.setString(index++, sc.getRecordType());
+			ps.setLong(index++, sc.getWorkflowId());
+			ps.setLong(index++, sc.getId());
+			ps.setLong(index++, sc.getFinID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, sc.getVersion() - 1);
+			}
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Fetch current version of the record.
-	 * 
-	 * @param id
-	 * @param typeCode
-	 * @return Integer
-	 */
+	// FIXME:FinID seems method not using
 	@Override
 	public int getVersion(long id, String sanctionCondition) {
 		logger.debug("Entering");
