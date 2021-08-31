@@ -174,6 +174,7 @@ import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
@@ -2827,20 +2828,28 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.manualAdviseDAO.saveDueTaxDetail(detail);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	protected FinanceDetail getFinanceDetail(long finID, String type) {
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+		String finReference = fm.getFinReference();
+		String finType = fm.getFinType();
+
+		FinanceType ft = financeTypeDAO.getFinanceTypeByID(finType, "_AView");
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(ft);
+		schdData.setFinReference(finReference);
+
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, type, false));
+		schdData.setFinFeeDetailList(finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "_View"));
+
+		return fd;
+	}
 
 	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
 		this.customerStatusCodeDAO = customerStatusCodeDAO;
-	}
-
-	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
-		return customerStatusCodeDAO;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
@@ -2851,68 +2860,32 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
 	}
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
-	public RepayInstructionDAO getRepayInstructionDAO() {
-		return repayInstructionDAO;
-	}
-
 	public void setRepayInstructionDAO(RepayInstructionDAO repayInstructionDAO) {
 		this.repayInstructionDAO = repayInstructionDAO;
-	}
-
-	public FinODPenaltyRateDAO getFinODPenaltyRateDAO() {
-		return finODPenaltyRateDAO;
 	}
 
 	public void setFinODPenaltyRateDAO(FinODPenaltyRateDAO finODPenaltyRateDAO) {
 		this.finODPenaltyRateDAO = finODPenaltyRateDAO;
 	}
 
-	public DocumentDetailsDAO getDocumentDetailsDAO() {
-		return documentDetailsDAO;
-	}
-
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
-	}
-
-	public CustomerDocumentDAO getCustomerDocumentDAO() {
-		return customerDocumentDAO;
 	}
 
 	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
 		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
-	public EligibilityDetailService getEligibilityDetailService() {
-		return eligibilityDetailService;
-	}
-
 	public void setEligibilityDetailService(EligibilityDetailService eligibilityDetailService) {
 		this.eligibilityDetailService = eligibilityDetailService;
-	}
-
-	public GuarantorDetailService getGuarantorDetailService() {
-		return guarantorDetailService;
 	}
 
 	@Autowired
@@ -2920,104 +2893,52 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.guarantorDetailService = guarantorDetailService;
 	}
 
-	public JointAccountDetailService getJointAccountDetailService() {
-		return jointAccountDetailService;
-	}
-
 	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
 		this.jointAccountDetailService = jointAccountDetailService;
-	}
-
-	public ScoringDetailService getScoringDetailService() {
-		return scoringDetailService;
 	}
 
 	public void setScoringDetailService(ScoringDetailService scoringDetailService) {
 		this.scoringDetailService = scoringDetailService;
 	}
 
-	public CheckListDetailService getCheckListDetailService() {
-		return checkListDetailService;
-	}
-
 	public void setCheckListDetailService(CheckListDetailService checkListDetailService) {
 		this.checkListDetailService = checkListDetailService;
-	}
-
-	public PostingsDAO getPostingsDAO() {
-		return postingsDAO;
 	}
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
 		this.postingsDAO = postingsDAO;
 	}
 
-	public AccountEngineExecution getEngineExecution() {
-		return engineExecution;
-	}
-
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
-	}
-
-	public CommitmentDAO getCommitmentDAO() {
-		return commitmentDAO;
 	}
 
 	public void setCommitmentDAO(CommitmentDAO commitmentDAO) {
 		this.commitmentDAO = commitmentDAO;
 	}
 
-	public FinLogEntryDetailDAO getFinLogEntryDetailDAO() {
-		return finLogEntryDetailDAO;
-	}
-
 	public void setFinLogEntryDetailDAO(FinLogEntryDetailDAO finLogEntryDetailDAO) {
 		this.finLogEntryDetailDAO = finLogEntryDetailDAO;
-	}
-
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
 	}
 
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
-		return financeRepaymentsDAO;
 	}
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
-	public OverdueChargeRecoveryDAO getRecoveryDAO() {
-		return recoveryDAO;
-	}
-
 	public void setRecoveryDAO(OverdueChargeRecoveryDAO recoveryDAO) {
 		this.recoveryDAO = recoveryDAO;
 	}
 
-	public FinanceSuspHeadDAO getFinanceSuspHeadDAO() {
-		return financeSuspHeadDAO;
-	}
-
 	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
 		this.financeSuspHeadDAO = financeSuspHeadDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
 	}
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
@@ -3028,20 +2949,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.commitmentMovementDAO = commitmentMovementDAO;
 	}
 
-	public CommitmentMovementDAO getCommitmentMovementDAO() {
-		return commitmentMovementDAO;
-	}
-
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	public AccountProcessUtil getAccountProcessUtil() {
-		return accountProcessUtil;
 	}
 
 	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
@@ -3052,196 +2961,96 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.transactionEntryDAO = transactionEntryDAO;
 	}
 
-	public TransactionEntryDAO getTransactionEntryDAO() {
-		return transactionEntryDAO;
-	}
-
-	public FinFeeChargesDAO getFinFeeChargesDAO() {
-		return finFeeChargesDAO;
-	}
-
 	public void setFinFeeChargesDAO(FinFeeChargesDAO finFeeChargesDAO) {
 		this.finFeeChargesDAO = finFeeChargesDAO;
-	}
-
-	public FinFeeScheduleDetailDAO getFinFeeScheduleDetailDAO() {
-		return finFeeScheduleDetailDAO;
 	}
 
 	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
 		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
 
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public FinStatusDetailDAO getFinStatusDetailDAO() {
-		return finStatusDetailDAO;
 	}
 
 	public void setFinStatusDetailDAO(FinStatusDetailDAO finStatusDetailDAO) {
 		this.finStatusDetailDAO = finStatusDetailDAO;
 	}
 
-	public SuspensePostingUtil getSuspensePostingUtil() {
-		return suspensePostingUtil;
-	}
-
 	public void setSuspensePostingUtil(SuspensePostingUtil suspensePostingUtil) {
 		this.suspensePostingUtil = suspensePostingUtil;
-	}
-
-	public OverDueRecoveryPostingsUtil getRecoveryPostingsUtil() {
-		return recoveryPostingsUtil;
 	}
 
 	public void setRecoveryPostingsUtil(OverDueRecoveryPostingsUtil recoveryPostingsUtil) {
 		this.recoveryPostingsUtil = recoveryPostingsUtil;
 	}
 
-	public FinanceDeviationsService getDeviationDetailsService() {
-		return deviationDetailsService;
-	}
-
 	public void setDeviationDetailsService(FinanceDeviationsService deviationDetailsService) {
 		this.deviationDetailsService = deviationDetailsService;
-	}
-
-	public FinMandateService getFinMandateService() {
-		return finMandateService;
 	}
 
 	public void setFinMandateService(FinMandateService finMandateService) {
 		this.finMandateService = finMandateService;
 	}
 
-	public FinanceStepDetailDAO getFinanceStepDetailDAO() {
-		return financeStepDetailDAO;
-	}
-
 	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
 		this.financeStepDetailDAO = financeStepDetailDAO;
-	}
-
-	public BlackListCustomerDAO getBlacklistCustomerDAO() {
-		return blacklistCustomerDAO;
 	}
 
 	public void setBlacklistCustomerDAO(BlackListCustomerDAO blacklistCustomerDAO) {
 		this.blacklistCustomerDAO = blacklistCustomerDAO;
 	}
 
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
 	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
 		this.customerDetailsService = customerDetailsService;
-	}
-
-	public FinanceDedupeDAO getFinanceDedupeDAO() {
-		return financeDedupeDAO;
 	}
 
 	public void setFinanceDedupeDAO(FinanceDedupeDAO financeDedupeDAO) {
 		this.financeDedupeDAO = financeDedupeDAO;
 	}
 
-	public CustomerDedupDAO getCustomerDedupDAO() {
-		return customerDedupDAO;
-	}
-
 	public void setCustomerDedupDAO(CustomerDedupDAO customerDedupDAO) {
 		this.customerDedupDAO = customerDedupDAO;
-	}
-
-	public FinStageAccountingLogDAO getFinStageAccountingLogDAO() {
-		return finStageAccountingLogDAO;
 	}
 
 	public void setFinStageAccountingLogDAO(FinStageAccountingLogDAO finStageAccountingLogDAO) {
 		this.finStageAccountingLogDAO = finStageAccountingLogDAO;
 	}
 
-	public FinCollateralsDAO getFinCollateralsDAO() {
-		return finCollateralsDAO;
-	}
-
 	public void setFinCollateralsDAO(FinCollateralsDAO finCollateralsDAO) {
 		this.finCollateralsDAO = finCollateralsDAO;
-	}
-
-	public FinCollateralService getFinCollateralService() {
-		return finCollateralService;
 	}
 
 	public void setFinCollateralService(FinCollateralService finCollateralService) {
 		this.finCollateralService = finCollateralService;
 	}
 
-	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
-		return finAdvancePaymentsService;
-	}
-
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
-	}
-
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
 	}
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
 	}
 
-	public FinCovenantTypeService getFinCovenantTypeService() {
-		return finCovenantTypeService;
-	}
-
 	public void setFinCovenantTypeService(FinCovenantTypeService finCovenantTypeService) {
 		this.finCovenantTypeService = finCovenantTypeService;
-	}
-
-	public RepaymentPostingsUtil getRepayPostingUtil() {
-		return repayPostingUtil;
 	}
 
 	public void setRepayPostingUtil(RepaymentPostingsUtil repayPostingUtil) {
 		this.repayPostingUtil = repayPostingUtil;
 	}
 
-	public ExtTablesDAO getExtTablesDAO() {
-		return extTablesDAO;
-	}
-
 	public void setExtTablesDAO(ExtTablesDAO extTablesDAO) {
 		this.extTablesDAO = extTablesDAO;
-	}
-
-	public FinFlagDetailsDAO getFinFlagDetailsDAO() {
-		return finFlagDetailsDAO;
 	}
 
 	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
 		this.finFlagDetailsDAO = finFlagDetailsDAO;
 	}
 
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
-	}
-
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
 		this.finServiceInstructionDAO = finServiceInstructionDAO;
-	}
-
-	public FinTypeAccountingDAO getFinTypeAccountingDAO() {
-		return finTypeAccountingDAO;
 	}
 
 	public void setFinTypeAccountingDAO(FinTypeAccountingDAO finTypeAccountingDAO) {
@@ -3255,10 +3064,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return collateralAssignmentValidation;
 	}
 
-	public CollateralAssignmentDAO getCollateralAssignmentDAO() {
-		return collateralAssignmentDAO;
-	}
-
 	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
 		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
@@ -3270,40 +3075,20 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return finAssetTypesValidation;
 	}
 
-	public FinAssetTypeDAO getFinAssetTypeDAO() {
-		return finAssetTypeDAO;
-	}
-
 	public void setFinAssetTypeDAO(FinAssetTypeDAO finAssetTypeDAO) {
 		this.finAssetTypeDAO = finAssetTypeDAO;
-	}
-
-	public FinPlanEmiHolidayDAO getFinPlanEmiHolidayDAO() {
-		return finPlanEmiHolidayDAO;
 	}
 
 	public void setFinPlanEmiHolidayDAO(FinPlanEmiHolidayDAO finPlanEmiHolidayDAO) {
 		this.finPlanEmiHolidayDAO = finPlanEmiHolidayDAO;
 	}
 
-	public CustomerQueuingDAO getCustomerQueuingDAO() {
-		return customerQueuingDAO;
-	}
-
 	public void setCustomerQueuingDAO(CustomerQueuingDAO customerQueuingDAO) {
 		this.customerQueuingDAO = customerQueuingDAO;
 	}
 
-	public AccrualService getAccrualService() {
-		return accrualService;
-	}
-
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
-	}
-
-	public FinFeeDetailDAO getFinFeeDetailDAO() {
-		return finFeeDetailDAO;
 	}
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
@@ -3323,68 +3108,32 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
-	}
-
-	public FinIRRDetailsDAO getFinIRRDetailsDAO() {
-		return finIRRDetailsDAO;
-	}
-
 	public void setFinIRRDetailsDAO(FinIRRDetailsDAO finIRRDetailsDAO) {
 		this.finIRRDetailsDAO = finIRRDetailsDAO;
-	}
-
-	public QueryDetailService getQueryDetailService() {
-		return queryDetailService;
 	}
 
 	public void setQueryDetailService(QueryDetailService queryDetailService) {
 		this.queryDetailService = queryDetailService;
 	}
 
-	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-		return financeReferenceDetailDAO;
-	}
-
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public FeeTypeDAO getFeeTypeDAO() {
-		return feeTypeDAO;
 	}
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
 		this.feeTypeDAO = feeTypeDAO;
 	}
 
-	public ReceiptCalculator getReceiptCalculator() {
-		return receiptCalculator;
-	}
-
 	public void setReceiptCalculator(ReceiptCalculator receiptCalculator) {
 		this.receiptCalculator = receiptCalculator;
-	}
-
-	public RuleDAO getRuleDAO() {
-		return ruleDAO;
 	}
 
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
 	}
 
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
-	}
-
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
 		this.financeTaxDetailDAO = financeTaxDetailDAO;
-	}
-
-	public VehicleDealerService getVehicleDealerService() {
-		return vehicleDealerService;
 	}
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
@@ -3395,10 +3144,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.covenantsService = covenantsService;
 	}
 
-	public FinOptionService getFinOptionService() {
-		return finOptionService;
-	}
-
 	public void setFinOptionService(FinOptionService finOptionService) {
 		this.finOptionService = finOptionService;
 	}
@@ -3407,28 +3152,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		this.covenantsDAO = covenantsDAO;
 	}
 
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
-	}
-
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public InstallmentDueService getInstallmentDueService() {
-		return installmentDueService;
-	}
-
-	public AdvancePaymentService getAdvancePaymentService() {
-		return advancePaymentService;
-	}
-
-	public CovenantsService getCovenantsService() {
-		return covenantsService;
-	}
-
-	public CovenantsDAO getCovenantsDAO() {
-		return covenantsDAO;
 	}
 
 	public void setCollateralAssignmentValidation(CollateralAssignmentValidation collateralAssignmentValidation) {

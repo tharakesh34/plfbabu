@@ -1242,7 +1242,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
-			int eodProgressCount = getFinanceDetailService().getProgressCountByCust(aFinanceMain.getCustID());
+			int eodProgressCount = financeDetailService.getProgressCountByCust(aFinanceMain.getCustID());
 
 			// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 			if (eodProgressCount > 0) {
@@ -1252,7 +1252,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			if (StringUtils.isNotEmpty(moduleDefiner) && moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
-				boolean holdDisbursement = getFinanceDetailService()
+				boolean holdDisbursement = financeDetailService
 						.isholdDisbursementProcess(aFinanceMain.getFinReference());
 
 				if (holdDisbursement) {
@@ -1545,331 +1545,312 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	private void openFinMaintenanceDialog(Listitem item) throws Exception {
-		logger.debug("Entering ");
-		// get the selected FinanceMain object
+		logger.debug(Literal.ENTERING);
 
-		if (item != null) {
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+		if (item == null) {
+			return;
+		}
 
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinReference(),
-					"_View");
+		final FinanceMain aFm = (FinanceMain) item.getAttribute("data");
 
-			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
+		String finRef = aFm.getFinReference();
+		long finID = aFm.getFinID();
 
-			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				return;
-			}
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String whereCond1 = " Where FinReference = ?";
 
-			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
-				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
-				return;
-			}
+		if (!doCheckAuthority(aFm, whereCond1, new Object[] { finRef })) {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+			return;
+		}
 
-			// Set Workflow Details
-			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
-			if (workFlowDetails == null) {
-				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
-				return;
-			}
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			return;
+		}
 
-			String userRole = aFinanceMain.getNextRoleCode();
-			if (StringUtils.isEmpty(userRole)) {
-				userRole = workFlowDetails.getFirstTaskOwner();
-			}
+		// Set Workflow Details
+		setWorkflowDetails(aFm.getFinType(), StringUtils.isNotEmpty(aFm.getLovDescFinProduct()));
+		if (workFlowDetails == null) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+			return;
+		}
 
-			final FinanceDetail financeDetail = getFinanceMaintenanceService().getFinanceDetailById(
-					aFinanceMain.getFinReference(), "_View", userRole, moduleDefiner, eventCodeRef);
-			financeDetail.setModuleDefiner(moduleDefiner);
+		String userRole = aFm.getNextRoleCode();
+		if (StringUtils.isEmpty(userRole)) {
+			userRole = workFlowDetails.getFirstTaskOwner();
+		}
 
-			// Role Code State Checking
-			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
-			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+		final FinanceDetail financeDetail = financeMaintenanceService.getFinanceDetailById(finRef, "_View", userRole,
+				moduleDefiner, eventCodeRef);
+		financeDetail.setModuleDefiner(moduleDefiner);
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
+		// Role Code State Checking
+		String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();
+		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = finRef;
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
-				logger.debug("Leaving");
-				return;
-			}
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
 
-			String maintainSts = "";
-			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
-				maintainSts = StringUtils
-						.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
-			}
+			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			logger.debug("Leaving");
+			return;
+		}
 
-			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+		String maintainSts = "";
+		if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
+			maintainSts = StringUtils
+					.trimToEmpty(financeDetail.getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+		}
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-			} else {
+		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = finRef;
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				if (isWorkFlowEnabled()) {
-					String whereCond = " AND FinReference='" + aFinanceMain.getFinReference() + "' AND version="
-							+ aFinanceMain.getVersion() + " ";
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+		} else {
 
-					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
-							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
-					if (userAcces) {
-						showMaintainDetailView(financeDetail);
-					} else {
-						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
-					}
-				} else {
+			if (isWorkFlowEnabled()) {
+				String whereCond = " AND FinReference='" + finRef + "' AND version=" + aFm.getVersion() + " ";
+
+				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond, aFm.getTaskId(),
+						aFm.getNextTaskId());
+				if (userAcces) {
 					showMaintainDetailView(financeDetail);
-				}
-			}
-		}
-		logger.debug("Leaving ");
-	}
-
-	/**
-	 * Method for Fetching Finance Repayment Details
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
-	private void openFinanceRepaymentDialog(Listitem item) throws Exception {
-		logger.debug("Entering ");
-		// get the selected FinanceMain object
-
-		if (item != null) {
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
-
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinReference(),
-					"_View");
-
-			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
-
-			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				return;
-			}
-
-			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
-				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
-				return;
-			}
-
-			// Set Workflow Details
-			String userRole = "";
-			if (!StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSTLENQ)) {
-				setWorkflowDetails(aFinanceMain.getFinType(),
-						StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
-				if (workFlowDetails == null) {
-					MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
-					return;
-				}
-
-				userRole = aFinanceMain.getNextRoleCode();
-				if (StringUtils.isEmpty(userRole)) {
-					userRole = workFlowDetails.getFirstTaskOwner();
-				}
-			}
-
-			final RepayData repayData = getManualPaymentService().getRepayDataById(aFinanceMain.getFinReference(),
-					eventCodeRef, moduleDefiner, userRole);
-
-			// Role Code State Checking
-			String nextroleCode = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
-			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-
-				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
-				logger.debug("Leaving");
-				return;
-			}
-
-			String maintainSts = "";
-			if (repayData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
-				maintainSts = StringUtils.trimToEmpty(
-						repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
-			}
-
-			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-			} else {
-
-				if (isWorkFlowEnabled()) {
-					String whereCond = " AND FinReference='" + aFinanceMain.getFinReference() + "' AND version="
-							+ aFinanceMain.getVersion() + " ";
-
-					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
-							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
-					if (userAcces) {
-						showRepayDetailView(repayData);
-					} else {
-						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
-					}
 				} else {
-					showRepayDetailView(repayData);
+					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 				}
+			} else {
+				showMaintainDetailView(financeDetail);
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Fetching Finance Receipt Details
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
-	private void openFinanceReceiptDialog(Listitem item) throws Exception {
-		logger.debug("Entering ");
-		// get the selected FinanceMain object
+	private void openFinanceRepaymentDialog(Listitem item) throws Exception {
+		logger.debug(Literal.ENTERING);
 
-		if (item != null) {
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+		if (item == null) {
+			return;
+		}
 
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinReference(),
-					"_View");
+		// CAST AND STORE THE SELECTED OBJECT
+		final FinanceMain aFm = (FinanceMain) item.getAttribute("data");
 
-			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
+		String finRef = aFm.getFinReference();
+		long finID = aFm.getFinID();
 
-			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
-				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-				return;
-			}
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
 
-			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
-				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
-				return;
-			}
+		// Check whether the user has authority to change/view the record.
+		String whereCond1 = " where FinReference=?";
 
-			// Set Workflow Details
-			String userRole = "";
-			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+		if (!doCheckAuthority(aFm, whereCond1, new Object[] { finRef })) {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+			return;
+		}
+
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			return;
+		}
+
+		// Set Workflow Details
+		String userRole = "";
+		if (!StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSTLENQ)) {
+			setWorkflowDetails(aFm.getFinType(), StringUtils.isNotEmpty(aFm.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
 				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
 				return;
 			}
 
-			userRole = aFinanceMain.getNextRoleCode();
+			userRole = aFm.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
+		}
 
-			final FinReceiptData receiptData = getReceiptService().getFinReceiptDataById(aFinanceMain.getFinReference(),
-					eventCodeRef, moduleDefiner, userRole);
+		final RepayData repayData = getManualPaymentService().getRepayDataById(finRef, eventCodeRef, moduleDefiner,
+				userRole);
 
-			// Role Code State Checking
-			String nextroleCode = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain()
-					.getNextRoleCode();
-			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+		// Role Code State Checking
+		String nextroleCode = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
+		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = finRef;
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
 
-				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
-				logger.debug("Leaving");
-				return;
-			}
+			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			logger.debug("Leaving");
+			return;
+		}
 
-			String maintainSts = "";
-			if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
-				maintainSts = StringUtils.trimToEmpty(
-						receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
-			}
+		String maintainSts = "";
+		if (repayData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
+			maintainSts = StringUtils.trimToEmpty(
+					repayData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+		}
 
-			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = finRef;
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-			} else if (receiptData.getReceiptHeader().isDepositProcess()) {
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+		} else {
 
-				// If record is in Deposit Process, not allowed to do the Process on Realization
-				String[] errParm = new String[1];
-				String[] valueParm = new String[1];
-				valueParm[0] = aFinanceMain.getFinReference();
-				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+			if (isWorkFlowEnabled()) {
+				String whereCond = " AND FinReference='" + finRef + "' AND version=" + aFm.getVersion() + " ";
 
-				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParm, valueParm),
-						getUserWorkspace().getUserLanguage());
-				MessageUtil.showError(errorDetails.getError());
-
-			} else {
-
-				if (isWorkFlowEnabled()) {
-					String whereCond = " AND FinReference='" + aFinanceMain.getFinReference() + "' AND version="
-							+ aFinanceMain.getVersion() + " ";
-
-					boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-							getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
-							aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
-					if (userAcces) {
-						showReceiptDetailView(receiptData);
-					} else {
-						MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
-					}
+				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond, aFm.getTaskId(),
+						aFm.getNextTaskId());
+				if (userAcces) {
+					showRepayDetailView(repayData);
 				} else {
-					showReceiptDetailView(receiptData);
+					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
 				}
+			} else {
+				showRepayDetailView(repayData);
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Fetching Finance Repayment Details
-	 * 
-	 * @param item
-	 * @throws Exception
-	 */
+	private void openFinanceReceiptDialog(Listitem item) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (item == null) {
+			return;
+		}
+
+		// CAST AND STORE THE SELECTED OBJECT
+		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinReference(),
+				"_View");
+
+		// Check whether the user has authority to change/view the record.
+		String whereCond1 = " where FinReference=?";
+
+		if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+			return;
+		}
+
+		if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
+			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+			return;
+		}
+
+		// Set Workflow Details
+		String userRole = "";
+		setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+		if (workFlowDetails == null) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+			return;
+		}
+
+		userRole = aFinanceMain.getNextRoleCode();
+		if (StringUtils.isEmpty(userRole)) {
+			userRole = workFlowDetails.getFirstTaskOwner();
+		}
+
+		final FinReceiptData receiptData = getReceiptService().getFinReceiptDataById(aFinanceMain.getFinReference(),
+				eventCodeRef, moduleDefiner, userRole);
+
+		// Role Code State Checking
+		String nextroleCode = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getNextRoleCode();
+		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = aFinanceMain.getFinReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+
+			Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+			logger.debug("Leaving");
+			return;
+		}
+
+		String maintainSts = "";
+		if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
+			maintainSts = StringUtils.trimToEmpty(
+					receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
+		}
+
+		if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = aFinanceMain.getFinReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+		} else if (receiptData.getReceiptHeader().isDepositProcess()) {
+
+			// If record is in Deposit Process, not allowed to do the Process on Realization
+			String[] errParm = new String[1];
+			String[] valueParm = new String[1];
+			valueParm[0] = aFinanceMain.getFinReference();
+			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+					new ErrorDetail(PennantConstants.KEY_FIELD, "65034", errParm, valueParm),
+					getUserWorkspace().getUserLanguage());
+			MessageUtil.showError(errorDetails.getError());
+
+		} else {
+
+			if (isWorkFlowEnabled()) {
+				String whereCond = " AND FinReference='" + aFinanceMain.getFinReference() + "' AND version="
+						+ aFinanceMain.getVersion() + " ";
+
+				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
+						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
+						aFinanceMain.getTaskId(), aFinanceMain.getNextTaskId());
+				if (userAcces) {
+					showReceiptDetailView(receiptData);
+				} else {
+					MessageUtil.showError(Labels.getLabel("RECORD_NOTALLOWED"));
+				}
+			} else {
+				showReceiptDetailView(receiptData);
+			}
+		}
+		logger.debug(Literal.ENTERING);
+	}
+
 	private void openFinanceWriteoffDialog(Listitem item) throws Exception {
-		logger.debug("Entering ");
-		// get the selected FinanceMain object
+		logger.debug(Literal.ENTERING);
 
 		if (item != null) {
 			// CAST AND STORE THE SELECTED OBJECT
@@ -1989,7 +1970,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void openFinanceCancellationDialog(Listitem item) throws Exception {
@@ -2140,8 +2121,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				String whereCond = " AND FinID=" + finID + " AND version=" + fm.getVersion() + " ";
 
 				boolean userAcces = validateUserAccess(workFlowDetails.getId(),
-						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond,
-						fm.getTaskId(), fm.getNextTaskId());
+						getUserWorkspace().getLoggedInUser().getUserId(), workflowCode, whereCond, fm.getTaskId(),
+						fm.getNextTaskId());
 				if (userAcces) {
 					showCancellationDetailView(fd);
 				} else {
