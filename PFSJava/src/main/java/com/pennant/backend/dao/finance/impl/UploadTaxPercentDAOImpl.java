@@ -1,61 +1,44 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadHeaderDAOImpl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2017    														*
- *                                                                  						*
- * Modified Date    :  17-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2017 * * Modified
+ * Date : 17-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import com.pennant.backend.dao.finance.UploadTaxPercentDAO;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>UploadTaxPercent model</b> class.<br>
@@ -68,42 +51,54 @@ public class UploadTaxPercentDAOImpl extends BasicDao<UploadTaxPercent> implemen
 		super();
 	}
 
-	/**
-	 * Method for saving Fee schedule Details list
-	 */
 	@Override
 	public void saveUploadDetails(List<UploadTaxPercent> uploadDetailsList) {
-		logger.debug("Entering");
+		String sql = "Insert Into UploadTaxPercent (UploadId, FinID, FinReference, FeeTypeCode, TaxPercent, Status, Reason) Values (?, ?, ?, ?, ?, ?, ?)";
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" INSERT INTO UploadTaxPercent");
-		insertSql.append(" (UploadId, FinReference, FeeTypeCode, TaxPercent, Status, Reason) ");
-		insertSql.append(" VALUES(:UploadId, :FinReference, :FeeTypeCode, :TaxPercent, :Status, :Reason)");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				UploadTaxPercent tax = uploadDetailsList.get(i);
+				int index = 1;
 
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(uploadDetailsList.toArray());
+				ps.setLong(index++, tax.getUploadId());
+				ps.setLong(index++, tax.getFinID());
+				ps.setString(index++, tax.getFinReference());
+				ps.setString(index++, tax.getFeeTypeCode());
+				ps.setBigDecimal(index++, tax.getTaxPercent());
+				ps.setString(index++, tax.getStatus());
+				ps.setString(index++, tax.getReason());
 
-		this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
+			}
 
-		logger.debug("Leaving");
+			@Override
+			public int getBatchSize() {
+				return uploadDetailsList.size();
+			}
+		});
 	}
 
 	@Override
 	public List<UploadTaxPercent> getSuccesFailedCount(long uploadId) {
+		String sql = "Select Count(UploadId) UploadId, Status From UploadTaxPercent Where UploadId = ?";
 
-		logger.debug("Entering");
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("UploadId", uploadId);
-		StringBuilder selectSql = new StringBuilder("Select Count(UploadId) Count, Status ");
-		selectSql.append(" from UploadTaxPercent ");
-		selectSql.append(" Where UploadId = :UploadId Group By STATUS");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("selectListSql: " + selectSql.toString());
-		RowMapper<UploadTaxPercent> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadTaxPercent.class);
-		logger.debug("Leaving");
+		List<UploadTaxPercent> uploadList = this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, uploadId);
+		}, (rs, rowNum) -> {
+			UploadTaxPercent tax = new UploadTaxPercent();
 
-		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+			tax.setUploadId(rs.getLong("UploadId"));
+			tax.setStatus(rs.getString("Status"));
+
+			return tax;
+		});
+
+		return uploadList.stream().sorted((l1, l2) -> StringUtils.compare(l1.getStatus(), l2.getStatus()))
+				.collect(Collectors.toList());
 	}
 
 }
