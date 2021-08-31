@@ -1,51 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * * Modified
+ * Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.financemanagement.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,8 +36,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -81,31 +60,32 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 	@Override
 	public Provision getProvision() {
-		logger.debug(Literal.ENTERING);
-		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Provision");
+		WorkFlowDetails wfd = WorkFlowUtil.getWorkFlowDetails("Provision");
 		Provision provision = new Provision();
-		if (workFlowDetails != null) {
-			provision.setWorkflowId(workFlowDetails.getWorkFlowId());
+
+		if (wfd != null) {
+			provision.setWorkflowId(wfd.getWorkFlowId());
 		}
-		logger.debug(Literal.LEAVING);
+
 		return provision;
 	}
 
 	@Override
-	public Provision getProvisionById(final String finReference, TableType tableType, boolean isMovement) {
+	public Provision getProvisionByFinId(long finID, TableType tableType, boolean isMovement) {
 		StringBuilder sql = null;
+
 		if (isMovement) {
 			sql = getMovementsQuery(tableType);
 		} else {
 			sql = getSelectQuery(tableType);
 		}
-		sql.append(" Where FinReference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new ProvisionRowMapper(tableType));
+			return this.jdbcOperations.queryForObject(sql.toString(), new ProvisionRowMapper(tableType), finID);
 		} catch (EmptyResultDataAccessException e) {
 			if (isMovement) {
 				logger.info("Details not exists in PROVISION_MOVEMENTS table");
@@ -118,43 +98,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 	}
 
-	private StringBuilder getSelectQuery(TableType tableType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit, ProfitAccruedAndDue");
-		sql.append(", ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate, DueDays, CurrBucket");
-		sql.append(", Dpd, ProvisionDate, ProvisionedAmt, AssetCode, AssetStageOrder, Npa, ManualProvision");
-		sql.append(", LinkedTranId, ChgLinkedTranId, Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
-
-		if (tableType.getSuffix().toLowerCase().contains("view")) {
-			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, FinIsActive, NpaTemplateCode");
-			sql.append(", NpaTemplateDesc");
-		}
-		sql.append(" from PROVISIONS");
-		sql.append(tableType.getSuffix());
-		return sql;
-	}
-
-	private StringBuilder getMovementsQuery(TableType tableType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, ProvisionId, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
-		sql.append(", ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate");
-		sql.append(", DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt, AssetCode, AssetStageOrder, Npa");
-		sql.append(", ManualProvision, LinkedTranId, ChgLinkedTranId, Version, LastMntBy, LastMntOn");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
-
-		if (tableType.getSuffix().toLowerCase().contains("view")) {
-			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, NpaTemplateCode, NpaTemplateDesc");
-		}
-		sql.append(" from PROVISION_MOVEMENTS");
-		sql.append(tableType.getSuffix());
-		return sql;
-	}
-
 	@Override
 	public Provision getProvisionById(final long id, TableType tableType, boolean isMovement) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = null;
 		if (isMovement) {
 			sql = getMovementsQuery(tableType);
@@ -163,32 +108,31 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		}
 		sql.append(" Where id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new ProvisionRowMapper(tableType));
+			return this.jdbcOperations.queryForObject(sql.toString(), new ProvisionRowMapper(tableType), id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 
 	}
 
 	@Override
 	public void delete(Provision provision, TableType type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder("Delete From PROVISIONS");
+		StringBuilder sql = new StringBuilder("Delete From Provisions");
 		sql.append(type.getSuffix());
-		sql.append(" Where FinReference =:FinReference");
+		sql.append(" Where FinID = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(provision);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug(Literal.LEAVING);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, provision.getFinID());
+		});
 	}
 
 	@Override
@@ -197,16 +141,16 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			provision.setId(getNextValue("SEQPROVISIONS"));
 		}
 
-		StringBuilder sql = new StringBuilder("insert into PROVISIONS");
+		StringBuilder sql = new StringBuilder("Insert Into Provisions");
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
-		sql.append(" , ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue");
+		sql.append("(Id, FinID, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
+		sql.append(", ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue");
 		sql.append(", DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
 		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, NpaTemplateId");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
@@ -216,7 +160,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			public void setValues(PreparedStatement ps) throws SQLException {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(provision.getId()));
+				ps.setLong(index++, provision.getId());
+				ps.setLong(index++, provision.getFinID());
 				ps.setString(index++, provision.getFinReference());
 				ps.setBigDecimal(index++, provision.getClosingBalance());
 				ps.setBigDecimal(index++, provision.getOutStandPrincipal());
@@ -247,7 +192,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				ps.setString(index++, provision.getNextTaskId());
 				ps.setString(index++, provision.getRecordType());
 				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
-				ps.setLong(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
+				ps.setObject(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
 			}
 		});
 
@@ -256,63 +201,60 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 	@Override
 	public long saveMovements(Provision provision, TableType tableType) {
-
 		if (provision.getId() <= 0) {
 			provision.setId(getNextValue("SEQPROVISIONS"));
 		}
-		StringBuilder sql = new StringBuilder("insert into PROVISION_MOVEMENTS");
+
+		StringBuilder sql = new StringBuilder("Insert Into Provision_Movements");
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, ProvisionId, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
+		sql.append(" (Id, ProvisionId, FinID, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
 		sql.append(" , ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue");
 		sql.append(", DueFromDate, LastFullyPaidDate, DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt");
 		sql.append(", AssetCode, AssetStageOrder, Npa, ManualProvision, LinkedTranId, ChgLinkedTranId");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, NpaTemplateId");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
-		jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-
-				ps.setLong(index++, JdbcUtil.setLong(provision.getId()));
-				ps.setLong(index++, JdbcUtil.setLong(provision.getProvisionId()));
-				ps.setString(index++, provision.getFinReference());
-				ps.setBigDecimal(index++, provision.getClosingBalance());
-				ps.setBigDecimal(index++, provision.getOutStandPrincipal());
-				ps.setBigDecimal(index++, provision.getOutStandProfit());
-				ps.setBigDecimal(index++, provision.getProfitAccruedAndDue());
-				ps.setBigDecimal(index++, provision.getProfitAccruedAndNotDue());
-				ps.setBigDecimal(index++, provision.getCollateralValue());
-				ps.setDate(index++, JdbcUtil.getDate(provision.getDueFromDate()));
-				ps.setDate(index++, JdbcUtil.getDate(provision.getLastFullyPaidDate()));
-				ps.setInt(index++, provision.getDueDays());
-				ps.setInt(index++, provision.getCurrBucket());
-				ps.setInt(index++, provision.getDpd());
-				ps.setDate(index++, JdbcUtil.getDate(provision.getProvisionDate()));
-				ps.setBigDecimal(index++, provision.getProvisionedAmt());
-				ps.setString(index++, provision.getAssetCode());
-				ps.setInt(index++, provision.getAssetStageOrder());
-				ps.setBoolean(index++, provision.isNpa());
-				ps.setBoolean(index++, provision.isManualProvision());
-				ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
-				ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
-				ps.setInt(index++, provision.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
-				ps.setTimestamp(index++, provision.getLastMntOn());
-				ps.setString(index++, provision.getRecordStatus());
-				ps.setString(index++, provision.getRoleCode());
-				ps.setString(index++, provision.getNextRoleCode());
-				ps.setString(index++, provision.getTaskId());
-				ps.setString(index++, provision.getNextTaskId());
-				ps.setString(index++, provision.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
-				ps.setLong(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
-			}
+			ps.setLong(index++, JdbcUtil.setLong(provision.getId()));
+			ps.setLong(index++, JdbcUtil.setLong(provision.getProvisionId()));
+			ps.setLong(index++, JdbcUtil.setLong(provision.getFinID()));
+			ps.setString(index++, provision.getFinReference());
+			ps.setBigDecimal(index++, provision.getClosingBalance());
+			ps.setBigDecimal(index++, provision.getOutStandPrincipal());
+			ps.setBigDecimal(index++, provision.getOutStandProfit());
+			ps.setBigDecimal(index++, provision.getProfitAccruedAndDue());
+			ps.setBigDecimal(index++, provision.getProfitAccruedAndNotDue());
+			ps.setBigDecimal(index++, provision.getCollateralValue());
+			ps.setDate(index++, JdbcUtil.getDate(provision.getDueFromDate()));
+			ps.setDate(index++, JdbcUtil.getDate(provision.getLastFullyPaidDate()));
+			ps.setInt(index++, provision.getDueDays());
+			ps.setInt(index++, provision.getCurrBucket());
+			ps.setInt(index++, provision.getDpd());
+			ps.setDate(index++, JdbcUtil.getDate(provision.getProvisionDate()));
+			ps.setBigDecimal(index++, provision.getProvisionedAmt());
+			ps.setString(index++, provision.getAssetCode());
+			ps.setInt(index++, provision.getAssetStageOrder());
+			ps.setBoolean(index++, provision.isNpa());
+			ps.setBoolean(index++, provision.isManualProvision());
+			ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
+			ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
+			ps.setInt(index++, provision.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
+			ps.setTimestamp(index++, provision.getLastMntOn());
+			ps.setString(index++, provision.getRecordStatus());
+			ps.setString(index++, provision.getRoleCode());
+			ps.setString(index++, provision.getNextRoleCode());
+			ps.setString(index++, provision.getTaskId());
+			ps.setString(index++, provision.getNextTaskId());
+			ps.setString(index++, provision.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
+			ps.setLong(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
 		});
 
 		return provision.getId();
@@ -320,16 +262,17 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 	@Override
 	public int saveAmounts(List<ProvisionAmount> provisionAmounts, TableType tableType, boolean isMovement) {
-		StringBuilder sql = new StringBuilder("Insert into PROVISION");
+		StringBuilder sql = new StringBuilder("Insert Into Provision");
+
 		if (isMovement) {
-			sql.append("_MOVMENT_AMOUNTS");
+			sql.append("_Movment_Amounts");
 		} else {
-			sql.append("_AMOUNTS");
+			sql.append("_Amounts");
 		}
 
 		sql.append(tableType.getSuffix());
-		sql.append("(Id, ProvisionId, ProvisionType, AssetCode , ProvisionPer, ProvisionAmtCal");
-		sql.append(") values(");
+		sql.append(" (Id, ProvisionId, ProvisionType, AssetCode, ProvisionPer, ProvisionAmtCal");
+		sql.append(") Values(");
 		sql.append("?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
@@ -337,17 +280,19 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				ProvisionAmount provisionAmount = provisionAmounts.get(i);
+				ProvisionAmount pa = provisionAmounts.get(i);
 				int index = 1;
-				if (provisionAmount.getId() == Long.MIN_VALUE || isMovement) {
-					provisionAmount.setId(getNextValue("SEQPROVISION_AMOUNTS"));
+
+				if (pa.getId() == Long.MIN_VALUE || isMovement) {
+					pa.setId(getNextValue("SEQPROVISION_AMOUNTS"));
 				}
-				ps.setLong(index++, JdbcUtil.setLong(provisionAmount.getId()));
-				ps.setLong(index++, provisionAmount.getProvisionId());
-				ps.setString(index++, provisionAmount.getProvisionType());
-				ps.setString(index++, provisionAmount.getAssetCode());
-				ps.setBigDecimal(index++, provisionAmount.getProvisionPer());
-				ps.setBigDecimal(index++, provisionAmount.getProvisionAmtCal());
+
+				ps.setLong(index++, JdbcUtil.setLong(pa.getId()));
+				ps.setLong(index++, pa.getProvisionId());
+				ps.setString(index++, pa.getProvisionType());
+				ps.setString(index++, pa.getAssetCode());
+				ps.setBigDecimal(index++, pa.getProvisionPer());
+				ps.setBigDecimal(index++, pa.getProvisionAmtCal());
 			}
 
 			@Override
@@ -362,8 +307,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		StringBuilder sql = new StringBuilder();
 		sql.append("Update PROVISIONS");
 		sql.append(type.getSuffix());
-		sql.append("  Set ");
-		sql.append("  FinReference = ?, ClosingBalance = ?, OutStandPrincipal = ?, OutStandProfit = ?");
+		sql.append("  Set");
+		sql.append("  FinID = ?, FinReference = ?, ClosingBalance = ?, OutStandPrincipal = ?, OutStandProfit = ?");
 		sql.append(", ProfitAccruedAndDue = ?, ProfitAccruedAndNotDue = ?, CollateralValue = ?, DueFromDate = ?");
 		sql.append(", LastFullyPaidDate = ?, DueDays = ?, CurrBucket = ?, Dpd = ?, ProvisionDate = ?");
 		sql.append(", ProvisionedAmt = ?, AssetCode = ?, AssetStageOrder = ?, Npa = ?, ManualProvision = ?");
@@ -374,6 +319,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 
 		return jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
+
+			ps.setLong(index++, prv.getFinID());
 			ps.setString(index++, prv.getFinReference());
 			ps.setBigDecimal(index++, prv.getClosingBalance());
 			ps.setBigDecimal(index++, prv.getOutStandPrincipal());
@@ -410,17 +357,17 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 	@Override
 	public int updateAmounts(List<ProvisionAmount> prvAmtList, TableType type) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("Update PROVISION_AMOUNTS");
+		sql.append("Update Provision_Amounts");
 		sql.append(type.getSuffix());
-		sql.append(" Set ");
-		sql.append(" AssetCode = ?, ProvisionPer = ?, ProvisionAmtCal = ?");
-		sql.append(" Where Id= ?");
+		sql.append(" Set AssetCode = ?, ProvisionPer = ?, ProvisionAmtCal = ?");
+		sql.append(" Where Id = ?");
 
 		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				ProvisionAmount prv = prvAmtList.get(i);
 				int index = 1;
+
 				ps.setString(index++, prv.getAssetCode());
 				ps.setBigDecimal(index++, prv.getProvisionPer());
 				ps.setBigDecimal(index++, prv.getProvisionAmtCal());
@@ -435,16 +382,100 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 	}
 
 	@Override
-	public boolean isProvisionExists(String finReference, TableType type) {
-
-		StringBuilder sql = new StringBuilder("Select Count(*) From PROVISIONS");
+	public boolean isProvisionExists(long finID, TableType type) {
+		StringBuilder sql = new StringBuilder("Select Count(FinID) From Provisions");
 		sql.append(StringUtils.trimToEmpty(type.getSuffix()));
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Integer.class) > 0;
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 
+		return false;
+	}
+
+	@Override
+	public void deleteAmounts(long provisionId, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From Provision_Amounts");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where provisionId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, provisionId);
+		});
+	}
+
+	@Override
+	public List<ProvisionAmount> getProvisionAmounts(long id, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, ProvisionId, ProvisionType, ProvisionPer, ProvisionAmtCal, AssetCode");
+		sql.append(" From Provision_Amounts");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where ProvisionId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, id);
+		}, (ResultSet rs, int rowNum) -> {
+			ProvisionAmount pa = new ProvisionAmount();
+
+			pa.setId(rs.getLong("Id"));
+			pa.setProvisionId(rs.getLong("ProvisionId"));
+			pa.setProvisionType(rs.getString("ProvisionType"));
+			pa.setProvisionPer(rs.getBigDecimal("ProvisionPer"));
+			pa.setProvisionAmtCal(rs.getBigDecimal("ProvisionAmtCal"));
+			pa.setAssetCode(rs.getString("AssetCode"));
+
+			return pa;
+		});
+
+	}
+
+	private StringBuilder getSelectQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit, ProfitAccruedAndDue");
+		sql.append(", ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate, DueDays, CurrBucket");
+		sql.append(", Dpd, ProvisionDate, ProvisionedAmt, AssetCode, AssetStageOrder, Npa, ManualProvision");
+		sql.append(", LinkedTranId, ChgLinkedTranId, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
+
+		if (tableType.getSuffix().toLowerCase().contains("view")) {
+			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, FinIsActive, NpaTemplateCode");
+			sql.append(", NpaTemplateDesc");
+		}
+
+		sql.append(" From Provisions");
+		sql.append(tableType.getSuffix());
+
+		return sql;
+	}
+
+	private StringBuilder getMovementsQuery(TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, ProvisionId, FinID, FinReference, ClosingBalance, OutStandPrincipal, OutStandProfit");
+		sql.append(", ProfitAccruedAndDue, ProfitAccruedAndNotDue, CollateralValue, DueFromDate, LastFullyPaidDate");
+		sql.append(", DueDays, CurrBucket, Dpd, ProvisionDate, ProvisionedAmt, AssetCode, AssetStageOrder, Npa");
+		sql.append(", ManualProvision, LinkedTranId, ChgLinkedTranId, Version, LastMntBy, LastMntOn");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, NpaTemplateId");
+
+		if (tableType.getSuffix().toLowerCase().contains("view")) {
+			sql.append(", FinBranch, FinType, CustID, CustCIF, CustShrtName, NpaTemplateCode, NpaTemplateDesc");
+		}
+
+		sql.append(" From Provision_Movements");
+		sql.append(tableType.getSuffix());
+
+		return sql;
 	}
 
 	public class ProvisionRowMapper implements RowMapper<Provision> {
@@ -457,7 +488,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		@Override
 		public Provision mapRow(ResultSet rs, int arg1) throws SQLException {
 			Provision provision = new Provision();
+
 			provision.setId(rs.getLong("Id"));
+			provision.setFinID(rs.getLong("FinID"));
 			provision.setFinReference(rs.getString("FinReference"));
 			provision.setClosingBalance(rs.getBigDecimal("ClosingBalance"));
 			provision.setOutStandPrincipal(rs.getBigDecimal("outStandPrincipal"));
@@ -496,7 +529,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 				provision.setCustID(rs.getLong("CustID"));
 				provision.setCustCIF(rs.getString("CustCIF"));
 				provision.setCustShrtName(rs.getString("CustShrtName"));
-				//provision.setFinCcy(rs.getString("FinCcy"));
+				// provision.setFinCcy(rs.getString("FinCcy"));
 				provision.setNpaTemplateCode(rs.getString("NpaTemplateCode"));
 				provision.setNpaTemplateDesc(rs.getString("NpaTemplateDesc"));
 			}
@@ -505,58 +538,4 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		}
 
 	}
-
-	@Override
-	public void deleteAmounts(long provisionId, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from PROVISION_AMOUNTS");
-		sql.append(tableType.getSuffix());
-		sql.append(" where provisionId = :ProvisionId ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		ProvisionAmount provisionAmount = new ProvisionAmount();
-		provisionAmount.setProvisionId(provisionId);
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(provisionAmount);
-		jdbcTemplate.update(sql.toString(), paramSource);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public List<ProvisionAmount> getProvisionAmounts(long id, TableType tableType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, ProvisionId, ProvisionType, ProvisionPer, ProvisionAmtCal, AssetCode");
-		sql.append(" From PROVISION_AMOUNTS");
-		sql.append(tableType.getSuffix());
-		sql.append(" Where ProvisionId = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index, id);
-
-			}, (ResultSet rs, int rowNum) -> {
-				ProvisionAmount pa = new ProvisionAmount();
-
-				pa.setId(rs.getLong("Id"));
-				pa.setProvisionId(rs.getLong("ProvisionId"));
-				pa.setProvisionType(rs.getString("ProvisionType"));
-				pa.setProvisionPer(rs.getBigDecimal("ProvisionPer"));
-				pa.setProvisionAmtCal(rs.getBigDecimal("ProvisionAmtCal"));
-				pa.setAssetCode(rs.getString("AssetCode"));
-
-				return pa;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		return new ArrayList<>();
-
-	}
-
 }

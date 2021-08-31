@@ -47,6 +47,7 @@ public class Provision extends AbstractWorkflowEntity {
 
 	private long id = Long.MIN_VALUE;
 	private long provisionId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private BigDecimal closingBalance;
 	private BigDecimal outStandPrincipal;
@@ -146,6 +147,7 @@ public class Provision extends AbstractWorkflowEntity {
 		Provision entity = new Provision();
 		entity.setId(this.id);
 		entity.setProvisionId(this.provisionId);
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setClosingBalance(this.closingBalance);
 		entity.setOutStandPrincipal(this.outStandPrincipal);
@@ -228,6 +230,14 @@ public class Provision extends AbstractWorkflowEntity {
 
 	public void setProvisionId(long provisionId) {
 		this.provisionId = provisionId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
