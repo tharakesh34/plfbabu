@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -32,54 +32,51 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 	@Override
 	public List<RateChangeUpload> getRateChangeUploadDetails(long batchId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, BatchId, FinReference, BaseRateCode, Margin, ActualRate, ReCalType");
-		sql.append(", RecalFromDate, RecalToDate, SpecialRate, Remarks, FromDate, ToDate, UploadStatusRemarks ");
-		sql.append(" FROM RATECHANGE_UPLOAD_DETAILS");
-		sql.append(" WHERE BATCHID = ?");
+		sql.append(" Id, BatchId, FinID, FinReference, BaseRateCode, Margin, ActualRate, ReCalType");
+		sql.append(", RecalFromDate, RecalToDate, SpecialRate, Remarks, FromDate, ToDate, UploadStatusRemarks");
+		sql.append(" From RateChange_Upload_Details");
+		sql.append(" Where BatchId = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
-		List<RateChangeUpload> list = this.jdbcOperations.query(sql.toString(), new Object[] { batchId },
-				(rs, rowNum) -> {
-					RateChangeUpload rateChange = new RateChangeUpload();
+		List<RateChangeUpload> list = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			RateChangeUpload rc = new RateChangeUpload();
 
-					rateChange.setId(rs.getLong("Id"));
-					rateChange.setBatchId(rs.getLong("BatchId"));
-					rateChange.setFinReference(rs.getString("FINREFERENCE"));
-					rateChange.setBaseRateCode(rs.getString("BaseRateCode"));
-					rateChange.setMargin(rs.getBigDecimal("Margin"));
-					rateChange.setActualRate(rs.getBigDecimal("ActualRate"));
-					rateChange.setRecalType(rs.getString("ReCalType"));
-					rateChange.setRecalFromDate(rs.getDate("RecalFromDate"));
-					rateChange.setRecalToDate(rs.getDate("RecalToDate"));
-					rateChange.setSpecialRate(rs.getString("SpecialRate"));
-					rateChange.setRemarks(rs.getString("Remarks"));
-					rateChange.setFromDate(JdbcUtil.getDate(rs.getDate("FromDate")));
-					rateChange.setToDate(JdbcUtil.getDate(rs.getDate("ToDate")));
-					rateChange.setUploadStatusRemarks((rs.getString("UploadStatusRemarks")));
+			rc.setId(rs.getLong("Id"));
+			rc.setBatchId(rs.getLong("BatchId"));
+			rc.setFinID(rs.getLong("FinID"));
+			rc.setFinReference(rs.getString("FinReference"));
+			rc.setBaseRateCode(rs.getString("BaseRateCode"));
+			rc.setMargin(rs.getBigDecimal("Margin"));
+			rc.setActualRate(rs.getBigDecimal("ActualRate"));
+			rc.setRecalType(rs.getString("ReCalType"));
+			rc.setRecalFromDate(rs.getDate("RecalFromDate"));
+			rc.setRecalToDate(rs.getDate("RecalToDate"));
+			rc.setSpecialRate(rs.getString("SpecialRate"));
+			rc.setRemarks(rs.getString("Remarks"));
+			rc.setFromDate(JdbcUtil.getDate(rs.getDate("FromDate")));
+			rc.setToDate(JdbcUtil.getDate(rs.getDate("ToDate")));
+			rc.setUploadStatusRemarks((rs.getString("UploadStatusRemarks")));
 
-					return rateChange;
-				});
+			return rc;
+		}, batchId);
 
 		return list.stream().sorted((l1, l2) -> Long.compare(l1.getId(), l2.getId())).collect(Collectors.toList());
 	}
 
 	@Override
 	public boolean isFileExists(String name) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select count(ID) from RATECHANGE_UPLOAD_HEADER");
-		sql.append(" where FileName = ?");
+		String sql = "Select Count(ID) From Ratechange_Upload_Header Where FileName = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { name }, Integer.class) > 0 ? true
-				: false;
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, name) > 0 ? true : false;
 	}
 
 	@Override
 	public long saveHeader(String fileName, String entityCode) {
-		StringBuilder sql = new StringBuilder("Insert into");
-		sql.append(" RATECHANGE_UPLOAD_HEADER");
+		StringBuilder sql = new StringBuilder("Insert Into");
+		sql.append(" Ratechange_Upload_Header");
 		sql.append(" (FileName, EntityCode, TotalRecords, SucessRecords, FailureRecords)");
 		sql.append(" values(?, ?, ?, ?, ?) ");
 
@@ -107,7 +104,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 			return keyHolder.getKey().longValue();
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return 0;
@@ -115,21 +112,20 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 	@Override
 	public int logRcUpload(List<ErrorDetail> errDetail, Long id) {
-		StringBuilder sql = new StringBuilder("Insert Into RATECHANGE_UPLOAD_LOG");
-		sql.append(" (DetailId, ErrorCode, ErrorDescription)");
-		sql.append(" Values( ? , ?, ?)");
+		String sql = "Insert Into Ratechange_Upload_Log (DetailId, ErrorCode, ErrorDescription) Values(?, ?, ?)";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+		return jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				int i = 1;
-				ErrorDetail err = errDetail.get(index);
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				int index = 1;
 
-				ps.setLong(i++, id);
-				ps.setString(i++, err.getCode());
-				ps.setString(i++, err.getError());
+				ErrorDetail err = errDetail.get(i);
+
+				ps.setLong(index++, id);
+				ps.setString(index++, err.getCode());
+				ps.setString(index++, err.getError());
 			}
 
 			public int getBatchSize() {
@@ -139,74 +135,79 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 	}
 
 	@Override
-	public void updateRemarks(RateChangeUploadHeader rateChangeUploadHeader) {
-		StringBuffer sql = new StringBuffer();
-		sql.append(" UPDATE RATECHANGE_UPLOAD_HEADER Set");
-		sql.append(" TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? ");
-		sql.append(" WHERE Id = ?");
+	public void updateRemarks(RateChangeUploadHeader rcuh) {
+		String sql = "Update Ratechange_Upload_Header Set TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? Where Id = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
+			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
 
-				ps.setInt(index++, rateChangeUploadHeader.getTotalRecords());
-				ps.setInt(index++, rateChangeUploadHeader.getSucessRecords());
-				ps.setInt(index++, rateChangeUploadHeader.getFailureRecords());
-				ps.setString(index++, rateChangeUploadHeader.getStatus());
-				ps.setLong(index++, rateChangeUploadHeader.getId());
+				ps.setInt(index++, rcuh.getTotalRecords());
+				ps.setInt(index++, rcuh.getSucessRecords());
+				ps.setInt(index++, rcuh.getFailureRecords());
+				ps.setString(index++, rcuh.getStatus());
+
+				ps.setLong(index++, rcuh.getId());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	@Override
 	public boolean getRateCodes(String brCode) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT count(*) FROM RMTBaseRateCodes");
-		sql.append(" WHERE BRType = ?");
+		String sql = "Select Count(BRType) From RMTBaseRateCodes Where BRType = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { brCode }, Integer.class) > 0 ? true
-				: false;
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, brCode) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
 	}
 
 	public boolean getsplRateCodes(String srCode) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT count(*) FROM RMTSplRateCodes");
-		sql.append(" WHERE SRType = ?");
+		String sql = "Select count(SRType) FROM RMTSplRateCodes Where SRType = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { srCode }, Integer.class) > 0 ? true
-				: false;
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, srCode) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return false;
 	}
 
 	@Override
 	public List<FinanceMain> getFinanceMain(long batchId) {
-		StringBuilder sql = new StringBuilder("Select ");
-		sql.append(" FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID ");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FM.FinID, FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID ");
 		sql.append(", FM.FinCcy, FM.FinIsActive");
 		sql.append(" From Financemain FM");
-		sql.append(" INNER JOIN Customers Cust on FM.CUSTID = Cust.CUSTID");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode");
-		sql.append(" Where FM.FinReference in (select FinReference from RATECHANGE_UPLOAD_DETAILS where BatchId = ?)");
+		sql.append(" Inner Join Customers Cust on FM.CustId = Cust.CustId");
+		sql.append(" Inner Join RmtFinanceTypes FT on FT.FinType = FM.FinType");
+		sql.append(" Inner Join SmtDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
+		sql.append(" Where FM.FinID in (Select FinID From Ratechange_Upload_Details Where BatchId = ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { batchId }, FinanceMainRowMapper());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-	}
+			ps.setLong(index++, batchId);
 
-	private RowMapper<FinanceMain> FinanceMainRowMapper() {
-		return (rs, rowNum) -> {
+		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
+			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setEntityCode(rs.getString("EntityCode"));
@@ -216,31 +217,28 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 
 			return fm;
-		};
+		});
+
 	}
 
 	@Override
 	public void updateRateChangeDetails(RateChangeUpload rcUpload) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update RATECHANGE_UPLOAD_DETAILS Set ");
-		sql.append(" UploadStatusRemarks = ? , STATUS = ?");
-		sql.append(" Where Id = ?");
+		String sql = "Update Ratechange_Upload_Details Set UploadStatusRemarks = ?, Status = ? Where Id = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
+			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
-				//ps.setObject(index++, rcUpload.getFinServInstId());
+
 				ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
 				ps.setString(index++, rcUpload.getStatus());
 				ps.setLong(index++, rcUpload.getId());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-
 	}
 
 	public void updateDeRemarks(RateChangeUploadHeader header, DataEngineStatus deStatus) {
@@ -252,14 +250,12 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 		deStatus.setRemarks(remarks.toString());
 
-		StringBuffer sql = new StringBuffer();
-		sql.append(" UPDATE DATA_ENGINE_STATUS set EndTime = ?, Remarks = ?, Status = ?");
-		sql.append(" WHERE Name = ?");
+		String sql = "Update Data_Engine_Status Set EndTime = ?, Remarks = ?, Status = ? Where Name = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			this.jdbcOperations.update(sql.toString(), ps -> {
+			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
 
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
@@ -269,7 +265,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 

@@ -13,6 +13,7 @@ public class RateChangeUpload implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	private long finID;
 	private String finReference;
 	private Long batchId;
 	private String baseRateCode;
@@ -87,6 +88,14 @@ public class RateChangeUpload implements Serializable {
 
 	public void setServiceReqNo(String serviceReqNo) {
 		this.serviceReqNo = serviceReqNo;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
