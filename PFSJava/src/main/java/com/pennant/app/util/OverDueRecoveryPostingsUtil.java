@@ -90,6 +90,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -123,21 +124,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		super();
 	}
 
-	/**
-	 * Method for Posting OverDue Recoveries .
-	 * 
-	 * @param fm
-	 * @param scheduleDetails
-	 * @param financeProfitDetail
-	 * @param dateValueDate
-	 * @param curSchDate
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterfaceException
-	 */
 	public List<Object> recoveryPayment(FinanceMain fm, Date dateValueDate, Date postDate,
 			ManualAdviseMovements movement, Date movementDate, AEEvent aeEvent, FinRepayQueueHeader rpyQueueHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		// AmountCodes Preparation
@@ -157,6 +146,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			isGSTInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
 		}
 
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		if (aeEvent == null) {
@@ -196,7 +186,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 
 		// LPP Receivable Amounts setting for Accounting difference
-		FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, "LPP");
+		FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finID, "LPP");
 		if (taxRcv != null) {
 			if (taxRcv.getReceivableAmount()
 					.compareTo(amountCodes.getPenaltyPaid().add(amountCodes.getPenaltyWaived())) < 0) {
@@ -280,7 +270,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		dataMap.put("LPP_UGST_P", ugstPaid);
 		dataMap.put("LPP_CESS_P", cessPaid);
 
-		//GST Waivers Details
+		// GST Waivers Details
 		dataMap.put("LPP_CGST_W", cgstWaived);
 		dataMap.put("LPP_SGST_W", sgstWaived);
 		dataMap.put("LPP_UGST_W", ugstWaived);
@@ -403,7 +393,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		List<Object> returnList = new ArrayList<>();
 		returnList.add(aeEvent);
 
-		// GST Invoice 
+		// GST Invoice
 		if (movement != null && movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0 && aeEvent.isPostingSucess()
 				&& aeEvent.getLinkedTranId() > 0) {
 
@@ -465,12 +455,12 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		return getTDSAmount(paidAmount);
 	}
 
-	private void prepareTaxMovement(FinRepayQueueHeader rpyQueueHeader, FinanceMain financeMain,
-			ManualAdviseMovements advMov, long linkedTranID) {
+	private void prepareTaxMovement(FinRepayQueueHeader rpyQueueHeader, FinanceMain fm, ManualAdviseMovements advMov,
+			long linkedTranID) {
 
 		// Prepare GST Details based on Invoice ID which was incomized
 		List<OverdueTaxMovement> odTaxMovList = new ArrayList<>();
-		List<FinODAmzTaxDetail> dueTaxList = finODAmzTaxDetailDAO.getODTaxList(financeMain.getFinReference());
+		List<FinODAmzTaxDetail> dueTaxList = finODAmzTaxDetailDAO.getODTaxList(fm.getFinID());
 
 		// Sorting Due Tax details based on Valuedate
 		dueTaxList = sortDueTaxDetails(dueTaxList);
@@ -573,7 +563,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			if (rpyQueueHeader.isLppAmzReqonME()) {
 
 				FinanceDetail financeDetail = new FinanceDetail();
-				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				financeDetail.getFinScheduleData().setFinanceMain(fm);
 
 				for (OverdueTaxMovement taxMovement : odTaxMovList) {
 
@@ -647,27 +637,18 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		}
 	}
 
-	/**
-	 * Method for Preparation or Update of OverDue Details data
-	 * 
-	 * @param finRepayQueue
-	 * @param scheduleDetail
-	 * @param dateValueDate
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterfaceException
-	 */
 	public FinODDetails overDueDetailPreparation(FinRepayQueue finRepayQueue, String profitDayBasis, Date dateValueDate,
-			boolean isAfterRecovery, boolean isEnqPurpose)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			boolean isAfterRecovery, boolean isEnqPurpose) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		Date curBussDate = SysParamUtil.getAppValueDate();
 
 		String finReference = finRepayQueue.getFinReference();
-		FinODDetails odDetails = finODDetailsDAO.getFinODDetailsForBatch(finReference, finRepayQueue.getRpyDate());
+		long finID = finRepayQueue.getFinID();
 
-		//Finance Overdue Details Save or Updation
+		FinODDetails odDetails = finODDetailsDAO.getFinODDetailsForBatch(finID, finRepayQueue.getRpyDate());
+
+		// Finance Overdue Details Save or Updation
 		if (odDetails != null) {
 			odDetails = prepareOverDueData(odDetails, dateValueDate, finRepayQueue, isAfterRecovery);
 			if (!isEnqPurpose) {
@@ -684,30 +665,16 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		return odDetails;
 	}
 
-	/**
-	 * Method for Preparation or Update of OverDue Details data
-	 * 
-	 * @param repayQueue
-	 * @param pftDaysBasis
-	 * @param valueDate
-	 * @param isRecovery
-	 * @param isEnqPurpose
-	 * @return
-	 * @throws InterfaceException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 */
 	public List<Object> recoveryCalculation(FinRepayQueue repayQueue, String pftDaysBasis, Date valueDate,
-			boolean isRecovery, boolean isEnqPurpose)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			boolean isRecovery, boolean isEnqPurpose) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> odObjDetails = new ArrayList<>();
 
-		//Overdue Detail Calculation
+		// Overdue Detail Calculation
 		FinODDetails details = overDueDetailPreparation(repayQueue, pftDaysBasis, valueDate, isRecovery, isEnqPurpose);
 
-		//Preparation for Overdue Penalty Recovery Details
+		// Preparation for Overdue Penalty Recovery Details
 		OverdueChargeRecovery rec = overdueRecoverCalculation(details, valueDate, pftDaysBasis, isRecovery,
 				isEnqPurpose, false);
 
@@ -718,51 +685,52 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		return odObjDetails;
 	}
 
-	private OverdueChargeRecovery overdueRecoverCalculation(FinODDetails details, Date valueDate, String profitDayBasis,
+	private OverdueChargeRecovery overdueRecoverCalculation(FinODDetails od, Date valueDate, String profitDayBasis,
 			boolean isAfterRecovery, boolean isEnqPurpose, boolean doPostings) {
 
-		Date schdDate = details.getFinODSchdDate();
-		Date newPenaltyDate = DateUtil.addDays(schdDate, details.getODGraceDays());
+		Date schdDate = od.getFinODSchdDate();
+		Date newPenaltyDate = DateUtil.addDays(schdDate, od.getODGraceDays());
 
 		OverdueChargeRecovery recovery = null;
-		//Check Condition for Overdue Recovery Details Entries
+		// Check Condition for Overdue Recovery Details Entries
 		if (newPenaltyDate.compareTo(valueDate) <= 0) {
 
 			boolean searchForPenalty = true;
-			//Condition Checking for Overdue Penalty Exist or not
-			if (!details.isApplyODPenalty()) {
+			// Condition Checking for Overdue Penalty Exist or not
+			if (!od.isApplyODPenalty()) {
 				searchForPenalty = false;
 			} else {
-				if (details.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) == 0) {
+				if (od.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) == 0) {
 					searchForPenalty = false;
 				}
 			}
 
-			//Delete Max Finance Effective Date Recovery Record if Overdue Payment
-			//will not happen, only for Percentage on Due Days Charge type
+			// Delete Max Finance Effective Date Recovery Record if Overdue Payment
+			// will not happen, only for Percentage on Due Days Charge type
 			OverdueChargeRecovery prvRecovery = null;
-			String finReference = details.getFinReference();
-			String odFor = details.getFinODFor();
-			String odChargeType = details.getODChargeType();
+			long finID = od.getFinID();
+			String finReference = od.getFinReference();
+			String odFor = od.getFinODFor();
+			String odChargeType = od.getODChargeType();
 
 			if (searchForPenalty) {
-				prvRecovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finReference, schdDate, odFor, "_AMView");
+				prvRecovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finID, schdDate, odFor, "_AMView");
 
 				if (FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null
 						&& prvRecovery.isRcdCanDel() && !isEnqPurpose) {
-					recoveryDAO.deleteUnpaid(finReference, schdDate, odFor, "");
+					recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 				}
 			} else if (!searchForPenalty) {
-				prvRecovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finReference, schdDate, odFor, "_AMView");
+				prvRecovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finID, schdDate, odFor, "_AMView");
 				if (prvRecovery != null && prvRecovery.isRcdCanDel()) {
 					if (!isEnqPurpose) {
-						recoveryDAO.deleteUnpaid(finReference, schdDate, odFor, "");
+						recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 					}
 
 					BigDecimal prvPenalty = BigDecimal.ZERO.subtract(prvRecovery.getPenalty());
 					BigDecimal prvPenaltyBal = BigDecimal.ZERO.subtract(prvRecovery.getPenaltyBal());
 
-					//Overdue Details Updation for Totals
+					// Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
 					detail.setFinReference(finReference);
 					detail.setFinODSchdDate(schdDate);
@@ -778,7 +746,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				}
 			}
 
-			//Save/Update Overdue Recovery Details based upon Search Criteria
+			// Save/Update Overdue Recovery Details based upon Search Criteria
 			if (searchForPenalty) {
 
 				BigDecimal prvPenalty = BigDecimal.ZERO;
@@ -792,14 +760,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 						tableType = "_ATView";
 					}
 
-					recovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finReference, schdDate, odFor, tableType);
+					recovery = recoveryDAO.getMaxOverdueChargeRecoveryById(finID, schdDate, odFor, tableType);
 				} else {
 					recovery = prvRecovery;
 				}
 
 				boolean resetTotals = true;
 				int seqNo = 1;
-				//Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
+				// Stop calculation for paid penalty for Charge Type 'FLAT' & 'PERCONETIME'
 				if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && recovery != null
 						&& (recovery.getPenaltyPaid().compareTo(BigDecimal.ZERO) > 0
 								|| recovery.getWaivedAmt().compareTo(BigDecimal.ZERO) > 0)) {
@@ -808,7 +776,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				} else {
 
-					//Store Previous values for Total Calculations
+					// Store Previous values for Total Calculations
 					if (recovery != null) {
 						seqNo = recovery.getSeqNo() + 1;
 
@@ -821,7 +789,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 					if (!FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS.equals(odChargeType) && prvRecovery != null) {
 						if (!isEnqPurpose) {
-							recoveryDAO.deleteUnpaid(finReference, schdDate, odFor, "");
+							recoveryDAO.deleteUnpaid(finID, schdDate, odFor, "");
 						}
 						recovery = null;
 					}
@@ -839,10 +807,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					recovery.setODDays(DateUtil.getDaysBetween(valueDate, schdDate));
 					odDate = schdDate;
 
-					if (details.isODIncGrcDays()) {
+					if (od.isODIncGrcDays()) {
 						odDate = schdDate;
 					} else {
-						odDate = DateUtil.addDays(schdDate, details.getODGraceDays());
+						odDate = DateUtil.addDays(schdDate, od.getODGraceDays());
 					}
 					recovery.setPenaltyPaid(BigDecimal.ZERO);
 					recovery.setPenaltyBal(BigDecimal.ZERO);
@@ -859,30 +827,30 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					recovery.setODDays(recovery.getODDays() + 1);
 				}
 
-				recovery.setFinCurODAmt(details.getFinCurODAmt());
-				recovery.setFinCurODPri(details.getFinCurODPri());
-				recovery.setFinCurODPft(details.getFinCurODPft());
+				recovery.setFinCurODAmt(od.getFinCurODAmt());
+				recovery.setFinCurODPri(od.getFinCurODPri());
+				recovery.setFinCurODPft(od.getFinCurODPft());
 				recovery.setPenaltyType(odChargeType);
-				recovery.setPenaltyCalOn(details.getODChargeCalOn());
-				recovery.setPenaltyAmtPerc(details.getODChargeAmtOrPerc());
-				recovery.setMaxWaiver(details.getODMaxWaiverPerc());
+				recovery.setPenaltyCalOn(od.getODChargeCalOn());
+				recovery.setPenaltyAmtPerc(od.getODChargeAmtOrPerc());
+				recovery.setMaxWaiver(od.getODMaxWaiverPerc());
 
-				//Overdue Penalty Amount Calculation Depends on applied Charge Type
+				// Overdue Penalty Amount Calculation Depends on applied Charge Type
 				switch (odChargeType) {
 				case FinanceConstants.PENALTYTYPE_FLAT:
-					recovery.setPenalty(details.getODChargeAmtOrPerc());
+					recovery.setPenalty(od.getODChargeAmtOrPerc());
 					break;
 				case FinanceConstants.PENALTYTYPE_PERC_ONETIME:
-					penatlyOnOneTime(details, recovery);
+					penatlyOnOneTime(od, recovery);
 					break;
 				case FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS:
-					penaltyOnDueDays(details, valueDate, profitDayBasis, isAfterRecovery, recovery, odDate);
+					penaltyOnDueDays(od, valueDate, profitDayBasis, isAfterRecovery, recovery, odDate);
 					break;
 				default:
 					break;
 				}
 
-				//Total Penalty Details Recalculation 
+				// Total Penalty Details Recalculation
 				prvPenalty = recovery.getPenalty().add(prvPenalty);
 				prvPenaltyBal = recovery.getPenalty().add(prvPenaltyBal);
 
@@ -898,7 +866,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 				Date curBussDate = SysParamUtil.getAppValueDate();
 				if (!isEnqPurpose && schdDate.compareTo(curBussDate) <= 0) {
-					//Recovery Record Saving : Check to Add the Record/Not with "ZERO" penalty balance Amount while Recovery calculation
+					// Recovery Record Saving : Check to Add the Record/Not with "ZERO" penalty balance Amount while
+					// Recovery calculation
 					if (isRecordSave) {
 						if (recovery.getPenaltyBal().compareTo(BigDecimal.ZERO) > 0
 								&& recovery.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
@@ -908,7 +877,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 						recoveryDAO.update(recovery, "");
 					}
 
-					//Overdue Details Updation for Totals
+					// Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
 					detail.setFinReference(finReference);
 					detail.setFinODSchdDate(schdDate);
@@ -980,8 +949,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		fod.setFinType(queue.getFinType());
 		fod.setCustID(queue.getCustomerID());
 
-		//Prepare Overdue Penalty rate Details & set to Finance Overdue Details
-		FinODPenaltyRate fodPr = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinReference(), "");
+		// Prepare Overdue Penalty rate Details & set to Finance Overdue Details
+		FinODPenaltyRate fodPr = finODPenaltyRateDAO.getFinODPenaltyRateByRef(queue.getFinID(), "");
 
 		if (fodPr != null) {
 			fod.setApplyODPenalty(fodPr.isApplyODPenalty());
@@ -1028,7 +997,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		if (isAfterRecovery) {
 			fod.setFinCurODDays(fod.getFinCurODDays() + 1);
 		}
-		//TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be worked.
+		// TODO ###124902 - New field to be included for future use which stores the last payment date. This needs to be
+		// worked.
 		fod.setFinLMdfDate(SysParamUtil.getAppDate());
 
 		return fod;
@@ -1074,16 +1044,16 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		BigDecimal paidAmount = BigDecimal.ZERO;
 
 		String finReference = fm.getFinReference();
-		//Calculate Pending Penalty Balance
+		// Calculate Pending Penalty Balance
 		BigDecimal pendingPenalty = penalty.subtract(prvPenaltyPaid);
 
 		if (pendingPenalty.compareTo(BigDecimal.ZERO) > 0) {
 
-			//Get Finance Details From DB
-			//financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
+			// Get Finance Details From DB
+			// financeMain = getFinanceMainDAO().getFinanceMainForBatch(finReference);
 			boolean isPayNow = false;
 
-			//### 06-11-2015 End
+			// ### 06-11-2015 End
 			BigDecimal penaltyPaidNow = BigDecimal.ZERO;
 			boolean isPaidClear = false;
 
@@ -1124,14 +1094,14 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				linkedTranId = aeEvent.getLinkedTranId();
 				errorCode = aeEvent.getErrorMessage();
 
-				//Overdue Details Updation for Paid Penalty
+				// Overdue Details Updation for Paid Penalty
 				if (isPostingSuccess) {
 
-					//Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
+					// Overdue Recovery Details Updation for Paid Amounts & Record Deletion Status
 					doUpdateRecoveryData(finReference, schdDate, finODFor, movementDate, chargeType, penaltyPaidNow,
 							waiverAmt, isPaidClear);
 
-					//Overdue Details Updation for Totals
+					// Overdue Details Updation for Totals
 					FinODDetails detail = new FinODDetails();
 					detail.setFinReference(finReference);
 					detail.setFinODSchdDate(schdDate);
