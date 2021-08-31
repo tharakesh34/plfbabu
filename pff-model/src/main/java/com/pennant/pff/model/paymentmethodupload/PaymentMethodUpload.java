@@ -11,6 +11,7 @@ public class PaymentMethodUpload implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private Long id;
+	private Long finID;
 	private String finReference;
 	private Long batchId;
 	private Long mandateId;
@@ -26,6 +27,14 @@ public class PaymentMethodUpload implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

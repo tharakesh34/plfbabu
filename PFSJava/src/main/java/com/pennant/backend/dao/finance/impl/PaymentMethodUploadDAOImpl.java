@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -29,32 +28,39 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 	@Override
 	public boolean isFileExists(String name) {
-		String sql = "Select count(ID) from PAYMENTMETHOD_UPLOAD_HEADER Where FileName = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		return this.jdbcOperations.queryForObject(sql, new Object[] { name }, Integer.class) > 0 ? true : false;
-	}
-
-	@Override
-	public long saveHeader(String fileName) {
-		String sql = "Insert into PAYMENTMETHOD_UPLOAD_HEADER (FileName, TotalRecords, SucessRecords, FailureRecords) Values(?, ?, ?, ?)";
+		String sql = "Select count(ID) From PaymentMethod_Upload_Header Where FileName = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			KeyHolder keyHolder = new GeneratedKeyHolder();
+			return this.jdbcOperations.queryForObject(sql, Integer.class, name) > 0;
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 
+		return false;
+	}
+
+	@Override
+	public long saveHeader(String fileName) {
+		String sql = "Insert Into PaymentMethod_Upload_Header (FileName, TotalRecords, SucessRecords, FailureRecords) Values(?, ?, ?, ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+
+		try {
 			jdbcOperations.update(new PreparedStatementCreator() {
 
 				@Override
 				public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 					PreparedStatement ps = con.prepareStatement(sql, new String[] { "id" });
+					int index = 1;
 
-					ps.setString(1, fileName);
-					ps.setInt(2, 0);
-					ps.setInt(3, 0);
-					ps.setInt(4, 0);
+					ps.setString(index++, fileName);
+					ps.setInt(index++, 0);
+					ps.setInt(index++, 0);
+					ps.setInt(index++, 0);
 
 					return ps;
 				}
@@ -62,7 +68,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 			return keyHolder.getKey().longValue();
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return 0;
@@ -70,36 +76,44 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 	@Override
 	public void updateRemarks(PaymentMethodUploadHeader header) {
-		String sql = "Update PAYMENTMETHOD_UPLOAD_HEADER Set TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? Where Id = ?";
+		String sql = "Update PaymentMethod_Upload_Header Set TotalRecords = ?, SucessRecords = ?, FailureRecords = ?, Status = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
 			this.jdbcOperations.update(sql, ps -> {
-				ps.setInt(1, header.getTotalRecords());
-				ps.setInt(2, header.getSucessRecords());
-				ps.setInt(3, header.getFailureRecords());
-				ps.setString(4, header.getStatus());
-				ps.setLong(5, header.getId());
+				int index = 1;
+
+				ps.setInt(index++, header.getTotalRecords());
+				ps.setInt(index++, header.getSucessRecords());
+				ps.setInt(index++, header.getFailureRecords());
+				ps.setString(index++, header.getStatus());
+
+				ps.setLong(index++, header.getId());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	@Override
 	public List<PaymentMethodUpload> getChangePaymentUploadDetails(long batchId) {
-		String sql = "SELECT Id, BatchId, FINREFERENCE, MandateId, FinRepayMethod , UploadStatusRemarks FROM PAYMENTMETHOD_UPLOAD_DETAIL WHERE BATCHID = ?";
+		String sql = "Select Id, BatchId, FinID, FinReference, MandateId, FinRepayMethod, UploadStatusRemarks From PaymentMethod_Upload_Detail Where BatchId = ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		List<PaymentMethodUpload> list = this.jdbcOperations.query(sql, new Object[] { batchId }, (rs, rowNum) -> {
+		List<PaymentMethodUpload> list = this.jdbcOperations.query(sql, ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchId);
+		}, (rs, rowNum) -> {
 			PaymentMethodUpload pmu = new PaymentMethodUpload();
 
 			pmu.setId(rs.getLong("Id"));
 			pmu.setBatchId(rs.getLong("BatchId"));
-			pmu.setFinReference(rs.getString("FINREFERENCE"));
+			pmu.setFinID(rs.getLong("FinID"));
+			pmu.setFinReference(rs.getString("FinReference"));
 			pmu.setMandateId(rs.getLong("MandateId"));
 			pmu.setFinRepayMethod(rs.getString("FinRepayMethod"));
 			pmu.setUploadStatusRemarks(rs.getString("UploadStatusRemarks"));
@@ -112,18 +126,19 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 	@Override
 	public int logRcUpload(List<ErrorDetail> errDetail, Long id) {
-		String sql = "Insert Into PAYMENTMETHOD_UPLOAD_LOG (DetailId, ErrorCode, ErrorDescription) Values( ? , ?, ?)";
+		String sql = "Insert Into PaymentMethod_Upload_Log (DetailId, ErrorCode, ErrorDescription) Values( ?, ?, ?)";
 
 		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
 
-			public void setValues(PreparedStatement ps, int index) throws SQLException {
-				ErrorDetail err = errDetail.get(index);
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ErrorDetail err = errDetail.get(i);
+				int index = 1;
 
-				ps.setLong(1, id);
-				ps.setString(2, err.getCode());
-				ps.setString(3, err.getError());
+				ps.setLong(index++, id);
+				ps.setString(index++, err.getCode());
+				ps.setString(index++, err.getError());
 			}
 
 			public int getBatchSize() {
@@ -134,17 +149,19 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 	@Override
 	public void updateDeRemarks(DataEngineStatus deStatus) {
-		String sql = "Update DATA_ENGINE_STATUS set EndTime = ?, Remarks = ?, Status = ?, SuccessRecords = ?, FailedRecords = ? WHERE Id = ?";
+		String sql = "Update Data_Engine_Status Set EndTime = ?, Remarks = ?, Status = ?, SuccessRecords = ?, FailedRecords = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		this.jdbcOperations.update(sql, ps -> {
-			ps.setDate(1, JdbcUtil.getDate(DateUtil.getSysDate()));
-			ps.setString(2, deStatus.getRemarks());
-			ps.setString(3, deStatus.getStatus());
-			ps.setLong(4, deStatus.getSuccessRecords());
-			ps.setLong(5, deStatus.getFailedRecords());
-			ps.setLong(6, deStatus.getId());
+			int index = 1;
+
+			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+			ps.setString(index++, deStatus.getRemarks());
+			ps.setString(index++, deStatus.getStatus());
+			ps.setLong(index++, deStatus.getSuccessRecords());
+			ps.setLong(index++, deStatus.getFailedRecords());
+			ps.setLong(index++, deStatus.getId());
 		});
 
 	}
@@ -152,91 +169,89 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 	@Override
 	public List<FinanceMain> getFinanceMain(long batchId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID, ");
-		sql.append(" Cust.CustCIF LovDescCustCIF, FM.FinCcy, FM.FinIsActive");
+		sql.append(" FM.FinID, FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID");
+		sql.append(", Cust.CustCIF LovDescCustCIF, FM.FinCcy, FM.FinIsActive");
 		sql.append(" From Financemain FM");
-		sql.append(" INNER JOIN Customers Cust on FM.CUSTID = Cust.CUSTID");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN SMTDivisiondetail SD On FT.FINDIVISION = SD.DivisionCode");
-		sql.append(" Where FM.FinReference in ");
-		sql.append("(select FinReference from PAYMENTMETHOD_UPLOAD_DETAIL where BatchId = ?)");
+		sql.append(" Inner Join Customers Cust on FM.CustId = Cust.CustId");
+		sql.append(" Inner Join RMTFinanceTypes FT on FT.FinType = FM.FinType");
+		sql.append(" Inner Join SMTDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
+		sql.append(" Where FM.FinID in ");
+		sql.append("(Select FinID From PaymentMethod_Upload_Detail Where BatchId = ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { batchId }, FinanceMainRowMapper());
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-	}
-
-	private RowMapper<FinanceMain> FinanceMainRowMapper() {
-		return (rs, rowNum) -> {
+			ps.setLong(index++, batchId);
+		}, (rs, rowNum) -> {
 			FinanceMain fm = new FinanceMain();
 
+			fm.setFinID(rs.getLong("FinID"));
 			fm.setFinReference(rs.getString("FinReference"));
 			fm.setFinType(rs.getString("FinType"));
 			fm.setEntityCode(rs.getString("EntityCode"));
 			fm.setFinBranch(rs.getString("FinBranch"));
 			fm.setCustID(rs.getLong("CustID"));
+			fm.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
 			fm.setFinCcy(rs.getString("FinCcy"));
 			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-			fm.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
 
 			return fm;
-		};
+		});
+
 	}
 
 	@Override
 	public void updateChangePaymentDetails(PaymentMethodUpload paymentUpload) {
-		String sql = "Update PAYMENTMETHOD_UPLOAD_DETAIL Set UploadStatusRemarks = ?, STATUS = ? Where Id = ?";
+		String sql = "Update PaymentMethod_Upload_Detail Set UploadStatusRemarks = ?, Status = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
 			this.jdbcOperations.update(sql, ps -> {
-				ps.setString(1, StringUtils.trimToEmpty(paymentUpload.getUploadStatusRemarks()));
-				ps.setString(2, paymentUpload.getStatus());
-				ps.setLong(3, paymentUpload.getId());
+				int index = 1;
+
+				ps.setString(index++, StringUtils.trimToEmpty(paymentUpload.getUploadStatusRemarks()));
+				ps.setString(index++, paymentUpload.getStatus());
+				ps.setLong(index++, paymentUpload.getId());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	@Override
 	public void updateFinRepaymethod(PaymentMethodUpload changePayment) {
-		String sql = "Update FinanceMain Set FinRepayMethod = ?, MandateID = ? Where FinReference = ?";
+		String sql = "Update FinanceMain Set FinRepayMethod = ?, MandateID = ? Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
 			this.jdbcOperations.update(sql, ps -> {
-				ps.setString(1, changePayment.getFinRepayMethod());
-				ps.setObject(2, changePayment.getMandateId());
-				ps.setString(3, changePayment.getFinReference());
+				int index = 1;
+
+				ps.setString(index++, changePayment.getFinRepayMethod());
+				ps.setObject(index++, changePayment.getMandateId());
+				ps.setLong(index++, changePayment.getFinID());
 
 			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
-	/**
-	 * Method for fetch existing mandate id by reference.
-	 * 
-	 * @param finReference
-	 * @param type
-	 * @return mandateId
-	 */
 	@Override
 	public boolean isMandateIdExists(long mandateId) {
-		String sql = "Select count(*) From FinanceMain Where MandateId = ?";
+		String sql = "Select count(FinID) From FinanceMain Where MandateId = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, new Object[] { mandateId }, Integer.class) > 0;
+			return this.jdbcOperations.queryForObject(sql, Integer.class, mandateId) > 0;
 		} catch (EmptyResultDataAccessException dae) {
-			logger.warn("No records are available in FinanceMain for thi MandateId >> {}", mandateId);
+			//
 		}
 
 		return false;
