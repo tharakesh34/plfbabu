@@ -45,7 +45,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type);
 
-	List<FinFeeDetail> getFinFeeDetailById(String id, boolean isWIF, String type, String eventCodeRef);
+	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type, String eventCodeRef);
 
 	List<AuditDetail> saveOrUpdate(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
 			boolean isWIF);
@@ -58,7 +58,7 @@ public interface FinFeeDetailService {
 	List<AuditDetail> validate(List<FinFeeDetail> finFeeDetails, long workflowId, String method, String auditTranType,
 			String usrLanguage, boolean isWIF);
 
-	List<FinReceiptDetail> getFinReceiptDetais(long finID, long custId);
+	List<FinReceiptDetail> getFinReceiptDetais(String reference, long custId);
 
 	List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type);
 
@@ -75,7 +75,7 @@ public interface FinFeeDetailService {
 
 	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map, long custId);
 
-	long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference);
+	long getFinFeeTypeIdByFeeType(String feeTypeCode, String finID);
 
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 

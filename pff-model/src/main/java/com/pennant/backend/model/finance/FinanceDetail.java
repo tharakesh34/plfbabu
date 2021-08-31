@@ -223,7 +223,7 @@ public class FinanceDetail implements Serializable {
 	private ReasonHeader reasonHeader;
 	@XmlElementWrapper(name = "legalDetails")
 	@XmlElement(name = "legalDetail")
-	private List<LegalDetail> legalDetailsList;
+	private List<LegalDetail> legalDetailsList = new ArrayList<>();
 	private Verification fiVerification;
 	private Verification tvVerification;
 	private Verification lvVerification;

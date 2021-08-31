@@ -25,8 +25,8 @@ public class DisbursementRequestsQueries {
 
 	public static String getSelectAllQuery(DisbursementRequest requestData) {
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT PAYMENTID DISBURSEMENT_ID, CUSTCIF, FINREFERENCE, AMTTOBERELEASED DISBURSEMENT_AMOUNT");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PAYMENTID DISBURSEMENT_ID, CUSTCIF, FINID, FINREFERENCE, AMTTOBERELEASED DISBURSEMENT_AMOUNT");
 		sql.append(", DISBURSEMENT_TYPE, LLDATE DISBURSEMENT_DATE, PAYABLELOC DRAWEE_LOCATION");
 		sql.append(", PRINTINGLOC PRINT_LOCATION, CUSTSHRTNAME CUSTOMER_NAME, CUSTOMER_MOBILE, CUSTOMER_EMAIL");
 		sql.append(", CUSTOMER_STATE, CUSTOMER_CITY, CUSTOMER_ADDRESS1, CUSTOMER_ADDRESS2, CUSTOMER_ADDRESS3");
@@ -55,10 +55,10 @@ public class DisbursementRequestsQueries {
 		sql = new StringBuilder();
 		sql.append("SELECT PAYMENTID, PAYMENTTYPE, FA.PARTNERBANKID, PARTNERBANKCODE, ALWFILEDOWNLOAD, CHANNEL FROM (");
 		sql.append(" SELECT PAYMENTID, PAYMENTTYPE, PARTNERBANKID, STATUS, 'D' CHANNEL");
-		sql.append(" FROM FINADVANCEPAYMENTS");// Disbursements
+		sql.append(" FROM FINADVANCEPAYMENTS");
 		sql.append(" UNION ALL");
 		sql.append(" SELECT PAYMENTINSTRUCTIONID PAYMENTID, PAYMENTTYPE, PARTNERBANKID, STATUS, 'P' CHANNEL");
-		sql.append(" FROM PAYMENTINSTRUCTIONS"); // Payments
+		sql.append(" FROM PAYMENTINSTRUCTIONS");
 		sql.append(" ) FA");
 		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID");
 		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID = :HEADER_ID)");
@@ -75,7 +75,7 @@ public class DisbursementRequestsQueries {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DISBURSEMENT_REQUESTS (");
-		sql.append(" DISBURSEMENT_ID, CUSTCIF, FINREFERENCE, DISBURSEMENT_AMOUNT, DISBURSEMENT_TYPE");
+		sql.append(" DISBURSEMENT_ID, CUSTCIF, FINID, FINREFERENCE, DISBURSEMENT_AMOUNT, DISBURSEMENT_TYPE");
 		sql.append(", DISBURSEMENT_DATE, DRAWEE_LOCATION, PRINT_LOCATION, CUSTOMER_NAME, CUSTOMER_MOBILE");
 		sql.append(", CUSTOMER_EMAIL, CUSTOMER_STATE, CUSTOMER_CITY, CUSTOMER_ADDRESS1, CUSTOMER_ADDRESS2");
 		sql.append(", CUSTOMER_ADDRESS3, CUSTOMER_ADDRESS4, CUSTOMER_ADDRESS5, BENFICIARY_BANK, BENFICIARY_BRANCH");
@@ -87,7 +87,7 @@ public class DisbursementRequestsQueries {
 		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID");
 		sql.append(", PARTNERBANK_ID, PARTNERBANK_CODE, PARTNERBANK_ACCOUNT, CHEQUE_NUMBER, DOWNLOADED_ON)");
 		sql.append(" Values (");
-		sql.append(" :DisbursementId, :CustCIF, :FinReference, :DisbursementAmount, :DisbursementType");
+		sql.append(" :DisbursementId, :CustCIF, :FinID, :FinReference, :DisbursementAmount, :DisbursementType");
 		sql.append(", :DisbursementDate, :DraweeLocation, :PrintLocation, :CustomerName, :CustomerMobile");
 		sql.append(", :CustomerEmail, :CustomerState, :CustomerCity, :CustomerAddress1, :CustomerAddress2");
 		sql.append(", :CustomerAddress3, :CustomerAddress4, :CustomerAddress5, :BenficiaryBank, :BenficiaryBranch");

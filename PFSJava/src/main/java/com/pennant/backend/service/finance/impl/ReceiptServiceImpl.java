@@ -810,7 +810,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 						for (Taxes taxes : taxDetails) {
 							taxes.setReferenceId(headerId);
 						}
-						getTaxHeaderDetailsDAO().saveTaxes(taxDetails, TableType.TEMP_TAB.getSuffix());
+						taxHeaderDetailsDAO.saveTaxes(taxDetails, TableType.TEMP_TAB.getSuffix());
 						payAdvMovement.setTaxHeaderId(headerId);
 					}
 
@@ -1048,7 +1048,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("Receipt");
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		auditHeader.getAuditDetail().setModelData(rceiptData);
 
 		logger.debug("Leaving");
@@ -1135,7 +1135,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.RECIP, AccountingEvent.RECIP);
 		aeEvent.getAcSetIDList().add(accountsetId);
-		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
 	}

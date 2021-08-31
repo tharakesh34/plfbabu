@@ -14,6 +14,10 @@ import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
+/**
+ * @author murthy.y
+ *
+ */
 @XmlAccessorType(XmlAccessType.NONE)
 public class DisbursementRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -23,6 +27,7 @@ public class DisbursementRequest implements Serializable {
 	private Long disbursementId;
 	@XmlElement
 	private String custCIF;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -180,6 +185,14 @@ public class DisbursementRequest implements Serializable {
 
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

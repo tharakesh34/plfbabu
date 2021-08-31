@@ -109,6 +109,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 							req.setAutoDownload(requestData.isAutoDownload());
 							req.setDisbursementId(getValueAsLong(rs, "DISBURSEMENT_ID"));
 							req.setCustCIF(getValueAsString(rs, "CUSTCIF"));
+							req.setFinID(getValueAsLong(rs, "FINID"));
 							req.setFinReference(getValueAsString(rs, "FINREFERENCE"));
 							req.setDisbursementAmount(getValueAsBigDecimal(rs, "DISBURSEMENT_AMOUNT"));
 							req.setDisbursementType(getValueAsString(rs, "DISBURSEMENT_TYPE"));
@@ -529,21 +530,21 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from (");
 		sql.append(" select fa.paymentid, fa.PaymentType, pb.partnerbankid, pb.PartnerbankCode");
-		sql.append(", fm.FinType, fm.FinReference, div.EntityCode, 'D' Channel, fa.status, fa.llDate");
-		sql.append(", pb.downloadType");
+		sql.append(", fm.FinType, fm.FinID, fm.FinReference, div.EntityCode, 'D' Channel, fa.status");
+		sql.append(", fa.llDate, pb.downloadType");
 		sql.append(" from finadvancepayments fa");
 		sql.append(" inner join partnerbanks pb on pb.partnerbankid = fa.partnerbankid");
-		sql.append(" inner join financemain fm on fm.FinReference = fa.FinReference");
+		sql.append(" inner join financemain fm on fm.FinID = fa.FinID");
 		sql.append(" inner join rmtfinancetypes ft on ft.fintype  = fm.fintype");
 		sql.append(" inner join smtdivisiondetail div on div.divisioncode  = ft.findivision");
 		sql.append(" union all");
 		sql.append(" select paymentinstructionid paymentid,  pi.paymenttype, pb.partnerbankid, pb.PartnerbankCode");
-		sql.append(", fm.FinType, fm.FinReference, div.EntityCode, 'P' Channel, pi.status, pi.postDate llDate");
-		sql.append(", pb.downloadType");
+		sql.append(", fm.FinType, fm.FinID, fm.FinReference, div.EntityCode, 'P' Channel, pi.status");
+		sql.append(", pi.postDate llDate, pb.downloadType");
 		sql.append(" from paymentinstructions pi");
 		sql.append(" inner join paymentheader ph on ph.paymentid = pi.paymentid");
 		sql.append(" inner join partnerbanks pb on pb.partnerbankid = pi.partnerbankid");
-		sql.append(" inner join financemain fm on fm.FinReference = ph.FinReference");
+		sql.append(" inner join financemain fm on fm.FinID = ph.FinID");
 		sql.append(" inner join rmtfinancetypes ft on ft.fintype  = fm.fintype");
 		sql.append(" inner join smtdivisiondetail div on div.divisioncode  = ft.findivision");
 		sql.append(" union all");
@@ -552,6 +553,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", pi.paymentdate llDate, pb.downloadType");
 		sql.append(" from insurancepaymentinstructions pi");
 		sql.append(" inner join partnerbanks pb on pb.partnerbankid = pi.partnerbankid");
+		sql.append(" inner join financemain fm on fm.FinReference = vr.primarylinkref");
 		sql.append(" inner join vasrecording vr ON vr.paymentinsid = pi.id) t");
 		sql.append(" where status ='APPROVED' and llDate <= ?");
 		sql.append(" and paymentid not in (SELECT disbursement_requests.disbursement_id FROM");
@@ -560,37 +562,35 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.query(sql.toString(), new Object[] { llDate },
-					new RowMapper<FinAdvancePayments>() {
+			return this.jdbcOperations.query(sql.toString(), new RowMapper<FinAdvancePayments>() {
 
-						@Override
-						public FinAdvancePayments mapRow(ResultSet rs, int rowNum) throws SQLException {
-							FinAdvancePayments fap = new FinAdvancePayments();
-							fap.setPaymentId(rs.getLong("PaymentId"));
-							if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_IFT,
-									rs.getString("PaymentType"))) {
-								fap.setPaymentType("I");
-							} else {
-								fap.setPaymentType(rs.getString("PaymentType"));
-							}
-							fap.setPartnerBankID(rs.getLong("PartnerbankId"));
-							fap.setPartnerbankCode(rs.getString("PartnerbankCode"));
-							fap.setFinType(rs.getString("FinType"));
-							fap.setFinReference(rs.getString("FinReference"));
-							fap.setEntityCode(rs.getString("EntityCode"));
-							fap.setChannel(rs.getString("Channel"));
-							fap.setStatus(rs.getString("Status"));
-							fap.setDownloadType(rs.getString("downloadType"));
+				@Override
+				public FinAdvancePayments mapRow(ResultSet rs, int rowNum) throws SQLException {
+					FinAdvancePayments fap = new FinAdvancePayments();
+					fap.setPaymentId(rs.getLong("PaymentId"));
+					if (StringUtils.equals(DisbursementConstants.PAYMENT_TYPE_IFT, rs.getString("PaymentType"))) {
+						fap.setPaymentType("I");
+					} else {
+						fap.setPaymentType(rs.getString("PaymentType"));
+					}
+					fap.setPartnerBankID(rs.getLong("PartnerbankId"));
+					fap.setPartnerbankCode(rs.getString("PartnerbankCode"));
+					fap.setFinType(rs.getString("FinType"));
+					fap.setFinReference(rs.getString("FinReference"));
+					fap.setEntityCode(rs.getString("EntityCode"));
+					fap.setChannel(rs.getString("Channel"));
+					fap.setStatus(rs.getString("Status"));
+					fap.setDownloadType(rs.getString("downloadType"));
 
-							if (PATNER_BANKS.get(fap.getPartnerbankCode()) == null) {
-								loadPartnerBankDataEngineConfigs();
-							}
+					if (PATNER_BANKS.get(fap.getPartnerbankCode()) == null) {
+						loadPartnerBankDataEngineConfigs();
+					}
 
-							fap.setConfigName(PATNER_BANKS.get(fap.getPartnerbankCode()));
+					fap.setConfigName(PATNER_BANKS.get(fap.getPartnerbankCode()));
 
-							return fap;
-						}
-					});
+					return fap;
+				}
+			}, llDate);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -618,7 +618,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public List<DisbursementRequest> getDisbursementInstructions(DisbursementRequest req) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT PAYMENTID, CUSTCIF, FINREFERENCE, FINTYPE");
+		sql.append("SELECT PAYMENTID, CUSTCIF, FINID, FINREFERENCE, FINTYPE");
 		sql.append(", AMTTOBERELEASED, DISBURSEMENT_TYPE, PAYABLELOC, PRINTINGLOC");
 		sql.append(", BANKNAME, MICR_CODE, IFSC_CODE, DISBDATE");
 		sql.append(", BENEFICIARYACCNO, BENEFICIARYNAME, BENFICIRY_EMAIL, PAYMENTTYPE");
@@ -691,6 +691,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			DisbursementRequest dr = new DisbursementRequest();
 
 			dr.setDisbInstId(rs.getLong("PAYMENTID"));
+			dr.setFinID(rs.getLong("FINID"));
 			dr.setFinReference(rs.getString("FINREFERENCE"));
 			dr.setCustCIF(rs.getString("CUSTCIF"));
 			dr.setDisbType(rs.getString("PAYMENTTYPE"));
@@ -721,8 +722,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public FinAdvancePayments getDisbursementInstruction(long paymentId, String channel) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT PAYMENTID ,PARTNERBANK_ID, FINTYPE, BRANCHCODE");
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" PAYMENTID, PARTNERBANK_ID, FINTYPE, BRANCHCODE");
 		sql.append(", BRANCHDESC, PARTNERBANK_CODE, ALWFILEDOWNLOAD, FINREFERENCE");
 		sql.append(", PAYMENTTYPE, ENTITYCODE, CUSTSHRTNAME, BENEFICIARYNAME");
 		sql.append(", BENEFICIARYACCNO, AMTTOBERELEASED, DISBURSEMENT_TYPE");
@@ -733,32 +734,31 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId, channel },
-					(rs, rowNum) -> {
-						FinAdvancePayments fp = new FinAdvancePayments();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinAdvancePayments fp = new FinAdvancePayments();
 
-						fp.setPaymentId(rs.getLong("PAYMENTID"));
-						fp.setPartnerBankID(rs.getLong("PARTNERBANK_ID"));
-						fp.setFinType((rs.getString("FINTYPE")));
-						fp.setBranchCode(rs.getString("BRANCHCODE"));
-						fp.setBranchDesc(rs.getString("BRANCHDESC"));
-						fp.setPartnerbankCode(rs.getString("PARTNERBANK_CODE"));
-						fp.setAlwFileDownload(rs.getBoolean(("ALWFILEDOWNLOAD")));
-						fp.setFinReference(rs.getString("FINREFERENCE"));
-						fp.setPaymentType(rs.getString("PAYMENTTYPE"));
-						fp.setEntityCode((rs.getString("ENTITYCODE")));
-						fp.setCustShrtName(rs.getString("CUSTSHRTNAME"));
-						fp.setBeneficiaryName(rs.getString("BENEFICIARYNAME"));
-						fp.setBeneficiaryAccNo(rs.getString("BENEFICIARYACCNO"));
-						fp.setAmtToBeReleased(rs.getBigDecimal("AMTTOBERELEASED"));
-						fp.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
-						fp.setChannel(rs.getString("CHANNEL"));
-						fp.setProviderId(JdbcUtil.getLong(rs.getObject("PROVIDERID")));
-						fp.setStatus(rs.getString("STATUS"));
-						fp.setPaymentDetail(rs.getString("PAYMENTDETAIL"));
+				fp.setPaymentId(rs.getLong("PAYMENTID"));
+				fp.setPartnerBankID(rs.getLong("PARTNERBANK_ID"));
+				fp.setFinType((rs.getString("FINTYPE")));
+				fp.setBranchCode(rs.getString("BRANCHCODE"));
+				fp.setBranchDesc(rs.getString("BRANCHDESC"));
+				fp.setPartnerbankCode(rs.getString("PARTNERBANK_CODE"));
+				fp.setAlwFileDownload(rs.getBoolean(("ALWFILEDOWNLOAD")));
+				fp.setFinReference(rs.getString("FINREFERENCE"));
+				fp.setPaymentType(rs.getString("PAYMENTTYPE"));
+				fp.setEntityCode((rs.getString("ENTITYCODE")));
+				fp.setCustShrtName(rs.getString("CUSTSHRTNAME"));
+				fp.setBeneficiaryName(rs.getString("BENEFICIARYNAME"));
+				fp.setBeneficiaryAccNo(rs.getString("BENEFICIARYACCNO"));
+				fp.setAmtToBeReleased(rs.getBigDecimal("AMTTOBERELEASED"));
+				fp.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
+				fp.setChannel(rs.getString("CHANNEL"));
+				fp.setProviderId(JdbcUtil.getLong(rs.getObject("PROVIDERID")));
+				fp.setStatus(rs.getString("STATUS"));
+				fp.setPaymentDetail(rs.getString("PAYMENTDETAIL"));
 
-						return fp;
-					});
+				return fp;
+			}, paymentId, channel);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			return null;
@@ -768,7 +768,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public List<DisbursementRequest> getDetailsByHeaderID(long headerID) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT FINREFERENCE, ID, CHANNEL, DISBURSEMENT_ID");
+		sql.append("SELECT FINID, FINREFERENCE, ID, CHANNEL, DISBURSEMENT_ID");
 		sql.append(" FROM DISBURSEMENT_REQUESTS");
 		sql.append(" WHERE HEADER_ID = ?");
 
@@ -804,7 +804,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { disbReqId }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FinAdvancePayments fa = new FinAdvancePayments();
 				fa.setPaymentId(rs.getLong("PAYMENTID"));
 				fa.setPaymentSeq(rs.getInt("PAYMENTSEQ"));
@@ -828,7 +828,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				fa.setPartnerBankID(rs.getLong("PARTNERBANKID"));
 
 				return fa;
-			});
+			}, disbReqId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			return null;
@@ -837,8 +837,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public PaymentInstruction getPaymentInstruction(long disbReqId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PH.FINID, PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO");
 		sql.append(", PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID");
 		sql.append(", PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, DR.DISBURSEMENT_ID, PI.STATUS");
 		sql.append(" FROM DISBURSEMENT_REQUESTS DR");
@@ -849,8 +849,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { disbReqId }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				PaymentInstruction pi = new PaymentInstruction();
+				pi.setFinID(rs.getLong("FINID"));
 				pi.setFinReference(rs.getString("FINREFERENCE"));
 				pi.setLinkedTranId(rs.getLong("LINKEDTRANID"));
 				pi.setBankBranchId(rs.getLong("BANKBRANCHID"));
@@ -865,7 +866,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				pi.setStatus(rs.getString("STATUS"));
 
 				return pi;
-			});
+			}, disbReqId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			return null;
@@ -889,7 +890,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { disbReqId }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				InsurancePaymentInstructions ipi = new InsurancePaymentInstructions();
 
 				ipi.setLinkedTranId(rs.getLong("LINKEDTRANID"));
@@ -902,7 +903,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				ipi.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
 
 				return ipi;
-			});
+			}, disbReqId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 			return null;
@@ -912,14 +913,14 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public DisbursementRequest getDisbRequest(long id) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT ID, FINREFERENCE, DISBURSEMENT_ID, CHANNEL, STATUS, DISBURSEMENT_TYPE");
+		sql.append("SELECT ID, FINID, FINREFERENCE, DISBURSEMENT_ID, CHANNEL, STATUS, DISBURSEMENT_TYPE");
 		sql.append(" FROM DISBURSEMENT_REQUESTS");
 		sql.append(" WHERE ID = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				DisbursementRequest dr = new DisbursementRequest();
 
 				dr.setId(rs.getLong("ID"));
@@ -930,11 +931,12 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				dr.setDisbType(rs.getString("DISBURSEMENT_TYPE"));
 
 				return dr;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not available in DISBURSEMENT_REQUESTS table for the specified Id >> {}", id);
-			return null;
+			//
 		}
+
+		return null;
 	}
 
 	@Override
@@ -959,7 +961,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	@Override
 	public List<FinAdvancePayments> getDisbRequestsByRespBatchId(long respBatchId) {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT FA.PAYMENTID, FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE");
+		sql.append(" SELECT FA.PAYMENTID, FA.FINID, FA.FINREFERENCE, FA.LINKEDTRANID, DR.PAYMENT_DATE DISBDATE");
 		sql.append(", FA.PAYMENTTYPE, FA.STATUS, DR.STATUS CLEARINGSTATUS, FA.BENEFICIARYACCNO, FA.BENEFICIARYNAME");
 		sql.append(", FA.BANKBRANCHID, FA.BANKCODE, FA.PHONECOUNTRYCODE, FA.PHONENUMBER, FA.PHONEAREACODE");
 		sql.append(", FA.AMTTOBERELEASED, FA.RECORDTYPE, DR.CHEQUE_NUMBER LLREFERENCENO");
@@ -984,6 +986,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			FinAdvancePayments fap = new FinAdvancePayments();
 
 			fap.setPaymentId(rs.getLong("PAYMENTID"));
+			fap.setFinID(rs.getLong("FINID"));
 			fap.setFinReference(rs.getString("FINREFERENCE"));
 			fap.setLinkedTranId(JdbcUtil.getLong(rs.getObject("LINKEDTRANID")));
 			fap.setPaymentType(rs.getString("PAYMENTTYPE"));
@@ -1020,8 +1023,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public List<PaymentInstruction> getPaymentInstructionsByRespBatchId(long respBatchId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PH.FINID, PH.FINREFERENCE, PH.LINKEDTRANID, PI.PAYMENTID, PI.BANKBRANCHID, PI.ACCOUNTNO");
 		sql.append(", PI.ACCTHOLDERNAME, PI.PHONECOUNTRYCODE, PI.PHONENUMBER, PI.PAYMENTINSTRUCTIONID");
 		sql.append(", PI.PAYMENTAMOUNT, PI.PAYMENTTYPE, PI.STATUS, DR.STATUS CLEARINGSTATUS");
 		sql.append(", DR.REJECT_REASON REJECTREASON, DR.REALIZATION_DATE REALIZATIONDATE");
@@ -1038,6 +1041,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		}, (rs, rowNum) -> {
 			PaymentInstruction pi = new PaymentInstruction();
 
+			pi.setFinID(rs.getLong("FINID"));
 			pi.setFinReference(rs.getString("FINREFERENCE"));
 			pi.setLinkedTranId(JdbcUtil.getLong(rs.getObject("LINKEDTRANID")));
 			pi.setPaymentId(rs.getLong("PAYMENTID"));

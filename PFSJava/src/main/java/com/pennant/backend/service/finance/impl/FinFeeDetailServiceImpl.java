@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinFeeDetailServiceImpl.java                                 		* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinFeeDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * *
+ * Modified Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -61,7 +43,6 @@ import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -122,7 +103,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private static final Logger logger = LogManager.getLogger(FinFeeDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinFeeReceiptDAO finFeeReceiptDAO;
 	private FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
@@ -139,155 +119,120 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		super();
 	}
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinFeeDetailDAO getFinFeeDetailDAO() {
-		return finFeeDetailDAO;
-	}
-
-	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
-		this.finFeeDetailDAO = finFeeDetailDAO;
-	}
-
 	@Override
 	public List<FinReceiptDetail> getFinReceiptDetais(String finReference, long custId) {
-		logger.debug(Literal.ENTERING);
-		return getFinReceiptDetailDAO().getFinReceiptDetailByFinRef(finReference, custId);
+		return finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
 	}
 
 	@Override
 	public List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type) {
-		logger.debug(Literal.ENTERING);
-		return getFinFeeReceiptDAO().getFinFeeReceiptByFinRef(feeIds, type);
+		return finFeeReceiptDAO.getFinFeeReceiptByFinRef(feeIds, type);
 	}
 
 	@Override
-	public List<FinFeeDetail> getFinFeeDetailById(String finReference, boolean isWIF, String type) {
+	public List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinFeeDetail> finFeeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, isWIF, type);
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type);
 
-		if (CollectionUtils.isEmpty(finFeeDetails)) {
+		if (CollectionUtils.isEmpty(feeList)) {
 			logger.debug(Literal.LEAVING);
-			return finFeeDetails;
+			return feeList;
 		}
 
-		for (FinFeeDetail finFeeDetail : finFeeDetails) {
-			String feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
+		for (FinFeeDetail fee : feeList) {
+			String feeScheduleMethod = fee.getFeeScheduleMethod();
 			if (CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT.equals(feeScheduleMethod)
 					|| CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR.equals(feeScheduleMethod)
 					|| CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS.equals(feeScheduleMethod)) {
 
-				// Finance Fee Schedule Details
-				finFeeDetail.setFinFeeScheduleDetailList(
-						finFeeScheduleDetailDAO.getFeeScheduleByFeeID(finFeeDetail.getFeeID(), isWIF, type));
-
+				long feeID = fee.getFeeID();
+				fee.setFinFeeScheduleDetailList(finFeeScheduleDetailDAO.getFeeScheduleByFeeID(feeID, isWIF, type));
 			}
 
-			// Fin Tax Header
-			Long taxHeaderId = finFeeDetail.getTaxHeaderId();
-			if (finFeeDetail.isTaxApplicable() && (taxHeaderId != null && taxHeaderId > 0)) {
-				finFeeDetail.setTaxHeader(taxHeaderDetailsService.getTaxHeaderById(taxHeaderId, type));
+			Long taxHeaderId = fee.getTaxHeaderId();
+			if (fee.isTaxApplicable() && (taxHeaderId != null && taxHeaderId > 0)) {
+				fee.setTaxHeader(taxHeaderDetailsService.getTaxHeaderById(taxHeaderId, type));
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
-		return finFeeDetails;
+		return feeList;
 	}
 
 	@Override
-	public List<FinFeeDetail> getFinFeeDetailById(String finReference, boolean isWIF, String type,
-			String eventCodeRef) {
+	public List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type, String eventCodeRef) {
 		logger.debug(Literal.ENTERING);
-		List<FinFeeDetail> finFeeDetails = getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, isWIF, type,
-				eventCodeRef);
-		// Finance Fee Schedule Details
-		if (finFeeDetails != null && !finFeeDetails.isEmpty()) {
-			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				finFeeDetail.setFinFeeScheduleDetailList(
-						getFinFeeScheduleDetailDAO().getFeeScheduleByFeeID(finFeeDetail.getFeeID(), isWIF, type));
 
-				// Fin Tax Header
-				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
-				if (taxHeaderId != null && taxHeaderId > 0) {
-					TaxHeader taxheader = getTaxHeaderDetailsService().getTaxHeaderById(taxHeaderId, type);
-					finFeeDetail.setTaxHeader(taxheader);
-				}
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type, eventCodeRef);
+
+		for (FinFeeDetail fee : feeList) {
+			fee.setFinFeeScheduleDetailList(finFeeScheduleDetailDAO.getFeeScheduleByFeeID(fee.getFeeID(), isWIF, type));
+
+			Long taxHeaderId = fee.getTaxHeaderId();
+			if (taxHeaderId != null && taxHeaderId > 0) {
+				TaxHeader taxheader = taxHeaderDetailsService.getTaxHeaderById(taxHeaderId, type);
+				fee.setTaxHeader(taxheader);
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
-		return finFeeDetails;
+		return feeList;
 	}
 
 	@Override
 	public List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinFeeDetail> finFeeDetails = finFeeDetailDAO.getFinFeeDetailByReferenceId(referenceId, eventCodeRef,
-				type);
-		// Finance Fee Schedule Details and Fin Tax Details
-		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				finFeeDetail.setFinFeeScheduleDetailList(
-						finFeeScheduleDetailDAO.getFeeScheduleByFeeID(finFeeDetail.getFeeID(), false, type));
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getFinFeeDetailByReferenceId(referenceId, eventCodeRef, type);
 
-				// Fin Tax Header
-				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
-				if (taxHeaderId != null && taxHeaderId > 0) {
-					TaxHeader taxheader = getTaxHeaderDetailsService().getTaxHeaderById(taxHeaderId, type);
-					finFeeDetail.setTaxHeader(taxheader);
-				}
+		for (FinFeeDetail fee : feeList) {
+			fee.setFinFeeScheduleDetailList(finFeeScheduleDetailDAO.getFeeScheduleByFeeID(fee.getFeeID(), false, type));
+
+			Long taxHeaderId = fee.getTaxHeaderId();
+			if (taxHeaderId != null && taxHeaderId > 0) {
+				TaxHeader taxheader = taxHeaderDetailsService.getTaxHeaderById(taxHeaderId, type);
+				fee.setTaxHeader(taxheader);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return finFeeDetails;
+		return feeList;
 	}
 
 	@Override
-	public List<AuditDetail> saveOrUpdate(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
+	public List<AuditDetail> saveOrUpdate(List<FinFeeDetail> feeList, String tableType, String auditTranType,
 			boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 
-		for (FinFeeDetail finFeeDetail : finFeeDetails) {
-			if (finFeeDetail.getTaxHeaderId() == null) {
-				finFeeDetail.setTaxHeaderId(0L);
+		for (FinFeeDetail fee : feeList) {
+			if (fee.getTaxHeaderId() == null) {
+				fee.setTaxHeaderId(0L);
 			}
-			TaxHeader taxHeader = finFeeDetail.getTaxHeader();
-			if (taxHeader != null && (finFeeDetail.isNewRecord() || (!finFeeDetail.isNewRecord()
-					&& (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0)))) {
-				taxHeader.setRecordType(finFeeDetail.getRecordType());
-				taxHeader.setNewRecord(finFeeDetail.isNewRecord());
-				taxHeader.setLastMntBy(finFeeDetail.getLastMntBy());
-				taxHeader.setLastMntOn(finFeeDetail.getLastMntOn());
-				taxHeader.setRecordStatus(finFeeDetail.getRecordStatus());
 
-				Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+			TaxHeader taxHeader = fee.getTaxHeader();
+			if (taxHeader != null && (fee.isNewRecord()
+					|| (!fee.isNewRecord() && (fee.getTaxHeaderId() != null && fee.getTaxHeaderId() > 0)))) {
+				taxHeader.setRecordType(fee.getRecordType());
+				taxHeader.setNewRecord(fee.isNewRecord());
+				taxHeader.setLastMntBy(fee.getLastMntBy());
+				taxHeader.setLastMntOn(fee.getLastMntOn());
+				taxHeader.setRecordStatus(fee.getRecordStatus());
+
+				Long taxHeaderId = fee.getTaxHeaderId();
 				if (taxHeaderId != null && taxHeaderId > 0) {
 					taxHeader.setHeaderId(taxHeaderId);
 				}
 
-				if (finFeeDetail.isTaxApplicable() && !isWIF) {
+				if (fee.isTaxApplicable() && !isWIF) {
 					TaxHeader txHeader = taxHeaderDetailsService.saveOrUpdate(taxHeader, tableType, auditTranType);
-					finFeeDetail.setTaxHeaderId(txHeader.getHeaderId());
+					fee.setTaxHeaderId(txHeader.getHeaderId());
 				}
 			}
 		}
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		auditDetails.addAll(processFinFeeDetails(finFeeDetails, tableType, auditTranType, false, isWIF));
+		auditDetails.addAll(processFinFeeDetails(feeList, tableType, auditTranType, false, isWIF));
 
 		logger.debug(Literal.LEAVING);
 
@@ -390,43 +335,41 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 
 				if ((fee.isAlwPreIncomization()) && (fee.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
-					FinFeeDetail finFeeDtl = getFinFeeDetailDAO().getFeeDetailByExtReference(fee.getTransactionId(),
+					FinFeeDetail finFeeDtl = finFeeDetailDAO.getFeeDetailByExtReference(fee.getTransactionId(),
 							fee.getFeeTypeID(), "");
 					if (finFeeDtl != null) {
 						fee.setFeeID(finFeeDtl.getFeeID());
 						fee.setFeeSeq(finFeeDtl.getFeeSeq());
 						fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						getFinFeeDetailDAO().update(fee, false, "");
+						finFeeDetailDAO.update(fee, false, "");
 					}
 				} else {
-					fee.setFeeID(getFinFeeDetailDAO().save(fee, isWIF, tableType));
+					fee.setFeeID(finFeeDetailDAO.save(fee, isWIF, tableType));
 				}
 
 				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
 						finFeeSchDetail.setFeeID(fee.getFeeID());
 					}
-					getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(fee.getFinFeeScheduleDetailList(), isWIF,
-							tableType);
+					finFeeScheduleDetailDAO.saveFeeScheduleBatch(fee.getFinFeeScheduleDetailList(), isWIF, tableType);
 				}
 			}
 
 			if (updateRecord) {
-				getFinFeeDetailDAO().update(fee, isWIF, tableType);
+				finFeeDetailDAO.update(fee, isWIF, tableType);
 
-				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
+				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
 				if (!fee.getFinFeeScheduleDetailList().isEmpty()) {
 					for (FinFeeScheduleDetail finFeeSchDetail : fee.getFinFeeScheduleDetailList()) {
 						finFeeSchDetail.setFeeID(fee.getFeeID());
 					}
-					getFinFeeScheduleDetailDAO().saveFeeScheduleBatch(fee.getFinFeeScheduleDetailList(), isWIF,
-							tableType);
+					finFeeScheduleDetailDAO.saveFeeScheduleBatch(fee.getFinFeeScheduleDetailList(), isWIF, tableType);
 				}
 			}
 
 			if (deleteRecord) {
-				getFinFeeScheduleDetailDAO().deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
-				getFinFeeDetailDAO().delete(fee, isWIF, tableType);
+				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
+				finFeeDetailDAO.delete(fee, isWIF, tableType);
 			}
 
 			if (approveRec) {
@@ -511,15 +454,15 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 
 				if (saveRecord) {
-					finFeeReceipt.setId(getFinFeeReceiptDAO().save(finFeeReceipt, tableType));
+					finFeeReceipt.setId(finFeeReceiptDAO.save(finFeeReceipt, tableType));
 				}
 
 				if (updateRecord) {
-					getFinFeeReceiptDAO().update(finFeeReceipt, tableType);
+					finFeeReceiptDAO.update(finFeeReceipt, tableType);
 				}
 
 				if (deleteRecord) {
-					getFinFeeReceiptDAO().delete(finFeeReceipt, tableType);
+					finFeeReceiptDAO.delete(finFeeReceipt, tableType);
 				}
 
 				if (approveRec) {
@@ -564,49 +507,18 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return auditDetails;
 	}
 
-	/*
-	 * @Override public List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
-	 * String auditTranType, String finReference) { logger.debug(Literal.ENTERING);
-	 * 
-	 * List<AuditDetail> auditDetails = new ArrayList<AuditDetail>(); Map<Long, FinFeeReceipt> map = new HashMap<Long,
-	 * FinFeeReceipt>();
-	 * 
-	 * if (!StringUtils.equals(PennantConstants.TRAN_DEL, auditTranType)) {
-	 * 
-	 * FinFeeReceipt feeReceipt; for (FinFeeReceipt finFeeReceipt : finFeeReceipts) { if
-	 * (!map.containsKey(finFeeReceipt.getReceiptID())) { feeReceipt = new FinFeeReceipt();
-	 * feeReceipt.setReceiptID(finFeeReceipt.getReceiptID()); feeReceipt.setPaidAmount(finFeeReceipt.getPaidAmount());
-	 * feeReceipt.setReceiptAmount(finFeeReceipt.getReceiptAmount());
-	 * feeReceipt.setLastMntBy(finFeeReceipt.getLastMntBy());
-	 * feeReceipt.setAvailableAmount(finFeeReceipt.getReceiptAmount().subtract( finFeeReceipt.getPaidAmount())); } else
-	 * { feeReceipt = map.get(finFeeReceipt.getReceiptID());
-	 * feeReceipt.setPaidAmount(feeReceipt.getPaidAmount().add(finFeeReceipt. getPaidAmount()));
-	 * feeReceipt.setAvailableAmount(feeReceipt.getReceiptAmount().subtract( feeReceipt.getPaidAmount())); }
-	 * 
-	 * map.put(finFeeReceipt.getReceiptID(), feeReceipt); }
-	 * 
-	 * if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) { createPayableAdvise(finReference, map); } }
-	 * 
-	 * if (!ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) { createExcessAmount(finReference, map); }
-	 * 
-	 * auditDetails.addAll(processFinFeeReceipts(finFeeReceipts, tableType, auditTranType, true));
-	 * 
-	 * logger.debug(Literal.LEAVING); return auditDetails; }
-	 */
-
-	public Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> finFeeReceipts) {
+	public Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> feeReceipts) {
 		Map<Long, List<FinFeeReceipt>> map = new HashMap<>();
 
-		for (FinFeeReceipt finFeeRecipt : finFeeReceipts) {
+		for (FinFeeReceipt feeReceipt : feeReceipts) {
 			List<FinFeeReceipt> finFeeRecList = null;
-			if (map.containsKey(finFeeRecipt.getReceiptID())) {
-				finFeeRecList = map.get(finFeeRecipt.getReceiptID());
+			if (map.containsKey(feeReceipt.getReceiptID())) {
+				finFeeRecList = map.get(feeReceipt.getReceiptID());
 			} else {
 				finFeeRecList = new ArrayList<>();
 			}
-			finFeeRecList.add(finFeeRecipt);
-			map.put(finFeeRecipt.getReceiptID(), finFeeRecList);
-
+			finFeeRecList.add(feeReceipt);
+			map.put(feeReceipt.getReceiptID(), finFeeRecList);
 		}
 
 		return map;
@@ -620,7 +532,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		Map<Long, List<FinFeeReceipt>> map = getUpfromtReceiptMap(finFeeReceipts);
-		if (!StringUtils.equals(PennantConstants.TRAN_DEL, auditTranType)) {
+		if (!PennantConstants.TRAN_DEL.equals(auditTranType)) {
 			if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
 				createPayableAdvises(finReference, map, custId);
 			}
@@ -652,7 +564,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
 			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
 			finExcessAmount.setBalanceAmt(excessAmount);
-			getFinExcessAmountDAO().saveExcess(finExcessAmount);
+			finExcessAmountDAO.saveExcess(finExcessAmount);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -662,29 +574,31 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	@Override
 	public BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
 
-		List<FinReceiptDetail> finReceiptDetailsList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference,
-				custId);
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+
 		BigDecimal excessAmount = BigDecimal.ZERO;
-		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
-			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
-				List<FinFeeReceipt> finFeeReceiptList = map.get(finReceiptDetail.getReceiptID());
+		for (FinReceiptDetail rcd : rcdList) {
+			if (map != null && map.containsKey(rcd.getReceiptID())) {
+				List<FinFeeReceipt> finFeeReceiptList = map.get(rcd.getReceiptID());
 				BigDecimal feePaidAmount = BigDecimal.ZERO;
 				for (FinFeeReceipt feeReceipt : finFeeReceiptList) {
 					feePaidAmount = feePaidAmount.add(feeReceipt.getPaidAmount());
 				}
-				excessAmount = excessAmount.add(finReceiptDetail.getAmount().subtract(feePaidAmount));
+				excessAmount = excessAmount.add(rcd.getAmount().subtract(feePaidAmount));
 			} else {
-				excessAmount = excessAmount.add(finReceiptDetail.getAmount());
+				excessAmount = excessAmount.add(rcd.getAmount());
 			}
 		}
 		return excessAmount;
 	}
 
 	private void updateUpfrontExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
-		List<FinReceiptDetail> receipts = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+
 		FinExcessAmount excessAmount = null;
-		for (FinReceiptDetail receipt : receipts) {
-			long receiptID = receipt.getReceiptID();
+		for (FinReceiptDetail rcd : rcdList) {
+			long receiptID = rcd.getReceiptID();
 
 			if (map == null || !map.containsKey(receiptID)) {
 				continue;
@@ -723,13 +637,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("MANUALADVISE_FEETYPEID");
 		long feeTypeId = Long.parseLong(pfsParameter.getSysParmValue());
 		ManualAdvise manualAdvise = null;
-		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
-				.getFinReceiptDetailByFinRef(finReference, custId);
+
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
 
 		Date appDate = SysParamUtil.getAppDate();
 
-		for (FinReceiptDetail finRecDetail : finReceiptDetailsList) {
-			List<FinFeeReceipt> finFeeRecList = map.get(finRecDetail.getReceiptID());
+		for (FinReceiptDetail rcd : rcdList) {
+			List<FinFeeReceipt> finFeeRecList = map.get(rcd.getReceiptID());
 			BigDecimal feePaid = BigDecimal.ZERO;
 			BigDecimal available;
 			long getLastMntBy = Long.MIN_VALUE;
@@ -737,9 +651,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				feePaid = feePaid.add(feeReceipt.getPaidAmount());
 				getLastMntBy = feeReceipt.getLastMntBy();
 			}
-			available = finRecDetail.getAmount().subtract(feePaid);
-			if (available.compareTo(BigDecimal.ZERO) > 0) {
+			available = rcd.getAmount().subtract(feePaid);
 
+			if (available.compareTo(BigDecimal.ZERO) > 0) {
 				manualAdvise = new ManualAdvise();
 				manualAdvise.setAdviseType(2);
 				manualAdvise.setFinReference(finReference);
@@ -750,7 +664,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				manualAdvise.setWaivedAmount(BigDecimal.ZERO);
 				manualAdvise.setRemarks("FeeReceipt Remaining Amount");
 				manualAdvise.setBounceID(0);
-				manualAdvise.setReceiptID(finRecDetail.getReceiptID());
+				manualAdvise.setReceiptID(rcd.getReceiptID());
 				manualAdvise.setValueDate(appDate);
 				manualAdvise.setPostDate(appDate);
 				manualAdvise.setReservedAmt(BigDecimal.ZERO);
@@ -768,7 +682,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				manualAdvise.setWorkflowId(0);
 			}
 
-			getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
+			manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 		}
 		// FIXME CH Get the latest Receipt details and update the payable.
 
@@ -783,9 +697,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		long feeTypeId = Long.valueOf(pfsParameter.getSysParmValue());
 		ManualAdvise manualAdvise;
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		// FIXME CH Get the latest Receipt details and update the payable.
 		for (Long key : map.keySet()) {
 			feeReceipt = map.get(key);
+
 			if (feeReceipt.getAvailableAmount().compareTo(BigDecimal.ZERO) != 0) {
 				manualAdvise = new ManualAdvise();
 				manualAdvise.setAdviseType(2);
@@ -798,8 +715,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				manualAdvise.setRemarks("FeeReceipt Remaining Amount");
 				manualAdvise.setBounceID(0);
 				manualAdvise.setReceiptID(feeReceipt.getReceiptID());
-				manualAdvise.setValueDate(DateUtility.getAppDate());
-				manualAdvise.setPostDate(DateUtility.getAppDate());
+				manualAdvise.setValueDate(appDate);
+				manualAdvise.setPostDate(appDate);
 				manualAdvise.setReservedAmt(BigDecimal.ZERO);
 				manualAdvise.setBalanceAmt(BigDecimal.ZERO);
 
@@ -814,7 +731,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				manualAdvise.setRecordType("");
 				manualAdvise.setWorkflowId(0);
 
-				getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
+				manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 			}
 		}
 
@@ -828,15 +745,16 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinFeeReceipt feeReceipt;
 		FinExcessAmount finExcessAmount;
 
-		List<FinReceiptDetail> finReceiptDetailsList = getFinReceiptDetailDAO()
-				.getFinReceiptDetailByFinRef(finReference, custId);
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+
 		BigDecimal excessAmount = BigDecimal.ZERO;
-		for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
-			if (map != null && map.containsKey(finReceiptDetail.getReceiptID())) {
-				feeReceipt = map.get(finReceiptDetail.getReceiptID());
-				excessAmount = excessAmount.add(finReceiptDetail.getAmount().subtract(feeReceipt.getPaidAmount()));
+
+		for (FinReceiptDetail rcd : rcdList) {
+			if (map != null && map.containsKey(rcd.getReceiptID())) {
+				feeReceipt = map.get(rcd.getReceiptID());
+				excessAmount = excessAmount.add(rcd.getAmount().subtract(feeReceipt.getPaidAmount()));
 			} else {
-				excessAmount = excessAmount.add(finReceiptDetail.getAmount());
+				excessAmount = excessAmount.add(rcd.getAmount());
 			}
 		}
 
@@ -848,33 +766,35 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
 			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
 			finExcessAmount.setBalanceAmt(excessAmount);
-			getFinExcessAmountDAO().saveExcess(finExcessAmount);
+			finExcessAmountDAO.saveExcess(finExcessAmount);
 		}
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public List<AuditDetail> delete(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
-			boolean isWIF) {
+	public List<AuditDetail> delete(List<FinFeeDetail> feeList, String tableType, String auditTranType, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 
-		String[] fields = null;
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			int auditSeq = 1;
-			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				finFeeScheduleDetailDAO.deleteFeeScheduleBatch(finFeeDetail.getFeeID(), isWIF, tableType);
-				finFeeDetailDAO.delete(finFeeDetail, isWIF, tableType);
-				if (finFeeDetail.getTaxHeaderId() != null && finFeeDetail.getTaxHeaderId() > 0) {
-					getTaxHeaderDetailsService().delete(finFeeDetail.getTaxHeaderId(), tableType);
-				}
-				fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
-						finFeeDetail.getBefImage(), finFeeDetail));
-				auditSeq++;
+		if (CollectionUtils.isEmpty(feeList)) {
+			logger.debug(Literal.LEAVING);
+			return auditDetails;
+		}
+
+		int auditSeq = 1;
+		for (FinFeeDetail fee : feeList) {
+			finFeeScheduleDetailDAO.deleteFeeScheduleBatch(fee.getFeeID(), isWIF, tableType);
+			finFeeDetailDAO.delete(fee, isWIF, tableType);
+
+			if (fee.getTaxHeaderId() != null && fee.getTaxHeaderId() > 0) {
+				taxHeaderDetailsService.delete(fee.getTaxHeaderId(), tableType);
 			}
+
+			String[] fields = PennantJavaUtil.getFieldDetails(fee, fee.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], fee.getBefImage(), fee));
+			auditSeq++;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -882,21 +802,24 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
+	public List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> feeReceipts, String tableType,
 			String auditTranType) {
 		logger.debug(Literal.ENTERING);
-		List<AuditDetail> auditDetails = new ArrayList<>();
-		String[] fields = null;
 
-		if (CollectionUtils.isNotEmpty(finFeeReceipts)) {
-			int auditSeq = 1;
-			for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
-				getFinFeeReceiptDAO().delete(finFeeReceipt, tableType);
-				fields = PennantJavaUtil.getFieldDetails(finFeeReceipt, finFeeReceipt.getExcludeFields());
-				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
-						finFeeReceipt.getBefImage(), finFeeReceipt));
-				auditSeq++;
-			}
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
+		if (CollectionUtils.isEmpty(feeReceipts)) {
+			return auditDetails;
+		}
+
+		int auditSeq = 1;
+		for (FinFeeReceipt feeReceipt : feeReceipts) {
+			finFeeReceiptDAO.delete(feeReceipt, tableType);
+
+			String[] fields = PennantJavaUtil.getFieldDetails(feeReceipt, feeReceipt.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1], feeReceipt.getBefImage(),
+					feeReceipt));
+			auditSeq++;
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -906,17 +829,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private List<AuditDetail> getFinFeeDetailAuditDetail(List<FinFeeDetail> finFeeDetails, String auditTranType,
 			String method, long workFlowId) {
 		logger.debug(Literal.ENTERING);
+
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		String[] fields = null;
 		for (FinFeeDetail finFeeDetail : finFeeDetails) {
 
 			if ("doApprove".equals(method) && !StringUtils.trimToEmpty(finFeeDetail.getRecordStatus())
 					.equals(PennantConstants.RCD_STATUS_SAVED)) {
-				// finFeeDetail.setWorkflowId(0);
-				/*
-				 * if (StringUtils.equals(finFeeDetail.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-				 * finFeeDetail.setNewRecord(true); }
-				 */
 			} else {
 				finFeeDetail.setWorkflowId(workFlowId);
 			}
@@ -947,8 +865,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					}
 
 				}
-			} else if ("doApprove".equals(method)
-					&& (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
+			} else if ("doApprove".equals(method) && (AccountingEvent.VAS_FEE.equals(finFeeDetail.getFinEvent()))) {
 				if (!isRcdType || PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(finFeeDetail.getRecordType())) {
 					finFeeDetail.setNewRecord(false);
 					if (!finFeeDetailDAO.isFinFeeDetailExists(finFeeDetail, TableType.MAIN_TAB.getSuffix())) {
@@ -969,12 +886,14 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
+
+			String[] fields = PennantJavaUtil.getFieldDetails(finFeeDetail, finFeeDetail.getExcludeFields());
 			if (StringUtils.isNotEmpty(finFeeDetail.getRecordType())) {
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
 						finFeeDetail.getBefImage(), finFeeDetail));
 			}
 		}
+
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
@@ -1009,71 +928,73 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return auditDetails;
 	}
 
-	private List<AuditDetail> doValidationFinFeeReceipts(FinanceDetail financeDetail, long workflowId, String method,
+	private List<AuditDetail> doValidationFinFeeReceipts(FinanceDetail fd, long workflowId, String method,
 			String auditTranType, String usrLanguage, List<AuditDetail> auditDetails) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> finFeeAuditDetails = new ArrayList<>();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		List<FinFeeReceipt> finFeeReceipts = finScheduleData.getFinFeeReceipts();
-		AuditDetail detail = new AuditDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		List<FinFeeReceipt> feeReceipts = schdData.getFinFeeReceipts();
+
+		AuditDetail auditDetail = new AuditDetail();
 
 		// auditDetails.addAll(finFeeAuditDetails);
 		BigDecimal totalFee = BigDecimal.ZERO;
 		boolean error = false;
 
-		if (!financeDetail.isActionSave() && financeDetail.isUpFrentFee()) {
-			List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
+		if (!fd.isActionSave() && fd.isUpFrentFee()) {
+			List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
 			// In Case Of IMD is inProgress
 			List<Long> feeIds = new ArrayList<Long>(1);
 
-			for (FinFeeDetail finFeeDetail : feeDetails) {
+			for (FinFeeDetail fee : feeList) {
 				BigDecimal totalPaidAmount = BigDecimal.ZERO;
-				feeIds.add(finFeeDetail.getFeeID());
+				feeIds.add(fee.getFeeID());
 
-				for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
+				for (FinFeeReceipt finFeeReceipt : feeReceipts) {
 
 					if (!StringUtils.equals(PennantConstants.RECORD_TYPE_CAN, finFeeReceipt.getRecordType())) {
-						if (finFeeDetail.getFeeTypeID() == 0) {
-							if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), finFeeDetail.getVasReference())) {
+						if (fee.getFeeTypeID() == 0) {
+							if (StringUtils.equals(finFeeReceipt.getFeeTypeCode(), fee.getVasReference())) {
 								totalPaidAmount = totalPaidAmount.add(finFeeReceipt.getPaidAmount());
 							}
 						} else {
-							if (finFeeDetail.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
+							if (fee.getFeeTypeID() == finFeeReceipt.getFeeTypeId()) {
 								totalPaidAmount = totalPaidAmount.add(finFeeReceipt.getPaidAmount());
 							}
 						}
 					}
 				}
 
-				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
-					String feeTypeDesc = finFeeDetail.getFeeTypeDesc();
+				if (fee.getPaidAmount().compareTo(BigDecimal.ZERO) != 0) {
+					String feeTypeDesc = fee.getFeeTypeDesc();
 					if (StringUtils.isBlank(feeTypeDesc)) {
-						feeTypeDesc = finFeeDetail.getVasReference();
+						feeTypeDesc = fee.getVasReference();
 					}
+
 					if (totalPaidAmount.compareTo(BigDecimal.ZERO) == 0) {
 						String[] errParm = new String[1];
 						String[] valueParm = new String[1];
 						valueParm[0] = feeTypeDesc;
 						errParm[0] = valueParm[0];
-						detail.setErrorDetail(ErrorUtil.getErrorDetail(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "65019", errParm, valueParm), usrLanguage));
-						auditDetails.add(detail);
+						auditDetails.add(auditDetail);
 						error = true;
 						break;
-					} else if (finFeeDetail.getPaidAmount().compareTo(totalPaidAmount) != 0) {
+					} else if (fee.getPaidAmount().compareTo(totalPaidAmount) != 0) {
 						String[] errParm = new String[2];
 						String[] valueParm = new String[1];
 						valueParm[0] = feeTypeDesc;
 						errParm[0] = ":" + valueParm[0];
 						errParm[1] = ":" + valueParm[0];
-						detail.setErrorDetail(ErrorUtil.getErrorDetail(
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "65018", errParm, valueParm), usrLanguage));
-						auditDetails.add(detail);
+						auditDetails.add(auditDetail);
 						error = true;
 						break;
 					}
-					totalFee = totalFee.add(finFeeDetail.getPaidAmount());
+					totalFee = totalFee.add(fee.getPaidAmount());
 
 				}
 			}
@@ -1082,17 +1003,18 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			if (!feeIds.isEmpty()) {
 				ErrorDetail errorDetail = validateUpfrontFees(feeIds);
 				if (errorDetail != null) {
-					detail.setErrorDetail(ErrorUtil.getErrorDetail(errorDetail, usrLanguage));
-					auditDetails.add(detail);
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(errorDetail, usrLanguage));
+					auditDetails.add(auditDetail);
 					error = true;
 				}
 			}
 		}
 
 		if ("doReject".equalsIgnoreCase(method) || "doApprove".equalsIgnoreCase(method)) {
-			List<FinFeeDetail> feeDetails = finScheduleData.getFinFeeDetailList();
+			List<FinFeeDetail> feeDetails = schdData.getFinFeeDetailList();
 			BigDecimal totalPaidFee = BigDecimal.ZERO;
 			List<Long> feeIds = new ArrayList<Long>(1);
+
 			for (FinFeeDetail finFeeDetail : feeDetails) {
 				// If we Select VAS Fee Payment Mode as Cash or Cheque getting error "Fees not paid"
 				if (!AccountingEvent.VAS_FEE.equalsIgnoreCase(finFeeDetail.getFinEvent())) {
@@ -1102,30 +1024,33 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					}
 				}
 			}
+
 			ErrorDetail errorDetail = validateUpfrontFees(feeIds);
+
 			if (errorDetail != null) {
-				detail.setErrorDetail(ErrorUtil.getErrorDetail(errorDetail, usrLanguage));
-				auditDetails.add(detail);
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(errorDetail, usrLanguage));
+				auditDetails.add(auditDetail);
 			}
-			BigDecimal totalPaidAmt = getFinReceiptDetailDAO().getFinReceiptDetailsByFinRef(
-					financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+
+			BigDecimal totalPaidAmt = finReceiptDetailDAO
+					.getFinReceiptDetailsByFinRef(fd.getFinScheduleData().getFinanceMain().getFinReference());
+
 			// BUF FIX 136896
 			if (totalPaidAmt.compareTo(totalPaidFee) < 0) {
-				detail.setErrorDetail(ErrorUtil.getErrorDetail(
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "FUF001", null, null), usrLanguage));
-				auditDetails.add(detail);
+				auditDetails.add(auditDetail);
 			}
 		}
 
-		if (!financeDetail.isActionSave() && (financeDetail.isUpFrentFee() || "doApprove".equalsIgnoreCase(method))
-				&& !error) {
-			BigDecimal totalPaidAmt = getFinReceiptDetailDAO().getFinReceiptDetailsByFinRef(
-					financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		if (!fd.isActionSave() && (fd.isUpFrentFee() || "doApprove".equalsIgnoreCase(method)) && !error) {
+			BigDecimal totalPaidAmt = finReceiptDetailDAO
+					.getFinReceiptDetailsByFinRef(fd.getFinScheduleData().getFinanceMain().getFinReference());
 			// BUF FIX 136896
 			if (totalPaidAmt.compareTo(totalFee) < 0) {
-				detail.setErrorDetail(ErrorUtil.getErrorDetail(
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "FUF001", null, null), usrLanguage));
-				auditDetails.add(detail);
+				auditDetails.add(auditDetail);
 			}
 		}
 
@@ -1148,36 +1073,37 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	private AuditDetail validateFinFeeDetail(AuditDetail auditDetail, String usrLanguage, String method,
 			boolean isWIF) {
 		logger.debug(Literal.ENTERING);
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		FinFeeDetail finFeeDetail = (FinFeeDetail) auditDetail.getModelData();
+		FinFeeDetail fee = (FinFeeDetail) auditDetail.getModelData();
 		FinFeeDetail tempFinFinDetail = null;
-		if (finFeeDetail.isWorkflow()) {
-			tempFinFinDetail = getFinFeeDetailDAO().getFinFeeDetailById(finFeeDetail, isWIF, "_Temp");
+		if (fee.isWorkflow()) {
+			tempFinFinDetail = finFeeDetailDAO.getFinFeeDetailById(fee, isWIF, "_Temp");
 		}
-		FinFeeDetail befFinFeeDetail = getFinFeeDetailDAO().getFinFeeDetailById(finFeeDetail, isWIF, "");
-		FinFeeDetail oldFinFeeDetail = finFeeDetail.getBefImage();
+		FinFeeDetail befFinFeeDetail = finFeeDetailDAO.getFinFeeDetailById(fee, isWIF, "");
+		FinFeeDetail oldFinFeeDetail = fee.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(finFeeDetail.getFeeTypeDesc());
+		valueParm[0] = String.valueOf(fee.getFeeTypeDesc());
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
-		if (finFeeDetail.isNewRecord()) { // for New record or new record into work
-									// flow
+		if (fee.isNewRecord()) { // for New record or new record into work
+			// flow
 
-			if (!finFeeDetail.isWorkflow()) {// With out Work flow only new
-												// records
+			if (!fee.isWorkflow()) {// With out Work flow only new
+									// records
 				if (befFinFeeDetail != null) { // Record Already Exists in the
 												// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (finFeeDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
-																								// type
-																								// is
-																								// new
+				if (fee.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
+																					// records
+																					// type
+																					// is
+																					// new
 					if (befFinFeeDetail != null || tempFinFinDetail != null) { // if
 																				// records
 																				// already
@@ -1199,8 +1125,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		} else {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
-			if (!finFeeDetail.isWorkflow()) { // With out Work flow for update
-												// and delete
+			if (!fee.isWorkflow()) { // With out Work flow for update
+										// and delete
 
 				if (befFinFeeDetail == null) { // if records not exists in the
 												// main table
@@ -1238,34 +1164,33 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		}
 
 		// Waiver should not allow for Inclusive Fees
-		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())
-				&& finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) != 0
+		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())
+				&& fee.getWaivedAmount().compareTo(BigDecimal.ZERO) != 0
 				&& !PennantConstants.method_doReject.equals(method)
-				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(finFeeDetail.getRecordStatus())) {
+				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(fee.getRecordStatus())) {
 			String[] valueParam = new String[1];
-			valueParam[0] = finFeeDetail.getFeeTypeCode();
+			valueParam[0] = fee.getFeeTypeCode();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91137", valueParam)));
 		}
 
 		// Fee scheduled methods (Include to First Installment, entire tenor, N
 		// installments, Paid by customer and Waived by bank) should not allowed
 		// if Tax applicable
-		String feeScheduleMethod = finFeeDetail.getFeeScheduleMethod();
-		if (finFeeDetail.isTaxApplicable()
-				&& (CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT.equals(feeScheduleMethod)
-						|| CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS.equals(feeScheduleMethod)
-						|| CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR.equals(feeScheduleMethod)
-						|| CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(feeScheduleMethod)
-						|| CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(feeScheduleMethod))) {
+		String feeScheduleMethod = fee.getFeeScheduleMethod();
+		if (fee.isTaxApplicable() && (CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT.equals(feeScheduleMethod)
+				|| CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS.equals(feeScheduleMethod)
+				|| CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR.equals(feeScheduleMethod)
+				|| CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(feeScheduleMethod)
+				|| CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(feeScheduleMethod))) {
 			String[] valueParam = new String[2];
 			valueParam[0] = feeScheduleMethod;
-			valueParam[1] = finFeeDetail.getFeeTypeCode();
+			valueParam[1] = fee.getFeeTypeCode();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91139", valueParam)));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !finFeeDetail.isWorkflow()) {
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !fee.isWorkflow()) {
 			auditDetail.setBefImage(befFinFeeDetail);
 		}
 		return auditDetail;
@@ -1279,10 +1204,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		FinFeeReceipt tempFinFeeReceipt = null;
 
 		if (finFeeReceipt.isWorkflow()) {
-			tempFinFeeReceipt = getFinFeeReceiptDAO().getFinFeeReceiptById(finFeeReceipt, "_Temp");
+			tempFinFeeReceipt = finFeeReceiptDAO.getFinFeeReceiptById(finFeeReceipt, "_Temp");
 		}
 
-		FinFeeReceipt befFinFeeReceipt = getFinFeeReceiptDAO().getFinFeeReceiptById(finFeeReceipt, "");
+		FinFeeReceipt befFinFeeReceipt = finFeeReceiptDAO.getFinFeeReceiptById(finFeeReceipt, "");
 		FinFeeReceipt oldFinFeeReceipt = finFeeReceipt.getBefImage();
 
 		String[] errParm = new String[1];
@@ -1291,7 +1216,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		errParm[0] = PennantJavaUtil.getLabel("FeeType") + ":" + valueParm[0];
 
 		if (finFeeReceipt.isNewRecord()) { // for New record or new record into work
-										// flow
+											// flow
 			if (!finFeeReceipt.isWorkflow()) {// With out Work flow only new
 												// records
 				if (befFinFeeReceipt != null) { // Record Already Exists in the
@@ -1376,79 +1301,80 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
+	public void convertGSTFinTypeFees(FinFeeDetail fee, FinTypeFees finTypeFee, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages) {
 		String taxComponent = finTypeFee.getTaxComponent();
 		BigDecimal taxableAmount = finTypeFee.getAmount();
-		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
+		BigDecimal waivedAmount = fee.getWaivedAmount();
 
 		BigDecimal totalGST;
+
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
 
-			finFeeDetail.setActualAmountOriginal(finTypeFee.getAmount());
-			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(totalGST.add(finTypeFee.getAmount()));
+			fee.setActualAmountOriginal(finTypeFee.getAmount());
+			fee.setActualAmountGST(totalGST);
+			fee.setActualAmount(totalGST.add(finTypeFee.getAmount()));
 
 			if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				finFeeDetail.setPaidAmount(finTypeFee.getAmount().add(totalGST));
-				finFeeDetail.setPaidAmountOriginal(finTypeFee.getAmount());
-				finFeeDetail.setPaidAmountGST(totalGST);
+				fee.setPaidAmount(finTypeFee.getAmount().add(totalGST));
+				fee.setPaidAmountOriginal(finTypeFee.getAmount());
+				fee.setPaidAmountGST(totalGST);
 			}
 
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
-			finFeeDetail.setNetAmount(finTypeFee.getAmount());
-			finFeeDetail.setNetAmountGST(totalGST);
-			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
-			finFeeDetail.setActualAmountOriginal(taxableAmount.subtract(totalGST));
+			fee.setNetAmount(finTypeFee.getAmount());
+			fee.setNetAmountGST(totalGST);
+			fee.setNetAmountOriginal(taxableAmount.subtract(totalGST));
+			fee.setActualAmountOriginal(taxableAmount.subtract(totalGST));
 
-			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(taxableAmount);
+			fee.setActualAmountGST(totalGST);
+			fee.setActualAmount(taxableAmount);
 
 			if (StringUtils.equals(finTypeFee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				finFeeDetail.setPaidAmount(finTypeFee.getAmount());
+				fee.setPaidAmount(finTypeFee.getAmount());
 			}
 		}
 	}
 
 	@Override
-	public void convertGSTFinFeeConfig(FinFeeDetail finFeeDetail, FinFeeConfig finFeeConfig,
-			FinanceDetail financeDetail, Map<String, BigDecimal> taxPercentages) {
+	public void convertGSTFinFeeConfig(FinFeeDetail fee, FinFeeConfig finFeeConfig, FinanceDetail financeDetail,
+			Map<String, BigDecimal> taxPercentages) {
 		logger.debug(Literal.ENTERING);
 
 		String taxComponent = finFeeConfig.getTaxComponent();
 		BigDecimal taxableAmount = finFeeConfig.getAmount();
-		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
+		BigDecimal waivedAmount = fee.getWaivedAmount();
 
 		BigDecimal totalGST;
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
 
-			finFeeDetail.setActualAmountOriginal(finFeeConfig.getAmount());
-			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(totalGST.add(finFeeConfig.getAmount()));
+			fee.setActualAmountOriginal(finFeeConfig.getAmount());
+			fee.setActualAmountGST(totalGST);
+			fee.setActualAmount(totalGST.add(finFeeConfig.getAmount()));
 
 			if (StringUtils.equals(finFeeConfig.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				finFeeDetail.setPaidAmount(finFeeConfig.getAmount().add(totalGST));
-				finFeeDetail.setPaidAmountOriginal(finFeeConfig.getAmount());
-				finFeeDetail.setPaidAmountGST(totalGST);
+				fee.setPaidAmount(finFeeConfig.getAmount().add(totalGST));
+				fee.setPaidAmountOriginal(finFeeConfig.getAmount());
+				fee.setPaidAmountGST(totalGST);
 			}
 
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
-			finFeeDetail.setNetAmount(finFeeConfig.getAmount());
-			finFeeDetail.setNetAmountGST(totalGST);
-			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
-			finFeeDetail.setActualAmountOriginal(taxableAmount.subtract(totalGST));
+			fee.setNetAmount(finFeeConfig.getAmount());
+			fee.setNetAmountGST(totalGST);
+			fee.setNetAmountOriginal(taxableAmount.subtract(totalGST));
+			fee.setActualAmountOriginal(taxableAmount.subtract(totalGST));
 
-			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(taxableAmount);
+			fee.setActualAmountGST(totalGST);
+			fee.setActualAmount(taxableAmount);
 
 			if (StringUtils.equals(finFeeConfig.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				finFeeDetail.setPaidAmount(finFeeConfig.getAmount());
+				fee.setPaidAmount(finFeeConfig.getAmount());
 			}
 		}
 
@@ -1456,37 +1382,37 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal taxableAmount, FinanceDetail financeDetail,
+	public void processGSTCalForRule(FinFeeDetail fee, BigDecimal taxableAmount, FinanceDetail fd,
 			Map<String, BigDecimal> taxPercentages, boolean apiRequest) {
 
-		String taxComponent = finFeeDetail.getTaxComponent();
-		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
+		String taxComponent = fee.getTaxComponent();
+		BigDecimal waivedAmount = fee.getWaivedAmount();
 
 		BigDecimal totalGST;
 		if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, taxComponent)) {
-			if ((!apiRequest && !finFeeDetail.isFeeModified()) || !finFeeDetail.isAlwModifyFee()) {
+			if ((!apiRequest && !fee.isFeeModified()) || !fee.isAlwModifyFee()) {
 				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
-				finFeeDetail.setActualAmountOriginal(taxableAmount);
-				finFeeDetail.setActualAmountGST(totalGST);
-				finFeeDetail.setActualAmount(totalGST.add(taxableAmount));
+				fee.setActualAmountOriginal(taxableAmount);
+				fee.setActualAmountGST(totalGST);
+				fee.setActualAmount(totalGST.add(taxableAmount));
 
-				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
-					finFeeDetail.setPaidAmount(totalGST.add(taxableAmount));
-					finFeeDetail.setPaidAmountOriginal(taxableAmount);
-					finFeeDetail.setPaidAmountGST(totalGST);
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(fee.getFeeScheduleMethod())) {
+					fee.setPaidAmount(totalGST.add(taxableAmount));
+					fee.setPaidAmountOriginal(taxableAmount);
+					fee.setPaidAmountGST(totalGST);
 				}
 			}
 
 			if (apiRequest) {
 				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
-				finFeeDetail.setActualAmountOriginal(taxableAmount);
-				finFeeDetail.setActualAmountGST(totalGST);
-				finFeeDetail.setActualAmount(totalGST.add(taxableAmount));
+				fee.setActualAmountOriginal(taxableAmount);
+				fee.setActualAmountGST(totalGST);
+				fee.setActualAmount(totalGST.add(taxableAmount));
 
-				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
-					finFeeDetail.setPaidAmount(totalGST.add(taxableAmount));
-					finFeeDetail.setPaidAmountOriginal(taxableAmount);
-					finFeeDetail.setPaidAmountGST(totalGST);
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(fee.getFeeScheduleMethod())) {
+					fee.setPaidAmount(totalGST.add(taxableAmount));
+					fee.setPaidAmountOriginal(taxableAmount);
+					fee.setPaidAmountGST(totalGST);
 				}
 
 			}
@@ -1494,82 +1420,80 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
-			finFeeDetail.setNetAmount(taxableAmount);
-			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
-			finFeeDetail.setNetAmountGST(totalGST);
-			finFeeDetail.setActualAmountOriginal(totalGST.add(finFeeDetail.getWaivedAmount()));
+			fee.setNetAmount(taxableAmount);
+			fee.setNetAmountOriginal(taxableAmount.subtract(totalGST));
+			fee.setNetAmountGST(totalGST);
+			fee.setActualAmountOriginal(totalGST.add(fee.getWaivedAmount()));
 
-			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
+			fee.setActualAmountGST(totalGST);
+			fee.setActualAmount(fee.getActualAmountOriginal().add(totalGST));
 
-			if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
-				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
-				finFeeDetail.setPaidAmountOriginal(totalGST.add(finFeeDetail.getWaivedAmount()));
-				finFeeDetail.setPaidAmountGST(totalGST);
+			if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(fee.getFeeScheduleMethod())) {
+				fee.setPaidAmount(fee.getActualAmountOriginal().add(totalGST));
+				fee.setPaidAmountOriginal(totalGST.add(fee.getWaivedAmount()));
+				fee.setPaidAmountGST(totalGST);
 			}
 		}
 
 	}
 
 	@Override
-	public void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal taxableAmount,
-			FinanceDetail financeDetail, Map<String, BigDecimal> taxPercentages, boolean apiRequest) {
+	public void processGSTCalForPercentage(FinFeeDetail fee, BigDecimal taxableAmount, FinanceDetail fd,
+			Map<String, BigDecimal> taxPercentages, boolean apiRequest) {
 		logger.debug(Literal.ENTERING);
 
 		// 27-08-19: Fee Defaults setting when comes from API
 		BigDecimal totalGST;
-		if ((!apiRequest && finFeeDetail.isFeeModified()) || (apiRequest && finFeeDetail.isAlwModifyFee())) {
+		if ((!apiRequest && fee.isFeeModified()) || (apiRequest && fee.isAlwModifyFee())) {
 			if (apiRequest) {
 				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
-				finFeeDetail.setActualAmountOriginal(taxableAmount);
-				finFeeDetail.setActualAmountGST(totalGST);
-				finFeeDetail.setActualAmount(totalGST.add(taxableAmount));
+				fee.setActualAmountOriginal(taxableAmount);
+				fee.setActualAmountGST(totalGST);
+				fee.setActualAmount(totalGST.add(taxableAmount));
 
-				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
-					finFeeDetail.setPaidAmount(totalGST.add(taxableAmount));
-					finFeeDetail.setPaidAmountOriginal(taxableAmount);
-					finFeeDetail.setPaidAmountGST(totalGST);
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(fee.getFeeScheduleMethod())) {
+					fee.setPaidAmount(totalGST.add(taxableAmount));
+					fee.setPaidAmountOriginal(taxableAmount);
+					fee.setPaidAmountGST(totalGST);
 				}
 			}
 			return;
 		}
 
-		String taxComponent = finFeeDetail.getTaxComponent();
-		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
+		String taxComponent = fee.getTaxComponent();
+		BigDecimal waivedAmount = fee.getWaivedAmount();
 
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-			if ((!apiRequest && !finFeeDetail.isFeeModified()) || !finFeeDetail.isAlwModifyFee()) {
+			if ((!apiRequest && !fee.isFeeModified()) || !fee.isAlwModifyFee()) {
 				totalGST = GSTCalculator.getExclusiveGST(taxableAmount, taxPercentages).gettGST();
-				finFeeDetail.setActualAmountOriginal(taxableAmount);
-				finFeeDetail.setActualAmountGST(totalGST);
-				finFeeDetail.setActualAmount(totalGST.add(taxableAmount));
+				fee.setActualAmountOriginal(taxableAmount);
+				fee.setActualAmountGST(totalGST);
+				fee.setActualAmount(totalGST.add(taxableAmount));
 
-				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
-					finFeeDetail.setPaidAmount(totalGST.add(taxableAmount));
-					finFeeDetail.setPaidAmountOriginal(taxableAmount);
-					finFeeDetail.setPaidAmountGST(totalGST);
+				if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(fee.getFeeScheduleMethod())) {
+					fee.setPaidAmount(totalGST.add(taxableAmount));
+					fee.setPaidAmountOriginal(taxableAmount);
+					fee.setPaidAmountGST(totalGST);
 				}
 			}
 
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
 			totalGST = GSTCalculator.getInclusiveGST(taxableAmount, waivedAmount, taxPercentages).gettGST();
 
-			if (finFeeDetail.getNetTDS().compareTo(BigDecimal.ZERO) == 0) {
-				finFeeDetail.setNetAmount(taxableAmount);
+			if (fee.getNetTDS().compareTo(BigDecimal.ZERO) == 0) {
+				fee.setNetAmount(taxableAmount);
 			}
-			finFeeDetail.setNetAmountGST(totalGST);
-			finFeeDetail.setNetAmountOriginal(taxableAmount.subtract(totalGST));
-			finFeeDetail
-					.setActualAmountOriginal(finFeeDetail.getNetAmountOriginal().add(finFeeDetail.getWaivedAmount()));
+			fee.setNetAmountGST(totalGST);
+			fee.setNetAmountOriginal(taxableAmount.subtract(totalGST));
+			fee.setActualAmountOriginal(fee.getNetAmountOriginal().add(fee.getWaivedAmount()));
 
-			finFeeDetail.setActualAmountGST(totalGST);
-			finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
+			fee.setActualAmountGST(totalGST);
+			fee.setActualAmount(fee.getActualAmountOriginal().add(totalGST));
 
-			if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(finFeeDetail.getFeeScheduleMethod())) {
-				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmountOriginal().add(totalGST));
-				finFeeDetail.setPaidAmountOriginal(
-						finFeeDetail.getPaidAmount().add(finFeeDetail.getWaivedAmount()).subtract(totalGST));
-				finFeeDetail.setPaidAmountGST(totalGST);
+			if (CalculationConstants.REMFEE_PAID_BY_CUSTOMER.equals(fee.getFeeScheduleMethod())) {
+				fee.setPaidAmount(fee.getActualAmountOriginal().add(totalGST));
+				fee.setPaidAmountOriginal(fee.getPaidAmount().add(fee.getWaivedAmount()).subtract(totalGST));
+				fee.setPaidAmountGST(totalGST);
 			}
 		}
 
@@ -1603,12 +1527,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public void calculateFees(FinFeeDetail fee, FinScheduleData scheduleData, Map<String, BigDecimal> taxPercentages) {
-		FinanceMain financeMain = scheduleData.getFinanceMain();
+	public void calculateFees(FinFeeDetail fee, FinScheduleData schdData, Map<String, BigDecimal> taxPercentages) {
+		FinanceMain fm = schdData.getFinanceMain();
 		String finEvent = fee.getFinEvent();
 
 		if (AccountingEvent.ADDDBSP.equals(finEvent)) {
-			AdvancePaymentUtil.calculateLOSAdvPayment(scheduleData, fee);
+			AdvancePaymentUtil.calculateLOSAdvPayment(schdData, fee);
 		} else if (AccountingEvent.ADDDBSN.equals(finEvent)) {
 			AdvanceRuleCode advanceRule = AdvanceRuleCode.getRule(fee.getFeeTypeCode());
 			if (advanceRule != null
@@ -1616,39 +1540,40 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				List<String> list = new ArrayList<>();
 				list.add(AccountingEvent.ADDDBSP);
 				list.add(AccountingEvent.ADDDBSN);
-				String finReference = financeMain.getFinReference();
-				List<FinFeeDetail> fees = finFeeDetailDAO.getFeeDetails(finReference, advanceRule.name(), list);
-				AdvancePaymentUtil.calculateLMSAdvPayment(scheduleData, fee, fees);
+				List<FinFeeDetail> fees = finFeeDetailDAO.getFeeDetails(fm.getFinID(), advanceRule.name(), list);
+				AdvancePaymentUtil.calculateLMSAdvPayment(schdData, fee, fees);
 			}
 		}
 
-		calculateFees(fee, financeMain, taxPercentages);
+		calculateFees(fee, fm, taxPercentages);
 	}
 
 	@Override
-	public void calculateFees(FinFeeDetail finFeeDetail, FinanceMain financeMain,
-			Map<String, BigDecimal> taxPercentages) {
+	public void calculateFees(FinFeeDetail fee, FinanceMain fm, Map<String, BigDecimal> taxPercentages) {
 		logger.debug(Literal.ENTERING);
 
-		BigDecimal waivedAmount = finFeeDetail.getWaivedAmount();
-		BigDecimal netAmountOriginal = finFeeDetail.getActualAmountOriginal().subtract(waivedAmount);
-		BigDecimal paidAmountOriginal = finFeeDetail.getPaidAmountOriginal();
+		BigDecimal waivedAmount = fee.getWaivedAmount();
+		BigDecimal netAmountOriginal = fee.getActualAmountOriginal().subtract(waivedAmount);
+		BigDecimal paidAmountOriginal = fee.getPaidAmountOriginal();
 
 		// GST Calculations
-		TaxHeader taxHeader = finFeeDetail.getTaxHeader();
+		TaxHeader taxHeader = fee.getTaxHeader();
 		Taxes cgstTax = null;
 		Taxes sgstTax = null;
 		Taxes igstTax = null;
 		Taxes ugstTax = null;
 		Taxes cessTax = null;
+
 		if (taxHeader == null) {
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);
 			taxHeader.setRecordType(PennantConstants.RCD_ADD);
 			taxHeader.setVersion(taxHeader.getVersion() + 1);
-			finFeeDetail.setTaxHeader(taxHeader);
+			fee.setTaxHeader(taxHeader);
 		}
+
 		List<Taxes> taxDetails = taxHeader.getTaxDetails();
+
 		if (CollectionUtils.isNotEmpty(taxDetails)) {
 			for (Taxes taxes : taxDetails) {
 				if (StringUtils.equals(RuleConstants.CODE_CGST, taxes.getTaxType())) {
@@ -1672,7 +1597,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		BigDecimal cessPerc = taxPercentages.get(RuleConstants.CODE_CESS);
 		BigDecimal totalGST = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 
-		finFeeDetail.setTaxPercent(totalGST);
+		fee.setTaxPercent(totalGST);
 
 		if (taxHeader.getTaxDetails() == null) {
 			taxHeader.setTaxDetails(new ArrayList<>());
@@ -1718,12 +1643,12 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			cessTax.setTaxPerc(cessPerc);
 		}
 
-		if (finFeeDetail.isTaxApplicable()) {
+		if (fee.isTaxApplicable()) {
 			TaxAmountSplit taxSplit;
-			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, finFeeDetail.getTaxComponent())) {
+			if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE, fee.getTaxComponent())) {
 
 				// Actual Amounts
-				BigDecimal actualOriginal = finFeeDetail.getActualAmountOriginal();
+				BigDecimal actualOriginal = fee.getActualAmountOriginal();
 				taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
 				cgstTax.setActualTax(taxSplit.getcGST());
 				sgstTax.setActualTax(taxSplit.getsGST());
@@ -1731,11 +1656,11 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				ugstTax.setActualTax(taxSplit.getuGST());
 				cessTax.setActualTax(taxSplit.getCess());
 
-				finFeeDetail.setActualAmountGST(taxSplit.gettGST());
-				finFeeDetail.setActualAmount(actualOriginal.add(taxSplit.gettGST()));
+				fee.setActualAmountGST(taxSplit.gettGST());
+				fee.setActualAmount(actualOriginal.add(taxSplit.gettGST()));
 
 				// Paid Amounts
-				if (finFeeDetail.isPaidCalcReq()) {
+				if (fee.isPaidCalcReq()) {
 					taxSplit = GSTCalculator.getExclusiveGST(paidAmountOriginal, taxPercentages);
 					cgstTax.setPaidTax(taxSplit.getcGST());
 					sgstTax.setPaidTax(taxSplit.getsGST());
@@ -1743,9 +1668,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					ugstTax.setPaidTax(taxSplit.getuGST());
 					cessTax.setPaidTax(taxSplit.getCess());
 
-					finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
-					finFeeDetail.setPaidAmount(
-							paidAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getPaidTDS()));
+					fee.setPaidAmountGST(taxSplit.gettGST());
+					fee.setPaidAmount(paidAmountOriginal.add(taxSplit.gettGST()).subtract(fee.getPaidTDS()));
 				}
 
 				// Net Amounts
@@ -1756,13 +1680,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				ugstTax.setNetTax(taxSplit.getuGST());
 				cessTax.setNetTax(taxSplit.getCess());
 
-				finFeeDetail.setNetAmountGST(taxSplit.gettGST());
-				finFeeDetail.setNetAmountOriginal(netAmountOriginal);
-				finFeeDetail.setNetAmount(netAmountOriginal.add(taxSplit.gettGST()).subtract(finFeeDetail.getNetTDS()));
+				fee.setNetAmountGST(taxSplit.gettGST());
+				fee.setNetAmountOriginal(netAmountOriginal);
+				fee.setNetAmount(netAmountOriginal.add(taxSplit.gettGST()).subtract(fee.getNetTDS()));
 
 				// Remaining Fee
-				BigDecimal remainingAmountOriginal = finFeeDetail.getActualAmountOriginal()
-						.subtract(finFeeDetail.getPaidAmountOriginal()).subtract(waivedAmount);
+				BigDecimal remainingAmountOriginal = fee.getActualAmountOriginal().subtract(fee.getPaidAmountOriginal())
+						.subtract(waivedAmount);
 				// taxSplit = GSTCalculator.getExclusiveGST(remainingAmountOriginal, taxPercentages);
 				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
 				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
@@ -1772,9 +1696,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				BigDecimal totRemGST = cgstTax.getRemFeeTax().add(sgstTax.getRemFeeTax()).add(igstTax.getRemFeeTax())
 						.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
-				finFeeDetail.setRemainingFeeGST(totRemGST);
-				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
-				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(finFeeDetail.getRemTDS()));
+				fee.setRemainingFeeGST(totRemGST);
+				fee.setRemainingFeeOriginal(remainingAmountOriginal);
+				fee.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(fee.getRemTDS()));
 
 				// Waived Amounts
 				taxSplit = GSTCalculator.getExclusiveGST(waivedAmount, taxPercentages);
@@ -1783,15 +1707,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				igstTax.setWaivedTax(taxSplit.getiGST());
 				ugstTax.setWaivedTax(taxSplit.getuGST());
 				cessTax.setWaivedTax(taxSplit.getCess());
-				finFeeDetail.setWaivedGST(taxSplit.gettGST());
-				finFeeDetail.setTaxHeader(taxHeader);
+				fee.setWaivedGST(taxSplit.gettGST());
+				fee.setTaxHeader(taxHeader);
 
-			} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
-					finFeeDetail.getTaxComponent())) {
+			} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, fee.getTaxComponent())) {
 
 				// Net Amount
-				BigDecimal totalNetFee = finFeeDetail.getNetAmount().subtract(waivedAmount)
-						.add(finFeeDetail.getNetTDS());
+				BigDecimal totalNetFee = fee.getNetAmount().subtract(waivedAmount).add(fee.getNetTDS());
 
 				taxSplit = GSTCalculator.getInclusiveGST(totalNetFee, taxPercentages);
 
@@ -1801,18 +1723,18 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				ugstTax.setNetTax(taxSplit.getuGST());
 				cessTax.setNetTax(taxSplit.getCess());
 
-				finFeeDetail.setNetAmountOriginal(totalNetFee.subtract(taxSplit.gettGST()));
-				finFeeDetail.setNetAmountGST(taxSplit.gettGST());
-				finFeeDetail.setNetAmount(totalNetFee.subtract(finFeeDetail.getNetTDS()));
+				fee.setNetAmountOriginal(totalNetFee.subtract(taxSplit.gettGST()));
+				fee.setNetAmountGST(taxSplit.gettGST());
+				fee.setNetAmount(totalNetFee.subtract(fee.getNetTDS()));
 
 				BigDecimal netFeeOriginal = taxSplit.getNetAmount();
 				BigDecimal netTGST = taxSplit.gettGST();
 
 				// Actual Amounts
 				if (BigDecimal.ZERO.compareTo(waivedAmount) == 0) {
-					finFeeDetail.setActualAmountOriginal(finFeeDetail.getNetAmountOriginal());
-					finFeeDetail.setActualAmountGST(finFeeDetail.getNetAmountGST());
-					finFeeDetail.setActualAmount(finFeeDetail.getNetAmount());
+					fee.setActualAmountOriginal(fee.getNetAmountOriginal());
+					fee.setActualAmountGST(fee.getNetAmountGST());
+					fee.setActualAmount(fee.getNetAmount());
 
 					cgstTax.setActualTax(taxSplit.getcGST());
 					sgstTax.setActualTax(taxSplit.getsGST());
@@ -1821,9 +1743,9 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					cessTax.setActualTax(taxSplit.getCess());
 				} else {
 					taxSplit = GSTCalculator.getInclusiveGST(netFeeOriginal.subtract(waivedAmount), taxPercentages);
-					finFeeDetail.setActualAmountOriginal(totalNetFee.subtract(netTGST));
-					finFeeDetail.setActualAmountGST(taxSplit.gettGST());
-					finFeeDetail.setActualAmount(finFeeDetail.getActualAmountOriginal().add(taxSplit.gettGST()));
+					fee.setActualAmountOriginal(totalNetFee.subtract(netTGST));
+					fee.setActualAmountGST(taxSplit.gettGST());
+					fee.setActualAmount(fee.getActualAmountOriginal().add(taxSplit.gettGST()));
 
 					cgstTax.setActualTax(taxSplit.getcGST());
 					sgstTax.setActualTax(taxSplit.getsGST());
@@ -1833,8 +1755,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				}
 
 				// Paid Amounts
-				BigDecimal totalPaidFee = finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS());
-				if (finFeeDetail.isPaidCalcReq()) {
+				BigDecimal totalPaidFee = fee.getPaidAmount().add(fee.getPaidTDS());
+				if (fee.isPaidCalcReq()) {
 
 					taxSplit = GSTCalculator.getInclusiveGST(totalPaidFee, taxPercentages);
 					cgstTax.setPaidTax(taxSplit.getcGST());
@@ -1843,13 +1765,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 					ugstTax.setPaidTax(taxSplit.getuGST());
 					cessTax.setPaidTax(taxSplit.getCess());
 
-					finFeeDetail.setPaidAmountOriginal(totalPaidFee.subtract(taxSplit.gettGST()));
-					finFeeDetail.setPaidAmountGST(taxSplit.gettGST());
+					fee.setPaidAmountOriginal(totalPaidFee.subtract(taxSplit.gettGST()));
+					fee.setPaidAmountGST(taxSplit.gettGST());
 				}
 
 				// Remaining Fee
-				BigDecimal remainingAmountOriginal = finFeeDetail.getActualAmountOriginal()
-						.subtract(finFeeDetail.getPaidAmountOriginal());
+				BigDecimal remainingAmountOriginal = fee.getActualAmountOriginal()
+						.subtract(fee.getPaidAmountOriginal());
 				// taxSplit = GSTCalculator.getInclusiveGST(remainingAmountOriginal, taxPercentages);
 				cgstTax.setRemFeeTax(cgstTax.getNetTax().subtract(cgstTax.getPaidTax()));
 				sgstTax.setRemFeeTax(sgstTax.getNetTax().subtract(sgstTax.getPaidTax()));
@@ -1859,10 +1781,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				BigDecimal totRemGST = cgstTax.getRemFeeTax().add(sgstTax.getRemFeeTax()).add(igstTax.getRemFeeTax())
 						.add(ugstTax.getRemFeeTax()).add(cessTax.getRemFeeTax());
-				finFeeDetail.setRemainingFeeGST(totRemGST);
-				finFeeDetail.setRemainingFeeOriginal(remainingAmountOriginal);
-				finFeeDetail.setRemTDS(finFeeDetail.getNetTDS().subtract(finFeeDetail.getPaidTDS()));
-				finFeeDetail.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(finFeeDetail.getRemTDS()));
+				fee.setRemainingFeeGST(totRemGST);
+				fee.setRemainingFeeOriginal(remainingAmountOriginal);
+				fee.setRemTDS(fee.getNetTDS().subtract(fee.getPaidTDS()));
+				fee.setRemainingFee(remainingAmountOriginal.add(totRemGST).subtract(fee.getRemTDS()));
 
 				// Waived Amounts
 				taxSplit = GSTCalculator.getInclusiveGST(waivedAmount, taxPercentages);
@@ -1871,25 +1793,25 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				igstTax.setWaivedTax(taxSplit.getiGST());
 				ugstTax.setWaivedTax(taxSplit.getuGST());
 				cessTax.setWaivedTax(taxSplit.getCess());
-				finFeeDetail.setWaivedGST(taxSplit.gettGST());
+				fee.setWaivedGST(taxSplit.gettGST());
 			}
 		} else {
 
 			// Net Amount
-			finFeeDetail.setNetAmountOriginal(netAmountOriginal);
-			finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
-			finFeeDetail.setNetAmount(netAmountOriginal.subtract(finFeeDetail.getNetTDS()));
+			fee.setNetAmountOriginal(netAmountOriginal);
+			fee.setNetAmountGST(BigDecimal.ZERO);
+			fee.setNetAmount(netAmountOriginal.subtract(fee.getNetTDS()));
 
 			// Remaining Amount
-			finFeeDetail.setRemainingFeeOriginal(finFeeDetail.getActualAmountOriginal().subtract(waivedAmount)
-					.subtract(finFeeDetail.getPaidAmount()));
-			finFeeDetail.setRemainingFeeGST(BigDecimal.ZERO);
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(waivedAmount)
-					.subtract(finFeeDetail.getPaidAmount()).subtract(finFeeDetail.getRemTDS()));
+			fee.setRemainingFeeOriginal(
+					fee.getActualAmountOriginal().subtract(waivedAmount).subtract(fee.getPaidAmount()));
+			fee.setRemainingFeeGST(BigDecimal.ZERO);
+			fee.setRemainingFee(fee.getActualAmount().subtract(waivedAmount).subtract(fee.getPaidAmount())
+					.subtract(fee.getRemTDS()));
 
 			// Paid Amount
-			finFeeDetail.setPaidAmountOriginal(finFeeDetail.getPaidAmount().add(finFeeDetail.getPaidTDS()));
-			finFeeDetail.setPaidAmountGST(BigDecimal.ZERO);
+			fee.setPaidAmountOriginal(fee.getPaidAmount().add(fee.getPaidTDS()));
+			fee.setPaidAmountGST(BigDecimal.ZERO);
 
 			// Actual Fee
 			cgstTax.setActualTax(BigDecimal.ZERO);
@@ -1925,7 +1847,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 			igstTax.setWaivedTax(BigDecimal.ZERO);
 			ugstTax.setWaivedTax(BigDecimal.ZERO);
 			cessTax.setWaivedTax(BigDecimal.ZERO);
-			finFeeDetail.setWaivedGST(BigDecimal.ZERO);
+			fee.setWaivedGST(BigDecimal.ZERO);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1956,8 +1878,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public long getFinFeeTypeIdByFeeType(String feeTypeCode, String finReference) {
-		return finFeeDetailDAO.getFinFeeTypeIdByFeeType(feeTypeCode, finReference, "_AView");
+	public long getFinFeeTypeIdByFeeType(String feeTypeCode, long finID) {
+		return finFeeDetailDAO.getFinFeeTypeIdByFeeType(feeTypeCode, finID, "_AView");
 	}
 
 	@Override
@@ -1971,21 +1893,21 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public BigDecimal calDropLineLPOS(FinScheduleData finScheduleData, Date appDate) {
+	public BigDecimal calDropLineLPOS(FinScheduleData schdData, Date appDate) {
 
 		BigDecimal limitAmt = BigDecimal.ZERO;
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 
-		if (scheduleList == null || scheduleList.isEmpty()) {
-			scheduleList = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finMain.getFinReference());
+		if (schedules == null || schedules.isEmpty()) {
+			schedules = financeScheduleDetailDAO.getFinSchdDetailsForBatch(fm.getFinID());
 		}
 
-		if (appDate.compareTo(finMain.getGrcPeriodEndDate()) <= 0) {
-			limitAmt = finMain.getFinAssetValue();
+		if (appDate.compareTo(fm.getGrcPeriodEndDate()) <= 0) {
+			limitAmt = fm.getFinAssetValue();
 		} else {
-			for (FinanceScheduleDetail schedule : scheduleList) {
+			for (FinanceScheduleDetail schedule : schedules) {
 
 				if (appDate.compareTo(schedule.getSchDate()) < 0) {
 					break;
@@ -2001,76 +1923,44 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return finFeeDetailDAO.getFinFeeDetailsByTran(reference, isWIF, type);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public FinFeeScheduleDetailDAO getFinFeeScheduleDetailDAO() {
-		return finFeeScheduleDetailDAO;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
-		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
-	}
-
-	public FinFeeReceiptDAO getFinFeeReceiptDAO() {
-		return finFeeReceiptDAO;
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
 	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
 		this.finFeeReceiptDAO = finFeeReceiptDAO;
 	}
 
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
+	public void setFinFeeScheduleDetailDAO(FinFeeScheduleDetailDAO finFeeScheduleDetailDAO) {
+		this.finFeeScheduleDetailDAO = finFeeScheduleDetailDAO;
 	}
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
-	public FinExcessAmountDAO getFinExcessAmountDAO() {
-		return finExcessAmountDAO;
-	}
-
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
-		return finReceiptDetailDAO;
 	}
 
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 
-	public RuleDAO getRuleDAO() {
-		return ruleDAO;
-	}
-
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
-	}
-
-	public BranchDAO getBranchDAO() {
-		return branchDAO;
 	}
 
 	public void setBranchDAO(BranchDAO branchDAO) {
 		this.branchDAO = branchDAO;
 	}
 
-	public ProvinceDAO getProvinceDAO() {
-		return provinceDAO;
-	}
-
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {
 		this.provinceDAO = provinceDAO;
-	}
-
-	public TaxHeaderDetailsService getTaxHeaderDetailsService() {
-		return taxHeaderDetailsService;
 	}
 
 	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
@@ -2080,4 +1970,5 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
+
 }
