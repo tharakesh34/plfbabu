@@ -101,72 +101,21 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private FinanceMainDAO financeMainDAO;
-	private FinAdvancePaymentsService finAdvancePaymentsService; // ##PSD:
-																	// 128172-Auto
-																	// move the
-																	// data to
-																	// staging
-																	// table
-	@Autowired
+	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private DocumentDetailsDAO documentDetailsDAO;
 	private FinCovenantTypeDAO finCovenantTypeDAO;
-	@Autowired
 	private VASRecordingDAO vasRecordingDAO;
 	private PartnerBankService partnerBankService;
-	@Autowired
 	private PostingsDAO postingsDAO;
 	private PaymentsProcessService paymentsProcessService;
-	@Autowired
 	private PennyDropDAO pennyDropDAO;
-	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
 	private JointAccountDetailDAO jointAccountDetailDAO;
-	@Autowired
 	private FinFeeDetailDAO finFeeDetailDAO;
 
 	public PayOrderIssueServiceImpl() {
 		super();
 	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public PayOrderIssueHeaderDAO getPayOrderIssueHeaderDAO() {
-		return payOrderIssueHeaderDAO;
-	}
-
-	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
-		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
-	}
-
-	public FinCovenantTypeDAO getFinCovenantTypeDAO() {
-		return finCovenantTypeDAO;
-	}
-
-	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
-		this.finCovenantTypeDAO = finCovenantTypeDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * BMTPayOrderIssueHeader/BMTPayOrderIssueHeader_Temp by using PayOrderIssueHeaderDAO's save method b) Update the
-	 * Record in the table. based on the module workFlow Configuration. by using PayOrderIssueHeaderDAO's update method
-	 * 3) Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -201,21 +150,11 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 				payOrderIssueHeader));
 		auditHeader.setAuditDetails(auditDetails);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
 	}
-
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * BMTPayOrderIssueHeader by using PayOrderIssueHeaderDAO's delete method with type as Blank 3) Audit the record in
-	 * to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
@@ -228,33 +167,25 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		PayOrderIssueHeader payOrderIssueHeader = (PayOrderIssueHeader) auditHeader.getAuditDetail().getModelData();
-		getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "");
+		payOrderIssueHeaderDAO.delete(payOrderIssueHeader, "");
 		List<FinAdvancePayments> list = payOrderIssueHeader.getFinAdvancePaymentsList();
 		if (list != null && !list.isEmpty()) {
 			finAdvancePaymentsDAO.deleteByFinRef(payOrderIssueHeader.getFinReference(), "_Temp");
 		}
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	/**
-	 * getPayOrderIssueHeaderById fetch the details by using PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById method.
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return PayOrderIssueHeader
-	 */
-
 	@Override
 	public PayOrderIssueHeader getPayOrderIssueHeaderById(String id) {
 		logger.debug("Entering");
-		PayOrderIssueHeader issueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(id, "_View");
-		FinanceMain finMian = getFinanceMainDAO().getDisbursmentFinMainById(issueHeader.getFinReference(),
+		PayOrderIssueHeader issueHeader = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(id, "_View");
+		FinanceMain finMian = financeMainDAO.getDisbursmentFinMainById(issueHeader.getFinReference(),
 				TableType.MAIN_TAB);
 		issueHeader.setLoanApproved(true);
 		if (finMian == null) {
-			finMian = getFinanceMainDAO().getDisbursmentFinMainById(id, TableType.TEMP_TAB);
+			finMian = financeMainDAO.getDisbursmentFinMainById(id, TableType.TEMP_TAB);
 			issueHeader.setLoanApproved(false);
 		}
 		issueHeader.setFinanceMain(finMian);
@@ -323,44 +254,18 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 			issueHeader.setvASRecordings(vasRecordingDAO.getVASRecordingsByLinkRef(finMian.getFinReference(), ""));
 		}
 		// Getting the JoinAccount Details
-		if (getJointAccountDetailDAO() != null) {
-			issueHeader.setJointAccountDetails(
-					getJointAccountDetailDAO().getJointAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
-		}
+		issueHeader.setJointAccountDetails(
+				jointAccountDetailDAO.getJointAccountDetailByFinRef(id, TableType.MAIN_TAB.getSuffix()));
 		logger.debug("Leaving");
 		return issueHeader;
 	}
 
-	/**
-	 * getApprovedPayOrderIssueHeaderById fetch the details by using PayOrderIssueHeaderDAO's getPayOrderIssueHeaderById
-	 * method . with parameter id and type as blank. it fetches the approved records from the BMTPayOrderIssueHeader.
-	 * 
-	 * @param id (String)
-	 * @return PayOrderIssueHeader
-	 */
-
 	public PayOrderIssueHeader getApprovedPayOrderIssueHeaderById(String id, String code) {
-		PayOrderIssueHeader payOrderIssueHeader = getPayOrderIssueHeaderDAO().getPayOrderIssueByHeaderRef(id, "_AView");
+		PayOrderIssueHeader payOrderIssueHeader = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(id, "_AView");
 		payOrderIssueHeader.setFinAdvancePaymentsList(
 				finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(payOrderIssueHeader.getFinReference(), "_AView"));
 		return payOrderIssueHeader;
 	}
-
-	/**
-	 * ` * doApprove method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * based on the Record type do following actions a) DELETE Delete the record from the main table by using
-	 * getPaymentOrderIssueHeaderDAO().delete with parameters payOrderIssueHeader,"" b) NEW Add new record in to main
-	 * table by using getPaymentOrderIssueHeaderDAO().save with parameters payOrderIssueHeader,"" c) EDIT Update record
-	 * in the main table by using getPaymentOrderIssueHeaderDAO().update with parameters payOrderIssueHeader,"" 3)
-	 * Delete the record from the workFlow table by using getPaymentOrderIssueHeaderDAO().delete with parameters
-	 * payOrderIssueHeader,"_Temp" 4) Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
-	 * AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
@@ -408,7 +313,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		if (payOrderIssueHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "");
+			payOrderIssueHeaderDAO.delete(payOrderIssueHeader, "");
 		} else {
 			payOrderIssueHeader.setRoleCode("");
 			payOrderIssueHeader.setNextRoleCode("");
@@ -437,18 +342,18 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		finAdvancePaymentsDAO.deleteByFinRef(payOrderIssueHeader.getFinReference(), "_Temp");
 
-		getPayOrderIssueHeaderDAO().delete(payOrderIssueHeader, "_Temp");
+		payOrderIssueHeaderDAO.delete(payOrderIssueHeader, "_Temp");
 
 		processPayment(payOrderIssueHeader);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(payOrderIssueHeader);
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -501,17 +406,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getPaymentOrderIssueHeaderDAO().delete with parameters payOrderIssueHeader,"_Temp" 3)
-	 * Audit the record in to AuditHeader and AdtBMTPayOrderIssueHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
-
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -541,13 +435,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
@@ -564,16 +451,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getPaymentOrderIssueHeaderDAO().getErrorDPayOrderIssueHeaderith Error ID and language as parameters. if any
-	 * error/Warnings then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @param method
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 
@@ -582,10 +459,10 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		PayOrderIssueHeader tempPayOrderIssueHeader = null;
 		if (payOrderIssueHeader.isWorkflow()) {
-			tempPayOrderIssueHeader = getPayOrderIssueHeaderDAO()
+			tempPayOrderIssueHeader = payOrderIssueHeaderDAO
 					.getPayOrderIssueByHeaderRef(payOrderIssueHeader.getFinReference(), "_Temp");
 		}
-		PayOrderIssueHeader befPayOrderIssueHeader = getPayOrderIssueHeaderDAO()
+		PayOrderIssueHeader befPayOrderIssueHeader = payOrderIssueHeaderDAO
 				.getPayOrderIssueByHeaderRef(payOrderIssueHeader.getFinReference(), "");
 		PayOrderIssueHeader oldPayOrderIssueHeader = payOrderIssueHeader.getBefImage();
 
@@ -802,11 +679,6 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 	}
 
-	/**
-	 * @param payOrderIssueHeader
-	 * @param type
-	 * @return
-	 */
 	private List<AuditDetail> processFinAdvancepayments(PayOrderIssueHeader payOrderIssueHeader, String type,
 			Map<Integer, Long> data) {
 		logger.debug(" Entering ");
@@ -994,6 +866,19 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		return noValidation;
 	}
 
+	@Override
+	public List<ReturnDataSet> getDisbursementPostings(String finReference) {
+		return postingsDAO.getDisbursementPostings(finReference);
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
+		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
+	}
+
 	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
 		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
 	}
@@ -1006,41 +891,32 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		this.financeDisbursementDAO = financeDisbursementDAO;
 	}
 
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public void setPartnerBankService(PartnerBankService partnerBankService) {
-		this.partnerBankService = partnerBankService;
-	}
-
-	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
-		return finAdvancePaymentsService;
-	}
-
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
-	@Override
-	public List<ReturnDataSet> getDisbursementPostings(String finReference) {
-		return postingsDAO.getDisbursementPostings(finReference);
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
-	public PostingsDAO getPostingsDAO() {
-		return postingsDAO;
+	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
+		this.finCovenantTypeDAO = finCovenantTypeDAO;
+	}
+
+	public void setVasRecordingDAO(VASRecordingDAO vasRecordingDAO) {
+		this.vasRecordingDAO = vasRecordingDAO;
+	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
 	}
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
@@ -1051,12 +927,21 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		this.paymentsProcessService = paymentsProcessService;
 	}
 
-	public JointAccountDetailDAO getJointAccountDetailDAO() {
-		return jointAccountDetailDAO;
+	public void setPennyDropDAO(PennyDropDAO pennyDropDAO) {
+		this.pennyDropDAO = pennyDropDAO;
+	}
+
+	@Autowired(required = false)
+	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
+		this.bankAccountValidationService = bankAccountValidationService;
 	}
 
 	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
 		this.jointAccountDetailDAO = jointAccountDetailDAO;
+	}
+
+	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
+		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
 }

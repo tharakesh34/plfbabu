@@ -1,54 +1,33 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * * Modified
+ * Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.financemanagement.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -80,7 +59,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -103,62 +81,11 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public ProvisionDAO getProvisionDAO() {
-		return provisionDAO;
-	}
-
-	public void setProvisionDAO(ProvisionDAO provisionDAO) {
-		this.provisionDAO = provisionDAO;
-	}
-
-	public ProvisionMovementDAO getProvisionMovementDAO() {
-		return provisionMovementDAO;
-	}
-
-	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
-		this.provisionMovementDAO = provisionMovementDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public ProvisionCalculationUtil getProvisionCalculationUtil() {
-		return provisionCalculationUtil;
-	}
-
-	public void setProvisionCalculationUtil(ProvisionCalculationUtil provisionCalculationUtil) {
-		this.provisionCalculationUtil = provisionCalculationUtil;
-	}
-
 	@Override
 	public Provision getProvision() {
-		return getProvisionDAO().getProvision();
+		return provisionDAO.getProvision();
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table FinProvisions/FinProvisions_Temp
-	 * by using ProvisionDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ProvisionDAO's update method 3) Audit the record in to AuditHeader and AdtFinProvisions
-	 * by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -185,22 +112,12 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			provisionDAO.updateAmounts(provision.getProvisionAmounts(), tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinProvisions by using ProvisionDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtFinProvisions by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -214,55 +131,28 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		provisionDAO.deleteAmounts(provision.getId(), TableType.MAIN_TAB);
 		provisionDAO.delete(provision, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	@Override
-	public Provision getProvisionById(String finReference, TableType tableType) {
-		Provision provision = provisionDAO.getProvisionById(finReference, tableType, false);
+	public Provision getProvisionById(long finID, TableType tableType) {
+		Provision provision = provisionDAO.getProvisionById(finID, tableType, false);
 		if (provision != null) {
 			provision.setProvisionAmounts(provisionDAO.getProvisionAmounts(provision.getId(), tableType));
 		}
 		return provision;
 	}
 
-	/**
-	 * getApprovedProvisionById fetch the details by using ProvisionDAO's getProvisionById method . with parameter id
-	 * and type as blank. it fetches the approved records from the FinProvisions.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @return Provision
-	 */
 	public Provision getApprovedProvisionById(String id) {
 		return provisionDAO.getProvisionById(id, TableType.AVIEW, true);
 	}
 
 	@Override
-	public FinanceProfitDetail getProfitDetailById(String finReference) {
-		return getProfitDetailsDAO().getFinProfitDetailsById(finReference);
+	public FinanceProfitDetail getProfitDetailById(long finID) {
+		return profitDetailsDAO.getFinProfitDetailsById(finID);
 	}
-
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getProvisionDAO().delete with
-	 * parameters provision,"" b) NEW Add new record in to main table by using getProvisionDAO().save with parameters
-	 * provision,"" c) EDIT Update record in the main table by using getProvisionDAO().update with parameters
-	 * provision,"" 3) Delete the record from the workFlow table by using getProvisionDAO().delete with parameters
-	 * provision,"_Temp" 4) Audit the record in to AuditHeader and AdtFinProvisions by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinProvisions by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -280,12 +170,12 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(provision.getRecordType())) {
 			auditHeader.getAuditDetail()
-					.setBefImage(getProvisionDAO().getProvisionById(provision.getId(), TableType.MAIN_TAB, false));
+					.setBefImage(provisionDAO.getProvisionById(provision.getId(), TableType.MAIN_TAB, false));
 		}
 
 		if (provision.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getProvisionDAO().delete(provision, TableType.MAIN_TAB);
+			provisionDAO.delete(provision, TableType.MAIN_TAB);
 		} else {
 			provision.setRoleCode("");
 			provision.setNextRoleCode("");
@@ -311,13 +201,13 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(provision);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
@@ -325,23 +215,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 	// Document Details List Maintenance
 	public void listDocDeletion(FinanceDetail custDetails, String tableType) {
-		getDocumentDetailsDAO().deleteList(new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()),
-				tableType);
+		documentDetailsDAO.deleteList(new ArrayList<DocumentDetails>(custDetails.getDocumentDetailsList()), tableType);
 	}
-
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getProvisionDAO().delete with parameters provision,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtFinProvisions by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 * @throws InterfaceException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -352,59 +227,48 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		}
 
 		Provision provision = (Provision) auditHeader.getAuditDetail().getModelData();
-		FinanceMain financeMain = provision.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceDetail fd = provision.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinanceMain fm = schdData.getFinanceMain();
 		String tranType = PennantConstants.TRAN_DEL;
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : provision.getFinanceDetail().getFinScheduleData()
-				.getFinServiceInstructions()) {
+
+		for (FinServiceInstruction finServInst : schdData.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
 		}
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(financeMain.getFinReference(), FinServiceEvent.PROVISION);
+		cancelStageAccounting(fm.getFinReference(), FinServiceEvent.PROVISION);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		provisionDAO.deleteAmounts(provision.getId(), TableType.TEMP_TAB);
 		provisionDAO.delete(provision, TableType.TEMP_TAB);
 
 		// Save Document Details
-		if (provision.getFinanceDetail().getDocumentDetailsList() != null
-				&& provision.getFinanceDetail().getDocumentDetailsList().size() > 0) {
-			for (DocumentDetails docDetails : provision.getFinanceDetail().getDocumentDetailsList()) {
+		if (fd.getDocumentDetailsList() != null && fd.getDocumentDetailsList().size() > 0) {
+			for (DocumentDetails docDetails : fd.getDocumentDetailsList()) {
 				docDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
-			List<AuditDetail> details = provision.getFinanceDetail().getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "_Temp",
-					provision.getFinanceDetail().getFinScheduleData().getFinanceMain(),
-					provision.getFinanceDetail().getModuleDefiner(), serviceUID);
+			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
+			details = processingDocumentDetailsList(details, "_Temp", schdData.getFinanceMain(), fd.getModuleDefiner(),
+					serviceUID);
 			auditHeader.setAuditDetails(details);
-			listDocDeletion(provision.getFinanceDetail(), "_Temp");
+			listDocDeletion(fd, "_Temp");
 		}
 
 		// Fee charges deletion
-		getFinFeeChargesDAO().deleteChargesBatch(financeMain.getFinReference(),
-				provision.getFinanceDetail().getModuleDefiner(), false, "_Temp");
+		finFeeChargesDAO.deleteChargesBatch(fm.getFinID(), fd.getModuleDefiner(), false, "_Temp");
 
 		// Checklist Details delete
 		// =======================================
-		getCheckListDetailService().delete(provision.getFinanceDetail(), "_Temp", tranType);
+		checkListDetailService.delete(fd, "_Temp", tranType);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
-
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getProvisionDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
@@ -424,9 +288,9 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		Provision tempProvision = null;
 		if (provision.isWorkflow()) {
-			tempProvision = getProvisionDAO().getProvisionById(provision.getId(), TableType.TEMP_TAB, false);
+			tempProvision = provisionDAO.getProvisionById(provision.getId(), TableType.TEMP_TAB, false);
 		}
-		Provision befProvision = getProvisionDAO().getProvisionById(provision.getId(), TableType.MAIN_TAB, false);
+		Provision befProvision = provisionDAO.getProvisionById(provision.getId(), TableType.MAIN_TAB, false);
 		Provision oldProvision = provision.getBefImage();
 
 		String[] errParm = new String[1];
@@ -529,8 +393,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
-						auditTranType, method));
+				auditDetails.addAll(
+						checkListDetailService.getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
 			}
 		} else {
 			String tableType = "_Temp";
@@ -539,12 +403,12 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 			}
 
 			String finReference = schdule.getFinReference();
-			financeCheckList = getCheckListDetailService().getCheckListByFinRef(finReference, tableType);
+			financeCheckList = checkListDetailService.getCheckListByFinRef(finReference, tableType);
 			financeDetail.setFinanceCheckList(financeCheckList);
 
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(getCheckListDetailService().getAuditDetail(auditDetailMap, financeDetail,
-						auditTranType, method));
+				auditDetails.addAll(
+						checkListDetailService.getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
 			}
 		}
 
@@ -556,17 +420,6 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		return auditHeader;
 	}
 
-	/**
-	 * Method for Execute posting Details on Core Banking Side
-	 * 
-	 * @param auditHeader
-	 * @param curBDay
-	 * @return
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws AccountNotFoundException
-	 */
-
 	private long executeAccountingProcess(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
@@ -576,8 +429,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
-		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(),
-				AccountingEvent.PROVSN, FinanceConstants.MODULEID_FINTYPE);
+		Long accountingID = AccountingConfigCache.getCacheAccountSetID(financeMain.getFinType(), AccountingEvent.PROVSN,
+				FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		aeEvent.setFinReference(provision.getFinReference());
@@ -614,6 +467,22 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	@Override
 	public List<ProvisionAmount> getProvisionAmounts(long id, TableType type) {
 		return provisionDAO.getProvisionAmounts(id, type);
+	}
+
+	public void setProvisionDAO(ProvisionDAO provisionDAO) {
+		this.provisionDAO = provisionDAO;
+	}
+
+	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
+		this.provisionMovementDAO = provisionMovementDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setProvisionCalculationUtil(ProvisionCalculationUtil provisionCalculationUtil) {
+		this.provisionCalculationUtil = provisionCalculationUtil;
 	}
 
 }

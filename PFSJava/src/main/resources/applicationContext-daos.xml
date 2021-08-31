@@ -4180,9 +4180,15 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
+		<property name="vasRecordingDAO" ref="vasRecordingDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
+		<property name="pennyDropDAO" ref="pennyDropDAO" />
 		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
 		<property name="dMSService" ref="dMSService" />
 	</bean>
 

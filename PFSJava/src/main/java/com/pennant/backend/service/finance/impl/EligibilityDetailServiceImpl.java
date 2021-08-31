@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EligibilityDetailServiceImpl.java     	                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EligibilityDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -73,9 +55,9 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> implements EligibilityDetailService {
-
 	private static final Logger logger = LogManager.getLogger(FinanceDetailServiceImpl.class);
 
 	private FinanceMainDAO financeMainDAO;
@@ -86,92 +68,69 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		super();
 	}
 
-	/**
-	 * Set Finance Eligibility Details to the Finance Detail
-	 * 
-	 * @param financeDetail
-	 * @param finType
-	 * @param userRole
-	 */
 	@Override
-	public List<FinanceEligibilityDetail> fetchEligibilityDetails(FinanceMain financeMain,
-			List<FinanceReferenceDetail> financeReferenceList) {
-		logger.debug("Entering");
-		return fetchFinElgDetails(financeReferenceList, financeMain.getFinReference(), financeMain.getFinCcy(),
-				financeMain.getFinAmount(), financeMain.isNewRecord());
+	public List<FinanceEligibilityDetail> fetchEligibilityDetails(FinanceMain fm,
+			List<FinanceReferenceDetail> frdList) {
+		return fetchFinElgDetails(frdList, fm.getFinID(), fm.getFinCcy(), fm.getFinAmount(), fm.isNewRecord());
 	}
 
-	/**
-	 * Set Finance Eligibility Details to the Finance Detail
-	 * 
-	 * @param financeDetail
-	 * @param finType
-	 * @param userRole
-	 */
 	@Override
-	public List<FinanceEligibilityDetail> setFinanceEligibilityDetails(String finReference, String finCcy,
-			BigDecimal finAmount, boolean isNewRecord, String finType, String userRole, String screenEvent) {
-		logger.debug("Entering");
+	public List<FinanceEligibilityDetail> setFinanceEligibilityDetails(long finID, String finCcy, BigDecimal finAmount,
+			boolean isNewRecord, String finType, String userRole, String screenEvent) {
+		logger.debug(Literal.ENTERING);
 
-		List<FinanceReferenceDetail> financeReferenceList = getFinanceReferenceDetailDAO()
+		List<FinanceReferenceDetail> financeReferenceList = financeReferenceDetailDAO
 				.getFinRefDetByRoleAndFinType(finType, screenEvent, userRole, null, "_AEView");
 
-		logger.debug("Leaving");
-		return fetchFinElgDetails(financeReferenceList, finReference, finCcy, finAmount, isNewRecord);
+		logger.debug(Literal.LEAVING);
+		return fetchFinElgDetails(financeReferenceList, finID, finCcy, finAmount, isNewRecord);
 	}
 
-	private List<FinanceEligibilityDetail> fetchFinElgDetails(List<FinanceReferenceDetail> financeReferenceList,
-			String finReference, String finCcy, BigDecimal finAmount, boolean isNewRecord) {
-		logger.debug("Entering");
+	private List<FinanceEligibilityDetail> fetchFinElgDetails(List<FinanceReferenceDetail> frdList, long finID,
+			String finCcy, BigDecimal finAmount, boolean isNewRecord) {
+		logger.debug(Literal.ENTERING);
 
 		List<FinanceEligibilityDetail> eligibilityRuleList = null;
 
-		//Fetching Existed Executed Eligibility Rule List in Previous Stages
+		// Fetching Existed Executed Eligibility Rule List in Previous Stages
 		boolean executed = false;
 		if (isNewRecord) {
 			eligibilityRuleList = new ArrayList<FinanceEligibilityDetail>();
 		} else {
-			eligibilityRuleList = getFinElgDetailList(finReference);
+			eligibilityRuleList = getFinElgDetailList(finID);
 			for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
 				financeEligibilityDetail.setEligible(getEligibilityStatus(financeEligibilityDetail, finCcy, finAmount));
 			}
 		}
 
-		if (financeReferenceList == null || financeReferenceList.isEmpty()) {
+		if (frdList == null || frdList.isEmpty()) {
 			eligibilityRuleList.clear();
 		} else {
-			for (FinanceReferenceDetail finReferenceDetail : financeReferenceList) {
+			for (FinanceReferenceDetail frd : frdList) {
 				for (FinanceEligibilityDetail detail : eligibilityRuleList) {
-					if (finReferenceDetail.getFinRefId() == detail.getElgRuleCode()) {
+					if (frd.getFinRefId() == detail.getElgRuleCode()) {
 						executed = true;
 						detail.setExecute(true);
-						detail.setElgRuleValue(finReferenceDetail.getLovDescElgRuleValue());
-						detail.setAllowDeviation(finReferenceDetail.isAllowDeviation());
+						detail.setElgRuleValue(frd.getLovDescElgRuleValue());
+						detail.setAllowDeviation(frd.isAllowDeviation());
 						break;
 					}
 				}
 				if (!executed) {
-					eligibilityRuleList.add(prepareElgDetail(finReferenceDetail, finReference));
+					eligibilityRuleList.add(prepareElgDetail(frd, finID));
 				}
 				executed = false;
 			}
-			financeReferenceList.clear();
+			frdList.clear();
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return eligibilityRuleList;
 	}
 
-	/**
-	 * Method for Preparation of Eligibility Rule Details Execution List
-	 * 
-	 * @param elgRuleCode
-	 * @param ruleResult
-	 * @param ruleResultType
-	 * @return
-	 */
 	@Override
-	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, String finReference) {
+	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, long finID) {
 		FinanceEligibilityDetail detail = new FinanceEligibilityDetail();
+		detail.setFinID(finID);
 		detail.setFinReference(finReference);
 		detail.setElgRuleCode(referenceDetail.getFinRefId());
 		detail.setRuleResultType(referenceDetail.getLovDescRuleReturnType());
@@ -184,21 +143,16 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		detail.setEligible(false);
 		detail.setRuleResult("");
 		detail.setAllowDeviation(referenceDetail.isAllowDeviation());
-		//detail= getElgResult(detail, financeDetail);
+		// detail= getElgResult(detail, financeDetail);
 		detail.setExecute(true);
 		return detail;
 	}
 
-	/**
-	 * Method to invoke method to execute Eligibility rules and return result.
-	 * 
-	 * @param financeReferenceDetail
-	 * @return String
-	 */
 	@Override
 	public FinanceEligibilityDetail getElgResult(FinanceEligibilityDetail financeEligibilityDetail,
 			FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		CustomerEligibilityCheck customerEligibilityCheck = financeDetail.getCustomerEligibilityCheck();
 		String finCcy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
 
@@ -219,7 +173,7 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 
 		if (object != null) {
 			if (object instanceof BigDecimal) {
-				//unFormating object
+				// unFormating object
 				int formatter = CurrencyUtil.getFormat(finCcy);
 				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
 			}
@@ -228,12 +182,12 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 			ruleResString = null;
 		}
 
-		//Amount Conversion Based upon Finance Currency
+		// Amount Conversion Based upon Finance Currency
 		if (RuleConstants.RETURNTYPE_DECIMAL.equals(financeEligibilityDetail.getRuleResultType())
 				&& StringUtils.isNumeric(ruleResString)) {
 
 			if (StringUtils.isNotBlank(ruleResString)) {
-				//Get Finance Currency
+				// Get Finance Currency
 				ruleResString = CalculationUtil.getConvertedAmount(null, finCcy, new BigDecimal(ruleResString))
 						.toString();
 			} else {
@@ -245,17 +199,11 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		financeEligibilityDetail.setRuleResult(ruleResString);
 		financeEligibilityDetail.setEligible(
 				getEligibilityStatus(financeEligibilityDetail, finCcy, customerEligibilityCheck.getReqFinAmount()));
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return financeEligibilityDetail;
 	}
 
-	/**
-	 * Execute Rule by using rule engine
-	 * 
-	 * @param rule
-	 * @param customerEligibilityCheck
-	 * @return
-	 */
 	@Override
 	public boolean getEligibilityStatus(FinanceEligibilityDetail financeEligibilityDetail, String finCcy,
 			BigDecimal financeAmount) {
@@ -288,13 +236,6 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		return true;
 	}
 
-	/**
-	 * Returns if the customer is Eligible True/False
-	 * 
-	 * @param List<FinanceEligibilityDetail>
-	 *            financeEligibilityDetails
-	 * @return boolean(true/false)
-	 */
 	@Override
 	public boolean isCustEligible(List<FinanceEligibilityDetail> financeEligibilityDetails) {
 		for (FinanceEligibilityDetail financeEligibilityDetail : financeEligibilityDetails) {
@@ -305,14 +246,9 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		return true;
 	}
 
-	/**
-	 * Save or update the Customer Eligibility Details
-	 * 
-	 * @param financeDetail
-	 */
 	@Override
 	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinanceEligibilityDetail eligibilityDetail = new FinanceEligibilityDetail();
@@ -333,7 +269,7 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 					detail.setLastMntOn(financeMain.getLastMntOn());
 					detail.setRoleCode(financeMain.getRoleCode());
 					detail.setRecordStatus(financeMain.getRecordStatus());
-					if (getFinanceEligibilityDetailDAO().getFinElgDetailCount(detail) > 0) {
+					if (financeEligibilityDetailDAO.getFinElgDetailCount(detail) > 0) {
 						updateList.add(detail);
 						auditDetails.add(
 								new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
@@ -348,46 +284,31 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 				saveList(insertList, "");
 			}
 			if (!updateList.isEmpty()) {
-				getFinanceEligibilityDetailDAO().updateList(updateList);
+				financeEligibilityDetailDAO.updateList(updateList);
 			}
 			insertList.clear();
 			updateList.clear();
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
 	@Override
-	public void deleteByFinRef(String finReference) {
-		getFinanceEligibilityDetailDAO().deleteByFinRef(finReference);
+	public void deleteByFinRef(long finID) {
+		financeEligibilityDetailDAO.deleteByFinRef(finID);
 	}
 
 	@Override
 	public void saveList(List<FinanceEligibilityDetail> list, String type) {
-		getFinanceEligibilityDetailDAO().saveList(list, type);
+		financeEligibilityDetailDAO.saveList(list, type);
 	}
 
-	/**
-	 * Method for Fetching List of Eligibility Details
-	 * 
-	 * @param finReference
-	 * @return
-	 */
 	@Override
-	public List<FinanceEligibilityDetail> getFinElgDetailList(String finReference) {
-		return getFinanceEligibilityDetailDAO().getFinElgDetailByFinRef(finReference, "_View");
+	public List<FinanceEligibilityDetail> getFinElgDetailList(long finID) {
+		return financeEligibilityDetailDAO.getFinElgDetailByFinRef(finID, "_View");
 	}
 
-	/**
-	 * 
-	 * Validate the Customer Eligibility Details
-	 * 
-	 * @param financeEligibilityDetailList
-	 * @param auditDetail
-	 * @param errParm
-	 * @param valueParm
-	 * @param usrLanguage
-	 */
 	@Override
 	public void validate(List<FinanceEligibilityDetail> financeEligibilityDetailList, AuditDetail auditDetail,
 			String[] errParm, String[] valueParm, String usrLanguage) {
@@ -398,28 +319,12 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 		}
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
 		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
-	}
-
-	public FinanceReferenceDetailDAO getFinanceReferenceDetailDAO() {
-		return financeReferenceDetailDAO;
-	}
-
-	public FinanceEligibilityDetailDAO getFinanceEligibilityDetailDAO() {
-		return financeEligibilityDetailDAO;
 	}
 
 	public void setFinanceEligibilityDetailDAO(FinanceEligibilityDetailDAO financeEligibilityDetailDAO) {
