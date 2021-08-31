@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VasMovementDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VasMovementDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * *
+ * Modified Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.math.BigDecimal;
@@ -51,17 +33,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.VasMovementDetailDAO;
 import com.pennant.backend.model.finance.VasMovementDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -75,223 +53,198 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 		super();
 	}
 
-	/**
-	 * Fetch the Record Check List Details details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return VasMovementDetail
-	 */
 	@Override
 	public List<VasMovementDetail> getVasMovementDetailById(final long id, String type) {
-		logger.debug("Entering");
-		VasMovementDetail vasMovementDetail = new VasMovementDetail();
-		vasMovementDetail.setVasMovementId(id);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" VasMovementId, VasMovementDetailId, FinID, FinReference, VasReference, MovementDate");
+		sql.append(", MovementAmt, VasProvider, VasProduct, VasAmount");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+		sql.append(" From VasMovementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where VasMovementId = ?");
 
-		List<VasMovementDetail> vasMovementDetailList = null;
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select VasMovementId,VasMovementDetailId,FinReference,VasReference,MovementDate,MovementAmt,VasProvider,VasProduct,VasAmount");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId");
-		selectSql.append(" From VasMovementDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where VasMovementId =:VasMovementId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovementDetail);
-		RowMapper<VasMovementDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(VasMovementDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			vasMovementDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.query(sql.toString(), ps -> {
+				ps.setLong(1, id);
+			}, (rs, rowNum) -> {
+				VasMovementDetail vmd = new VasMovementDetail();
+
+				vmd.setVasMovementId(rs.getLong("VasMovementId"));
+				vmd.setVasMovementDetailId(rs.getLong("VasMovementDetailId"));
+				vmd.setFinID(rs.getLong("FinID"));
+				vmd.setFinReference(rs.getString("FinReference"));
+				vmd.setVasReference(rs.getString("VasReference"));
+				vmd.setMovementDate(rs.getDate("MovementDate"));
+				vmd.setMovementAmt(rs.getBigDecimal("MovementAmt"));
+				vmd.setVasProvider(rs.getString("VasProvider"));
+				vmd.setVasProduct(rs.getString("VasProduct"));
+				vmd.setVasAmount(rs.getBigDecimal("VasAmount"));
+				vmd.setVersion(rs.getInt("Version"));
+				vmd.setLastMntBy(rs.getLong("LastMntBy"));
+				vmd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				vmd.setRecordStatus(rs.getString("RecordStatus"));
+				vmd.setRoleCode(rs.getString("RoleCode"));
+				vmd.setNextRoleCode(rs.getString("NextRoleCode"));
+				vmd.setTaskId(rs.getString("TaskId"));
+				vmd.setNextTaskId(rs.getString("NextTaskId"));
+				vmd.setRecordType(rs.getString("RecordType"));
+				vmd.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return vmd;
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vasMovementDetailList = null;
+			//
 		}
-		logger.debug("Leaving");
-		return vasMovementDetailList;
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the RMTVasMovementDetails or RMTVasMovementDetails_Temp. if Record not
-	 * deleted then throws DataAccessException with error 41003. delete Check List Details by key VasMovementId
-	 * 
-	 * @param Check
-	 *            List Details (checkListDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	public void delete(VasMovementDetail vasMovementDetail, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(VasMovementDetail vmd, String type) {
+		StringBuilder sql = new StringBuilder("Delete From VasMovementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where VasMovementDetailId = ? and VasReference = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From VasMovementDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where VasMovementDetailId =:VasMovementDetailId and vasReference=:vasReference ");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovementDetail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, vmd.getVasMovementDetailId());
+				ps.setString(index++, vmd.getVasReference());
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method Deletes the Record from the RMTVasMovementDetail or RMTVasMovementDetail_Temp.
-	 * 
-	 * delete Educational Expenses by key loanRefNumber
-	 * 
-	 */
 	public void delete(long vasMovementDetailId, String type) {
-		logger.debug("Entering");
-		VasMovementDetail vasMovementDetail = new VasMovementDetail();
-		vasMovementDetail.setVasMovementId(vasMovementDetailId);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Delete From VasMovementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where VasMovementId = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From VasMovementDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where VasMovementId =:VasMovementId");
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovementDetail);
-		logger.debug("DeleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, vasMovementDetailId);
+		});
 	}
 
-	/**
-	 * This method insert new Records into RMTVasMovementDetails or RMTVasMovementDetails_Temp.
-	 *
-	 * save Check List Details
-	 * 
-	 * @param Check
-	 *            List Details (checkListDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(VasMovementDetail checkListDetail, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder("Insert Into VasMovementDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (VasMovementId,VasMovementDetailId,FinReference,VasReference,MovementDate,MovementAmt,VasProvider,VasProduct,VasAmount");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(
-				" Values( :VasMovementId,:VasMovementDetailId,:FinReference,:VasReference,:MovementDate,:MovementAmt,:VasProvider,:VasProduct,:VasAmount");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
-		insertSql.append(", :RecordType, :WorkflowId)");
+	public long save(VasMovementDetail vmd, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into VasMovementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (VasMovementId, VasMovementDetailId, FinID, FinReference, VasReference");
+		sql.append(", MovementDate, MovementAmt, VasProvider, VasProduct, VasAmount");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return checkListDetail.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, vmd.getVasMovementId());
+			ps.setLong(index++, vmd.getVasMovementDetailId());
+			ps.setLong(index++, vmd.getFinID());
+			ps.setString(index++, vmd.getFinReference());
+			ps.setString(index++, vmd.getVasReference());
+			ps.setDate(index++, JdbcUtil.getDate(vmd.getMovementDate()));
+			ps.setBigDecimal(index++, vmd.getMovementAmt());
+			ps.setString(index++, vmd.getVasProvider());
+			ps.setString(index++, vmd.getVasProduct());
+			ps.setBigDecimal(index++, vmd.getVasAmount());
+			ps.setInt(index++, vmd.getVersion());
+			ps.setLong(index++, vmd.getLastMntBy());
+			ps.setTimestamp(index++, vmd.getLastMntOn());
+			ps.setString(index++, vmd.getRecordStatus());
+			ps.setString(index++, vmd.getRoleCode());
+			ps.setString(index++, vmd.getNextRoleCode());
+			ps.setString(index++, vmd.getTaskId());
+			ps.setString(index++, vmd.getNextTaskId());
+			ps.setString(index++, vmd.getRecordType());
+			ps.setLong(index++, vmd.getWorkflowId());
+		});
+
+		return vmd.getId();
 	}
 
-	/**
-	 * This method updates the Record RMTVasMovementDetails or RMTVasMovementDetails_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update Check List Details by key VasMovementId and Version
-	 * 
-	 * @param Check
-	 *            List Details (checkListDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(VasMovementDetail checkListDetail, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update VasMovementDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set MovementDate=:MovementDate,MovementAmt=:MovementAmt");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
-		updateSql.append(
-				", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where VasMovementDetailId =:VasMovementDetailId and VasMovementId = :VasMovementId");
+	public void update(VasMovementDetail vmd, String type) {
+		StringBuilder sql = new StringBuilder("Update VasMovementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set MovementDate = ?, MovementAmt = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where VasMovementDetailId = ? and VasMovementId = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setDate(index++, JdbcUtil.getDate(vmd.getMovementDate()));
+			ps.setBigDecimal(index++, vmd.getMovementAmt());
+			ps.setInt(index++, vmd.getVersion());
+			ps.setLong(index++, vmd.getLastMntBy());
+			ps.setTimestamp(index++, vmd.getLastMntOn());
+			ps.setString(index++, vmd.getRecordStatus());
+			ps.setString(index++, vmd.getRoleCode());
+			ps.setString(index++, vmd.getNextRoleCode());
+			ps.setString(index++, vmd.getTaskId());
+			ps.setString(index++, vmd.getNextTaskId());
+			ps.setString(index++, vmd.getRecordType());
+			ps.setLong(index++, vmd.getWorkflowId());
+
+			ps.setLong(index++, vmd.getVasMovementDetailId());
+			ps.setLong(index++, vmd.getVasMovementId());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, vmd.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
-	public List<VasMovementDetail> getVasMovementDetailByRef(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-		VasMovementDetail vasMovementDetail = new VasMovementDetail();
-		vasMovementDetail.setFinReference(finReference);
-		List<VasMovementDetail> vasMovementDetailList = null;
-		StringBuilder selectSql = new StringBuilder("Select");
-		selectSql.append(" VasMovementId,VasMovementDetailId,FinReference,VasReference,");
-		selectSql.append(" MovementDate, MovementAmt,VasProvider,VasProduct,VasAmount");
-		selectSql.append(" From VasMovementDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
+	public BigDecimal getVasMovementDetailByRef(long finID, Date finStartDate, Date finEndDate, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" sum(MovementAmt)");
+		sql.append(" From VasMovementDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+		sql.append(" and MovementDate >= ? and MovementDate <= ?");
 
-		logger.trace(Literal.SQL + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(vasMovementDetail);
-		RowMapper<VasMovementDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(VasMovementDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			vasMovementDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finStartDate,
+					finEndDate);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			vasMovementDetailList = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return vasMovementDetailList;
-	}
 
-	@Override
-	public BigDecimal getVasMovementDetailByRef(String finReference, Date finStartDate, Date finEndDate, String type) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
-		source.addValue("FinstartDate", finStartDate);
-		source.addValue("FinEndDate", finEndDate);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT SUM(MovementAmt) ");
-		selectSql.append(" From VasMovementDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-		selectSql.append(" And MOVEMENTDATE >=:FinstartDate and MOVEMENTDATE <=:FinEndDate");
-		logger.debug("selectSql: " + selectSql.toString());
-		BigDecimal movementAmt = this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
-		if (movementAmt == null) {
-			movementAmt = BigDecimal.ZERO;
-		}
-		return movementAmt;
+		return BigDecimal.ZERO;
 	}
 }
