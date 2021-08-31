@@ -24,6 +24,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 384180539764860246L;
 
+	private long finID;
 	private String finReference;
 	private BigDecimal totalPOAmount = BigDecimal.ZERO;
 	private int totalPOCount;
@@ -98,6 +99,14 @@ public class PayOrderIssueHeader extends AbstractWorkflowEntity {
 
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

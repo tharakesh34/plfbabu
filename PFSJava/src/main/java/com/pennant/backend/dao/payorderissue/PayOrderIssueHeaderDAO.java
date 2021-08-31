@@ -4,7 +4,7 @@ import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 
 public interface PayOrderIssueHeaderDAO {
 
-	PayOrderIssueHeader getPayOrderIssueByHeaderRef(String finReference, String type);
+	PayOrderIssueHeader getPayOrderIssueByHeaderRef(long finID, String type);
 
 	void update(PayOrderIssueHeader payOrderIssueHeader, String type);
 
