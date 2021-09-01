@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  presentmentDetailService.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-05-2017    														*
- *                                                                  						*
- * Modified Date    :  01-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : presentmentDetailService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-05-2017 * *
+ * Modified Date : 01-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.financemanagement;
@@ -70,11 +52,11 @@ public interface PresentmentDetailService {
 
 	void updatePresentmentIdAsZero(List<Long> presentmentIds);
 
-	FinanceDetail getFinanceDetailsByRef(String finReference);
+	FinanceDetail getFinanceDetailsByRef(long finID);
 
-	FinanceMain getDefualtPostingDetails(String finReference, Date schDate);
+	FinanceMain getDefualtPostingDetails(long finID, Date schDate);
 
-	PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId);
+	PresentmentDetail getPresentmentDetailByFinRefAndPresID(long finID, long presentmentId);
 
 	void saveModifiedPresentments(List<Long> excludeList, List<Long> includeList, long presentmentId,
 			long partnerBankId);

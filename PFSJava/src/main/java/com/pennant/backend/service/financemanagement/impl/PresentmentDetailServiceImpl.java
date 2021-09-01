@@ -498,18 +498,18 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	 * Fetching the Finance and customer details for sending the bounce notification to customer.
 	 */
 	@Override
-	public FinanceDetail getFinanceDetailsByRef(String finReference) {
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData finScheduleData = new FinScheduleData();
+	public FinanceDetail getFinanceDetailsByRef(long finID) {
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = new FinScheduleData();
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
-		CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(financeMain.getCustID(),
-				"_AView");
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_AView", false);
+		long custID = fm.getCustID();
+		CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(custID, "_AView");
 
-		finScheduleData.setFinanceMain(financeMain);
-		financeDetail.setCustomerDetails(customerDetails);
-		financeDetail.setFinScheduleData(finScheduleData);
-		return financeDetail;
+		schdData.setFinanceMain(fm);
+		fd.setCustomerDetails(customerDetails);
+		fd.setFinScheduleData(schdData);
+		return fd;
 	}
 
 	private void processReceipts(PresentmentDetail pd, boolean isFullEMIPresent) throws Exception {
@@ -564,14 +564,13 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		finReceiptData.setReceiptHeader(header);
 		finReceiptData.setFinReference(finReference);
 		finReceiptData.setSourceId("");
-		List<FinanceScheduleDetail> scheduleDetails = null;
 
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_AView", false);
 		Customer customer = customerDAO.getCustomerForPresentment(fm.getCustID());
-		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finID);
 
-		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header,
 				pd.getSchDate(), appDate);
 
 		if (pd.getId() != Long.MIN_VALUE) {
@@ -579,160 +578,168 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 	}
 
-	private void processAdvaceEMI(PresentmentDetail presentmentDetail, boolean isFullEMIPresent) throws Exception {
+	private void processAdvaceEMI(PresentmentDetail pd, boolean isFullEMIPresent) throws Exception {
+		FinReceiptData rd = new FinReceiptData();
 
-		FinReceiptData finReceiptData = new FinReceiptData();
-		FinReceiptHeader header = new FinReceiptHeader();
-		BigDecimal advanceAmt = presentmentDetail.getAdvanceAmt();
-		String finReference = presentmentDetail.getFinReference();
-		Date schDate = presentmentDetail.getSchDate();
-		Date appDate = presentmentDetail.getAppDate();
-		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
+		long finID = pd.getFinID();
+		String finReference = pd.getFinReference();
 
-		header.setReference(finReference);
-		header.setReceiptDate(schDate);
-		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReceiptID(receiptId);
-		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceiptAmount(presentmentDetail.getPresentmentAmt().add(advanceAmt));
-		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-		header.setLogSchInPresentment(true);
-		header.setActFinReceipt(true);
+		BigDecimal advanceAmt = pd.getAdvanceAmt();
+		Date schDate = pd.getSchDate();
+		Date appDate = pd.getAppDate();
+
+		FinReceiptHeader rch = new FinReceiptHeader();
+		long receiptId = finReceiptHeaderDAO.generatedReceiptID(rch);
+
+		rch.setReference(finReference);
+		rch.setReceiptDate(schDate);
+		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		rch.setReceiptID(receiptId);
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setReceiptAmount(pd.getPresentmentAmt().add(advanceAmt));
+		rch.setEffectSchdMethod(PennantConstants.List_Select);
+		rch.setReceiptMode(RepayConstants.PAYTYPE_EXCESS);
+		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rch.setLogSchInPresentment(true);
+		rch.setActFinReceipt(true);
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<>();
 
 		if (advanceAmt.compareTo(BigDecimal.ZERO) > 0) {
-			FinReceiptDetail rd = new FinReceiptDetail();
-			rd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			rd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			rd.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
-			rd.setPayAgainstID(presentmentDetail.getExcessID());
-			rd.setAmount(advanceAmt);
-			rd.setDueAmount(advanceAmt);
-			rd.setValueDate(schDate);
-			rd.setReceivedDate(appDate);
-			rd.setPartnerBankAc(presentmentDetail.getAccountNo());
-			rd.setPartnerBankAcType(presentmentDetail.getAcType());
-			rd.setNoReserve(false);
-			receiptDetails.add(rd);
+			FinReceiptDetail rcd = new FinReceiptDetail();
+			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+			rcd.setPaymentType(RepayConstants.PAYTYPE_EMIINADV);
+			rcd.setPayAgainstID(pd.getExcessID());
+			rcd.setAmount(advanceAmt);
+			rcd.setDueAmount(advanceAmt);
+			rcd.setValueDate(schDate);
+			rcd.setReceivedDate(appDate);
+			rcd.setPartnerBankAc(pd.getAccountNo());
+			rcd.setPartnerBankAcType(pd.getAcType());
+			rcd.setNoReserve(false);
+			receiptDetails.add(rcd);
 
 			XcessPayables xp = new XcessPayables();
 			xp.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			xp.setAmount(advanceAmt);
 			xp.setTotPaidNow(advanceAmt);
-			header.getXcessPayables().add(xp);
+			rch.getXcessPayables().add(xp);
 		}
 
-		header.setReceiptDetails(receiptDetails);
-		header.setRemarks("");
+		rch.setReceiptDetails(receiptDetails);
+		rch.setRemarks("");
 
-		finReceiptData.setReceiptHeader(header);
-		finReceiptData.setFinReference(finReference);
-		finReceiptData.setSourceId("");
-		List<FinanceScheduleDetail> scheduleDetails = null;
+		rd.setReceiptHeader(rch);
+		rd.setFinReference(finReference);
+		rd.setSourceId("");
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReference, "_AView", false);
-		Customer customer = customerDAO.getCustomerForPresentment(financeMain.getCustID());
-		scheduleDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
-		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_AView", false);
+		Customer customer = customerDAO.getCustomerForPresentment(fm.getCustID());
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finID);
 
-		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, customer, scheduleDetails, null, profitDetail, header,
-				schDate, appDate);
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, rch, schDate, appDate);
 	}
 
 	private void processEmiInAdvance(PresentmentDetail pd, boolean isExcessNoReserve, boolean updateReceiptId)
 			throws Exception {
 
-		FinReceiptData finReceiptData = new FinReceiptData();
-		FinReceiptHeader header = new FinReceiptHeader();
+		long finID = pd.getFinID();
+		String finReference = pd.getFinReference();
+
+		FinReceiptData rd = new FinReceiptData();
 
 		Date appDate = SysParamUtil.getAppDate();
 		Date valueDate = pd.getSchDate();
 
-		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
-		header.setReference(pd.getFinReference());
-		header.setPresentmentSchDate(pd.getSchDate());
+		FinReceiptHeader rch = new FinReceiptHeader();
+		long receiptId = finReceiptHeaderDAO.generatedReceiptID(rch);
+
+		rch.setReference(finReference);
+		rch.setPresentmentSchDate(pd.getSchDate());
+
 		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-			header.setReceiptDate(appDate);
+			rch.setReceiptDate(appDate);
 			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				valueDate = appDate;
 			}
 		} else {
-			header.setReceiptDate(pd.getSchDate());
+			rch.setReceiptDate(pd.getSchDate());
 		}
-		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReceiptID(receiptId);
-		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
-		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		header.setReceiptAmount(pd.getPresentmentAmt());
-		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-		header.setRealizationDate(appDate);
-		header.setLogSchInPresentment(true);
-		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		header.setTransactionRef(pd.getUtrNumber());
 
-		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		rch.setReceiptID(receiptId);
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
+		rch.setReceiptAmount(pd.getPresentmentAmt());
+		rch.setEffectSchdMethod(PennantConstants.List_Select);
+		rch.setReceiptMode(RepayConstants.RECEIPTMODE_EXCESS);
+		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rch.setRealizationDate(appDate);
+		rch.setLogSchInPresentment(true);
+		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		rch.setTransactionRef(pd.getUtrNumber());
 
-		FinReceiptDetail receiptDetail = new FinReceiptDetail();
+		List<FinReceiptDetail> rcdList = new ArrayList<FinReceiptDetail>();
+
+		FinReceiptDetail rcd = new FinReceiptDetail();
 
 		if (pd.getAdvanceAmt().compareTo(BigDecimal.ZERO) > 0) {
-			receiptDetail = new FinReceiptDetail();
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
-			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-			receiptDetail.setPayAgainstID(pd.getExcessID());
-			receiptDetail.setAmount(pd.getAdvanceAmt());
-			receiptDetail.setDueAmount(pd.getAdvanceAmt());
+			rcd = new FinReceiptDetail();
+			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+			rcd.setPaymentType(RepayConstants.RECEIPTMODE_EMIINADV);
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			rcd.setPayAgainstID(pd.getExcessID());
+			rcd.setAmount(pd.getAdvanceAmt());
+			rcd.setDueAmount(pd.getAdvanceAmt());
 			XcessPayables xcessPayable = new XcessPayables();
 			xcessPayable.setPayableType(RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			xcessPayable.setAmount(pd.getAdvanceAmt());
 			xcessPayable.setTotPaidNow(pd.getAdvanceAmt());
-			header.getXcessPayables().add(xcessPayable);
-			header.setReceiptAmount(pd.getAdvanceAmt());
-			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-			receiptDetail.setValueDate(pd.getSchDate());
+			rch.getXcessPayables().add(xcessPayable);
+			rch.setReceiptAmount(pd.getAdvanceAmt());
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			rcd.setValueDate(pd.getSchDate());
 			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-				receiptDetail.setValueDate(pd.getSchDate());
+				rcd.setValueDate(pd.getSchDate());
 			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
-				receiptDetail.setValueDate(appDate);
+				rcd.setValueDate(appDate);
 			}
-			receiptDetail.setReceivedDate(receiptDetail.getValueDate());
-			receiptDetail.setValueDate(pd.getSchDate());
-			receiptDetail.setPartnerBankAc(pd.getAccountNo());
-			receiptDetail.setPartnerBankAcType(pd.getAcType());
-			receiptDetail.setNoReserve(isExcessNoReserve);
-			receiptDetail.setTransactionRef(pd.getUtrNumber());
-			receiptDetails.add(receiptDetail);
+			rcd.setReceivedDate(rcd.getValueDate());
+			rcd.setValueDate(pd.getSchDate());
+			rcd.setPartnerBankAc(pd.getAccountNo());
+			rcd.setPartnerBankAcType(pd.getAcType());
+			rcd.setNoReserve(isExcessNoReserve);
+			rcd.setTransactionRef(pd.getUtrNumber());
+			rcdList.add(rcd);
 
 		}
 
-		header.setReceiptDetails(receiptDetails);
+		rch.setReceiptDetails(rcdList);
 
-		header.setRemarks("");
-		finReceiptData.setReceiptHeader(header);
-		finReceiptData.setFinReference(pd.getFinReference());
-		finReceiptData.setSourceId("");
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(pd.getFinReference(), "_AView", false);
-		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
-				"_AView");
-		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(pd.getFinReference(), "_AView", false);
-		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(pd.getFinReference());
-		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
-				profitDetail, header, valueDate, appDate);
+		rch.setRemarks("");
+		rd.setReceiptHeader(rch);
+		rd.setFinReference(finReference);
+		rd.setSourceId("");
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_AView", false);
+		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_AView");
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "_AView", false);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finID);
+
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, custDetails.getCustomer(), schedules, null, profitDetail, rch,
+				valueDate, appDate);
+
 		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
-			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
+			presentmentDetailDAO.updateReceptId(pd.getId(), rch.getReceiptID());
 		}
 
 		pd.setReceiptID(receiptId);
@@ -741,92 +748,100 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	private void processReceipts(PresentmentDetail pd, boolean isExcessNoReserve, boolean updateReceiptId,
 			boolean isRealized) throws Exception {
 
-		FinReceiptData finReceiptData = new FinReceiptData();
-		FinReceiptHeader header = new FinReceiptHeader();
+		long finID = pd.getFinID();
+		String finReference = pd.getFinReference();
+
+		FinReceiptData rd = new FinReceiptData();
 
 		Date appDate = SysParamUtil.getAppDate();
 		Date valueDate = pd.getSchDate();
 
-		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
-		header.setReference(pd.getFinReference());
-		header.setPresentmentSchDate(pd.getSchDate());
+		FinReceiptHeader rch = new FinReceiptHeader();
+
+		long receiptId = finReceiptHeaderDAO.generatedReceiptID(rch);
+		rch.setReference(finReference);
+		rch.setPresentmentSchDate(pd.getSchDate());
+
 		if (ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-			header.setReceiptDate(appDate);
+			rch.setReceiptDate(appDate);
 			if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
 				valueDate = appDate;
 			}
 		} else {
-			header.setReceiptDate(pd.getSchDate());
+			rch.setReceiptDate(pd.getSchDate());
 		}
-		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReceiptID(receiptId);
-		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		header.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
-		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
-		header.setReceiptAmount(pd.getPresentmentAmt());
-		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+
+		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		rch.setReceiptID(receiptId);
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rch.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
+		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setReceivedFrom(RepayConstants.RECEIVED_CUSTOMER);
+		rch.setReceiptAmount(pd.getPresentmentAmt());
+		rch.setEffectSchdMethod(PennantConstants.List_Select);
+		rch.setReceiptMode(RepayConstants.PAYTYPE_PRESENTMENT);
+
 		if (isRealized) {
-			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
 		} else {
-			header.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
+			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
-		header.setLogSchInPresentment(true);
-		header.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		header.setLastMntBy(pd.getLastMntBy());
-		header.setVersion(header.getVersion() + 1);
 
-		List<FinReceiptDetail> receiptDetails = new ArrayList<FinReceiptDetail>();
+		rch.setLogSchInPresentment(true);
+		rch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		rch.setLastMntBy(pd.getLastMntBy());
+		rch.setVersion(rch.getVersion() + 1);
 
-		FinReceiptDetail receiptDetail = new FinReceiptDetail();
+		List<FinReceiptDetail> rcdList = new ArrayList<FinReceiptDetail>();
+
+		FinReceiptDetail rcd = new FinReceiptDetail();
 
 		if (pd.getPresentmentAmt().compareTo(BigDecimal.ZERO) > 0) {
-			receiptDetail = new FinReceiptDetail();
-			header.setReceiptAmount(pd.getPresentmentAmt());
-			receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptDetail.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
-			receiptDetail.setPayAgainstID(pd.getExcessID());
-			receiptDetail.setAmount(pd.getPresentmentAmt());
-			receiptDetail.setDueAmount(pd.getPresentmentAmt());
-			receiptDetail.setValueDate(pd.getSchDate());
+			rcd = new FinReceiptDetail();
+			rch.setReceiptAmount(pd.getPresentmentAmt());
+			rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+			rcd.setPaymentType(RepayConstants.PAYTYPE_PRESENTMENT);
+			rcd.setPayAgainstID(pd.getExcessID());
+			rcd.setAmount(pd.getPresentmentAmt());
+			rcd.setDueAmount(pd.getPresentmentAmt());
+			rcd.setValueDate(pd.getSchDate());
 			if (!ImplementationConstants.PRESENT_RECEIPTS_ON_RESP) {
-				receiptDetail.setValueDate(pd.getSchDate());
+				rcd.setValueDate(pd.getSchDate());
 			} else if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())) {
-				receiptDetail.setValueDate(appDate);
+				rcd.setValueDate(appDate);
 			}
-			receiptDetail.setReceivedDate(receiptDetail.getValueDate());
-			receiptDetail.setPartnerBankAc(pd.getAccountNo());
-			receiptDetail.setPartnerBankAcType(pd.getAcType());
-			receiptDetail.setTransactionRef(pd.getUtrNumber());
-			receiptDetails.add(receiptDetail);
+			rcd.setReceivedDate(rcd.getValueDate());
+			rcd.setPartnerBankAc(pd.getAccountNo());
+			rcd.setPartnerBankAcType(pd.getAcType());
+			rcd.setTransactionRef(pd.getUtrNumber());
+			rcdList.add(rcd);
 
 		}
 
-		header.setReceiptDetails(receiptDetails);
+		rch.setReceiptDetails(rcdList);
 
-		header.setRemarks("");
-		finReceiptData.setReceiptHeader(header);
-		finReceiptData.setFinReference(pd.getFinReference());
-		finReceiptData.setSourceId("");
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(pd.getFinReference(), "_AView", false);
-		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true,
-				"_AView");
-		List<FinanceScheduleDetail> scheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(pd.getFinReference(), "_AView", false);
-		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(pd.getFinReference());
-		repaymentProcessUtil.calcualteAndPayReceipt(financeMain, custDetails.getCustomer(), scheduleDetails, null,
-				profitDetail, header, valueDate, appDate);
+		rch.setRemarks("");
+		rd.setReceiptHeader(rch);
+		rd.setFinReference(finReference);
+		rd.setSourceId("");
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_AView", false);
+		CustomerDetails custDetails = customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_AView");
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "_AView", false);
+		FinanceProfitDetail profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(finID);
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, custDetails.getCustomer(), schedules, null, profitDetail, rch,
+				valueDate, appDate);
+
 		if (pd.getId() != Long.MIN_VALUE && updateReceiptId) {
-			presentmentDetailDAO.updateReceptId(pd.getId(), header.getReceiptID());
+			presentmentDetailDAO.updateReceptId(pd.getId(), rch.getReceiptID());
 		}
 	}
 
 	@Override
-	public FinanceMain getDefualtPostingDetails(String finReference, Date schDate) {
-		return presentmentDetailDAO.getDefualtPostingDetails(finReference, schDate);
+	public FinanceMain getDefualtPostingDetails(long finID, Date schDate) {
+		return presentmentDetailDAO.getDefualtPostingDetails(finID, schDate);
 	}
 
 	private PresentmentRequest getPresentmentRequest() {
@@ -834,8 +849,8 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
-	public PresentmentDetail getPresentmentDetailByFinRefAndPresID(String finReference, long presentmentId) {
-		return presentmentDetailDAO.getPresentmentDetailByFinRefAndPresID(finReference, presentmentId, "");
+	public PresentmentDetail getPresentmentDetailByFinRefAndPresID(long finID, long presentmentId) {
+		return presentmentDetailDAO.getPresentmentDetailByFinRefAndPresID(finID, presentmentId, "");
 	}
 
 	@Override
