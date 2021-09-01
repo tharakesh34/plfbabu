@@ -24,7 +24,6 @@
  */
 package com.pennant.backend.service.finance.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -95,53 +94,9 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceMainDAO financeMainDAO;
-
 	private DocumentDetailsDAO documentDetailsDAO;
 	private DocumentManagerDAO documentManagerDAO;
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the manualAdviseDAO
-	 */
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
-	}
-
-	/**
-	 * @param manualAdviseDAO the manualAdviseDAO to set
-	 */
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table ManualAdvise/ManualAdvise_Temp
-	 * by using ManualAdviseDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ManualAdviseDAO's update method 3) Audit the record in to AuditHeader and AdtManualAdvise
-	 * by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -161,14 +116,13 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		if (manualAdvise.isNewRecord()) {
-			manualAdvise.setId(Long.parseLong(getManualAdviseDAO().save(manualAdvise, tableType)));
+			manualAdvise.setId(Long.parseLong(manualAdviseDAO.save(manualAdvise, tableType)));
 			auditHeader.getAuditDetail().setModelData(manualAdvise);
 			auditHeader.setAuditReference(String.valueOf(manualAdvise.getAdviseID()));
 		} else {
-			getManualAdviseDAO().update(manualAdvise, tableType);
+			manualAdviseDAO.update(manualAdvise, tableType);
 		}
 
-		// Document Details
 		List<DocumentDetails> documentsList = manualAdvise.getDocumentDetails();
 		if (CollectionUtils.isNotEmpty(documentsList)) {
 			List<AuditDetail> details = manualAdvise.getAuditDetailMap().get("DocumentDetails");
@@ -178,23 +132,14 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		String rcdMaintainSts = FinServiceEvent.MANUALADVISE;
-		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), rcdMaintainSts);
+		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinID(), rcdMaintainSts);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * ManualAdvise by using ManualAdviseDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -206,97 +151,62 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		ManualAdvise manualAdvise = (ManualAdvise) auditHeader.getAuditDetail().getModelData();
-		getManualAdviseDAO().delete(manualAdvise, TableType.MAIN_TAB);
+		manualAdviseDAO.delete(manualAdvise, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getManualAdvise fetch the details by using ManualAdviseDAO's getManualAdviseById method.
-	 * 
-	 * @param adviseID adviseID of the ManualAdvise.
-	 * @return ManualAdvise
-	 */
 	@Override
 	public ManualAdvise getManualAdviseById(long adviseID) {
-		ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(adviseID, "_View");
-		if (manualAdvise != null) {
-			// Document Details
-			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
-					String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
-					FinServiceEvent.RECEIPT, "_View");
-			if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
-				manualAdvise.getDocumentDetails().addAll(documentList);
-			} else {
-				manualAdvise.setDocumentDetails(documentList);
-			}
+		ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(adviseID, "_View");
 
+		if (manualAdvise == null) {
+			return null;
 		}
+
+		// Document Details
+		List<DocumentDetails> documents = documentDetailsDAO.getDocumentDetailsByRef(
+				String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
+				FinServiceEvent.RECEIPT, "_View");
+		manualAdvise.getDocumentDetails().addAll(documents);
+
 		return manualAdvise;
 	}
 
-	/**
-	 * getApprovedManualAdviseById fetch the details by using ManualAdviseDAO's getManualAdviseById method . with
-	 * parameter id and type as blank. it fetches the approved records from the ManualAdvise.
-	 * 
-	 * @param adviseID adviseID of the ManualAdvise. (String)
-	 * @return ManualAdvise
-	 */
 	public ManualAdvise getApprovedManualAdvise(long adviseID) {
-		ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(adviseID, "_AView");
-		if (manualAdvise != null) {
-			// Document Details
-			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(
-					String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
-					FinServiceEvent.RECEIPT, "_AView");
-			if (CollectionUtils.isNotEmpty(manualAdvise.getDocumentDetails())) {
-				manualAdvise.getDocumentDetails().addAll(documentList);
-			} else {
-				manualAdvise.setDocumentDetails(documentList);
-			}
+		ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(adviseID, "_AView");
+
+		if (manualAdvise == null) {
+			return null;
 		}
+
+		// Document Details
+		List<DocumentDetails> documents = documentDetailsDAO.getDocumentDetailsByRef(
+				String.valueOf(manualAdvise.getAdviseID()), PennantConstants.PAYABLE_ADVISE_DOC_MODULE_NAME,
+				FinServiceEvent.RECEIPT, "_AView");
+		manualAdvise.getDocumentDetails().addAll(documents);
 		return manualAdvise;
 	}
 
 	@Override
 	public String getTaxComponent(Long adviseID, String type) {
-		return getManualAdviseDAO().getTaxComponent(adviseID, type);
+		return manualAdviseDAO.getTaxComponent(adviseID, type);
 	}
 
-	/**
-	 * Getting advice fee type.
-	 * 
-	 * @param manualAdvise
-	 * @return
-	 */
 	@Override
 	public ManualAdvise getAdviceFeeType(ManualAdvise manualAdvise) {
-		FeeType javaFeeType = this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
-		if (javaFeeType != null) {
+		FeeType feeType = this.feeTypeService.getApprovedFeeTypeById(manualAdvise.getFeeTypeID());
+		if (feeType != null) {
 			com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
-			BeanUtils.copyProperties(javaFeeType, modelFeeType);
+			BeanUtils.copyProperties(feeType, modelFeeType);
 			manualAdvise.setFeeType(modelFeeType);
 		}
 		return manualAdvise;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getManualAdviseDAO().delete with
-	 * parameters manualAdvise,"" b) NEW Add new record in to main table by using getManualAdviseDAO().save with
-	 * parameters manualAdvise,"" c) EDIT Update record in the main table by using getManualAdviseDAO().update with
-	 * parameters manualAdvise,"" 3) Delete the record from the workFlow table by using getManualAdviseDAO().delete with
-	 * parameters manualAdvise,"_Temp" 4) Audit the record in to AuditHeader and AdtManualAdvise by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtManualAdvise by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -314,7 +224,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		ManualAdvise manualAdvise = new ManualAdvise();
 		BeanUtils.copyProperties((ManualAdvise) auditHeader.getAuditDetail().getModelData(), manualAdvise);
 
-		// Processing Accounting Details
 		if (StringUtils.equals(manualAdvise.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			com.pennant.backend.model.finance.FeeType feeType = manualAdvise.getFeeType();
 			if (feeType != null && feeType.isDueAccReq()) {
@@ -323,7 +232,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		if (StringUtils.equals(manualAdvise.getFinSource(), UploadConstants.FINSOURCE_ID_PFF)) {
-			getManualAdviseDAO().delete(manualAdvise, TableType.TEMP_TAB);
+			manualAdviseDAO.delete(manualAdvise, TableType.TEMP_TAB);
 		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(manualAdvise.getRecordType())) {
@@ -333,7 +242,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		if (manualAdvise.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getManualAdviseDAO().delete(manualAdvise, TableType.MAIN_TAB);
+			manualAdviseDAO.delete(manualAdvise, TableType.MAIN_TAB);
 			auditDetails.addAll(listDeletion(manualAdvise, TableType.MAIN_TAB.getSuffix(), tranType));
 		} else {
 			manualAdvise.setRoleCode("");
@@ -345,11 +254,11 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			if (manualAdvise.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				manualAdvise.setRecordType("");
-				getManualAdviseDAO().save(manualAdvise, TableType.MAIN_TAB);
+				manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				manualAdvise.setRecordType("");
-				getManualAdviseDAO().update(manualAdvise, TableType.MAIN_TAB);
+				manualAdviseDAO.update(manualAdvise, TableType.MAIN_TAB);
 			}
 
 			// Document Details
@@ -362,35 +271,25 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		if (!manualAdvise.isNewRecord()) {
-			// deleting data from _temp tables while Approve
 			auditHeader.setAuditDetails(
 					listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		}
 
-		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), "");
+		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinID(), "");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(manualAdvise);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getManualAdviseDAO().delete with parameters manualAdvise,"_Temp" 3) Audit the record in
-	 * to AuditHeader and AdtManualAdvise by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -406,7 +305,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditDetails.addAll(listDeletion(manualAdvise, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
 		manualAdviseDAO.delete(manualAdvise, TableType.TEMP_TAB);
-		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinReference(), "");
+		financeMainDAO.updateMaintainceStatus(manualAdvise.getFinID(), "");
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -430,7 +329,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	private ManualAdvise executeDueAccountingProcess(ManualAdvise advise, String postBranch) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = getFinanceDetails(advise.getFinReference());
+		FinanceMain financeMain = getFinanceDetails(advise.getFinID());
 
 		AEEvent aeEvent = prepareAccSetData(advise, postBranch, financeMain);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
@@ -507,20 +406,13 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 		}
 
-		// saving Due tax advice details
 		saveDueTaxDetail(advise, detail, invoiceID);
 
 		logger.debug(Literal.LEAVING);
 		return advise;
 	}
 
-	/**
-	 * Saving Due tax advice details
-	 * 
-	 * @param advise
-	 */
 	private void saveDueTaxDetail(ManualAdvise advise, AdviseDueTaxDetail detail, Long invoiceID) {
-
 		detail.setAdviseID(advise.getAdviseID());
 		detail.setTaxType(advise.getTaxComponent());
 		detail.setAmount(advise.getAdviseAmount());
@@ -529,21 +421,14 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		detail.setTotalGST(detail.getCGST().add(detail.getSGST()).add(detail.getIGST()).add(detail.getUGST())
 				.add(detail.getCESS()));
 
-		// Saving Tax Details
-		getManualAdviseDAO().saveDueTaxDetail(detail);
+		manualAdviseDAO.saveDueTaxDetail(detail);
 	}
 
-	/**
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterfaceException
-	 * 
-	 */
 	@Override
 	public List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = getFinanceDetails(manualAdvise.getFinReference());
+		FinanceMain financeMain = getFinanceDetails(manualAdvise.getFinID());
 		AEEvent aeEvent = prepareAccSetData(manualAdvise, "", financeMain);
 		aeEvent = postingsPreparationUtil.getAccounting(aeEvent);
 
@@ -551,11 +436,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return aeEvent.getReturnDataSet();
 	}
 
-	/**
-	 * 
-	 * @param advise
-	 * @return
-	 */
 	private AEEvent prepareAccSetData(ManualAdvise advise, String postBranch, FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 
@@ -571,7 +451,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			amountCodes = new AEAmountCodes();
 		}
 
-		// Finance main
 		amountCodes.setFinType(financeMain.getFinType());
 
 		aeEvent.setPostingUserBranch(postBranch);
@@ -694,16 +573,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return taxes;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getManualAdviseDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
-
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
@@ -715,52 +584,12 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	@Override
 	public List<ManualAdviseMovements> getAdivseMovements(long id) {
-		return getManualAdviseDAO().getAdviseMovements(id);
+		return manualAdviseDAO.getAdviseMovements(id);
 	}
 
 	@Override
-	public FinanceMain getFinanceDetails(String finReference) {
-		return manualAdviseDAO.getFinanceDetails(finReference);
-	}
-
-	public FeeTypeService getFeeTypeService() {
-		return feeTypeService;
-	}
-
-	public void setFeeTypeService(FeeTypeService feeTypeService) {
-		this.feeTypeService = feeTypeService;
-	}
-
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
-	}
-
-	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
-		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	public FinanceMain getFinanceDetails(long finID) {
+		return manualAdviseDAO.getFinanceDetails(finID);
 	}
 
 	@Override
@@ -768,13 +597,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return manualAdviseDAO.getNewAdviseID();
 	}
 
-	/**
-	 * Common Method for Retrieving AuditDetails List
-	 * 
-	 * @param auditHeader
-	 * @param method
-	 * @return
-	 */
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -802,14 +624,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditHeader;
 	}
 
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param manualAdvise
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
 	public List<AuditDetail> setDocumentDetailsAuditData(ManualAdvise manualAdvise, String auditTranType,
 			String method) {
 		logger.debug(Literal.ENTERING);
@@ -866,14 +680,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditDetails;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Document Details
-	 * 
-	 * @param auditDetails
-	 * @param manualAdvise
-	 * @param type
-	 * @return
-	 */
 	private List<AuditDetail> processingDocumentDetailsList(List<AuditDetail> auditDetails, ManualAdvise manualAdvise,
 			String type) {
 		logger.debug(Literal.ENTERING);
@@ -1020,24 +826,44 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return auditList;
 	}
 
-	public DocumentDetailsDAO getDocumentDetailsDAO() {
-		return documentDetailsDAO;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
 	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
 		this.documentManagerDAO = documentManagerDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
 	}
 
 }
