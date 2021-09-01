@@ -39,9 +39,9 @@ public interface PayOrderIssueService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	PayOrderIssueHeader getPayOrderIssueHeaderById(String id);
+	PayOrderIssueHeader getPayOrderIssueHeaderById(long finID);
 
-	PayOrderIssueHeader getApprovedPayOrderIssueHeaderById(String id, String code);
+	PayOrderIssueHeader getApprovedPayOrderIssueHeaderById(long finID, String code);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -49,6 +49,6 @@ public interface PayOrderIssueService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	List<ReturnDataSet> getDisbursementPostings(String finReference);
+	List<ReturnDataSet> getDisbursementPostings(long finID);
 
 }
