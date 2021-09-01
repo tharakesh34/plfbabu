@@ -27,6 +27,7 @@ import com.pennant.backend.service.finance.impl.FinanceDataValidation;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CancelDisbursementServiceImpl extends GenericService<FinServiceInstruction>
@@ -36,24 +37,24 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 	private FinanceDataValidation financeDataValidation;
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 
-	public FinScheduleData getCancelDisbDetails(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
+	public FinScheduleData getCancelDisbDetails(FinScheduleData schdData) {
+		logger.debug(Literal.ENTERING);
 
-		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		FinanceMain fm = schdData.getFinanceMain();
+		BigDecimal oldTotalPft = fm.getTotalGrossPft();
 
 		// Schedule Recalculation Locking Period Applicability
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
-
-			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			Date recalLockTill = fm.getRecalFromDate();
 			if (recalLockTill == null) {
-				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+				recalLockTill = fm.getMaturityDate();
 			}
 
-			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			int sdSize = schdData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
-				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				curSchd = schdData.getFinanceScheduleDetails().get(i);
 				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
@@ -62,37 +63,41 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 			}
 		}
 
-		FinScheduleData finSchData = ScheduleCalculator.reCalSchd(finScheduleData, "");
+		FinScheduleData finSchData = ScheduleCalculator.reCalSchd(schdData, "");
 
-		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
+		BigDecimal newTotalPft = fm.getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
 		finSchData.setPftChg(pftDiff);
 		finSchData.getFinanceMain().setScheduleRegenerated(true);
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 		return finSchData;
 	}
 
 	@Override
-	public AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+	public AuditDetail doValidations(FinanceDetail fd, FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
+
 		AuditDetail auditDetail = new AuditDetail();
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
 		// validate disb amount
-		if (finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+		if (fsi.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement amount";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 		}
 		boolean isValidDate = false;
-		List<FinAdvancePayments> finAdvancePayments = financeDetail.getAdvancePaymentsList();
-		if (finAdvancePayments != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
-			for (FinAdvancePayments finAdvancePayment : financeDetail.getAdvancePaymentsList()) {
+		List<FinAdvancePayments> finAdvancePayments = fd.getAdvancePaymentsList();
+		Date fromDate = fsi.getFromDate();
+		if (finAdvancePayments != null && !fd.getAdvancePaymentsList().isEmpty()) {
+			for (FinAdvancePayments finAdvancePayment : fd.getAdvancePaymentsList()) {
 
 				// Validate from date
-				if (DateUtility.compare(finServiceInstruction.getFromDate(), finAdvancePayment.getLlDate()) == 0
+				if (DateUtility.compare(fromDate, finAdvancePayment.getLlDate()) == 0
 						&& !(StringUtils.equals(finAdvancePayment.getStatus(), "CANCELED"))) {
 					isValidDate = true;
 				}
@@ -100,68 +105,64 @@ public class CancelDisbursementServiceImpl extends GenericService<FinServiceInst
 
 			if (!isValidDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "From date:" + DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
+				valueParm[0] = "From date:" + DateUtility.formatToLongDate(fromDate);
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30101", "", valueParm)));
 				return auditDetail;
 			}
 		}
 
-		List<ErrorDetail> errors = financeDataValidation.disbursementValidation(financeDetail);
+		List<ErrorDetail> errors = financeDataValidation.disbursementValidation(fd);
 		for (ErrorDetail errorDetails : errors) {
 			auditDetail.setErrorDetail(errorDetails);
 		}
 
-		//validate fromDate and DisbDate
+		// validate fromDate and DisbDate
 		isValidDate = false;
-		if (DateUtility.compare(finServiceInstruction.getFromDate(),
-				finServiceInstruction.getDisbursementDetails().get(0).getLlDate()) == 0) {
+		if (DateUtility.compare(fromDate, fsi.getDisbursementDetails().get(0).getLlDate()) == 0) {
 			isValidDate = true;
 		}
 
 		if (!isValidDate) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "fromDate:" + DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
-			valueParm[1] = "disbDate:"
-					+ DateUtility.formatToLongDate(finServiceInstruction.getDisbursementDetails().get(0).getLlDate());
+			valueParm[0] = "fromDate:" + DateUtility.formatToLongDate(fromDate);
+			valueParm[1] = "disbDate:" + DateUtility.formatToLongDate(fsi.getDisbursementDetails().get(0).getLlDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm)));
 			return auditDetail;
 		}
 
-		//validate ServiceReqNo
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-				&& !(StringUtils.isEmpty(finServiceInstruction.getServiceReqNo()))) {
-			List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO.getFinServInstByServiceReqNo(
-					finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
-					finServiceInstruction.getServiceReqNo(), FinServiceEvent.ADDDISB);
+		// validate ServiceReqNo
+		String serviceReqNo = fsi.getServiceReqNo();
+		long finID = fsi.getFinID();
+
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())
+				&& !(StringUtils.isEmpty(serviceReqNo))) {
+
+			List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO
+					.getFinServInstByServiceReqNo(finID, fromDate, serviceReqNo, FinServiceEvent.ADDDISB);
 			if (CollectionUtils.isNullOrEmpty(finServiceInstructions)) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getServiceReqNo();
+				valueParm[0] = serviceReqNo;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99026", "", valueParm)));
 				return auditDetail;
 			} else {
-				List<FinServiceInstruction> finServInstCanReq = finServiceInstructionDAO.getFinServInstByServiceReqNo(
-						finServiceInstruction.getFinReference(), finServiceInstruction.getFromDate(),
-						finServiceInstruction.getServiceReqNo(), FinServiceEvent.CANCELDISB);
+				List<FinServiceInstruction> finServInstCanReq = finServiceInstructionDAO
+						.getFinServInstByServiceReqNo(finID, fromDate, serviceReqNo, FinServiceEvent.CANCELDISB);
 
 				if (!CollectionUtils.isNullOrEmpty(finServInstCanReq)) {
 					String[] valueParm = new String[1];
-					valueParm[0] = finServiceInstruction.getServiceReqNo();
+					valueParm[0] = serviceReqNo;
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99027", "", valueParm)));
 					return auditDetail;
 				}
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
 	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
 		this.financeDataValidation = financeDataValidation;
-	}
-
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
 	}
 
 	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {

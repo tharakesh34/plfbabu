@@ -80,7 +80,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private FeeTypeDAO feeTypeDAO;
 	private ManualAdviseService manualAdviseService;
 	private CashBackDetailDAO cashBackDetailDAO;
-
 	private FinanceMainDAO financeMainDAO;
 	private FinTypePartnerBankDAO finTypePartnerBankDAO;
 	private BankBranchDAO bankBranchDAO;
@@ -89,8 +88,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private PaymentHeaderService paymentHeaderService;
 	private PartnerBankDAO partnerBankDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;
-
-	//Receipt
 	private ReceiptService receiptService;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private RuleDAO ruleDAO;
@@ -110,16 +107,11 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	private BigDecimal cessPerc = BigDecimal.ZERO;
 	private BigDecimal tgstPerc = BigDecimal.ZERO;
 
-	/**
-	 * Method for creating cashback records against scheme structure definition on Loan creation
-	 * 
-	 * @param finMain
-	 */
 	@Override
-	public void createCashBackAdvice(FinanceMain finMain, Promotion promotion, Date appDate) {
+	public void createCashBackAdvice(FinanceMain fm, Promotion promotion, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
-		if (!StringUtils.equals(FinanceConstants.PRODUCT_CD, finMain.getProductCategory())) {
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_CD, fm.getProductCategory())) {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
@@ -136,15 +128,15 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
 
-				dbdAmount = finMain.getFinAmount().multiply(promotion.getDbdPerc()).divide(new BigDecimal(100), 0,
+				dbdAmount = fm.getFinAmount().multiply(promotion.getDbdPerc()).divide(new BigDecimal(100), 0,
 						RoundingMode.HALF_DOWN);
 
 				// Payable Advise creation against cash back amount in Hold Status
 				// Hold is for to avoid usage in screens till Settlement process completed
-				manualAdvise = cashBackDueCreation(finMain, promotion.getDbdFeeTypId(), dbdAmount, appDate);
+				manualAdvise = cashBackDueCreation(fm, promotion.getDbdFeeTypId(), dbdAmount, appDate);
 
 				// Logging Cash back process details for future usage
-				cashBackDetailList.add(prepareCashbackLog(finMain, manualAdvise, "DBD"));
+				cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, "DBD"));
 
 				dbdProcAvail = true;
 			}
@@ -155,17 +147,17 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 				// If DBD Available balance amount from Subvention will be MDB CashBack
 				// Total CashBack should not cross Subvention amount always
 				if (dbdProcAvail) {
-					mbdAmount = finMain.getSvAmount().subtract(dbdAmount);
+					mbdAmount = fm.getSvAmount().subtract(dbdAmount);
 				} else {
-					mbdAmount = finMain.getSvAmount();
+					mbdAmount = fm.getSvAmount();
 				}
 
 				// Payable Advise creation against cash back amount in Hold Status
 				// Hold is for to avoid usage in screens till Settlement process completed
-				manualAdvise = cashBackDueCreation(finMain, promotion.getMbdFeeTypId(), mbdAmount, appDate);
+				manualAdvise = cashBackDueCreation(fm, promotion.getMbdFeeTypId(), mbdAmount, appDate);
 
 				// Logging Cash back process details for future usage
-				cashBackDetailList.add(prepareCashbackLog(finMain, manualAdvise, "MBD"));
+				cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, "MBD"));
 			}
 
 			break;
@@ -173,11 +165,10 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 			// Payable Advise creation against cash back amount in Hold Status
 			// Hold is for to avoid usage in screens till Settlement process completed
-			manualAdvise = cashBackDueCreation(finMain, promotion.getDbdAndMbdFeeTypId(), finMain.getSvAmount(),
-					appDate);
+			manualAdvise = cashBackDueCreation(fm, promotion.getDbdAndMbdFeeTypId(), fm.getSvAmount(), appDate);
 
 			// Logging Cash back process details for future usage
-			cashBackDetailList.add(prepareCashbackLog(finMain, manualAdvise, "DBMBD"));
+			cashBackDetailList.add(prepareCashbackLog(fm, manualAdvise, "DBMBD"));
 			break;
 
 		default:
@@ -192,14 +183,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Preparation of Cahsback Log details
-	 * 
-	 * @param finMain
-	 * @param manualAdvise
-	 * @param type
-	 * @return
-	 */
 	private CashBackDetail prepareCashbackLog(FinanceMain finMain, ManualAdvise manualAdvise, String type) {
 		logger.debug(Literal.ENTERING);
 
@@ -214,57 +197,41 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return cbDetail;
 	}
 
-	/**
-	 * Method for create Payable advice against Cashback amount under Cashback type
-	 * 
-	 * @param finMain
-	 * @param feeId
-	 * @param cashbackAmount
-	 * @return
-	 */
 	private ManualAdvise cashBackDueCreation(FinanceMain finMain, long feeId, BigDecimal cashbackAmount, Date appDate) {
 		logger.debug(Literal.ENTERING);
 
-		ManualAdvise manualAdvise = new ManualAdvise();
-		manualAdvise.setAdviseID(manualAdviseService.getNewAdviseID());
-		manualAdvise.setFinReference(finMain.getFinReference());
-		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
-		manualAdvise.setAdviseAmount(cashbackAmount);
-		manualAdvise.setBalanceAmt(manualAdvise.getAdviseAmount());
-		manualAdvise.setHoldDue(true);
-		manualAdvise.setFinSource(UploadConstants.FINSOURCE_ID_CD_UPLOAD);
+		ManualAdvise ma = new ManualAdvise();
+		ma.setAdviseID(manualAdviseService.getNewAdviseID());
+		ma.setFinReference(finMain.getFinReference());
+		ma.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		ma.setAdviseAmount(cashbackAmount);
+		ma.setBalanceAmt(ma.getAdviseAmount());
+		ma.setHoldDue(true);
+		ma.setFinSource(UploadConstants.FINSOURCE_ID_CD_UPLOAD);
 
 		FeeType cbFeeType = feeTypeDAO.getFeeTypeById(feeId, "_AView");
 		com.pennant.backend.model.finance.FeeType modelFeeType = new com.pennant.backend.model.finance.FeeType();
 		BeanUtils.copyProperties(cbFeeType, modelFeeType);
-		manualAdvise.setFeeType(modelFeeType);
-		manualAdvise.setFeeTypeCode(cbFeeType.getFeeTypeCode());
-		manualAdvise.setFeeTypeID(cbFeeType.getFeeTypeID());
+		ma.setFeeType(modelFeeType);
+		ma.setFeeTypeCode(cbFeeType.getFeeTypeCode());
+		ma.setFeeTypeID(cbFeeType.getFeeTypeID());
 
-		manualAdvise.setValueDate(appDate);
-		manualAdvise.setPostDate(appDate);
-		manualAdvise.setVersion(1);
-		manualAdvise.setLastMntBy(finMain.getLastMntBy());
-		manualAdvise.setLastMntOn(finMain.getLastMntOn());
-		manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		manualAdvise.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		manualAdvise.setNewRecord(true);
-		manualAdvise.setUserDetails(finMain.getUserDetails());
+		ma.setValueDate(appDate);
+		ma.setPostDate(appDate);
+		ma.setVersion(1);
+		ma.setLastMntBy(finMain.getLastMntBy());
+		ma.setLastMntOn(finMain.getLastMntOn());
+		ma.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		ma.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ma.setNewRecord(true);
+		ma.setUserDetails(finMain.getUserDetails());
 
 		// Save Cashback Advice
-		manualAdviseService.doApprove(getAuditHeader(manualAdvise, PennantConstants.TRAN_WF));
+		manualAdviseService.doApprove(getAuditHeader(ma, PennantConstants.TRAN_WF));
 
 		logger.debug(Literal.LEAVING);
-		return manualAdvise;
+		return ma;
 	}
-
-	/**
-	 * Method for creating Auto Payment Instruction using default beneficiary against Loan
-	 * 
-	 * @param finMain
-	 * @param feeypeCode
-	 * @param adviseId
-	 */
 
 	@Override
 	public void createPaymentInstruction(FinanceMain finMain, String feeypeCode, long adviseId, BigDecimal instAmount) {
@@ -279,14 +246,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for preparing Instruction data against cash back Payable record
-	 * 
-	 * @param finMain
-	 * @param feeTypeCode
-	 * @param instAmount
-	 * @return
-	 */
 	private PaymentHeader preparePaymentInst(FinanceMain finMain, String feeTypeCode, long adviseId,
 			BigDecimal instAmount) {
 		logger.debug("Entering");
@@ -295,32 +254,32 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		Date appDate = SysParamUtil.getAppDate();
 
 		// Payment Header
-		PaymentHeader paymentHeader = new PaymentHeader();
-		paymentHeader.setFinReference(finMain.getFinReference());
-		paymentHeader.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
-		paymentHeader.setCreatedOn(appDate);
-		paymentHeader.setApprovedOn(appDate);
-		paymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
-		paymentHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		paymentHeader.setNewRecord(true);
-		paymentHeader.setVersion(1);
-		paymentHeader.setUserDetails(finMain.getUserDetails());
-		paymentHeader.setLastMntBy(finMain.getLastMntBy());
-		paymentHeader.setLastMntOn(finMain.getLastMntOn());
-		paymentHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		paymentHeader.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
-		paymentHeader.setFinSource(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD);
+		PaymentHeader ph = new PaymentHeader();
+		ph.setFinReference(finMain.getFinReference());
+		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
+		ph.setCreatedOn(appDate);
+		ph.setApprovedOn(appDate);
+		ph.setStatus(RepayConstants.PAYMENT_APPROVE);
+		ph.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		ph.setNewRecord(true);
+		ph.setVersion(1);
+		ph.setUserDetails(finMain.getUserDetails());
+		ph.setLastMntBy(finMain.getLastMntBy());
+		ph.setLastMntOn(finMain.getLastMntOn());
+		ph.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		ph.setPaymentId(paymentHeaderDAO.getNewPaymentHeaderId());
+		ph.setFinSource(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD);
 
-		FinanceMain financeMain = financeMainDAO.getFinanceForIncomeAMZ(finMain.getFinReference());
+		FinanceMain fm = financeMainDAO.getFinanceForIncomeAMZ(finMain.getFinID());
 
-		if (financeMain == null) {
+		if (fm == null) {
 			throw new InterfaceException("9999", "Loan Reference should not exist.");
 		}
 		long partnerBankId = Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK"));
 		String partnerBankcode = partnerBankDAO.getPartnerBankCodeById(partnerBankId);
 
 		FinTypePartnerBank finTypePartnerBank = finTypePartnerBankDAO.getFinTypePartnerBankByPartnerBankCode(
-				partnerBankcode, financeMain.getFinType(), DisbursementConstants.PAYMENT_TYPE_NEFT);
+				partnerBankcode, fm.getFinType(), DisbursementConstants.PAYMENT_TYPE_NEFT);
 
 		if (finTypePartnerBank == null) {
 			throw new InterfaceException("9999", "Partner banks should not linked to Loan Type.");
@@ -341,74 +300,76 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		// Payment Details
 		List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
 
-		ManualAdvise advise = getManualAdviseDAO().getManualAdviseById(adviseId, "_AView");
+		ManualAdvise advise = manualAdviseDAO.getManualAdviseById(adviseId, "_AView");
+
 		if (advise == null) {
 			return null;
 		}
 
 		// Payment Instruction Details preparation
-		PaymentDetail paymentDetail = new PaymentDetail();
-		paymentDetail.setAmount(instAmount);
-		paymentHeader.setPaymentAmount(instAmount);
-		paymentDetail.setReferenceId(advise.getAdviseID());
-		paymentDetail.setAvailableAmount(advise.getBalanceAmt());
-		paymentDetail.setAmountType(String.valueOf(advise.getAdviseType()));
-		paymentDetail.setFeeTypeCode(advise.getFeeTypeCode());
-		paymentDetail.setFeeTypeDesc(advise.getFeeTypeDesc());
-		paymentDetail.setRecordType(PennantConstants.RCD_ADD);
-		paymentDetail.setNewRecord(true);
-		paymentDetail.setVersion(1);
-		paymentDetail.setUserDetails(finMain.getUserDetails());
-		paymentDetail.setLastMntBy(finMain.getLastMntBy());
-		paymentDetail.setLastMntOn(finMain.getLastMntOn());
-		paymentDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		paymentDetail.setApiRequest(true);
-		paymentDetail.setFinSource(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD);
-		paymentDetailList.add(paymentDetail);
+		PaymentDetail pd = new PaymentDetail();
+		pd.setAmount(instAmount);
+		ph.setPaymentAmount(instAmount);
+		pd.setReferenceId(advise.getAdviseID());
+		pd.setAvailableAmount(advise.getBalanceAmt());
+		pd.setAmountType(String.valueOf(advise.getAdviseType()));
+		pd.setFeeTypeCode(advise.getFeeTypeCode());
+		pd.setFeeTypeDesc(advise.getFeeTypeDesc());
+		pd.setRecordType(PennantConstants.RCD_ADD);
+		pd.setNewRecord(true);
+		pd.setVersion(1);
+		pd.setUserDetails(finMain.getUserDetails());
+		pd.setLastMntBy(finMain.getLastMntBy());
+		pd.setLastMntOn(finMain.getLastMntOn());
+		pd.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		pd.setApiRequest(true);
+		pd.setFinSource(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD);
+		paymentDetailList.add(pd);
 
 		// Payment Instructions
-		PaymentInstruction paymentInstruction = new PaymentInstruction();
-		paymentInstruction.setPostDate(appDate);
-		paymentInstruction.setPaymentType(DisbursementConstants.PAYMENT_TYPE_NEFT);
-		paymentInstruction.setPaymentAmount(instAmount);
-		paymentInstruction.setBankBranchCode(mandate.getBranchCode());
-		paymentInstruction.setBankBranchId(bankBranchId);
-		paymentInstruction.setAcctHolderName(mandate.getAccHolderName());
-		paymentInstruction.setAccountNo(mandate.getAccNumber());
-		paymentInstruction.setPhoneNumber(mandate.getPhoneNumber());
-		paymentInstruction.setValueDate(appDate);
-		paymentInstruction.setPaymentCCy(finMain.getFinCcy());
-		paymentInstruction.setPartnerBankCode(partnerBankcode);
-		paymentInstruction.setPartnerBankId(partnerBankId);
-		paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
-		paymentInstruction.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		paymentInstruction.setRecordType(PennantConstants.RCD_ADD);
-		paymentInstruction.setNewRecord(true);
-		paymentInstruction.setVersion(1);
-		paymentInstruction.setUserDetails(finMain.getUserDetails());
-		paymentInstruction.setLastMntBy(finMain.getLastMntBy());
-		paymentInstruction.setLastMntOn(finMain.getLastMntOn());
+		PaymentInstruction pi = new PaymentInstruction();
+		pi.setPostDate(appDate);
+		pi.setPaymentType(DisbursementConstants.PAYMENT_TYPE_NEFT);
+		pi.setPaymentAmount(instAmount);
+		pi.setBankBranchCode(mandate.getBranchCode());
+		pi.setBankBranchId(bankBranchId);
+		pi.setAcctHolderName(mandate.getAccHolderName());
+		pi.setAccountNo(mandate.getAccNumber());
+		pi.setPhoneNumber(mandate.getPhoneNumber());
+		pi.setValueDate(appDate);
+		pi.setPaymentCCy(finMain.getFinCcy());
+		pi.setPartnerBankCode(partnerBankcode);
+		pi.setPartnerBankId(partnerBankId);
+		pi.setStatus(DisbursementConstants.STATUS_NEW);
+		pi.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		pi.setRecordType(PennantConstants.RCD_ADD);
+		pi.setNewRecord(true);
+		pi.setVersion(1);
+		pi.setUserDetails(finMain.getUserDetails());
+		pi.setLastMntBy(finMain.getLastMntBy());
+		pi.setLastMntOn(finMain.getLastMntOn());
 
 		// Extra validation fields
-		paymentInstruction.setPartnerBankAcType(finTypePartnerBank.getAccountType());
-		paymentInstruction.setApiRequest(true);
+		pi.setPartnerBankAcType(finTypePartnerBank.getAccountType());
+		pi.setApiRequest(true);
 
-		paymentHeader.setPaymentDetailList(paymentDetailList);
-		paymentHeader.setPaymentInstruction(paymentInstruction);
+		ph.setPaymentDetailList(paymentDetailList);
+		ph.setPaymentInstruction(pi);
 
 		logger.debug("Leaving");
-		return paymentHeader;
+		return ph;
 	}
 
 	@Override
-	public BigDecimal createReceiptOnCashBack(CashBackDetail cashBackDetail) throws AppException {
+	public BigDecimal createReceiptOnCashBack(CashBackDetail cb) throws AppException {
 
 		// Fetch Loan Level Receipt Adjustment Summary Details to create Receipts
-		String finReference = cashBackDetail.getFinReference();
+		long finID = cb.getFinID();
+		String finReference = cb.getFinReference();
 		Date valueDate = SysParamUtil.getAppDate();
 
 		// Actual Cash back Amount
-		BigDecimal actCashBack = cashBackDetail.getAmount();
+		BigDecimal actCashBack = cb.getAmount();
 
 		// Fetch TDS Parameter Details
 		tdsRoundMode = SysParamUtil.getValue(CalculationConstants.TDS_ROUNDINGMODE).toString();
@@ -416,7 +377,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		tdsPerc = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 
 		// Prepare Due AMount against Each Loan Reference & Value Date
-		BigDecimal cashBackBal = prepareLoanAlocList(finReference, valueDate, cashBackDetail.getAmount());
+		BigDecimal cashBackBal = prepareLoanAlocList(finID, valueDate, cb.getAmount());
 		if (cashBackBal.compareTo(BigDecimal.ZERO) <= 0) {
 			cashBackBal = BigDecimal.ZERO;
 		}
@@ -428,7 +389,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		// Create Finance Service Instruction
 		BigDecimal rcptAmt = actCashBack.subtract(cashBackBal);
 		FinServiceInstruction serviceInstr = createFinServInstr(finReference, rcptAmt, valueDate);
-		serviceInstr.setAdviseId(cashBackDetail.getAdviseId());
+		serviceInstr.setAdviseId(cb.getAdviseId());
 		serviceInstr.setAdviseAmount(rcptAmt);
 
 		// Create Receipt Against Loan
@@ -440,12 +401,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return actCashBack.subtract(rcptAmt);
 	}
 
-	/**
-	 * Method for Preparing Instruction Service to generate Loan Level Receipt
-	 * 
-	 * @param rch
-	 * @return
-	 */
 	private FinServiceInstruction createFinServInstr(String finReference, BigDecimal rcptAmount, Date valueDate) {
 
 		FinServiceInstruction fsi = new FinServiceInstruction();
@@ -500,21 +455,12 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return fsi;
 	}
 
-	/**
-	 * Method for Preparing List of Loan Summary Allocation Dues
-	 * 
-	 * @param finRefList
-	 * @param facilityRef
-	 * @param valueDate
-	 * @return
-	 */
-	private BigDecimal prepareLoanAlocList(String finReference, Date valueDate, BigDecimal cashBackAmount) {
+	private BigDecimal prepareLoanAlocList(long finID, Date valueDate, BigDecimal cashBackAmount) {
 
 		// Fetch all Schedules Dues (Principal + Interest) against all Loans by Date Order
-		List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getDueSchedulesByFacilityRef(finReference,
-				valueDate);
-		for (FinanceScheduleDetail curSchd : schdList) {
+		List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getDueSchedulesByFacilityRef(finID, valueDate);
 
+		for (FinanceScheduleDetail curSchd : schdList) {
 			BigDecimal priBal = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
 			BigDecimal pftBal = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
 
@@ -541,32 +487,29 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		// Fetch all LPP & LPI Dues against all Loans by Date Order
 		if (cashBackAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-			List<FinODDetails> penaltyList = finODDetailsDAO.getFinODBalByFinRef(finReference);
-			if (penaltyList != null && !penaltyList.isEmpty()) {
+			List<FinODDetails> penaltyList = finODDetailsDAO.getFinODBalByFinRef(finID);
 
-				String lppTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_ODC);
-				for (FinODDetails fod : penaltyList) {
-					if (fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) <= 0
-							&& fod.getLPIBal().compareTo(BigDecimal.ZERO) <= 0) {
-						continue;
-					}
-					BigDecimal lppBal = fod.getTotPenaltyBal();
-					if (StringUtils.equals(lppTaxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-						lppBal = lppBal.add(getGST(fod.getFinReference(), fod.getTotPenaltyBal(), lppTaxType));
-					}
-					cashBackAmount = cashBackAmount.subtract(lppBal);
+			String lppTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_ODC);
+			for (FinODDetails fod : penaltyList) {
+				if (fod.getTotPenaltyBal().compareTo(BigDecimal.ZERO) <= 0
+						&& fod.getLPIBal().compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+				BigDecimal lppBal = fod.getTotPenaltyBal();
+				if (StringUtils.equals(lppTaxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+					lppBal = lppBal.add(getGST(fod.getFinReference(), fod.getTotPenaltyBal(), lppTaxType));
+				}
+				cashBackAmount = cashBackAmount.subtract(lppBal);
 
-					if (cashBackAmount.compareTo(BigDecimal.ZERO) <= 0) {
-						break;
-					}
+				if (cashBackAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
 				}
 			}
 		}
 
 		// Fetch all Bounce & Receivable Charges against all Loans by Date Order
 		if (cashBackAmount.compareTo(BigDecimal.ZERO) > 0) {
-
-			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdviseByRef(finReference, 1, "_AView");
+			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdviseByRef(finID, 1, "_AView");
 			if (adviseList != null && !adviseList.isEmpty()) {
 
 				String bounceTaxType = feeTypeDAO.getTaxCompByCode(RepayConstants.ALLOCATION_BOUNCE);
@@ -608,14 +551,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return tds;
 	}
 
-	/**
-	 * Method for Calculating GST Amounts
-	 * 
-	 * @param finReference
-	 * @param amount
-	 * @param taxType
-	 * @return
-	 */
 	private BigDecimal getGST(String finReference, BigDecimal amount, String taxType) {
 
 		// No AMount to calculate Tax
@@ -642,13 +577,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return BigDecimal.ZERO;
 	}
 
-	/**
-	 * Method for Preparing all GST fee amounts based on configurations
-	 * 
-	 * @param manAdvList
-	 * @param financeDetail
-	 * @return
-	 */
 	private void setTaxPercValues(String finReference) {
 
 		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(finReference);
@@ -739,11 +667,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 				null, null, auditDetail, aManualAdvise.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
 	}
 
-	/**
-	 * @param aAuthorizedSignatoryRepository
-	 * @param tranType
-	 * @return
-	 */
 	private AuditHeader getAuditHeader(PaymentHeader paymentHeader, String tranType) {
 		AuditDetail auditDetail = new AuditDetail(tranType, 1, paymentHeader.getBefImage(), paymentHeader);
 		return new AuditHeader(String.valueOf(paymentHeader.getPaymentId()),
@@ -759,140 +682,68 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		this.manualAdviseService = manualAdviseService;
 	}
 
-	public FinTypePartnerBankDAO getFinTypePartnerBankDAO() {
-		return finTypePartnerBankDAO;
-	}
-
-	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
-		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
-	}
-
-	public BankBranchDAO getBankBranchDAO() {
-		return bankBranchDAO;
-	}
-
-	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
-		this.bankBranchDAO = bankBranchDAO;
-	}
-
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
-	}
-
-	public void setMandateDAO(MandateDAO mandateDAO) {
-		this.mandateDAO = mandateDAO;
-	}
-
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public PaymentHeaderService getPaymentHeaderService() {
-		return paymentHeaderService;
-	}
-
-	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
-		this.paymentHeaderService = paymentHeaderService;
-	}
-
-	public PartnerBankDAO getPartnerBankDAO() {
-		return partnerBankDAO;
-	}
-
-	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
-		this.partnerBankDAO = partnerBankDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
+	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
+		this.cashBackDetailDAO = cashBackDetailDAO;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public PaymentHeaderDAO getPaymentHeaderDAO() {
-		return paymentHeaderDAO;
+	public void setFinTypePartnerBankDAO(FinTypePartnerBankDAO finTypePartnerBankDAO) {
+		this.finTypePartnerBankDAO = finTypePartnerBankDAO;
+	}
+
+	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
+		this.bankBranchDAO = bankBranchDAO;
+	}
+
+	public void setMandateDAO(MandateDAO mandateDAO) {
+		this.mandateDAO = mandateDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setPaymentHeaderService(PaymentHeaderService paymentHeaderService) {
+		this.paymentHeaderService = paymentHeaderService;
+	}
+
+	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
+		this.partnerBankDAO = partnerBankDAO;
 	}
 
 	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
 		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
 
-	public CashBackDetailDAO getCashBackDetailDAO() {
-		return cashBackDetailDAO;
-	}
-
-	public void setCashBackDetailDAO(CashBackDetailDAO cashBackDetailDAO) {
-		this.cashBackDetailDAO = cashBackDetailDAO;
-	}
-
-	public ReceiptService getReceiptService() {
-		return receiptService;
-	}
-
 	public void setReceiptService(ReceiptService receiptService) {
 		this.receiptService = receiptService;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
 	}
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
-	public RuleDAO getRuleDAO() {
-		return ruleDAO;
-	}
-
 	public void setRuleDAO(RuleDAO ruleDAO) {
 		this.ruleDAO = ruleDAO;
-	}
-
-	public GSTRateDAO getGstRateDAO() {
-		return gstRateDAO;
 	}
 
 	public void setGstRateDAO(GSTRateDAO gstRateDAO) {
 		this.gstRateDAO = gstRateDAO;
 	}
 
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
-	}
-
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
-	}
-
-	public FinanceRepaymentsDAO getFinanceRepaymentsDAO() {
-		return financeRepaymentsDAO;
 	}
 
 	public void setFinanceRepaymentsDAO(FinanceRepaymentsDAO financeRepaymentsDAO) {
 		this.financeRepaymentsDAO = financeRepaymentsDAO;
 	}
 
-	public LatePayMarkingService getLatePayMarkingService() {
-		return latePayMarkingService;
-	}
-
 	public void setLatePayMarkingService(LatePayMarkingService latePayMarkingService) {
 		this.latePayMarkingService = latePayMarkingService;
-	}
-
-	public FeeTypeDAO getFeeTypeDAO() {
-		return feeTypeDAO;
-	}
-
-	public ManualAdviseService getManualAdviseService() {
-		return manualAdviseService;
 	}
 
 }
