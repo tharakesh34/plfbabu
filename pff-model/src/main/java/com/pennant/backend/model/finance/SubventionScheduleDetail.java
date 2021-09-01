@@ -13,6 +13,7 @@ public class SubventionScheduleDetail implements Serializable {
 	}
 
 	private static final long serialVersionUID = 1L;
+	private long finID;
 	private String finReference = null;
 	private long disbSeqID = 0;
 	private Date schDate;
@@ -34,6 +35,7 @@ public class SubventionScheduleDetail implements Serializable {
 
 	public SubventionScheduleDetail copyEntity() {
 		SubventionScheduleDetail entity = new SubventionScheduleDetail();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setDisbSeqID(this.disbSeqID);
 		entity.setSchDate(this.schDate);
@@ -45,6 +47,14 @@ public class SubventionScheduleDetail implements Serializable {
 		entity.setFvPftFraction(this.fvPftFraction);
 		entity.setCbPftFraction(this.cbPftFraction);
 		return entity;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
