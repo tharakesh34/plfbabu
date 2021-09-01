@@ -141,7 +141,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			BigDecimal principalDue = curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid());
 
-			// get excess
+			long finID = fm.getFinID();
 			String finReference = fm.getFinReference();
 			BigDecimal dueAmt = BigDecimal.ZERO;
 
@@ -161,7 +161,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			}
 
 			// excess fetch
-			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, amountType);
+			FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID, amountType);
 
 			BigDecimal excessBal = BigDecimal.ZERO;
 			if (excessAmount == null || excessAmount.getBalanceAmt() == null
@@ -272,12 +272,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * @param finEODEvent
-	 * @param curSchd
-	 * @param valueDate
-	 * @return
-	 */
 	public long postAdvancePayments(FinEODEvent finEODEvent, FinanceScheduleDetail curSchd, Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
@@ -340,13 +334,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		return aeEvent.getLinkedTranId();
 	}
 
-	/**
-	 * @param excess
-	 * @param adjAmount
-	 * @param receiptID
-	 * @param valueDate
-	 * @return
-	 */
 	private long advanceExcessMovement(FinExcessAmount excess, BigDecimal adjAmount, Long receiptID, Date valueDate) {
 		long excessID = Long.MIN_VALUE;
 
@@ -625,13 +612,14 @@ public class AdvancePaymentService extends ServiceHelper {
 	public void processBpiAmount(FinScheduleData finScheduleData, FinanceScheduleDetail curSchd) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 
+		long finID = financeMain.getFinID();
 		String finReference = financeMain.getFinReference();
 		boolean tdsApplicable = TDSCalculator.isTDSApplicable(financeMain);
 		BigDecimal pftSchd = curSchd.getProfitSchd();
 		BigDecimal tdsAmount = curSchd.getTDSAmount();
 		String amountType = RepayConstants.EXAMOUNTTYPE_ADVINT;
 
-		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByRefAndType(finReference, amountType);
+		FinExcessAmount exAmount = this.finExcessAmountDAO.getExcessAmountsByRefAndType(finID, amountType);
 
 		BigDecimal bpiAmt = pftSchd;
 		if (tdsApplicable && !SysParamUtil.isAllowed(SMTParameterConstants.BPI_TDS_DEDUCT_ON_ORG)) {
@@ -688,8 +676,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	protected void updateExcess(AdvancePaymentDetail advPay, String excessType, String moduleDefiner, long lastMntBy) {
 		FinExcessAmount excess = null;
 		if (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
-			excess = finExcessAmountDAO.getFinExcessAmount(advPay.getFinReference(),
-					RepayConstants.EXAMOUNTTYPE_ADVINT);
+			excess = finExcessAmountDAO.getFinExcessAmount(advPay.getFinID(), RepayConstants.EXAMOUNTTYPE_ADVINT);
 		}
 
 		if (excess == null) {
@@ -716,13 +703,14 @@ public class AdvancePaymentService extends ServiceHelper {
 			return;
 		}
 
-		FinExcessAmount existingExcessData = finExcessAmountDAO.getFinExcessAmount(advPay.getFinReference(),
+		FinExcessAmount existingExcessData = finExcessAmountDAO.getFinExcessAmount(advPay.getFinID(),
 				RepayConstants.EXAMOUNTTYPE_ADVINT);
 
 		if (existingExcessData != null) {
 			excess.setExcessID(existingExcessData.getExcessID());
 		}
 
+		excess.setFinID(advPay.getFinID());
 		excess.setFinReference(advPay.getFinReference());
 		excess.setAmountType(excessType);
 		excess.setAmount(excess.getAmount().add(amount));
@@ -851,7 +839,7 @@ public class AdvancePaymentService extends ServiceHelper {
 	private BigDecimal getAdvIntBalance(FinanceMain fm, boolean bpi) {
 		BigDecimal advIntBalance = BigDecimal.ZERO;
 		if (AdvanceType.hasAdvInterest(fm) || bpi) {
-			FinExcessAmount excessAmount = finExcessAmountDAO.getFinExcessAmount(fm.getFinReference(),
+			FinExcessAmount excessAmount = finExcessAmountDAO.getFinExcessAmount(fm.getFinID(),
 					RepayConstants.EXAMOUNTTYPE_ADVINT);
 
 			if (excessAmount != null) {
@@ -871,6 +859,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 	public void excessAmountMovement(FinScheduleData finScheduleData) {
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		long finID = financeMain.getFinID();
 		String finReference = financeMain.getFinReference();
 		Date valueDate = SysParamUtil.getAppValueDate();
 		long lastMntBy = financeMain.getLastMntBy();
@@ -878,8 +867,8 @@ public class AdvancePaymentService extends ServiceHelper {
 		AdvanceType grcAdvanceType = AdvanceType.getType(financeMain.getGrcAdvType());
 		AdvanceType repayAdvanceType = AdvanceType.getType(financeMain.getAdvType());
 
-		List<FinFeeDetail> fees = finFeeDetailDAO.getPreviousAdvPayments(finReference);
-		List<ManualAdvise> manualAdvises = manualAdviseDAO.getPreviousAdvPayments(finReference);
+		List<FinFeeDetail> fees = finFeeDetailDAO.getPreviousAdvPayments(finID);
+		List<ManualAdvise> manualAdvises = manualAdviseDAO.getPreviousAdvPayments(finID);
 
 		BigDecimal previousAdvInt = BigDecimal.ZERO;
 		BigDecimal previousAdvEmi = BigDecimal.ZERO;
@@ -1013,12 +1002,14 @@ public class AdvancePaymentService extends ServiceHelper {
 	}
 
 	public long excessAmountMovement(AdvancePayment advancePayment, Long receiptID, String txnType) {
-		String finReference = advancePayment.getFinanceMain().getFinReference();
+		FinanceMain fm = advancePayment.getFinanceMain();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 		String adviceType = advancePayment.getAdvancePaymentType();
 		AdvanceRuleCode advanceType = AdvanceRuleCode.getRule(adviceType);
 
 		BigDecimal reqAmount = advancePayment.getRequestedAmt();
-		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finReference, adviceType);
+		FinExcessAmount excess = finExcessAmountDAO.getFinExcessAmount(finID, adviceType);
 
 		if (reqAmount == null) {
 			reqAmount = BigDecimal.ZERO;

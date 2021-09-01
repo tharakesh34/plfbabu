@@ -51,7 +51,7 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 	@Override
 	public AdvancePaymentDetail getAdvancePaymentDetailBalByRef(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, SUM(AdvInt) AdvInt, SUM(AdvIntTds) AdvIntTds");
+		sql.append(" FinID, FinReference, SUM(AdvInt) AdvInt, SUM(AdvIntTds) AdvIntTds");
 		sql.append(", SUM(AdvEMI) AdvEMI, SUM(AdvEMITds) AdvEMITds");
 		sql.append(" From AdvancePaymentDetails");
 		sql.append(" Where FinID = ? Group by FinReference");
@@ -62,6 +62,7 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				AdvancePaymentDetail apd = new AdvancePaymentDetail();
 
+				apd.setFinID(rs.getLong("FinID"));
 				apd.setFinReference(rs.getString("FinReference"));
 				apd.setAdvInt(rs.getBigDecimal("AdvInt"));
 				apd.setAdvIntTds(rs.getBigDecimal("AdvIntTds"));
