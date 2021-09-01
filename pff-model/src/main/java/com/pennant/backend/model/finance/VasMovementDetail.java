@@ -41,6 +41,7 @@ public class VasMovementDetail extends AbstractWorkflowEntity {
 
 	private long vasMovementId = 0;
 	private long vasMovementDetailId = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	private String vasReference;
 	private Date movementDate;
@@ -115,6 +116,14 @@ public class VasMovementDetail extends AbstractWorkflowEntity {
 
 	public void setVasMovementDetailId(long vasMovementDetailId) {
 		this.vasMovementDetailId = vasMovementDetailId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
