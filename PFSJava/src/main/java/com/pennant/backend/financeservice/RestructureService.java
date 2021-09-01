@@ -15,31 +15,31 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 
 public interface RestructureService {
 
-	FinScheduleData doRestructure(FinScheduleData finScheduleData, FinServiceInstruction finServiceInstruction);
+	FinScheduleData doRestructure(FinScheduleData schdData, FinServiceInstruction finServiceInstruction);
 
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
 
-	FinScheduleData doResetOverdraftSchd(FinScheduleData finScheduleData);
+	FinScheduleData doResetOverdraftSchd(FinScheduleData schdData);
 
-	RestructureDetail getRestructureDetailByRef(String finReference, String type);
+	RestructureDetail getRestructureDetailByRef(long finID, String type);
 
-	FinanceProfitDetail getFinProfitDetailsById(String fineference);
+	FinanceProfitDetail getFinProfitDetailsById(long finID);
 
-	List<RepayInstruction> getRepayInstructions(String id, String type, boolean isWIF);
+	List<RepayInstruction> getRepayInstructions(long finID, String type, boolean isWIF);
 
-	AuditDetail deleteRestructureDetail(FinanceDetail financeDetail, String type, String transType);
+	AuditDetail deleteRestructureDetail(FinanceDetail fd, String type, String transType);
 
-	List<AuditDetail> doApproveRestructureDetail(FinanceDetail financeDetail, String type, String transType);
+	List<AuditDetail> doApproveRestructureDetail(FinanceDetail fd, String type, String transType);
 
-	AuditDetail saveOrUpdateRestructureDetail(FinanceDetail financeDetail, String type, String transType);
+	AuditDetail saveOrUpdateRestructureDetail(FinanceDetail fd, String type, String transType);
 
-	AuditDetail validationRestructureDetail(FinanceDetail financeDetail, String method, String usrLanguage);
+	AuditDetail validationRestructureDetail(FinanceDetail fd, String method, String usrLanguage);
 
-	BigDecimal getReceivableAmt(String finReference, boolean isBounce);
+	BigDecimal getReceivableAmt(long finID, boolean isBounce);
 
-	BigDecimal getTotalPenaltyBal(String finReference, List<Date> presentmentDates);
+	BigDecimal getTotalPenaltyBal(long finID, List<Date> presentmentDates);
 
-	void computeLPPandUpdateOD(FinanceDetail financeDetail);
+	void computeLPPandUpdateOD(FinanceDetail fd);
 
-	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail financeDetail);
+	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail fd);
 }
