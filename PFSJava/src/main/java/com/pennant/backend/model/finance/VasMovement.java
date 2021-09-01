@@ -44,6 +44,7 @@ public class VasMovement extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3060817228345423733L;
 
 	private long vasMovementId = 0;
+	private long finID;
 	private String finReference;
 	private BigDecimal finAmount;
 	private Date finStartdate;
@@ -164,6 +165,14 @@ public class VasMovement extends AbstractWorkflowEntity {
 
 	public void setVasMovementId(long vasMovementId) {
 		this.vasMovementId = vasMovementId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
