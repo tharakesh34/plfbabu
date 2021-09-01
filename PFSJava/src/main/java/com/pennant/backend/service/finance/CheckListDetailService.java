@@ -18,7 +18,7 @@ public interface CheckListDetailService {
 
 	void setFinanceCheckListDetails(FinanceDetail financeDetail, String finType, String finEvent, String userRole);
 
-	List<FinanceCheckListReference> getCheckListByFinRef(final String id, String tableType);
+	List<FinanceCheckListReference> getCheckListByFinRef(long finID, String tableType);
 
 	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail, String tableType, long instructionUID);
 

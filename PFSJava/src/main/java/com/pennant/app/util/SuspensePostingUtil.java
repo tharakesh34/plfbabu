@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SuspensePostingUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SuspensePostingUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -67,6 +58,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -84,19 +76,8 @@ public class SuspensePostingUtil implements Serializable {
 		super();
 	}
 
-	/**
-	 * Method for preparation of Finance Suspend Data
-	 * 
-	 * @param financeMain
-	 * @param details
-	 * @param valueDate
-	 * @param isEODProcess
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterfaceException
-	 */
 	public List<Object> suspensePreparation(FinanceMain financeMain, FinRepayQueue repayQueue, Date valueDate,
-			boolean isPastDeferment) throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			boolean isPastDeferment) throws AppException {
 		logger.debug("Entering");
 
 		List<Object> returnList = new ArrayList<Object>(3);
@@ -126,7 +107,7 @@ public class SuspensePostingUtil implements Serializable {
 		Date suspFromDate = null;
 		BigDecimal suspAmount = BigDecimal.ZERO;
 
-		//Finance Related Details Fetching
+		// Finance Related Details Fetching
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(), valueDate);
@@ -148,7 +129,7 @@ public class SuspensePostingUtil implements Serializable {
 			aeEvent.setEOD(true);
 		}
 
-		//Postings Preparation
+		// Postings Preparation
 		Date dateAppDate = DateUtility.getAppDate();
 		aeEvent.setAppDate(dateAppDate);
 		aeEvent.setAppValueDate(dateAppDate);
@@ -165,7 +146,7 @@ public class SuspensePostingUtil implements Serializable {
 		isPostingSuccess = aeEvent.isPostingSucess();
 		long linkedTranId = aeEvent.getLinkedTranId();
 
-		//Check Status for Postings
+		// Check Status for Postings
 		if (!isPostingSuccess) {
 			returnList.add(isPostingSuccess);
 			returnList.add(isDueSuspNow);
@@ -224,7 +205,7 @@ public class SuspensePostingUtil implements Serializable {
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		//Fetch the Finance Suspend head
+		// Fetch the Finance Suspend head
 		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finRepayQueue.getFinReference(), "");
 		if (suspHead == null || !suspHead.isFinIsInSusp()) {
 			return;
@@ -236,7 +217,7 @@ public class SuspensePostingUtil implements Serializable {
 		BigDecimal suspAmtToMove = BigDecimal.ZERO;
 		Date suspFromDate = null;
 
-		//Pending OverDue Details for that particular Schedule date and overDue For
+		// Pending OverDue Details for that particular Schedule date and overDue For
 		int curOverDueDays = getFinODDetailsDAO().getPendingOverDuePayment(finRepayQueue.getFinReference());
 		int suspenceGraceDays = SysParamUtil.getValueAsInt("SUSP_AFTER");
 
@@ -244,7 +225,7 @@ public class SuspensePostingUtil implements Serializable {
 
 			suspFromDate = DateUtility.addDays(valueDate, -suspenceGraceDays);
 
-			//Suspend Amount Calculation
+			// Suspend Amount Calculation
 			if (suspFromDate.compareTo(valueDate) > 0 && !suspHead.isManualSusp()) {
 				suspAmtToMove = suspHead.getFinCurSuspAmt();
 				isInSuspNow = false;
@@ -261,7 +242,7 @@ public class SuspensePostingUtil implements Serializable {
 			}
 		}
 
-		//Creating DataSet using Finance Details
+		// Creating DataSet using Finance Details
 		aeEvent.setFinReference(financeMain.getFinReference());
 		amountCodes.setSuspRls(suspAmtToMove);
 		aeEvent.setAccountingEvent(AccountingEvent.PIS_NORM);
@@ -271,7 +252,7 @@ public class SuspensePostingUtil implements Serializable {
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 		aeEvent.setDataMap(dataMap);
 
-		//Postings Preparation
+		// Postings Preparation
 		Date dateAppDate = DateUtility.getAppDate();
 		aeEvent.setAppDate(dateAppDate);
 		aeEvent.setAppValueDate(dateAppDate);
@@ -287,7 +268,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		long linkedTranId = aeEvent.getLinkedTranId();
 
-		//Finance Suspend Head
+		// Finance Suspend Head
 		suspHead.setFinIsInSusp(isInSuspNow);
 		suspHead.setFinCurSuspAmt(suspHead.getFinCurSuspAmt().subtract(suspAmtToMove));
 		if (!isInSuspNow && !suspHead.isManualSusp()) {
@@ -296,7 +277,7 @@ public class SuspensePostingUtil implements Serializable {
 
 		getFinanceSuspHeadDAO().update(suspHead, "");
 
-		//Finance Suspend Details Record Insert
+		// Finance Suspend Details Record Insert
 		FinanceSuspDetails suspDetails = prepareSuspDetail(suspHead, suspAmtToMove, 1, valueDate,
 				finRepayQueue.getRpyDate(), "R", suspFromDate, linkedTranId);
 		getFinanceSuspHeadDAO().saveSuspenseDetails(suspDetails, "");
