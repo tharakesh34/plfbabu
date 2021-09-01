@@ -284,7 +284,7 @@ public class NPAService extends ServiceHelper {
 		dataMap.put("FuturePrincipal", provision.getFutureRpyPri());
 		dataMap.put("OverduePrincipal", provision.getOverDuePrincipal());
 		dataMap.put("OverdueInterest", provision.getOverDueProfit());
-		dataMap.put("UndisbursedAmount", provision.getUnDisbursedAmount()); //FIX ME
+		dataMap.put("UndisbursedAmount", provision.getUnDisbursedAmount()); // FIX ME
 		getPropertyType(provision, dataMap);
 
 		// Calculating Provision Amount
@@ -511,7 +511,7 @@ public class NPAService extends ServiceHelper {
 	 * @param finReference
 	 * @return
 	 */
-	public boolean isNAPRepayHierarchyReq(String finReference) {
+	public boolean isNAPRepayHierarchyReq(long finID) {
 		logger.debug(Literal.ENTERING);
 
 		Provision provision = provisionDAO.getProvisionByFinId(finReference, TableType.AVIEW, false);
