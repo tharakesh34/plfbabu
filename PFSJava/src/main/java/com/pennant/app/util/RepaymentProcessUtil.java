@@ -77,7 +77,6 @@ import com.pennant.backend.model.finance.RepayScheduleDetail;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
-import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
@@ -89,6 +88,7 @@ import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -132,86 +132,89 @@ public class RepaymentProcessUtil {
 
 	public void calcualteAndPayReceipt(FinanceMain fm, Customer customer, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail profitDetail, FinReceiptHeader rch, Date valuedate,
-			Date postDate) throws IllegalAccessException, InvocationTargetException, InterfaceException {
+			Date postDate) throws AppException {
 		logger.debug(Literal.ENTERING);
 
-		String finrefer = fm.getFinReference();
+		long finID = fm.getFinID();
+		String finType = fm.getFinType();
+
 		finReceiptHeaderDAO.generatedReceiptID(rch);
-		// Prepare schedule data for log
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData fsd = new FinScheduleData();
-		fsd.setFinanceScheduleDetails(scheduleDetails);
+
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = new FinScheduleData();
+		schdData.setFinanceScheduleDetails(scheduleDetails);
 
 		List<FinanceScheduleDetail> schdDtls = new ArrayList<>();
 		for (FinanceScheduleDetail schd : scheduleDetails) {
 			schdDtls.add(schd.copyEntity());
 		}
 
-		fsd.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finrefer, "", false));
-		fsd.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finrefer, "", false));
-		FinanceType finType = FinanceConfigCache.getCacheFinanceType(StringUtils.trimToEmpty(fm.getFinType()));
-		fsd.setFinanceType(finType);
-		fsd.setFinPftDeatil(profitDetail);
-		fsd.setFinanceMain(fm);
+		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false));
+		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, "", false));
+		schdData.setFinanceType(FinanceConfigCache.getCacheFinanceType(finType));
+		schdData.setFinPftDeatil(profitDetail);
+		schdData.setFinanceMain(fm);
+
+		fd.setFinScheduleData(schdData);
+
 		List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
-		FinReceiptData finReceiptData = new FinReceiptData();
-		// TDS Calculation, if Applicable
-		financeDetail.setFinScheduleData(fsd);
-		/*
-		 * final List<XcessPayables> xcsPaybles = new ArrayList<>(); xcsPaybles.addAll(rch.getXcessPayables());
-		 */
 
-		fsd.getFinanceMain().setRecordType("");
-		fsd.getFinanceMain().setVersion(fsd.getFinanceMain().getVersion() + 1);
-		finReceiptData.setFinanceDetail(financeDetail);
-		finReceiptData.setBuildProcess("I");
+		schdData.getFinanceMain().setRecordType("");
+		schdData.getFinanceMain().setVersion(schdData.getFinanceMain().getVersion() + 1);
 
-		finReceiptData.setValueDate(valuedate);
+		FinReceiptData rd = new FinReceiptData();
+		rd.setFinanceDetail(fd);
+		rd.setBuildProcess("I");
+
+		rd.setValueDate(valuedate);
 		rch.setValueDate(null);
-		finReceiptData.setReceiptHeader(rch);
-		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
-		BigDecimal totDues = finReceiptData.getReceiptHeader().getTotalPastDues().getTotalDue();
+		rd.setReceiptHeader(rch);
+		rd = receiptCalculator.initiateReceipt(rd, true);
+
+		BigDecimal totDues = rd.getReceiptHeader().getTotalPastDues().getTotalDue();
 		FinReceiptDetail recdtl = rch.getReceiptDetails().get(0);
+
 		if (recdtl.getDueAmount().compareTo(totDues) > 0) {
 			recdtl.setDueAmount(totDues);
 		}
-		finReceiptData = receiptCalculator.recalAutoAllocation(finReceiptData, valuedate, true);
 
-		finReceiptData.setBuildProcess("R");
-		finReceiptData.getRepayMain().setRepayAmountNow(BigDecimal.ZERO);
-		finReceiptData.getRepayMain().setPrincipalPayNow(BigDecimal.ZERO);
-		finReceiptData.getRepayMain().setProfitPayNow(BigDecimal.ZERO);
+		rd = receiptCalculator.recalAutoAllocation(rd, valuedate, true);
+
+		rd.setBuildProcess("R");
+		rd.getRepayMain().setRepayAmountNow(BigDecimal.ZERO);
+		rd.getRepayMain().setPrincipalPayNow(BigDecimal.ZERO);
+		rd.getRepayMain().setProfitPayNow(BigDecimal.ZERO);
 
 		int receiptPurposeCtg = 0;
-		receiptPurposeCtg = receiptCalculator.setReceiptCategory(finReceiptData.getReceiptHeader().getReceiptPurpose());
+		receiptPurposeCtg = receiptCalculator.setReceiptCategory(rd.getReceiptHeader().getReceiptPurpose());
 		if (receiptPurposeCtg == 1) {
-			fsd = ScheduleCalculator.recalEarlyPaySchedule(fsd, rch.getValueDate(), null, finReceiptData.getRemBal(),
-					fsd.getFinanceType().getFinScheduleOn());
-			finReceiptData = receiptCalculator.addPartPaymentAlloc(finReceiptData);
+			schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, rch.getValueDate(), null, rd.getRemBal(),
+					schdData.getFinanceType().getFinScheduleOn());
+			rd = receiptCalculator.addPartPaymentAlloc(rd);
 		}
 
-		for (ReceiptAllocationDetail allocate : finReceiptData.getReceiptHeader().getAllocations()) {
-			allocate.setPaidAvailable(allocate.getPaidAmount());
-			allocate.setWaivedAvailable(allocate.getWaivedAmount());
-			allocate.setPaidAmount(BigDecimal.ZERO);
-			allocate.setPaidGST(BigDecimal.ZERO);
-			allocate.setTotalPaid(BigDecimal.ZERO);
-			allocate.setBalance(allocate.getTotalDue());
-			allocate.setWaivedAmount(BigDecimal.ZERO);
-			allocate.setWaivedGST(BigDecimal.ZERO);
-			allocate.setTdsPaid(BigDecimal.ZERO);
-			allocate.setTdsWaived(BigDecimal.ZERO);
+		for (ReceiptAllocationDetail rad : rd.getReceiptHeader().getAllocations()) {
+			rad.setPaidAvailable(rad.getPaidAmount());
+			rad.setWaivedAvailable(rad.getWaivedAmount());
+			rad.setPaidAmount(BigDecimal.ZERO);
+			rad.setPaidGST(BigDecimal.ZERO);
+			rad.setTotalPaid(BigDecimal.ZERO);
+			rad.setBalance(rad.getTotalDue());
+			rad.setWaivedAmount(BigDecimal.ZERO);
+			rad.setWaivedGST(BigDecimal.ZERO);
+			rad.setTdsPaid(BigDecimal.ZERO);
+			rad.setTdsWaived(BigDecimal.ZERO);
 		}
 
-		finReceiptData = receiptCalculator.initiateReceipt(finReceiptData, true);
-		finReceiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(schdDtls);
+		rd = receiptCalculator.initiateReceipt(rd, true);
+		rd.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(schdDtls);
 		/*
 		 * finReceiptData.getReceiptHeader().getXcessPayables().clear();
 		 * finReceiptData.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);
 		 */
 		rch.setValueDate(valuedate);
-		List<Object> returnList = doProcessReceipts(fm, schdDtls, profitDetail, rch, finFeeDetailList, fsd, valuedate,
-				postDate, financeDetail);
+		List<Object> returnList = doProcessReceipts(fm, schdDtls, profitDetail, rch, finFeeDetailList, schdData,
+				valuedate, postDate, fd);
 		scheduleDetails = (List<FinanceScheduleDetail>) returnList.get(0);
 
 		BigDecimal priPaynow = BigDecimal.ZERO;
@@ -284,7 +287,7 @@ public class RepaymentProcessUtil {
 	public List<Object> doProcessReceipts(FinanceMain fm, List<FinanceScheduleDetail> schedules,
 			FinanceProfitDetail pfd, FinReceiptHeader rch, List<FinFeeDetail> finFeeDetailList,
 			FinScheduleData logScheduleData, Date valueDate, Date postingDate, FinanceDetail financeDetail)
-			throws IllegalAccessException, InvocationTargetException, InterfaceException {
+			throws AppException {
 		logger.debug("Entering");
 
 		BigDecimal uAmz = BigDecimal.ZERO;
@@ -302,8 +305,7 @@ public class RepaymentProcessUtil {
 		boolean isSchdLogReq = false;
 
 		String receiptPurpose = rch.getReceiptPurpose();
-		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)
-				|| FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
+		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose) || FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 			isSchdLogReq = true;
 		}
 		BigDecimal receiptFromBank = BigDecimal.ZERO;
@@ -519,8 +521,8 @@ public class RepaymentProcessUtil {
 			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
 					AccountingEvent.REPAY, FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-					AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.REPAY,
+					FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		// Assignment Percentage
@@ -2543,7 +2545,7 @@ public class RepaymentProcessUtil {
 		if (!ImplementationConstants.LPP_CALC_SOD) {
 			reqMaxODDate = DateUtility.addDays(reqMaxODDate, -1);
 		}
-		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinReference());
+		List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
 		if (CollectionUtils.isNotEmpty(overdueList)) {
 			overdueList = receiptCalculator.calPenalty(scheduleData, receiptData, reqMaxODDate, overdueList);
 			finODDetailsDAO.updateList(overdueList);
