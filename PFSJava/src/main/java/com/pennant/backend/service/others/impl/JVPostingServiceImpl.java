@@ -36,7 +36,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import com.pennant.app.constants.AccountConstants;
@@ -91,7 +90,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	private LegalExpensesDAO legalExpensesDAO;
 	private PostingsDAO postingsDAO;
 	private AccountProcessUtil accountProcessUtil;
-
 	private FinanceMainService financeMainService;
 	private CurrencyService currencyService;
 	private TransactionCodeService transactionCodeService;
@@ -103,83 +101,20 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		super();
 	}
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the jVPostingDAO
-	 */
-	public JVPostingDAO getJVPostingDAO() {
-		return jVPostingDAO;
-	}
-
-	/**
-	 * @param jVPostingDAO
-	 *            the jVPostingDAO to set
-	 */
-	public void setJVPostingDAO(JVPostingDAO jVPostingDAO) {
-		this.jVPostingDAO = jVPostingDAO;
-	}
-
-	/**
-	 * @return the jVPosting
-	 */
 	@Override
 	public JVPosting getJVPosting() {
-		return getJVPostingDAO().getJVPosting();
+		return jVPostingDAO.getJVPosting();
 	}
 
-	/**
-	 * @return the jVPosting for New Record
-	 */
 	@Override
 	public JVPosting getNewJVPosting() {
-		return getJVPostingDAO().getNewJVPosting();
+		return jVPostingDAO.getNewJVPosting();
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table JVPostings/JVPostings_Temp by
-	 * using JVPostingDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using JVPostingDAO's update method 3) Audit the record in to AuditHeader and AdtJVPostings by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		return saveOrUpdate(auditHeader, false);
 	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table JVPostings/JVPostings_Temp by
-	 * using JVPostingDAO's save method b) Update the Record in the table. based on the module workFlow Configuration.
-	 * by using JVPostingDAO's update method 3) Audit the record in to AuditHeader and AdtJVPostings by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
-	 * @return auditHeader
-	 */
 
 	private AuditHeader saveOrUpdate(AuditHeader auditHeader, boolean online) {
 		logger.debug("Entering");
@@ -197,7 +132,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		}
 
 		if (jVPosting.isNewRecord()) {
-			jVPosting.setBatchReference(getJVPostingDAO().save(jVPosting, tableType));
+			jVPosting.setBatchReference(jVPostingDAO.save(jVPosting, tableType));
 			if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
 				for (int i = 0; i < jVPosting.getJVPostingEntrysList().size(); i++) {
 					jVPosting.getJVPostingEntrysList().get(i).setBatchReference(jVPosting.getBatchReference());
@@ -205,7 +140,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				}
 			}
 		} else {
-			getJVPostingDAO().update(jVPosting, tableType);
+			jVPostingDAO.update(jVPosting, tableType);
 			// Process Entry Details
 		}
 		if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
@@ -218,7 +153,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		financeMainDAO.updateMaintainceStatus(jVPosting.getReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -235,17 +170,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return jVPosting.getValidationStatus().equals(PennantConstants.POSTSTS_SUCCESS);
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * JVPostings by using JVPostingDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
-	 * AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
@@ -256,31 +180,21 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		}
 
 		JVPosting jVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
-		getJVPostingDAO().delete(jVPosting, "");
+		jVPostingDAO.delete(jVPosting, "");
 
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "", auditHeader.getAuditTranType())));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
 
-	/**
-	 * getJVPostingById fetch the details by using JVPostingDAO's getJVPostingById method.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return JVPosting
-	 */
-
 	@Override
 	public JVPosting getJVPostingById(long id) {
-		JVPosting jvPosting = getJVPostingDAO().getJVPostingById(id, "_View");
+		JVPosting jvPosting = jVPostingDAO.getJVPostingById(id, "_View");
 		if (jvPosting != null) {
 			String debitAc = null;
-			List<JVPostingEntry> entries = getjVPostingEntryDAO()
-					.getJVPostingEntryListById(jvPosting.getBatchReference(), "_View");
+			List<JVPostingEntry> entries = jVPostingEntryDAO.getJVPostingEntryListById(jvPosting.getBatchReference(),
+					"_View");
 			if (entries != null && !entries.isEmpty()) {
 				for (int i = 0; i < entries.size(); i++) {
 					if (entries.get(i).getDerivedTxnRef() == 0) {
@@ -296,42 +210,17 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	@Override
 	public JVPosting getJVPostingByFileName(String fileName) {
-		return getJVPostingDAO().getJVPostingByFileName(fileName);
+		return jVPostingDAO.getJVPostingByFileName(fileName);
 	}
 
-	/**
-	 * getApprovedJVPostingById fetch the details by using JVPostingDAO's getJVPostingById method . with parameter id
-	 * and type as blank. it fetches the approved records from the JVPostings.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @return JVPosting
-	 */
-
 	public JVPosting getApprovedJVPostingById(long id) {
-		JVPosting jvPosting = getJVPostingDAO().getJVPostingById(id, "_AView");
+		JVPosting jvPosting = jVPostingDAO.getJVPostingById(id, "_AView");
 		if (jvPosting != null) {
 			jvPosting.setJVPostingEntrysList(
-					getjVPostingEntryDAO().getJVPostingEntryListById(jvPosting.getBatchReference(), "_AView"));
+					jVPostingEntryDAO.getJVPostingEntryListById(jvPosting.getBatchReference(), "_AView"));
 		}
 		return jvPosting;
 	}
-
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getJVPostingDAO().delete with
-	 * parameters jVPosting,"" b) NEW Add new record in to main table by using getJVPostingDAO().save with parameters
-	 * jVPosting,"" c) EDIT Update record in the main table by using getJVPostingDAO().update with parameters
-	 * jVPosting,"" 3) Delete the record from the workFlow table by using getJVPostingDAO().delete with parameters
-	 * jVPosting,"_Temp" 4) Audit the record in to AuditHeader and AdtJVPostings by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtJVPostings by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug("Entering");
@@ -351,7 +240,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 			for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
 				dbList.add(entry);
-				dbList.addAll(getPostingsPreparationUtil().prepareJVPostingEntry(entry, jVPosting.getCurrency(),
+				dbList.addAll(postingsPreparationUtil.prepareJVPostingEntry(entry, jVPosting.getCurrency(),
 						CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
 						CurrencyUtil.getFormat(jVPosting.getCurrency()), false));
 			}
@@ -367,9 +256,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					jVPosting.setBatchReference(jVPostingDAO.createBatchReference());
 				}
 
-				List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
+				List<ReturnDataSet> list = postingsPreparationUtil.processEntryList(dbList, jVPosting);
 
-				getAccountProcessUtil().procAccountUpdate(list);
+				accountProcessUtil.procAccountUpdate(list);
 
 				if (list != null && list.size() > 0) {
 					ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -385,7 +274,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 						}
 					}
 
-					getPostingsDAO().saveBatch(list);
+					postingsDAO.saveBatch(list);
 					auditHeader.setErrorList(errorDetails);
 				}
 			} catch (Exception e) {
@@ -407,9 +296,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				}
 				if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())) {
 					// Update Child Records Status
-					getjVPostingEntryDAO().updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
+					jVPostingEntryDAO.updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
 					// Updating Header Status
-					getjVPostingDAO().updateBatchPostingStatus(jVPosting, "_Temp");
+					jVPostingDAO.updateBatchPostingStatus(jVPosting, "_Temp");
 				}
 				// Regular Approving Process moving total Batch into main table
 				// and remove from Temp Table.
@@ -433,10 +322,10 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		// Checking if it is Re-Posting Process, If Yes then Update record in
 		// Main Table otherwise Insert.
-		JVPosting rePosting = getjVPostingDAO().getJVPostingById(jVPosting.getBatchReference(), "_AView");
+		JVPosting rePosting = jVPostingDAO.getJVPostingById(jVPosting.getBatchReference(), "_AView");
 		if (rePosting != null) {
 			jVPosting.setVersion(jVPosting.getVersion() + 1);
-			getjVPostingDAO().update(jVPosting, "");
+			jVPostingDAO.update(jVPosting, "");
 		} else {
 			// Setting Work flow details Empty for Successfully Posted Records.
 			tranType = PennantConstants.TRAN_ADD;
@@ -447,10 +336,10 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			jVPosting.setWorkflowId(0);
 			jVPosting.setRecordType("");
 			jVPosting.setValidationStatus(PennantConstants.POSTSTS_SUCCESS);
-			//Bug fix before main table saving delete data in temp table
-			getjVPostingDAO().delete(jVPosting, "_Temp");
+			// Bug fix before main table saving delete data in temp table
+			jVPostingDAO.delete(jVPosting, "_Temp");
 			// Saving In main Table
-			getjVPostingDAO().save(jVPosting, "");
+			jVPostingDAO.save(jVPosting, "");
 		}
 
 		if (jVPosting.getJVPostingEntrysList() != null && jVPosting.getJVPostingEntrysList().size() > 0) {
@@ -461,14 +350,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, jVPosting.getFinSourceID())
 				&& !UploadConstants.MISC_POSTING_UPLOAD.equals("MiscPostingUpload")) {
-			getjVPostingDAO().delete(jVPosting, "_Temp");
+			jVPostingDAO.delete(jVPosting, "_Temp");
 		}
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader
 				.setAuditDetails(getListAuditDetails(listDeletion(jVPosting, "_Temp", auditHeader.getAuditTranType())));
 		auditHeader
 				.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -476,7 +365,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		auditHeader
 				.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, jVPosting.getBefImage(), jVPosting));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
-		// getAuditHeaderDAO().addAudit(auditHeader);
+		// auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 	}
 
@@ -494,17 +383,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 		}
 	}
-
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getJVPostingDAO().delete with parameters jVPosting,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtJVPostings by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
@@ -528,17 +406,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		return auditHeader;
 	}
-
-	/**
-	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
-	 * assign the to auditHeader 3) identify the nextprocess
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
-	 * @return auditHeader
-	 */
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
 		logger.debug("Entering");
@@ -578,18 +445,18 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 			if (!jVPosting.isWorkflow()) {// With out Work flow only new records
 				if (befJVPosting != null) { // Record Already Exists in the
-												// table then error
+											// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (jVPosting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is
 																							// new
 					if (befJVPosting != null || tempJVPosting != null) { // if
-																				// records
+																			// records
 																			// already
 																			// exists
 																			// in
@@ -610,10 +477,10 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!jVPosting.isWorkflow()) { // With out Work flow for update and
-												// delete
+											// delete
 
 				if (befJVPosting == null) { // if records not exists in the main
-												// table
+											// table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -633,7 +500,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			} else {
 
 				if (tempJVPosting == null) { // if records not exists in the
-													// Work flow table
+												// Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -648,7 +515,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		// To validate if the posting amount Exceeds the tracked amount for
 		// expreference.
 		if (jVPosting.getExpReference() != null) {
-			LegalExpenses expenses = getLegalExpensesDAO().getLegalExpensesById(jVPosting.getExpReference(), "_Aview");
+			LegalExpenses expenses = legalExpensesDAO.getLegalExpensesById(jVPosting.getExpReference(), "_Aview");
 			if (expenses != null && jVPosting.getTotDebitsByBatchCcy().compareTo(expenses.getAmount()) > 0) {
 				valueParm[0] = jVPosting.getExpReference();
 				errParm[0] = PennantJavaUtil.getLabel("label_LegalExpensesList_ExpReference.value") + ":"
@@ -709,14 +576,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditHeader;
 	}
 
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param customerDetails
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
 	private List<AuditDetail> setJVPostingEntryAuditData(JVPosting jVPosting, String auditTranType, String method) {
 		logger.debug("Entering");
 
@@ -770,14 +629,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditDetails;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Customer Ratings
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
 	private List<AuditDetail> processJVPostingEntry(List<AuditDetail> auditDetails, String type, JVPosting jVPosting,
 			boolean deleteUpdateFlag, boolean generateEntry) {
 		logger.debug("Entering");
@@ -850,11 +701,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				}
 				jVPostingEntryDAO.save(jVPostingEntry, type);
 				if (generateEntry) {
-					for (JVPostingEntry entry : getPostingsPreparationUtil().prepareJVPostingEntry(jVPostingEntry,
+					for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
 							jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
 							CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
 						entry.setTxnReference(jVPostingEntry.getTxnReference());
-						getjVPostingEntryDAO().save(entry, type);
+						jVPostingEntryDAO.save(entry, type);
 					}
 				}
 			}
@@ -868,11 +719,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				} else {
 					jVPostingEntryDAO.update(jVPostingEntry, type);
 					if (generateEntry) {
-						for (JVPostingEntry entry : getPostingsPreparationUtil().prepareJVPostingEntry(jVPostingEntry,
+						for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
 								jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
 								CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
 							entry.setTxnReference(jVPostingEntry.getTxnReference());
-							getjVPostingEntryDAO().update(entry, type);
+							jVPostingEntryDAO.update(entry, type);
 						}
 					}
 				}
@@ -881,7 +732,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			if (deleteRecord) {
 				jVPostingEntryDAO.delete(jVPostingEntry, type);
 				if (generateEntry) {
-					for (JVPostingEntry entry : getPostingsPreparationUtil().prepareJVPostingEntry(jVPostingEntry,
+					for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(jVPostingEntry,
 							jVPosting.getCurrency(), CurrencyUtil.getCcyNumber(jVPosting.getCurrency()),
 							CurrencyUtil.getFormat(jVPosting.getCurrency()), false)) {
 						entry.setTxnReference(jVPostingEntry.getTxnReference());
@@ -902,12 +753,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 	}
 
-	/**
-	 * Method deletion of feeTier list with existing fee type
-	 * 
-	 * @param jvPosting
-	 * @param tableType
-	 */
 	public List<AuditDetail> listDeletion(JVPosting jvPosting, String tableType, String auditTranType) {
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
@@ -918,7 +763,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			for (int i = 0; i < jvPosting.getJVPostingEntrysList().size(); i++) {
 				JVPostingEntry jvEntry = jvPosting.getJVPostingEntrysList().get(i);
 				entryList.add(jvEntry);
-				entryList.addAll(getPostingsPreparationUtil().prepareJVPostingEntry(jvEntry, jvPosting.getCurrency(),
+				entryList.addAll(postingsPreparationUtil.prepareJVPostingEntry(jvEntry, jvPosting.getCurrency(),
 						CurrencyUtil.getCcyNumber(jvPosting.getCurrency()),
 						CurrencyUtil.getFormat(jvPosting.getCurrency()), false));
 			}
@@ -928,21 +773,12 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], jvEntry.getBefImage(),
 							jvEntry));
 				}
-				getjVPostingEntryDAO().deleteByID(jvEntry, tableType);
+				jVPostingEntryDAO.deleteByID(jvEntry, tableType);
 			}
 		}
 		return auditList;
 	}
 
-	/**
-	 * Common Method for Customers list validation
-	 * 
-	 * @param list
-	 * @param method
-	 * @param userDetails
-	 * @param lastMntON
-	 * @return
-	 */
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
 		logger.debug("Entering");
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
@@ -979,7 +815,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	@Override
 	public void deleteIAEntries(long batchReference) {
 		logger.debug("Entering");
-		getjVPostingEntryDAO().deleteIAEntries(batchReference);
+		jVPostingEntryDAO.deleteIAEntries(batchReference);
 		logger.debug("Leaving");
 	}
 
@@ -1062,16 +898,6 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 		}
-
-		// Removing Validation because We should consider inactive loans also for miscellaneous postings.
-		/*
-		 * int count = financeMainService.getFinanceCountById(posting.getReference(), false); if (count <= 0) { String[]
-		 * valueParm = new String[1]; valueParm[0] = posting.getReference();
-		 * 
-		 * errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90201", valueParm)));
-		 * 
-		 * return errorsList; }
-		 */
 
 		List<JVPostingEntry> postingEntries = posting.getJVPostingEntrysList();
 		if (CollectionUtils.isEmpty(postingEntries)) {
@@ -1187,63 +1013,40 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return errorsList;
 	}
 
-	/**
-	 * This method gets the max endnum
-	 * 
-	 * @param Inventory
-	 *            (inventory)
-	 * @return inventory
-	 */
-	public JVPostingDAO getjVPostingDAO() {
-		return jVPostingDAO;
-	}
-
-	public void setjVPostingDAO(JVPostingDAO jVPostingDAO) {
-		this.jVPostingDAO = jVPostingDAO;
-	}
-
-	public JVPostingEntryDAO getjVPostingEntryDAO() {
-		return jVPostingEntryDAO;
-	}
-
-	public void setjVPostingEntryDAO(JVPostingEntryDAO jVPostingEntryDAO) {
-		this.jVPostingEntryDAO = jVPostingEntryDAO;
-	}
-
 	@Override
 	public JVPostingEntry getNewJVPostingEntry() {
-		return getjVPostingEntryDAO().getNewJVPostingEntry();
+		return jVPostingEntryDAO.getNewJVPostingEntry();
 	}
 
 	@Override
 	public List<JVPostingEntry> getJVPostingEntryListById(long id) {
-		return getjVPostingEntryDAO().getJVPostingEntryListById(id, "_View");
+		return jVPostingEntryDAO.getJVPostingEntryListById(id, "_View");
 	}
 
 	@Override
 	public List<JVPostingEntry> getFailureJVPostingEntryListById(long batchRef) {
-		return getjVPostingEntryDAO().getFailureJVPostingEntryListById(batchRef, "_View");
+		return jVPostingEntryDAO.getFailureJVPostingEntryListById(batchRef, "_View");
 	}
 
 	@Override
 	public JVPostingEntry getJVPostingEntryById(long id, long txnRef, long acEntryRef) {
-		return getjVPostingEntryDAO().getJVPostingEntryById(id, txnRef, acEntryRef, "_View");
+		return jVPostingEntryDAO.getJVPostingEntryById(id, txnRef, acEntryRef, "_View");
 	}
 
 	@Override
 	public JVPostingEntry getApprovedJVPostingEntryById(long id, long txnRef, long acEntryRef) {
-		return getjVPostingEntryDAO().getJVPostingEntryById(id, txnRef, acEntryRef, "_AView");
+		return jVPostingEntryDAO.getJVPostingEntryById(id, txnRef, acEntryRef, "_AView");
 	}
 
 	@Override
 	public long save(JVPostingEntry externalAcEntry, String baseCcy, String baseCcyNumber, int baseCcyEditField,
 			boolean addIAEntry) {
-		long txnReference = getjVPostingEntryDAO().save(externalAcEntry, "_Temp");
+		long txnReference = jVPostingEntryDAO.save(externalAcEntry, "_Temp");
 		if (addIAEntry) {
-			for (JVPostingEntry entry : getPostingsPreparationUtil().prepareJVPostingEntry(externalAcEntry, baseCcy,
+			for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(externalAcEntry, baseCcy,
 					baseCcyNumber, baseCcyEditField, false)) {
 				entry.setTxnReference(externalAcEntry.getTxnReference());
-				getjVPostingEntryDAO().save(entry, "_Temp");
+				jVPostingEntryDAO.save(entry, "_Temp");
 			}
 		}
 		return txnReference;
@@ -1253,118 +1056,65 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	@Override
 	public void update(JVPostingEntry externalAcEntry, String baseCcy, String baseCcyNumber, int baseCcyEditField,
 			boolean addIAEntry, String type) {
-		getjVPostingEntryDAO().update(externalAcEntry, "_Temp");
+		jVPostingEntryDAO.update(externalAcEntry, "_Temp");
 		if (addIAEntry) {
-			for (JVPostingEntry entry : getPostingsPreparationUtil().prepareJVPostingEntry(externalAcEntry, baseCcy,
+			for (JVPostingEntry entry : postingsPreparationUtil.prepareJVPostingEntry(externalAcEntry, baseCcy,
 					baseCcyNumber, baseCcyEditField, false)) {
 				entry.setNewRecord(false);
-				getjVPostingEntryDAO().update(entry, "_Temp");
+				jVPostingEntryDAO.update(entry, "_Temp");
 			}
 		}
 	}
 
 	@Override
 	public void deleteByID(JVPostingEntry jVPostingEntry, String type) {
-		getjVPostingEntryDAO().deleteByID(jVPostingEntry, "_Temp");
+		jVPostingEntryDAO.deleteByID(jVPostingEntry, "_Temp");
 	}
 
 	@Override
 	public JVPostingEntry getJVPostingEntryById(long batchRef, long txnReference, String account, String txnEntry,
 			BigDecimal txnAmount) {
-		return getjVPostingEntryDAO().getJVPostingEntryById(batchRef, txnReference, account, txnEntry, txnAmount,
-				"_View");
+		return jVPostingEntryDAO.getJVPostingEntryById(batchRef, txnReference, account, txnEntry, txnAmount, "_View");
 	}
 
 	@Override
 	public JVPosting getJVPostingBatchById(long id) {
-		return getJVPostingDAO().getJVPostingById(id, "_TView");
+		return jVPostingDAO.getJVPostingById(id, "_TView");
 	}
 
 	@Override
 	public List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef) {
-		return getjVPostingEntryDAO().getDeletedJVPostingEntryListById(batchRef, "_TView");
+		return jVPostingEntryDAO.getDeletedJVPostingEntryListById(batchRef, "_TView");
 	}
 
 	@Override
 	public void updateDeleteFlag(JVPostingEntry jVPostingEntry) {
-		getjVPostingEntryDAO().updateDeleteFlag(jVPostingEntry, "_Temp");
+		jVPostingEntryDAO.updateDeleteFlag(jVPostingEntry, "_Temp");
 	}
 
 	@Override
 	public void updateValidationStatus(JVPosting jVPosting) {
-		getJVPostingDAO().updateValidationStatus(jVPosting, "_Temp");
+		jVPostingDAO.updateValidationStatus(jVPosting, "_Temp");
 	}
 
 	@Override
 	public int getMaxSeqNumForCurrentDay(JVPostingEntry jVPostingEntry) {
-		return getjVPostingEntryDAO().getMaxSeqNumForCurrentDay(jVPostingEntry);
+		return jVPostingEntryDAO.getMaxSeqNumForCurrentDay(jVPostingEntry);
 	}
 
 	@Override
 	public void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry) {
-		getjVPostingEntryDAO().upDateSeqNoForCurrentDayBatch(jVPostingEntry);
+		jVPostingEntryDAO.upDateSeqNoForCurrentDayBatch(jVPostingEntry);
 	}
 
 	@Override
 	public void updateWorkFlowDetails(JVPostingEntry jVPostingEntry) {
-		getjVPostingEntryDAO().updateWorkFlowDetails(jVPostingEntry, "_Temp");
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
+		jVPostingEntryDAO.updateWorkFlowDetails(jVPostingEntry, "_Temp");
 	}
 
 	@Override
 	public long getBatchRerbyExpRef(String expReference) {
-		return getjVPostingDAO().getBatchRerbyExpRef(expReference);
-	}
-
-	public LegalExpensesDAO getLegalExpensesDAO() {
-		return legalExpensesDAO;
-	}
-
-	public void setLegalExpensesDAO(LegalExpensesDAO legalExpensesDAO) {
-		this.legalExpensesDAO = legalExpensesDAO;
-	}
-
-	public PostingsDAO getPostingsDAO() {
-		return postingsDAO;
-	}
-
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
-	public AccountProcessUtil getAccountProcessUtil() {
-		return accountProcessUtil;
-	}
-
-	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
-		this.accountProcessUtil = accountProcessUtil;
-	}
-
-	@Autowired
-	public void setFinanceMainService(FinanceMainService financeMainService) {
-		this.financeMainService = financeMainService;
-	}
-
-	@Autowired
-	public void setCurrencyService(CurrencyService currencyService) {
-		this.currencyService = currencyService;
-	}
-
-	@Autowired
-	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
-		this.transactionCodeService = transactionCodeService;
-	}
-
-	@Autowired
-	public void setAccountMappingService(AccountMappingService accountMappingService) {
-		this.accountMappingService = accountMappingService;
+		return jVPostingDAO.getBatchRerbyExpRef(expReference);
 	}
 
 	@Override
@@ -1377,7 +1127,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		for (JVPostingEntry entry : jVPosting.getJVPostingEntrysList()) {
 			dbList.add(entry);
-			dbList.addAll(getPostingsPreparationUtil().prepareJVPostingEntry(entry, jVPosting.getCurrency(),
+			dbList.addAll(postingsPreparationUtil.prepareJVPostingEntry(entry, jVPosting.getCurrency(),
 					CurrencyUtil.getCcyNumber(jVPosting.getCurrency()), CurrencyUtil.getFormat(jVPosting.getCurrency()),
 					false));
 		}
@@ -1386,14 +1136,14 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		Collections.sort(dbList, new EntryComparator());
 		long linkedTranId = Long.MIN_VALUE;
 		try {
-			List<ReturnDataSet> list = getPostingsPreparationUtil().processEntryList(dbList, jVPosting);
+			List<ReturnDataSet> list = postingsPreparationUtil.processEntryList(dbList, jVPosting);
 			// Post and save
 			/*
-			 * getPostingsPreparationUtil().postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(),
-			 * "Y", false, false, linkedTranId, BigDecimal.ZERO, "", false);
+			 * postingsPreparationUtil.postingsExecProcess(list, jVPosting.getBranch(), DateUtility.getAppDate(), "Y",
+			 * false, false, linkedTranId, BigDecimal.ZERO, "", false);
 			 */
 
-			getAccountProcessUtil().procAccountUpdate(list);
+			accountProcessUtil.procAccountUpdate(list);
 
 			if (list != null && list.size() > 0) {
 				ArrayList<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -1409,7 +1159,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 					}
 				}
 
-				getPostingsDAO().saveBatch(list);
+				postingsDAO.saveBatch(list);
 				auditHeader.setErrorList(errorDetails);
 			}
 		} catch (InterfaceException e) {
@@ -1432,9 +1182,9 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			}
 			try {
 				// Update Child Records Status
-				getjVPostingEntryDAO().updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
+				jVPostingEntryDAO.updateListPostingStatus(jVPosting.getJVPostingEntrysList(), "_Temp", true);
 				// Updating Header Status
-				getjVPostingDAO().updateBatchPostingStatus(jVPosting, "_Temp");
+				jVPostingDAO.updateBatchPostingStatus(jVPosting, "_Temp");
 			} catch (Exception e) {
 				logger.error(e);
 			}
@@ -1445,6 +1195,50 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 		return auditHeader;
 	}
 
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setjVPostingDAO(JVPostingDAO jVPostingDAO) {
+		this.jVPostingDAO = jVPostingDAO;
+	}
+
+	public void setjVPostingEntryDAO(JVPostingEntryDAO jVPostingEntryDAO) {
+		this.jVPostingEntryDAO = jVPostingEntryDAO;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setLegalExpensesDAO(LegalExpensesDAO legalExpensesDAO) {
+		this.legalExpensesDAO = legalExpensesDAO;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
+	}
+
+	public void setAccountProcessUtil(AccountProcessUtil accountProcessUtil) {
+		this.accountProcessUtil = accountProcessUtil;
+	}
+
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
+	}
+
+	public void setCurrencyService(CurrencyService currencyService) {
+		this.currencyService = currencyService;
+	}
+
+	public void setTransactionCodeService(TransactionCodeService transactionCodeService) {
+		this.transactionCodeService = transactionCodeService;
+	}
+
+	public void setAccountMappingService(AccountMappingService accountMappingService) {
+		this.accountMappingService = accountMappingService;
+	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -1452,4 +1246,5 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
+
 }

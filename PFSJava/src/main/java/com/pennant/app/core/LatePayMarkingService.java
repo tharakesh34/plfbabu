@@ -262,12 +262,13 @@ public class LatePayMarkingService extends ServiceHelper {
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
 		// Get details first time from DB
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		Date finStartDate = fm.getFinStartDate();
 
 		logger.info("Checking penalties for the FinReference >> {}", finReference);
 
-		List<FinODDetails> finODdetails = finODDetailsDAO.getFinODDByFinRef(finReference, finStartDate);
+		List<FinODDetails> finODdetails = finODDetailsDAO.getFinODDByFinRef(finID, finStartDate);
 		finEODEvent.setFinODDetails(finODdetails);
 		finEODEvent.setFinODDetailsLBD(new ArrayList<>(finODdetails));
 
@@ -279,7 +280,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			appDate = SysParamUtil.getAppDate();
 		}
 
-		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finReference, "");
+		FinODPenaltyRate penaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
 
 		if (penaltyRate == null) {
 			logger.warn("Penalty rate not found.");
@@ -389,7 +390,7 @@ public class LatePayMarkingService extends ServiceHelper {
 				continue;
 			}
 
-			isExists = finODAmzTaxDetailDAO.isDueCreatedForDate(fod.getFinReference(), fod.getFinODSchdDate(), "LPP");
+			isExists = finODAmzTaxDetailDAO.isDueCreatedForDate(fod.getFinID(), fod.getFinODSchdDate(), "LPP");
 
 			if (!isExists) {
 				postLppAccruals(finEODEvent, custEODEvent, fod);
@@ -417,10 +418,11 @@ public class LatePayMarkingService extends ServiceHelper {
 
 		Date grcDate = DateUtil.addDays(fod.getFinODSchdDate(), fod.getODGraceDays());
 
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		if (repayments == null) {
-			repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, fod.getFinODSchdDate());
+			repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finID, fod.getFinODSchdDate());
 		} else {
 			repayments = sortRpdListByValueDate(repayments);
 		}
@@ -709,6 +711,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		boolean addGSTInvoice = false;
 
 		// LPP GST Amount for Postings
+		long finID = pfd.getFinID();
 		String finReference = pfd.getFinReference();
 		if (penaltyDue.compareTo(BigDecimal.ZERO) > 0 && lppFeeType != null && lppFeeType.isTaxApplicable()) {
 
@@ -717,6 +720,7 @@ public class LatePayMarkingService extends ServiceHelper {
 			}
 
 			FinODAmzTaxDetail taxDetail = getTaxDetail(taxPercmap, penaltyDueGst, lppFeeType.getTaxComponent());
+			taxDetail.setFinID(finID);
 			taxDetail.setFinReference(finReference);
 			taxDetail.setTaxFor("LPP");
 			taxDetail.setAmount(penaltyDue);
@@ -762,10 +766,11 @@ public class LatePayMarkingService extends ServiceHelper {
 			if (penaltyDue.compareTo(BigDecimal.ZERO) > 0) {
 
 				// Save Tax Receivable Details
-				FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, "LPP");
+				FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finID, "LPP");
 				boolean isSave = false;
 				if (taxRcv == null) {
 					taxRcv = new FinTaxReceivable();
+					taxRcv.setFinID(finID);
 					taxRcv.setFinReference(finReference);
 					taxRcv.setTaxFor("LPP");
 					isSave = true;
@@ -820,7 +825,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		// Set Tax Details if Already exists
 		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		if (financeDetail.getFinanceTaxDetail() == null) {
-			financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(fm.getFinReference(), ""));
+			financeDetail.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(fm.getFinID(), ""));
 		}
 
 		CustomerAddres addres = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");

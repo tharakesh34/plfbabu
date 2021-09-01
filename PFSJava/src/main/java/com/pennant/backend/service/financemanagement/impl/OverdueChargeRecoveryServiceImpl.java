@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeRecoveryServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-05-2012    														*
- *                                                                  						*
- * Modified Date    :  11-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeRecoveryServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-05-2012
+ * * * Modified Date : 11-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.financemanagement.impl;
@@ -63,6 +45,7 @@ import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryServic
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>OverdueChargeRecovery</b>.<br>
@@ -80,68 +63,17 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public OverdueChargeRecoveryDAO getOverdueChargeRecoveryDAO() {
-		return overdueChargeRecoveryDAO;
-	}
-
-	public void setOverdueChargeRecoveryDAO(OverdueChargeRecoveryDAO overdueChargeRecoveryDAO) {
-		this.overdueChargeRecoveryDAO = overdueChargeRecoveryDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	/**
-	 * @return the overdueChargeRecovery
-	 */
-	@Override
-	public OverdueChargeRecovery getOverdueChargeRecovery() {
-		return getOverdueChargeRecoveryDAO().getOverdueChargeRecovery();
-	}
-
-	/**
-	 * @return the overdueChargeRecovery for New Record
-	 */
 	@Override
 	public OverdueChargeRecovery getNewOverdueChargeRecovery() {
-		return getOverdueChargeRecoveryDAO().getNewOverdueChargeRecovery();
+		return overdueChargeRecoveryDAO.getNewOverdueChargeRecovery();
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinODCRecovery/FinODCRecovery_Temp by using OverdueChargeRecoveryDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using OverdueChargeRecoveryDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtFinODCRecovery by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		/*
 		 * auditHeader = businessValidation(auditHeader,"saveOrUpdate"); if (!auditHeader.isNextProcess()) {
-		 * logger.debug("Leaving"); return auditHeader; }
+		 * logger.debug(Literal.LEAVING); return auditHeader; }
 		 */
 		String tableType = "";
 		OverdueChargeRecovery overdueChargeRecovery = (OverdueChargeRecovery) auditHeader.getAuditDetail()
@@ -152,116 +84,66 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 		}
 
 		if (overdueChargeRecovery.isNewRecord()) {
-			getOverdueChargeRecoveryDAO().save(overdueChargeRecovery, tableType);
+			overdueChargeRecoveryDAO.save(overdueChargeRecovery, tableType);
 		} else {
-			getOverdueChargeRecoveryDAO().update(overdueChargeRecovery, tableType);
+			overdueChargeRecoveryDAO.update(overdueChargeRecovery, tableType);
 		}
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		// auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinODCRecovery by using OverdueChargeRecoveryDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and AdtFinODCRecovery by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		OverdueChargeRecovery overdueChargeRecovery = (OverdueChargeRecovery) auditHeader.getAuditDetail()
 				.getModelData();
-		getOverdueChargeRecoveryDAO().delete(overdueChargeRecovery, "");
+		overdueChargeRecoveryDAO.delete(overdueChargeRecovery, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getOverdueChargeRecoveryById fetch the details by using OverdueChargeRecoveryDAO's getOverdueChargeRecoveryById
-	 * method.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return OverdueChargeRecovery
-	 */
-
 	@Override
-	public OverdueChargeRecovery getOverdueChargeRecoveryById(String id, Date finSchDate, String finOdFor) {
+	public OverdueChargeRecovery getOverdueChargeRecoveryById(long finID, Date finSchDate, String finOdFor) {
 		OverdueChargeRecovery ocr = getNewOverdueChargeRecovery();
-		ocr = getOverdueChargeRecoveryDAO().getOverdueChargeRecoveryById(id, finSchDate, finOdFor, "_View");
-		ocr = getOverdueChargeRecoveryDAO().getODCRecoveryDetails(ocr);
+		ocr = overdueChargeRecoveryDAO.getOverdueChargeRecoveryById(finID, finSchDate, finOdFor, "_View");
+		ocr = overdueChargeRecoveryDAO.getODCRecoveryDetails(ocr);
 		return ocr;
 	}
 
-	/**
-	 * getApprovedOverdueChargeRecoveryById fetch the details by using OverdueChargeRecoveryDAO's
-	 * getOverdueChargeRecoveryById method . with parameter id and type as blank. it fetches the approved records from
-	 * the FinODCRecovery.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @return OverdueChargeRecovery
-	 */
-	public OverdueChargeRecovery getApprovedOverdueChargeRecoveryById(String id, Date finSchDate, String finOdFor) {
-		return getOverdueChargeRecoveryDAO().getOverdueChargeRecoveryById(id, finSchDate, finOdFor, "_AView");
-	}
-
-	/**
-	 * Method for Getting Pending OverDueAmount
-	 */
-	@Override
-	public BigDecimal getPendingODCAmount(String finReference) {
-		return getOverdueChargeRecoveryDAO().getPendingODCAmount(finReference);
+	public OverdueChargeRecovery getApprovedOverdueChargeRecoveryById(long finID, Date finSchDate, String finOdFor) {
+		return overdueChargeRecoveryDAO.getOverdueChargeRecoveryById(finID, finSchDate, finOdFor, "_AView");
 	}
 
 	@Override
-	public OverdueChargeRecovery getOverdueChargeRecovery(String finReference) {
+	public BigDecimal getPendingODCAmount(long finID) {
+		return overdueChargeRecoveryDAO.getPendingODCAmount(finID);
+	}
+
+	@Override
+	public OverdueChargeRecovery getOverdueChargeRecovery(long finID) {
 		OverdueChargeRecovery overdueCherage = new OverdueChargeRecovery();
-		overdueCherage.setFinReference(finReference);
+		overdueCherage.setFinID(finID);
 
-		return getOverdueChargeRecoveryDAO().getODCRecoveryDetails(overdueCherage);
+		return overdueChargeRecoveryDAO.getODCRecoveryDetails(overdueCherage);
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getOverdueChargeRecoveryDAO().delete
-	 * with parameters overdueChargeRecovery,"" b) NEW Add new record in to main table by using
-	 * getOverdueChargeRecoveryDAO().save with parameters overdueChargeRecovery,"" c) EDIT Update record in the main
-	 * table by using getOverdueChargeRecoveryDAO().update with parameters overdueChargeRecovery,"" 3) Delete the record
-	 * from the workFlow table by using getOverdueChargeRecoveryDAO().delete with parameters
-	 * overdueChargeRecovery,"_Temp" 4) Audit the record in to AuditHeader and AdtFinODCRecovery by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinODCRecovery by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -272,7 +154,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 		if (overdueChargeRecovery.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getOverdueChargeRecoveryDAO().delete(overdueChargeRecovery, "");
+			overdueChargeRecoveryDAO.delete(overdueChargeRecovery, "");
 
 		} else {
 			overdueChargeRecovery.setRoleCode("");
@@ -284,44 +166,33 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 			if (overdueChargeRecovery.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				overdueChargeRecovery.setRecordType("");
-				getOverdueChargeRecoveryDAO().save(overdueChargeRecovery, "");
+				overdueChargeRecoveryDAO.save(overdueChargeRecovery, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				overdueChargeRecovery.setRecordType("");
-				getOverdueChargeRecoveryDAO().update(overdueChargeRecovery, "");
+				overdueChargeRecoveryDAO.update(overdueChargeRecovery, "");
 			}
 		}
 
-		getOverdueChargeRecoveryDAO().delete(overdueChargeRecovery, "_Temp");
+		overdueChargeRecoveryDAO.delete(overdueChargeRecovery, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(overdueChargeRecovery);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getOverdueChargeRecoveryDAO().delete with parameters overdueChargeRecovery,"_Temp" 3)
-	 * Audit the record in to AuditHeader and AdtFinODCRecovery by using auditHeaderDAO.addAudit(auditHeader) for Work
-	 * flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -329,65 +200,57 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getOverdueChargeRecoveryDAO().delete(overdueChargeRecovery, "_Temp");
+		overdueChargeRecoveryDAO.delete(overdueChargeRecovery, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getOverdueChargeRecoveryDAO().getErrorDetail with Error
-	 * ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		OverdueChargeRecovery overdueChargeRecovery = (OverdueChargeRecovery) auditDetail.getModelData();
+		OverdueChargeRecovery odcr = (OverdueChargeRecovery) auditDetail.getModelData();
 
 		OverdueChargeRecovery tempOverdueChargeRecovery = null;
-		if (overdueChargeRecovery.isWorkflow()) {
-			tempOverdueChargeRecovery = getOverdueChargeRecoveryDAO().getOverdueChargeRecoveryById(
-					overdueChargeRecovery.getId(), overdueChargeRecovery.getFinODSchdDate(),
-					overdueChargeRecovery.getFinODFor(), "_Temp");
+		if (odcr.isWorkflow()) {
+			tempOverdueChargeRecovery = overdueChargeRecoveryDAO.getOverdueChargeRecoveryById(odcr.getFinID(),
+					odcr.getFinODSchdDate(), odcr.getFinODFor(), "_Temp");
 		}
-		OverdueChargeRecovery befOverdueChargeRecovery = getOverdueChargeRecoveryDAO().getOverdueChargeRecoveryById(
-				overdueChargeRecovery.getId(), overdueChargeRecovery.getFinODSchdDate(),
-				overdueChargeRecovery.getFinODFor(), "");
-		OverdueChargeRecovery oldOverdueChargeRecovery = overdueChargeRecovery.getBefImage();
+		OverdueChargeRecovery befOverdueChargeRecovery = overdueChargeRecoveryDAO
+				.getOverdueChargeRecoveryById(odcr.getFinID(), odcr.getFinODSchdDate(), odcr.getFinODFor(), "");
+		OverdueChargeRecovery oldOverdueChargeRecovery = odcr.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = overdueChargeRecovery.getId();
+		valueParm[0] = odcr.getId();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (overdueChargeRecovery.isNewRecord()) { // for New record or new record into work flow
+		if (odcr.isNewRecord()) { // for New record or new record into work flow
 
-			if (!overdueChargeRecovery.isWorkflow()) {// With out Work flow only new records  
-				if (befOverdueChargeRecovery != null) { // Record Already Exists in the table then error  
+			if (!odcr.isWorkflow()) {// With out Work flow only new records
+				if (befOverdueChargeRecovery != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (overdueChargeRecovery.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befOverdueChargeRecovery != null || tempOverdueChargeRecovery != null) { // if records already exists in the main table
+				if (odcr.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
+																						// is new
+					if (befOverdueChargeRecovery != null || tempOverdueChargeRecovery != null) { // if records already
+																									// exists in the
+																									// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -400,7 +263,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!overdueChargeRecovery.isWorkflow()) { // With out Work flow for update and delete
+			if (!odcr.isWorkflow()) { // With out Work flow for update and delete
 
 				if (befOverdueChargeRecovery == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -422,7 +285,7 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 				}
 			} else {
 
-				if (tempOverdueChargeRecovery == null) { // if records not exists in the Work flow table 
+				if (tempOverdueChargeRecovery == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -437,11 +300,23 @@ public class OverdueChargeRecoveryServiceImpl extends GenericService<OverdueChar
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !overdueChargeRecovery.isWorkflow()) {
-			overdueChargeRecovery.setBefImage(befOverdueChargeRecovery);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !odcr.isWorkflow()) {
+			odcr.setBefImage(befOverdueChargeRecovery);
 		}
 
 		return auditDetail;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setOverdueChargeRecoveryDAO(OverdueChargeRecoveryDAO overdueChargeRecoveryDAO) {
+		this.overdueChargeRecoveryDAO = overdueChargeRecoveryDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
 	}
 
 }

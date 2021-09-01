@@ -4906,6 +4906,10 @@
 		<property name="legalExpensesDAO" ref="legalExpensesDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
+		<property name="financeMainService" ref="financeMainService" />
+		<property name="currencyService" ref="currencyService" />
+		<property name="transactionCodeService" ref="transactionCodeService" />
+		<property name="accountMappingService" ref="accountMappingService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="financeWriteoffDAO" ref="financeWriteoffDAO" />
 
