@@ -76,14 +76,12 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	private ChangeGraceEndService changeGraceEndService;
 	private FinAssetAmtMovementDAO finAssetAmtMovementDAO;
 
-	/**
-	 * Method for retrieving required finance data for DownSizing
-	 */
 	@Override
-	public FinanceDetail getDownSizingFinance(FinanceMain aFinanceMain, String rcdMaintainSts) {
+	public FinanceDetail getDownSizingFinance(FinanceMain fm, String rcdMaintainSts) {
 		logger.debug(Literal.ENTERING);
 
-		String finReference = aFinanceMain.getFinReference();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
@@ -91,13 +89,13 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		List<FinServiceInstruction> finservInstList = new ArrayList<FinServiceInstruction>();
 		if (StringUtils.isNotBlank(rcdMaintainSts)) {
-			finservInstList = finServiceInstructionDAO.getFinServiceInstructions(finReference, "_Temp", rcdMaintainSts);
+			finservInstList = finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp", rcdMaintainSts);
 		} else {
 			finservInstList.add(new FinServiceInstruction());
 		}
 
 		// TODO : Customer Details
-		financeDetail.setCustomerDetails(getCustomerDetails(aFinanceMain));
+		financeDetail.setCustomerDetails(getCustomerDetails(fm));
 
 		finScheduleData.setFinServiceInstructions(finservInstList);
 		financeDetail.setFinScheduleData(finScheduleData);
@@ -106,73 +104,59 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		return financeDetail;
 	}
 
-	/**
-	 * 
-	 * @param aFinanceMain
-	 * @return
-	 */
-	private CustomerDetails getCustomerDetails(FinanceMain aFinanceMain) {
-
-		CustomerDetails customerDetails = new CustomerDetails();
-		customerDetails.setCustID(aFinanceMain.getCustID());
+	private CustomerDetails getCustomerDetails(FinanceMain fm) {
+		CustomerDetails cd = new CustomerDetails();
+		cd.setCustID(fm.getCustID());
 
 		Customer customer = new Customer();
-		customer.setCustID(aFinanceMain.getCustID());
-		customer.setCustCIF(aFinanceMain.getLovDescCustCIF());
-		customer.setCustShrtName(aFinanceMain.getLovDescCustShrtName());
+		customer.setCustID(fm.getCustID());
+		customer.setCustCIF(fm.getLovDescCustCIF());
+		customer.setCustShrtName(fm.getLovDescCustShrtName());
 
-		customerDetails.setCustomer(customer);
-		return customerDetails;
+		cd.setCustomer(customer);
+		return cd;
 	}
 
-	public FinScheduleData getFinSchDataByFinRef(String finRef, String type, long logKey) {
+	public FinScheduleData getFinSchDataByFinRef(long finID, String type, long logKey) {
 		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinReference(finRef);
 
 		if (logKey == 0) {
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(finRef, "_View", false);
-			finSchData.setFinanceMain(financeMain);
+			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
+			finSchData.setFinReference(fm.getFinReference());
+			finSchData.setFinanceMain(fm);
 
-			String finType = financeMain.getFinType();
+			String finType = fm.getFinType();
 			finSchData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
 		}
 
 		// Schedule, Disbursement Details and Repay Instructions
-		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finRef, type, false));
-		finSchData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finRef, type, false));
-		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finRef, type, false));
+		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+		finSchData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, type, false));
+		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
 
 		logger.debug(Literal.LEAVING);
+
 		return finSchData;
 	}
 
-	/**
-	 * Re build the schedule based on new grace end date
-	 * 
-	 * End Grace / PRE EMI Period After Full Disbursement
-	 * 
-	 * @param finScheduleData
-	 * @return
-	 */
-	public FinScheduleData changeGraceEndAfterFullDisb(FinScheduleData finScheduleData) {
-		// New Grace End Date
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		financeMain.setEventFromDate(SysParamUtil.getAppDate());
+	public FinScheduleData changeGraceEndAfterFullDisb(FinScheduleData schdData) {
+		FinanceMain fm = schdData.getFinanceMain();
+		fm.setEventFromDate(SysParamUtil.getAppDate());
 
-		changeGraceEndService.changeGraceEnd(finScheduleData, true);
+		changeGraceEndService.changeGraceEnd(schdData, true);
 
-		return finScheduleData;
+		return schdData;
 	}
 
-	public AEEvent getChangeGrcEndPostings(FinScheduleData finScheduleData) throws Exception {
-		return changeGraceEndService.getChangeGrcEndPostings(finScheduleData);
+	public AEEvent getChangeGrcEndPostings(FinScheduleData schdData) throws Exception {
+		return changeGraceEndService.getChangeGrcEndPostings(schdData);
 
 	}
 
-	public List<FinAssetAmtMovement> getFinAssetAmtMovements(String finRef, String movementType) {
-		return finAssetAmtMovementDAO.getFinAssetAmtMovements(finRef, movementType);
+	public List<FinAssetAmtMovement> getFinAssetAmtMovements(long finID, String movementType) {
+		return finAssetAmtMovementDAO.getFinAssetAmtMovements(finID, movementType);
 	}
 
 	@Override
@@ -185,40 +169,40 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			return auditHeader;
 		}
 
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinServiceInstruction finServInst = finScheduleData.getFinServiceInstructions().get(0);
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinServiceInstruction finServInst = schdData.getFinServiceInstructions().get(0);
 
 		String rcdMaintainSts = "";
 		TableType tableType = TableType.MAIN_TAB;
 
-		if (financeMain.isWorkflow()) {
+		if (fm.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 			rcdMaintainSts = FinServiceEvent.LOANDOWNSIZING;
 		}
-		financeMain.setRcdMaintainSts(rcdMaintainSts);
+		fm.setRcdMaintainSts(rcdMaintainSts);
 
-		if (financeMain.isNewRecord()) {
+		if (fm.isNewRecord()) {
 
-			financeMainDAO.save(financeMain, tableType, false);
+			financeMainDAO.save(fm, tableType, false);
 			finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
 
-			auditHeader.setAuditReference(financeMain.getFinReference());
-			auditHeader.getAuditDetail().setModelData(financeMain);
+			auditHeader.setAuditReference(fm.getFinReference());
+			auditHeader.getAuditDetail().setModelData(fm);
 
 		} else {
-			financeMainDAO.update(financeMain, tableType, false);
+			financeMainDAO.update(fm, tableType, false);
 
-			finServiceInstructionDAO.deleteList(financeMain.getFinReference(), rcdMaintainSts, tableType.getSuffix());
+			finServiceInstructionDAO.deleteList(fm.getFinID(), rcdMaintainSts, tableType.getSuffix());
 			finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
 
 		}
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				financeMain.getBefImage(), financeMain));
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
+		String auditTranType = auditHeader.getAuditTranType();
+		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], fm.getBefImage(), fm));
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -237,36 +221,36 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			return auditHeader;
 		}
 
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		financeDetail.setModuleDefiner(FinServiceEvent.LOANDOWNSIZING);
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		fd.setModuleDefiner(FinServiceEvent.LOANDOWNSIZING);
 
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinServiceInstruction finServInst = finScheduleData.getFinServiceInstructions().get(0);
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinServiceInstruction finServInst = schdData.getFinServiceInstructions().get(0);
 		BigDecimal downSizingAmt = finServInst.getAmount();
 
-		FinanceMain financeMain = new FinanceMain();
-		BeanUtils.copyProperties(finScheduleData.getFinanceMain(), financeMain);
+		FinanceMain fdm = new FinanceMain();
+		BeanUtils.copyProperties(schdData.getFinanceMain(), fdm);
 
-		financeMain.setRcdMaintainSts("");
-		financeMain.setRoleCode("");
-		financeMain.setNextRoleCode("");
-		financeMain.setTaskId("");
-		financeMain.setNextTaskId("");
-		financeMain.setWorkflowId(0);
+		fdm.setRcdMaintainSts("");
+		fdm.setRoleCode("");
+		fdm.setNextRoleCode("");
+		fdm.setTaskId("");
+		fdm.setNextTaskId("");
+		fdm.setWorkflowId(0);
 
 		// Revised FinAssetValue Value
-		FinAssetAmtMovement assetAmtMovt = prepareSanAmtMovement(financeMain, finServInst);
-		financeMain.setFinAssetValue(financeMain.getFinAssetValue().subtract(downSizingAmt));
+		FinAssetAmtMovement assetAmtMovt = prepareSanAmtMovement(fdm, finServInst);
+		fdm.setFinAssetValue(fdm.getFinAssetValue().subtract(downSizingAmt));
 
-		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+		if (fdm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			tranType = PennantConstants.TRAN_ADD;
-			financeMain.setRecordType("");
+			fdm.setRecordType("");
 		} else {
 			tranType = PennantConstants.TRAN_UPD;
-			financeMain.setRecordType("");
+			fdm.setRecordType("");
 
 			// FULL DISB : Schedule Changed By Grace Period Ended
-			if (financeMain.isScheduleRegenerated()) {
+			if (fdm.isScheduleRegenerated()) {
 
 				// 1. Postings ----> Execute Accounting Details Process
 				auditHeader = executeAccountingProcess(auditHeader, SysParamUtil.getAppDate());
@@ -277,13 +261,13 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 				}
 
 				// 2. Data Saving ----> Schedule Tables
-				processScheduleDetails(financeDetail, finServInst);
-				financeMainDAO.update(financeMain, TableType.MAIN_TAB, false);
+				processScheduleDetails(fd, finServInst);
+				financeMainDAO.update(fdm, TableType.MAIN_TAB, false);
 			} else {
 
 				// Update Revised Sanctioned Amount and Save FinServiceInstructions
 				finServiceInstructionDAO.save(finServInst, "");
-				financeMainDAO.updateFinAssetValue(financeMain);
+				financeMainDAO.updateFinAssetValue(fdm);
 			}
 		}
 
@@ -291,19 +275,19 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		finAssetAmtMovementDAO.saveFinAssetAmtMovement(assetAmtMovt);
 
 		// Delete from Staging Tables
-		financeMainDAO.delete(financeMain, TableType.TEMP_TAB, false, true);
-		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinServiceEvent.LOANDOWNSIZING, "_Temp");
+		financeMainDAO.delete(fdm, TableType.TEMP_TAB, false, true);
+		finServiceInstructionDAO.deleteList(fdm.getFinID(), FinServiceEvent.LOANDOWNSIZING, "_Temp");
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				financeMain.getBefImage(), financeMain));
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fdm.getExcludeFields());
+		String auditTranType = auditHeader.getAuditTranType();
+		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], fdm.getBefImage(), fdm));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(financeMain);
+		auditHeader.getAuditDetail().setModelData(fdm);
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -311,18 +295,12 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		return auditHeader;
 	}
 
-	/**
-	 * Delete and Save Schedule dependent tables
-	 * 
-	 * @param financeDetail
-	 * @param finServInst
-	 */
-	private void processScheduleDetails(FinanceDetail financeDetail, FinServiceInstruction finServInst) {
+	private void processScheduleDetails(FinanceDetail fd, FinServiceInstruction finServInst) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		String finReference = financeMain.getFinReference();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String finReference = fm.getFinReference();
 
 		// START : prepare FinLogEntryDetail data
 		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
@@ -330,7 +308,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		entryDetail.setReversalCompleted(false);
 		entryDetail.setFinReference(finReference);
 		entryDetail.setPostDate(SysParamUtil.getAppDate());
-		entryDetail.setSchdlRecal(financeMain.isScheduleRegenerated());
+		entryDetail.setSchdlRecal(fm.isScheduleRegenerated());
 		entryDetail.setEventAction(AccountingEvent.GRACEEND);
 
 		long logKey = finLogEntryDetailDAO.save(entryDetail);
@@ -339,7 +317,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		// START : Fetch Existing data before Modification
 		FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "", -1);
 		oldFinSchdData.setFinReference(finReference);
-		oldFinSchdData.setFinanceMain(financeMain);
+		oldFinSchdData.setFinanceMain(fm);
 
 		// Save Schedule Details For Future Modifications
 		listSave(oldFinSchdData, "_Log", false, logKey, finServInst.getServiceSeqId());
@@ -347,20 +325,20 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		// END
 
 		// delete from Staging table and schedule tables delete and insert
-		listDeletion(finScheduleData, financeDetail.getModuleDefiner(), "", false);
-		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), financeDetail.getModuleDefiner(), "");
+		listDeletion(schdData, fd.getModuleDefiner(), "", false);
+		finServiceInstructionDAO.deleteList(fm.getFinID(), fd.getModuleDefiner(), "");
 
 		// save latest schedule details
-		listSave(finScheduleData, "", false, 0, finServInst.getServiceSeqId());
+		listSave(schdData, "", false, 0, finServInst.getServiceSeqId());
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	private FinAssetAmtMovement prepareSanAmtMovement(FinanceMain financeMain, FinServiceInstruction finServInst) {
+	private FinAssetAmtMovement prepareSanAmtMovement(FinanceMain fm, FinServiceInstruction finServInst) {
 		FinAssetAmtMovement assetAmtMovt = new FinAssetAmtMovement();
 
 		assetAmtMovt.setFinServiceInstID(finServInst.getServiceSeqId());
-		assetAmtMovt.setFinReference(financeMain.getFinReference());
+		assetAmtMovt.setFinReference(fm.getFinReference());
 		assetAmtMovt.setMovementDate(SysParamUtil.getAppDate());
 
 		// TODO : Not Always 1
@@ -369,17 +347,17 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		// DS : DownSizing, US : UpSizing
 		assetAmtMovt.setMovementType(FinanceConstants.MOVEMENTTYPE_DOWNSIZING);
 
-		BigDecimal rvsdSanAmount = financeMain.getFinAssetValue().subtract(finServInst.getAmount());
+		BigDecimal rvsdSanAmount = fm.getFinAssetValue().subtract(finServInst.getAmount());
 
 		// DownSizing Amount
 		assetAmtMovt.setMovementAmount(finServInst.getAmount());
 		assetAmtMovt.setRevisedSanctionedAmt(rvsdSanAmount);
-		assetAmtMovt.setSanctionedAmt(financeMain.getFinAssetValue());
-		assetAmtMovt.setDisbursedAmt(financeMain.getFinCurrAssetValue());
-		assetAmtMovt.setAvailableAmt(rvsdSanAmount.subtract(financeMain.getFinCurrAssetValue()));
+		assetAmtMovt.setSanctionedAmt(fm.getFinAssetValue());
+		assetAmtMovt.setDisbursedAmt(fm.getFinCurrAssetValue());
+		assetAmtMovt.setAvailableAmt(rvsdSanAmount.subtract(fm.getFinCurrAssetValue()));
 
-		assetAmtMovt.setLastMntBy(financeMain.getLastMntBy());
-		assetAmtMovt.setLastMntOn(financeMain.getLastMntOn());
+		assetAmtMovt.setLastMntBy(fm.getLastMntBy());
+		assetAmtMovt.setLastMntOn(fm.getLastMntOn());
 
 		return assetAmtMovt;
 	}
@@ -393,16 +371,16 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 			return auditHeader;
 		}
 
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		financeMainDAO.delete(financeMain, TableType.TEMP_TAB, false, true);
-		finServiceInstructionDAO.deleteList(financeMain.getFinReference(), FinServiceEvent.LOANDOWNSIZING, "_Temp");
+		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
+		finServiceInstructionDAO.deleteList(fm.getFinID(), FinServiceEvent.LOANDOWNSIZING, "_Temp");
 
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				financeMain.getBefImage(), financeMain));
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
+		String auditTranType = auditHeader.getAuditTranType();
+		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], fm.getBefImage(), fm));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -426,23 +404,24 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceDetail fd = (FinanceDetail) auditDetail.getModelData();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
 
-		valueParm[0] = financeMain.getFinReference();
+		valueParm[0] = fm.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + " : " + valueParm[0];
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		if (StringUtils.equals(PennantConstants.method_doApprove, method)
-				&& !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
-			auditDetail.setBefImage(financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "", false));
+				&& !PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
+			auditDetail.setBefImage(financeMainDAO.getFinanceMainById(fm.getFinID(), "", false));
 		}
 
 		logger.debug(Literal.LEAVING);
+
 		return auditDetail;
 	}
 
@@ -453,4 +432,5 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	public void setFinAssetAmtMovementDAO(FinAssetAmtMovementDAO finAssetAmtMovementDAO) {
 		this.finAssetAmtMovementDAO = finAssetAmtMovementDAO;
 	}
+
 }

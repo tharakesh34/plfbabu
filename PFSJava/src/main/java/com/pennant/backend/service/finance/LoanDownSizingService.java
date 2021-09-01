@@ -24,7 +24,7 @@ public interface LoanDownSizingService {
 
 	FinScheduleData changeGraceEndAfterFullDisb(FinScheduleData finScheduleData);
 
-	List<FinAssetAmtMovement> getFinAssetAmtMovements(String finRef, String movementType);
+	List<FinAssetAmtMovement> getFinAssetAmtMovements(long finID, String movementType);
 
 	AEEvent getChangeGrcEndPostings(FinScheduleData finScheduleData) throws Exception;
 }
