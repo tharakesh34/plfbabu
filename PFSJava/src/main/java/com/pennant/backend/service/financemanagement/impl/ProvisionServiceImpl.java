@@ -137,8 +137,13 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	}
 
 	@Override
+
+	public Provision getProvisionById(String finReference, TableType tableType) {
+		Provision provision = provisionDAO.getProvisionByFinId(finReference, tableType, false);
+
 	public Provision getProvisionById(long finID, TableType tableType) {
 		Provision provision = provisionDAO.getProvisionById(finID, tableType, false);
+
 		if (provision != null) {
 			provision.setProvisionAmounts(provisionDAO.getProvisionAmounts(provision.getId(), tableType));
 		}
@@ -146,7 +151,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	}
 
 	public Provision getApprovedProvisionById(String id) {
-		return provisionDAO.getProvisionById(id, TableType.AVIEW, true);
+		return provisionDAO.getProvisionByFinId(id, TableType.AVIEW, true);
 	}
 
 	@Override

@@ -8,7 +8,7 @@ public interface RestructureDAO {
 
 	RestructureDetail getRestructureDetailById(long restructureId, String type);
 
-	RestructureDetail getRestructureDetailByFinReference(String finReference, String type);
+	RestructureDetail getRestructureDetailByFinReference(long finID, String type);
 
 	void update(RestructureDetail restructureDetail, String tableType);
 

@@ -54,6 +54,7 @@ public class QueryDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 	@XmlElement
 	private long id = Long.MIN_VALUE;
+	private long finID;
 	private String finReference;
 	// private String finReferenceName;
 	private long categoryId = 0;
@@ -130,6 +131,14 @@ public class QueryDetail extends AbstractWorkflowEntity {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

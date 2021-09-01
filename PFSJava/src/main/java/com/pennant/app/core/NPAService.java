@@ -171,7 +171,7 @@ public class NPAService extends ServiceHelper {
 
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
-		Provision oldProvision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
+		Provision oldProvision = provisionDAO.getProvisionByFinId(finReference, TableType.MAIN_TAB, false);
 		if (oldProvision != null && oldProvision.isManualProvision()) {
 			return finEODEvent;
 		}
@@ -514,7 +514,7 @@ public class NPAService extends ServiceHelper {
 	public boolean isNAPRepayHierarchyReq(String finReference) {
 		logger.debug(Literal.ENTERING);
 
-		Provision provision = provisionDAO.getProvisionById(finReference, TableType.AVIEW, false);
+		Provision provision = provisionDAO.getProvisionByFinId(finReference, TableType.AVIEW, false);
 		if (provision == null) {
 			return false;
 		}

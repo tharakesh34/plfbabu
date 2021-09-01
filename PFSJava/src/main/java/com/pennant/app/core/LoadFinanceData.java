@@ -486,7 +486,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			String finReference = provision.getFinReference();
 			logger.warn("Checking Old provision Details in PROVISIONS table..");
-			Provision oldProvision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
+			Provision oldProvision = provisionDAO.getProvisionByFinId(finReference, TableType.MAIN_TAB, false);
 
 			long provisionId = Long.MIN_VALUE;
 			int count = 0;

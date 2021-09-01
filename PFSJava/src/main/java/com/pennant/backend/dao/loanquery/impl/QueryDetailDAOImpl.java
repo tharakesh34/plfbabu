@@ -1,50 +1,31 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-05-2018    														*
- *                                                                  						*
- * Modified Date    :  09-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QueryDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-05-2018 * * Modified
+ * Date : 09-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-05-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-05-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.loanquery.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -53,10 +34,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.loanquery.QueryDetailDAO;
@@ -80,324 +59,343 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 
 	@Override
 	public QueryDetail getQueryDetail(long id, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where Id = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append(
-				" status, Coalesce(raisedBy,0) raisedBy, raisedOn, responsNotes, Coalesce(responseBy,0) responseBy, responseOn, ");
-		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn, module, reference, Version");
+		logger.debug(Literal.SQL + sql.toString());
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			// sql.append(" code, description,usrLogin " );
-			sql.append(" ,categorycode, categoryDescription,usrLogin, ");
-			sql.append(" responseUser, closerUser ");
-		}
-		sql.append(" From QUERYDETAIL");
-		sql.append(type);
-		sql.append(" Where id = :id");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		QueryDetail queryDetail = new QueryDetail();
-		queryDetail.setId(id);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
+		QueryDetailRowMapper rowMapper = new QueryDetailRowMapper(type);
 
 		try {
-			queryDetail = jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			queryDetail = null;
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
-		return queryDetail;
+		return null;
 	}
 
 	@Override
-	public String save(QueryDetail queryDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public String save(QueryDetail qd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Insert Into QueryDetail");
+		sql.append(" (Id, FinID, FinReference, CategoryId, QryNotes, AssignedRole, NotifyTo");
+		sql.append(", Status, RaisedBy, RaisedOn, Version, LastMntBy, WorkflowId, Module, Reference");
+		sql.append(", RaisedUsrRole)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into QUERYDETAIL");
-		// sql.append(tableType.getSuffix());
-		sql.append("(id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append("status, raisedBy, raisedOn, Version, LastMntBy,WorkflowId, Module, Reference, ");
-		sql.append("RaisedUsrRole)");
-		sql.append(" values(");
-		sql.append(" :id, :finReference, :categoryId, :qryNotes, :assignedRole, :notifyTo, ");
-		sql.append(" :status, :raisedBy, :raisedOn, :Version, :LastMntBy, :WorkflowId, :Module, :Reference, ");
-		sql.append(" :RaisedUsrRole)");
-
-		if (queryDetail.getId() == Long.MIN_VALUE) {
-			queryDetail.setId(getNextValue("SeqQUERYDETAIL"));
-			logger.debug("get NextID:" + queryDetail.getId());
+		if (qd.getId() == Long.MIN_VALUE) {
+			qd.setId(getNextValue("SeqQueryDetail"));
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, qd.getId());
+				ps.setLong(index++, qd.getFinID());
+				ps.setString(index++, qd.getFinReference());
+				ps.setLong(index++, qd.getCategoryId());
+				ps.setString(index++, qd.getQryNotes());
+				ps.setString(index++, qd.getAssignedRole());
+				ps.setString(index++, qd.getNotifyTo());
+				ps.setString(index++, qd.getStatus());
+				ps.setLong(index++, qd.getRaisedBy());
+				ps.setTimestamp(index++, qd.getRaisedOn());
+				ps.setInt(index++, qd.getVersion());
+				ps.setLong(index++, qd.getLastMntBy());
+				ps.setLong(index++, qd.getWorkflowId());
+				ps.setString(index++, qd.getModule());
+				ps.setString(index++, qd.getReference());
+				ps.setString(index++, qd.getRaisedUsrRole());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(queryDetail.getId());
+		return String.valueOf(qd.getId());
 	}
 
 	@Override
-	public void update(QueryDetail queryDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
+	public void update(QueryDetail qd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update QueryDetail");
+		sql.append(" Set Status = ?, RaisedBy = ?, QryNotes = ?, ResponsNotes = ?");
+		sql.append(", ResponseBy = ?, ResponseOn = ?, CloserNotes = ?");
+		sql.append(", CloserBy = ?, CloserOn = ?, Version = ?, Module = ?, Reference = ?");
+		sql.append(" Where Id = ?");
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update QUERYDETAIL");
-		// sql.append(tableType.getSuffix());
-		sql.append("  set status = :status, raisedBy= :raisedBy, qryNotes = :qryNotes, responsNotes = :responsNotes, ");
-		sql.append(" responseBy = :responseBy, responseOn = :responseOn, closerNotes = :closerNotes, ");
-		sql.append(
-				" closerBy = :closerBy, closerOn = :closerOn, Version = :Version, Module = :Module, Reference = :Reference");
-		sql.append(" where id = :id ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		jdbcTemplate.update(sql.toString(), paramSource);
+			ps.setString(index++, qd.getStatus());
+			ps.setLong(index++, qd.getRaisedBy());
+			ps.setString(index++, qd.getQryNotes());
+			ps.setString(index++, qd.getResponsNotes());
+			ps.setLong(index++, qd.getResponseBy());
+			ps.setTimestamp(index++, qd.getResponseOn());
+			ps.setString(index++, qd.getCloserNotes());
+			ps.setLong(index++, qd.getCloserBy());
+			ps.setTimestamp(index++, qd.getCloserOn());
+			ps.setInt(index++, qd.getVersion());
+			ps.setString(index++, qd.getModule());
+			ps.setString(index++, qd.getReference());
 
-		logger.debug(Literal.LEAVING);
+			ps.setLong(index++, qd.getId());
+		});
 	}
 
+	// FIXME:PrevMntOn is not Available
 	@Override
 	public void delete(QueryDetail queryDetail, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from QUERYDETAIL");
+		StringBuilder sql = new StringBuilder("Delete From QueryDetail");
 		sql.append(tableType.getSuffix());
-		sql.append(" where id = :id ");
+		sql.append(" Where Id = :Id ");
 		sql.append(QueryUtil.getConcurrencyCondition(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		int recordCount = 0;
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
 
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public List<QueryDetail> getQueryMgmtList(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT status, Raisedusrrole ");
-
-		sql.append(" From QUERYDETAIL");
+	public List<QueryDetail> getQueryMgmtList(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select Status, RaisedUsrRole");
+		sql.append(" From QueryDetail");
 		sql.append(type);
-		sql.append(" Where finReference = :FinReference");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		QueryDetail queryDetail = new QueryDetail();
-		queryDetail.setFinReference(finReference);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
+			ps.setLong(index++, finID);
+		}, (rs, rowNum) -> {
+			QueryDetail qd = new QueryDetail();
 
-		try {
-			queryDetails = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			queryDetail = null;
-		}
+			qd.setStatus(rs.getString("Status"));
+			qd.setRaisedUsrRole(rs.getString("RaisedUsrRole"));
 
-		logger.debug(Literal.LEAVING);
-		return queryDetails;
+			return qd;
+		});
+
 	}
 
 	@Override
 	public List<QueryDetail> getQueryMgmtListByRef(String reference, String type) {
-		logger.debug(Literal.ENTERING);
-
-		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT status ");
-
-		sql.append(" From QUERYDETAIL");
+		StringBuilder sql = new StringBuilder("Select Status");
+		sql.append(" From QueryDetail");
 		sql.append(type);
-		sql.append(" Where Reference = :Reference");
+		sql.append(" Where Reference = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		QueryDetail queryDetail = new QueryDetail();
-		queryDetail.setReference(reference);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
+			ps.setString(index++, reference);
+		}, (rs, rowNum) -> {
+			QueryDetail qd = new QueryDetail();
 
-		try {
-			queryDetails = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			queryDetail = null;
-		}
+			qd.setStatus(rs.getString("Status"));
 
-		logger.debug(Literal.LEAVING);
-		return queryDetails;
+			return qd;
+		});
 	}
 
 	@Override
-	public List<QueryDetail> getQueryMgmtListForAgreements(String finReference, String type) {
-		logger.debug(Literal.ENTERING);
+	public List<QueryDetail> getQueryMgmtListForAgreements(long finID, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinID = ?");
 
-		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(" id, finReference, categoryId, qryNotes, assignedRole, notifyTo, ");
-		sql.append(
-				" status, Coalesce(raisedBy,0) raisedBy, raisedOn, responsNotes, Coalesce(responseBy,0) responseBy, responseOn, ");
-		sql.append(" closerNotes, Coalesce(closerBy,0) closerBy, closerOn,");
+		QueryDetailRowMapper rowMapper = new QueryDetailRowMapper(type);
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			// sql.append(" code, description,usrLogin " );
-			sql.append(" categorycode, categoryDescription,usrLogin, ");
-			sql.append(" responseUser, closerUser ");
-		}
-		sql.append(" From QUERYDETAIL");
-		sql.append(type);
-		sql.append(" Where finReference = :FinReference");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+			ps.setLong(index++, finID);
+		}, rowMapper);
 
-		QueryDetail queryDetail = new QueryDetail();
-		queryDetail.setFinReference(finReference);
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(queryDetail);
-		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
-
-		try {
-			queryDetails = this.jdbcTemplate.query(sql.toString(), paramSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			queryDetail = null;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return queryDetails;
 	}
 
 	@Override
-	public List<QueryDetail> getUnClosedQurysForGivenRole(String finReference, String assignedRole) {
-		logger.debug(Literal.ENTERING);
+	public List<QueryDetail> getUnClosedQurysForGivenRole(long finID, String assignedRole) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, CategoryId, QryNotes, AssignedRole");
+		sql.append(" NotifyTo, Status, RaisedBy, RaisedOn, Version, LastmntBy, WorkFlowId, Module, Reference");
+		sql.append(" From QueryDetail");
+		sql.append(" Where FinID = ? and AssignedRole = ?");
+		sql.append(" and (Status ! = ? and Status ! = ?) ");
 
-		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+		logger.debug(Literal.SQL + sql.toString());
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ID, FINREFERENCE, CATEGORYID, QRYNOTES, ASSIGNEDROLE, ");
-		sql.append(" NOTIFYTO, STATUS, RAISEDBY, RAISEDON, VERSION, LASTMNTBY,WORKFLOWID, MODULE, REFERENCE ");
-		sql.append(" From QUERYDETAIL");
-		sql.append(" Where FinReference = :FinReference AND AssignedRole = :AssignedRole ");
-		sql.append("  AND ( Status != :ClosedStatus AND Status!= :ResolvedStatus) ");
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("FinReference", finReference);
-		parameterSource.addValue("AssignedRole", assignedRole);
-		parameterSource.addValue("ClosedStatus", "Close");
-		parameterSource.addValue("ResolvedStatus", "Resolve");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
+			ps.setLong(index++, finID);
+			ps.setString(index++, assignedRole);
+			ps.setString(index++, "Close");
+			ps.setString(index++, "Resolve");
+		}, (rs, rowNum) -> {
+			QueryDetail qd = new QueryDetail();
 
-		try {
-			queryDetails = this.jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
+			qd.setFinID(rs.getLong("Id"));
+			qd.setFinID(rs.getLong("FinID"));
+			qd.setFinReference(rs.getString("FinReference"));
+			qd.setCategoryId(rs.getLong("CategoryId"));
+			qd.setQryNotes(rs.getString("QryNotes"));
+			qd.setAssignedRole(rs.getString("AssignedRole"));
+			qd.setNotifyTo(rs.getString("NotifyTo"));
+			qd.setStatus(rs.getString("Status"));
+			qd.setRaisedBy(rs.getLong("RaisedBy"));
+			qd.setRaisedOn(rs.getTimestamp("RaisedOn"));
+			qd.setVersion(rs.getInt("Version"));
+			qd.setLastMntBy(rs.getLong("LastMntBy"));
+			qd.setWorkflowId(rs.getLong("WorkflowId"));
+			qd.setModule(rs.getString("Module"));
+			qd.setReference(rs.getString("Reference"));
 
-		logger.debug(Literal.LEAVING);
-		return queryDetails;
+			return qd;
+		});
+
 	}
 
 	@Override
 	public List<QueryDetail> getQueryListByReference(String Reference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, CategoryId, QryNotes, AssignedRole");
+		sql.append(", NotifyTo, Status, RaisedBy, RaisedOn, Version, LastmntBy, WorkFlowId, Module, Reference");
+		sql.append(" From QueryDetail");
+		sql.append(" Where Reference = ?");
 
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.SQL + sql.toString());
 
-		List<QueryDetail> queryDetails = new ArrayList<QueryDetail>();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("SELECT ID, FINREFERENCE, CATEGORYID, QRYNOTES, ASSIGNEDROLE, ");
-		sql.append(" NOTIFYTO, STATUS, RAISEDBY, RAISEDON, VERSION, LASTMNTBY,WORKFLOWID, MODULE, REFERENCE ");
-		sql.append(" From QUERYDETAIL");
-		sql.append(" Where Reference = :Reference ");
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-		parameterSource.addValue("Reference", Reference);
+			ps.setString(index++, Reference);
+		}, (rs, rowNum) -> {
+			QueryDetail qd = new QueryDetail();
 
-		RowMapper<QueryDetail> rowMapper = BeanPropertyRowMapper.newInstance(QueryDetail.class);
+			qd.setFinID(rs.getLong("Id"));
+			qd.setFinID(rs.getLong("FinID"));
+			qd.setFinReference(rs.getString("FinReference"));
+			qd.setCategoryId(rs.getLong("CategoryId"));
+			qd.setQryNotes(rs.getString("QryNotes"));
+			qd.setAssignedRole(rs.getString("AssignedRole"));
+			qd.setNotifyTo(rs.getString("NotifyTo"));
+			qd.setStatus(rs.getString("Status"));
+			qd.setRaisedBy(rs.getLong("RaisedBy"));
+			qd.setRaisedOn(rs.getTimestamp("RaisedOn"));
+			qd.setVersion(rs.getInt("Version"));
+			qd.setLastMntBy(rs.getLong("LastMntBy"));
+			qd.setWorkflowId(rs.getLong("WorkflowId"));
+			qd.setModule(rs.getString("Module"));
+			qd.setReference(rs.getString("Reference"));
 
-		try {
-			queryDetails = this.jdbcTemplate.query(sql.toString(), parameterSource, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-		}
+			return qd;
 
-		logger.debug(Literal.LEAVING);
-		return queryDetails;
+		});
 	}
 
 	@Override
 	public Long getCustIdByQuery(long queryId) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = new StringBuilder("Select Distinct CustId From (");
+		sql.append(" Select c.CustId, qd.Id From Querydetail_Temp qd");
+		sql.append(" Inner Join Financemain_Temp fm on fm.FinID = qd.FinID");
+		sql.append(" Inner Join Customers_Temp c on c.CustId = fm.CustId");
+		sql.append(" Union All");
+		sql.append(" Select c.CustId, qd.Id From Querydetail qd");
+		sql.append(" Inner Join Financemain fm on fm.FinID = qd.FinID");
+		sql.append(" Inner Join Customers c on c.CustId = fm.CustId) T Where Id = ?");
 
-		StringBuilder sql = new StringBuilder("Select distinct CustId");
-		sql.append(" from (select c.custId, qd.id from Querydetail_Temp qd");
-		sql.append(" inner join Financemain_Temp fm on fm.FinReference = qd.FinReference");
-		sql.append(" inner join Customers_Temp c on c.CustId = fm.CustId");
-		sql.append(" union all");
-		sql.append(" select c.CustId, qd.id from Querydetail qd");
-		sql.append(" inner join Financemain fm on fm.FinReference = qd.FinReference");
-		sql.append(" inner join Customers c on c.CustId = fm.CustId) T where id = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { queryId }, new RowMapper<Long>() {
-
-				@Override
-				public Long mapRow(ResultSet rs, int arg1) throws SQLException {
-					return rs.getLong("CustId");
-				}
-			});
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, queryId);
 		} catch (EmptyResultDataAccessException e) {
-			//logger.error(Literal.EXCEPTION, e);
+			//
 		}
+
 		return null;
+	}
+
+	private StringBuilder sqlSelectQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" Id, FinID, FinReference, CategoryId, QryNotes, AssignedRole, NotifyTo");
+		sql.append(", Status, Coalesce(RaisedBy, 0) RaisedBy, RaisedOn, ResponsNotes");
+		sql.append(", Coalesce(ResponseBy, 0) ResponseBy, ResponseOn");
+		sql.append(", CloserNotes, Coalesce(CloserBy,0) CloserBy, CloserOn, Module, Reference, Version");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", CategoryCode, CategoryDescription, UsrLogin");
+			sql.append(", ResponseUser, CloserUser");
+		}
+
+		sql.append(" From QueryDetail");
+		sql.append(type);
+
+		return sql;
+	}
+
+	private class QueryDetailRowMapper implements RowMapper<QueryDetail> {
+		private String type;
+
+		private QueryDetailRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public QueryDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			QueryDetail qd = new QueryDetail();
+
+			qd.setFinID(rs.getLong("Id"));
+			qd.setFinID(rs.getLong("FinID"));
+			qd.setFinReference(rs.getString("FinReference"));
+			qd.setCategoryId(rs.getLong("CategoryId"));
+			qd.setQryNotes(rs.getString("QryNotes"));
+			qd.setAssignedRole(rs.getString("AssignedRole"));
+			qd.setNotifyTo(rs.getString("NotifyTo"));
+			qd.setStatus(rs.getString("Status"));
+			qd.setRaisedBy(rs.getLong("RaisedBy"));
+			qd.setRaisedOn(rs.getTimestamp("RaisedOn"));
+			qd.setResponsNotes(rs.getString("ResponsNotes"));
+			qd.setResponseBy(rs.getLong("ResponseBy"));
+			qd.setResponseOn(rs.getTimestamp("ResponseOn"));
+			qd.setCloserNotes(rs.getString("CloserNotes"));
+			qd.setCloserBy(rs.getLong("CloserBy"));
+			qd.setCloserOn(rs.getTimestamp("CloserOn"));
+			qd.setModule(rs.getString("Module"));
+			qd.setReference(rs.getString("Reference"));
+			qd.setVersion(rs.getInt("Version"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				qd.setCategoryCode(rs.getString("CategoryCode"));
+				qd.setCategoryDescription(rs.getString("CategoryDescription"));
+				qd.setUsrLogin(rs.getString("UsrLogin"));
+				qd.setResponseUser(rs.getString("ResponseUser"));
+				qd.setCloserUser(rs.getString("CloserUser"));
+			}
+
+			return qd;
+
+		}
 	}
 }

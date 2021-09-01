@@ -23,10 +23,9 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 	@Override
 	public long save(RestructureDetail rd, String type) {
-		StringBuilder sql = new StringBuilder("insert into");
-		sql.append(" Restructure_Details");
+		StringBuilder sql = new StringBuilder("Insert Into Restructure_Details");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (Id, FinReference, RestructureType, RestructureDate, EmiHldPeriod, PriHldPeriod");
+		sql.append(" (Id, FinID, FinReference, RestructureType, RestructureDate, EmiHldPeriod, PriHldPeriod");
 		sql.append(", EmiPeriods, TenorChange, EmiRecal, TotNoOfRestructure, RecalculationType, ServiceRequestNo");
 		sql.append(", Remark, OldBucket, NewBucket, OldEmiOs, NewEmiOs, OldBalTenure, NewBalTenure, OldMaturity");
 		sql.append(", NewMaturity, LastBilledDate, LastBilledInstNo, ActLoanAmount, OldTenure, NewTenure");
@@ -39,12 +38,12 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(");");
+		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		if (rd.getId() <= 0) {
 			rd.setId(getNextValue("Seq_Restructure_Details"));
@@ -54,7 +53,8 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(rd.getId()));
+				ps.setLong(index++, rd.getId());
+				ps.setLong(index++, rd.getFinID());
 				ps.setString(index++, rd.getFinReference());
 				ps.setString(index++, rd.getRestructureType());
 				ps.setDate(index++, JdbcUtil.getDate(rd.getRestructureDate()));
@@ -113,7 +113,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 				ps.setBigDecimal(index++, rd.getRepayProfitRate());
 				ps.setBigDecimal(index++, rd.getGrcMaxAmount());
 				ps.setInt(index++, rd.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(rd.getLastMntBy()));
+				ps.setLong(index++, rd.getLastMntBy());
 				ps.setTimestamp(index++, rd.getLastMntOn());
 				ps.setString(index++, rd.getRecordStatus());
 				ps.setString(index++, rd.getRoleCode());
@@ -121,149 +121,61 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 				ps.setString(index++, rd.getTaskId());
 				ps.setString(index++, rd.getNextTaskId());
 				ps.setString(index++, rd.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(rd.getWorkflowId()));
+				ps.setLong(index++, rd.getWorkflowId());
 			});
 
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		logger.debug(Literal.LEAVING);
+
 		return rd.getId();
 	}
 
 	@Override
 	public RestructureDetail getRestructureDetailById(long id, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Id, FinReference, RestructureType, RestructureDate, EmiHldPeriod, PriHldPeriod");
-		sql.append(", EmiPeriods, TenorChange, EmiRecal, TotNoOfRestructure, RecalculationType, ServiceRequestNo");
-		sql.append(", Remark, OldBucket, NewBucket, OldEmiOs, NewEmiOs, OldBalTenure, NewBalTenure");
-		sql.append(", OldMaturity, NewMaturity, LastBilledDate, LastBilledInstNo, ActLoanAmount, OldTenure");
-		sql.append(", NewTenure, OldInterest, NewInterest, OldMaxUnplannedEmi, NewMaxUnplannedEmi");
-		sql.append(", OldAvailedUnplanEmi, NewAvailedUnplanEmi, OldFinalEmi, NewFinalEmi, RestructureReason");
-		sql.append(", OldDpd, NewDpd, OldCpzInterest, NewCpzInterest, EmiHldStartDate, EmiHldEndDate");
-		sql.append(", PriHldStartDate, PriHldEndDate, AppDate, OldPOsAmount, NewPOsAmount");
-		sql.append(", OldEmiOverdue, NewEmiOverdue, BounceCharge, OldPenaltyAmount, NewPenaltyAmount");
-		sql.append(", OtherCharge, RestructureCharge, FinCurrAssetValue, OldExtOdDays, NewExtOdDays");
-		sql.append(", RepayProfitRate, GrcMaxAmount, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", RstTypeCode, RstTypeDesc");
-		sql.append(" FROM Restructure_Details");
-		sql.append(StringUtils.trimToEmpty(type));
+		StringBuilder sql = sqlSelectQuery(type);
 		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
+		RestructureDetailRowMapper rowMapper = new RestructureDetailRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<RestructureDetail>() {
-						@Override
-						public RestructureDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							RestructureDetail rd = new RestructureDetail();
-							rd.setId(rs.getLong("Id"));
-							rd.setFinReference(rs.getString("FinReference"));
-							rd.setRestructureType(rs.getString("RestructureType"));
-							rd.setRestructureDate(rs.getTimestamp("RestructureDate"));
-							rd.setEmiHldPeriod(rs.getInt("EmiHldPeriod"));
-							rd.setPriHldPeriod(rs.getInt("PriHldPeriod"));
-							rd.setEmiPeriods(rs.getInt("EmiPeriods"));
-							rd.setTenorChange(rs.getBoolean("TenorChange"));
-							rd.setEmiRecal(rs.getBoolean("EmiRecal"));
-							rd.setTotNoOfRestructure(rs.getInt("TotNoOfRestructure"));
-							rd.setRecalculationType(rs.getString("RecalculationType"));
-							rd.setServiceRequestNo(rs.getString("ServiceRequestNo"));
-							rd.setRemark(rs.getString("Remark"));
-							rd.setOldBucket(rs.getInt("OldBucket"));
-							rd.setNewBucket(rs.getInt("NewBucket"));
-							rd.setOldEmiOs(rs.getBigDecimal("OldEmiOs"));
-							rd.setNewEmiOs(rs.getBigDecimal("NewEmiOs"));
-							rd.setOldBalTenure(rs.getInt("OldBalTenure"));
-							rd.setNewBalTenure(rs.getInt("NewBalTenure"));
-							rd.setOldMaturity(rs.getTimestamp("OldMaturity"));
-							rd.setNewMaturity(rs.getTimestamp("NewMaturity"));
-							rd.setLastBilledDate(rs.getTimestamp("LastBilledDate"));
-							rd.setLastBilledInstNo(rs.getInt("LastBilledInstNo"));
-							rd.setActLoanAmount(rs.getBigDecimal("ActLoanAmount"));
-							rd.setOldTenure(rs.getInt("OldTenure"));
-							rd.setNewTenure(rs.getInt("NewTenure"));
-							rd.setOldInterest(rs.getBigDecimal("OldInterest"));
-							rd.setNewInterest(rs.getBigDecimal("NewInterest"));
-							rd.setOldMaxUnplannedEmi(rs.getInt("OldMaxUnplannedEmi"));
-							rd.setNewMaxUnplannedEmi(rs.getInt("NewMaxUnplannedEmi"));
-							rd.setOldAvailedUnplanEmi(rs.getInt("OldAvailedUnplanEmi"));
-							rd.setNewAvailedUnplanEmi(rs.getInt("NewAvailedUnplanEmi"));
-							rd.setOldFinalEmi(rs.getBigDecimal("OldFinalEmi"));
-							rd.setNewFinalEmi(rs.getBigDecimal("NewFinalEmi"));
-							rd.setRestructureReason(rs.getString("RestructureReason"));
-							rd.setOldDpd(rs.getInt("OldDpd"));
-							rd.setNewDpd(rs.getInt("NewDpd"));
-							rd.setOldCpzInterest(rs.getBigDecimal("OldCpzInterest"));
-							rd.setNewCpzInterest(rs.getBigDecimal("NewCpzInterest"));
-							rd.setEmiHldStartDate(rs.getTimestamp("EmiHldStartDate"));
-							rd.setEmiHldEndDate(rs.getTimestamp("EmiHldEndDate"));
-							rd.setPriHldStartDate(rs.getTimestamp("PriHldStartDate"));
-							rd.setPriHldEndDate(rs.getTimestamp("PriHldEndDate"));
-							rd.setAppDate(rs.getTimestamp("AppDate"));
-							rd.setOldPOsAmount(rs.getBigDecimal("OldPOsAmount"));
-							rd.setNewPOsAmount(rs.getBigDecimal("NewPOsAmount"));
-							rd.setOldEmiOverdue(rs.getBigDecimal("OldEmiOverdue"));
-							rd.setNewEmiOverdue(rs.getBigDecimal("NewEmiOverdue"));
-							rd.setBounceCharge(rs.getBigDecimal("BounceCharge"));
-							rd.setOldPenaltyAmount(rs.getBigDecimal("OldPenaltyAmount"));
-							rd.setNewPenaltyAmount(rs.getBigDecimal("NewPenaltyAmount"));
-							rd.setOtherCharge(rs.getBigDecimal("OtherCharge"));
-							rd.setRestructureCharge(rs.getBigDecimal("RestructureCharge"));
-							rd.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-							rd.setOldExtOdDays(rs.getInt("OldExtOdDays"));
-							rd.setNewExtOdDays(rs.getInt("NewExtOdDays"));
-							rd.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
-							rd.setGrcMaxAmount(rs.getBigDecimal("GrcMaxAmount"));
-							rd.setVersion(rs.getInt("Version"));
-							rd.setLastMntBy(rs.getLong("LastMntBy"));
-							rd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							rd.setRecordStatus(rs.getString("RecordStatus"));
-							rd.setRoleCode(rs.getString("RoleCode"));
-							rd.setNextRoleCode(rs.getString("NextRoleCode"));
-							rd.setTaskId(rs.getString("TaskId"));
-							rd.setNextTaskId(rs.getString("NextTaskId"));
-							rd.setRecordType(rs.getString("RecordType"));
-							rd.setWorkflowId(rs.getLong("WorkflowId"));
-							rd.setRstTypeCode(rs.getString("RstTypeCode"));
-							rd.setRstTypeDesc(rs.getString("RstTypeDesc"));
-							return rd;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in Restructure_Details for the specified Id >> {}", id);
+			//
 		}
+
 		return null;
 	}
 
 	@Override
 	public void update(RestructureDetail rd, String tableType) {
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" Restructure_Details");
+		StringBuilder sql = new StringBuilder("Update Restructure_Details");
 		sql.append(tableType);
-		sql.append(" set finReference = ?, restructureType = ?, restructureDate = ?, emiHldPeriod = ?");
-		sql.append(", priHldPeriod = ?, emiPeriods = ?, tenorChange = ?, emiRecal = ?, totNoOfRestructure = ?");
-		sql.append(", recalculationType = ?, serviceRequestNo = ?, remark = ?, oldBucket = ?, newBucket = ?");
-		sql.append(", oldEmiOs = ?, newEmiOs = ?, oldBalTenure = ?, newBalTenure = ?, oldMaturity = ?");
-		sql.append(", newMaturity = ?, lastBilledDate = ?, lastBilledInstNo = ?, actLoanAmount = ?");
-		sql.append(", oldTenure = ?, newTenure = ?, oldInterest = ?, newInterest = ?, oldMaxUnplannedEmi = ?");
-		sql.append(", newMaxUnplannedEmi = ?, oldAvailedUnplanEmi = ?, newAvailedUnplanEmi = ?, oldFinalEmi = ?");
-		sql.append(", newFinalEmi = ?, oldDpd = ?, newDpd = ?, oldCpzInterest = ?, newCpzInterest = ?");
-		sql.append(", emiHldStartDate = ?, emiHldEndDate = ?, priHldStartDate = ?, priHldEndDate = ?");
-		sql.append(", AppDate = ?, oldPOsAmount = ?, newPOsAmount = ?, oldEmiOverdue = ?");
-		sql.append(", newEmiOverdue = ?, bounceCharge = ?, oldPenaltyAmount = ?, newPenaltyAmount = ?");
-		sql.append(", otherCharge = ?, restructureCharge = ?, repayProfitRate = ?, finCurrAssetValue = ?");
-		sql.append(", oldExtOdDays = ?, newExtOdDays = ?, grcMaxAmount = ?, Version = ?, LastMntBy = ?");
+		sql.append(" Set FinID = ?, FinReference = ?, RestructureType = ?, RestructureDate = ?, EmiHldPeriod = ?");
+		sql.append(", PriHldPeriod = ?, EmiPeriods = ?, TenorChange = ?, EmiRecal = ?, TotNoOfRestructure = ?");
+		sql.append(", RecalculationType = ?, ServiceRequestNo = ?, Remark = ?, OldBucket = ?, NewBucket = ?");
+		sql.append(", OldEmiOs = ?, NewEmiOs = ?, OldBalTenure = ?, NewBalTenure = ?, OldMaturity = ?");
+		sql.append(", NewMaturity = ?, LastBilledDate = ?, LastBilledInstNo = ?, ActLoanAmount = ?");
+		sql.append(", OldTenure = ?, NewTenure = ?, OldInterest = ?, NewInterest = ?, OldMaxUnplannedEmi = ?");
+		sql.append(", NewMaxUnplannedEmi = ?, OldAvailedUnplanEmi = ?, NewAvailedUnplanEmi = ?, OldFinalEmi = ?");
+		sql.append(", NewFinalEmi = ?, OldDpd = ?, NewDpd = ?, OldCpzInterest = ?, NewCpzInterest = ?");
+		sql.append(", EmiHldStartDate = ?, EmiHldEndDate = ?, PriHldStartDate = ?, PriHldEndDate = ?");
+		sql.append(", AppDate = ?, OldPOsAmount = ?, NewPOsAmount = ?, OldEmiOverdue = ?");
+		sql.append(", NewEmiOverdue = ?, BounceCharge = ?, OldPenaltyAmount = ?, NewPenaltyAmount = ?");
+		sql.append(", OtherCharge = ?, RestructureCharge = ?, RepayProfitRate = ?, FinCurrAssetValue = ?");
+		sql.append(", OldExtOdDays = ?, NewExtOdDays = ?, GrcMaxAmount = ?, Version = ?, LastMntBy = ?");
 		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
-		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?,  restructureReason = ?");
-		sql.append(" where Id = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?,  RestructureReason = ?");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
+
+			ps.setLong(index++, rd.getFinID());
 			ps.setString(index++, rd.getFinReference());
 			ps.setString(index++, rd.getRestructureType());
 			ps.setDate(index++, JdbcUtil.getDate(rd.getRestructureDate()));
@@ -331,6 +243,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 			ps.setString(index++, rd.getRecordType());
 			ps.setLong(index++, rd.getWorkflowId());
 			ps.setString(index++, rd.getRestructureReason());
+
 			ps.setLong(index++, rd.getId());
 		});
 
@@ -341,20 +254,43 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 
 	@Override
 	public void delete(long id, String tableType) {
-		StringBuilder sql = new StringBuilder("Delete From");
-		sql.append(" Restructure_Details");
+		StringBuilder sql = new StringBuilder("Delete From Restructure_Details");
 		sql.append(tableType);
-		sql.append(" where Id = ?");
+		sql.append(" Where Id = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcOperations.update(sql.toString(), new Object[] { id });
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, id);
+		});
 	}
 
 	@Override
-	public RestructureDetail getRestructureDetailByFinReference(String finReference, String type) {
+	public RestructureDetail getRestructureDetailByFinReference(long finID, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where Id = ");
+		sql.append("(Select max(Id) From Restructure_Details");
+		sql.append(type);
+		sql.append(" Where FinID = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		RestructureDetailRowMapper rowMapper = new RestructureDetailRowMapper();
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	private StringBuilder sqlSelectQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append("  Id, FinReference, RestructureType, RestructureDate, EmiHldPeriod, PriHldPeriod");
+		sql.append(" Id, FinID, FinReference, RestructureType, RestructureDate, EmiHldPeriod, PriHldPeriod");
 		sql.append(", EmiPeriods, TenorChange, EmiRecal, TotNoOfRestructure, RecalculationType, ServiceRequestNo");
 		sql.append(", Remark, OldBucket, NewBucket, OldEmiOs, NewEmiOs, OldBalTenure, NewBalTenure");
 		sql.append(", OldMaturity, NewMaturity, LastBilledDate, LastBilledInstNo, ActLoanAmount, OldTenure");
@@ -367,96 +303,95 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 		sql.append(", RepayProfitRate, GrcMaxAmount, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(", RstTypeCode, RstTypeDesc");
-		sql.append(" FROM  Restructure_Details");
+		sql.append(" From Restructure_Details");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where Id = ");
-		sql.append("(SELECT MAX(id) FROM Restructure_Details" + type + " Where FinReference = ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		return sql;
+	}
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference },
-					new RowMapper<RestructureDetail>() {
-						@Override
-						public RestructureDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-							RestructureDetail rd = new RestructureDetail();
-							rd.setId(rs.getLong("Id"));
-							rd.setFinReference(rs.getString("FinReference"));
-							rd.setRestructureType(rs.getString("RestructureType"));
-							rd.setRestructureDate(rs.getTimestamp("RestructureDate"));
-							rd.setEmiHldPeriod(rs.getInt("EmiHldPeriod"));
-							rd.setPriHldPeriod(rs.getInt("PriHldPeriod"));
-							rd.setEmiPeriods(rs.getInt("EmiPeriods"));
-							rd.setTenorChange(rs.getBoolean("TenorChange"));
-							rd.setEmiRecal(rs.getBoolean("EmiRecal"));
-							rd.setTotNoOfRestructure(rs.getInt("TotNoOfRestructure"));
-							rd.setRecalculationType(rs.getString("RecalculationType"));
-							rd.setServiceRequestNo(rs.getString("ServiceRequestNo"));
-							rd.setRemark(rs.getString("Remark"));
-							rd.setOldBucket(rs.getInt("OldBucket"));
-							rd.setNewBucket(rs.getInt("NewBucket"));
-							rd.setOldEmiOs(rs.getBigDecimal("OldEmiOs"));
-							rd.setNewEmiOs(rs.getBigDecimal("NewEmiOs"));
-							rd.setOldBalTenure(rs.getInt("OldBalTenure"));
-							rd.setNewBalTenure(rs.getInt("NewBalTenure"));
-							rd.setOldMaturity(rs.getTimestamp("OldMaturity"));
-							rd.setNewMaturity(rs.getTimestamp("NewMaturity"));
-							rd.setLastBilledDate(rs.getTimestamp("LastBilledDate"));
-							rd.setLastBilledInstNo(rs.getInt("LastBilledInstNo"));
-							rd.setActLoanAmount(rs.getBigDecimal("ActLoanAmount"));
-							rd.setOldTenure(rs.getInt("OldTenure"));
-							rd.setNewTenure(rs.getInt("NewTenure"));
-							rd.setOldInterest(rs.getBigDecimal("OldInterest"));
-							rd.setNewInterest(rs.getBigDecimal("NewInterest"));
-							rd.setOldMaxUnplannedEmi(rs.getInt("OldMaxUnplannedEmi"));
-							rd.setNewMaxUnplannedEmi(rs.getInt("NewMaxUnplannedEmi"));
-							rd.setOldAvailedUnplanEmi(rs.getInt("OldAvailedUnplanEmi"));
-							rd.setNewAvailedUnplanEmi(rs.getInt("NewAvailedUnplanEmi"));
-							rd.setOldFinalEmi(rs.getBigDecimal("OldFinalEmi"));
-							rd.setNewFinalEmi(rs.getBigDecimal("NewFinalEmi"));
-							rd.setRestructureReason(rs.getString("RestructureReason"));
-							rd.setOldDpd(rs.getInt("OldDpd"));
-							rd.setNewDpd(rs.getInt("NewDpd"));
-							rd.setOldCpzInterest(rs.getBigDecimal("OldCpzInterest"));
-							rd.setNewCpzInterest(rs.getBigDecimal("NewCpzInterest"));
-							rd.setEmiHldStartDate(rs.getTimestamp("EmiHldStartDate"));
-							rd.setEmiHldEndDate(rs.getTimestamp("EmiHldEndDate"));
-							rd.setPriHldStartDate(rs.getTimestamp("PriHldStartDate"));
-							rd.setPriHldEndDate(rs.getTimestamp("PriHldEndDate"));
-							rd.setAppDate(rs.getTimestamp("AppDate"));
-							rd.setOldPOsAmount(rs.getBigDecimal("OldPOsAmount"));
-							rd.setNewPOsAmount(rs.getBigDecimal("NewPOsAmount"));
-							rd.setOldEmiOverdue(rs.getBigDecimal("OldEmiOverdue"));
-							rd.setNewEmiOverdue(rs.getBigDecimal("NewEmiOverdue"));
-							rd.setBounceCharge(rs.getBigDecimal("BounceCharge"));
-							rd.setOldPenaltyAmount(rs.getBigDecimal("OldPenaltyAmount"));
-							rd.setNewPenaltyAmount(rs.getBigDecimal("NewPenaltyAmount"));
-							rd.setOtherCharge(rs.getBigDecimal("OtherCharge"));
-							rd.setRestructureCharge(rs.getBigDecimal("RestructureCharge"));
-							rd.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-							rd.setOldExtOdDays(rs.getInt("OldExtOdDays"));
-							rd.setNewExtOdDays(rs.getInt("NewExtOdDays"));
-							rd.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
-							rd.setGrcMaxAmount(rs.getBigDecimal("GrcMaxAmount"));
-							rd.setVersion(rs.getInt("Version"));
-							rd.setLastMntBy(rs.getLong("LastMntBy"));
-							rd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							rd.setRecordStatus(rs.getString("RecordStatus"));
-							rd.setRoleCode(rs.getString("RoleCode"));
-							rd.setNextRoleCode(rs.getString("NextRoleCode"));
-							rd.setTaskId(rs.getString("TaskId"));
-							rd.setNextTaskId(rs.getString("NextTaskId"));
-							rd.setRecordType(rs.getString("RecordType"));
-							rd.setWorkflowId(rs.getLong("WorkflowId"));
-							rd.setRstTypeCode(rs.getString("RstTypeCode"));
-							rd.setRstTypeDesc(rs.getString("RstTypeDesc"));
-
-							return rd;
-						}
-					});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in Restructure_Details for the specified reference >> {}", finReference);
+	private class RestructureDetailRowMapper implements RowMapper<RestructureDetail> {
+		private RestructureDetailRowMapper() {
+			super();
 		}
-		return null;
+
+		@Override
+		public RestructureDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			RestructureDetail rd = new RestructureDetail();
+
+			rd.setId(rs.getLong("Id"));
+			rd.setId(rs.getLong("FinID"));
+			rd.setFinReference(rs.getString("FinReference"));
+			rd.setRestructureType(rs.getString("RestructureType"));
+			rd.setRestructureDate(rs.getTimestamp("RestructureDate"));
+			rd.setEmiHldPeriod(rs.getInt("EmiHldPeriod"));
+			rd.setPriHldPeriod(rs.getInt("PriHldPeriod"));
+			rd.setEmiPeriods(rs.getInt("EmiPeriods"));
+			rd.setTenorChange(rs.getBoolean("TenorChange"));
+			rd.setEmiRecal(rs.getBoolean("EmiRecal"));
+			rd.setTotNoOfRestructure(rs.getInt("TotNoOfRestructure"));
+			rd.setRecalculationType(rs.getString("RecalculationType"));
+			rd.setServiceRequestNo(rs.getString("ServiceRequestNo"));
+			rd.setRemark(rs.getString("Remark"));
+			rd.setOldBucket(rs.getInt("OldBucket"));
+			rd.setNewBucket(rs.getInt("NewBucket"));
+			rd.setOldEmiOs(rs.getBigDecimal("OldEmiOs"));
+			rd.setNewEmiOs(rs.getBigDecimal("NewEmiOs"));
+			rd.setOldBalTenure(rs.getInt("OldBalTenure"));
+			rd.setNewBalTenure(rs.getInt("NewBalTenure"));
+			rd.setOldMaturity(rs.getTimestamp("OldMaturity"));
+			rd.setNewMaturity(rs.getTimestamp("NewMaturity"));
+			rd.setLastBilledDate(rs.getTimestamp("LastBilledDate"));
+			rd.setLastBilledInstNo(rs.getInt("LastBilledInstNo"));
+			rd.setActLoanAmount(rs.getBigDecimal("ActLoanAmount"));
+			rd.setOldTenure(rs.getInt("OldTenure"));
+			rd.setNewTenure(rs.getInt("NewTenure"));
+			rd.setOldInterest(rs.getBigDecimal("OldInterest"));
+			rd.setNewInterest(rs.getBigDecimal("NewInterest"));
+			rd.setOldMaxUnplannedEmi(rs.getInt("OldMaxUnplannedEmi"));
+			rd.setNewMaxUnplannedEmi(rs.getInt("NewMaxUnplannedEmi"));
+			rd.setOldAvailedUnplanEmi(rs.getInt("OldAvailedUnplanEmi"));
+			rd.setNewAvailedUnplanEmi(rs.getInt("NewAvailedUnplanEmi"));
+			rd.setOldFinalEmi(rs.getBigDecimal("OldFinalEmi"));
+			rd.setNewFinalEmi(rs.getBigDecimal("NewFinalEmi"));
+			rd.setRestructureReason(rs.getString("RestructureReason"));
+			rd.setOldDpd(rs.getInt("OldDpd"));
+			rd.setNewDpd(rs.getInt("NewDpd"));
+			rd.setOldCpzInterest(rs.getBigDecimal("OldCpzInterest"));
+			rd.setNewCpzInterest(rs.getBigDecimal("NewCpzInterest"));
+			rd.setEmiHldStartDate(rs.getTimestamp("EmiHldStartDate"));
+			rd.setEmiHldEndDate(rs.getTimestamp("EmiHldEndDate"));
+			rd.setPriHldStartDate(rs.getTimestamp("PriHldStartDate"));
+			rd.setPriHldEndDate(rs.getTimestamp("PriHldEndDate"));
+			rd.setAppDate(rs.getTimestamp("AppDate"));
+			rd.setOldPOsAmount(rs.getBigDecimal("OldPOsAmount"));
+			rd.setNewPOsAmount(rs.getBigDecimal("NewPOsAmount"));
+			rd.setOldEmiOverdue(rs.getBigDecimal("OldEmiOverdue"));
+			rd.setNewEmiOverdue(rs.getBigDecimal("NewEmiOverdue"));
+			rd.setBounceCharge(rs.getBigDecimal("BounceCharge"));
+			rd.setOldPenaltyAmount(rs.getBigDecimal("OldPenaltyAmount"));
+			rd.setNewPenaltyAmount(rs.getBigDecimal("NewPenaltyAmount"));
+			rd.setOtherCharge(rs.getBigDecimal("OtherCharge"));
+			rd.setRestructureCharge(rs.getBigDecimal("RestructureCharge"));
+			rd.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			rd.setOldExtOdDays(rs.getInt("OldExtOdDays"));
+			rd.setNewExtOdDays(rs.getInt("NewExtOdDays"));
+			rd.setRepayProfitRate(rs.getBigDecimal("RepayProfitRate"));
+			rd.setGrcMaxAmount(rs.getBigDecimal("GrcMaxAmount"));
+			rd.setVersion(rs.getInt("Version"));
+			rd.setLastMntBy(rs.getLong("LastMntBy"));
+			rd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			rd.setRecordStatus(rs.getString("RecordStatus"));
+			rd.setRoleCode(rs.getString("RoleCode"));
+			rd.setNextRoleCode(rs.getString("NextRoleCode"));
+			rd.setTaskId(rs.getString("TaskId"));
+			rd.setNextTaskId(rs.getString("NextTaskId"));
+			rd.setRecordType(rs.getString("RecordType"));
+			rd.setWorkflowId(rs.getLong("WorkflowId"));
+			rd.setRstTypeCode(rs.getString("RstTypeCode"));
+			rd.setRstTypeDesc(rs.getString("RstTypeDesc"));
+
+			return rd;
+
+		}
 	}
 }

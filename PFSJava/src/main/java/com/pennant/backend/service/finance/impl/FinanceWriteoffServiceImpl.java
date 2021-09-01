@@ -202,7 +202,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				financeWriteoff.setUnPaidSchdPft(detail.getPftAccrued());
 			}
 
-			Provision provision = provisionDAO.getProvisionById(finReference, TableType.MAIN_TAB, false);
+			Provision provision = provisionDAO.getProvisionByFinId(finReference, TableType.MAIN_TAB, false);
 			if (provision != null) {
 				financeWriteoff.setProvisionedAmount(provision.getProvisionedAmt());
 			}

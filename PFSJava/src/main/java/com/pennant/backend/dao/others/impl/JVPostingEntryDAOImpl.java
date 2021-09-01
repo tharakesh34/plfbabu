@@ -1,60 +1,43 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  JVPostingEntryDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-06-2013    														*
- *                                                                  						*
- * Modified Date    :  21-06-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : JVPostingEntryDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2013 * *
+ * Modified Date : 21-06-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-06-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-06-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.others.impl;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
@@ -66,6 +49,9 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 /**
  * DAO methods implementation for the <b>JVPostingEntry model</b> class.<br>
@@ -78,712 +64,671 @@ public class JVPostingEntryDAOImpl extends BasicDao<JVPostingEntry> implements J
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new JVPostingEntry
-	 * 
-	 * @return JVPostingEntry
-	 */
-
-	/**
-	 * This method get the module from method getJVPostingEntry() and set the new record flag as true and return
-	 * JVPostingEntry()
-	 * 
-	 * @return JVPostingEntry
-	 */
-
 	@Override
 	public JVPostingEntry getNewJVPostingEntry() {
-		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("JVPostingEntry");
-		JVPostingEntry jVPostingEntry = new JVPostingEntry();
-		if (workFlowDetails != null) {
-			jVPostingEntry.setWorkflowId(workFlowDetails.getWorkFlowId());
+		WorkFlowDetails wfd = WorkFlowUtil.getWorkFlowDetails("JVPostingEntry");
+		JVPostingEntry jvpe = new JVPostingEntry();
+
+		if (wfd != null) {
+			jvpe.setWorkflowId(wfd.getWorkFlowId());
 		}
-		jVPostingEntry.setNewRecord(true);
-		logger.debug("Leaving");
-		return jVPostingEntry;
+
+		jvpe.setNewRecord(true);
+
+		return jvpe;
 	}
 
-	/**
-	 * Fetch the Record JV Posting Entry details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return JVPostingEntry
-	 */
 	@Override
 	public JVPostingEntry getJVPostingEntryById(final long id, long txnReference, long acEntryRef, String type) {
-		logger.debug("Entering");
-		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
-		jVPostingEntry.setId(id);
-		jVPostingEntry.setTxnReference(txnReference);
-		jVPostingEntry.setAcEntryRef(acEntryRef);
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select  FileName,BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		selectSql.append(
-				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",TxnDesc");
-		}
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		JVPostingEntryRowMapper rowMapper = new JVPostingEntryRowMapper(type);
 
 		try {
-			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, id, txnReference, acEntryRef);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jVPostingEntry = null;
+			//
 		}
-		logger.debug("Leaving");
-		return jVPostingEntry;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record JV Posting Entry details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return JVPostingEntry
-	 */
 	@Override
 	public List<JVPostingEntry> getJVPostingEntryListById(final long id, String type) {
-		logger.debug("Entering");
-		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
-		jVPostingEntry.setId(id);
-		StringBuilder selectSql = new StringBuilder(
-				"Select  FileName, BatchReference,AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus , PostingStatus, ExternalAccount,LinkedTranId");
-		selectSql.append(
-				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",TxnDesc,derivedTxnRef");
-		}
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND ExternalAccount=1 order by TxnReference");
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where BatchReference = ? and ExternalAccount = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		JVPostingEntryRowMapper rowMapper = new JVPostingEntryRowMapper(type);
+
+		List<JVPostingEntry> jvpList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, id);
+			ps.setInt(index++, 1);
+		}, rowMapper);
+
+		return jvpList.stream().sorted((j1, j2) -> Long.compare(j1.getTxnReference(), j2.getTxnReference()))
+				.collect(Collectors.toList());
 	}
 
-	/**
-	 * Fetch the Record JV Posting Entry details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return JVPostingEntry
-	 */
 	@Override
 	public List<JVPostingEntry> getFailureJVPostingEntryListById(final long id, String type) {
-		logger.debug("Entering");
-		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
-		jVPostingEntry.setId(id);
-		jVPostingEntry.setPostingStatus(PennantConstants.POSTSTS_SUCCESS);
-		StringBuilder selectSql = new StringBuilder(
-				"Select  FileName, BatchReference,AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus , PostingStatus, ExternalAccount, LinkedTranId");
-		selectSql.append(
-				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",TxnDesc");
-		}
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND PostingStatus !=:PostingStatus ");
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where BatchReference = ? and PostingStatus ! = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		JVPostingEntryRowMapper rowMapper = new JVPostingEntryRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, id);
+			ps.setString(index++, PennantConstants.POSTSTS_SUCCESS);
+		}, rowMapper);
 	}
 
-	/**
-	 * This method Deletes the Record from the JVPostingEntry or JVPostingEntry_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete JV Posting Entry by key BatchReference
-	 * 
-	 * @param JV
-	 *            Posting Entry (jVPostingEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(JVPostingEntry jVPostingEntry, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(JVPostingEntry jve, String type) {
+		StringBuilder sql = new StringBuilder("Delete From JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From JVPostingEntry");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(
-				" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, jve.getBatchReference());
+				ps.setLong(index++, jve.getTxnReference());
+				ps.setLong(index++, jve.getAcEntryRef());
+			});
+
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into JVPostingEntry or JVPostingEntry_Temp.
-	 * 
-	 * save JV Posting Entry
-	 * 
-	 * @param JV
-	 *            Posting Entry (jVPostingEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public long save(JVPostingEntry jVPostingEntry, String type) {
-		logger.debug("Entering");
+	public long save(JVPostingEntry jve, String type) {
+		if (jve.getTxnReference() == 0) {
+			JVPostingEntry jvpe = getNewJVPostingEntry();
+			jvpe.setDaySeqDate(
+					DateUtility.getDBDate(DateUtil.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat)));
+			jvpe.setDaySeqNo(0);
+			jve.setTxnReference(getMaxSeqNumForCurrentDay(jvpe) + 1);
 
-		if (jVPostingEntry.getTxnReference() == 0) {
-			// Getting max Sequence Number Form Entry Sequence Table for Current Day and Current Batch File
-			JVPostingEntry aJVPostingEntry = getNewJVPostingEntry();
-			aJVPostingEntry.setDaySeqDate(
-					DateUtility.getDBDate(DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat)));
-			aJVPostingEntry.setDaySeqNo(0);
-			jVPostingEntry.setTxnReference(getMaxSeqNumForCurrentDay(aJVPostingEntry) + 1);
+			jvpe.setDaySeqNo((int) jve.getTxnReference());
+			upDateSeqNoForCurrentDayBatch(jvpe);
 
-			// Updating Latest Sequence No in Entry table for Current Day and Current Batch File 
-			aJVPostingEntry.setDaySeqNo((int) jVPostingEntry.getTxnReference());
-			upDateSeqNoForCurrentDayBatch(aJVPostingEntry);
-			if (!jVPostingEntry.getTxnEntry().equals(AccountConstants.TRANTYPE_CREDIT)) {
-				jVPostingEntry.setDerivedTxnRef(jVPostingEntry.getTxnReference() - 1);
+			if (!AccountConstants.TRANTYPE_CREDIT.equals(jve.getTxnEntry())) {
+				jve.setDerivedTxnRef(jve.getTxnReference() - 1);
 			}
 		}
-		StringBuilder insertSql = new StringBuilder("Insert Into JVPostingEntry");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (FileName, BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		insertSql.append(
-				",Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DerivedTxnRef)");
-		insertSql.append(
-				" Values(:FileName, :BatchReference, :AcEntryRef, :HostSeqNo, :Account, :AcType, :AccountName, :TxnCCy, :TxnEntry, :AccCCy, :TxnCode, :PostingDate, :ValueDate, :TxnAmount, :TxnReference, :NarrLine1, :NarrLine2, :NarrLine3, :NarrLine4, :ExchRate_Batch, :ExchRate_Ac, :TxnAmount_Batch, :TxnAmount_Ac, :ModifiedFlag, :DeletedFlag, :ValidationStatus, :PostingStatus, :ExternalAccount, :LinkedTranId");
-		insertSql.append(
-				",:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId ,:DerivedTxnRef)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		StringBuilder sql = new StringBuilder("Insert Into JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FileName, BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy");
+		sql.append(", TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1");
+		sql.append(", NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac");
+		sql.append(", ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, DerivedTxnRef)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return jVPostingEntry.getId();
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, jve.getFileName());
+			ps.setLong(index++, jve.getBatchReference());
+			ps.setLong(index++, jve.getAcEntryRef());
+			ps.setString(index++, jve.getHostSeqNo());
+			ps.setString(index++, jve.getAccount());
+			ps.setString(index++, jve.getAcType());
+			ps.setString(index++, jve.getAccountName());
+			ps.setString(index++, jve.getTxnCCy());
+			ps.setString(index++, jve.getTxnEntry());
+			ps.setString(index++, jve.getAccCCy());
+			ps.setString(index++, jve.getTxnCode());
+			ps.setDate(index++, JdbcUtil.getDate(jve.getPostingDate()));
+			ps.setDate(index++, JdbcUtil.getDate(jve.getValueDate()));
+			ps.setBigDecimal(index++, jve.getTxnAmount());
+			ps.setLong(index++, jve.getTxnReference());
+			ps.setString(index++, jve.getNarrLine1());
+			ps.setString(index++, jve.getNarrLine2());
+			ps.setString(index++, jve.getNarrLine3());
+			ps.setString(index++, jve.getNarrLine4());
+			ps.setBigDecimal(index++, jve.getExchRate_Batch());
+			ps.setBigDecimal(index++, jve.getExchRate_Ac());
+			ps.setBigDecimal(index++, jve.getTxnAmount_Batch());
+			ps.setBigDecimal(index++, jve.getTxnAmount_Ac());
+			ps.setString(index++, jve.getModifiedFlag());
+			ps.setBoolean(index++, jve.isDeletedFlag());
+			ps.setString(index++, jve.getValidationStatus());
+			ps.setString(index++, jve.getPostingStatus());
+			ps.setBoolean(index++, jve.isExternalAccount());
+			ps.setLong(index++, jve.getLinkedTranId());
+			ps.setInt(index++, jve.getVersion());
+			ps.setLong(index++, jve.getLastMntBy());
+			ps.setTimestamp(index++, jve.getLastMntOn());
+			ps.setString(index++, jve.getRecordStatus());
+			ps.setString(index++, jve.getRoleCode());
+			ps.setString(index++, jve.getNextRoleCode());
+			ps.setString(index++, jve.getTaskId());
+			ps.setString(index++, jve.getNextTaskId());
+			ps.setString(index++, jve.getRecordType());
+			ps.setLong(index++, jve.getWorkflowId());
+			ps.setLong(index++, jve.getDerivedTxnRef());
+		});
+
+		return jve.getId();
 	}
-
-	/**
-	 * This method insert new Records into JVPostingEntry or JVPostingEntry_Temp.
-	 * 
-	 * save JV Posting Entry
-	 * 
-	 * @param JV
-	 *            Posting Entry (jVPostingEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 
 	@Override
-	public void saveJVPostingEntryList(List<JVPostingEntry> aJVPostingEntryList, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder("Insert Into JVPostingEntry");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (FileName, BatchReference, AcEntryRef, AcType, HostSeqNo, Account, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
-		insertSql.append(
-				",Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				" Values(:FileName, :BatchReference, :AcEntryRef, :AcType, :HostSeqNo, :Account,:AccountName, :TxnCCy, :TxnEntry, :AccCCy, :TxnCode, :PostingDate, :ValueDate, :TxnAmount, :TxnReference, :NarrLine1, :NarrLine2, :NarrLine3, :NarrLine4, :ExchRate_Batch, :ExchRate_Ac, :TxnAmount_Batch, :TxnAmount_Ac, :ModifiedFlag, :DeletedFlag, :ValidationStatus, :PostingStatus, :ExternalAccount,:LinkedTranId");
-		insertSql.append(
-				",:Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+	public void update(JVPostingEntry jve, String type) {
+		StringBuilder sql = new StringBuilder("Update JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FileName = ?, HostSeqNo = ?, Account = ?, AcType = ?, AccountName = ?");
+		sql.append(", TxnCCy = ?, AccCCy = ?, TxnCode = ?, TxnEntry = ?, PostingDate = ?, ValueDate = ?");
+		sql.append(", TxnAmount = ?, NarrLine1 = ?, NarrLine2 = ?, NarrLine3 = ?, NarrLine4 = ?, ExchRate_Batch = ?");
+		sql.append(", ExchRate_Ac = ?, TxnAmount_Batch = ?, TxnAmount_Ac = ?, ModifiedFlag = ?, DeletedFlag = ?");
+		sql.append(", ValidationStatus = ?, PostingStatus = ?, ExternalAccount = ?, LinkedTranId = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(aJVPostingEntryList.toArray());
-		int[] cont = this.jdbcTemplate.batchUpdate(insertSql.toString(), beanParameters);
-		logger.debug("Leaving Updated Count ==" + cont.length);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, jve.getFileName());
+			ps.setString(index++, jve.getHostSeqNo());
+			ps.setString(index++, jve.getAccount());
+			ps.setString(index++, jve.getAcType());
+			ps.setString(index++, jve.getAccountName());
+			ps.setString(index++, jve.getTxnCCy());
+			ps.setString(index++, jve.getAccCCy());
+			ps.setString(index++, jve.getTxnCode());
+			ps.setString(index++, jve.getTxnEntry());
+			ps.setDate(index++, JdbcUtil.getDate(jve.getPostingDate()));
+			ps.setDate(index++, JdbcUtil.getDate(jve.getValueDate()));
+			ps.setBigDecimal(index++, jve.getTxnAmount());
+			ps.setString(index++, jve.getNarrLine1());
+			ps.setString(index++, jve.getNarrLine2());
+			ps.setString(index++, jve.getNarrLine3());
+			ps.setString(index++, jve.getNarrLine4());
+			ps.setBigDecimal(index++, jve.getExchRate_Batch());
+			ps.setBigDecimal(index++, jve.getExchRate_Ac());
+			ps.setBigDecimal(index++, jve.getTxnAmount_Batch());
+			ps.setBigDecimal(index++, jve.getTxnAmount_Ac());
+			ps.setString(index++, jve.getModifiedFlag());
+			ps.setBoolean(index++, jve.isDeletedFlag());
+			ps.setString(index++, jve.getValidationStatus());
+			ps.setString(index++, jve.getPostingStatus());
+			ps.setBoolean(index++, jve.isExternalAccount());
+			ps.setLong(index++, jve.getLinkedTranId());
+			ps.setInt(index++, jve.getVersion());
+			ps.setLong(index++, jve.getLastMntBy());
+			ps.setTimestamp(index++, jve.getLastMntOn());
+			ps.setString(index++, jve.getRecordStatus());
+			ps.setString(index++, jve.getRoleCode());
+			ps.setString(index++, jve.getNextRoleCode());
+			ps.setString(index++, jve.getTaskId());
+			ps.setString(index++, jve.getNextTaskId());
+			ps.setString(index++, jve.getRecordType());
+			ps.setLong(index++, jve.getWorkflowId());
+
+			ps.setLong(index++, jve.getBatchReference());
+			ps.setLong(index++, jve.getTxnReference());
+			ps.setLong(index++, jve.getAcEntryRef());
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
 	}
 
-	public long getNextTxnReference(JVPostingEntry jVPostingEntry, String type) {
-		logger.debug("Entering");
-		long nextTxnReference = 0;
-		StringBuilder selectSql = new StringBuilder("select COALESCE(MAX(TxnReference),0) TxnReference  ");
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
+	@Override
+	public void updateDeleteFlag(JVPostingEntry jve, String type) {
+		StringBuilder sql = new StringBuilder("Update JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set DeletedFlag = ?");
+		sql.append(" Where BatchReference = ? and TxnReference = ?  and AcEntryRef = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setBoolean(index++, jve.isDeletedFlag());
+
+			ps.setLong(index++, jve.getBatchReference());
+			ps.setLong(index++, jve.getTxnReference());
+			ps.setLong(index++, jve.getAcEntryRef());
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void updateDeletedDetails(JVPostingEntry jve, String type) {
+		StringBuilder sql = new StringBuilder("Update JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FileName = ?, HostSeqNo = ?, Account = ?,  AcType = ?, AccountName = ?, TxnCCy = ?");
+		sql.append(", AccCCy = ?, TxnCode = ?, TxnEntry = ?, PostingDate = ?, ValueDate = ?, TxnAmount = ?");
+		sql.append(", NarrLine1 = ?, NarrLine2 = ?, NarrLine3 = ?, NarrLine4 = ?, ExchRate_Batch = ?, ExchRate_Ac = ?");
+		sql.append(", TxnAmount_Batch = ?, TxnAmount_Ac = ?, ModifiedFlag = ?, DeletedFlag = ?, ValidationStatus = ?");
+		sql.append(", PostingStatus = ?, ExternalAccount = ?, LinkedTranId = ?");
+		sql.append(", LastMntBy = ?, LastMntOn = ?, WorkflowId = ?");
+		sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, jve.getFileName());
+			ps.setString(index++, jve.getHostSeqNo());
+			ps.setString(index++, jve.getAccount());
+			ps.setString(index++, jve.getAcType());
+			ps.setString(index++, jve.getAccountName());
+			ps.setString(index++, jve.getTxnCCy());
+			ps.setString(index++, jve.getAccCCy());
+			ps.setString(index++, jve.getTxnCode());
+			ps.setString(index++, jve.getTxnEntry());
+			ps.setDate(index++, JdbcUtil.getDate(jve.getPostingDate()));
+			ps.setDate(index++, JdbcUtil.getDate(jve.getValueDate()));
+			ps.setBigDecimal(index++, jve.getTxnAmount());
+			ps.setString(index++, jve.getNarrLine1());
+			ps.setString(index++, jve.getNarrLine2());
+			ps.setString(index++, jve.getNarrLine3());
+			ps.setString(index++, jve.getNarrLine4());
+			ps.setBigDecimal(index++, jve.getExchRate_Batch());
+			ps.setBigDecimal(index++, jve.getExchRate_Ac());
+			ps.setBigDecimal(index++, jve.getTxnAmount_Batch());
+			ps.setBigDecimal(index++, jve.getTxnAmount_Ac());
+			ps.setString(index++, jve.getModifiedFlag());
+			ps.setBoolean(index++, jve.isDeletedFlag());
+			ps.setString(index++, jve.getValidationStatus());
+			ps.setString(index++, jve.getPostingStatus());
+			ps.setBoolean(index++, jve.isExternalAccount());
+			ps.setLong(index++, jve.getLinkedTranId());
+			ps.setLong(index++, jve.getLastMntBy());
+			ps.setTimestamp(index++, jve.getLastMntOn());
+			ps.setLong(index++, jve.getWorkflowId());
+
+			ps.setLong(index++, jve.getBatchReference());
+			ps.setLong(index++, jve.getTxnReference());
+			ps.setLong(index++, jve.getAcEntryRef());
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+
+	}
+
+	@Override
+	public void updateWorkFlowDetails(JVPostingEntry jve, String type) {
+		StringBuilder sql = new StringBuilder("Update JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set LastMntBy = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, WorkflowId = ?, RecordStatus = ?");
+		sql.append(" Where BatchReference = ? and Account = ? and DeletedFlag = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, jve.getLastMntBy());
+			ps.setString(index++, jve.getRoleCode());
+			ps.setString(index++, jve.getNextRoleCode());
+			ps.setString(index++, jve.getTaskId());
+			ps.setString(index++, jve.getNextTaskId());
+			ps.setLong(index++, jve.getWorkflowId());
+			ps.setString(index++, jve.getRecordStatus());
+
+			ps.setLong(index++, jve.getBatchReference());
+			ps.setString(index++, jve.getAccount());
+			ps.setInt(index++, 0);
+
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void deleteByID(JVPostingEntry jve, String tableType) {
+		StringBuilder sql = new StringBuilder("Delete From JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			nextTxnReference = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Long.class);
-			nextTxnReference = nextTxnReference + 1;
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			nextTxnReference = 0;
-			nextTxnReference = nextTxnReference + 1;
-		}
-		jVPostingEntry = null;
-		logger.debug("Leaving NextTxnReference = " + nextTxnReference);
-		return nextTxnReference;
-	}
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-	/**
-	 * This method updates the Record JVPostingEntry or JVPostingEntry_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update JV Posting Entry by key BatchReference and Version
-	 * 
-	 * @param JV
-	 *            Posting Entry (jVPostingEntry)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
-	@Override
-	public void update(JVPostingEntry jVPostingEntry, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account, AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId");
-		updateSql.append(
-				", Version=:Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(
-				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference  AND AcEntryRef = :AcEntryRef");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateDeleteFlag(JVPostingEntry jVPostingEntry, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set DeletedFlag = :DeletedFlag ");
-		updateSql.append(
-				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference  AND AcEntryRef = :AcEntryRef ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateDeletedDetails(JVPostingEntry jVPostingEntry, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set FileName=:FileName, HostSeqNo = :HostSeqNo, Account = :Account,  AcType = :AcType, AccountName = :AccountName, TxnCCy = :TxnCCy, AccCCy=:AccCCy, TxnCode = :TxnCode, TxnEntry = :TxnEntry, PostingDate = :PostingDate, ValueDate = :ValueDate, TxnAmount = :TxnAmount, NarrLine1 = :NarrLine1, NarrLine2 = :NarrLine2, NarrLine3 = :NarrLine3, NarrLine4 = :NarrLine4, ExchRate_Batch = :ExchRate_Batch, ExchRate_Ac = :ExchRate_Ac, TxnAmount_Batch = :TxnAmount_Batch, TxnAmount_Ac = :TxnAmount_Ac, ModifiedFlag = :ModifiedFlag, DeletedFlag = :DeletedFlag, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, ExternalAccount=:ExternalAccount, LinkedTranId=:LinkedTranId ");
-		updateSql.append(", LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, WorkflowId = :WorkflowId");
-		updateSql.append(
-				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateValidationStatus(JVPostingEntry jVPostingEntry, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set  AcType=:AcType, AccCCy=:AccCCy, AccountName=:AccountName, ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus, LinkedTranId=:LinkedTranId");
-		updateSql.append(" Where BatchReference =:BatchReference AND Account = :Account ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateListValidationStatus(List<JVPostingEntry> aJVPostingEntryList, String type,
-			boolean isAccountWise) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set  AcType=:AcType, AccCCy=:AccCCy, AccountName=:AccountName,ValidationStatus = :ValidationStatus, PostingStatus = :PostingStatus,LinkedTranId=:LinkedTranId");
-		if (isAccountWise) {
-			updateSql.append(" Where BatchReference =:BatchReference AND Account = :Account ");
-		} else {
-			updateSql.append(" Where BatchReference =:BatchReference ");
-		}
-
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(aJVPostingEntryList.toArray());
-		int[] cont = this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Leaving Updated Count ==" + cont.length);
-	}
-
-	@Override
-	public void updateWorkFlowDetails(JVPostingEntry jVPostingEntry, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
-		updateSql.append(" Where BatchReference =:BatchReference AND Account = :Account AND DeletedFlag = 0");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updateDelteEntryDetails(JVPostingEntry jVPostingEntry, String type) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(
-				" Set LastMntBy = :LastMntBy, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, WorkflowId = :WorkflowId, RecordStatus= :RecordStatus");
-		updateSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 1");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void updatePostingStatus(JVPostingEntry jVPostingEntry, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set  PostingStatus = :PostingStatus");
-		updateSql.append(
-				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef ");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public void deleteByID(JVPostingEntry jVPostingEntry, String tableType) {
-		logger.debug("Entering");
-		JVPostingEntry aJVPostingEntry = new JVPostingEntry();
-		aJVPostingEntry.setBatchReference(jVPostingEntry.getBatchReference());
-		aJVPostingEntry.setTxnReference(jVPostingEntry.getTxnReference());
-		StringBuilder deleteSql = new StringBuilder("Delete From JVPostingEntry");
-		deleteSql.append(StringUtils.trimToEmpty(tableType));
-		deleteSql.append(
-				" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef = :AcEntryRef ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+				ps.setLong(index++, jve.getBatchReference());
+				ps.setLong(index++, jve.getTxnReference());
+				ps.setLong(index++, jve.getAcEntryRef());
+			});
 
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
-
 	}
 
 	@Override
 	public JVPostingEntry getJVPostingEntryById(long batchRef, long txnReference, String account, String txnEntry,
 			BigDecimal txnAmount, String type) {
-		logger.debug("Entering");
-		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
-		jVPostingEntry.setBatchReference(batchRef);
-		jVPostingEntry.setTxnReference(txnReference);
-		jVPostingEntry.setTxnEntry(txnEntry);
-		jVPostingEntry.setAccount(account);
-		jVPostingEntry.setTxnAmount(txnAmount);
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FileName, BatchReference, AcEntryRef, HostSeqNo, Account,  AcType, AccountName, TxnCCy");
+		sql.append(", TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1");
+		sql.append(", NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac");
+		sql.append(", ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select FileName, BatchReference, AcEntryRef, HostSeqNo, Account,  AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount,LinkedTranId ");
-		selectSql.append(
-				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",TxnCCyName,TxnCCyEditField,TxnDesc,AccCCyName,AccCCyEditField,AcCcyNumber,TxnCcyNumber");
+			sql.append(", TxnCCyName, TxnCCyEditField, TxnDesc, AccCCyName");
+			sql.append(", AccCCyEditField, AcCcyNumber, TxnCcyNumber");
 		}
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(
-				" Where BatchReference =:BatchReference and TxnReference = :TxnReference AND TxnEntry = :TxnEntry AND Account = :Account AND TxnAmount = :TxnAmount ");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
+		sql.append(" From JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BatchReference = ? and TxnReference = ? and TxnEntry = ? and Account = ? and TxnAmount = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				JVPostingEntry jve = new JVPostingEntry();
+
+				jve.setFileName(rs.getString("FileName"));
+				jve.setBatchReference(rs.getLong("BatchReference"));
+				jve.setAcEntryRef(rs.getLong("AcEntryRef"));
+				jve.setHostSeqNo(rs.getString("HostSeqNo"));
+				jve.setAccount(rs.getString("Account"));
+				jve.setAcType(rs.getString("AcType"));
+				jve.setAccountName(rs.getString("AccountName"));
+				jve.setTxnCCy(rs.getString("TxnCCy"));
+				jve.setTxnEntry(rs.getString("TxnEntry"));
+				jve.setAccCCy(rs.getString("AccCCy"));
+				jve.setTxnCode(rs.getString("TxnCode"));
+				jve.setPostingDate(rs.getTimestamp("PostingDate"));
+				jve.setValueDate(rs.getTimestamp("ValueDate"));
+				jve.setTxnAmount(rs.getBigDecimal("TxnAmount"));
+				jve.setTxnReference(rs.getLong("TxnReference"));
+				jve.setNarrLine1(rs.getString("NarrLine1"));
+				jve.setNarrLine2(rs.getString("NarrLine2"));
+				jve.setNarrLine3(rs.getString("NarrLine3"));
+				jve.setNarrLine4(rs.getString("NarrLine4"));
+				jve.setExchRate_Batch(rs.getBigDecimal("ExchRate_Batch"));
+				jve.setExchRate_Ac(rs.getBigDecimal("ExchRate_Ac"));
+				jve.setTxnAmount_Batch(rs.getBigDecimal("TxnAmount_Batch"));
+				jve.setTxnAmount_Ac(rs.getBigDecimal("TxnAmount_Ac"));
+				jve.setModifiedFlag(rs.getString("ModifiedFlag"));
+				jve.setDeletedFlag(rs.getBoolean("DeletedFlag"));
+				jve.setValidationStatus(rs.getString("ValidationStatus"));
+				jve.setPostingStatus(rs.getString("PostingStatus"));
+				jve.setExternalAccount(rs.getBoolean("ExternalAccount"));
+				jve.setLinkedTranId(rs.getLong("LinkedTranId"));
+				jve.setLastMntBy(rs.getLong("LastMntBy"));
+				jve.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				jve.setRecordStatus(rs.getString("RecordStatus"));
+				jve.setRoleCode(rs.getString("RoleCode"));
+				jve.setNextRoleCode(rs.getString("NextRoleCode"));
+				jve.setTaskId(rs.getString("TaskId"));
+				jve.setNextTaskId(rs.getString("NextTaskId"));
+				jve.setRecordType(rs.getString("RecordType"));
+				jve.setWorkflowId(rs.getLong("WorkflowId"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					// jve.setTxnCCyName(rs.getString("TxnCCyName"));
+					// jve.setTxnCCyEditField(rs.getString("TxnCCyEditField"));
+					jve.setTxnDesc(rs.getString("TxnDesc"));
+					// jve.setAccCCyName(rs.getString("AccCCyName"));
+					// jve.setAccCCyEditField(rs.getString("AccCCyEditField"));
+					// jve.setAcCcyNumber(rs.getString("AcCcyNumber"));
+					// jve.setTxnCcyNumber(rs.getLong("TxnCcyNumber"));
+				}
+
+				return jve;
+
+			}, batchRef, txnReference, txnEntry, account, txnAmount);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jVPostingEntry = null;
+			//
 		}
-		logger.debug("Leaving");
-		return jVPostingEntry;
-	}
 
-	@Override
-	public List<JVPostingEntry> getDistinctJVPostingEntryListById(JVPostingEntry jVPostingEntry, String type) {
-		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder("select DISTINCT Account, AcType, ExternalAccount,AccCcy ");
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
-
-		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public List<JVPostingEntry> getDistinctJVPostingEntryValidationStatusById(JVPostingEntry jVPostingEntry,
-			String type) {
-		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder("select distinct ValidationStatus");
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
-
-		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	@Override
-	public List<JVPostingEntry> getDistinctJVPostingEntryPostingStatusById(JVPostingEntry jVPostingEntry, String type) {
-		logger.debug("Entering");
-		StringBuilder selectSql = new StringBuilder("select distinct PostingStatus");
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 0 ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
-
-		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return null;
 	}
 
 	@Override
 	public List<JVPostingEntry> getDeletedJVPostingEntryListById(long batchRef, String type) {
-		logger.debug("Entering");
-		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
-		jVPostingEntry.setBatchReference(batchRef);
-		StringBuilder selectSql = new StringBuilder(
-				"Select FileName, BatchReference, HostSeqNo, Account,  AcType, AccountName, TxnCCy, TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1, NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac, ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus , ExternalAccount, LinkedTranId");
-		selectSql.append(
-				", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(",TxnDesc");
-		}
-		selectSql.append(" From JVPostingEntry");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BatchReference =:BatchReference AND DeletedFlag = 1 ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
-		logger.debug("Leaving ");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where BatchReference = ? and DeletedFlag = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		JVPostingEntryRowMapper rowMapper = new JVPostingEntryRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, batchRef);
+			ps.setInt(index++, 1);
+		}, rowMapper);
 	}
 
 	@Override
 	public void updateListPostingStatus(List<JVPostingEntry> aJVPostingEntryList, String type, boolean isTxnRefWise) {
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update JVPostingEntry");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set  PostingStatus = :PostingStatus");
+		StringBuilder sql = new StringBuilder("Update JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set PostingStatus = ?");
+
 		if (isTxnRefWise) {
-			updateSql.append(
-					" Where BatchReference =:BatchReference AND TxnReference = :TxnReference AND AcEntryRef=:AcEntryRef ");
+			sql.append(" Where BatchReference = ? and TxnReference = ? and AcEntryRef = ?");
 		} else {
-			updateSql.append(" Where BatchReference =:BatchReference ");
+			sql.append(" Where BatchReference = ?");
 		}
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource[] beanParameters = SqlParameterSourceUtils.createBatch(aJVPostingEntryList.toArray());
-		this.jdbcTemplate.batchUpdate(updateSql.toString(), beanParameters);
-		logger.debug("Entering");
-	}
 
-	@Override
-	public int getMaxSeqNumForCurrentDay(JVPostingEntry jVPostingEntry) {
-		logger.debug("Entering");
-		int count = 0;
-		StringBuilder selectSql = new StringBuilder(
-				"Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			count = 0;
-		}
-		if (count == 0) {
-			selectSql = new StringBuilder("Insert into SeqJVPostingEntry (SeqDate, SeqNo)");
-			selectSql.append(" Values (:DaySeqDate, :DaySeqNo)");
-			logger.debug("inserttSql: " + selectSql.toString());
-			SqlParameterSource beanParameters1 = new BeanPropertySqlParameterSource(jVPostingEntry);
-			this.jdbcTemplate.update(selectSql.toString(), beanParameters1);
+		logger.debug(Literal.SQL + sql.toString());
 
-			selectSql = new StringBuilder(
-					"Select COALESCE(MAX(SeqNo),0) DaySeqNo From SeqJVPostingEntry Where SeqDate = :DaySeqDate");
-			logger.debug("selectSql: " + selectSql.toString());
-			SqlParameterSource beanParameters2 = new BeanPropertySqlParameterSource(jVPostingEntry);
-			try {
-				count = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters2, Integer.class);
-			} catch (EmptyResultDataAccessException e) {
-				logger.warn("Exception: ", e);
-				count = 0;
+		jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				JVPostingEntry jve = aJVPostingEntryList.get(i);
+				int index = 1;
+
+				ps.setString(index++, jve.getPostingStatus());
+
+				if (isTxnRefWise) {
+					ps.setLong(index++, jve.getBatchReference());
+					ps.setLong(index++, jve.getTxnReference());
+					ps.setLong(index++, jve.getAcEntryRef());
+				} else {
+					ps.setLong(index++, jve.getBatchReference());
+				}
 			}
-		}
 
-		logger.debug("Leaving");
-		return count;
+			@Override
+			public int getBatchSize() {
+				return aJVPostingEntryList.size();
+			}
+		});
 	}
 
 	@Override
-	public void upDateSeqNoForCurrentDayBatch(JVPostingEntry jVPostingEntry) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update SeqJVPostingEntry");
-		updateSql.append(" Set  SeqNo = :DaySeqNo");
-		updateSql.append(" Where SeqDate = :DaySeqDate");
-		logger.debug("updateSql: " + updateSql.toString());
+	public int getMaxSeqNumForCurrentDay(JVPostingEntry jve) {
+		int count = getJVPostingCount(jve);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		if (count != 0) {
+			return count;
+		}
+
+		String sql = "Insert into SeqJVPostingEntry (SeqDate, SeqNo) Values (?, ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setDate(index++, JdbcUtil.getDate(jve.getDaySeqDate()));
+			ps.setInt(index++, jve.getDaySeqNo());
+		});
+
+		return getJVPostingCount(jve);
+	}
+
+	private int getJVPostingCount(JVPostingEntry jve) {
+		String sql = "Select Coalesce(max(SeqNo), 0) DaySeqNo From SeqJVPostingEntry Where SeqDate = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Integer.class, jve.getDaySeqDate());
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void upDateSeqNoForCurrentDayBatch(JVPostingEntry jve) {
+		String sql = "Update SeqJVPostingEntry Set SeqNo = ? Where SeqDate = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		int recordCount = this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setInt(index++, jve.getDaySeqNo());
+			ps.setDate(index++, JdbcUtil.getDate(jve.getDaySeqDate()));
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
 	@Override
 	public void deleteIAEntries(long batchReference) {
-		logger.debug("Entering");
-		JVPostingEntry aJVPostingEntry = new JVPostingEntry();
-		aJVPostingEntry.setBatchReference(batchReference);
-		StringBuilder deleteSql = new StringBuilder("Delete From JVPostingEntry_Temp");
-		deleteSql.append(" Where BatchReference =:BatchReference AND ExternalAccount = 0 ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(aJVPostingEntry);
+		String sql = "Delete From JVPostingEntry_Temp Where BatchReference = ? and ExternalAccount = ?";
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			this.jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setLong(index++, batchReference);
+				ps.setInt(index++, 0);
+			});
 
 		} catch (DataAccessException e) {
-			logger.error("Exception: ", e);
+			//
 		}
-		logger.debug("Leaving");
 	}
 
-	@Override
-	public JVPostingEntry getJVPostingEntrybyDerivedTxnRef(long derivedTxnRef, long batchReference) {
+	private StringBuilder sqlSelectQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FileName, BatchReference, AcEntryRef, HostSeqNo, Account, AcType, AccountName, TxnCCy");
+		sql.append(", TxnEntry, AccCCy, TxnCode, PostingDate, ValueDate, TxnAmount, TxnReference, NarrLine1");
+		sql.append(", NarrLine2, NarrLine3, NarrLine4, ExchRate_Batch, ExchRate_Ac, TxnAmount_Batch, TxnAmount_Ac");
+		sql.append(", ModifiedFlag, DeletedFlag, ValidationStatus, PostingStatus, ExternalAccount, LinkedTranId");
+		sql.append(", LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
+		sql.append(", NextTaskId, RecordType, WorkflowId");
 
-		logger.debug("Entering");
-		JVPostingEntry jVPostingEntry = getNewJVPostingEntry();
-		jVPostingEntry.setDerivedTxnRef(derivedTxnRef);
-		jVPostingEntry.setBatchReference(batchReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				"select T1.Account,T1.TxnCode,T2.TranDesc as DebitTxnDesc from JVPostingEntry_view T1,BMTTransactionCode T2 ");
-		selectSql.append(
-				" where T1.TxnCode=T2.TranCode and T1.DerivedTxnRef =:DerivedTxnRef and T1.BatchReference =:BatchReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(jVPostingEntry);
-		RowMapper<JVPostingEntry> typeRowMapper = BeanPropertyRowMapper.newInstance(JVPostingEntry.class);
-
-		try {
-			jVPostingEntry = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			jVPostingEntry = null;
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", TxnDesc, DerivedTxnRef");
 		}
-		logger.debug("Leaving");
-		return jVPostingEntry;
 
+		sql.append(" From JVPostingEntry");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class JVPostingEntryRowMapper implements RowMapper<JVPostingEntry> {
+		private String type;
+
+		private JVPostingEntryRowMapper(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public JVPostingEntry mapRow(ResultSet rs, int rowNum) throws SQLException {
+			JVPostingEntry jve = new JVPostingEntry();
+
+			jve.setFileName(rs.getString("FileName"));
+			jve.setBatchReference(rs.getLong("BatchReference"));
+			jve.setAcEntryRef(rs.getLong("AcEntryRef"));
+			jve.setHostSeqNo(rs.getString("HostSeqNo"));
+			jve.setAccount(rs.getString("Account"));
+			jve.setAcType(rs.getString("AcType"));
+			jve.setAccountName(rs.getString("AccountName"));
+			jve.setTxnCCy(rs.getString("TxnCCy"));
+			jve.setTxnEntry(rs.getString("TxnEntry"));
+			jve.setAccCCy(rs.getString("AccCCy"));
+			jve.setTxnCode(rs.getString("TxnCode"));
+			jve.setPostingDate(rs.getTimestamp("PostingDate"));
+			jve.setValueDate(rs.getTimestamp("ValueDate"));
+			jve.setTxnAmount(rs.getBigDecimal("TxnAmount"));
+			jve.setTxnReference(rs.getLong("TxnReference"));
+			jve.setNarrLine1(rs.getString("NarrLine1"));
+			jve.setNarrLine2(rs.getString("NarrLine2"));
+			jve.setNarrLine3(rs.getString("NarrLine3"));
+			jve.setNarrLine4(rs.getString("NarrLine4"));
+			jve.setExchRate_Batch(rs.getBigDecimal("ExchRate_Batch"));
+			jve.setExchRate_Ac(rs.getBigDecimal("ExchRate_Ac"));
+			jve.setTxnAmount_Batch(rs.getBigDecimal("TxnAmount_Batch"));
+			jve.setTxnAmount_Ac(rs.getBigDecimal("TxnAmount_Ac"));
+			jve.setModifiedFlag(rs.getString("ModifiedFlag"));
+			jve.setDeletedFlag(rs.getBoolean("DeletedFlag"));
+			jve.setValidationStatus(rs.getString("ValidationStatus"));
+			jve.setPostingStatus(rs.getString("PostingStatus"));
+			jve.setExternalAccount(rs.getBoolean("ExternalAccount"));
+			jve.setLinkedTranId(rs.getLong("LinkedTranId"));
+			jve.setLastMntBy(rs.getLong("LastMntBy"));
+			jve.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			jve.setRecordStatus(rs.getString("RecordStatus"));
+			jve.setRoleCode(rs.getString("RoleCode"));
+			jve.setNextRoleCode(rs.getString("NextRoleCode"));
+			jve.setTaskId(rs.getString("TaskId"));
+			jve.setNextTaskId(rs.getString("NextTaskId"));
+			jve.setRecordType(rs.getString("RecordType"));
+			jve.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				jve.setTxnDesc(rs.getString("TxnDesc"));
+				jve.setDerivedTxnRef(rs.getLong("DerivedTxnRef"));
+			}
+
+			return jve;
+
+		}
 	}
 
 }

@@ -13,6 +13,7 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -3793133053909214411L;
 
 	private long id;
+	private long finID;
 	private String finReference;
 	private Date restructureDate;
 	private Date appDate;
@@ -89,6 +90,14 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
