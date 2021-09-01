@@ -41,9 +41,9 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
  *
  */
 public class FinanceSuspHead extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -7731584953589841445L;
 
+	private long finID;
 	private String finReference;
 	private String finBranch;
 	private String finType;
@@ -82,9 +82,14 @@ public class FinanceSuspHead extends AbstractWorkflowEntity {
 		excludeFields.add("financeDetail");
 		return excludeFields;
 	}
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getId() {
 		return finReference;
