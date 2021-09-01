@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  HoldDisbursementServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  09-10-2018    														*
- *                                                                  						*
- * Modified Date    :  09-10-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : HoldDisbursementServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 09-10-2018 * *
+ * Modified Date : 09-10-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 09-10-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 09-10-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.util.List;
@@ -48,8 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
@@ -58,7 +40,6 @@ import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
-import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.HoldDisbursement;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.HoldDisbursementService;
@@ -80,60 +61,7 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 	private FinServiceInstrutionDAO finServiceInstructionDAO;
 	private FinanceDisbursementDAO financeDisbursementDAO;
 	private FinanceMainDAO financeMainDAO;
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the holdDisbursementDAO
-	 */
-	public HoldDisbursementDAO getHoldDisbursementDAO() {
-		return holdDisbursementDAO;
-	}
-
-	/**
-	 * @param holdDisbursementDAO
-	 *            the holdDisbursementDAO to set
-	 */
-	public void setHoldDisbursementDAO(HoldDisbursementDAO holdDisbursementDAO) {
-		this.holdDisbursementDAO = holdDisbursementDAO;
-	}
-
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
-	}
-
-	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
-		this.finServiceInstructionDAO = finServiceInstructionDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * HoldDisbursement/HoldDisbursement_Temp by using HoldDisbursementDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using HoldDisbursementDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtHoldDisbursement by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -144,36 +72,26 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 			return auditHeader;
 		}
 
-		HoldDisbursement holdDisbursement = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
+		HoldDisbursement hd = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (holdDisbursement.isWorkflow()) {
+		if (hd.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		if (holdDisbursement.isNewRecord()) {
-			holdDisbursementDAO.save(holdDisbursement, tableType);
+		if (hd.isNewRecord()) {
+			holdDisbursementDAO.save(hd, tableType);
 		} else {
-			holdDisbursementDAO.update(holdDisbursement, tableType);
+			holdDisbursementDAO.update(hd, tableType);
 		}
 		String rcdMaintainSts = FinServiceEvent.HOLDDISB;
-		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), rcdMaintainSts);
+		financeMainDAO.updateMaintainceStatus(hd.getFinID(), rcdMaintainSts);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * HoldDisbursement by using HoldDisbursementDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and AdtHoldDisbursement by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -184,58 +102,24 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 			return auditHeader;
 		}
 
-		HoldDisbursement holdDisbursement = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
-		getHoldDisbursementDAO().delete(holdDisbursement, TableType.MAIN_TAB);
+		HoldDisbursement hd = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
+		holdDisbursementDAO.delete(hd, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getHoldDisbursement fetch the details by using HoldDisbursementDAO's getHoldDisbursementById method.
-	 * 
-	 * @param entityCode
-	 *            entityCode of the HoldDisbursement.
-	 * @param finReference
-	 *            finReference of the HoldDisbursement.
-	 * @return HoldDisbursement
-	 */
 	@Override
-	public HoldDisbursement getHoldDisbursement(String finReference) {
-		return getHoldDisbursementDAO().getHoldDisbursement(finReference, "_View");
+	public HoldDisbursement getHoldDisbursement(long finID) {
+		return holdDisbursementDAO.getHoldDisbursement(finID, "_View");
 	}
 
-	/**
-	 * getApprovedHoldDisbursementById fetch the details by using HoldDisbursementDAO's getHoldDisbursementById method .
-	 * with parameter id and type as blank. it fetches the approved records from the HoldDisbursement.
-	 * 
-	 * @param entityCode
-	 *            entityCode of the HoldDisbursement.
-	 * @param finReference
-	 *            finReference of the HoldDisbursement. (String)
-	 * @return HoldDisbursement
-	 */
-	public HoldDisbursement getApprovedHoldDisbursement(String finReference) {
-		return getHoldDisbursementDAO().getHoldDisbursement(finReference, "_AView");
+	public HoldDisbursement getApprovedHoldDisbursement(long finID) {
+		return holdDisbursementDAO.getHoldDisbursement(finID, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getHoldDisbursementDAO().delete with
-	 * parameters holdDisbursement,"" b) NEW Add new record in to main table by using getHoldDisbursementDAO().save with
-	 * parameters holdDisbursement,"" c) EDIT Update record in the main table by using getHoldDisbursementDAO().update
-	 * with parameters holdDisbursement,"" 3) Delete the record from the workFlow table by using
-	 * getHoldDisbursementDAO().delete with parameters holdDisbursement,"_Temp" 4) Audit the record in to AuditHeader
-	 * and AdtHoldDisbursement by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
-	 * AuditHeader and AdtHoldDisbursement by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -248,69 +132,58 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 			return auditHeader;
 		}
 
-		HoldDisbursement holdDisbursement = new HoldDisbursement();
-		BeanUtils.copyProperties((HoldDisbursement) auditHeader.getAuditDetail().getModelData(), holdDisbursement);
+		HoldDisbursement hd = new HoldDisbursement();
+		BeanUtils.copyProperties((HoldDisbursement) auditHeader.getAuditDetail().getModelData(), hd);
 
-		getHoldDisbursementDAO().delete(holdDisbursement, TableType.TEMP_TAB);
+		holdDisbursementDAO.delete(hd, TableType.TEMP_TAB);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(holdDisbursement.getRecordType())) {
-			auditHeader.getAuditDetail()
-					.setBefImage(holdDisbursementDAO.getHoldDisbursement(holdDisbursement.getFinReference(), ""));
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(hd.getRecordType())) {
+			auditHeader.getAuditDetail().setBefImage(holdDisbursementDAO.getHoldDisbursement(hd.getFinID(), ""));
 		}
 
-		if (holdDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (hd.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getHoldDisbursementDAO().delete(holdDisbursement, TableType.MAIN_TAB);
+			holdDisbursementDAO.delete(hd, TableType.MAIN_TAB);
 		} else {
-			holdDisbursement.setRoleCode("");
-			holdDisbursement.setNextRoleCode("");
-			holdDisbursement.setTaskId("");
-			holdDisbursement.setNextTaskId("");
-			holdDisbursement.setWorkflowId(0);
+			hd.setRoleCode("");
+			hd.setNextRoleCode("");
+			hd.setTaskId("");
+			hd.setNextTaskId("");
+			hd.setWorkflowId(0);
 
-			if (holdDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (hd.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				holdDisbursement.setRecordType("");
-				getHoldDisbursementDAO().save(holdDisbursement, TableType.MAIN_TAB);
+				hd.setRecordType("");
+				holdDisbursementDAO.save(hd, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				holdDisbursement.setRecordType("");
-				getHoldDisbursementDAO().update(holdDisbursement, TableType.MAIN_TAB);
+				hd.setRecordType("");
+				holdDisbursementDAO.update(hd, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		// save FinInstruction to maintain records
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(holdDisbursement.getFinReference());
-		finServiceInstruction.setFromDate(DateUtility.getAppDate());
+		finServiceInstruction.setFinReference(hd.getFinReference());
+		finServiceInstruction.setFromDate(SysParamUtil.getAppDate());
 		finServiceInstruction.setFinEvent(FinServiceEvent.HOLDDISB);
-		finServiceInstruction.setAmount(holdDisbursement.getHoldLimitAmount());
-		getFinServiceInstructionDAO().save(finServiceInstruction, "");
-		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), "");
+		finServiceInstruction.setAmount(hd.getHoldLimitAmount());
+		finServiceInstructionDAO.save(finServiceInstruction, "");
+		financeMainDAO.updateMaintainceStatus(hd.getFinID(), "");
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(holdDisbursement);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeader.getAuditDetail().setModelData(hd);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getHoldDisbursementDAO().delete with parameters holdDisbursement,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtHoldDisbursement by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -321,11 +194,11 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 			return auditHeader;
 		}
 
-		HoldDisbursement holdDisbursement = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
+		HoldDisbursement hd = (HoldDisbursement) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		holdDisbursementDAO.delete(holdDisbursement, TableType.TEMP_TAB);
-		financeMainDAO.updateMaintainceStatus(holdDisbursement.getFinReference(), "");
+		holdDisbursementDAO.delete(hd, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(hd.getFinID(), "");
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -333,14 +206,6 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -353,42 +218,20 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getHoldDisbursementDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
-
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		HoldDisbursement holdDisbursement = (HoldDisbursement) auditDetail.getModelData();
+		HoldDisbursement hd = (HoldDisbursement) auditDetail.getModelData();
 
 		String[] parameters = new String[2];
-		parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + holdDisbursement.getFinReference();
+		parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + hd.getFinReference();
 
 		// Check the unique keys.
-		if (holdDisbursement.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(holdDisbursement.getRecordType())
-				&& getHoldDisbursementDAO().isDuplicateKey(holdDisbursement.getFinReference(),
-						holdDisbursement.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (hd.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(hd.getRecordType()) && holdDisbursementDAO
+				.isDuplicateKey(hd.getFinID(), hd.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
-		/*
-		 * String[] parameter = new String[2]; parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " +
-		 * holdDisbursement.getFinReference();
-		 * 
-		 * if (PennantApplicationUtil.unFormateAmount(holdDisbursement.getTotalLoanAmt(),
-		 * PennantConstants.defaultCCYDecPos).compareTo(BigDecimal.ZERO) == 0 ||
-		 * (holdDisbursement.getDisbursedAmount().compareTo(holdDisbursement.getTotalLoanAmt()) == 0) ||
-		 * (holdDisbursement.getTotalLoanAmt().compareTo(holdDisbursement.getDisbursedAmount()) == -1)) {
-		 * 
-		 * auditDetail.setErrorDetail(new ErrorDetail("HD99018", parameter)); }
-		 */
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
@@ -397,15 +240,31 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 	}
 
 	@Override
-	public boolean getFinanceDisbursementById(String id) {
-		FinanceDisbursement financeDisbursementById = getFinanceDisbursementDAO().getFinanceDisbursementById(id,
-				"_TEMP", false);
-
-		return (financeDisbursementById == null) ? true : false;
+	public boolean getFinanceDisbursementById(long finID) {
+		return financeDisbursementDAO.getFinanceDisbursementById(finID, "_TEMP", false) == null ? true : false;
 	}
 
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
+	@Override
+	public boolean isFinServiceInstructionExist(long finID, String type, String finEvent) {
+		boolean isExist = false;
+		List<FinServiceInstruction> finServiceInstructions = finServiceInstructionDAO.getFinServiceInstructions(finID,
+				type, finEvent);
+		if (finServiceInstructions.size() > 0) {
+			isExist = true;
+		}
+		return isExist;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setHoldDisbursementDAO(HoldDisbursementDAO holdDisbursementDAO) {
+		this.holdDisbursementDAO = holdDisbursementDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
 	}
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
@@ -414,17 +273,6 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Override
-	public boolean isFinServiceInstructionExist(String finReference, String type, String finEvent) {
-		boolean isExist = false;
-		List<FinServiceInstruction> finServiceInstructions = getFinServiceInstructionDAO()
-				.getFinServiceInstructions(finReference, type, finEvent);
-		if (finServiceInstructions.size() > 0) {
-			isExist = true;
-		}
-		return isExist;
 	}
 
 }

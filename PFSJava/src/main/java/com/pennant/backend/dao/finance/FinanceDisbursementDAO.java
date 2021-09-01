@@ -31,6 +31,8 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 
 public interface FinanceDisbursementDAO {
+	FinanceDisbursement getFinanceDisbursementById(long finID, String type, boolean isWIF);
+
 	void update(FinanceDisbursement financeDisbursement, String type, boolean isWIF);
 
 	void deleteByFinReference(long finID, String type, boolean isWIF, long logKey);

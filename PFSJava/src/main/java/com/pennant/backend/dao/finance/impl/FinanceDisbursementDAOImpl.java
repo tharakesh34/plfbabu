@@ -35,6 +35,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
@@ -59,6 +60,25 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 	public FinanceDisbursementDAOImpl() {
 		super();
+	}
+
+	@Override
+	public FinanceDisbursement getFinanceDisbursementById(long finID, String type, boolean isWIF) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = getSqlQuery(type, isWIF);
+		sql.append(" Where FinID = ?");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		FinanceDisbursementRowMapper rowMapper = new FinanceDisbursementRowMapper(isWIF);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
 	}
 
 	public void deleteByFinReference(long finID, String type, boolean isWIF, long logKey) {
