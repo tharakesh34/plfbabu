@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentHeaderServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentHeaderServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * *
+ * Modified Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.payment.impl;
@@ -49,8 +31,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -116,7 +96,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 	private AuditHeaderDAO auditHeaderDAO;
 	private PaymentHeaderDAO paymentHeaderDAO;
-
 	private PaymentDetailService paymentDetailService;
 	private PaymentInstructionService paymentInstructionService;
 	private transient PostingsPreparationUtil postingsPreparationUtil;
@@ -126,56 +105,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private CustomerAddresDAO customerAddresDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
-
-	//IMPS Splitting
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	private FinanceMainDAO financeMainDAO;
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public PaymentHeaderDAO getPaymentHeaderDAO() {
-		return paymentHeaderDAO;
-	}
-
-	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
-		this.paymentHeaderDAO = paymentHeaderDAO;
-	}
-
-	public void setPaymentDetailService(PaymentDetailService paymentDetailService) {
-		this.paymentDetailService = paymentDetailService;
-	}
-
-	public void setPaymentInstructionService(PaymentInstructionService paymentInstructionService) {
-		this.paymentInstructionService = paymentInstructionService;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table PaymentHeader/PaymentHeader_Temp
-	 * by using PaymentHeaderDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using PaymentHeaderDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtPaymentHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
 
@@ -186,42 +119,46 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			logger.info(Literal.LEAVING);
 			return auditHeader;
 		}
-		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
+
+		PaymentHeader ph = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
+
+		long finID = ph.getFinID();
+		String finReference = ph.getFinReference();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (paymentHeader.isWorkflow()) {
+		if (ph.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (paymentHeader.isNewRecord()) {
-			paymentHeader.setId(Long.parseLong(getPaymentHeaderDAO().save(paymentHeader, tableType)));
-			setPaymentHeaderId(paymentHeader);
-			auditHeader.getAuditDetail().setModelData(paymentHeader);
-			auditHeader.setAuditReference(String.valueOf(paymentHeader.getPaymentId()));
+		if (ph.isNewRecord()) {
+			ph.setId(Long.parseLong(paymentHeaderDAO.save(ph, tableType)));
+			setPaymentHeaderId(ph);
+			auditHeader.getAuditDetail().setModelData(ph);
+			auditHeader.setAuditReference(String.valueOf(ph.getPaymentId()));
 		} else {
-			getPaymentHeaderDAO().update(paymentHeader, tableType);
+			paymentHeaderDAO.update(ph, tableType);
 		}
 
 		// PaymentHeader
-		if (paymentHeader.getPaymentDetailList() != null && paymentHeader.getPaymentDetailList().size() > 0) {
-			List<AuditDetail> payAuditDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
-			payAuditDetails = this.paymentDetailService.processPaymentDetails(payAuditDetails, tableType, "", 0,
-					paymentHeader.getFinReference());
-			auditDetails.addAll(payAuditDetails);
+		List<PaymentDetail> pdList = ph.getPaymentDetailList();
+
+		if (pdList != null && pdList.size() > 0) {
+			List<AuditDetail> auditDetail = ph.getAuditDetailMap().get("PaymentDetails");
+			auditDetail = this.paymentDetailService.processPaymentDetails(auditDetail, tableType, "", 0, finReference);
+			auditDetails.addAll(auditDetail);
 		}
 
 		// PaymentInstructions
-		if (paymentHeader.getPaymentInstruction() != null) {
-			List<AuditDetail> paymentInstrAuditDetails = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
-			paymentInstrAuditDetails = this.paymentInstructionService
-					.processPaymentInstrDetails(paymentInstrAuditDetails, tableType, "");
-			auditDetails.addAll(paymentInstrAuditDetails);
+		if (ph.getPaymentInstruction() != null) {
+			List<AuditDetail> auditDetail = ph.getAuditDetailMap().get("PaymentInstructions");
+			auditDetail = this.paymentInstructionService.processPaymentInstrDetails(auditDetail, tableType, "");
+			auditDetails.addAll(auditDetail);
 		}
 		String rcdMaintainSts = FinServiceEvent.PAYMENTINST;
-		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), rcdMaintainSts);
+		financeMainDAO.updateMaintainceStatus(finID, rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -238,16 +175,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * PaymentHeader by using PaymentHeaderDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtPaymentHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -258,40 +185,31 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			return auditHeader;
 		}
 
-		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
-		getPaymentHeaderDAO().delete(paymentHeader, TableType.MAIN_TAB);
+		PaymentHeader ph = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
+		paymentHeaderDAO.delete(ph, TableType.MAIN_TAB);
 		auditHeader.setAuditDetails(
-				processChildsAudit(deleteChilds(paymentHeader, TableType.MAIN_TAB, auditHeader.getAuditTranType())));
+				processChildsAudit(deleteChilds(ph, TableType.MAIN_TAB, auditHeader.getAuditTranType())));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getPaymentHeader fetch the details by using PaymentHeaderDAO's getPaymentHeaderById method.
-	 * 
-	 * @param paymentId
-	 *            paymentId of the PaymentHeader.
-	 * @return PaymentHeader
-	 */
 	@Override
 	public PaymentHeader getPaymentHeader(long paymentId) {
-		PaymentHeader paymentHeader = getPaymentHeaderDAO().getPaymentHeader(paymentId, "_View");
+		PaymentHeader paymentHeader = paymentHeaderDAO.getPaymentHeader(paymentId, "_View");
 		List<PaymentDetail> list = this.paymentDetailService.getPaymentDetailList(paymentHeader.getPaymentId(),
 				"_View");
 
 		if (list != null) {
 			paymentHeader.setPaymentDetailList(list);
-			for (PaymentDetail paymentDetail : list) {
-				if (paymentDetail.getTaxHeaderId() != null) {
-					paymentDetail.setTaxHeader(
-							taxHeaderDetailsDAO.getTaxHeaderDetailsById(paymentDetail.getTaxHeaderId(), "_View"));
+			for (PaymentDetail pd : list) {
+				if (pd.getTaxHeaderId() != null) {
+					pd.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(pd.getTaxHeaderId(), "_View"));
 				}
-				if (paymentDetail.getTaxHeader() != null) {
-					paymentDetail.getTaxHeader().setTaxDetails(
-							taxHeaderDetailsDAO.getTaxDetailById(paymentDetail.getTaxHeaderId(), "_View"));
+				if (pd.getTaxHeader() != null) {
+					pd.getTaxHeader().setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(pd.getTaxHeaderId(), "_View"));
 				}
 			}
 		}
@@ -304,53 +222,30 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return paymentHeader;
 	}
 
-	/**
-	 * getApprovedPaymentHeaderById fetch the details by using PaymentHeaderDAO's getPaymentHeaderById method . with
-	 * parameter id and type as blank. it fetches the approved records from the PaymentHeader.
-	 * 
-	 * @param paymentId
-	 *            paymentId of the PaymentHeader. (String)
-	 * @return PaymentHeader
-	 */
 	public PaymentHeader getApprovedPaymentHeader(long paymentId) {
-		return getPaymentHeaderDAO().getPaymentHeader(paymentId, "_AView");
+		return paymentHeaderDAO.getPaymentHeader(paymentId, "_AView");
 	}
 
 	@Override
-	public FinanceMain getFinanceDetails(String finReference) {
-		return getPaymentHeaderDAO().getFinanceDetails(finReference);
+	public FinanceMain getFinanceDetails(long finID) {
+		return paymentHeaderDAO.getFinanceDetails(finID);
 	}
 
 	@Override
-	public List<FinExcessAmount> getfinExcessAmount(String finReference) {
-		return getPaymentHeaderDAO().getfinExcessAmount(finReference);
+	public List<FinExcessAmount> getfinExcessAmount(long finID) {
+		return paymentHeaderDAO.getfinExcessAmount(finID);
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdvise(String finReference) {
-		return getPaymentHeaderDAO().getManualAdvise(finReference);
+	public List<ManualAdvise> getManualAdvise(long finID) {
+		return paymentHeaderDAO.getManualAdvise(finID);
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseForEnquiry(String finReference) {
-		return getPaymentHeaderDAO().getManualAdviseForEnquiry(finReference);
+	public List<ManualAdvise> getManualAdviseForEnquiry(long finID) {
+		return paymentHeaderDAO.getManualAdviseForEnquiry(finID);
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getPaymentHeaderDAO().delete with
-	 * parameters paymentHeader,"" b) NEW Add new record in to main table by using getPaymentHeaderDAO().save with
-	 * parameters paymentHeader,"" c) EDIT Update record in the main table by using getPaymentHeaderDAO().update with
-	 * parameters paymentHeader,"" 3) Delete the record from the workFlow table by using getPaymentHeaderDAO().delete
-	 * with parameters paymentHeader,"_Temp" 4) Audit the record in to AuditHeader and AdtPaymentHeader by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPaymentHeader by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException {
 		logger.info(Literal.ENTERING);
@@ -382,7 +277,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(deleteChilds(paymentHeader, TableType.MAIN_TAB, tranType));
-			getPaymentHeaderDAO().delete(paymentHeader, TableType.MAIN_TAB);
+			paymentHeaderDAO.delete(paymentHeader, TableType.MAIN_TAB);
 		} else {
 			paymentHeader.setRoleCode("");
 			paymentHeader.setNextRoleCode("");
@@ -393,11 +288,11 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			if (paymentHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				paymentHeader.setRecordType("");
-				getPaymentHeaderDAO().save(paymentHeader, TableType.MAIN_TAB);
+				paymentHeaderDAO.save(paymentHeader, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				paymentHeader.setRecordType("");
-				getPaymentHeaderDAO().update(paymentHeader, TableType.MAIN_TAB);
+				paymentHeaderDAO.update(paymentHeader, TableType.MAIN_TAB);
 			}
 
 			// PaymentDetails
@@ -427,36 +322,29 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			String[] fields = PennantJavaUtil.getFieldDetails(new PaymentHeader(), paymentHeader.getExcludeFields());
 			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 					paymentHeader.getBefImage(), paymentHeader));
-			getAuditHeaderDAO().addAudit(auditHeader);
-			getPaymentHeaderDAO().delete(paymentHeader, TableType.TEMP_TAB);
+			auditHeaderDAO.addAudit(auditHeader);
+			paymentHeaderDAO.delete(paymentHeader, TableType.TEMP_TAB);
 		}
-		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), "");
+		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinID(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(paymentHeader);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * split the each transaction based on the Imps Maximum amount
-	 * 
-	 * @param paymentInstructions
-	 * @param instrumentwiseLimit
-	 * @return
-	 */
 	private List<AuditDetail> splitRequest(List<AuditDetail> paymentInstructions) {
 		logger.debug("Entering");
 
 		List<AuditDetail> finalPaymentsList = new ArrayList<AuditDetail>();
-		InstrumentwiseLimit instrumentwiseLimit = getInstrumentwiseLimitService()
+		InstrumentwiseLimit instrumentwiseLimit = instrumentwiseLimitService
 				.getInstrumentWiseModeLimit(DisbursementConstants.PAYMENT_TYPE_IMPS);
 
 		if (instrumentwiseLimit != null) {
@@ -522,16 +410,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return finalPaymentsList;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getPaymentHeaderDAO().delete with parameters paymentHeader,"_Temp" 3) Audit the record in
-	 * to AuditHeader and AdtPaymentHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -542,26 +420,18 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			return auditHeader;
 		}
 
-		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
+		PaymentHeader ph = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
-				processChildsAudit(deleteChilds(paymentHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
-		financeMainDAO.updateMaintainceStatus(paymentHeader.getFinReference(), "");
-		paymentHeaderDAO.delete(paymentHeader, TableType.TEMP_TAB);
+				processChildsAudit(deleteChilds(ph, TableType.TEMP_TAB, auditHeader.getAuditTranType())));
+		financeMainDAO.updateMaintainceStatus(ph.getFinID(), "");
+		paymentHeaderDAO.delete(ph, TableType.TEMP_TAB);
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -583,16 +453,6 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		return auditHeader;
 	}
-
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getPaymentHeaderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
@@ -663,12 +523,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		logger.debug("Entering");
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		PaymentHeader paymentHeader = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
+		PaymentHeader ph = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 
 		// PaymentDetails
-		if (paymentHeader.getAuditDetailMap().get("PaymentDetails") != null) {
-			auditDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
+		if (ph.getAuditDetailMap().get("PaymentDetails") != null) {
+			auditDetails = ph.getAuditDetailMap().get("PaymentDetails");
 			for (AuditDetail auditDetail : auditDetails) {
 				List<ErrorDetail> details = this.paymentDetailService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
@@ -678,9 +538,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 		}
 
-		//PaymentInstruction
-		if (paymentHeader.getAuditDetailMap().get("PaymentInstruction") != null) {
-			auditDetails = paymentHeader.getAuditDetailMap().get("PaymentInstructions");
+		// PaymentInstruction
+		if (ph.getAuditDetailMap().get("PaymentInstruction") != null) {
+			auditDetails = ph.getAuditDetailMap().get("PaymentInstructions");
 			for (AuditDetail auditDetail : auditDetails) {
 				List<ErrorDetail> details = this.paymentInstructionService.validation(auditDetail, usrLanguage, method)
 						.getErrorDetails();
@@ -693,20 +553,20 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		return errorDetails;
 	}
 
-	public List<AuditDetail> deleteChilds(PaymentHeader paymentHeader, TableType tableType, String auditTranType) {
+	public List<AuditDetail> deleteChilds(PaymentHeader ph, TableType tableType, String auditTranType) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		// PaymentDetails
-		if (paymentHeader.getPaymentDetailList() != null && !paymentHeader.getPaymentDetailList().isEmpty()) {
-			auditDetails.addAll(this.paymentDetailService.delete(paymentHeader.getPaymentDetailList(), tableType,
-					auditTranType, paymentHeader.getPaymentId()));
+		if (ph.getPaymentDetailList() != null && !ph.getPaymentDetailList().isEmpty()) {
+			auditDetails.addAll(this.paymentDetailService.delete(ph.getPaymentDetailList(), tableType, auditTranType,
+					ph.getPaymentId()));
 		}
 		// PaymentInstructions
-		if (paymentHeader.getPaymentInstruction() != null) {
-			auditDetails.addAll(this.paymentInstructionService.delete(paymentHeader.getPaymentInstruction(), tableType,
-					auditTranType, paymentHeader.getPaymentId()));
+		if (ph.getPaymentInstruction() != null) {
+			auditDetails.addAll(this.paymentInstructionService.delete(ph.getPaymentInstruction(), tableType,
+					auditTranType, ph.getPaymentId()));
 		}
 		logger.debug("Leaving");
 		return auditDetails;
@@ -747,7 +607,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader) {
+	public void executeAccountingProcess(AEEvent aeEvent, PaymentHeader ph) {
 		logger.debug(Literal.ENTERING);
 
 		aeEvent.setAccountingEvent(AccountingEvent.PAYMTINS);
@@ -757,12 +617,12 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			amountCodes = new AEAmountCodes();
 		}
 
-		FinanceMain financeMain = paymentHeaderDAO.getFinanceDetails(paymentHeader.getFinReference());
-		amountCodes.setFinType(financeMain.getFinType());
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCustID(financeMain.getCustID());
+		FinanceMain fm = paymentHeaderDAO.getFinanceDetails(ph.getFinID());
+		amountCodes.setFinType(fm.getFinType());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCustID(fm.getCustID());
 
-		PaymentInstruction paymentInstruction = paymentHeader.getPaymentInstruction();
+		PaymentInstruction paymentInstruction = ph.getPaymentInstruction();
 
 		if (paymentInstruction != null) {
 			amountCodes.setPartnerBankAc(paymentInstruction.getPartnerBankAc());
@@ -771,10 +631,10 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 
 		// GST parameters
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
 
-		aeEvent.setCcy(financeMain.getFinCcy());
-		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
@@ -785,7 +645,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
 
-		for (PaymentDetail paymentDetail : paymentHeader.getPaymentDetailList()) {
+		for (PaymentDetail paymentDetail : ph.getPaymentDetailList()) {
 
 			String amountType = paymentDetail.getAmountType();
 
@@ -798,7 +658,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				}
 				eventMapping.put(feeTypeCode + "_P", payableAmount.add(paymentDetail.getAmount()));
 
-				//GST Calculations
+				// GST Calculations
 				TaxHeader taxHeader = paymentDetail.getTaxHeader();
 				Taxes cgstTax = null;
 				Taxes sgstTax = null;
@@ -828,35 +688,35 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 						}
 					}
 
-					//CGST
+					// CGST
 					BigDecimal gstAmount = BigDecimal.ZERO;
 					if (eventMapping.containsKey(feeTypeCode + "_CGST_P")) {
 						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CGST_P");
 					}
 					eventMapping.put(feeTypeCode + "_CGST_P", gstAmount.add(cgstTax.getPaidTax()));
 
-					//SGST
+					// SGST
 					gstAmount = BigDecimal.ZERO;
 					if (eventMapping.containsKey(feeTypeCode + "_SGST_P")) {
 						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_SGST_P");
 					}
 					eventMapping.put(feeTypeCode + "_SGST_P", gstAmount.add(sgstTax.getPaidTax()));
 
-					//UGST
+					// UGST
 					gstAmount = BigDecimal.ZERO;
 					if (eventMapping.containsKey(feeTypeCode + "_UGST_P")) {
 						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_UGST_P");
 					}
 					eventMapping.put(feeTypeCode + "_UGST_P", gstAmount.add(ugstTax.getPaidTax()));
 
-					//IGST
+					// IGST
 					gstAmount = BigDecimal.ZERO;
 					if (eventMapping.containsKey(feeTypeCode + "_IGST_P")) {
 						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_IGST_P");
 					}
 					eventMapping.put(feeTypeCode + "_IGST_P", gstAmount.add(igstTax.getPaidTax()));
 
-					//CESS
+					// CESS
 					gstAmount = BigDecimal.ZERO;
 					if (eventMapping.containsKey(feeTypeCode + "_CESS_P")) {
 						gstAmount = (BigDecimal) eventMapping.get(feeTypeCode + "_CESS_P");
@@ -885,7 +745,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 			eventMapping.put("pi_excessAmount", excessAmount);
 			eventMapping.put("pi_emiInAdvance", emiInAdavance);
-			eventMapping.put("pi_paymentAmount", paymentHeader.getPaymentInstruction().getPaymentAmount());
+			eventMapping.put("pi_paymentAmount", ph.getPaymentInstruction().getPaymentAmount());
 			eventMapping.put("pi_advInst", advInst);
 			eventMapping.put("CASHCLT_P", cashCtrl);
 			eventMapping.put("DSF_P", dsf);
@@ -901,22 +761,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			}
 		}
 
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountingEvent.PAYMTINS, FinanceConstants.MODULEID_FINTYPE);
+		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.PAYMTINS,
+				FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.getAcSetIDList().add(accountsetId);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Execute posting Details on Core Banking Side
-	 * 
-	 * @param auditHeader
-	 * @param appDate
-	 * @return
-	 * @throws AccountNotFoundException
-	 */
 	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date appDate) throws InterfaceException {
 		logger.debug(Literal.ENTERING);
 
@@ -943,14 +795,14 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 			if (aeEvent.getLinkedTranId() > 0 && aeEvent.isPostingSucess() && !movements.isEmpty()) {
 				List<ManualAdviseMovements> waiverMovements = new ArrayList<>();
 
-				FinanceMain financeMain = getPaymentHeaderDAO().getFinanceDetails(paymentHeader.getFinReference());
+				FinanceMain fm = paymentHeaderDAO.getFinanceDetails(paymentHeader.getFinID());
 
-				FinanceDetail financeDetail = new FinanceDetail();
-				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+				FinanceDetail fd = new FinanceDetail();
+				fd.getFinScheduleData().setFinanceMain(fm);
 
 				InvoiceDetail invoiceDetail = new InvoiceDetail();
 				invoiceDetail.setLinkedTranId(aeEvent.getLinkedTranId());
-				invoiceDetail.setFinanceDetail(financeDetail);
+				invoiceDetail.setFinanceDetail(fd);
 				invoiceDetail.setInvoiceType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_CREDIT);
 				invoiceDetail.setWaiver(false);
 
@@ -979,7 +831,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private ManualAdviseMovements prepareAdviseRefund(PaymentDetail paymentDetail) {
 		logger.debug(Literal.ENTERING);
 
-		//GST Calculations
+		// GST Calculations
 		TaxHeader taxHeader = paymentDetail.getTaxHeader();
 		if (taxHeader == null || taxHeader.getTaxDetails().isEmpty()) {
 			logger.debug(Literal.LEAVING);
@@ -1039,7 +891,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public boolean getPaymentHeadersByFinReference(String finReference, String type) {
+	public boolean getPaymentHeadersByFinReference(long finID, String type) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -1050,68 +902,68 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public boolean isInstructionInProgress(String finReference) {
-		return this.paymentInstructionService.isInstructionInProgress(finReference);
+	public boolean isInstructionInProgress(long finID) {
+		return this.paymentInstructionService.isInstructionInProgress(finID);
 	}
 
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
+	public void setPaymentHeaderDAO(PaymentHeaderDAO paymentHeaderDAO) {
+		this.paymentHeaderDAO = paymentHeaderDAO;
 	}
 
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
+	public void setPaymentDetailService(PaymentDetailService paymentDetailService) {
+		this.paymentDetailService = paymentDetailService;
 	}
 
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	public void setPaymentInstructionService(PaymentInstructionService paymentInstructionService) {
+		this.paymentInstructionService = paymentInstructionService;
 	}
 
-	public CustomerAddresDAO getCustomerAddresDAO() {
-		return customerAddresDAO;
-	}
-
-	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
-		this.customerAddresDAO = customerAddresDAO;
-	}
-
-	public FinAdvancePaymentsService getFinAdvancePaymentsService() {
-		return finAdvancePaymentsService;
-	}
-
-	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
-		this.finAdvancePaymentsService = finAdvancePaymentsService;
-	}
-
-	public InstrumentwiseLimitService getInstrumentwiseLimitService() {
-		return instrumentwiseLimitService;
-	}
-
-	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
-		this.instrumentwiseLimitService = instrumentwiseLimitService;
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
 	}
 
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
+	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
+		this.finFeeDetailService = finFeeDetailService;
 	}
 
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
 		this.gstInvoiceTxnService = gstInvoiceTxnService;
 	}
 
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
+	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
+		this.instrumentwiseLimitService = instrumentwiseLimitService;
+	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
+
+	// ******************************************************//
+	// *********************** Setter ***********************//
+	// ******************************************************//
 
 }
