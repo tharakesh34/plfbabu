@@ -20,14 +20,13 @@ public interface ChequeHeaderService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	ChequeHeader getChequeHeaderByRef(String finReference);
+	ChequeHeader getChequeHeaderByRef(long finID);
 
-	FinanceDetail getFinanceDetailById(String finReference);
+	FinanceDetail getFinanceDetailById(long finID);
 
-	List<ErrorDetail> chequeValidation(FinanceDetail financeDetail, String methodName, String tableType);
+	List<ErrorDetail> chequeValidation(FinanceDetail fd, String methodName, String tableType);
 
-	List<ErrorDetail> chequeValidationForUpdate(FinanceDetail financeDetail, String methodUpdate, String tableType);
+	List<ErrorDetail> chequeValidationForUpdate(FinanceDetail fd, String methodUpdate, String tableType);
 
-	List<ErrorDetail> chequeValidationInMaintainence(FinanceDetail financeDetail, String methodUpdate,
-			String tableType);
+	List<ErrorDetail> chequeValidationInMaintainence(FinanceDetail fd, String methodUpdate, String tableType);
 }
