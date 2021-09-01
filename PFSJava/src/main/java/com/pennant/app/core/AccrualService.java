@@ -90,6 +90,7 @@ public class AccrualService extends ServiceHelper {
 
 	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
 		FinanceMain fm = finEODEvent.getFinanceMain();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		logger.info("Calculating Accruals for FinReference >>{} started...", finReference);
 
@@ -102,7 +103,7 @@ public class AccrualService extends ServiceHelper {
 		// Finance Profit Details
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		if (pfd.getFinReference() == null) {
-			pfd = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
+			pfd = financeProfitDetailDAO.getFinProfitDetailsById(finID);
 		}
 
 		pfd = calProfitDetails(fm, schedules, pfd, custEODEvent.getEodValueDate());
@@ -1038,7 +1039,7 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private void calGapInterest(FinanceMain fm, FinanceProfitDetail fpd, Date valueDate) {
-		List<IRRScheduleDetail> irrSDList = irrScheduleDetailDAO.getIRRScheduleDetailList(fm.getFinReference());
+		List<IRRScheduleDetail> irrSDList = irrScheduleDetailDAO.getIRRScheduleDetailList(fm.getFinID());
 
 		IRRScheduleDetail prvSchd = null;
 		IRRScheduleDetail curSchd = null;
@@ -1108,8 +1109,8 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private BigDecimal calculateSvnPftAmount(FinanceMain fm, Date accrualDate) {
-		String finReference = fm.getFinReference();
-		List<SubventionScheduleDetail> list = subventionDetailDAO.getSubventionScheduleDetails(finReference, 0, "");
+		long finID = fm.getFinID();
+		List<SubventionScheduleDetail> list = subventionDetailDAO.getSubventionScheduleDetails(finID, 0, "");
 
 		SubventionScheduleDetail svnPrvSchd = null;
 		SubventionScheduleDetail svnCurSchd = null;

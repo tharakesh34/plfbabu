@@ -181,11 +181,11 @@ public class SubventionService {
 		subventionDetailDAO.delete(subventionDetail, tableType);
 	}
 
-	public void savSubvnetion(FinScheduleData finDetail, String tableType) {
-		//SubventionScheduleDetails saving
-		if (CollectionUtils.isNotEmpty(finDetail.getDisbursementDetails())
+	public void savSubvnetion(FinScheduleData schdData, String tableType) {
+		// SubventionScheduleDetails saving
+		if (CollectionUtils.isNotEmpty(schdData.getDisbursementDetails())
 				&& (StringUtils.isBlank(tableType) || "_Temp".equalsIgnoreCase(tableType))) {
-			for (FinanceDisbursement financeDisbursement : finDetail.getDisbursementDetails()) {
+			for (FinanceDisbursement financeDisbursement : schdData.getDisbursementDetails()) {
 				if (CollectionUtils.isNotEmpty(financeDisbursement.getSubventionSchedules())) {
 
 					for (SubventionScheduleDetail scheduleDetail : financeDisbursement.getSubventionSchedules()) {
@@ -198,10 +198,10 @@ public class SubventionService {
 		}
 
 		// save SubVention Amount
-		if (StringUtils.isEmpty(tableType) && CollectionUtils.isNotEmpty(finDetail.getDisbursementDetails())) {
+		if (StringUtils.isEmpty(tableType) && CollectionUtils.isNotEmpty(schdData.getDisbursementDetails())) {
 
-			BigDecimal totalSubVentionAmt = getSubVentionTotalAmt(finDetail);
-			subventionDetailDAO.updateSubVebtionAmt(finDetail.getFinReference(), totalSubVentionAmt);
+			BigDecimal totalSubVentionAmt = getSubVentionTotalAmt(schdData);
+			subventionDetailDAO.updateSubVebtionAmt(schdData.getFinReference(), totalSubVentionAmt);
 		}
 	}
 
@@ -212,17 +212,17 @@ public class SubventionService {
 	}
 
 	public void setSubventionDetails(FinScheduleData scheduleData, String type) {
-		FinanceMain finMain = scheduleData.getFinanceMain();
+		FinanceMain fm = scheduleData.getFinanceMain();
 		// SubventionDetails
-		if (finMain.isAllowSubvention()) {
-			scheduleData.setSubventionDetail(subventionDetailDAO.getSubventionDetail(finMain.getFinReference(), type));
+		if (fm.isAllowSubvention()) {
+			scheduleData.setSubventionDetail(subventionDetailDAO.getSubventionDetail(fm.getFinID(), type));
 		} else {
 			scheduleData.setSubventionDetail(null);
 		}
 	}
 
 	public void setSubventionScheduleDetails(FinScheduleData scheduleData, String type) {
-		//		FinanceMain finMain = scheduleData.getFinanceMain();
+		// FinanceMain finMain = scheduleData.getFinanceMain();
 		List<FinanceDisbursement> disbDet = scheduleData.getDisbursementDetails();
 		setSubventionScheduleDetails(disbDet, type);
 
@@ -234,7 +234,7 @@ public class SubventionService {
 		if (CollectionUtils.isNotEmpty(disbDet)) {
 			for (FinanceDisbursement disb : disbDet) {
 				List<SubventionScheduleDetail> subvnSchs = subventionDetailDAO
-						.getSubventionScheduleDetails(disb.getFinReference(), disb.getDisbSeq(), type);
+						.getSubventionScheduleDetails(disb.getFinID(), disb.getDisbSeq(), type);
 				disb.setSubventionSchedules(subvnSchs);
 			}
 		}
@@ -258,7 +258,7 @@ public class SubventionService {
 		this.subventionDetailDAO = subventionDetailDAO;
 	}
 
-	public void deleteByFinReference(String finReference, String tableType) {
-		getSubventionDetailDAO().deleteByFinReference(finReference, tableType);
+	public void deleteByFinReference(long finID, String tableType) {
+		getSubventionDetailDAO().deleteByFinReference(finID, tableType);
 	}
 }

@@ -31,18 +31,6 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 	private PMAYDAO pmayDAO;
 	private FinanceMainDAO financeMainDAO;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table PMAY/PMAY_Temp by using
-	 * PmayDAO's save method b) Update the Record in the table. based on the module workFlow Configuration. by using
-	 * PmayDAO's update method 3) Audit the record in to AuditHeader and AdtPMAYp by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -61,12 +49,12 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		if (pmay.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
-		//updating the PMAY flag to true if loan fall into any one of the category
+		// updating the PMAY flag to true if loan fall into any one of the category
 		if (pmay != null && StringUtils.isNotBlank(pmay.getPmayCategory())) {
 			if (!"NA".equals(pmay.getPmayCategory())) {
 				flag = true;
 			}
-			financeMainDAO.updatePmay(pmay.getFinReference(), flag, TableType.MAIN_TAB.getSuffix());
+			financeMainDAO.updatePmay(pmay.getFinID(), flag, TableType.MAIN_TAB.getSuffix());
 		}
 
 		if (pmay.isNewRecord()) {
@@ -151,7 +139,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 				pmayDAO.update(pmayEligibilityLog, TableType.MAIN_TAB);
 			}
 		}
-		//deleting the records  from temp while approve
+		// deleting the records from temp while approve
 		pmayDAO.delete(pmay, TableType.TEMP_TAB);
 		logger.debug(Literal.LEAVING);
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], pmay.getBefImage(), pmay);
@@ -166,7 +154,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		pmayDAO.delete(pmay, tableType);
 		List<PmayEligibilityLog> pmayEligibilityLogList = pmay.getPmayEligibilityLogList();
 		for (PmayEligibilityLog pmayEligibilityLog : pmayEligibilityLogList) {
-			//assetBaseDAO.delete(assetBase, tableType.getSuffix());
+			// assetBaseDAO.delete(assetBase, tableType.getSuffix());
 		}
 		logger.debug(Literal.LEAVING);
 		return new AuditDetail(auditTranType, 1, fields[0], fields[1], pmay.getBefImage(), pmay);
@@ -190,50 +178,21 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		return auditHeader;
 	}
 
-	/**
-	 * getPmay fetch the details by using PmayDAO's getPMAY method.
-	 * 
-	 * @param finReference
-	 *            finReference of PMAY.
-	 * @return pmay
-	 */
 	@Override
-	public PMAY getPMAY(String finReference, String tableType) {
-		PMAY pmay = pmayDAO.getPMAY(finReference, tableType);
+	public PMAY getPMAY(long finID, String tableType) {
+		PMAY pmay = pmayDAO.getPMAY(finID, tableType);
 		if (pmay != null) {
-			List<PmayEligibilityLog> eligibilityLogList = pmayDAO.getEligibilityLogList(finReference, "");
+			List<PmayEligibilityLog> eligibilityLogList = pmayDAO.getEligibilityLogList(finID, "");
 			pmay.setPmayEligibilityLogList(eligibilityLogList);
 		}
 		return pmay;
 	}
 
-	/**
-	 * getApprovedPMAY fetch the details by using PmayDAO's getPMAY method . with parameter finReference and type as
-	 * blank. it fetches the approved records from the PMAY.
-	 * 
-	 * @param finReference
-	 *            finReference of the PMAY. (String)
-	 * @return pmay
-	 */
 	@Override
-	public PMAY getApprovedPMAY(String finReference) {
-		return pmayDAO.getPMAY(finReference, "_AView");
+	public PMAY getApprovedPMAY(long finID) {
+		return pmayDAO.getPMAY(finID, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using pmayDAO.delete with parameters pmay,""
-	 * b) NEW Add new record in to main table by using pmayDAO.save with parameters pmay,"" c) EDIT Update record in the
-	 * main table by using pmayDAO.update with parameters pmay,"" 3) Delete the record from the workFlow table by using
-	 * pmayDAO.delete with parameters pmay,"_Temp" 4) Audit the record in to AuditHeader and AdtPmayGroup by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPMAY by using
-	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -250,7 +209,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		BeanUtils.copyProperties((PMAY) auditHeader.getAuditDetail().getModelData(), pmay);
 
 		pmayDAO.delete(pmay, TableType.TEMP_TAB);
-		PMAY pmayFromLoan = pmayDAO.getPMAY(pmay.getFinReference(), "");
+		PMAY pmayFromLoan = pmayDAO.getPMAY(pmay.getFinID(), "");
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(pmay.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(pmayFromLoan);
 		}
@@ -308,17 +267,6 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using pmayDAO.delete with parameters pmay,"_Temp" 3) Audit the record in to AuditHeader and
-	 * AdtPMAY by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
-
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -340,14 +288,6 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -360,16 +300,6 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from pmayDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign the to
-	 * auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
-
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
@@ -380,7 +310,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		parameters[0] = PennantJavaUtil.getLabel("label_PmayDialog_FinReference.value") + ": " + pmay.getFinReference();
 		// Check the unique keys.
 		if (pmay.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(pmay.getRecordType()) && pmayDAO
-				.isDuplicateKey(pmay.getFinReference(), pmay.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				.isDuplicateKey(pmay.getFinID(), pmay.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
@@ -406,7 +336,7 @@ public class PMAYServiceImpl extends GenericService<PMAY> implements PMAYService
 		logger.debug(Literal.ENTERING);
 		pmayDAO.update(pmayEligibilityLog);
 		if (StringUtils.isNotEmpty(pmayEligibilityLog.getApplicantId())) {
-			String custCif = pmayDAO.getCustCif(pmayEligibilityLog.getFinReference());
+			String custCif = pmayDAO.getCustCif(pmayEligibilityLog.getFinID());
 			pmayDAO.update(custCif, pmayEligibilityLog.getApplicantId());
 		}
 

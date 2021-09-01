@@ -11,9 +11,9 @@ import com.pennanttech.pff.core.TableType;
 public interface PMAYService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	PMAY getPMAY(String finReference, String tableType);
+	PMAY getPMAY(long finID, String tableType);
 
-	PMAY getApprovedPMAY(String finReference);
+	PMAY getApprovedPMAY(long finID);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
