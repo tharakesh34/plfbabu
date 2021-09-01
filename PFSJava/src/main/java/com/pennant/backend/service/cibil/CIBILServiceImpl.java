@@ -33,7 +33,7 @@ public class CIBILServiceImpl implements CIBILService {
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	@Override
-	public CustomerDetails getCustomerDetails(long customerId, String finreference, String segmentType) {
+	public CustomerDetails getCustomerDetails(long customerId, long finID, String segmentType) {
 		logger.debug(Literal.ENTERING);
 		logger.trace(Literal.ENTERING);
 
@@ -47,7 +47,7 @@ public class CIBILServiceImpl implements CIBILService {
 			customer.setCustomerEMailList(cibildao.getCustomerEmails(customerId));
 
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-				customer.setCustomerFinance(cibildao.getFinanceSummary(customerId, finreference, segmentType));
+				customer.setCustomerFinance(cibildao.getFinanceSummary(customerId, finID, segmentType));
 			} else {
 				customer.setCustomerFinances(cibildao.getFinanceSummary(customerId, segmentType));
 			}
@@ -59,13 +59,13 @@ public class CIBILServiceImpl implements CIBILService {
 			String finReference;
 			for (FinanceEnquiry finance : customer.getCustomerFinances()) {
 				finReference = finance.getFinReference();
-				finance.setFinOdDetails(cibildao.getFinODDetails(finReference, finance.getFinCcy()));
-				finance.setCollateralSetupDetails(cibildao.getCollateralDetails(finReference, segmentType));
-				finance.setChequeDetail(cibildao.getChequeBounceStatus(finReference));
+				finance.setFinOdDetails(cibildao.getFinODDetails(finID, finance.getFinCcy()));
+				finance.setCollateralSetupDetails(cibildao.getCollateralDetails(finID, segmentType));
+				finance.setChequeDetail(cibildao.getChequeBounceStatus(finID));
 
 				List<CustomerDetails> guarenterList = new ArrayList<>();
 				// Bank Customers
-				List<Long> guarenters = cibildao.getGuarantorsDetails(finReference, true);
+				List<Long> guarenters = cibildao.getGuarantorsDetails(finID, true);
 				for (Long custId : guarenters) {
 					CustomerDetails guarenter = new CustomerDetails();
 					guarenter.setCustomer(cibildao.getCustomer(custId, segmentType));
@@ -76,14 +76,14 @@ public class CIBILServiceImpl implements CIBILService {
 				}
 
 				// Non Banking Customers needs to prepared
-				//guarenters = cibildao.getGuarantorsDetails(finReference, false);
+				// guarenters = cibildao.getGuarantorsDetails(finReference, false);
 				for (Long custId : guarenters) {
-					//CustomerDetails guarenter = new CustomerDetails();
-					//guarenter.setCustomer(cibildao.getExternalCustomer(custId));
-					//guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
-					//guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
-					//guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
-					//guarenterList.add(guarenter);
+					// CustomerDetails guarenter = new CustomerDetails();
+					// guarenter.setCustomer(cibildao.getExternalCustomer(custId));
+					// guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
+					// guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
+					// guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
+					// guarenterList.add(guarenter);
 				}
 
 				finance.setFinGuarenters(guarenterList);
@@ -102,20 +102,20 @@ public class CIBILServiceImpl implements CIBILService {
 	}
 
 	@Override
-	public List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type) {
+	public List<FinReceiptHeader> getReceiptHeadersByRef(long finID, String type) {
 		return null;
 
 	}
 
 	@Override
-	public FinanceSummary getFinanceProfitDetails(String finRef) {
-		return financeMainDAO.getFinanceProfitDetails(finRef);
+	public FinanceSummary getFinanceProfitDetails(long finID) {
+		return financeMainDAO.getFinanceProfitDetails(finID);
 
 	}
 
 	@Override
-	public Date getMaxReceiptDateByRef(String finReference) {
-		return finReceiptHeaderDAO.getMaxReceiptDateByRef(finReference);
+	public Date getMaxReceiptDateByRef(long finID) {
+		return finReceiptHeaderDAO.getMaxReceiptDateByRef(finID);
 	}
 
 	@Override
@@ -124,8 +124,8 @@ public class CIBILServiceImpl implements CIBILService {
 	}
 
 	@Override
-	public void logFileInfoException(long id, String finReference, String reason) {
-		cibildao.logFileInfoException(id, finReference, reason);
+	public void logFileInfoException(long id, long finID, String finReference, String reason) {
+		cibildao.logFileInfoException(id, finID, finReference, reason);
 
 	}
 
@@ -161,7 +161,7 @@ public class CIBILServiceImpl implements CIBILService {
 		return cibildao.getMemberDetails(segmentType);
 	}
 
-	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+	// changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	@Override
 	public CibilMemberDetail getMemberDetailsByType(String segmentType, String type) {
 		return cibildao.getMemberDetailsByType(segmentType, type);

@@ -12,11 +12,11 @@ import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public interface CIBILService {
-	CustomerDetails getCustomerDetails(long customerId, String finReference, String bureauType);
+	CustomerDetails getCustomerDetails(long customerId, long finID, String bureauType);
 
 	void deleteDetails();
 
-	void logFileInfoException(long id, String finReference, String reason);
+	void logFileInfoException(long id, long finID, String finReference, String reason);
 
 	DataEngineStatus getLatestExecution();
 
@@ -34,13 +34,13 @@ public interface CIBILService {
 
 	EventProperties getEventProperties(String configName);
 
-	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+	// changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	CibilMemberDetail getMemberDetailsByType(String segmentType, String type);
 
-	FinanceSummary getFinanceProfitDetails(String finRef);
+	FinanceSummary getFinanceProfitDetails(long finID);
 
-	List<FinReceiptHeader> getReceiptHeadersByRef(String finReference, String type);
+	List<FinReceiptHeader> getReceiptHeadersByRef(long finID, String type);
 
-	public Date getMaxReceiptDateByRef(String finReference);
+	public Date getMaxReceiptDateByRef(long finID);
 
 }
