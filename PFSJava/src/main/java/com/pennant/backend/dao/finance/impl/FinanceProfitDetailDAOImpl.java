@@ -745,7 +745,7 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	@Override
-	public int getCurOddays(long finID, String type) {
+	public int getCurOddays(long finID) {
 		String sql = "Select CurOdDays From FinPftDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);

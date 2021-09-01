@@ -117,49 +117,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	protected FinanceDisbursementDAO financeDisbursementDAO;
 	private PaymentsProcessService paymentsProcessService;
 	private transient PennyDropService pennyDropService;
-	@Autowired(required = false)
 	private transient BankAccountValidationService bankAccountValidationService;
 	private DocumentDetailsDAO documentDetailsDAO;
-
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
 
 	public FinAdvancePaymentsServiceImpl() {
 		super();
 	}
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the finAdvancePaymentsDAO
-	 */
-	public FinAdvancePaymentsDAO getFinAdvancePaymentsDAO() {
-		return finAdvancePaymentsDAO;
-	}
-
-	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
-		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
-	}
-
-	/**
-	 * Fetch FinAdvancePayments details by finReference
-	 * 
-	 * @param finReference
-	 * 
-	 * @return List<FinAdvancePayments>
-	 */
 
 	@Override
 	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(long finID) {
@@ -179,7 +144,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		auditDetails.addAll(processFinAdvancePaymentDetails(advPayments, tableType, auditTranType, false, disbStp));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
@@ -199,51 +164,51 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
-		for (FinAdvancePayments finPayment : finAdvancePayments) {
+		for (FinAdvancePayments fap : finAdvancePayments) {
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
 			approveRec = isApproveRcd;
 			String rcdType = "";
 			String recordStatus = "";
-			if (finPayment.ispOIssued() || StringUtils.isEmpty(finPayment.getRecordType())) {
+			if (fap.ispOIssued() || StringUtils.isEmpty(fap.getRecordType())) {
 				continue;
 			}
 
 			if (StringUtils.isEmpty(tableType)
 					|| StringUtils.equals(tableType, PennantConstants.PREAPPROVAL_TABLE_TYPE)) {
 				approveRec = true;
-				finPayment.setRoleCode("");
-				finPayment.setNextRoleCode("");
-				finPayment.setTaskId("");
-				finPayment.setNextTaskId("");
+				fap.setRoleCode("");
+				fap.setNextRoleCode("");
+				fap.setTaskId("");
+				fap.setNextTaskId("");
 			}
 
-			finPayment.setWorkflowId(0);
-			if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			fap.setWorkflowId(0);
+			if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (finPayment.isNewRecord()) {
+			} else if (fap.isNewRecord()) {
 				saveRecord = true;
-				if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					finPayment.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					finPayment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					finPayment.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					fap.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					fap.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					fap.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (finPayment.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (finPayment.isNewRecord()) {
+				} else if (fap.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
@@ -251,53 +216,52 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 
 			if (approveRec) {
-				rcdType = finPayment.getRecordType();
-				recordStatus = finPayment.getRecordStatus();
-				finPayment.setRecordType("");
-				finPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				if (!StringUtils.equals(finPayment.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
-					finPayment.setStatus(DisbursementConstants.STATUS_APPROVED);
+				rcdType = fap.getRecordType();
+				recordStatus = fap.getRecordStatus();
+				fap.setRecordType("");
+				fap.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				if (!StringUtils.equals(fap.getStatus(), DisbursementConstants.STATUS_AWAITCON)) {
+					fap.setStatus(DisbursementConstants.STATUS_APPROVED);
 				}
-				finPayment.setpOIssued(true);
+				fap.setpOIssued(true);
 			}
 
-			if (finPayment.isHoldDisbursement()) {
-				finPayment.setStatus(DisbursementConstants.STATUS_HOLD);
+			if (fap.isHoldDisbursement()) {
+				fap.setStatus(DisbursementConstants.STATUS_HOLD);
 			}
 
 			if (disbStp) {
-				finPayment.setStatus(DisbursementConstants.STATUS_AWAITCON);
+				fap.setStatus(DisbursementConstants.STATUS_AWAITCON);
 			}
 
 			if (saveRecord) {
 				if (approveRec) {
-					finPayment.setOnlineProcReq(true);
+					fap.setOnlineProcReq(true);
 				}
-				finAdvancePaymentsDAO.save(finPayment, tableType);
-				if (finPayment.getDocImage() != null) {
-					saveDocumentDetails(finPayment);
+				finAdvancePaymentsDAO.save(fap, tableType);
+				if (fap.getDocImage() != null) {
+					saveDocumentDetails(fap);
 				}
 			}
 
 			if (updateRecord) {
-				finAdvancePaymentsDAO.update(finPayment, tableType);
-				if (finPayment.getDocImage() != null) {
-					saveDocumentDetails(finPayment);
+				finAdvancePaymentsDAO.update(fap, tableType);
+				if (fap.getDocImage() != null) {
+					saveDocumentDetails(fap);
 				}
 			}
 
 			if (deleteRecord) {
-				finAdvancePaymentsDAO.delete(finPayment, tableType);
+				finAdvancePaymentsDAO.delete(fap, tableType);
 			}
 
 			if (approveRec) {
-				finPayment.setRecordType(rcdType);
-				finPayment.setRecordStatus(recordStatus);
+				fap.setRecordType(rcdType);
+				fap.setRecordStatus(recordStatus);
 			}
 
-			String[] fields = PennantJavaUtil.getFieldDetails(finPayment, finPayment.getExcludeFields());
-			auditDetails.add(
-					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finPayment.getBefImage(), finPayment));
+			String[] fields = PennantJavaUtil.getFieldDetails(fap, fap.getExcludeFields());
+			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], fap.getBefImage(), fap));
 			i++;
 		}
 
@@ -320,14 +284,14 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	@Override
 	public List<AuditDetail> delete(List<FinAdvancePayments> finAdvancePayments, String tableType,
 			String auditTranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = null;
 
 		if (finAdvancePayments != null && !finAdvancePayments.isEmpty()) {
 			int auditSeq = 1;
 			for (FinAdvancePayments finPayment : finAdvancePayments) {
-				getFinAdvancePaymentsDAO().delete(finPayment, tableType);
+				finAdvancePaymentsDAO.delete(finPayment, tableType);
 				fields = PennantJavaUtil.getFieldDetails(finPayment, finPayment.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
 						finPayment.getBefImage(), finPayment));
@@ -335,178 +299,163 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
-	private List<AuditDetail> getAdvancePaymentAuditDetail(List<FinAdvancePayments> finAdvancePayments,
-			String auditTranType, String method, long workFlowId) {
-		logger.debug("Entering");
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = null;
-		for (FinAdvancePayments finAdvancePay : finAdvancePayments) {
+	private List<AuditDetail> getAdvancePaymentAuditDetail(List<FinAdvancePayments> fapList, String auditTranType,
+			String method, long workFlowId) {
+		logger.debug(Literal.ENTERING);
 
-			if (StringUtils.isEmpty(finAdvancePay.getRecordType())) {
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		for (FinAdvancePayments fap : fapList) {
+			if (StringUtils.isEmpty(fap.getRecordType())) {
 				continue;
 			}
 
-			if ("doApprove".equals(method) && !StringUtils.trimToEmpty(finAdvancePay.getRecordStatus())
-					.equals(PennantConstants.RCD_STATUS_SAVED)) {
-				finAdvancePay.setWorkflowId(0);
-				finAdvancePay.setNewRecord(true);
+			if ("doApprove".equals(method)
+					&& !StringUtils.trimToEmpty(fap.getRecordStatus()).equals(PennantConstants.RCD_STATUS_SAVED)) {
+				fap.setWorkflowId(0);
+				fap.setNewRecord(true);
 			} else {
-				finAdvancePay.setWorkflowId(workFlowId);
+				fap.setWorkflowId(workFlowId);
 			}
 
 			boolean isRcdType = false;
 
-			if (finAdvancePay.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				finAdvancePay.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				fap.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				isRcdType = true;
-			} else if (finAdvancePay.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				finAdvancePay.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				fap.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				isRcdType = true;
-			} else if (finAdvancePay.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				finAdvancePay.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				fap.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 				isRcdType = true;
 			}
 
 			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				finAdvancePay.setNewRecord(true);
+				fap.setNewRecord(true);
 			}
 
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (finAdvancePay.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (finAdvancePay.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| finAdvancePay.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				} else if (fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+						|| fap.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					auditTranType = PennantConstants.TRAN_DEL;
 				} else {
 					auditTranType = PennantConstants.TRAN_UPD;
 				}
 			}
-			fields = PennantJavaUtil.getFieldDetails(finAdvancePay, finAdvancePay.getExcludeFields());
-			if (StringUtils.isNotEmpty(finAdvancePay.getRecordType())) {
+			String[] fields = PennantJavaUtil.getFieldDetails(fap, fap.getExcludeFields());
+			if (StringUtils.isNotEmpty(fap.getRecordType())) {
 				auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
-						finAdvancePay.getBefImage(), finAdvancePay));
+						fap.getBefImage(), fap));
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
 	@Override
-	public List<AuditDetail> validate(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
+	public List<AuditDetail> validate(List<FinAdvancePayments> fapList, long workflowId, String method,
 			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi) {
-		return doValidation(finAdvancePayments, workflowId, method, auditTranType, usrLanguage, financeDetail, isApi);
+		return doValidation(fapList, workflowId, method, auditTranType, usrLanguage, financeDetail, isApi);
 	}
 
-	private List<AuditDetail> doValidation(List<FinAdvancePayments> finAdvancePayments, long workflowId, String method,
+	private List<AuditDetail> doValidation(List<FinAdvancePayments> fapList, long workflowId, String method,
 			String auditTranType, String usrLanguage, FinanceDetail financeDetail, boolean isApi) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		if (finAdvancePayments != null && !finAdvancePayments.isEmpty()) {
-			List<AuditDetail> advancePayAuditDetails = getAdvancePaymentAuditDetail(finAdvancePayments, auditTranType,
-					method, workflowId);
+		if (fapList != null && !fapList.isEmpty()) {
+			List<AuditDetail> advancePayAuditDetails = getAdvancePaymentAuditDetail(fapList, auditTranType, method,
+					workflowId);
 			for (AuditDetail auditDetail : advancePayAuditDetails) {
 				validateAdvancePayment(auditDetail, method, usrLanguage, financeDetail, isApi);
 			}
 			auditDetails.addAll(advancePayAuditDetails);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetails;
 	}
 
-	/**
-	 * split the each transaction based on the Imps Maximum amount
-	 * 
-	 * @param finAdvancePayments
-	 * @param instrumentwiseLimit
-	 * @return
-	 */
 	@Override
-	public List<FinAdvancePayments> splitRequest(List<FinAdvancePayments> finAdvancePayments) {
-		logger.debug("Entering");
+	public List<FinAdvancePayments> splitRequest(List<FinAdvancePayments> fapList) {
+		logger.debug(Literal.ENTERING);
 
 		List<FinAdvancePayments> finalPaymentsList = new ArrayList<FinAdvancePayments>();
-		InstrumentwiseLimit instrumentwiseLimit = getInstrumentwiseLimitService()
+		InstrumentwiseLimit instrumentwiseLimit = instrumentwiseLimitService
 				.getInstrumentWiseModeLimit(DisbursementConstants.PAYMENT_TYPE_NEFT);
 
-		if (instrumentwiseLimit != null) {
-
-			int seqNo = getNextPaymentSequence(finAdvancePayments);
-
-			for (FinAdvancePayments finAdvancePay : finAdvancePayments) {
-
-				if (!PennantConstants.RECORD_TYPE_DEL.equals(finAdvancePay.getRecordType())
-						&& !PennantConstants.RECORD_TYPE_CAN.equals(finAdvancePay.getRecordType())
-						&& PennantConstants.RECORD_TYPE_NEW.equals(finAdvancePay.getRecordType())
-						&& DisbursementConstants.PAYMENT_TYPE_NEFT.equals(finAdvancePay.getPaymentType())
-						&& !DisbursementConstants.STATUS_AWAITCON.equals(finAdvancePay.getStatus())
-						&& !DisbursementConstants.STATUS_PAID.equals(finAdvancePay.getStatus())
-						&& !DisbursementConstants.STATUS_REALIZED.equals(finAdvancePay.getStatus())
-						&& !DisbursementConstants.STATUS_REJECTED.equals(finAdvancePay.getStatus())
-						&& !DisbursementConstants.STATUS_CANCEL.equals(finAdvancePay.getStatus())) {
-
-					BigDecimal maxAmtPerInstruction = instrumentwiseLimit.getMaxAmtPerInstruction();
-					if (finAdvancePay.getAmtToBeReleased().compareTo(maxAmtPerInstruction) > 0) {
-
-						if (BigDecimal.ZERO.compareTo(maxAmtPerInstruction) == 0) {
-							throw new InterfaceException("NEFT",
-									"For NEFT requests Max Amount Per Instruction should be greater than zero.");
-						}
-
-						BigDecimal noOfRecords = finAdvancePay.getAmtToBeReleased().divide(maxAmtPerInstruction, 0,
-								RoundingMode.UP);
-						int records = noOfRecords.intValueExact();
-						BigDecimal totAmount = BigDecimal.ZERO;
-
-						for (int i = 1; i <= records; i++) {
-							FinAdvancePayments finAdvPay = new FinAdvancePayments();
-							BeanUtils.copyProperties(finAdvancePay, finAdvPay);
-							finAdvPay.setPaymentSeq(seqNo);
-							if (records == i) {
-								finAdvPay.setAmtToBeReleased(finAdvancePay.getAmtToBeReleased().subtract(totAmount));
-							} else {
-								finAdvPay.setAmtToBeReleased(maxAmtPerInstruction);
-							}
-							finAdvPay.setPaymentId(Long.MIN_VALUE);
-							finAdvPay.setNewRecord(true);
-							finAdvPay.setLLDate(SysParamUtil.getAppDate());
-							totAmount = totAmount.add(maxAmtPerInstruction);
-							seqNo++;
-							finalPaymentsList.add(finAdvPay);
-						}
-					} else {
-						finAdvancePay.setLLDate(SysParamUtil.getAppDate());
-						finalPaymentsList.add(finAdvancePay);
-					}
-				} else {
-					finalPaymentsList.add(finAdvancePay);
-				}
-			}
-		} else {
-			finalPaymentsList.addAll(finAdvancePayments);
+		if (instrumentwiseLimit == null) {
+			finalPaymentsList.addAll(fapList);
+			return finalPaymentsList;
 		}
 
-		logger.debug("Leaving");
+		int seqNo = getNextPaymentSequence(fapList);
+
+		for (FinAdvancePayments fap : fapList) {
+			if (!PennantConstants.RECORD_TYPE_DEL.equals(fap.getRecordType())
+					&& !PennantConstants.RECORD_TYPE_CAN.equals(fap.getRecordType())
+					&& PennantConstants.RECORD_TYPE_NEW.equals(fap.getRecordType())
+					&& DisbursementConstants.PAYMENT_TYPE_NEFT.equals(fap.getPaymentType())
+					&& !DisbursementConstants.STATUS_AWAITCON.equals(fap.getStatus())
+					&& !DisbursementConstants.STATUS_PAID.equals(fap.getStatus())
+					&& !DisbursementConstants.STATUS_REALIZED.equals(fap.getStatus())
+					&& !DisbursementConstants.STATUS_REJECTED.equals(fap.getStatus())
+					&& !DisbursementConstants.STATUS_CANCEL.equals(fap.getStatus())) {
+
+				BigDecimal maxAmtPerInstruction = instrumentwiseLimit.getMaxAmtPerInstruction();
+				if (fap.getAmtToBeReleased().compareTo(maxAmtPerInstruction) > 0) {
+
+					if (BigDecimal.ZERO.compareTo(maxAmtPerInstruction) == 0) {
+						throw new InterfaceException("NEFT",
+								"For NEFT requests Max Amount Per Instruction should be greater than zero.");
+					}
+
+					BigDecimal noOfRecords = fap.getAmtToBeReleased().divide(maxAmtPerInstruction, 0, RoundingMode.UP);
+					int records = noOfRecords.intValueExact();
+					BigDecimal totAmount = BigDecimal.ZERO;
+
+					for (int i = 1; i <= records; i++) {
+						FinAdvancePayments finAdvPay = new FinAdvancePayments();
+						BeanUtils.copyProperties(fap, finAdvPay);
+						finAdvPay.setPaymentSeq(seqNo);
+						if (records == i) {
+							finAdvPay.setAmtToBeReleased(fap.getAmtToBeReleased().subtract(totAmount));
+						} else {
+							finAdvPay.setAmtToBeReleased(maxAmtPerInstruction);
+						}
+						finAdvPay.setPaymentId(Long.MIN_VALUE);
+						finAdvPay.setNewRecord(true);
+						finAdvPay.setLLDate(SysParamUtil.getAppDate());
+						totAmount = totAmount.add(maxAmtPerInstruction);
+						seqNo++;
+						finalPaymentsList.add(finAdvPay);
+					}
+				} else {
+					fap.setLLDate(SysParamUtil.getAppDate());
+					finalPaymentsList.add(fap);
+				}
+			} else {
+				finalPaymentsList.add(fap);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 
 		return finalPaymentsList;
 	}
 
-	/**
-	 * get the Next Payment Sequence No
-	 * 
-	 * @param finAdvancePayDetails
-	 * @return
-	 */
-	private int getNextPaymentSequence(List<FinAdvancePayments> finAdvancePayDetails) {
+	private int getNextPaymentSequence(List<FinAdvancePayments> fapList) {
 		int seqNo = 0;
-		if (finAdvancePayDetails != null && !finAdvancePayDetails.isEmpty()) {
-			for (FinAdvancePayments advancePayments : finAdvancePayDetails) {
-				int tempId = advancePayments.getPaymentSeq();
+		if (fapList != null && !fapList.isEmpty()) {
+			for (FinAdvancePayments fap : fapList) {
+				int tempId = fap.getPaymentSeq();
 				if (tempId > seqNo) {
 					seqNo = tempId;
 				}
@@ -516,22 +465,30 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	private AuditDetail validateAdvancePayment(AuditDetail auditDetail, String usrLanguage, String method,
-			FinanceDetail financeDetail, boolean isApi) {
-		logger.debug("Entering");
+			FinanceDetail fd, boolean isApi) {
+		logger.debug(Literal.ENTERING);
+
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinAdvancePayments finAdvancePay = (FinAdvancePayments) auditDetail.getModelData();
 		FinAdvancePayments tempFinAdvancePay = null;
 		boolean isOverDraft = false;
 		int maxODDays = SysParamUtil.getValueAsInt(SMTParameterConstants.MAX_ODDAYS_ADDDISB);
 
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-				financeDetail.getFinScheduleData().getFinanceMain().getProductCategory())) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
 			isOverDraft = true;
 		}
+
 		if (finAdvancePay.isWorkflow()) {
-			tempFinAdvancePay = getFinAdvancePaymentsDAO().getFinAdvancePaymentsById(finAdvancePay, "_Temp");
+			tempFinAdvancePay = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePay, "_Temp");
 		}
-		FinAdvancePayments befFinAdvancePay = getFinAdvancePaymentsDAO().getFinAdvancePaymentsById(finAdvancePay, "");
+
+		FinAdvancePayments befFinAdvancePay = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePay, "");
 		FinAdvancePayments oldFinAdvancePay = finAdvancePay.getBefImage();
 
 		String[] errParm = new String[1];
@@ -598,10 +555,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		// validation related to Scheduled Disbursement date And Disbursement date should be same.
-		boolean noValidation = isnoValidationUserAction(financeDetail.getUserAction());
+		boolean noValidation = isnoValidationUserAction(fd.getUserAction());
 		if (!noValidation && !isDeleteRecord(finAdvancePay) && !finAdvancePay.ispOIssued()) {
-			List<FinanceDisbursement> finDisbursementDetails = financeDetail.getFinScheduleData()
-					.getDisbursementDetails();
+			List<FinanceDisbursement> finDisbursementDetails = schdData.getDisbursementDetails();
 			for (FinanceDisbursement finDisbursmentDetail : finDisbursementDetails) {
 				if (finAdvancePay.getDisbSeq() == finDisbursmentDetail.getDisbSeq() && finAdvancePay.getLlDate() != null
 						&& DateUtility.compare(finDisbursmentDetail.getDisbDate(), finAdvancePay.getLlDate()) != 0) {
@@ -637,14 +593,13 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		}
 
 		// for Overdraft loan types checking for mandate is approved or not. and validate for Expiry date.
-		String finReference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
-		if (isOverDraft && StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.ADDDISB)
-				&& financeDetail.getFinScheduleData().getFinanceMain().getMandateID() != 0) {
+		if (isOverDraft && StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ADDDISB)
+				&& fm.getMandateID() != 0) {
 
 			Mandate mandate = new Mandate();
-			long mandateID = financeDetail.getFinScheduleData().getFinanceMain().getMandateID();
+			long mandateID = fm.getMandateID();
 
-			mandate = getMandateDAO().getMandateStatusById(finReference, mandateID);
+			mandate = mandateDAO.getMandateStatusById(finReference, mandateID);
 			if (mandate != null && !StringUtils.isEmpty(mandate.getStatus())
 					&& !StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())) {
 				String[] errParam = new String[1];
@@ -665,7 +620,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		// Validation for Automatic Blocking of Add Disbursement after N due days from Overdue schedules.
 		if (isOverDraft) {
-			int currODDays = getProfitDetailsDAO().getCurOddays(finReference);
+			int currODDays = profitDetailsDAO.getCurOddays(finID);
 			if (currODDays != 0 && currODDays > maxODDays) {
 				String[] errParam = new String[2];
 				errParam[0] = finReference;
@@ -700,9 +655,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		boolean save = false;
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
-		PayOrderIssueHeader poiHeader = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(finReference, "");
+		PayOrderIssueHeader poiHeader = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(finID, "");
 
 		if (poiHeader == null) {
 			save = true;
@@ -834,8 +790,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		if (!financeDetail.isActionSave() && !StringUtils.equals(nextrole, role)) {
 			// Checking Authority i.e Is current Role contains authority (or) Not
-			List<FinanceReferenceDetail> limitCheckList = getLimitCheckDetails().doLimitChek(role,
-					finmain.getFinType());
+			List<FinanceReferenceDetail> limitCheckList = limitCheckDetails.doLimitChek(role, finmain.getFinType());
 
 			if (CollectionUtils.isNotEmpty(limitCheckList)) {
 				for (FinanceReferenceDetail finRefDetail : limitCheckList) {
@@ -851,52 +806,53 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	private void generateAccounting(FinanceDetail fd) {
-		FinanceMain financeMain = fd.getFinScheduleData().getFinanceMain();
-		AccountingEngine.post(AccountingEvent.DISBINS, fd, financeMain.getFinBranch());
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		AccountingEngine.post(AccountingEvent.DISBINS, fd, fm.getFinBranch());
 	}
 
 	@Override
-	public List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType,
-			String auditTranType) {
+	public List<AuditDetail> processAPIQuickDisbursment(FinanceDetail fd, String tableType, String auditTranType) {
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		List<FinAdvancePayments> finAdvancePayList = financeDetail.getAdvancePaymentsList();
+		List<FinAdvancePayments> finAdvancePayList = fd.getAdvancePaymentsList();
 
 		if (CollectionUtils.isEmpty(finAdvancePayList)) {
 			return auditDetails;
 		}
-		processDisbursments(financeDetail);
-		auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, financeDetail.isDisbStp()));
+		processDisbursments(fd);
+		auditDetails.addAll(doApprove(finAdvancePayList, "", PennantConstants.TRAN_ADD, fd.isDisbStp()));
 		return auditDetails;
 	}
 
 	@Override
-	public void doCancel(FinanceDetail financeDetail) {
-		FinScheduleData schdata = financeDetail.getFinScheduleData();
-		FinanceMain finMain = schdata.getFinanceMain();
-		List<FinanceDisbursement> list = schdata.getDisbursementDetails();
+	public void doCancel(FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
+
 		List<FinanceDisbursement> canceldDisbList = new ArrayList<FinanceDisbursement>();
-		for (FinanceDisbursement financeDisbursement : list) {
-			if (StringUtils.equals(financeDisbursement.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
-				canceldDisbList.add(financeDisbursement);
+		for (FinanceDisbursement disbursement : disbursements) {
+			if (StringUtils.equals(disbursement.getDisbStatus(), FinanceConstants.DISB_STATUS_CANCEL)) {
+				canceldDisbList.add(disbursement);
 			}
 		}
 
-		for (FinanceDisbursement financeDisbursement : canceldDisbList) {
+		for (FinanceDisbursement disbursement : canceldDisbList) {
 			FinAdvancePayments advancePayments = new FinAdvancePayments();
-			advancePayments.setFinReference(finMain.getFinReference());
-			advancePayments.setDisbSeq(financeDisbursement.getDisbSeq());
+			advancePayments.setFinReference(fm.getFinReference());
+			advancePayments.setDisbSeq(disbursement.getDisbSeq());
 			advancePayments.setStatus(DisbursementConstants.STATUS_CANCEL);
-			getFinAdvancePaymentsDAO().updateStatus(advancePayments, "");
+			finAdvancePaymentsDAO.updateStatus(advancePayments, "");
 		}
 
 	}
 
 	public List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> list,
-			List<FinanceDisbursement> financeDisbursement, FinanceMain financeMain, boolean loanApproved) {
+			List<FinanceDisbursement> disbursements, FinanceMain fm, boolean loanApproved) {
 		logger.debug(" Entering ");
 
-		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		FinanceDisbursement totDisb = getTotal(financeDisbursement, financeMain, 0, false);
+		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
+		FinanceDisbursement totDisb = getTotal(disbursements, fm, 0, false);
 
 		BigDecimal netFinAmount = totDisb.getDisbAmount();
 		// Since this is moved Fees should not be used here.
@@ -938,7 +894,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		if (netFinAmount.compareTo(totDisbAmt) != 0) {
 			// since if the loan not approved then user can cancel the instruction and resubmit the record in loan
 			// origination
-			if (loanApproved || financeMain.isQuickDisb()) {
+			if (loanApproved || fm.isQuickDisb()) {
 				// Total amount should match with disbursement amount.
 				String[] valueParm = new String[2];
 				valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmt, ccyFormat);
@@ -949,7 +905,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 			}
 		}
 
-		if (!checkMode && financeMain.isQuickDisb()) {
+		if (!checkMode && fm.isQuickDisb()) {
 			// For quick disbursement, only payment type cheque is allowed.
 			ErrorDetail error = new ErrorDetail("60402", null);
 			errorList.add(error);
@@ -960,11 +916,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		// origination
 		if (loanApproved) {
 			// Get approved disbursements.
-			List<FinanceDisbursement> approvedDisbursments = getFinanceDisbursementDAO()
-					.getFinanceDisbursementDetails(financeMain.getFinReference(), "", false);
+			List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
+					.getFinanceDisbursementDetails(fm.getFinID(), "", false);
 			boolean approvedDisbursement;
 
-			for (FinanceDisbursement disbursement : financeDisbursement) {
+			for (FinanceDisbursement disbursement : disbursements) {
 				approvedDisbursement = false;
 
 				if (FinanceConstants.DISB_STATUS_CANCEL.equals(disbursement.getDisbStatus())) {
@@ -989,11 +945,11 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 				Date disbDate = disbursement.getDisbDate();
 				BigDecimal singletDisbursment = disbursement.getDisbAmount();
 
-				if (disbDate.compareTo(financeMain.getFinStartDate()) == 0 && disbursement.getDisbSeq() == 1) {
-					singletDisbursment = singletDisbursment.subtract(financeMain.getDownPayment());
-					singletDisbursment = singletDisbursment.subtract(financeMain.getDeductFeeDisb());
-					if (FinanceConstants.BPI_DISBURSMENT.equals(financeMain.getBpiTreatment())) {
-						singletDisbursment = singletDisbursment.subtract(financeMain.getBpiAmount());
+				if (disbDate.compareTo(fm.getFinStartDate()) == 0 && disbursement.getDisbSeq() == 1) {
+					singletDisbursment = singletDisbursment.subtract(fm.getDownPayment());
+					singletDisbursment = singletDisbursment.subtract(fm.getDeductFeeDisb());
+					if (FinanceConstants.BPI_DISBURSMENT.equals(fm.getBpiTreatment())) {
+						singletDisbursment = singletDisbursment.subtract(fm.getBpiAmount());
 					}
 				} else if (disbursement.getDisbSeq() > 1) {
 					singletDisbursment = singletDisbursment.subtract(disbursement.getDeductFeeDisb());
@@ -1140,13 +1096,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		return errors;
 	}
 
-	/**
-	 * Method to get the AdvancePayment instruction for the given VasReference.
-	 * 
-	 * @param list
-	 * @param vasReference
-	 * @return
-	 */
 	private FinAdvancePayments getVasInstruction(List<FinAdvancePayments> list, String vasReference) {
 		if (CollectionUtils.isEmpty(list)) {
 			return null;
@@ -1356,26 +1305,6 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.paymentsProcessService.processPayments(paymentTransaction);
 	}
 
-	public PayOrderIssueHeaderDAO getPayOrderIssueHeaderDAO() {
-		return payOrderIssueHeaderDAO;
-	}
-
-	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
-		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
-	}
-
-	public LimitCheckDetails getLimitCheckDetails() {
-		return limitCheckDetails;
-	}
-
-	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
-		this.limitCheckDetails = limitCheckDetails;
-	}
-
-	public void setPostingsDAO(PostingsDAO postingsDAO) {
-		this.postingsDAO = postingsDAO;
-	}
-
 	@Override
 	public void Update(long paymentId, long linkedTranId) {
 		finAdvancePaymentsDAO.update(paymentId, linkedTranId);
@@ -1383,27 +1312,23 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	@Override
-	public int getMaxPaymentSeq(String finReference) {
-		return finAdvancePaymentsDAO.getMaxPaymentSeq(finReference);
+	public int getMaxPaymentSeq(long finID) {
+		return finAdvancePaymentsDAO.getMaxPaymentSeq(finID);
 	}
 
 	@Override
-	public int getFinAdvCountByRef(String finReference, String type) {
-		return finAdvancePaymentsDAO.getFinAdvCountByRef(finReference, type);
+	public int getFinAdvCountByRef(long finID, String type) {
+		return finAdvancePaymentsDAO.getFinAdvCountByRef(finID, type);
 	}
 
 	@Override
-	public int getCountByFinReference(String finReference) {
-		return finAdvancePaymentsDAO.getCountByFinReference(finReference);
-	}
-
-	public void setPartnerBankService(PartnerBankService partnerBankService) {
-		this.partnerBankService = partnerBankService;
+	public int getCountByFinReference(long finID) {
+		return finAdvancePaymentsDAO.getCountByFinReference(finID);
 	}
 
 	@Override
-	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate) {
-		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finRefernce, toDate, "");
+	public List<FinAdvancePayments> getFinAdvancePaymentByFinRef(long finID, Date toDate) {
+		return finAdvancePaymentsDAO.getFinAdvancePaymentByFinRef(finID, toDate, "");
 	}
 
 	@Override
@@ -1422,20 +1347,40 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 	}
 
 	@Override
-	public int getCountByPaymentId(String finReference, long paymentId) {
-		return finAdvancePaymentsDAO.getCountByPaymentId(finReference, paymentId);
+	public int getCountByPaymentId(long finID, long paymentId) {
+		return finAdvancePaymentsDAO.getCountByPaymentId(finID, paymentId);
 	}
 
-	public MandateDAO getMandateDAO() {
-		return mandateDAO;
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setPostingsDAO(PostingsDAO postingsDAO) {
+		this.postingsDAO = postingsDAO;
+	}
+
+	public void setFinAdvancePaymentsDAO(FinAdvancePaymentsDAO finAdvancePaymentsDAO) {
+		this.finAdvancePaymentsDAO = finAdvancePaymentsDAO;
+	}
+
+	public void setPayOrderIssueHeaderDAO(PayOrderIssueHeaderDAO payOrderIssueHeaderDAO) {
+		this.payOrderIssueHeaderDAO = payOrderIssueHeaderDAO;
+	}
+
+	public void setLimitCheckDetails(LimitCheckDetails limitCheckDetails) {
+		this.limitCheckDetails = limitCheckDetails;
+	}
+
+	public void setPartnerBankService(PartnerBankService partnerBankService) {
+		this.partnerBankService = partnerBankService;
 	}
 
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
-	}
-
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
 	}
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
@@ -1446,16 +1391,8 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.covenantsService = covenantsService;
 	}
 
-	public InstrumentwiseLimitService getInstrumentwiseLimitService() {
-		return instrumentwiseLimitService;
-	}
-
 	public void setInstrumentwiseLimitService(InstrumentwiseLimitService instrumentwiseLimitService) {
 		this.instrumentwiseLimitService = instrumentwiseLimitService;
-	}
-
-	public FinanceDisbursementDAO getFinanceDisbursementDAO() {
-		return financeDisbursementDAO;
 	}
 
 	public void setFinanceDisbursementDAO(FinanceDisbursementDAO financeDisbursementDAO) {
@@ -1470,6 +1407,15 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.pennyDropService = pennyDropService;
 	}
 
+	@Autowired(required = false)
+	public void setBankAccountValidationService(BankAccountValidationService bankAccountValidationService) {
+		this.bankAccountValidationService = bankAccountValidationService;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
 	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {
 		this.vASProviderAccDetailDAO = vASProviderAccDetailDAO;
 	}
@@ -1478,11 +1424,4 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		this.vASConfigurationDAO = vASConfigurationDAO;
 	}
 
-	public DocumentDetailsDAO getDocumentDetailsDAO() {
-		return documentDetailsDAO;
-	}
-
-	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
-		this.documentDetailsDAO = documentDetailsDAO;
-	}
 }

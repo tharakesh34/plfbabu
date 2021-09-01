@@ -65,7 +65,7 @@ public interface FinanceProfitDetailDAO {
 
 	void UpdateActiveSts(long finID, boolean isActive);
 
-	int getCurOddays(long finID, String type);
+	int getCurOddays(long finID);
 
 	boolean isSuspenseFinance(long finID);
 

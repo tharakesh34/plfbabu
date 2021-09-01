@@ -57,22 +57,22 @@ public interface FinAdvancePaymentsService {
 
 	void doCancel(FinanceDetail financeDetail);
 
-	int getCountByFinReference(String finReference);
+	int getCountByFinReference(long finID);
 
 	void Update(long paymentId, long linkedTranId);
 
-	int getMaxPaymentSeq(String finReference);
+	int getMaxPaymentSeq(long finID);
 
-	int getFinAdvCountByRef(String finReference, String type);
+	int getFinAdvCountByRef(long finID, String type);
 
 	List<ErrorDetail> validateFinAdvPayments(List<FinAdvancePayments> advancePaymentsList,
 			List<FinanceDisbursement> disbursementDetails, FinanceMain financeMain, boolean loanApproved);
 
 	List<AuditDetail> processAPIQuickDisbursment(FinanceDetail financeDetail, String tableType, String auditTranType);
 
-	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce);
+	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(long finID);
 
-	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(String finRefernce, Date toDate);
+	List<FinAdvancePayments> getFinAdvancePaymentByFinRef(long finID, Date toDate);
 
 	List<FinAdvancePayments> splitRequest(List<FinAdvancePayments> finAdvancePayments);
 
@@ -84,7 +84,7 @@ public interface FinAdvancePaymentsService {
 
 	void updatePaymentStatus(FinAdvancePayments finAdvancePayment, String type);
 
-	int getCountByPaymentId(String finReference, long paymentId);
+	int getCountByPaymentId(long finID, long paymentId);
 
 	List<FinAdvancePayments> processVasInstructions(List<VASRecording> vasRecordingList,
 			List<FinAdvancePayments> curAdvPaymentsList, String entityCode);
