@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related ChequeHeaders. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related ChequeHeaders. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ChequeHeaderServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2017    														*
- *                                                                  						*
- * Modified Date    :  18-10-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ChequeHeaderServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2017 * *
+ * Modified Date : 18-10-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -87,49 +69,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 	private ChequeHeaderDAO chequeHeaderDAO;
 	private ChequeDetailDAO chequeDetailDAO;
 
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public ChequeHeaderDAO getChequeHeaderDAO() {
-		return chequeHeaderDAO;
-	}
-
-	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
-		this.chequeHeaderDAO = chequeHeaderDAO;
-	}
-
-	public ChequeDetailDAO getChequeDetailDAO() {
-		return chequeDetailDAO;
-	}
-
-	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
-		this.chequeDetailDAO = chequeDetailDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table ChequeHeaders/ChequeHeaders_Temp
-	 * by using ChequeHeadersDAO's save method b) Update the Record in the table. based on the module workFlow
-	 * Configuration. by using ChequeHeadersDAO's update method 3) Audit the record in to AuditHeader and
-	 * AdtChequeHeaders by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader, TableType tableType) {
 		logger.info(Literal.ENTERING);
 
@@ -146,12 +85,12 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
 		if (chequeHeader.isNewRecord()) {
 			processDocument(chequeHeader);
-			chequeHeader.setId(Long.parseLong(getChequeHeaderDAO().save(chequeHeader, tableType)));
+			chequeHeader.setId(Long.parseLong(chequeHeaderDAO.save(chequeHeader, tableType)));
 			auditHeader.getAuditDetail().setModelData(chequeHeader);
 			auditHeader.setAuditReference(String.valueOf(chequeHeader.getHeaderID()));
 		} else {
 			processDocument(chequeHeader);
-			getChequeHeaderDAO().update(chequeHeader, tableType);
+			chequeHeaderDAO.update(chequeHeader, tableType);
 		}
 
 		// ChequeHeaderModule Details Processing
@@ -165,14 +104,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditHeader;
 	}
 
-	/**
-	 * Method For Preparing List of AuditDetails for Check List for Fin Flag Details
-	 * 
-	 * @param auditDetails
-	 * @param financeDetail
-	 * @param type
-	 * @return
-	 */
 	private List<AuditDetail> processingChequeDetailList(List<AuditDetail> auditDetails, TableType type,
 			long headerID) {
 		logger.debug(Literal.ENTERING);
@@ -233,15 +164,15 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				chequeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getChequeDetailDAO().save(chequeDetail, type);
+				chequeDetailDAO.save(chequeDetail, type);
 			}
 
 			if (updateRecord) {
-				getChequeDetailDAO().update(chequeDetail, type);
+				chequeDetailDAO.update(chequeDetail, type);
 			}
 
 			if (deleteRecord) {
-				getChequeDetailDAO().delete(chequeDetail, type);
+				chequeDetailDAO.delete(chequeDetail, type);
 			}
 
 			if (approveRec) {
@@ -287,14 +218,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditHeader;
 	}
 
-	/**
-	 * Methods for Creating List ChequeHeader of Audit Details with detailed fields
-	 * 
-	 * @param product
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
 	private List<AuditDetail> setChequeDetailAuditData(ChequeHeader chequeHeader, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -355,16 +278,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditDetails;
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * ChequeHeaders by using ChequeHeadersDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
-	 * and AdtChequeHeaders by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -376,79 +289,39 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		}
 
 		ChequeHeader chequeHeader = (ChequeHeader) auditHeader.getAuditDetail().getModelData();
-		getChequeHeaderDAO().delete(chequeHeader, TableType.MAIN_TAB);
+		chequeHeaderDAO.delete(chequeHeader, TableType.MAIN_TAB);
 		auditHeader.setAuditDetails(listDeletion(chequeHeader, TableType.MAIN_TAB, PennantConstants.TRAN_WF));
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * getChequeHeaders fetch the details by using ChequeHeadersDAO's getChequeHeadersById method.
-	 * 
-	 * @param productID
-	 *            productID of the ChequeHeader.
-	 * @return ChequeHeaders
-	 */
 	@Override
-	public ChequeHeader getChequeHeader(String finRef) {
-		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(finRef, "_View");
+	public ChequeHeader getChequeHeader(long finID) {
+		ChequeHeader chequeHeader = chequeHeaderDAO.getChequeHeader(finID, "_View");
 		if (chequeHeader != null) {
-			chequeHeader
-					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			chequeHeader.setChequeDetailList(chequeDetailDAO.getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
 
-	/**
-	 * getChequeHeaders fetch the details by using ChequeHeadersDAO's getChequeHeadersByRef method.
-	 * 
-	 * @param productID
-	 *            productID of the ChequeHeader.
-	 * @return ChequeHeaders
-	 */
 	@Override
-	public ChequeHeader getChequeHeaderByRef(String finReference) {
-		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeaderByRef(finReference, "_View");
+	public ChequeHeader getChequeHeaderByRef(long finID) {
+		ChequeHeader chequeHeader = chequeHeaderDAO.getChequeHeaderByRef(finID, "_View");
 		if (chequeHeader != null) {
-			chequeHeader
-					.setChequeDetailList(getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
+			chequeHeader.setChequeDetailList(chequeDetailDAO.getChequeDetailList(chequeHeader.getHeaderID(), "_View"));
 		}
 		return chequeHeader;
 	}
 
-	/**
-	 * getApprovedChequeHeadersById fetch the details by using ChequeHeadersDAO's getChequeHeadersById method . with
-	 * parameter id and type as blank. it fetches the approved records from the ChequeHeaders.
-	 * 
-	 * @param productID
-	 *            productID of the ChequeHeader. (String)
-	 * @return ChequeHeaders
-	 */
-	public ChequeHeader getApprovedChequeHeader(String finRef) {
-		ChequeHeader chequeHeader = getChequeHeaderDAO().getChequeHeader(finRef, "_AView");
+	public ChequeHeader getApprovedChequeHeader(long finID) {
+		ChequeHeader chequeHeader = chequeHeaderDAO.getChequeHeader(finID, "_AView");
 		if (chequeHeader != null) {
-			chequeHeader.setChequeDetailList(
-					getChequeDetailDAO().getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
+			chequeHeader.setChequeDetailList(chequeDetailDAO.getChequeDetailList(chequeHeader.getHeaderID(), "_AView"));
 		}
 		return chequeHeader;
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getChequeHeaderDAO().delete with
-	 * parameters product,"" b) NEW Add new record in to main table by using getChequeHeaderDAO().save with parameters
-	 * product,"" c) EDIT Update record in the main table by using getChequeHeaderDAO().update with parameters
-	 * product,"" 3) Delete the record from the workFlow table by using getChequeHeaderDAO().delete with parameters
-	 * product,"_Temp" 4) Audit the record in to AuditHeader and AdtChequeHeaders by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtChequeHeaders by
-	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -469,7 +342,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 
 		if (chequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getChequeHeaderDAO().delete(chequeHeader, TableType.MAIN_TAB);
+			chequeHeaderDAO.delete(chequeHeader, TableType.MAIN_TAB);
 			auditDetails.addAll(listDeletion(chequeHeader, TableType.MAIN_TAB, auditHeader.getAuditTranType()));
 
 		} else {
@@ -484,11 +357,11 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 			if (chequeHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				chequeHeader.setRecordType("");
-				getChequeHeaderDAO().save(chequeHeader, TableType.MAIN_TAB);
+				chequeHeaderDAO.save(chequeHeader, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				chequeHeader.setRecordType("");
-				getChequeHeaderDAO().update(chequeHeader, TableType.TEMP_TAB);
+				chequeHeaderDAO.update(chequeHeader, TableType.TEMP_TAB);
 			}
 		}
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -501,7 +374,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, auditHeader.getAuditTranType())));// FIXME
 		if (auditHeader.getApiHeader() == null) {
-			getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
+			chequeHeaderDAO.delete(chequeHeader, TableType.TEMP_TAB);
 		}
 
 		auditHeader.setAuditTranType(tranType);
@@ -552,7 +425,8 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		}
 	}
 
-	// Method for Deleting all records related to ChequeHeaderModule and ChequeHeaderLOB in _Temp/Main tables depend on method type
+	// Method for Deleting all records related to ChequeHeaderModule and ChequeHeaderLOB in _Temp/Main tables depend on
+	// method type
 	private List<AuditDetail> listDeletion(ChequeHeader chequeHeader, TableType tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
@@ -567,7 +441,7 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 							chequeDetail.getBefImage(), chequeDetail));
 				}
 				ChequeDetail detail = chequeHeader.getChequeDetailList().get(i);
-				getChequeDetailDAO().delete(detail, tableType);
+				chequeDetailDAO.delete(detail, tableType);
 			}
 		}
 
@@ -575,16 +449,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditList;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getChequeHeaderDAO().delete with parameters product,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtChequeHeaders by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -602,19 +466,11 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(chequeHeader, TableType.TEMP_TAB, PennantConstants.TRAN_WF)));
-		getChequeHeaderDAO().delete(chequeHeader, TableType.TEMP_TAB);
+		chequeHeaderDAO.delete(chequeHeader, TableType.TEMP_TAB);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
@@ -630,15 +486,6 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditHeader;
 	}
 
-	/**
-	 * Common Method for CheckList list validation
-	 * 
-	 * @param list
-	 * @param method
-	 * @param userDetails
-	 * @param lastMntON
-	 * @return
-	 */
 	private List<AuditDetail> getListAuditDetails(List<AuditDetail> list) {
 		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
@@ -677,42 +524,33 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 		return auditDetailsList;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getChequeHeaderDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 	@Override
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
-		chequeHeader.setRecordStatus(financeMain.getRecordStatus());
+		FinanceDetail fd = (FinanceDetail) auditDetail.getModelData();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		ChequeHeader chequeHeader = fd.getChequeHeader();
+		chequeHeader.setRecordStatus(fm.getRecordStatus());
 
-		//PSD#163298 Issue addressed for mandatory validations While Resubmitting.And Without tab validations are coming issue fixed.
+		// PSD#163298 Issue addressed for mandatory validations While Resubmitting.And Without tab validations are
+		// coming issue fixed.
 		String strTabId = StringUtils.leftPad(String.valueOf(StageTabConstants.Cheque), 3, "0");
 		boolean isTabVisible = true;
 		String roles = "";
 
-		if (financeDetail.getShowTabDetailMap().containsKey(strTabId)) {
-			roles = financeDetail.getShowTabDetailMap().get(strTabId);
-			if (!StringUtils.contains(roles, financeMain.getRoleCode() + ",")) {
+		if (fd.getShowTabDetailMap().containsKey(strTabId)) {
+			roles = fd.getShowTabDetailMap().get(strTabId);
+			if (!StringUtils.contains(roles, fm.getRoleCode() + ",")) {
 				isTabVisible = false;
 			}
 		}
 
 		if (isTabVisible) {
 			// Check the unique keys.
-			if (chequeHeader.isNewRecord()
-					&& chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(), financeDetail.getFinReference(),
-							chequeHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+			if (chequeHeader.isNewRecord() && chequeHeaderDAO.isDuplicateKey(chequeHeader.getHeaderID(), fm.getFinID(),
+					chequeHeader.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 				String[] parameters = new String[2];
 
 				parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + chequeHeader.getFinReference();
@@ -747,11 +585,11 @@ public class FinChequeHeaderServiceImpl extends GenericService<ChequeHeader> imp
 				}
 			}
 			// if finance Payment Method is PDC and there is no PDC cheques.
-			String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
+			String finRepayMethod = fd.getFinScheduleData().getFinanceMain().getFinRepayMethod();
 			if (StringUtils.equals(finRepayMethod, FinanceConstants.REPAYMTH_PDC)
 					&& !StringUtils.equals(PennantConstants.FINSOURCE_ID_API,
-							financeDetail.getFinScheduleData().getFinanceMain().getFinSourceID())) {
-				//PSD#163298 Issue addressed for validation raised While Resubmitting.
+							fd.getFinScheduleData().getFinanceMain().getFinSourceID())) {
+				// PSD#163298 Issue addressed for validation raised While Resubmitting.
 				if (!isListContainsPDC && !StringUtils.contains(chequeHeader.getRecordStatus(), "Resubmit")) {
 					String[] parameters = new String[2];
 					parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": "

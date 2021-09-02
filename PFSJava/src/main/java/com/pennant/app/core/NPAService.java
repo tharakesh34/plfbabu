@@ -84,7 +84,6 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 public class NPAService extends ServiceHelper {
-	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(NPAService.class);
 
 	private NPAProvisionHeaderDAO nPAProvisionHeaderDAO;
@@ -165,13 +164,11 @@ public class NPAService extends ServiceHelper {
 
 	private FinEODEvent findProvision(FinEODEvent finEODEvent, Date valueDate, String provisionBooks,
 			Provision provision) throws SQLException {
-		String finReference = finEODEvent.getFinProfitDetail().getFinReference();
-
-		logger.info("Provision Calculation started for the FinReference  {}", finReference);
+		long finID = finEODEvent.getFinProfitDetail().getFinID();
 
 		FinanceProfitDetail pftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain financeMain = finEODEvent.getFinanceMain();
-		Provision oldProvision = provisionDAO.getProvisionByFinId(finReference, TableType.MAIN_TAB, false);
+		Provision oldProvision = provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
 		if (oldProvision != null && oldProvision.isManualProvision()) {
 			return finEODEvent;
 		}
@@ -185,8 +182,6 @@ public class NPAService extends ServiceHelper {
 		}
 
 		if (provision == null) {
-			logger.info("Provision Calculation completed for the FinReference  {}", finReference);
-
 			return finEODEvent;
 		}
 
@@ -229,8 +224,6 @@ public class NPAService extends ServiceHelper {
 
 		finEODEvent.getFinProfitDetail().setProvision(true);
 		finEODEvent.getProvisions().add(provision);
-
-		logger.info("Provision Calculation completed for the FinReference  {}", finReference);
 
 		return finEODEvent;
 	}
@@ -514,7 +507,7 @@ public class NPAService extends ServiceHelper {
 	public boolean isNAPRepayHierarchyReq(long finID) {
 		logger.debug(Literal.ENTERING);
 
-		Provision provision = provisionDAO.getProvisionByFinId(finReference, TableType.AVIEW, false);
+		Provision provision = provisionDAO.getProvisionByFinId(finID, TableType.AVIEW, false);
 		if (provision == null) {
 			return false;
 		}

@@ -1182,12 +1182,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeDetail;
 	}
 
-	/**
-	 * getFinanceDetailById fetch the details by using FinanceMainDAO's getFinanceDetailById method.
-	 * 
-	 * @param finReference (String)
-	 * @return FinanceDetail
-	 */
 	@Override
 	public FinanceDetail getFinanceDetailById(String finReference, boolean isWIF, String eventCodeRef,
 			boolean reqCustDetail, String procEdtEvent, String userRole) {

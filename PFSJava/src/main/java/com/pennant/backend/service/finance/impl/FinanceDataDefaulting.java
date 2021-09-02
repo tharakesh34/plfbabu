@@ -67,11 +67,11 @@ public class FinanceDataDefaulting {
 		finDetail.getCustomerDetails().setCustomer(null);
 		Customer customer = null;
 
-		//Get the logged in users one time and set to avoid multiple calls
+		// Get the logged in users one time and set to avoid multiple calls
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		finMain.setUserDetails(userDetails);
 
-		//customer Defaulting
+		// customer Defaulting
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
 			if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
 				customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
@@ -88,7 +88,7 @@ public class FinanceDataDefaulting {
 				}
 			}
 
-			//Get Customer information
+			// Get Customer information
 			if (!StringUtils.equals("CRTSCHD", vldGroup)) {
 				if (customer == null) {
 					customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
@@ -112,7 +112,7 @@ public class FinanceDataDefaulting {
 			finMain.setFinStartDate(SysParamUtil.getAppDate());
 		}
 
-		//Validate Fields data (Excluding Base & Special rates Validations)
+		// Validate Fields data (Excluding Base & Special rates Validations)
 		validateMasterData(vldGroup, finDetail);
 
 		if (!finScheduleData.getErrorDetails().isEmpty()) {
@@ -288,7 +288,7 @@ public class FinanceDataDefaulting {
 		}
 
 		// If Finance Branch is NULL get it from customer (Without customer it
-		// would not have reached this point)	
+		// would not have reached this point)
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
 			if (StringUtils.isBlank(finMain.getFinBranch())) {
 				finMain.setFinBranch(finDeail.getCustomerDetails().getCustomer().getCustDftBranch());
@@ -1288,29 +1288,25 @@ public class FinanceDataDefaulting {
 
 	}
 
-	/**
-	 * 
-	 * @param financeDetail
-	 */
-	public void doFinanceDetailDefaulting(FinanceDetail financeDetail) {
-		if (financeDetail != null) {
-			String finReference = financeDetail.getFinReference();
-			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finReference, "_Temp", false);
-			if (financeDetail.getAdvancePaymentsList() != null) {
-				for (FinAdvancePayments payment : financeDetail.getAdvancePaymentsList()) {
-					payment.setLLDate(payment.getLlDate() == null ? finMain.getFinStartDate() : payment.getLlDate());
-				}
+	public void doFinanceDetailDefaulting(FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		long finID = schdData.getFinanceMain().getFinID();
+
+		FinanceMain fm = financeMainDAO.getFinanceDetailsForService(finID, "_Temp", false);
+
+		if (fd.getAdvancePaymentsList() != null) {
+			for (FinAdvancePayments payment : fd.getAdvancePaymentsList()) {
+				payment.setLLDate(payment.getLlDate() == null ? fm.getFinStartDate() : payment.getLlDate());
+			}
+		}
+
+		if (fd.getMandate() != null) {
+			Mandate mandate = fd.getMandate();
+			mandate.setStartDate(mandate.getStartDate() == null ? fm.getFinStartDate() : mandate.getStartDate());
+			if (!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
+				mandate.setExpiryDate(DateUtility.addDays(fm.getMaturityDate(), 1));
 			}
 
-			if (financeDetail.getMandate() != null) {
-				Mandate mandate = financeDetail.getMandate();
-				mandate.setStartDate(
-						mandate.getStartDate() == null ? finMain.getFinStartDate() : mandate.getStartDate());
-				if (!mandate.isOpenMandate() && mandate.getExpiryDate() == null) {
-					mandate.setExpiryDate(DateUtility.addDays(finMain.getMaturityDate(), 1));
-				}
-
-			}
 		}
 	}
 

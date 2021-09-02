@@ -1584,6 +1584,30 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
+	public Long getFinIDByFinReference(String finReference, String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Select FinID");
+
+		if (!isWIF) {
+			sql.append(" From FinanceMain");
+		} else {
+			sql.append(" From WIFFinanceMain");
+		}
+
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ? And FinIsActive = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
 	public int getFinCountByCustId(long custID) {
 		String sql = "Select count(FinID) From FinanceMain Where CustID = ? And FinIsActive = ?";
 
@@ -1656,6 +1680,45 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return recordCount;
 
+	}
+
+	@Override
+	public FinanceMain getFinanceDetailsForService1(String finReference, String type, boolean isWIF) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, GrcPeriodEndDate, MaturityDate");
+		sql.append(", AllowGrcPeriod, RepayFrq, FinStartDate, CustID");
+
+		if (isWIF) {
+			sql.append(" From WIFFinanceMain");
+		} else {
+			sql.append(" From FinanceMain");
+		}
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setGrcPeriodEndDate(rs.getTimestamp("GrcPeriodEndDate"));
+				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+				fm.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
+				fm.setRepayFrq(rs.getString("RepayFrq"));
+				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+				fm.setCustID(rs.getLong("CustID"));
+
+				return fm;
+
+			}, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		return null;
 	}
 
 	@Override

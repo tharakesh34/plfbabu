@@ -390,21 +390,22 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * validate and create finance with WIF reference by receiving request object from interface.
 	 * 
-	 * @param financeDetail
+	 * @param fd
 	 */
 	@Override
-	public FinanceDetail createFinanceWithWIF(FinanceDetail financeDetail) {
+	public FinanceDetail createFinanceWithWIF(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		// do Basic mandatory validations using hibernate validator
-		validationUtility.validate(financeDetail, CreateFinancewithWIFGroup.class);
+		validationUtility.validate(fd, CreateFinancewithWIFGroup.class);
 		// for logging purpose
-		String[] logFields = getLogFields(financeDetail);
+		String[] logFields = getLogFields(fd);
 		APIErrorHandlerService.logKeyFields(logFields);
 
 		try {
 			// call WIF finance related validations
-			WSReturnStatus returnStatus = doValidations(financeDetail);
+			WSReturnStatus returnStatus = doValidations(fd);
+
 			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
@@ -413,45 +414,53 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			}
 
 			FinanceDetail financeDetailRes = null;
-			String finReference = financeDetail.getFinReference();
+			String finReference = fd.getFinReference();
 			String procEdtEvent = FinServiceEvent.ORG;
 
-			FinanceDetail wifFinanceDetail = null;
-			int countInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);
-			if (countInWIF > 0) {
+			FinanceDetail wfd = null;
+			Long wIfFinID = financeMainDAO.getFinIDByFinReference(finReference, "", true);
+
+			FinScheduleData schdData = fd.getFinScheduleData();
+			FinanceMain fm = schdData.getFinanceMain();
+
+			if (wIfFinID != 0) {
 				// fetch WIF finance details
-				wifFinanceDetail = financeDetailService.getWIFFinance(finReference, true, procEdtEvent);
-				if (wifFinanceDetail != null) {
-					String custCIF = financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF();
-					String finRepayMethod = financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod();
-					Date finContractDate = financeDetail.getFinScheduleData().getFinanceMain().getFinContractDate();
-					String finPurpose = financeDetail.getFinScheduleData().getFinanceMain().getFinPurpose();
-					String finLimitRef = financeDetail.getFinScheduleData().getFinanceMain().getFinLimitRef();
-					String finCommitmentRef = financeDetail.getFinScheduleData().getFinanceMain().getFinCommitmentRef();
-					String dsaCode = financeDetail.getFinScheduleData().getFinanceMain().getDsaCode();
-					String salesDepartment = financeDetail.getFinScheduleData().getFinanceMain().getSalesDepartment();
-					String dmaCode = financeDetail.getFinScheduleData().getFinanceMain().getDmaCode();
-					long accountsOfficer = financeDetail.getFinScheduleData().getFinanceMain().getAccountsOfficer();
-					String referralId = financeDetail.getFinScheduleData().getFinanceMain().getReferralId();
-					boolean quickDisb = financeDetail.getFinScheduleData().getFinanceMain().isQuickDisb();
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setLovDescCustCIF(custCIF);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinRepayMethod(finRepayMethod);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinContractDate(finContractDate);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinPurpose(finPurpose);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinLimitRef(finLimitRef);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setFinCommitmentRef(finCommitmentRef);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDsaCode(dsaCode);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setSalesDepartment(salesDepartment);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setDmaCode(dmaCode);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setAccountsOfficer(accountsOfficer);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setReferralId(referralId);
-					wifFinanceDetail.getFinScheduleData().getFinanceMain().setQuickDisb(quickDisb);
-					financeDetail.setFinScheduleData(wifFinanceDetail.getFinScheduleData());
+				wfd = financeDetailService.getWIFFinance(finReference, true, procEdtEvent);
+				if (wfd != null) {
+					String custCIF = fm.getLovDescCustCIF();
+					String finRepayMethod = fm.getFinRepayMethod();
+					Date finContractDate = fm.getFinContractDate();
+					String finPurpose = fm.getFinPurpose();
+					String finLimitRef = fm.getFinLimitRef();
+					String finCommitmentRef = fm.getFinCommitmentRef();
+					String dsaCode = fm.getDsaCode();
+					String salesDepartment = fm.getSalesDepartment();
+					String dmaCode = fm.getDmaCode();
+					long accountsOfficer = fm.getAccountsOfficer();
+					String referralId = fm.getReferralId();
+					boolean quickDisb = fm.isQuickDisb();
+
+					FinScheduleData wSchdData = wfd.getFinScheduleData();
+					FinanceMain wfm = wSchdData.getFinanceMain();
+					wfm.setLovDescCustCIF(custCIF);
+					wfm.setFinRepayMethod(finRepayMethod);
+					wfm.setFinContractDate(finContractDate);
+					wfm.setFinPurpose(finPurpose);
+					wfm.setFinLimitRef(finLimitRef);
+					wfm.setFinCommitmentRef(finCommitmentRef);
+					wfm.setDsaCode(dsaCode);
+					wfm.setSalesDepartment(salesDepartment);
+					wfm.setDmaCode(dmaCode);
+					wfm.setAccountsOfficer(accountsOfficer);
+					wfm.setReferralId(referralId);
+					wfm.setQuickDisb(quickDisb);
+
+					fd.setFinScheduleData(wSchdData);
 				}
 
 				// check origination with same WIF Reference
-				int countInOrg = financeMainDAO.getFinanceCountById(finReference, "", false);
-				if (countInOrg > 0) {
+				Long finID = financeMainDAO.getFinIDByFinReference(finReference, "", false);
+				if (finID != null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
 					FinanceDetail response = new FinanceDetail();
@@ -460,7 +469,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					return response;
 				}
 			}
-			if (financeDetail.getFinScheduleData().getFinanceMain() == null) {
+
+			if (fm == null) {
 				FinanceDetail response = new FinanceDetail();
 				doEmptyResponseObject(response);
 				String[] valueParm = new String[1];
@@ -469,26 +479,27 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 				return response;
 			}
 			// validate and Data defaulting
-			financeDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail);
+			fd = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, fd);
 
-			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-				return getErrorMessage(financeDetail.getFinScheduleData());
+			if (!schdData.getErrorDetails().isEmpty()) {
+				return getErrorMessage(schdData);
 			}
 			// validate FinanceDetail Validations
 			// validate finance data
-			if (StringUtils.isNotBlank(financeDetail.getFinScheduleData().getFinanceMain().getLovDescCustCIF())) {
+			if (StringUtils.isNotBlank(fm.getLovDescCustCIF())) {
 				CustomerDetails customerDetails = new CustomerDetails();
 				customerDetails.setCustomer(null);
-				financeDetail.setCustomerDetails(customerDetails);
+				fd.setCustomerDetails(customerDetails);
 			}
-			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
 
-			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-				return getErrorMessage(financeDetail.getFinScheduleData());
+			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, fd, true);
+
+			if (!schdData.getErrorDetails().isEmpty()) {
+				return getErrorMessage(schdData);
 			}
 
 			// call doCreate method to create finance with WIF Reference
-			financeDetailRes = createFinanceController.doCreateFinance(financeDetail, true);
+			financeDetailRes = createFinanceController.doCreateFinance(fd, true);
 
 			if (financeDetailRes != null) {
 				if (financeDetailRes.getFinScheduleData() != null) {
@@ -515,19 +526,16 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 	}
 
-	/**
-	 * Validate the mandatory fields in the request object
-	 * 
-	 * @param financeDetail
-	 * @return
-	 */
-	private WSReturnStatus doValidations(FinanceDetail financeDetail) {
+	private WSReturnStatus doValidations(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String custCIF = financeMain.getLovDescCustCIF();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String custCIF = fm.getLovDescCustCIF();
+		String finReference = fd.getFinReference();
 
 		// validate Customer
 		Customer customer = customerDetailsService.getCustomerByCIF(custCIF);
@@ -537,16 +545,15 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			returnStatus = APIErrorHandlerService.getFailedStatus("90101", valueParm);
 		}
 
-		String finReference = financeDetail.getFinReference();
-		int rcdCountInWIF = financeMainDAO.getFinanceCountById(finReference, "", true);
+		Long wifFinID = financeMainDAO.getFinIDByFinReference(finReference, "", true);
 
-		if (rcdCountInWIF <= 0) {
+		if (wifFinID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
-		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getFinRepayMethod())) {
+		if (StringUtils.isBlank(schdData.getFinanceMain().getFinRepayMethod())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finRepayMethod";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
@@ -661,57 +668,50 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		return financeDetail;
 	}
 
-	/**
-	 * Method for update finance details(Disbursement, Mandate and Extended fields)
-	 * 
-	 * @param financeDetail
-	 * @return WSReturnStatus
-	 */
 	@Override
-	public WSReturnStatus updateFinance(FinanceDetail financeDetail) throws ServiceException {
+	public WSReturnStatus updateFinance(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		if (financeDetail != null) {
-			FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(financeDetail.getFinReference(), "_Temp",
-					false);
-			if (finMain == null) {
+		String finReference = fd.getFinReference();
+
+		FinanceMain fm = null;
+		if (fd != null) {
+			fm = financeMainDAO.getFinanceDetailsForService1(finReference, "_Temp", false);
+			if (fm == null) {
 				String valueParam[] = new String[1];
-				valueParam[0] = financeDetail.getFinReference();
+				valueParam[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 			}
 
 		}
 
-		// set default values
-		financeDataDefaulting.doFinanceDetailDefaulting(financeDetail);
-		// for logging purpose
-		String[] logFields = getLogFields(financeDetail);
-		APIErrorHandlerService.logKeyFields(logFields);
-		APIErrorHandlerService.logReference(financeDetail.getFinReference());
+		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinanceMain(fm);
 
-		// validate FinanceDetail Validations
-		FinScheduleData finSchData = financeDataValidation.financeDetailValidation(PennantConstants.VLD_UPD_LOAN,
-				financeDetail, true);
+		financeDataDefaulting.doFinanceDetailDefaulting(fd);
+
+		String[] logFields = getLogFields(fd);
+		APIErrorHandlerService.logKeyFields(logFields);
+		APIErrorHandlerService.logReference(finReference);
+
+		FinScheduleData finSchData = financeDataValidation.financeDetailValidation(PennantConstants.VLD_UPD_LOAN, fd,
+				true);
 		if (!finSchData.getErrorDetails().isEmpty()) {
 			FinanceDetail finDetail = getErrorMessage(finSchData);
 			return finDetail.getReturnStatus();
 		}
 
-		WSReturnStatus response = createFinanceController.updateFinance(financeDetail);
+		WSReturnStatus response = createFinanceController.updateFinance(fd);
+
 		logger.debug(Literal.LEAVING);
+
 		return response;
 	}
-
-	/**
-	 * Method for approve temp_finance details
-	 * 
-	 * @param fd
-	 * @return WSReturnStatus
-	 */
 
 	@Override
 	public WSReturnStatus approveLoan(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
+
 		FinanceDetail finDetail = null;
 		WSReturnStatus returnStatus = null;
 		String finReference = fd.getFinReference();
@@ -721,10 +721,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			APIErrorHandlerService.logReference(finReference);
 		}
 		// check reference is in temp table or not
-		FinanceMain finMain = financeMainDAO.getFinanceDetailsForService(finReference, "_Temp", false);
+		FinanceMain fm = financeMainDAO.getFinanceDetailsForService1(finReference, "_Temp", false);
 
-		if (finMain == null) {
-
+		if (fm == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -741,14 +740,16 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	private FinanceDetail getErrorMessage(FinScheduleData financeSchdData) {
-		for (ErrorDetail erroDetail : financeSchdData.getErrorDetails()) {
+	private FinanceDetail getErrorMessage(FinScheduleData schdData) {
+
+		for (ErrorDetail ed : schdData.getErrorDetails()) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(
-					APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+
 			return response;
 		}
+
 		return new FinanceDetail();
 	}
 
@@ -770,12 +771,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		response.setCustomerDetails(null);
 	}
 
-	/**
-	 * Method for validate finance reference and check existence in origination
-	 * 
-	 * @param finReference
-	 * @return
-	 */
 	private WSReturnStatus validateFinReference(String finReference) {
 		logger.debug(Literal.ENTERING);
 
@@ -795,8 +790,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * Method to reject loan based on data provided by customer
 	 * 
-	 * @param financeDetail
-	 *            {@link FinanceDetail}
+	 * @param financeDetail {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override
@@ -844,8 +838,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * Method to cancel loan based on data provided by customer
 	 * 
-	 * @param financeDetail
-	 *            {@link FinanceDetail}
+	 * @param financeDetail {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override
@@ -1723,7 +1716,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 		response = financeDetailService.getDetailsByOfferID(offerId);
 		if (response != null && response.getFinReference() == null) {
-			//if no data found for offerID
+			// if no data found for offerID
 			response.setCif(null);
 			String[] valueParm = new String[2];
 			valueParm[0] = "data is";

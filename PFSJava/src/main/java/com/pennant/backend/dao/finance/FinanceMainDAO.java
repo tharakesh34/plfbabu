@@ -102,6 +102,8 @@ public interface FinanceMainDAO {
 
 	int getFinanceCountById(long finID, String type, boolean isWIF);
 
+	Long getFinIDByFinReference(String finReference, String type, boolean isWIF);
+
 	int getFinanceCountByMandateId(long mandateID);
 
 	int getFinanceCountById(long finID, long mandateID);
@@ -109,6 +111,8 @@ public interface FinanceMainDAO {
 	int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type);
 
 	FinanceMain getFinanceDetailsForService(long finID, String type, boolean isWIF);
+
+	FinanceMain getFinanceDetailsForService1(String finReference, String type, boolean isWIF);// FIXME Remove 1
 
 	int updateFinanceBasicDetails(FinanceMain finacneMain, String type);
 

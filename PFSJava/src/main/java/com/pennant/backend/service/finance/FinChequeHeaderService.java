@@ -11,13 +11,13 @@ public interface FinChequeHeaderService {
 
 	AuditHeader delete(AuditHeader auditHeader);
 
-	ChequeHeader getChequeHeader(String finRef);
+	ChequeHeader getChequeHeader(long finID);
 
 	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	ChequeHeader getChequeHeaderByRef(String finReference);
+	ChequeHeader getChequeHeaderByRef(long finID);
 
 	AuditDetail validation(AuditDetail auditDetail, String usrLanguage);
 }

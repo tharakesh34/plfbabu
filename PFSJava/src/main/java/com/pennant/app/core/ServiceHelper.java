@@ -1,48 +1,38 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ServiceHelper.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ServiceHelper.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -103,17 +93,15 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
 import com.pennant.eod.dao.CustomerQueuingDAO;
 
-abstract public class ServiceHelper implements Serializable {
-
-	private static final long serialVersionUID = 4165353615228874397L;
+abstract public class ServiceHelper {
 	protected static Logger logger = LogManager.getLogger(ServiceHelper.class.getClass());
 
 	private DataSource dataSource;
-	//customer
+	// customer
 	protected CustomerDAO customerDAO;
 	protected CustomerStatusCodeDAO customerStatusCodeDAO;
 	private CustomerQueuingDAO customerQueuingDAO;
-	//Loan
+	// Loan
 	protected FinanceTypeDAO financeTypeDAO;
 	protected FinanceMainDAO financeMainDAO;
 	protected FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -124,13 +112,13 @@ abstract public class ServiceHelper implements Serializable {
 	protected FinFeeScheduleDetailDAO finFeeScheduleDetailDAO;
 	protected PresentmentDetailDAO presentmentDetailDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
-	//accounting
+	// accounting
 	private FinContributorDetailDAO finContributorDetailDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private PostingsDAO postingsDAO;
 	private AccountProcessUtil accountProcessUtil;
 	protected PostingsPreparationUtil postingsPreparationUtil;
-	//over due
+	// over due
 	protected FinODDetailsDAO finODDetailsDAO;
 	protected ProvisionDAO provisionDAO;
 	protected ProvisionMovementDAO provisionMovementDAO;
@@ -147,7 +135,7 @@ abstract public class ServiceHelper implements Serializable {
 	private static EODConfig eodConfig;
 
 	public Long getAccountingID(FinanceMain main, String eventCode) {
-		//FIXME: PV:  28AUG19. No Separate Accounting for Promotion
+		// FIXME: PV: 28AUG19. No Separate Accounting for Promotion
 		/*
 		 * if (StringUtils.isNotBlank(main.getPromotionCode())) { return
 		 * AccountingConfigCache.getCacheAccountSetID(main.getPromotionCode(), eventCode,
@@ -258,7 +246,7 @@ abstract public class ServiceHelper implements Serializable {
 
 	protected boolean isOldestDueOverDue(FinanceScheduleDetail curSchd) {
 		if (ImplementationConstants.ALLOW_OLDEST_DUE) {
-			FinODDetails od = finODDetailsDAO.getFinODByFinRef(curSchd.getFinReference(), curSchd.getSchDate());
+			FinODDetails od = finODDetailsDAO.getFinODByFinRef(curSchd.getFinID(), curSchd.getSchDate());
 			if (od != null && (od.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0
 					&& (od.getFinCurODPft().compareTo(BigDecimal.ZERO) > 0
 							|| od.getFinCurODPri().compareTo(BigDecimal.ZERO) > 0))) {
