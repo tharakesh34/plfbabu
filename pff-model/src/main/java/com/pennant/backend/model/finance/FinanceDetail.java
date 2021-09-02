@@ -198,7 +198,7 @@ public class FinanceDetail implements Serializable {
 	private FinanceTaxDetail financeTaxDetail;
 	@XmlElementWrapper(name = "financeFlags")
 	@XmlElement(name = "financeFlag")
-	private List<FinFlagsDetail> finFlagsDetails;
+	private List<FinFlagsDetail> finFlagsDetails = new ArrayList<>();
 	@XmlElementWrapper(name = "fees")
 	@XmlElement(name = "fee")
 	private List<FinFeeDetail> finFeeDetails;

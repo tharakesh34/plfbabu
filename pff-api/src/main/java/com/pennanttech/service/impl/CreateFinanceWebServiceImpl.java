@@ -705,16 +705,16 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * Method for approve temp_finance details
 	 * 
-	 * @param financeDetail
+	 * @param fd
 	 * @return WSReturnStatus
 	 */
 
 	@Override
-	public WSReturnStatus approveLoan(FinanceDetail financeDetail) throws ServiceException {
+	public WSReturnStatus approveLoan(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail finDetail = null;
 		WSReturnStatus returnStatus = null;
-		String finReference = financeDetail.getFinReference();
+		String finReference = fd.getFinReference();
 
 		// for logging purpose
 		if (StringUtils.isNotBlank(finReference)) {

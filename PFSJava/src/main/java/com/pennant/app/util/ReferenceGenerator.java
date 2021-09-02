@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: PennantReferenceIDUtil.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  5-09-2011    														*
- *                                                                  						*
- * Modified Date    :  6-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PennantReferenceIDUtil.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 5-09-2011 * *
+ * Modified Date : 6-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 19-06-2018		Siva			 		 0.2		Auto Receipt Number Generation      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-09-2011 Pennant 0.1 * * 19-06-2018 Siva 0.2 Auto Receipt Number Generation * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -63,7 +45,6 @@ public class ReferenceGenerator implements Serializable {
 	private static final long serialVersionUID = -4965488291173350445L;
 	private static Logger logger = LogManager.getLogger(ReferenceGenerator.class);
 
-	//private static NextidviewDAO	nextidviewDAO;
 	private static final String DEFAULT_FORMAT = "BBBB_PPP_SSSSSSS";
 	private static final String BRANCH = "B";
 	private static final String SWIFT_BRANCH = "A";
@@ -71,69 +52,80 @@ public class ReferenceGenerator implements Serializable {
 	private static final String PRODUCT = "P";
 	private static final String LOANTYPE = "L";
 	private static final String SEQUENCE = "S";
-	//First 4 letters of the customer and DOB in DDMMYY format 
+
+	// First 4 letters of the customer and DOB in DDMMYY format
 	private static final String DEFAULT_PWD_FORMAT = "LLLL_ddMMyy";
 	private static final String LETTER = "L";
 	private static final String DAY = "d";
 	private static final String YEAR = "y";
 	private static SequenceDao<?> sequenceGenetor;
 
-	/**
-	 * Method for Generating Sequence Reference Number based on Branch and product code
-	 * 
-	 * @param financeMain
-	 * @param financeType
-	 * @return
-	 */
-	public static String generateFinRef(FinanceMain financeMain, FinanceType financeType) {
+	private static String LOAN_REF_FORMAT = "";
+	private static String LOAN_REF_PREFIX = "";
 
-		String format = SysParamUtil.getValueAsString(SMTParameterConstants.LOAN_REF_FORMAT);
-		String prefix = SysParamUtil.getValueAsString(SMTParameterConstants.LOAN_REF_PREFIX);
-		if (StringUtils.isBlank(format)) {
-			format = DEFAULT_FORMAT;
+	static {
+		LOAN_REF_FORMAT = SysParamUtil.getValueAsString(SMTParameterConstants.LOAN_REF_FORMAT);
+		LOAN_REF_PREFIX = SysParamUtil.getValueAsString(SMTParameterConstants.LOAN_REF_PREFIX);
+
+		if (StringUtils.isBlank(LOAN_REF_FORMAT)) {
+			LOAN_REF_FORMAT = DEFAULT_FORMAT;
 		}
+	}
 
-		StringBuilder lonRef = new StringBuilder(StringUtils.trimToEmpty(prefix));
-		String branchCode = StringUtils.trimToEmpty(financeMain.getFinBranch());
-		String swiftbranchCode = StringUtils.trimToEmpty(financeMain.getSwiftBranchCode());
-		String productCode = StringUtils.trimToEmpty(financeMain.getFinCategory());
+	public static String generateFinRef(FinanceMain fm, FinanceType financeType) {
+		StringBuilder finReference = new StringBuilder(StringUtils.trimToEmpty(LOAN_REF_PREFIX));
+		String branchCode = StringUtils.trimToEmpty(fm.getFinBranch());
+		String swiftbranchCode = StringUtils.trimToEmpty(fm.getSwiftBranchCode());
+		String productCode = StringUtils.trimToEmpty(fm.getFinCategory());
 		String divisionCode = StringUtils.trimToEmpty(financeType.getFinDivision());
 		String finType = StringUtils.trimToEmpty(financeType.getFinType());
 
-		if (StringUtils.isNotBlank(format)) {
-			String[] formetFileds = format.split("_");
+		if (StringUtils.isNotBlank(LOAN_REF_FORMAT)) {
+			String[] formetFileds = LOAN_REF_FORMAT.split("_");
 			for (String formatCode : formetFileds) {
 
 				if (formatCode.startsWith(BRANCH)) {
-					appendLoanRef(lonRef, branchCode, formatCode);
+					appendLoanRef(finReference, branchCode, formatCode);
 				}
 
 				if (ImplementationConstants.FINREFERENCE_ALW_SWIFT_CODE && formatCode.startsWith(SWIFT_BRANCH)) {
-					appendLoanRef(lonRef, swiftbranchCode, formatCode);
+					appendLoanRef(finReference, swiftbranchCode, formatCode);
 				}
 
 				if (formatCode.startsWith(LOANTYPE)) {
-					appendLoanRef(lonRef, finType, formatCode);
+					appendLoanRef(finReference, finType, formatCode);
 				}
 
 				if (formatCode.startsWith(PRODUCT)) {
-					appendLoanRef(lonRef, productCode, formatCode);
+					appendLoanRef(finReference, productCode, formatCode);
 				}
 
 				if (formatCode.startsWith(DIVISION)) {
-					appendLoanRef(lonRef, divisionCode, formatCode);
+					appendLoanRef(finReference, divisionCode, formatCode);
 				}
 
 				if (formatCode.startsWith(SEQUENCE)) {
 					int length = formatCode.length();
 					long referenceSeqNumber = sequenceGenetor.getNextValue("SeqFinReference");
 					String sequence = StringUtils.leftPad(String.valueOf(referenceSeqNumber), length, '0');
-					lonRef.append(sequence);
+					finReference.append(sequence);
 				}
+
+				generateFinID(fm);
 			}
 		}
 
-		return StringUtils.trimToEmpty(lonRef.toString());
+		return StringUtils.trimToEmpty(finReference.toString());
+
+	}
+
+	public static void generateFinID(FinanceMain fm) {
+		long finID = fm.getFinID();
+
+		if (finID <= 0) {
+			finID = sequenceGenetor.getNextValue("SeqFinanceMain");
+			fm.setFinID(finID);
+		}
 
 	}
 

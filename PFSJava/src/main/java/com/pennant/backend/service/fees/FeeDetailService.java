@@ -78,6 +78,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -341,18 +342,8 @@ public class FeeDetailService {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method to process fees and charge details for Inquiry services
-	 * 
-	 * @param financeDetail
-	 * @param finEvent
-	 * @param finServiceInst
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent,
-			FinServiceInstruction finServiceInst, boolean enquiry)
-			throws IllegalAccessException, InvocationTargetException {
+			FinServiceInstruction finServiceInst, boolean enquiry) throws AppException {
 		logger.debug("Entering");
 
 		boolean isOrigination = false;
@@ -1115,19 +1106,8 @@ public class FeeDetailService {
 		return finFeeDetails;
 	}
 
-	/**
-	 * Method for execute finance fee details and validate with configured fees in loan type.<br>
-	 * - Execute Origination fees.<br>
-	 * - Execute Servicing fees.<br>
-	 * FinEvent is always empty for origination fees.
-	 * 
-	 * @param financeDetail
-	 * @param finEvent
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	public void doExecuteFeeCharges(FinanceDetail financeDetail, String finEvent, FinServiceInstruction finServiceInst,
-			boolean enquiry) throws IllegalAccessException, InvocationTargetException {
+			boolean enquiry) throws AppException {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		boolean isOriginationFee = false;
 		if (StringUtils.isBlank(finEvent)) {
