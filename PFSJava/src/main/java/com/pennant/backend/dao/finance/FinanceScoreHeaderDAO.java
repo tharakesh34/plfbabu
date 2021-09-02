@@ -9,6 +9,8 @@ public interface FinanceScoreHeaderDAO {
 
 	List<FinanceScoreHeader> getFinScoreHeaderList(long finID, String type);
 
+	List<FinanceScoreHeader> getFinScoreHeaderList(String finReference, String type);
+
 	long saveHeader(FinanceScoreHeader scoreHeader, String type);
 
 	boolean deleteHeader(FinanceScoreHeader scoreHeader, String type);

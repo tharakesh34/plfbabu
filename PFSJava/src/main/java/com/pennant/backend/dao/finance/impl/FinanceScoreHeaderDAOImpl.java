@@ -63,6 +63,46 @@ public class FinanceScoreHeaderDAOImpl extends SequenceDao<FinanceScoreHeader> i
 	}
 
 	@Override
+	public List<FinanceScoreHeader> getFinScoreHeaderList(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" HeaderId, FinID, FinReference, GroupId, MinScore, Override");
+		sql.append(", OverrideScore, CreditWorth, CustId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", GroupCode, GroupCodeDesc");
+		}
+
+		sql.append(" from FinanceScoreHeader");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+		}, (rs, rowNum) -> {
+			FinanceScoreHeader fsh = new FinanceScoreHeader();
+
+			fsh.setHeaderId(rs.getLong("HeaderId"));
+			fsh.setFinID(rs.getLong("FinID"));
+			fsh.setFinReference(rs.getString("FinReference"));
+			fsh.setGroupId(rs.getLong("GroupId"));
+			fsh.setMinScore(rs.getInt("MinScore"));
+			fsh.setOverride(rs.getBoolean("Override"));
+			fsh.setOverrideScore(rs.getInt("OverrideScore"));
+			fsh.setCreditWorth(rs.getString("CreditWorth"));
+			fsh.setCustId(rs.getLong("CustId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				fsh.setGroupCode(rs.getString("GroupCode"));
+				fsh.setGroupCodeDesc(rs.getString("GroupCodeDesc"));
+			}
+
+			return fsh;
+		});
+	}
+
+	@Override
 	public long saveHeader(FinanceScoreHeader sh, String type) {
 		if (sh.getHeaderId() == Long.MIN_VALUE) {
 			sh.setId(getNextValue("SeqFinanceScoreHeader"));

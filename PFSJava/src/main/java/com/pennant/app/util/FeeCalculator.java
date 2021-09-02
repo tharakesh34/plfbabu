@@ -59,36 +59,36 @@ public class FeeCalculator {
 	private JointAccountDetailDAO jointAccountDetailDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 
-	public FinReceiptData calculateFees(FinReceiptData receiptData) {
-		String finReference = receiptData.getFinReference();
+	public FinReceiptData calculateFees(FinReceiptData rd) {
+		String finReference = rd.getFinReference();
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
 
-		convertToFinanceFees(receiptData, taxPercentages);
+		convertToFinanceFees(rd, taxPercentages);
 
-		FinanceDetail fd = receiptData.getFinanceDetail();
+		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		List<FinFeeDetail> finFeeDetailList = schdData.getFinFeeDetailList();
 
 		if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-			calculateFeeDetail(receiptData, taxPercentages);
+			calculateFeeDetail(rd, taxPercentages);
 		}
 
-		return receiptData;
+		return rd;
 	}
 
-	private void convertToFinanceFees(FinReceiptData receiptData, Map<String, BigDecimal> taxPercentages) {
+	private void convertToFinanceFees(FinReceiptData rd, Map<String, BigDecimal> taxPercentages) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail financeDetail = receiptData.getFinanceDetail();
-		List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
-		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinanceDetail fd = rd.getFinanceDetail();
+		List<FinTypeFees> finTypeFeesList = fd.getFinTypeFeesList();
+		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinFeeDetail> feeList = new ArrayList<FinFeeDetail>();
 
-		List<FinFeeConfig> feeConfigList = financeDetail.getFinFeeConfigList();
+		List<FinFeeConfig> feeConfigList = fd.getFinFeeConfigList();
 
 		if (CollectionUtils.isNotEmpty(feeConfigList)) {
-			feeList.addAll(calculateFeeOnRule(receiptData));
+			feeList.addAll(calculateFeeOnRule(rd));
 			schdData.setFinFeeDetailList(feeList);
 			return;
 		}
@@ -134,7 +134,7 @@ public class FeeCalculator {
 			fee.setTaxApplicable(feeType.isTaxApplicable());
 
 			if (feeType.isTaxApplicable()) {
-				this.finFeeDetailService.convertGSTFinTypeFees(fee, feeType, financeDetail, taxPercentages);
+				this.finFeeDetailService.convertGSTFinTypeFees(fee, feeType, fd, taxPercentages);
 			} else {
 				fee.setActualAmountOriginal(feeType.getAmount());
 				fee.setActualAmountGST(BigDecimal.ZERO);
@@ -210,7 +210,7 @@ public class FeeCalculator {
 			}
 		}
 
-		Map<String, Integer> custCtgCount = jointAccountDetailDAO.getCustCtgCount(fm.getFinReference());
+		Map<String, Integer> custCtgCount = jointAccountDetailDAO.getCustCtgCount(fm.getFinID());
 		if (custCtgCount != null) {
 			if (custCtgCount.containsKey(PennantConstants.PFF_CUSTCTG_INDIV)) {
 				retailCount = retailCount + custCtgCount.get(PennantConstants.PFF_CUSTCTG_INDIV);
@@ -478,10 +478,11 @@ public class FeeCalculator {
 
 		dataMap.put("completedInstallments", instNO);
 
-		String finReference = fm.getFinReference();
+		long finID = fm.getFinID();
+
 		if (StringUtils.isNotBlank(financeDetail.getModuleDefiner())) {
-			FinanceProfitDetail pft = profitDetailsDAO.getFinProfitDetailsById(finReference);
-			BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finReference);
+			FinanceProfitDetail pft = profitDetailsDAO.getFinProfitDetailsById(finID);
+			BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
 			dataMap.put("totalOutStanding", pft.getTotalPftBal());
 			// PSD: 138255 PrincipalOutStanding will be future
 			// Amount to be paid.
@@ -694,21 +695,14 @@ public class FeeCalculator {
 
 	// ### 11-07-2018 - Start - PSD Ticket ID : 127846
 
-	/**
-	 * Method to get DroplinePOS.
-	 * 
-	 * @param valueDate
-	 * @param finScheduleData
-	 * 
-	 */
-	public BigDecimal getDropLinePOS(Date valueDate, FinScheduleData finScheduleData) {
-
+	public BigDecimal getDropLinePOS(Date valueDate, FinScheduleData schdData) {
 		BigDecimal dropLinePOS = BigDecimal.ZERO;
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
-		List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
+		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
+		List<FinanceScheduleDetail> scheduleList = schdData.getFinanceScheduleDetails();
 
 		if (scheduleList == null || scheduleList.isEmpty()) {
-			scheduleList = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
+			scheduleList = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
 		}
 
 		for (FinanceScheduleDetail schedule : scheduleList) {
@@ -919,10 +913,10 @@ public class FeeCalculator {
 			dataMap.put("finAgetilldate", finAge);
 		}
 
-		String finReference = fm.getFinReference();
-		FinanceProfitDetail finPft = profitDetailsDAO.getFinProfitDetailsById(finReference);
+		long finID = fm.getFinID();
+		FinanceProfitDetail finPft = profitDetailsDAO.getFinProfitDetailsById(finID);
 		FinanceProfitDetail orgFinPftDtls = rd.getOrgFinPftDtls();
-		BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finReference);
+		BigDecimal outStandingFeeBal = financeScheduleDetailDAO.getOutStandingBalFromFees(finID);
 
 		dataMap.put("totalOutStanding", finPft.getTotalPftBal());
 		dataMap.put("principalOutStanding", finPft.getTotalpriSchd().subtract(finPft.getTdSchdPri()));

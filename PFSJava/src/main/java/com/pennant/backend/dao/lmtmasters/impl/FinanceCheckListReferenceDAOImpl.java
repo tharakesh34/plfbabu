@@ -113,6 +113,44 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	}
 
 	@Override
+	public List<FinanceCheckListReference> getCheckListByFinRef(String finReference, String showStageCheckListIds,
+			String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinReference = ?");
+
+		if (StringUtils.isNotBlank(showStageCheckListIds)) {
+			String[] sscl = showStageCheckListIds.split(",");
+			sql.append(" and QuestionId IN(");
+
+			int i = 0;
+
+			while (i < sscl.length) {
+				sql.append(" ?,");
+				i++;
+			}
+
+			sql.deleteCharAt(sql.length() - 1);
+			sql.append(")");
+		}
+		FinanceCheckListReferenceRowMapper rowMapper = new FinanceCheckListReferenceRowMapper(type);
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+
+			if (StringUtils.isNotBlank(showStageCheckListIds)) {
+				String[] showStageCheckList = showStageCheckListIds.split(",");
+
+				for (String showStage : showStageCheckList) {
+					ps.setLong(index++, Long.valueOf(showStage));
+				}
+			}
+		}, rowMapper);
+	}
+
+	@Override
 	public void delete(FinanceCheckListReference fclr, String type) {
 		StringBuilder sql = new StringBuilder("Delete From FinanceCheckListRef");
 		sql.append(StringUtils.trimToEmpty(type));
