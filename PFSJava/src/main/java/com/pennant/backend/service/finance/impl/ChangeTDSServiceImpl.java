@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -58,61 +57,49 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 	@Override
 	public FinanceMain getFinanceBasicDetailByRef(String finReference) {
-		return getChangeTDSDAO().getFinanceBasicDetailByRef(finReference);
+		return changeTDSDAO.getFinanceBasicDetailByRef(finReference);
 	}
 
 	@Override
 	public boolean isTDSCheck(String reference, Date appDate) {
-		return getChangeTDSDAO().isTDSCheck(reference, appDate);
+		return changeTDSDAO.isTDSCheck(reference, appDate);
 	}
 
 	public Date getInstallmentDate(String reference, Date appDate) {
-		return getChangeTDSDAO().getInstallmentDate(reference, appDate);
+		return changeTDSDAO.getInstallmentDate(reference, appDate);
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinMaintainInstructions/BMTFinMaintainInstructions_Temp by using FinMaintainInstructionDAO's save method b)
-	 * Update the Record in the table. based on the module workFlow Configuration. by using FinMaintainInstructionDAO's
-	 * update method 3) Audit the record in to AuditHeader and AdtBMTFinMaintainInstructions by using
-	 * auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
-		String finReference = finMaintainInstruction.getFinReference();
+		String finReference = fmi.getFinReference();
 
 		String table = "_View";
-		if (!finMaintainInstruction.isNewRecord()) {
+		if (!fmi.isNewRecord()) {
 			table = "_Temp";
 		}
 
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, table, false);
+		long finID = fm.getFinID();
 
 		FinScheduleData schdData = new FinScheduleData();
 		List<FinanceScheduleDetail> schedules = null;
-		schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
+		schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(schedules);
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (finMaintainInstruction.isWorkflow()) {
+		if (fmi.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
@@ -123,16 +110,16 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		BeanUtils.copyProperties(fm, befImage);
 		fm.setBefImage(befImage);
 
-		fm.setNextRoleCode(finMaintainInstruction.getNextRoleCode());
-		fm.setRecordStatus(finMaintainInstruction.getRecordStatus());
+		fm.setNextRoleCode(fmi.getNextRoleCode());
+		fm.setRecordStatus(fmi.getRecordStatus());
 		fm.setRcdMaintainSts(FinServiceEvent.CHANGETDS);
-		fm.setRoleCode(finMaintainInstruction.getRoleCode());
-		fm.setTaskId(finMaintainInstruction.getTaskId());
-		fm.setNextTaskId(finMaintainInstruction.getNextTaskId());
-		fm.setWorkflowId(finMaintainInstruction.getWorkflowId());
-		fm.setLastMntOn(finMaintainInstruction.getLastMntOn());
-		fm.setLastMntBy(finMaintainInstruction.getLastMntBy());
-		fm.setVersion(finMaintainInstruction.getVersion());
+		fm.setRoleCode(fmi.getRoleCode());
+		fm.setTaskId(fmi.getTaskId());
+		fm.setNextTaskId(fmi.getNextTaskId());
+		fm.setWorkflowId(fmi.getWorkflowId());
+		fm.setLastMntOn(fmi.getLastMntOn());
+		fm.setLastMntBy(fmi.getLastMntBy());
+		fm.setVersion(fmi.getVersion());
 
 		FinServiceInstruction inst = new FinServiceInstruction();
 		inst.setFinEvent(FinServiceEvent.CHANGETDS);
@@ -146,27 +133,26 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
 		lowerTaxDeduction.setFinReference(fm.getFinReference());
-		lowerTaxDeduction.setStartDate(finMaintainInstruction.getTdsStartDate());
-		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
-		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
-		lowerTaxDeduction.setLimitAmt(finMaintainInstruction.getTdsLimit());
+		lowerTaxDeduction.setStartDate(fmi.getTdsStartDate());
+		lowerTaxDeduction.setEndDate(fmi.getTdsEndDate());
+		lowerTaxDeduction.setPercentage(fmi.getTdsPercentage());
+		lowerTaxDeduction.setLimitAmt(fmi.getTdsLimit());
 		ltdList.add(lowerTaxDeduction);
 
 		schdData.setLowerTaxDeductionDetails(ltdList);
 
-		finServiceInstructionDAO.deleteList(fm.getFinReference(), FinServiceEvent.CHANGETDS, tableType.getSuffix());
+		finServiceInstructionDAO.deleteList(finID, FinServiceEvent.CHANGETDS, tableType.getSuffix());
 
-		if (finMaintainInstruction.isNewRecord()) {
+		if (fmi.isNewRecord()) {
 			financeMainDAO.save(fm, tableType, false);
-			finMaintainInstruction.setFinMaintainId(
-					Long.parseLong(finMaintainInstructionDAO.save(finMaintainInstruction, tableType)));
-			schdData.getLowerTaxDeductionDetails().get(0).setFinMaintainId(finMaintainInstruction.getFinMaintainId());
+			fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
+			schdData.getLowerTaxDeductionDetails().get(0).setFinMaintainId(fmi.getFinMaintainId());
 			lowertaxDeductionDAO.save(schdData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
-			auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
-			auditHeader.setAuditReference(String.valueOf(finMaintainInstruction.getFinMaintainId()));
+			auditHeader.getAuditDetail().setModelData(fmi);
+			auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
 		} else {
 			financeMainDAO.update(fm, tableType, false);
-			finMaintainInstructionDAO.update(finMaintainInstruction, tableType);
+			finMaintainInstructionDAO.update(fmi, tableType);
 			lowertaxDeductionDAO.update(schdData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
 
 		}
@@ -175,20 +161,13 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		// Add Audit
 		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, false);
 		auditHeader.setAuditDetail(auditDetail);
@@ -196,156 +175,148 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader = nextProcess(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinMaintainInstructions by using FinMaintainInstructionDAO's delete method with type as Blank 3) Audit the record
-	 * in to AuditHeader and AdtBMTFinMaintainInstructions by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finMaintainInstruction.getFinReference());
+		FinanceMain fm = new FinanceMain();
+		fm.setFinReference(fmi.getFinReference());
+		fm.setFinID(fmi.getFinID());
 
-		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, false);
+		financeMainDAO.deleteFinreference(fm, TableType.TEMP_TAB, false, false);
 
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.MAIN_TAB);
+		finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
-		BeanUtils.copyProperties((FinMaintainInstruction) auditHeader.getAuditDetail().getModelData(),
-				finMaintainInstruction);
+		FinMaintainInstruction fmi = new FinMaintainInstruction();
+		long finID = fmi.getFinID();
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(finMaintainInstruction.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(finMaintainInstructionDAO
-					.getFinMaintainInstructionById(finMaintainInstruction.getFinMaintainId(), ""));
+		BeanUtils.copyProperties((FinMaintainInstruction) auditHeader.getAuditDetail().getModelData(), fmi);
+
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(fmi.getRecordType())) {
+			auditHeader.getAuditDetail()
+					.setBefImage(finMaintainInstructionDAO.getFinMaintainInstructionById(fmi.getFinMaintainId(), ""));
 		}
 
-		if (finMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 
 			tranType = PennantConstants.TRAN_DEL;
-			getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.MAIN_TAB);
+			finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
 
 		} else {
 
-			finMaintainInstruction.setRoleCode("");
-			finMaintainInstruction.setNextRoleCode("");
-			finMaintainInstruction.setTaskId("");
-			finMaintainInstruction.setNextTaskId("");
-			finMaintainInstruction.setWorkflowId(0);
+			fmi.setRoleCode("");
+			fmi.setNextRoleCode("");
+			fmi.setTaskId("");
+			fmi.setNextTaskId("");
+			fmi.setWorkflowId(0);
 
-			if (finMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				finMaintainInstruction.setRecordType("");
-				getFinMaintainInstructionDAO().save(finMaintainInstruction, TableType.MAIN_TAB);
+				fmi.setRecordType("");
+				finMaintainInstructionDAO.save(fmi, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				finMaintainInstruction.setRecordType("");
-				getFinMaintainInstructionDAO().update(finMaintainInstruction, TableType.MAIN_TAB);
+				fmi.setRecordType("");
+				finMaintainInstructionDAO.update(fmi, TableType.MAIN_TAB);
 			}
 		}
 
 		// calculate TDS amount from application date
-		FinScheduleData finScheduleData = calScheduleTDSAmount(finMaintainInstruction);
+		FinScheduleData schdData = calScheduleTDSAmount(fmi);
 
 		// update TdsAmount and TDS Applicable flag in schedule details
-		getFinanceScheduleDetailDAO().updateTDS(finScheduleData.getFinanceScheduleDetails());
+		financeScheduleDetailDAO.updateTDS(schdData.getFinanceScheduleDetails());
 
 		// save FinInstruction to maintain records
-		FinServiceInstruction finServiceInstruction = null;
-		List<FinServiceInstruction> finServInstList = getFinServiceInstructionDAO().getFinServiceInstructions(
-				finScheduleData.getFinanceMain().getFinReference(), "_Temp", FinServiceEvent.CHANGETDS);
+		FinServiceInstruction fsi = null;
+		List<FinServiceInstruction> fsiList = finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp",
+				FinServiceEvent.CHANGETDS);
 		Date appDate = SysParamUtil.getAppDate();
-		if (finServInstList.size() > 0) {
-			finServiceInstruction = finServInstList.get(0);
-			finServiceInstruction.setChecker(auditHeader.getAuditUsrId());
-			finServiceInstruction.setCheckerAppDate(appDate);
-			finServiceInstruction.setCheckerSysDate(DateUtility.getSysDate());
 
+		if (fsiList.size() > 0) {
+			fsi = fsiList.get(0);
+			fsi.setChecker(auditHeader.getAuditUsrId());
+			fsi.setCheckerAppDate(appDate);
+			fsi.setCheckerSysDate(DateUtility.getSysDate());
 		} else {
-			finServiceInstruction = new FinServiceInstruction();
-			finServiceInstruction.setFinReference(finMaintainInstruction.getFinReference());
-			finServiceInstruction.setFromDate(appDate);
-			finServiceInstruction.setFinEvent(FinServiceEvent.CHANGETDS);
-			finServiceInstruction.setChecker(auditHeader.getAuditUsrId());
-			finServiceInstruction.setCheckerAppDate(appDate);
-			finServiceInstruction.setCheckerSysDate(DateUtility.getSysDate());
-			finServiceInstruction.setMaker(auditHeader.getAuditUsrId());
-			finServiceInstruction.setMakerAppDate(appDate);
-			finServiceInstruction.setMakerSysDate(DateUtility.getSysDate());
-			finServiceInstruction.setLinkedTranId(0);
+			fsi = new FinServiceInstruction();
+			fsi.setFinReference(fmi.getFinReference());
+			fsi.setFromDate(appDate);
+			fsi.setFinEvent(FinServiceEvent.CHANGETDS);
+			fsi.setChecker(auditHeader.getAuditUsrId());
+			fsi.setCheckerAppDate(appDate);
+			fsi.setCheckerSysDate(DateUtility.getSysDate());
+			fsi.setMaker(auditHeader.getAuditUsrId());
+			fsi.setMakerAppDate(appDate);
+			fsi.setMakerSysDate(DateUtility.getSysDate());
+			fsi.setLinkedTranId(0);
 		}
-		getFinServiceInstructionDAO().deleteList(finServiceInstruction.getFinReference(), "",
-				TableType.TEMP_TAB.getSuffix());
-		getFinServiceInstructionDAO().save(finServiceInstruction, "");
+
+		finServiceInstructionDAO.deleteList(finID, "", TableType.TEMP_TAB.getSuffix());
+		finServiceInstructionDAO.save(fsi, "");
 
 		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finMaintainInstruction.getFinReference());
-		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, true);
+		financeMain.setFinReference(fmi.getFinReference());
+		financeMainDAO.deleteFinreference(financeMain, TableType.TEMP_TAB, false, true);
 
-		financeMain.setTDSApplicable(finMaintainInstruction.istDSApplicable());
+		financeMain.setTDSApplicable(fmi.istDSApplicable());
 		// update tdsApplicable in FinanceMain table
-		getFinanceMainDAO().updateTdsApplicable(financeMain);
+		financeMainDAO.updateTdsApplicable(financeMain);
 
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		finMaintainInstructionDAO.delete(fmi, TableType.TEMP_TAB);
 
-		for (LowerTaxDeduction deductions : finScheduleData.getLowerTaxDeductionDetails()) {
-			if (deductions.getFinMaintainId() == finMaintainInstruction.getId()) {
-				getLowertaxDeductionDAO().delete(deductions, TableType.TEMP_TAB.getSuffix());
+		for (LowerTaxDeduction deductions : schdData.getLowerTaxDeductionDetails()) {
+			if (deductions.getFinMaintainId() == fmi.getId()) {
+				lowertaxDeductionDAO.delete(deductions, TableType.TEMP_TAB.getSuffix());
 			}
 		}
 
-		for (LowerTaxDeduction deductions : finScheduleData.getLowerTaxDeductionDetails()) {
-			if (deductions.getFinMaintainId() == finMaintainInstruction.getId()) {
-				deductions.setRoleCode(finMaintainInstruction.getRoleCode());
-				deductions.setNextRoleCode(finMaintainInstruction.getNextRoleCode());
-				deductions.setRecordStatus(finMaintainInstruction.getRecordStatus());
-				deductions.setRecordType(finMaintainInstruction.getRecordType());
-				deductions.setTaskId(finMaintainInstruction.getTaskId());
-				deductions.setNextTaskId(finMaintainInstruction.getNextTaskId());
-				deductions.setWorkflowId(finMaintainInstruction.getWorkflowId());
-				deductions.setLastMntOn(finMaintainInstruction.getLastMntOn());
-				deductions.setLastMntBy(finMaintainInstruction.getLastMntBy());
-				deductions.setVersion(finMaintainInstruction.getVersion());
-				deductions.setWorkflowId(finMaintainInstruction.getWorkflowId());
-				getLowertaxDeductionDAO().save(deductions, "");
+		for (LowerTaxDeduction deductions : schdData.getLowerTaxDeductionDetails()) {
+			if (deductions.getFinMaintainId() == fmi.getId()) {
+				deductions.setRoleCode(fmi.getRoleCode());
+				deductions.setNextRoleCode(fmi.getNextRoleCode());
+				deductions.setRecordStatus(fmi.getRecordStatus());
+				deductions.setRecordType(fmi.getRecordType());
+				deductions.setTaskId(fmi.getTaskId());
+				deductions.setNextTaskId(fmi.getNextTaskId());
+				deductions.setWorkflowId(fmi.getWorkflowId());
+				deductions.setLastMntOn(fmi.getLastMntOn());
+				deductions.setLastMntBy(fmi.getLastMntBy());
+				deductions.setVersion(fmi.getVersion());
+				deductions.setWorkflowId(fmi.getWorkflowId());
+				lowertaxDeductionDAO.save(deductions, "");
 			}
 		}
 
@@ -353,51 +324,50 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 				auditHeader.getAuditDetail().getBefImage(), auditHeader.getAuditDetail().getModelData()));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		// Audit for Before And After Images
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				finMaintainInstruction.getBefImage(), finMaintainInstruction));
+		auditHeader.getAuditDetail().setModelData(fmi);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fmi.getBefImage(), fmi));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+
+		long finID = fmi.getFinID();
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finMaintainInstruction.getFinReference());
-		getFinanceMainDAO().deleteFinreference(financeMain, TableType.TEMP_TAB, false, false);
+		financeMain.setFinReference(fmi.getFinReference());
+		financeMainDAO.deleteFinreference(financeMain, TableType.TEMP_TAB, false, false);
 
-		getFinServiceInstructionDAO().deleteList(financeMain.getFinReference(), FinServiceEvent.CHANGETDS,
-				TableType.TEMP_TAB.getSuffix());
+		finServiceInstructionDAO.deleteList(finID, FinServiceEvent.CHANGETDS, TableType.TEMP_TAB.getSuffix());
 
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		finMaintainInstructionDAO.delete(fmi, TableType.TEMP_TAB);
 
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				finMaintainInstruction.getBefImage(), finMaintainInstruction));
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fmi.getBefImage(), fmi));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -407,75 +377,58 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
 		String auditTranType = "";
 
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-			if (finMaintainInstruction.isWorkflow()) {
+			if (fmi.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
-		finMaintainInstruction.setAuditDetailMap(auditDetailMap);
-		auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
+		fmi.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(fmi);
 		auditHeader.setAuditDetails(auditDetails);
 
 		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinMaintainInstructionDAO().getErrorDetail with Error ID and language as parameters. if any
-	 * error/Warnings then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
 			boolean isUniqueCheckReq) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditDetail.getModelData();
+
+		long finID = fmi.getFinID();
 
 		// Check the unique keys.
-		if (isUniqueCheckReq && finMaintainInstruction.isNewRecord()
-				&& finMaintainInstructionDAO.isDuplicateKey(finMaintainInstruction.getEvent(),
-						finMaintainInstruction.getFinReference(),
-						finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (isUniqueCheckReq && fmi.isNewRecord() && finMaintainInstructionDAO.isDuplicateKey(fmi.getEvent(), finID,
+				fmi.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": "
-					+ finMaintainInstruction.getEvent();
-			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : "
-					+ finMaintainInstruction.getFinReference();
+			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": " + fmi.getEvent();
+			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : " + fmi.getFinReference();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
-	/**
-	 * 
-	 * @param finMaintainInstruction
-	 */
-	private FinScheduleData calScheduleTDSAmount(FinMaintainInstruction finMaintainInstruction) {
+	private FinScheduleData calScheduleTDSAmount(FinMaintainInstruction fmi) {
 		logger.debug(Literal.ENTERING);
 
 		Date appDate = SysParamUtil.getAppDate();
 		FinScheduleData schdData = new FinScheduleData();
 
-		String finReference = finMaintainInstruction.getFinReference();
-		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
+		long finID = fmi.getFinID();
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
 
-		long finID = fm.getFinID();
 		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 
 		fm.setEventFromDate(appDate);
@@ -483,99 +436,31 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(schedules);
 
-		schdData.setLowerTaxDeductionDetails(
-				getLowertaxDeductionDAO().getLowerTaxDeductionDetails(fm.getFinReference(), ""));
+		schdData.setLowerTaxDeductionDetails(lowertaxDeductionDAO.getLowerTaxDeductionDetails(finID, ""));
 
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
-		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
-		lowerTaxDeduction.setFinReference(fm.getFinReference());
-		lowerTaxDeduction.setStartDate(finMaintainInstruction.getTdsStartDate());
-		lowerTaxDeduction.setEndDate(finMaintainInstruction.getTdsEndDate());
-		lowerTaxDeduction.setPercentage(finMaintainInstruction.getTdsPercentage());
-		lowerTaxDeduction.setFinMaintainId(finMaintainInstruction.getFinMaintainId());
-		lowerTaxDeduction.setLimitAmt(finMaintainInstruction.getTdsLimit());
-		ltdList.add(lowerTaxDeduction);
+		LowerTaxDeduction ltd = new LowerTaxDeduction();
+		ltd.setFinReference(fm.getFinReference());
+		ltd.setStartDate(fmi.getTdsStartDate());
+		ltd.setEndDate(fmi.getTdsEndDate());
+		ltd.setPercentage(fmi.getTdsPercentage());
+		ltd.setFinMaintainId(fmi.getFinMaintainId());
+		ltd.setLimitAmt(fmi.getTdsLimit());
+		ltdList.add(ltd);
 
 		schdData.getLowerTaxDeductionDetails().addAll(ltdList);
 
 		for (FinanceScheduleDetail schedule : schdData.getFinanceScheduleDetails()) {
 			if (schedule.getSchDate().compareTo(appDate) >= 0 && schedule.getPresentmentId() == 0) {
-				schedule.setTDSApplicable(finMaintainInstruction.istDSApplicable());
+				schedule.setTDSApplicable(fmi.istDSApplicable());
 			}
 		}
 
 		schdData = ScheduleCalculator.procReCalTDSAmount(schdData);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return schdData;
-	}
-
-	// Setters and getters
-
-	public ChangeTDSDAO getChangeTDSDAO() {
-		return changeTDSDAO;
-	}
-
-	public void setChangeTDSDAO(ChangeTDSDAO changeTDSDAO) {
-		this.changeTDSDAO = changeTDSDAO;
-	}
-
-	public FinServiceInstrutionDAO getFinServiceInstructionDAO() {
-		return finServiceInstructionDAO;
-	}
-
-	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
-		this.finServiceInstructionDAO = finServiceInstructionDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public FinMaintainInstructionDAO getFinMaintainInstructionDAO() {
-		return finMaintainInstructionDAO;
-	}
-
-	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
-		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public LowerTaxDeductionDAO getLowertaxDeductionDAO() {
-		return lowertaxDeductionDAO;
-	}
-
-	@Autowired
-	public void setLowertaxDeductionDAO(LowerTaxDeductionDAO lowertaxDeductionDAO) {
-		this.lowertaxDeductionDAO = lowertaxDeductionDAO;
 	}
 
 }

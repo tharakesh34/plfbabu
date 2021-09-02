@@ -10352,6 +10352,7 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
+		<property name="lowertaxDeductionDAO" ref="lowertaxDeductionDAO" />
 	</bean>
 	<!-- Income Amortization IND AS -->
 	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
