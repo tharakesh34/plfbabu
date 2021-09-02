@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinChangeCustomerServiceImpl.java                                    * 	  
- *                                                                    					    *
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :     																	*
- *                                                                  						*
- * Modified Date    :      																	*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinChangeCustomerServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : * * Modified
+ * Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 														                                    * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
@@ -106,17 +88,17 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			return auditHeader;
 		}
 
-		FinChangeCustomer finChangeCustomer = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
+		FinChangeCustomer fcc = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (finChangeCustomer.isWorkflow()) {
+		if (fcc.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finChangeCustomer.isNewRecord()) {
-			finChangeCustomerDAO.save(finChangeCustomer, tableType);
+		if (fcc.isNewRecord()) {
+			finChangeCustomerDAO.save(fcc, tableType);
 		} else {
-			finChangeCustomerDAO.update(finChangeCustomer, tableType);
+			finChangeCustomerDAO.update(fcc, tableType);
 		}
 
 		auditHeaderDAO.addAudit(auditHeader);
@@ -126,15 +108,6 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 
 	}
 
-	/**
-	 * delete method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) delete Record for the DB table
-	 * FinChangeCustomer by using FinChangeCustomerDAO's delete method with type as Blank 3) Audit the record in to
-	 * AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -145,8 +118,8 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			return auditHeader;
 		}
 
-		FinChangeCustomer FinChangeCustomer = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
-		finChangeCustomerDAO.delete(FinChangeCustomer, TableType.MAIN_TAB);
+		FinChangeCustomer fcc = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
+		finChangeCustomerDAO.delete(fcc, TableType.MAIN_TAB);
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -154,52 +127,22 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		return auditHeader;
 	}
 
-	/**
-	 * getFinChangeCustomer fetch the details by using FinChangeCustomerDAO's getFinChangeCustomerById method.
-	 * 
-	 * @param entityCode   entityCode of the FinChangeCustomer.
-	 * @param finReference finReference of the FinChangeCustomer.
-	 * @return FinChangeCustomer
-	 */
 	@Override
 	public FinChangeCustomer getFinChangeCustomerById(long id) {
-		FinChangeCustomer finChangeCustomer = finChangeCustomerDAO.getFinChangeCustomerById(id, "_View");
-		List<CollateralSetup> collateralByReference = getCollateralByReference(finChangeCustomer.getFinReference(),
-				finChangeCustomer.getOldCustId());
+		FinChangeCustomer fcc = finChangeCustomerDAO.getFinChangeCustomerById(id, "_View");
+		String finReference = fcc.getFinReference();
+		List<CollateralSetup> collateralByReference = getCollateralByReference(finReference, fcc.getOldCustId());
 		if (collateralByReference != null) {
-			finChangeCustomer.setCollateralSetups(collateralByReference);
+			fcc.setCollateralSetups(collateralByReference);
 		}
-		return finChangeCustomer;
+		return fcc;
 	}
 
-	/**
-	 * getApprovedFinChangeCustomerById fetch the details by using FinChangeCustomerDAO's getFinChangeCustomerById
-	 * method . with parameter id and type as blank. it fetches the approved records from the FinChangeCustomer.
-	 * 
-	 * @param entityCode   entityCode of the FinChangeCustomer.
-	 * @param finReference finReference of the FinChangeCustomer. (String)
-	 * @return FinChangeCustomer
-	 */
 	@Override
 	public FinChangeCustomer getApprovedFinChangeCustomerById(long id) {
 		return finChangeCustomerDAO.getFinChangeCustomerById(id, "_AView");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getFinChangeCustomerDAO().delete with
-	 * parameters FinChangeCustomer,"" b) NEW Add new record in to main table by using getFinChangeCustomerDAO().save
-	 * with parameters FinChangeCustomer,"" c) EDIT Update record in the main table by using
-	 * getFinChangeCustomerDAO().update with parameters FinChangeCustomer,"" 3) Delete the record from the workFlow
-	 * table by using getFinChangeCustomerDAO().delete with parameters FinChangeCustomer,"_Temp" 4) Audit the record in
-	 * to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the
-	 * record in to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) based on the
-	 * transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -234,7 +177,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			if (PennantConstants.RECORD_TYPE_NEW.equals(fcc.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				fcc.setRecordType("");
-				finChangeCustomerDAO.deleteByReference(fcc.getFinReference());
+				finChangeCustomerDAO.deleteByReference(fcc.getFinID());
 				finChangeCustomerDAO.save(fcc, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -257,23 +200,23 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 
 	}
 
-	public void doProcess(FinChangeCustomer finChangeCustomer) {
-		Long coApplicantId = finChangeCustomer.getCoApplicantId();
+	public void doProcess(FinChangeCustomer fcc) {
+		Long coApplicantId = fcc.getCoApplicantId();
 		if (coApplicantId == null || coApplicantId <= 0) {
 			return;
 		}
 
-		String finReference = finChangeCustomer.getFinReference();
-		String finRef = finReference;
-		changeCustomerDetails(finChangeCustomer);
+		String finReference = fcc.getFinReference();
+		long finID = fcc.getFinID();
+		changeCustomerDetails(fcc);
 
-		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finRef, "_Temp");
+		FinanceTaxDetail td = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_Temp");
 
-		if (financeTaxDetail != null) {
-			financeTaxDetailDAO.deleteFinTaxDetails(financeTaxDetail, TableType.TEMP_TAB);
+		if (td != null) {
+			financeTaxDetailDAO.deleteFinTaxDetails(td, TableType.TEMP_TAB);
 		}
 
-		JointAccountDetail ajd = finChangeCustomer.getJointAccountDetail();
+		JointAccountDetail ajd = fcc.getJointAccountDetail();
 		if (ajd != null) {
 			jointAccountDetailDAO.delete(ajd, "_Temp");
 		}
@@ -288,19 +231,19 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		jd.setVersion(ajd.getVersion());
 		jd.setLastMntOn(ajd.getLastMntOn());
 		jd.setLastMntBy(ajd.getLastMntBy());
-		jd.setFinReference(finRef);
-		jd.setCustCIF(finChangeCustomer.getCustCif());
+		jd.setFinReference(finReference);
+		jd.setCustCIF(fcc.getCustCif());
 
 		jointAccountDetailDAO.save(jd, "_Temp");
 
 		Date appDate = SysParamUtil.getAppDate();
-		boolean collateralDelinkStatus = finChangeCustomer.isCollateralDelinkStatus();
+		boolean collateralDelinkStatus = fcc.isCollateralDelinkStatus();
 
 		if (!collateralDelinkStatus) {
 			return;
 		}
 
-		long oldCustId = finChangeCustomer.getOldCustId();
+		long oldCustId = fcc.getOldCustId();
 		List<CollateralSetup> collateralsList = getCollateralByReference(finReference, oldCustId);
 
 		boolean colExist = false;
@@ -309,7 +252,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		CollateralAssignment assignment = null;
 		for (CollateralSetup collateralSetup : collateralsList) {
 			String colRef = collateralSetup.getCollateralRef();
-			assignment = collateralAssignmentDAO.getCollateralAssignmentByFinReference(finRef, colRef, "_Temp");
+			assignment = collateralAssignmentDAO.getCollateralAssignmentByFinReference(finReference, colRef, "_Temp");
 
 			if (assignment == null) {
 				continue;
@@ -319,7 +262,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			CollateralMovement movement = new CollateralMovement();
 			movement.setModule(FinanceConstants.MODULE_NAME);
 			movement.setCollateralRef(colRef);
-			movement.setReference(finRef);
+			movement.setReference(finReference);
 			movement.setAssignPerc(assignment.getAssignPerc());
 			movement.setValueDate(appDate);
 			movement.setProcess(CollateralConstants.PROCESS_MANUAL);
@@ -333,20 +276,11 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		}
 		collateralAssignmentDAO.saveList(movements);
 		if (colExist) {
-			collateralAssignmentDAO.deLinkCollateral(finRef, "_Temp");
+			collateralAssignmentDAO.deLinkCollateral(finReference, "_Temp");
 		}
 
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinChangeCustomerDAO().delete with parameters FinChangeCustomer,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtFinChangeCustomer by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -357,10 +291,10 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			return auditHeader;
 		}
 
-		FinChangeCustomer FinChangeCustomer = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
+		FinChangeCustomer fcc = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		finChangeCustomerDAO.delete(FinChangeCustomer, TableType.TEMP_TAB);
+		finChangeCustomerDAO.delete(fcc, TableType.TEMP_TAB);
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -368,58 +302,47 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
-		FinChangeCustomer finChangeCustomer = (FinChangeCustomer) auditDetail.getModelData();
-		finChangeCustomer.setAuditDetailMap(new HashMap<String, List<AuditDetail>>());
-		if (finChangeCustomer.isCollateralDelinkStatus()) {
+
+		FinChangeCustomer fcc = (FinChangeCustomer) auditDetail.getModelData();
+		fcc.setAuditDetailMap(new HashMap<String, List<AuditDetail>>());
+
+		if (fcc.isCollateralDelinkStatus()) {
 			auditHeader.setErrorList(auditDetail.getErrorDetails());
 			auditHeader = prepareChildsAudit(auditHeader, method);
 			auditHeader.setErrorList(validateChilds(auditHeader, auditHeader.getUsrLanguage(), method));
 		}
+
 		auditHeader = nextProcess(auditHeader);
+
 		logger.debug(Literal.LEAVING);
+
 		return auditHeader;
 	}
-
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinChangeCustomerDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
-	 * then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		FinChangeCustomer FinChangeCustomer = (FinChangeCustomer) auditDetail.getModelData();
+		FinChangeCustomer fcc = (FinChangeCustomer) auditDetail.getModelData();
 
 		String[] parameters = new String[2];
-		parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + FinChangeCustomer.getId();
+		parameters[0] = PennantJavaUtil.getLabel("label_FinReference") + ": " + fcc.getId();
 
 		// Check the unique keys.
-		if (FinChangeCustomer.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(FinChangeCustomer.getRecordType())
-				&& finChangeCustomerDAO.isDuplicateKey(FinChangeCustomer.getId(), FinChangeCustomer.getFinReference(),
-						FinChangeCustomer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (fcc.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(fcc.getRecordType())
+				&& finChangeCustomerDAO.isDuplicateKey(fcc.getId(), fcc.getFinReference(),
+						fcc.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
 		logger.debug(Literal.LEAVING);
+
 		return auditDetail;
 	}
 
@@ -427,15 +350,15 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		logger.debug(Literal.ENTERING);
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		FinChangeCustomer finChangeCustomer = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
+		FinChangeCustomer fcc = (FinChangeCustomer) auditHeader.getAuditDetail().getModelData();
 		List<AuditDetail> auditDetails = null;
 
 		// CollateralSetups
-		if (finChangeCustomer.getAuditDetailMap().get("CollateralSetups") != null) {
-			auditDetails = finChangeCustomer.getAuditDetailMap().get("CollateralSetups");
+		if (fcc.getAuditDetailMap().get("CollateralSetups") != null) {
+			auditDetails = fcc.getAuditDetailMap().get("CollateralSetups");
 			for (AuditDetail auditDetail : auditDetails) {
-				List<ErrorDetail> details = validationCollateralSetups(auditDetail, finChangeCustomer.getFinReference(),
-						usrLanguage, method).getErrorDetails();
+				List<ErrorDetail> details = validationCollateralSetups(auditDetail, fcc.getFinReference(), usrLanguage,
+						method).getErrorDetails();
 				if (details != null) {
 					errorDetails.addAll(details);
 				}
@@ -565,14 +488,13 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		return auditDetails;
 	}
 
-	public void changeCustomerDetails(FinChangeCustomer finChangeCustomer) {
-		financeMainDAO.updateCustChange(finChangeCustomer.getCoApplicantId(), 0, finChangeCustomer.getFinReference(),
-				"_Temp");
+	public void changeCustomerDetails(FinChangeCustomer fcc) {
+		financeMainDAO.updateCustChange(fcc.getCoApplicantId(), 0, fcc.getFinID(), "_Temp");
 	}
 
 	@Override
-	public boolean isFinReferenceProcess(String finReference) {
-		return finChangeCustomerDAO.isFinReferenceProcess(finReference, "_Temp");
+	public boolean isFinReferenceProcess(long finID) {
+		return finChangeCustomerDAO.isFinReferenceProcess(finID, "_Temp");
 	}
 
 	@Override
