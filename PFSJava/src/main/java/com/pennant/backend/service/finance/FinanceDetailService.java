@@ -79,8 +79,7 @@ public interface FinanceDetailService {
 
 	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent, String userrole);
 
-	FinanceDetail getServicingFinanceForQDP(String financeReference, String eventCode, String procEdtEvent,
-			String userrole);
+	FinanceDetail getServicingFinanceForQDP(long finID, String eventCode, String procEdtEvent, String userrole);
 
 	FinanceDetail getWIFFinance(String financeReference, boolean reqCustDetail, String procEdtEvent);
 
@@ -163,7 +162,7 @@ public interface FinanceDetailService {
 
 	String getUserRoleCodeByRefernce(long userId, String reference, List<String> roleCodes);
 
-	String getNextRoleCodeByRef(String finReference);
+	String getNextRoleCodeByRef(long finID);
 
 	FinanceMain getFinanceMain(String finReference, String type);
 

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeePostingServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  02-12-2016    														*
- *                                                                  						*
- * Modified Date    :  02-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeePostingServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 02-12-2016 * *
+ * Modified Date : 02-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 02-12-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 02-12-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.fees.feepostings.impl;
@@ -46,8 +28,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.security.auth.login.AccountNotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -94,6 +74,10 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
+/**
+ * @author murthy.y
+ *
+ */
 public class FeePostingServiceImpl extends GenericService<FeePostings> implements FeePostingService {
 	private static final Logger logger = LogManager.getLogger(FeePostingServiceImpl.class);
 
@@ -113,22 +97,21 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	@Override
 	public FeePostings getFeePostings() {
-		return getFeePostingsDAO().getFeePostings();
+		return feePostingsDAO.getFeePostings();
 	}
 
 	@Override
 	public FeePostings getNewFeePostings() {
-		return getFeePostingsDAO().getNewFeePostings();
+		return feePostingsDAO.getNewFeePostings();
 	}
 
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -141,17 +124,17 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 
 		if (feePostings.isNewRecord()) {
-			getFeePostingsDAO().save(feePostings, tableType);
+			feePostingsDAO.save(feePostings, tableType);
 		} else {
-			getFeePostingsDAO().update(feePostings, tableType);
+			feePostingsDAO.update(feePostings, tableType);
 		}
 
 		String rcdMaintainSts = FinServiceEvent.FEEPOSTING;
 		financeMainDAO.updateMaintainceStatus(feePostings.getReference(), rcdMaintainSts);
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
-		logger.debug("Leaving");
+		auditHeaderDAO.addAudit(auditHeader);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
@@ -167,16 +150,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
-
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinTypePartnerBankDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings
-	 * then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 
 	public AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
@@ -205,7 +178,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				}
 			} else { // with work flow
 				if (feePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
-					if (befFeePostings != null || tempfeePostings != null) { // if records already exists in the main table
+					if (befFeePostings != null || tempfeePostings != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -276,39 +250,39 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	@Override
 	public FeePostings getFeePostingsById(long id) {
-		return getFeePostingsDAO().getFeePostingsById(id, "_View");
+		return feePostingsDAO.getFeePostingsById(id, "_View");
 	}
 
 	@Override
 	public AuditHeader delete(AuditHeader auditHeader) {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader = businessValidation(auditHeader, "delete");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 		FeePostings feePostings = (FeePostings) auditHeader.getAuditDetail().getModelData();
 
-		getFeePostingsDAO().delete(feePostings, "");
+		feePostingsDAO.delete(feePostings, "");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FeePostings(), feePostings.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				feePostings.getBefImage(), feePostings));
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -325,7 +299,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		// Processing Accounting Details
 		if (StringUtils.equals(feePostings.getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
-			auditHeader = executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+			auditHeader = executeAccountingProcess(auditHeader, SysParamUtil.getAppDate());
 		}
 
 		if (!auditHeader.isNextProcess()) {
@@ -334,7 +308,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		if (feePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFeePostingsDAO().delete(feePostings, "");
+			feePostingsDAO.delete(feePostings, "");
 		} else {
 			feePostings.setRoleCode("");
 			feePostings.setNextRoleCode("");
@@ -345,11 +319,11 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			if (feePostings.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				feePostings.setRecordType("");
-				getFeePostingsDAO().save(feePostings, "");
+				feePostingsDAO.save(feePostings, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				feePostings.setRecordType("");
-				getFeePostingsDAO().update(feePostings, "");
+				feePostingsDAO.update(feePostings, "");
 			}
 
 		}
@@ -360,36 +334,29 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		if (!StringUtils.equals(feePostings.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-			getFeePostingsDAO().delete(feePostings, "_Temp");
+			feePostingsDAO.delete(feePostings, "_Temp");
 
 			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
 					feePostings.getBefImage(), feePostings));
 			auditHeader.setAuditDetails(auditDetailList);
-			getAuditHeaderDAO().addAudit(auditHeader);
+			auditHeaderDAO.addAudit(auditHeader);
 		}
+
 		financeMainDAO.updateMaintainceStatus(feePostings.getFinReference(), "");
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				feePostings.getBefImage(), feePostings));
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
 
-	/**
-	 * Method for Execute posting Details on Core Banking Side
-	 * 
-	 * @param auditHeader
-	 * @param curBDay
-	 * @return
-	 * @throws AccountNotFoundException
-	 */
 	public AuditHeader executeAccountingProcess(AuditHeader auditHeader, Date curBDay) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> list = new ArrayList<ReturnDataSet>();
 
@@ -445,7 +412,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 				feePostings.getDeclaredFieldValues(aeEvent.getDataMap());
 				aeEvent.getAcSetIDList().add(Long.valueOf(feePostings.getAccountSetId()));
-				getPostingsPreparationUtil().postAccounting(aeEvent);
+				postingsPreparationUtil.postAccounting(aeEvent);
 
 				engineExecution.getAccEngineExecResults(aeEvent);
 				list = aeEvent.getReturnDataSet();
@@ -463,14 +430,13 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			return auditHeader;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
@@ -489,11 +455,11 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		financeMainDAO.updateMaintainceStatus(feePostings.getFinReference(), "");
 		auditHeaderDAO.addAudit(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
 	}
@@ -622,7 +588,7 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 			break;
 		}
-		//ValueDate
+		// ValueDate
 		if (feePostings.getValueDate() == null) {
 			feePostings.setValueDate(DateUtility.getAppDate());
 		} else {
@@ -738,32 +704,16 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 	}
 
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FeePostingsDAO getFeePostingsDAO() {
-		return feePostingsDAO;
 	}
 
 	public void setFeePostingsDAO(FeePostingsDAO feePostingsDAO) {
 		this.feePostingsDAO = feePostingsDAO;
 	}
 
-	public AccountEngineExecution getEngineExecution() {
-		return engineExecution;
-	}
-
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
 		this.engineExecution = engineExecution;
-	}
-
-	public PostingsDAO getPostingsDAO() {
-		return postingsDAO;
 	}
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {
@@ -772,10 +722,6 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
 	}
 
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
@@ -790,20 +736,16 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		this.collateralSetupDAO = collateralSetupDAO;
 	}
 
-	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
-		this.feeTypeDAO = feeTypeDAO;
-	}
-
 	public void setPartnerBankDAO(PartnerBankDAO partnerBankDAO) {
 		this.partnerBankDAO = partnerBankDAO;
 	}
 
-	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
-		this.limitHeaderDAO = limitHeaderDAO;
+	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {
+		this.feeTypeDAO = feeTypeDAO;
 	}
 
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
+	public void setLimitHeaderDAO(LimitHeaderDAO limitHeaderDAO) {
+		this.limitHeaderDAO = limitHeaderDAO;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
@@ -813,4 +755,5 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 	public void setFinanceWriteoffDAO(FinanceWriteoffDAO financeWriteoffDAO) {
 		this.financeWriteoffDAO = financeWriteoffDAO;
 	}
+
 }

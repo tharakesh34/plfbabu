@@ -55,14 +55,15 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 
 	public void process(FinAutoApprovalDetails autoApproval) {
 		logger.info(Literal.ENTERING);
+
 		long userId = autoApproval.getUserId();
 
 		LoggedInUser loggedInUser = new LoggedInUser();
 		loggedInUser.setLoginUsrID(userId);
 
-		String finReference = autoApproval.getFinReference();
+		long finID = autoApproval.getFinID();
 
-		boolean finisQuickDisb = finAutoApprovalDetailDAO.isQuickDisb(finReference);
+		boolean finisQuickDisb = finAutoApprovalDetailDAO.isQuickDisb(finID);
 
 		if (!finisQuickDisb) {
 			autoApproval.setErrorDesc("Quick disbursement is not enabled for the disbursement instruction.");
@@ -72,21 +73,20 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 			return;
 		}
 
-		boolean approvedLoan = checkForPreviousApproval(finReference);
+		boolean approvedLoan = checkForPreviousApproval(finID);
 
-		String nextRoleCode = financeDetailService.getNextRoleCodeByRef(finReference);
+		String nextRoleCode = financeDetailService.getNextRoleCodeByRef(finID);
 
 		FinanceDetail financeDetail = null;
 
-		boolean servicing = finAutoApprovalDetailDAO.getFinanceServiceInstruction(finReference);
+		boolean servicing = finAutoApprovalDetailDAO.getFinanceServiceInstruction(finID);
 
 		if (!servicing && !approvedLoan) {
-			financeDetail = financeDetailService.getOriginationFinance(finReference, nextRoleCode, FinServiceEvent.ORG,
-					"");
+			financeDetail = financeDetailService.getOriginationFinance(finID, nextRoleCode, FinServiceEvent.ORG, "");
 			financeDetail.setModuleDefiner(FinServiceEvent.ORG);
 		} else {
-			financeDetail = financeDetailService.getServicingFinanceForQDP(finReference,
-					AccountingEvent.ADDDBSN, FinServiceEvent.ADDDISB, nextRoleCode);
+			financeDetail = financeDetailService.getServicingFinanceForQDP(finID, AccountingEvent.ADDDBSN,
+					FinServiceEvent.ADDDISB, nextRoleCode);
 		}
 
 		if (financeDetail != null) {
@@ -111,6 +111,8 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 		FinScheduleData finScheduleData = fd.getFinScheduleData();
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		FinanceType financeType = finScheduleData.getFinanceType();
+
+		long finID = fm.getFinID();
 
 		List<FinAdvancePayments> finAdvancePayments = fd.getAdvancePaymentsList();
 
@@ -181,11 +183,13 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 
 			if (FinServiceEvent.ORG.equals(moduleDefiner)) {
 				approveLoan(fd, user, finAad, disbursement);
-			} else if (checkForServicing(fm.getFinReference())) {
-				approveAddDisbursemnt(fd, user, finAad);
 			} else {
-				finAad.setErrorDesc("Unable to Process");
-				finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
+				if (checkForServicing(finID)) {
+					approveAddDisbursemnt(fd, user, finAad);
+				} else {
+					finAad.setErrorDesc("Unable to Process");
+					finAad.setStatus(DisbursementConstants.AUTODISB_STATUS_FAILED);
+				}
 			}
 
 		} catch (Exception e) {
@@ -456,12 +460,12 @@ public class FinAutoApprovalProcess extends GenericService<FinAutoApprovalDetail
 				HolidayHandlerTypes.MOVE_NONE, false, financeType.getFddLockPeriod()).getNextFrequencyDate()));
 	}
 
-	private boolean checkForPreviousApproval(String finReference) {
-		return finAutoApprovalDetailDAO.getFinanceIfApproved(finReference);
+	private boolean checkForPreviousApproval(long finID) {
+		return finAutoApprovalDetailDAO.getFinanceIfApproved(finID);
 	}
 
-	private boolean checkForServicing(String finReference) {
-		return finAutoApprovalDetailDAO.getFinanceServiceInstruction(finReference);
+	private boolean checkForServicing(long finID) {
+		return finAutoApprovalDetailDAO.getFinanceServiceInstruction(finID);
 	}
 
 	private boolean validateQDPDays(int days, Date disbDate, Date realizedDate) {
