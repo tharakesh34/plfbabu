@@ -16,36 +16,36 @@ import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> implements AddTermsService {
-
 	private static Logger logger = LogManager.getLogger(AddTermsServiceImpl.class);
 
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 
-	public FinScheduleData getAddTermsDetails(FinScheduleData finScheduleData,
-			FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+	public FinScheduleData getAddTermsDetails(FinScheduleData schdData, FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
 
-		BigDecimal oldTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		FinanceMain fm = schdData.getFinanceMain();
+		BigDecimal oldTotalPft = fm.getTotalGrossPft();
 
 		// Schedule Recalculation Locking Period Applicability.
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
-
-			Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate();
+			Date recalLockTill = fm.getRecalFromDate();
 			if (recalLockTill == null) {
-				recalLockTill = finScheduleData.getFinanceMain().getMaturityDate();
+				recalLockTill = fm.getMaturityDate();
 			}
 
-			int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+			int sdSize = schdData.getFinanceScheduleDetails().size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
 
-				curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+				curSchd = schdData.getFinanceScheduleDetails().get(i);
 				if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
 					curSchd.setRecalLock(true);
 				} else {
@@ -54,14 +54,16 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 			}
 		}
 
-		finScheduleData = ScheduleCalculator.addTerm(finScheduleData, finServiceInstruction.getTerms());
+		schdData = ScheduleCalculator.addTerm(schdData, fsi.getTerms());
 
-		BigDecimal newTotalPft = finScheduleData.getFinanceMain().getTotalGrossPft();
+		BigDecimal newTotalPft = fm.getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
-		finScheduleData.setPftChg(pftDiff);
-		finScheduleData.getFinanceMain().setScheduleRegenerated(true);
-		logger.debug("Leaving");
-		return finScheduleData;
+
+		schdData.setPftChg(pftDiff);
+		fm.setScheduleRegenerated(true);
+
+		logger.debug(Literal.LEAVING);
+		return schdData;
 	}
 
 	/**
@@ -69,31 +71,33 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 	 * 
 	 */
 	@Override
-	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+	public AuditDetail doValidations(FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 
 		// validate Instruction details
-		boolean isWIF = finServiceInstruction.isWif();
-		String finReference = finServiceInstruction.getFinReference();
+		boolean isWIF = fsi.isWif();
+		long finID = fsi.getFinID();
+		String finReference = fsi.getFinReference();
 
-		if (DateUtility.compare(finServiceInstruction.getRecalFromDate(), DateUtility.getAppDate()) <= 0) {
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtility.compare(fsi.getRecalFromDate(), appDate) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Recal From Date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(DateUtility.getAppDate());
+			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30512", "", valueParm), lang));
 			return auditDetail;
 		}
 
-		if (finServiceInstruction.getRecalFromDate() == null) {
+		if (fsi.getRecalFromDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Recal From Date";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 			return auditDetail;
 		}
-		if (finServiceInstruction.getTerms() <= 0) {
+		if (fsi.getTerms() <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Terms";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
@@ -102,15 +106,15 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 		}
 
 		boolean isValidRecalFromDate = false;
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 		if (schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
 				// FromDate
-				if (DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtility.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 				}
 				// RecalFromDate
-				if (DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtility.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 					if (checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
 						return auditDetail;
@@ -120,23 +124,15 @@ public class AddTermsServiceImpl extends GenericService<FinServiceInstruction> i
 
 			if (!isValidRecalFromDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "RecalFromDate:" + DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
+				valueParm[0] = "RecalFromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
-	/**
-	 * Method for validate current schedule date is valid schedule or not
-	 * 
-	 * @param auditDetail
-	 * @param curSchd
-	 * @param label
-	 * @return
-	 */
 	private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
 		if (!((curSchd.isRepayOnSchDate()
 				|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))

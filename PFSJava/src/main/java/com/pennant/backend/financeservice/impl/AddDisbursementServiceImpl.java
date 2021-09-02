@@ -558,4 +558,32 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		return auditDetail;
 	}
 
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
+		this.financeStepDetailDAO = financeStepDetailDAO;
+	}
+
+	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
+		this.financeDataValidation = financeDataValidation;
+	}
+
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
+	}
+
+	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
+		this.changeGraceEndService = changeGraceEndService;
+	}
+
+	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
+		this.finAdvancePaymentsService = finAdvancePaymentsService;
+	}
+
 }
