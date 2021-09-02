@@ -162,14 +162,14 @@ public class AccrualService extends ServiceHelper {
 			setSMTParms();
 		}
 
-		String finReference = fm.getFinReference();
+		long finID = fm.getFinID();
 		Date dateSusp = null;
 
 		boolean isSuspReq = ImplementationConstants.SUSP_CHECK_REQ;
 
 		if (isSuspReq) {
 			if (!PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
-				dateSusp = financeSuspHeadDAO.getFinSuspDate(finReference);
+				dateSusp = financeSuspHeadDAO.getFinSuspDate(finID);
 			}
 		}
 

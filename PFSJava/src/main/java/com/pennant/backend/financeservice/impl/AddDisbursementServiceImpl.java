@@ -54,49 +54,41 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 	private ChangeGraceEndService changeGraceEndService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 
-	/**
-	 * Method for perform add disbursement action
-	 * 
-	 * @param finScheduleData
-	 * @param amount
-	 * @param addFeeFinance
-	 * @param alwAssetUtilize
-	 * 
-	 * @return FinScheduleData
-	 */
-	public FinScheduleData getAddDisbDetails(FinScheduleData finScheduleData, BigDecimal amount,
-			BigDecimal addFeeFinance, boolean alwAssetUtilize, String moduleDefiner) {
-		logger.debug("Entering");
+	public FinScheduleData getAddDisbDetails(FinScheduleData schdData, BigDecimal amount, BigDecimal addFeeFinance,
+			boolean alwAssetUtilize, String moduleDefiner) {
+		logger.debug(Literal.ENTERING);
 
 		FinScheduleData finSchData = null;
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		BigDecimal oldTotalPft = financeMain.getTotalGrossPft();
+		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
+
+		BigDecimal oldTotalPft = fm.getTotalGrossPft();
 		BigDecimal disbAmount = BigDecimal.ZERO;
 
-		List<FinanceScheduleDetail> financeScheduleDetails = finScheduleData.getFinanceScheduleDetails();
-		if (financeScheduleDetails.size() > 0) {
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 
-			Date recalLockTill = financeMain.getRecalFromDate();
+		if (schedules.size() > 0) {
+			Date recalLockTill = fm.getRecalFromDate();
 			if (recalLockTill == null) {
-				recalLockTill = financeMain.getMaturityDate();
+				recalLockTill = fm.getMaturityDate();
 			}
 
-			int sdSize = financeScheduleDetails.size();
+			int sdSize = schedules.size();
 			FinanceScheduleDetail curSchd = null;
 			for (int i = 0; i <= sdSize - 1; i++) {
-				curSchd = financeScheduleDetails.get(i);
+				curSchd = schedules.get(i);
 
-				if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) <= 0) {
-					curSchd.setSchdMethod(financeMain.getGrcSchdMthd());
+				if (DateUtility.compare(curSchd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0) {
+					curSchd.setSchdMethod(fm.getGrcSchdMthd());
 				} else {
-					curSchd.setSchdMethod(financeMain.getScheduleMethod());
+					curSchd.setSchdMethod(fm.getScheduleMethod());
 				}
 
 				// Schedule Recalculation Locking Period Applicability
 				if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_SCH_RECAL_LOCK)) {
 					if (DateUtility.compare(curSchd.getSchDate(), recalLockTill) < 0 && (i != sdSize - 1) && i != 0) {
-						if (DateUtility.compare(curSchd.getSchDate(), financeMain.getEventFromDate()) == 0) {
+						if (DateUtility.compare(curSchd.getSchDate(), fm.getEventFromDate()) == 0) {
 							curSchd.setRecalLock(false);
 						} else {
 							curSchd.setRecalLock(true);
@@ -115,16 +107,15 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		 */
 
 		// Step POS Case , setting Step Details to Object
-		if (StringUtils.isNotEmpty(moduleDefiner) && finScheduleData.getFinanceMain().isStepFinance()) {
-			finScheduleData.setStepPolicyDetails(getFinanceStepDetailDAO()
-					.getFinStepDetailListByFinRef(finScheduleData.getFinReference(), "", false), true);
+		if (StringUtils.isNotEmpty(moduleDefiner) && fm.isStepFinance()) {
+			schdData.setStepPolicyDetails(financeStepDetailDAO.getFinStepDetailListByFinRef(finID, "", false), true);
 		}
 
-		//financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		//financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
-		finSchData = ScheduleCalculator.addDisbursement(finScheduleData, amount, addFeeFinance, alwAssetUtilize);
+		// financeMain.setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		// financeMain.setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		finSchData = ScheduleCalculator.addDisbursement(schdData, amount, addFeeFinance, alwAssetUtilize);
 
-		for (FinanceDisbursement curDisb : finScheduleData.getDisbursementDetails()) {
+		for (FinanceDisbursement curDisb : schdData.getDisbursementDetails()) {
 
 			/*
 			 * if (StringUtils.equals(FinanceConstants.DISB_STATUS_CANCEL, curDisb.getDisbStatus()) ||
@@ -132,7 +123,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			 */
 			disbAmount = disbAmount.add(curDisb.getDisbAmount());
 		}
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceMain finMain = schdData.getFinanceMain();
 		if (finMain.isAllowGrcPeriod() && finMain.isEndGrcPeriodAftrFullDisb()) {
 			if (finMain.getFinAssetValue().compareTo(disbAmount.add(amount)) == 0
 					&& finMain.getGrcPeriodEndDate().compareTo(finMain.getEventFromDate()) > 0) {
@@ -143,15 +134,14 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		} else {
 
 			// Plan EMI Holidays Resetting after Add Disbursement
-			if (finSchData.getFinanceMain().isPlanEMIHAlw()) {
-				finSchData.getFinanceMain().setEventFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
-				finSchData.getFinanceMain().setEventToDate(finSchData.getFinanceMain().getMaturityDate());
-				finSchData.getFinanceMain().setRecalFromDate(finScheduleData.getFinanceMain().getRecalFromDate());
-				finSchData.getFinanceMain().setRecalToDate(finSchData.getFinanceMain().getMaturityDate());
-				finSchData.getFinanceMain().setRecalSchdMethod(finSchData.getFinanceMain().getScheduleMethod());
+			if (fm.isPlanEMIHAlw()) {
+				fm.setEventFromDate(schdData.getFinanceMain().getRecalFromDate());
+				fm.setEventToDate(fm.getMaturityDate());
+				fm.setRecalFromDate(schdData.getFinanceMain().getRecalFromDate());
+				fm.setRecalToDate(fm.getMaturityDate());
+				fm.setRecalSchdMethod(fm.getScheduleMethod());
 
-				if (StringUtils.equals(finSchData.getFinanceMain().getPlanEMIHMethod(),
-						FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					finSchData = ScheduleCalculator.getFrqEMIHoliday(finSchData);
 				} else {
 					finSchData = ScheduleCalculator.getAdhocEMIHoliday(finSchData);
@@ -159,44 +149,42 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
-		BigDecimal newTotalPft = finSchData.getFinanceMain().getTotalGrossPft();
+		BigDecimal newTotalPft = fm.getTotalGrossPft();
 		BigDecimal pftDiff = newTotalPft.subtract(oldTotalPft);
+
 		finSchData.setPftChg(pftDiff);
-		finSchData.getFinanceMain().setScheduleRegenerated(true);
-		logger.debug("Leaving");
+		fm.setScheduleRegenerated(true);
+
+		logger.debug(Literal.LEAVING);
 
 		return finSchData;
 	}
 
-	/**
-	 * Validate Add disbursement instructions
-	 * 
-	 * @param finServiceInstruction
-	 * @return AuditDetail
-	 */
 	@Override
-	public AuditDetail doValidations(FinanceDetail financeDetail, FinServiceInstruction finServiceInstruction) {
-		logger.debug("Entering");
+	public AuditDetail doValidations(FinanceDetail fd, FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = new AuditDetail();
 		boolean servNoExist = false;
 
 		// validate Instruction details
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		List<ExtendedField> extendedDetailsList = finServiceInstruction.getExtendedDetails();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		List<ExtendedField> extendedDetailsList = fsi.getExtendedDetails();
 		List<ErrorDetail> errorDetailList = null;
 
-		String finReference = financeMain.getFinReference();
-		boolean isWIF = finServiceInstruction.isWif();
-		Date fromDate = finServiceInstruction.getFromDate();
-		BigDecimal actualDisbAmount = finServiceInstruction.getAmount();
-		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
-		if (!finScheduleData.getFinanceType().isFinIsAlwMD()) {
+		boolean isWIF = fsi.isWif();
+		Date fromDate = fsi.getFromDate();
+		BigDecimal actualDisbAmount = fsi.getAmount();
+		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
+
+		if (!schdData.getFinanceType().isFinIsAlwMD()) {
 			String[] valueParm = new String[2];
-			valueParm[0] = financeMain.getFinReference();
-			valueParm[1] = financeMain.getFinType();
+			valueParm[0] = fm.getFinReference();
+			valueParm[1] = fm.getFinType();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90276", valueParm)));
 			return auditDetail;
 		}
@@ -217,7 +205,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		 */
 
 		// validate disb amount
-		if (finServiceInstruction.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
+		if (fsi.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement amount";
 			valueParm[1] = String.valueOf(BigDecimal.ZERO);
@@ -225,16 +213,16 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		}
 
 		boolean isOverdraft = false;
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
 			isOverdraft = true;
 		}
-		if (!isOverdraft && StringUtils.isEmpty(finServiceInstruction.getRecalType())) {
+		if (!isOverdraft && StringUtils.isEmpty(fsi.getRecalType())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Recal Type";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 		}
 		if (isOverdraft) {
-			List<OverdraftScheduleDetail> odSchdDetail = finScheduleData.getOverdraftScheduleDetails();
+			List<OverdraftScheduleDetail> odSchdDetail = schdData.getOverdraftScheduleDetails();
 			BigDecimal availableLimit = BigDecimal.ZERO;
 			if (odSchdDetail != null && odSchdDetail.size() > 0) {
 				for (int i = 0; i < odSchdDetail.size(); i++) {
@@ -244,11 +232,11 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					availableLimit = odSchdDetail.get(i).getODLimit();
 				}
 			} else {
-				availableLimit = financeMain.getFinAssetValue();
+				availableLimit = fm.getFinAssetValue();
 			}
 
 			// Schedule Outstanding amount calculation
-			List<FinanceScheduleDetail> schList = finScheduleData.getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> schList = schdData.getFinanceScheduleDetails();
 			BigDecimal closingbal = BigDecimal.ZERO;
 			for (int i = 0; i < schList.size(); i++) {
 				if (DateUtility.compare(schList.get(i).getSchDate(), fromDate) > 0) {
@@ -280,52 +268,50 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 
 				totDisbAmount = actualDisbAmount.add(totDisbAmount);
-				if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
+				if (totDisbAmount.compareTo(fm.getFinAssetValue()) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = PennantApplicationUtil.amountFormate(totDisbAmount, ccyFormat);
-					valueParm[1] = PennantApplicationUtil.amountFormate(financeMain.getFinAssetValue(), ccyFormat);
+					valueParm[1] = PennantApplicationUtil.amountFormate(fm.getFinAssetValue(), ccyFormat);
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91120", valueParm)));
 				}
 			}
 		}
 
 		// validate RecalType
-		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
-			if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
-					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
-					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
-					&& !StringUtils.equals(finServiceInstruction.getRecalType(),
-							CalculationConstants.RPYCHG_ADDRECAL)) {
+		if (StringUtils.isNotBlank(fsi.getRecalType())) {
+			if (!StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+					&& !StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
+					&& !StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
+					&& !StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
+					&& !StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getRecalType();
+				valueParm[0] = fsi.getRecalType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91104", valueParm)));
 			}
 		}
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-				&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())
+				&& !StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "RecalType : " + finServiceInstruction.getRecalType();
+			valueParm[0] = "RecalType : " + fsi.getRecalType();
 			valueParm[1] = "Over Draft Loan";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 		}
 
 		// validate reCalFromDate
-		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-				|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
-				|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-			if (!isOverdraft && finServiceInstruction.getRecalFromDate() == null) {
+		if (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+				|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
+				|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+			if (!isOverdraft && fsi.getRecalFromDate() == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getRecalType();
+				valueParm[0] = fsi.getRecalType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91105", valueParm)));
 				return auditDetail;
 			}
 			if (isOverdraft) {
-				if (finServiceInstruction.getRecalFromDate() == null) {
-					finServiceInstruction.setRecalFromDate(finServiceInstruction.getFromDate());
+				if (fsi.getRecalFromDate() == null) {
+					fsi.setRecalFromDate(fsi.getFromDate());
 				} else {
-					if (DateUtility.compare(finServiceInstruction.getFromDate(),
-							finServiceInstruction.getRecalFromDate()) != 0) {
+					if (DateUtility.compare(fsi.getFromDate(), fsi.getRecalFromDate()) != 0) {
 						String[] valueParm = new String[2];
 						valueParm[0] = "RecalFromDate";
 						valueParm[1] = "FromDate";
@@ -335,13 +321,12 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			} else {
 
-				if (finServiceInstruction.getRecalFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
+				if (fsi.getRecalFromDate().compareTo(fm.getMaturityDate()) > 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
-					valueParm[1] = DateUtility.formatToShortDate(financeMain.getMaturityDate());
+					valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
+					valueParm[1] = DateUtility.formatToShortDate(fm.getMaturityDate());
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91114", valueParm)));
-				} else if (!isOverdraft && finServiceInstruction.getRecalFromDate()
-						.compareTo(finServiceInstruction.getFromDate()) <= 0) {
+				} else if (!isOverdraft && fsi.getRecalFromDate().compareTo(fsi.getFromDate()) <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "RecalFromDate";
 					valueParm[1] = "from date";
@@ -351,12 +336,11 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
-		//ExtendedFieldDetails Validation
+		// ExtendedFieldDetails Validation
 		if (extendedDetailsList != null && extendedDetailsList.size() > 0) {
-			String subModule = financeDetail.getFinScheduleData().getFinanceType().getFinCategory();
-			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(
-					finServiceInstruction.getExtendedDetails(), ExtendedFieldConstants.MODULE_LOAN, subModule,
-					FinServiceEvent.ADDDISB);
+			String subModule = fd.getFinScheduleData().getFinanceType().getFinCategory();
+			errorDetailList = extendedFieldDetailsService.validateExtendedFieldDetails(fsi.getExtendedDetails(),
+					ExtendedFieldConstants.MODULE_LOAN, subModule, FinServiceEvent.ADDDISB);
 			if (errorDetailList != null && !errorDetailList.isEmpty()) {
 				for (ErrorDetail errorDetails : errorDetailList) {
 					auditDetail.setErrorDetail(errorDetails);
@@ -365,16 +349,15 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
-		//### 02-05-2018-END
-		//validate serviceReqNo
+		// ### 02-05-2018-END
+		// validate serviceReqNo
 		if (isOverdraft) {
-			if (StringUtils.isNotBlank(finServiceInstruction.getServiceReqNo())) {
-				servNoExist = finServiceInstrutionDAO.getFinServInstDetails(finServiceInstruction.getFinEvent(),
-						finServiceInstruction.getServiceReqNo());
+			if (StringUtils.isNotBlank(fsi.getServiceReqNo())) {
+				servNoExist = finServiceInstrutionDAO.getFinServInstDetails(fsi.getFinEvent(), fsi.getServiceReqNo());
 				if (servNoExist) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "serviceReqNo with ";
-					valueParm[1] = finServiceInstruction.getServiceReqNo();
+					valueParm[1] = fsi.getServiceReqNo();
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
 					return auditDetail;
 				}
@@ -383,26 +366,26 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		// validate reCalToDate
 		if (!isOverdraft) {
-			if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-				if (finServiceInstruction.getRecalToDate() == null) {
+			if (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+				if (fsi.getRecalToDate() == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = finServiceInstruction.getRecalType();
+					valueParm[0] = fsi.getRecalType();
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91108", valueParm)));
 					return auditDetail;
 				}
 
-				if (finServiceInstruction.getRecalToDate().compareTo(finServiceInstruction.getRecalFromDate()) < 0) {
+				if (fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) < 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalToDate());
-					valueParm[1] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
+					valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalToDate());
+					valueParm[1] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91109", valueParm)));
 				}
 			}
 
 			// term
-			if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
-					|| StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
-				if (finServiceInstruction.getTerms() <= 0 || finServiceInstruction.getTerms() > 99) {
+			if (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADDTERM)
+					|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL)) {
+				if (fsi.getTerms() <= 0 || fsi.getTerms() > 99) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "terms";
 					valueParm[1] = "1";
@@ -410,7 +393,7 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65031", valueParm)));
 				}
 			} else {
-				if (finServiceInstruction.getTerms() > 0) {
+				if (fsi.getTerms() > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = CalculationConstants.RPYCHG_ADDTERM;
 					valueParm[1] = CalculationConstants.RPYCHG_ADDRECAL;
@@ -418,10 +401,10 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 		} else {
-			if (finServiceInstruction.getRecalToDate() == null) {
-				finServiceInstruction.setRecalToDate(financeMain.getMaturityDate());
+			if (fsi.getRecalToDate() == null) {
+				fsi.setRecalToDate(fm.getMaturityDate());
 			} else {
-				if (DateUtility.compare(financeMain.getMaturityDate(), finServiceInstruction.getRecalToDate()) != 0) {
+				if (DateUtility.compare(fm.getMaturityDate(), fsi.getRecalToDate()) != 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "RecalToDate";
 					valueParm[1] = "MaturityDate";
@@ -433,18 +416,17 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		boolean isValidRecalFromDate = false;
 		boolean isValidRecalToDate = false;
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
-		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-				&& schedules != null) {
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
+		if (!StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory()) && schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
-				if (DateUtility.compare(finServiceInstruction.getRecalFromDate(), schDetail.getSchDate()) == 0) {
+				if (DateUtility.compare(fsi.getRecalFromDate(), schDetail.getSchDate()) == 0) {
 					isValidRecalFromDate = true;
 					if (checkIsValidRepayDate(auditDetail, schDetail, "RecalFromDate") != null) {
 						return auditDetail;
 					}
 				}
-				if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
-					if (DateUtility.compare(finServiceInstruction.getRecalToDate(), schDetail.getSchDate()) == 0) {
+				if (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
+					if (DateUtility.compare(fsi.getRecalToDate(), schDetail.getSchDate()) == 0) {
 						isValidRecalToDate = true;
 						if (checkIsValidRepayDate(auditDetail, schDetail, "RecalToDate") != null) {
 							return auditDetail;
@@ -453,41 +435,36 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 				}
 			}
 
-			if (!isValidRecalFromDate
-					&& (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
-							|| StringUtils.equals(finServiceInstruction.getRecalType(),
-									CalculationConstants.RPYCHG_TILLDATE)
-							|| StringUtils.equals(finServiceInstruction.getRecalType(),
-									CalculationConstants.RPYCHG_ADDRECAL))) {
+			if (!isValidRecalFromDate && (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
+					|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)
+					|| StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_ADDRECAL))) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "RecalFromDate:"
-						+ DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
+				valueParm[0] = "RecalFromDate:" + DateUtility.formatToShortDate(fsi.getRecalFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", valueParm)));
 			}
-			if (!isValidRecalToDate && (StringUtils.equals(finServiceInstruction.getRecalType(),
-					CalculationConstants.RPYCHG_TILLDATE))) {
+			if (!isValidRecalToDate && (StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLDATE))) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "RecalToDate:" + DateUtility.formatToShortDate(finServiceInstruction.getRecalToDate());
+				valueParm[0] = "RecalToDate:" + DateUtility.formatToShortDate(fsi.getRecalToDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", valueParm)));
 			}
 		}
 
 		// validate disbursement amount
-		if (finScheduleData.getFinanceType().isAlwMaxDisbCheckReq()) {
+		if (schdData.getFinanceType().isAlwMaxDisbCheckReq()) {
 			BigDecimal totDisbAmount = BigDecimal.ZERO;
-			for (FinanceDisbursement finDisbursment : finScheduleData.getDisbursementDetails()) {
+			for (FinanceDisbursement finDisbursment : schdData.getDisbursementDetails()) {
 				totDisbAmount = totDisbAmount.add(finDisbursment.getDisbAmount());
 			}
 			totDisbAmount = actualDisbAmount.add(totDisbAmount);
-			if (totDisbAmount.compareTo(financeMain.getFinAssetValue()) > 0) {
+			if (totDisbAmount.compareTo(fm.getFinAssetValue()) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = String.valueOf(totDisbAmount);
-				valueParm[1] = String.valueOf(financeMain.getFinAssetValue());
+				valueParm[1] = String.valueOf(fm.getFinAssetValue());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90280", valueParm)));
 			}
 
-			BigDecimal finAssetValue = financeMain.getFinAssetValue();
-			BigDecimal finCurAssetValue = financeMain.getFinCurrAssetValue();
+			BigDecimal finAssetValue = fm.getFinAssetValue();
+			BigDecimal finCurAssetValue = fm.getFinCurrAssetValue();
 			if (actualDisbAmount.compareTo(finAssetValue.subtract(finCurAssetValue)) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Disbursement amount:" + actualDisbAmount;
@@ -496,10 +473,9 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 			}
 		}
 
-		//validate and allow only single instruction where instruction based schedule
-		if (financeMain.isInstBasedSchd() && finServiceInstruction.isQuickDisb()) {
-			if (CollectionUtils.isNotEmpty(financeDetail.getAdvancePaymentsList())
-					&& financeDetail.getAdvancePaymentsList().size() > 1) {
+		// validate and allow only single instruction where instruction based schedule
+		if (fm.isInstBasedSchd() && fsi.isQuickDisb()) {
+			if (CollectionUtils.isNotEmpty(fd.getAdvancePaymentsList()) && fd.getAdvancePaymentsList().size() > 1) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Only one Instruction allowed";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
@@ -507,38 +483,30 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 		}
 
 		BigDecimal totalDisbAmtFromInst = BigDecimal.ZERO;
-		if (financeDetail.getAdvancePaymentsList() != null && !financeDetail.getAdvancePaymentsList().isEmpty()) {
-			for (FinAdvancePayments finAdvancePayment : financeDetail.getAdvancePaymentsList()) {
+		if (fd.getAdvancePaymentsList() != null && !fd.getAdvancePaymentsList().isEmpty()) {
+			for (FinAdvancePayments finAdvancePayment : fd.getAdvancePaymentsList()) {
 				totalDisbAmtFromInst = totalDisbAmtFromInst.add(finAdvancePayment.getAmtToBeReleased());
 
 				// Validate from date and disb date.
-				if (DateUtility.compare(finServiceInstruction.getFromDate(), finAdvancePayment.getLlDate()) > 0) {
+				if (DateUtility.compare(fsi.getFromDate(), finAdvancePayment.getLlDate()) > 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Disb date:" + DateUtility.formatToLongDate(finAdvancePayment.getLlDate());
 					;
-					valueParm[1] = "From date:" + DateUtility.formatToLongDate(finServiceInstruction.getFromDate());
+					valueParm[1] = "From date:" + DateUtility.formatToLongDate(fsi.getFromDate());
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm)));
 				}
 			}
 
-			errorDetailList = financeDataValidation.disbursementValidation(financeDetail);
+			errorDetailList = financeDataValidation.disbursementValidation(fd);
 			for (ErrorDetail errorDetails : errorDetailList) {
 				auditDetail.setErrorDetail(errorDetails);
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditDetail;
 	}
 
-	/**
-	 * Method for validate current schedule date is valid schedule or not
-	 * 
-	 * @param auditDetail
-	 * @param curSchd
-	 * @param label
-	 * @return
-	 */
 	private AuditDetail checkIsValidRepayDate(AuditDetail auditDetail, FinanceScheduleDetail curSchd, String label) {
 		if (!((curSchd.isRepayOnSchDate()
 				|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))
@@ -588,46 +556,6 @@ public class AddDisbursementServiceImpl extends GenericService<FinServiceInstruc
 
 		logger.info(Literal.LEAVING);
 		return auditDetail;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
-		this.financeDataValidation = financeDataValidation;
-	}
-
-	public FinanceStepDetailDAO getFinanceStepDetailDAO() {
-		return financeStepDetailDAO;
-	}
-
-	public void setFinanceStepDetailDAO(FinanceStepDetailDAO financeStepDetailDAO) {
-		this.financeStepDetailDAO = financeStepDetailDAO;
-	}
-
-	public FinServiceInstrutionDAO getFinServiceInstrutionDAO() {
-		return finServiceInstrutionDAO;
-	}
-
-	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
-		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
-	}
-
-	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
-		return extendedFieldDetailsService;
-	}
-
-	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
-		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
-	public void setChangeGraceEndService(ChangeGraceEndService changeGraceEndService) {
-		this.changeGraceEndService = changeGraceEndService;
-	}
-
-	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
-		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
 
 }
