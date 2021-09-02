@@ -58,7 +58,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ChangeGraceEndService extends ServiceHelper {
-
 	private static final long serialVersionUID = -6254138886117514225L;
 	private static Logger logger = LogManager.getLogger(ChangeGraceEndService.class);
 
@@ -350,6 +349,9 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) throws Exception {
 		FinanceMain fm = fsd.getFinanceMain();
+
+		long finID = fm.getFinID();
+
 		EventProperties eventProperties = fm.getEventProperties();
 
 		Date valueDate = null;
@@ -359,11 +361,10 @@ public class ChangeGraceEndService extends ServiceHelper {
 			valueDate = SysParamUtil.getAppDate();
 		}
 
-		String finReference = fm.getFinReference();
 		List<FinanceScheduleDetail> schedules = fsd.getFinanceScheduleDetails();
 
 		// Get Profit Detail
-		FinanceProfitDetail pd = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
+		FinanceProfitDetail pd = financeProfitDetailDAO.getFinProfitDetailsById(finID);
 
 		BigDecimal totalPftSchdOld = pd.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = pd.getTotalPftCpz();
@@ -382,7 +383,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		amountCodes.setPftChg(totalPftSchdNew.subtract(totalPftSchdOld));
 		amountCodes.setCpzChg(totalPftCpzNew.subtract(totalPftCpzOld));
 
-		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(finReference);
+		Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(finID);
 
 		amountCodes.setBusinessvertical((String) map.get("BUSINESSVERTICAL"));
 		amountCodes.setAlwflexi(fm.isAlwFlexi());
@@ -418,18 +419,20 @@ public class ChangeGraceEndService extends ServiceHelper {
 	}
 
 	private FinScheduleData prepareFinScheduleData(FinEODEvent finEODEvent) {
-		FinScheduleData finSchData = new FinScheduleData();
+		FinScheduleData schdData = new FinScheduleData();
 		FinEODEvent finEODEvt = finEODEvent.copyEntity();
 
-		String finRef = finEODEvt.getFinanceMain().getFinReference();
-		finSchData.setFinReference(finRef);
+		FinanceMain fm = finEODEvt.getFinanceMain();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
-		finSchData.setFinanceMain(finEODEvt.getFinanceMain());
-		finSchData.setFinanceType(finEODEvt.getFinType());
-		finSchData.setFinanceScheduleDetails(finEODEvt.getFinanceScheduleDetails());
+		schdData.setFinReference(finReference);
 
-		String finReference = finSchData.getFinReference();
-		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finReference);
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(finEODEvt.getFinType());
+		schdData.setFinanceScheduleDetails(finEODEvt.getFinanceScheduleDetails());
+
+		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finID);
 
 		List<RepayInstruction> repayIns = new ArrayList<>();
 		for (RepayInstruction repay : repayIns) {
@@ -437,14 +440,14 @@ public class ChangeGraceEndService extends ServiceHelper {
 		}
 
 		finEODEvent.setOrgRepayInsts(repayIns);
-		finSchData.setRepayInstructions(repayInstructions);
+		schdData.setRepayInstructions(repayInstructions);
 
-		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false);
+		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false);
 
-		finSchData.setDisbursementDetails(fd);
+		schdData.setDisbursementDetails(fd);
 		finEODEvent.setFinanceDisbursements(fd);
 
-		return finSchData;
+		return schdData;
 	}
 
 	private List<FinServiceInstruction> getFinServiceInstruction(FinScheduleData finScheduleData) {
