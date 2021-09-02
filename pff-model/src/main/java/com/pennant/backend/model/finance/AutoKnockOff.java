@@ -25,6 +25,7 @@ public class AutoKnockOff extends AbstractWorkflowEntity {
 	private AutoKnockOff befImage;
 	@XmlTransient
 	private String lovValue;
+	private long finID;
 	private String finreference;
 	private String finType;
 	private String finTypeDesc;
@@ -41,6 +42,7 @@ public class AutoKnockOff extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("finID");
 		excludeFields.add("finreference");
 		excludeFields.add("finType");
 		excludeFields.add("finTypeDesc");
@@ -129,6 +131,14 @@ public class AutoKnockOff extends AbstractWorkflowEntity {
 
 	public void setId(long id) {
 		this.id = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinreference() {

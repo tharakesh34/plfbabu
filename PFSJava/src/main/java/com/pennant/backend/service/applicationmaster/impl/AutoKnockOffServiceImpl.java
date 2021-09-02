@@ -60,7 +60,7 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 			autoKnockOffDAO.update(knockOff, tableType);
 		}
 
-		//Retrieving List of Audit Details For check list detail  related modules
+		// Retrieving List of Audit Details For check list detail related modules
 		if (knockOff.getMappingList() != null && knockOff.getMappingList().size() > 0) {
 			List<AuditDetail> details = knockOff.getLovDescAuditDetailMap().get("AutoKnockOffFeeMapping");
 			details = processingFeeMappingList(details, tableType, knockOff.getId());
@@ -134,7 +134,7 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 			}
 		}
 
-		//Retrieving List of Audit Details For checkList details modules
+		// Retrieving List of Audit Details For checkList details modules
 		if (knockOff.getMappingList() != null && knockOff.getMappingList().size() > 0) {
 			List<AuditDetail> details = knockOff.getLovDescAuditDetailMap().get("AutoKnockOffFeeMapping");
 			details = processingFeeMappingList(details, tableType, knockOff.getId());
@@ -452,7 +452,7 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 				}
 
 				if (StringUtils.isNotEmpty(transType)) {
-					//check and change below line for Complete code
+					// check and change below line for Complete code
 					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
 							feeMappin.getBefImage(), feeMappin));
 				}
@@ -462,8 +462,8 @@ public class AutoKnockOffServiceImpl extends GenericService<AutoKnockOff> implem
 		return auditDetailsList;
 	}
 
-	public List<AutoKnockOff> getKnockOffDetails(String finreference) {
-		return autoKnockOffDAO.getKnockOffDetails(finreference);
+	public List<AutoKnockOff> getKnockOffDetails(long finID) {
+		return autoKnockOffDAO.getKnockOffDetails(finID);
 	}
 
 	public void setAutoKnockOffDAO(AutoKnockOffDAO autoKnockOffDAO) {

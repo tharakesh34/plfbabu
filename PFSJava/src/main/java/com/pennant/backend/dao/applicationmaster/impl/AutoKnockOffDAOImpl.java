@@ -1,14 +1,18 @@
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.applicationmaster.AutoKnockOffDAO;
@@ -198,6 +202,60 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 		}
 
 		return false;
+	}
+
+	public List<AutoKnockOff> getKnockOffDetails(long finID) {
+		logger.debug(Literal.ENTERING);
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ak.Id, fm.FinID, fm.Finreference, ft.FinType, ft.FinTypeDesc, ak.Code, ak.Description");
+		sql.append(", ak.ExecutionDays, fe.FeeTypeCode, fe.FeeTypedesc, akl.KnockOffOrder, akf.FeeOrder");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.Fintype = fm.Fintype");
+		sql.append(" Inner Join Auto_KnockOff_LoanTypes akl on akl.Loantype = ft.Fintype");
+		sql.append(" Inner Join Auto_knockOff ak on ak.Id = akl.Knockoffid and ak.Active = ?");
+		sql.append(" Inner Join AUTO_KNOCKOFF_FEE_TYPES akf on akf.KnockOffId = ak.Id");
+		sql.append(" Inner Join FeeTypes fe on fe.FeeTypeId = akf.FeeTypeId ");
+		sql.append(" Where fm.FinID = ? and Fm.FinIsActive=1");
+		sql.append(" Order By akl.KnockOffOrder, akf.FeeOrder");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+				@Override
+				public void setValues(PreparedStatement ps) throws SQLException {
+					int index = 1;
+					ps.setInt(index++, 1);
+					ps.setLong(index, finID);
+				}
+			}, new RowMapper<AutoKnockOff>() {
+				@Override
+				public AutoKnockOff mapRow(ResultSet rs, int rowNum) throws SQLException {
+					AutoKnockOff knockOff = new AutoKnockOff();
+
+					knockOff.setId(rs.getLong("Id"));
+					knockOff.setFinID(rs.getLong("FinID"));
+					knockOff.setFinreference(rs.getString("Finreference"));
+					knockOff.setFinType(rs.getString("FinType"));
+					knockOff.setFinTypeDesc(rs.getString("FinTypeDesc"));
+					knockOff.setCode(rs.getString("Code"));
+					knockOff.setDescription(rs.getString("Description"));
+					knockOff.setExecutionDays(rs.getString("ExecutionDays"));
+					knockOff.setFeeTypeCode(rs.getString("FeeTypeCode"));
+					// knockOff.setFeeTypeDesc(rs.getString("FeeTypedesc"));
+					knockOff.setKnockOffOrder(rs.getString("KnockOffOrder"));
+					knockOff.setFeeOrder(rs.getInt("FeeOrder"));
+
+					return knockOff;
+				}
+			});
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return new ArrayList<>();
 	}
 
 	private StringBuilder getSqlQuery(TableType type) {

@@ -1,6 +1,7 @@
 package com.pennant.backend.dao.applicationmaster;
 
 import java.util.Date;
+import java.util.List;
 
 import com.pennant.backend.dao.impl.BasicCrudDao;
 import com.pennant.backend.model.finance.AutoKnockOff;
@@ -15,6 +16,8 @@ public interface AutoKnockOffDAO extends BasicCrudDao<AutoKnockOff> {
 	AutoKnockOff getAutoKnockOffCode(String code, TableType tableType);
 
 	boolean isDuplicateKey(long id, String code, TableType tableType);
+
+	List<AutoKnockOff> getKnockOffDetails(long finID);
 
 	void logExcessForKnockOff(Date valueDate, String day, String thresholdValue);
 

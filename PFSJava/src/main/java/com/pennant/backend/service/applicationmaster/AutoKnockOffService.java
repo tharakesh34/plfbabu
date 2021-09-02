@@ -16,6 +16,6 @@ public interface AutoKnockOffService {
 
 	AutoKnockOff getAutoKnockOffCode(long id);
 
-	List<AutoKnockOff> getKnockOffDetails(String finreference);
+	List<AutoKnockOff> getKnockOffDetails(long finID);
 
 }
