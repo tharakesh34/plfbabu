@@ -340,4 +340,6 @@ public interface FinanceMainDAO {
 	Map<String, Object> getGSTDataMapForDealer(long manufacturerDealerId);
 
 	FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String string);
+
+	Long getFinID(String finReference);
 }

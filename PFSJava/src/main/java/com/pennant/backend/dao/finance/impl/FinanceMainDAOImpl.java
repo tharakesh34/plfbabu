@@ -5377,4 +5377,20 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
+	@Override
+	public Long getFinID(String finReference) {
+		StringBuilder sql = new StringBuilder("Select distinct FinID From (");
+		sql.append(" Select FinID From FinanceMain Where FinReference = ?");
+		sql.append(" Union all");
+		sql.append(" Select FinID From FinanceMain_Temp Where FinReference = ?");
+		sql.append(" ) fm");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
 }

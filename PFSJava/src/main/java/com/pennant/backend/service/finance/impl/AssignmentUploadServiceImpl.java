@@ -60,6 +60,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 /**
@@ -79,64 +80,13 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the assignmentUploadDAO
-	 */
-	public AssignmentUploadDAO getAssignmentUploadDAO() {
-		return assignmentUploadDAO;
-	}
-
-	/**
-	 * @param assignmentUploadDAO the assignmentUploadDAO to set
-	 */
-	public void setAssignmentUploadDAO(AssignmentUploadDAO assignmentUploadDAO) {
-		this.assignmentUploadDAO = assignmentUploadDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * AssignmentUploads/AssignmentUploads_Temp by using AssignmentUploadsDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using AssignmentUploadsDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtAssignmentUploads by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 
@@ -148,61 +98,33 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 
 		if (assignmentUpload.isNewRecord()) {
-			getAssignmentUploadDAO().save(assignmentUpload, tableType);
+			assignmentUploadDAO.save(assignmentUpload, tableType);
 			auditHeader.getAuditDetail().setModelData(assignmentUpload);
 			auditHeader.setAuditReference(String.valueOf(assignmentUpload.getId()));
 		} else {
-			getAssignmentUploadDAO().update(assignmentUpload, tableType);
+			assignmentUploadDAO.update(assignmentUpload, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * getAssignmentUploadsByUploadId fetch the details by using AssignmentUploadsDAO's getAssignmentUploadsByUploadId
-	 * method.
-	 * 
-	 * @param finType (String)
-	 * @param type    (String) ""/_Temp/_View
-	 * @return AssignmentUploads
-	 */
 	@Override
 	public List<AssignmentUpload> getAssignmentUploadsByUploadId(long uploadId) {
-		return getAssignmentUploadDAO().getAssignmentUploadsByUploadId(uploadId, "_TView");
+		return assignmentUploadDAO.getAssignmentUploadsByUploadId(uploadId, "_TView");
 	}
 
-	/**
-	 * getAssignmentUploadsById fetch the details by using AssignmentUploadsDAO's getAssignmentUploadByRef method.
-	 * 
-	 * @param uploadId (long)
-	 * @return AssignmentUploads
-	 */
 	@Override
 	public List<AssignmentUpload> getApprovedAssignmentUploadsByUploadId(long uploadId) {
-		return getAssignmentUploadDAO().getAssignmentUploadsByUploadId(uploadId, "_View");
+		return assignmentUploadDAO.getAssignmentUploadsByUploadId(uploadId, "_View");
 	}
 
-	/**
-	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getAssignmentUploadDAO().delete with
-	 * parameters promotionFee,"" b) NEW Add new record in to main table by using getAssignmentUploadDAO().save with
-	 * parameters promotionFee,"" c) EDIT Update record in the main table by using getAssignmentUploadDAO().update with
-	 * parameters promotionFee,"" 3) Delete the record from the workFlow table by using getAssignmentUploadDAO().delete
-	 * with parameters promotionFee,"_Temp" 4) Audit the record in to AuditHeader and AdtAssignmentUploads by using
-	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtAssignmentUploads
-	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doApprove(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		auditHeader = businessValidation(auditHeader, "doApprove");
@@ -216,7 +138,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(assignmentUpload.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
-			// getAssignmentUploadDAO().delete(assignmentUpload, ""); // because delete will not be applicable here
+			// assignmentUploadDAO.delete(assignmentUpload, ""); // because delete will not be applicable here
 		} else {
 			assignmentUpload.setRoleCode("");
 			assignmentUpload.setNextRoleCode("");
@@ -227,41 +149,32 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			if (PennantConstants.RECORD_TYPE_NEW.equals(assignmentUpload.getRecordType())) {
 				tranType = PennantConstants.TRAN_ADD;
 				assignmentUpload.setRecordType("");
-				getAssignmentUploadDAO().save(assignmentUpload, "");
+				assignmentUploadDAO.save(assignmentUpload, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				assignmentUpload.setRecordType("");
-				getAssignmentUploadDAO().update(assignmentUpload, "");
+				assignmentUploadDAO.update(assignmentUpload, "");
 			}
 		}
 
-		getAssignmentUploadDAO().deleteByUploadId(assignmentUpload.getUploadId(), "_TEMP");
+		assignmentUploadDAO.deleteByUploadId(assignmentUpload.getUploadId(), "_TEMP");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(assignmentUpload);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
-	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getAssignmentUploadDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record
-	 * in to AuditHeader and AdtAssignmentUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
 		if (!auditHeader.isNextProcess()) {
@@ -271,38 +184,31 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		// AssignmentUpload assignmentUpload = (AssignmentUpload) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		// getAssignmentUploadDAO().delete(assignmentUpload, "_TEMP"); // because delete will not be applicable here
+		// assignmentUploadDAO.delete(assignmentUpload, "_TEMP"); // because delete will not be applicable here
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method, null);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditHeader;
 	}
 
 	@Override
 	public List<ErrorDetail> validateAssignmentUploads(AuditHeader auditHeader, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		UploadHeader uploadHeader = (UploadHeader) auditHeader.getAuditDetail().getModelData();
@@ -336,23 +242,13 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			auditHeader.getAuditDetail().setModelData(uploadHeader);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return errorDetails;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getAssignmentUploadDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @param method
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, String entityCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AssignmentUpload assignmentUpload = (AssignmentUpload) auditDetail.getModelData();
 
@@ -381,7 +277,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	@Override
 	public List<AuditDetail> setAssignmentUploadsAuditData(List<AssignmentUpload> assignmentUploadList,
 			String auditTranType, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new AssignmentUpload(),
@@ -423,7 +319,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 					assignmentUpload));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditDetails;
 	}
@@ -431,7 +327,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	@Override
 	public List<AuditDetail> processAssignmentUploadsDetails(List<AuditDetail> auditDetails, long uploadId, String type,
 			String postingBranch) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean saveRecord = false;
 		boolean updateRecord = false;
 		boolean deleteRecord = false;
@@ -493,21 +389,20 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				assignmentUpload.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 			if (saveRecord) {
-				getAssignmentUploadDAO().save(assignmentUpload, type);
+				assignmentUploadDAO.save(assignmentUpload, type);
 
 				// Success case updating the Assignment Id
 				if (approveRec && UploadConstants.REFUND_UPLOAD_STATUS_SUCCESS.equals(assignmentUpload.getStatus())) {
 					generateAccounting(assignmentUpload, postingBranch);
 					// Update Assignment Id in Finance Main
-					getFinanceMainDAO().updateAssignmentId(assignmentUpload.getFinReference(),
-							assignmentUpload.getAssignmentId());
+					financeMainDAO.updateAssignmentId(assignmentUpload.getFinID(), assignmentUpload.getAssignmentId());
 				}
 			}
 			if (updateRecord) {
-				getAssignmentUploadDAO().update(assignmentUpload, type);
+				assignmentUploadDAO.update(assignmentUpload, type);
 			}
 			if (deleteRecord) {
-				// getAssignmentUploadDAO().delete(assignmentUpload, type); // because delete will not be applicable
+				// assignmentUploadDAO.delete(assignmentUpload, type); // because delete will not be applicable
 				// here
 			}
 			if (approveRec) {
@@ -517,16 +412,17 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			auditDetails.get(i).setModelData(assignmentUpload);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return auditDetails;
 	}
 
 	private void generateAccounting(AssignmentUpload assignUpload, String postingBranch) {
-
+		long finID = assignUpload.getFinID();
 		String finReference = assignUpload.getFinReference();
+
 		Assignment assignment = this.assignmentDAO.getAssignment(assignUpload.getAssignmentId(), "");
-		FinanceMain financeMain = this.financeMainDAO.getFinanceForAssignments(finReference);
+		FinanceMain financeMain = this.financeMainDAO.getFinanceForAssignments(finID);
 
 		// if assignment is not available or actual days is less than or equal to 0
 		if (assignment == null || financeMain == null) {
@@ -535,10 +431,9 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		BigDecimal sharePercent = assignment.getSharingPercentage();
 
 		// Get the Finance Schedule details
-		List<FinanceScheduleDetail> finScheduleDetails = getFinanceScheduleDetailDAO()
-				.getFinScheduleDetails(finReference, "", false);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 
-		if (CollectionUtils.isNotEmpty(finScheduleDetails)) {
+		if (CollectionUtils.isNotEmpty(schedules)) {
 			FinanceScheduleDetail curSchd = null;
 			FinanceScheduleDetail nextSchd = null;
 			int scheduleCount = -1;
@@ -546,7 +441,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			BigDecimal schPaidAmount = BigDecimal.ZERO; // for dues calculation
 
 			// get the next schedule payment
-			for (FinanceScheduleDetail schedule : finScheduleDetails) {
+			for (FinanceScheduleDetail schedule : schedules) {
 
 				if (DateUtility.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) >= 0) {
 					// Partial Settlement schedule
@@ -576,7 +471,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			if (scheduleCount == -1) {
 				curSchd = nextSchd;
 			} else {
-				curSchd = finScheduleDetails.get(scheduleCount);
+				curSchd = schedules.get(scheduleCount);
 			}
 
 			// difference between assignment date and current schedule date
@@ -592,7 +487,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// Total Interest calculation from Current schedule date.
 			BigDecimal afterAssignProfit = BigDecimal.ZERO;
-			for (FinanceScheduleDetail schedule : finScheduleDetails) {
+			for (FinanceScheduleDetail schedule : schedules) {
 				if (DateUtility.compare(schedule.getSchDate(), nextSchd.getSchDate()) >= 0) {
 					afterAssignProfit = afterAssignProfit.add(schedule.getProfitCalc());
 				}
@@ -604,7 +499,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			BigDecimal assignAmount = BigDecimal.ZERO;
 
 			// get the Effective next date schedule
-			for (FinanceScheduleDetail schedule : finScheduleDetails) {
+			for (FinanceScheduleDetail schedule : schedules) {
 				if (DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) > 0) {
 					if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) { // Partial Settlement case
 						if (schedule.getProfitSchd().compareTo(schedule.getProfitCalc()) == 0) {
@@ -640,7 +535,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// Assigning Principal Amount
 			if (assignAmount.compareTo(BigDecimal.ZERO) == 0) {
-				effectSchd = finScheduleDetails.get(effectSchdCount);
+				effectSchd = schedules.get(effectSchdCount);
 				assignAmount = effectSchd.getClosingBalance();
 			}
 			assignAmount = assignAmount.multiply(sharePercent).divide(new BigDecimal(100), 9, RoundingMode.HALF_DOWN);
@@ -666,7 +561,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// If we have any excess Amount
 			BigDecimal assginExcessAmt = BigDecimal.ZERO;
-			FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
+			FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 					RepayConstants.EXAMOUNTTYPE_EXCESS);
 			if (finExcessAmount != null) {
 				assginExcessAmt = assginExcessAmt.add(finExcessAmount.getBalanceAmt());
@@ -679,7 +574,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// If we have any EMI Advance Amount
 			BigDecimal assignEMIAdvAmt = BigDecimal.ZERO;
-			FinExcessAmount emiAdvanceAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
+			FinExcessAmount emiAdvanceAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 					RepayConstants.EXAMOUNTTYPE_EMIINADV);
 			if (emiAdvanceAmount != null) {
 				assignEMIAdvAmt = assignEMIAdvAmt.add(emiAdvanceAmount.getBalanceAmt());
@@ -691,8 +586,8 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			}
 
 			// BPI amount calculation
-			BigDecimal bpi1Amount = bpi1Calculation(finScheduleDetails, assignUpload, sharePercent);
-			BigDecimal bpi2Amount = bpi2Calculation(finScheduleDetails, assignUpload, nextSchd, sharePercent);
+			BigDecimal bpi1Amount = bpi1Calculation(schedules, assignUpload, sharePercent);
+			BigDecimal bpi2Amount = bpi2Calculation(schedules, assignUpload, nextSchd, sharePercent);
 
 			// AssignPftAmount
 			BigDecimal assignPftAmount = afterAssignProfit.subtract(effectiveProfit);
@@ -712,7 +607,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// if customer paid any Part Payment amount between the assignment date and effective date
 			BigDecimal assignPartPayment = BigDecimal.ZERO;
-			for (FinanceScheduleDetail schedule : finScheduleDetails) {
+			for (FinanceScheduleDetail schedule : schedules) {
 				if (schedule.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0
 						&& DateUtility.compare(schedule.getSchDate(), assignUpload.getEffectiveDate()) >= 0
 						&& DateUtility.compare(schedule.getSchDate(), assignUpload.getAssignmentDate()) <= 0) {
@@ -747,7 +642,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			AEEvent aeEvent = new AEEvent();
 			aeEvent.setFinReference(finReference);
 			aeEvent.setAccountingEvent(AccountingEvent.ASSIGNMENT);
-			aeEvent.setPostDate(DateUtility.getAppDate());
+			aeEvent.setPostDate(SysParamUtil.getAppDate());
 			aeEvent.setValueDate(DateUtility.getDerivedAppDate());
 			aeEvent.setFinType(financeMain.getFinType());
 			aeEvent.setCustID(financeMain.getCustID());
@@ -787,7 +682,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 			}
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
-			Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(financeMain.getFinReference());
+			Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(finID);
 			dataMap.put("emptype", map.get("EMPTYPE"));
 			dataMap.put("branchcity", map.get("BRANCHCITY"));
 			dataMap.put("fincollateralreq", map.get("FINCOLLATERALREQ"));
@@ -795,14 +690,15 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			aeEvent.setDataMap(dataMap);
 
 			// Prepared Postings execution
-			getPostingsPreparationUtil().postAccounting(aeEvent);
+			postingsPreparationUtil.postAccounting(aeEvent);
 
 			// update BPI Amounts for Reporting purpose in Finance Profit Details
 			FinanceProfitDetail finProfitDetails = new FinanceProfitDetail();
+			finProfitDetails.setFinID(finID);
 			finProfitDetails.setFinReference(finReference);
 			finProfitDetails.setAssignBPI1(bpi1Amount);
 			finProfitDetails.setAssignBPI2(bpi2Amount);
-			getProfitDetailsDAO().updateAssignmentBPIAmounts(finProfitDetails);
+			profitDetailsDAO.updateAssignmentBPIAmounts(finProfitDetails);
 		}
 	}
 
@@ -854,15 +750,6 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		return bpi1Amount;
 	}
 
-	/**
-	 * BPI2 calculation will start from Current Billing date to Next Schedule Date
-	 * 
-	 * @param finScheduleDetails
-	 * @param assignmentUpload
-	 * @param nextSchd
-	 * @param sharePercent
-	 * @return
-	 */
 	private BigDecimal bpi2Calculation(List<FinanceScheduleDetail> finScheduleDetails,
 			AssignmentUpload assignmentUpload, FinanceScheduleDetail nextSchd, BigDecimal sharePercent) {
 
@@ -927,7 +814,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 							assignmentUpload.getBefImage(), assignmentUpload));
 				}
 			}
-			getAssignmentUploadDAO().deleteByUploadId(uploadId, tableType);
+			assignmentUploadDAO.deleteByUploadId(uploadId, tableType);
 		}
 
 		return auditDetails;
@@ -959,37 +846,36 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 	private void validateData(AssignmentUpload assignmentUpload, String entityCode) {
 		int errorCount = 0;
 		String reason = "";
-		FinanceMain financeMain = null;
+		FinanceMain fm = null;
 
 		// FinReference
+		long finID = assignmentUpload.getFinID();
 		String finReference = assignmentUpload.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
 			errorCount++;
 			reason = "Loan Reference is mandatory.";
 		} else {
-			financeMain = this.financeMainDAO.getFinanceForAssignments(finReference);
-			if (financeMain == null) {
+			fm = this.financeMainDAO.getFinanceForAssignments(finID);
+			if (fm == null) {
 				errorCount++;
 				reason = "Invalid Loan Reference.";
-			} else if (!financeMain.isFinIsActive()) {
+			} else if (!fm.isFinIsActive()) {
 				errorCount++;
 				reason = "Loan Reference should be active.";
-			} else if (StringUtils.isNotBlank(entityCode)
-					&& !StringUtils.equals(entityCode, financeMain.getEntityCode())) {
+			} else if (StringUtils.isNotBlank(entityCode) && !StringUtils.equals(entityCode, fm.getEntityCode())) {
 				errorCount++;
 				reason = "Loan reference and assignment partner should be from same entity code.";
-			} else if (financeMain.getAssignmentId() > 0) {
+			} else if (fm.getAssignmentId() > 0) {
 				errorCount++;
 				reason = "Loan Reference is already assigned.";
-			} else if (financeMain.getFinCurrAssetValue().compareTo(financeMain.getFinAssetValue()) != 0) {
+			} else if (fm.getFinCurrAssetValue().compareTo(fm.getFinAssetValue()) != 0) {
 				errorCount++;
 				reason = "Partially disbursed loans will not be considered for Assignment.";
-			} else if (financeMain.isAlwFlexi()) {
+			} else if (fm.isAlwFlexi()) {
 				errorCount++;
 				reason = "Flexi loans will not be considered for Assignment.";
 			} else if (assignmentUpload.isNewRecord()) {
-				boolean isDuplicate = getAssignmentUploadDAO().getAssignmentUploadsByFinReference(finReference, 0,
-						"_View");
+				boolean isDuplicate = assignmentUploadDAO.getAssignmentUploadsByFinReference(finReference, 0, "_View");
 				if (isDuplicate) {
 					errorCount++;
 					reason = "Duplicate Loan Reference.";
@@ -1013,7 +899,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			} else {
 				reason = reason + " Assignment Code should be active.";
 			}
-		} else if (financeMain != null && !StringUtils.equals(financeMain.getFinType(), assignment.getLoanType())) {
+		} else if (fm != null && !StringUtils.equals(fm.getFinType(), assignment.getLoanType())) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Loan type assigned to the Assignment Code should match with the loan type of the loan.";
@@ -1021,8 +907,7 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				reason = reason
 						+ " Loan type assigned to the Assignment Code should match with the loan type of the loan.";
 			}
-		} else if (financeMain != null
-				&& !StringUtils.equals(financeMain.getEntityCode(), assignment.getEntityCode())) {
+		} else if (fm != null && !StringUtils.equals(fm.getEntityCode(), assignment.getEntityCode())) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Entity of the Assignment Code and the assigning loan should be same.";
@@ -1039,16 +924,14 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			} else {
 				reason = reason + " Effective date should be less than or equal to application date.";
 			}
-		} else if (financeMain != null
-				&& DateUtility.compare(assignmentUpload.getEffectiveDate(), financeMain.getFinStartDate()) == 0) {
+		} else if (fm != null && DateUtility.compare(assignmentUpload.getEffectiveDate(), fm.getFinStartDate()) == 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Effective date should be greater than Loan Start Date.";
 			} else {
 				reason = reason + " Effective date should be greater than Loan Start Date.";
 			}
-		} else if (financeMain != null
-				&& DateUtility.compare(assignmentUpload.getEffectiveDate(), financeMain.getMaturityDate()) > 0) {
+		} else if (fm != null && DateUtility.compare(assignmentUpload.getEffectiveDate(), fm.getMaturityDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Effective date should be less than Loan Maturity Date.";
@@ -1065,16 +948,14 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 			} else {
 				reason = reason + " Assignment date should be less than or equal to application date";
 			}
-		} else if (financeMain != null
-				&& DateUtility.compare(assignmentUpload.getAssignmentDate(), financeMain.getFinStartDate()) == 0) {
+		} else if (fm != null && DateUtility.compare(assignmentUpload.getAssignmentDate(), fm.getFinStartDate()) == 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Assignment date should be greater than Loan Start Date.";
 			} else {
 				reason = reason + "Assignment date should be greater than Loan Start Date.";
 			}
-		} else if (financeMain != null
-				&& DateUtility.compare(assignmentUpload.getAssignmentDate(), financeMain.getMaturityDate()) > 0) {
+		} else if (fm != null && DateUtility.compare(assignmentUpload.getAssignmentDate(), fm.getMaturityDate()) > 0) {
 			errorCount++;
 			if (StringUtils.isBlank(reason)) {
 				reason = "Assignment date should be less than Loan Maturity Date.";
@@ -1155,51 +1036,40 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 		}
 	}
 
-	public AssignmentDAO getAssignmentDAO() {
-		return assignmentDAO;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setAssignmentUploadDAO(AssignmentUploadDAO assignmentUploadDAO) {
+		this.assignmentUploadDAO = assignmentUploadDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 	public void setAssignmentDAO(AssignmentDAO assignmentDAO) {
 		this.assignmentDAO = assignmentDAO;
 	}
 
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public AssignmentDealDAO getAssignmentDealDAO() {
-		return assignmentDealDAO;
 	}
 
 	public void setAssignmentDealDAO(AssignmentDealDAO assignmentDealDAO) {
 		this.assignmentDealDAO = assignmentDealDAO;
 	}
 
-	public FinanceProfitDetailDAO getProfitDetailsDAO() {
-		return profitDetailsDAO;
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	public void setProfitDetailsDAO(FinanceProfitDetailDAO profitDetailsDAO) {
 		this.profitDetailsDAO = profitDetailsDAO;
 	}
 
-	public FinExcessAmountDAO getFinExcessAmountDAO() {
-		return finExcessAmountDAO;
-	}
-
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
+
 }
