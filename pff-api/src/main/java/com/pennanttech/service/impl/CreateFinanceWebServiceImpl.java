@@ -116,36 +116,40 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * validate and create finance by receiving request object from interface
 	 * 
-	 * @param financeDetail
+	 * @param fd
 	 */
 	@Override
-	public FinanceDetail createFinance(FinanceDetail financeDetail) {
+	public FinanceDetail createFinance(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData fsData = financeDetail.getFinScheduleData();
-		FinanceMain finMain = fsData.getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		if (finMain == null) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
+		if (fm == null) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
 			String[] valueParm = new String[1];
 			valueParm[0] = "financeDetail";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return fd;
 		}
 
-		finMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		String custCIF = fm.getCustCIF();
+		String coreBankId = fm.getCoreBankId();
+		String productCategory = fm.getProductCategory();
+
+		fm.setFinSourceID(APIConstants.FINSOURCE_ID_API);
 
 		// do Basic mandatory validations using hibernate validator
-		validationUtility.validate(financeDetail, CreateFinanceGroup.class);
+		validationUtility.validate(fd, CreateFinanceGroup.class);
 
-		if (!CollectionUtils.isEmpty(financeDetail.getCollaterals())) {
-			for (CollateralSetup setup : financeDetail.getCollaterals()) {
+		if (!CollectionUtils.isEmpty(fd.getCollaterals())) {
+			for (CollateralSetup setup : fd.getCollaterals()) {
 				validationUtility.validate(setup, CreateFinanceWithCollateral.class);
 			}
 		}
 
-		if (StringUtils.isBlank(finMain.getCustCIF()) && StringUtils.isBlank(finMain.getCoreBankId())) {
+		if (StringUtils.isBlank(custCIF) && StringUtils.isBlank(coreBankId)) {
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			String[] valueParm = new String[1];
@@ -155,7 +159,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 
 		// for logging purpose
-		String[] logFields = getLogFields(financeDetail);
+		String[] logFields = getLogFields(fd);
 		APIErrorHandlerService.logKeyFields(logFields);
 
 		// logging customer CIF as reference for create loan failure cases
@@ -164,37 +168,37 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 		try {
 			// validate and Data defaulting
-			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail);
+			financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, fd);
 
-			if (!fsData.getErrorDetails().isEmpty()) {
-				return getErrorMessage(fsData);
+			if (!schdData.getErrorDetails().isEmpty()) {
+				return getErrorMessage(schdData);
 			}
 
-			if (finMain.getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-				FinanceDetail finResponse = createOverDraftLoanValidation(financeDetail);
-				WSReturnStatus status = finResponse.getReturnStatus();
+			if (FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory)) {
+				fd = createOverDraftLoanValidation(fd);
+				WSReturnStatus status = fd.getReturnStatus();
 				if (status != null) {
-					doEmptyResponseObject(finResponse);
-					return finResponse;
+					doEmptyResponseObject(fd);
+					return fd;
 				}
 			}
 
 			// validate Finance schedule details Validations
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN,
-					financeDetail.getFinScheduleData(), true, financeDetail, false);
-			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-				return getErrorMessage(financeDetail.getFinScheduleData());
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, fd.getFinScheduleData(), true,
+					fd, false);
+			if (!fd.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(fd.getFinScheduleData());
 			}
 
 			// validate FinanceDetail Validations
-			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, financeDetail, true);
-			if (!financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-				return getErrorMessage(financeDetail.getFinScheduleData());
+			financeDataValidation.financeDetailValidation(PennantConstants.VLD_CRT_LOAN, fd, true);
+			if (!fd.getFinScheduleData().getErrorDetails().isEmpty()) {
+				return getErrorMessage(fd.getFinScheduleData());
 			}
 
 			// call doCreateFinance method after successful validations
 			FinanceDetail financeDetailRes = null;
-			financeDetailRes = createFinanceController.doCreateFinance(financeDetail, false);
+			financeDetailRes = createFinanceController.doCreateFinance(fd, false);
 
 			if (financeDetailRes != null) {
 				if (financeDetailRes.getFinScheduleData() != null) {
@@ -222,31 +226,33 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 	}
 
-	public FinanceDetail createOverDraftLoanValidation(FinanceDetail financeDetail) {
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+	public FinanceDetail createOverDraftLoanValidation(FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceType financeType = schdData.getFinanceType();
 		FinanceDetail response = new FinanceDetail();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		String finReference = fm.getFinReference();
+
 		if (!financeType.isFinIsGenRef()) {
-			FinanceDetail checkDuplicateRecord = createFinanceController
-					.getFinanceDetails(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
-			WSReturnStatus checkExistingRecordStatus = checkDuplicateRecord.getReturnStatus();
-			if (!checkExistingRecordStatus.getReturnCode().equals("API006")) {
+			fd = createFinanceController.getFinanceDetails(finReference);
+			WSReturnStatus wsrStatus = fd.getReturnStatus();
+
+			if (!wsrStatus.getReturnCode().equals("API006")) {
 				doEmptyResponseObject(response);
-				response.setStp(financeDetail.isStp());
+				response.setStp(fd.isStp());
 				String[] valueParm = new String[1];
 				valueParm[0] = "Finance Reference ";
 				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("PR002", valueParm);
-				status.setReturnText(
-						valueParm[0] + financeDetail.getFinScheduleData().getFinanceMain().getFinReference() + " "
-								+ status.getReturnText());
+				status.setReturnText(valueParm[0] + finReference + " " + status.getReturnText());
 				response.setReturnStatus(status);
 				return response;
 			}
 		}
 
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()
-				.compareTo(new BigDecimal("0")) == 0) {
+		if (fm.getFinAssetValue().compareTo(new BigDecimal("0")) == 0) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[1];
 			valueParm[0] = "Finance Asset Value ";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
@@ -255,10 +261,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			return response;
 		}
 
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()
-				.compareTo(new BigDecimal("0")) == -1) {
+		if (fm.getFinAssetValue().compareTo(new BigDecimal("0")) == -1) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[1];
 			valueParm[0] = "Finance Asset Value ";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90259", valueParm);
@@ -266,10 +271,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			response.setReturnStatus(status);
 			return response;
 		}
-		if ((new BigDecimal("999999999999999999")
-				.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinAssetValue()) == -1)) {
+		if ((new BigDecimal("999999999999999999").compareTo(fm.getFinAssetValue()) == -1)) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Finance Asset Value is less than 18 digits or ";
 			valueParm[1] = " 18";
@@ -281,9 +285,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 		// schedule method PFT only allowed in Over Draft
 
-		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod())) {
+		if (StringUtils.isBlank(fm.getScheduleMethod())) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[1];
 			valueParm[0] = "Schedule Method ";
 			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90501", valueParm);
@@ -292,10 +296,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			return response;
 		}
 
-		if (!financeDetail.getFinScheduleData().getFinanceMain().getScheduleMethod()
-				.equals(CalculationConstants.SCHMTHD_POS_INT)) {
+		if (!fm.getScheduleMethod().equals(CalculationConstants.SCHMTHD_POS_INT)) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Schedule Method ";
 			valueParm[1] = CalculationConstants.SCHMTHD_POS_INT;
@@ -307,11 +310,11 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 		// disbursement is not required in Over Draft loan
 
-		List<FinAdvancePayments> advancePaymentsList = financeDetail.getAdvancePaymentsList();
+		List<FinAdvancePayments> advancePaymentsList = fd.getAdvancePaymentsList();
 
 		if (!CollectionUtils.isEmpty(advancePaymentsList)) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement ";
 			valueParm[1] = " Overdraft Loan";
@@ -329,11 +332,10 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		 * response; }
 		 */
 
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate() != null) {
-			if (financeDetail.getFinScheduleData().getFinanceMain().getFirstDroplineDate()
-					.compareTo(financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate()) <= 0) {
+		if (fm.getFirstDroplineDate() != null) {
+			if (fm.getFirstDroplineDate().compareTo(fm.getFinStartDate()) <= 0) {
 				doEmptyResponseObject(response);
-				response.setStp(financeDetail.isStp());
+				response.setStp(fd.isStp());
 				String[] valueParm = new String[2];
 				valueParm[0] = "First Drop line Date";
 				valueParm[1] = "Finance Start Date";
@@ -344,9 +346,9 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			}
 
 		}
-		if (financeDetail.getFinScheduleData().getFinanceMain().getFinAmount().compareTo(new BigDecimal("0")) != 0) {
+		if (fm.getFinAmount().compareTo(new BigDecimal("0")) != 0) {
 			doEmptyResponseObject(response);
-			response.setStp(financeDetail.isStp());
+			response.setStp(fd.isStp());
 			String[] valueParm = new String[2];
 			valueParm[0] = "Finance Amount ";
 			valueParm[1] = "Zero";
@@ -357,12 +359,12 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			response.setReturnStatus(status);
 			return response;
 		}
-		financeDetail.getFinScheduleData().getFinanceMain().setRecalType("");
-		if (StringUtils.isBlank(financeDetail.getFinScheduleData().getFinanceMain().getRepayBaseRate())) {
-			financeDetail.getFinScheduleData().getFinanceMain().setRepayBaseRate(null);
+		fm.setRecalType("");
+		if (StringUtils.isBlank(fm.getRepayBaseRate())) {
+			fm.setRepayBaseRate(null);
 		}
 
-		return financeDetail;
+		return fd;
 	}
 
 	public FinanceDetail getOverDraftMaintenance(OverDraftMaintenance overDraftMaintenance) throws ServiceException {
@@ -712,15 +714,13 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	public WSReturnStatus approveLoan(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail finDetail = null;
 		WSReturnStatus returnStatus = null;
 		String finReference = fd.getFinReference();
 
-		// for logging purpose
 		if (StringUtils.isNotBlank(finReference)) {
 			APIErrorHandlerService.logReference(finReference);
 		}
-		// check reference is in temp table or not
+
 		FinanceMain fm = financeMainDAO.getFinanceDetailsForService1(finReference, "_Temp", false);
 
 		if (fm == null) {
@@ -730,13 +730,16 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 		}
 
-		finDetail = createFinanceController.getFinanceDetails(finReference);
+		long finID = fm.getFinID();
 
-		if (finDetail != null) {
-			returnStatus = createFinanceController.doApproveLoan(finDetail);
+		fd = createFinanceController.getFinanceDetails(finID);
+
+		if (fd != null) {
+			returnStatus = createFinanceController.doApproveLoan(fd);
 		}
 
 		logger.debug(Literal.LEAVING);
+
 		return returnStatus;
 	}
 

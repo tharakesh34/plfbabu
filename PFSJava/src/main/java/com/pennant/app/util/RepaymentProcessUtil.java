@@ -275,20 +275,14 @@ public class RepaymentProcessUtil {
 
 		financeMainDAO.updatePaymentInEOD(fm);
 		limitManagement.processLoanRepay(fm, customer, priPaynow, profitDetail.getFinCategory());
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Processing Payment details as per receipt details
-	 * 
-	 * @param receiptHeaderFinReceiptDetail
-	 */
-	@SuppressWarnings("unchecked")
 	public List<Object> doProcessReceipts(FinanceMain fm, List<FinanceScheduleDetail> schedules,
 			FinanceProfitDetail pfd, FinReceiptHeader rch, List<FinFeeDetail> finFeeDetailList,
 			FinScheduleData logScheduleData, Date valueDate, Date postingDate, FinanceDetail financeDetail)
 			throws AppException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BigDecimal uAmz = BigDecimal.ZERO;
 		BigDecimal uLpi = BigDecimal.ZERO;
@@ -313,6 +307,7 @@ public class RepaymentProcessUtil {
 		Map<String, BigDecimal> extDataMap = new HashMap<>();
 
 		long linkedTranId = 0;
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		// Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = null;
@@ -330,7 +325,7 @@ public class RepaymentProcessUtil {
 				logKey = finLogEntryDetailDAO.save(entryDetail);
 
 				// Save Schedule Details For Future Modifications
-				FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "");
+				FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finID, "");
 				oldFinSchdData.setFinanceMain(fm);
 				oldFinSchdData.setFinReference(finReference);
 				listSave(oldFinSchdData, "_Log", logKey);
@@ -1054,7 +1049,7 @@ public class RepaymentProcessUtil {
 			List<ManualAdviseMovements> movements, String postBranch, Map<String, BigDecimal> extDataMap,
 			Date dateValueDate, FinanceDetail financeDetail, FinRepayHeader repayHeader, int transOrder)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Accounting Postings Process Execution
 		AEEvent aeEvent = new AEEvent();
@@ -1221,7 +1216,7 @@ public class RepaymentProcessUtil {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private Map<String, BigDecimal> prepareMovementMap(List<ManualAdviseMovements> movements) {
@@ -1373,7 +1368,7 @@ public class RepaymentProcessUtil {
 	 * @param rch
 	 */
 	public void doSaveReceipts(FinReceiptHeader rch, List<FinFeeDetail> finFeeDetails, boolean isApproval) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		long receiptID = finReceiptHeaderDAO.save(rch, TableType.MAIN_TAB);
 		rch.setReceiptID(receiptID);
@@ -1703,6 +1698,7 @@ public class RepaymentProcessUtil {
 			rph.setValueDate(appValueDate);
 			rph.setFinReference(rch.getReference());
 			rph.setFinEvent(rch.getReceiptPurpose());
+
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 				int recordCount = 0;
 				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
@@ -1771,7 +1767,7 @@ public class RepaymentProcessUtil {
 
 		allocationPaidMap = null;
 		allocationWaivedMap = null;
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1809,7 +1805,7 @@ public class RepaymentProcessUtil {
 	 */
 	private void updateFeeDetails(RepayScheduleDetail rpySchd, List<FinFeeDetail> finFeeDetails,
 			Map<String, BigDecimal> allocationPaidMap, Map<String, BigDecimal> allocationWaivedMap) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BigDecimal paidBal = rpySchd.getSchdFeePayNow();
 		BigDecimal waivedBal = rpySchd.getSchdFeeWaivedNow();
@@ -1851,7 +1847,7 @@ public class RepaymentProcessUtil {
 		if (!updateFeeList.isEmpty()) {
 			finFeeScheduleDetailDAO.updateFeePaids(updateFeeList);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1859,7 +1855,7 @@ public class RepaymentProcessUtil {
 	 */
 	private FinFeeScheduleDetail feeSchdUpdation(FinFeeScheduleDetail feeSchd, BigDecimal paidBal, BigDecimal waivedBal,
 			Map<String, BigDecimal> allocationPaidMap, Map<String, BigDecimal> allocationWaivedMap) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// No balance to adjust, should return back
 		if (paidBal.compareTo(BigDecimal.ZERO) == 0 && waivedBal.compareTo(BigDecimal.ZERO) == 0) {
@@ -1944,7 +1940,7 @@ public class RepaymentProcessUtil {
 		feeSchd.setOsAmount(
 				feeSchd.getSchAmount().subtract(feeSchd.getPaidAmount()).subtract(feeSchd.getWaiverAmount()));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return feeSchd;
 	}
 
@@ -2208,7 +2204,7 @@ public class RepaymentProcessUtil {
 	 */
 	private FinRepayQueue doWriteDataToBean(FinRepayQueue finRepayQueue, FinanceMain financeMain,
 			RepayScheduleDetail rsd) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		finRepayQueue.setBranch(financeMain.getFinBranch());
 		finRepayQueue.setFinType(financeMain.getFinType());
@@ -2242,7 +2238,7 @@ public class RepaymentProcessUtil {
 		finRepayQueue.setSchdFeePaid(rsd.getSchdFeePaid());
 		finRepayQueue.setSchdFeeWaivedNow(rsd.getSchdFeeWaivedNow());
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return finRepayQueue;
 	}
 
@@ -2257,7 +2253,7 @@ public class RepaymentProcessUtil {
 	 */
 	private RepayScheduleDetail prepareRpyRecord(FinanceScheduleDetail curSchd, RepayScheduleDetail rsd, char rpyTo,
 			BigDecimal balPayNow, Date valueDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		if (rsd == null) {
 			rsd = new RepayScheduleDetail();
@@ -2312,37 +2308,31 @@ public class RepaymentProcessUtil {
 			rsd.setPenaltyPayNow(balPayNow);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return rsd;
 
 	}
 
-	/**
-	 * Method to get Schedule related data.
-	 * 
-	 * @param finReference (String)
-	 * @param isWIF        (boolean)
-	 **/
-	public FinScheduleData getFinSchDataByFinRef(String finReference, String type) {
-		FinScheduleData finSchData = new FinScheduleData();
-		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, false));
-		finSchData.setDisbursementDetails(
-				financeDisbursementDAO.getFinanceDisbursementDetails(finReference, type, false));
-		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finReference, type, false));
+	public FinScheduleData getFinSchDataByFinRef(long finID, String type) {
+		FinScheduleData schdData = new FinScheduleData();
 
-		return finSchData;
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, type, false));
+		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
+
+		return schdData;
 	}
 
-	public void listSave(FinScheduleData scheduleData, String tableType, long logKey) {
-		logger.debug("Entering ");
+	public void listSave(FinScheduleData schdData, String tableType, long logKey) {
+		logger.debug(Literal.ENTERING);
 		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
-		for (int i = 0; i < scheduleData.getFinanceScheduleDetails().size(); i++) {
+		for (int i = 0; i < schdData.getFinanceScheduleDetails().size(); i++) {
 
-			FinanceScheduleDetail curSchd = scheduleData.getFinanceScheduleDetails().get(i);
-			curSchd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
-			curSchd.setFinReference(scheduleData.getFinReference());
+			FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
+			curSchd.setLastMntBy(schdData.getFinanceMain().getLastMntBy());
+			curSchd.setFinReference(schdData.getFinReference());
 			int seqNo = 0;
 
 			if (mapDateSeq.containsKey(curSchd.getSchDate())) {
@@ -2355,11 +2345,11 @@ public class RepaymentProcessUtil {
 			curSchd.setLogKey(logKey);
 		}
 
-		financeScheduleDetailDAO.saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+		financeScheduleDetailDAO.saveList(schdData.getFinanceScheduleDetails(), tableType, false);
 
 		// Schedule Version Updating
 		if (StringUtils.isBlank(tableType)) {
-			financeMainDAO.updateSchdVersion(scheduleData.getFinanceMain(), false);
+			financeMainDAO.updateSchdVersion(schdData.getFinanceMain(), false);
 		}
 
 		if (logKey != 0) {
@@ -2367,28 +2357,28 @@ public class RepaymentProcessUtil {
 			mapDateSeq = new HashMap<Date, Integer>();
 			Date curBDay = SysParamUtil.getAppDate();
 
-			for (FinanceDisbursement disbursement : scheduleData.getDisbursementDetails()) {
-				disbursement.setFinReference(scheduleData.getFinReference());
+			for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
+				disbursement.setFinReference(schdData.getFinReference());
 				disbursement.setDisbReqDate(curBDay);
 				disbursement.setDisbIsActive(true);
 				disbursement.setLogKey(logKey);
 				disbursement.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				disbursement.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
+				disbursement.setLastMntBy(schdData.getFinanceMain().getLastMntBy());
 			}
 
-			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);
+			financeDisbursementDAO.saveList(schdData.getDisbursementDetails(), tableType, false);
 
 		}
 
 		// Finance Repay Instruction Details
-		if (scheduleData.getRepayInstructions() != null) {
-			for (int i = 0; i < scheduleData.getRepayInstructions().size(); i++) {
-				RepayInstruction curSchd = scheduleData.getRepayInstructions().get(i);
+		if (schdData.getRepayInstructions() != null) {
+			for (int i = 0; i < schdData.getRepayInstructions().size(); i++) {
+				RepayInstruction curSchd = schdData.getRepayInstructions().get(i);
 
-				curSchd.setFinReference(scheduleData.getFinReference());
+				curSchd.setFinReference(schdData.getFinReference());
 				curSchd.setLogKey(logKey);
 			}
-			repayInstructionDAO.saveList(scheduleData.getRepayInstructions(), tableType, false);
+			repayInstructionDAO.saveList(schdData.getRepayInstructions(), tableType, false);
 		}
 
 		logger.debug("Leaving ");
@@ -2562,7 +2552,9 @@ public class RepaymentProcessUtil {
 		if (rch == null) {
 			return;
 		}
-		String reference = rch.getReference();
+
+		Date appDate = SysParamUtil.getAppDate();
+
 		String excessAdjustTo = rch.getExcessAdjustTo();
 		List<FinReceiptDetail> rcdDtls = finReceiptDetailDAO.getReceiptHeaderByID(receiptId, "");
 
@@ -2571,12 +2563,13 @@ public class RepaymentProcessUtil {
 			// updating fixexcess amount after realization
 			if (FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose())) {
 				if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-					finExcessAmountDAO.updExcessAfterRealize(reference, excessAdjustTo, rph.getExcessAmount());
+					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount());
 				}
 			}
 		}
+
 		finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(receiptId, RepayConstants.PAYSTATUS_REALIZED,
-				SysParamUtil.getAppDate());
+				appDate);
 		finReceiptDetailDAO.updateReceiptStatusByReceiptId(receiptId, RepayConstants.PAYSTATUS_REALIZED);
 	}
 

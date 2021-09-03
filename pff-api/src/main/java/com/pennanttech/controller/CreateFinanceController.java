@@ -2423,34 +2423,36 @@ public class CreateFinanceController extends SummaryDetailService {
 		return response;
 	}
 
-	public FinanceDetail getFinanceDetails(String finReference) {
-		logger.debug("Enetring");
-		FinanceDetail financeDetail = null;
+	public FinanceDetail getFinanceDetails(long finID) {
+		logger.debug(Literal.ENTERING);
+		FinanceDetail fd = null;
 		try {
-			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-					FinServiceEvent.ORG, "");
+			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 
-			if (financeDetail != null) {
+			if (fd != null) {
+				FinScheduleData schdData = fd.getFinScheduleData();
+				FinanceMain fm = schdData.getFinanceMain();
+				String finReference = fm.getFinReference();
+				String finCategory = fm.getFinCategory();
+
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
-						ExtendedFieldConstants.MODULE_LOAN,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(), FinServiceEvent.ORG,
-						finReference);
-				financeDetail.setExtendedDetails(extData);
-				financeDetail.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+						ExtendedFieldConstants.MODULE_LOAN, finCategory, FinServiceEvent.ORG, finReference);
+				fd.setExtendedDetails(extData);
+				fd.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			} else {
-				financeDetail = new FinanceDetail();
-				financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+				fd = new FinanceDetail();
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
-			financeDetail = new FinanceDetail();
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("API006", "Test"));
-			return financeDetail;
+			fd = new FinanceDetail();
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("API006", "Test"));
+			return fd;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	public WSReturnStatus doApproveLoan(FinanceDetail fd) {
@@ -2558,7 +2560,7 @@ public class CreateFinanceController extends SummaryDetailService {
 	}
 
 	public FinanceDetail getFinInquiryDetails(String finReference) {
-		logger.debug("Enetring");
+		logger.debug(Literal.ENTERING);
 		FinanceDetail fd = null;
 		try {
 			fd = financeDetailService.getFinanceDetailById(finReference, false, "", false, FinServiceEvent.ORG, "");
