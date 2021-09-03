@@ -89,11 +89,12 @@ public class DisbInsPostingEvent extends PostingEvent {
 		FinanceMain fm = fschdData.getFinanceMain();
 		List<FinAdvancePayments> advPaymentsList = fd.getAdvancePaymentsList();
 
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		List<AEEvent> events = new ArrayList<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finID, "");
 
 		for (FinAdvancePayments fap : advPaymentsList) {
 			FinAdvancePayments finApprovedPay = isApproved(approvedList, fap.getPaymentId());

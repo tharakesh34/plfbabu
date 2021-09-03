@@ -1,14 +1,13 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennant.backend.service.finance.impl;
@@ -33,7 +32,9 @@ public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig> implem
 	@Override
 	public void save(FinFeeConfig finFeeDetailConfig, TableType tableType) {
 		logger.debug(Literal.ENTERING);
+
 		finFeeConfigDAO.save(finFeeDetailConfig, tableType);
+
 		logger.debug(Literal.LEAVING);
 
 	}
@@ -41,17 +42,18 @@ public class FinFeeConfigServiceImpl extends GenericService<FinFeeConfig> implem
 	@Override
 	public void saveList(List<FinFeeConfig> finFeeDetailConfig, String type) {
 		logger.debug(Literal.ENTERING);
+
 		finFeeConfigDAO.saveList(finFeeDetailConfig, type);
+
 		logger.debug(Literal.LEAVING);
 
 	}
 
 	@Override
-	public List<FinFeeConfig> getFinFeeConfigList(String finReference, String eventCode, boolean origination,
-			String type) {
+	public List<FinFeeConfig> getFinFeeConfigList(long finID, String eventCode, boolean origination, String type) {
 		logger.debug(Literal.ENTERING);
-		
-		List<FinFeeConfig> list = finFeeConfigDAO.getFinFeeConfigList(finReference, eventCode, origination, type);
+
+		List<FinFeeConfig> list = finFeeConfigDAO.getFinFeeConfigList(finID, eventCode, origination, type);
 
 		logger.debug(Literal.LEAVING);
 		return list;

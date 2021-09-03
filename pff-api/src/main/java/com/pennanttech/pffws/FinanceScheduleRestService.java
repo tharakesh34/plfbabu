@@ -15,7 +15,7 @@ public interface FinanceScheduleRestService {
 
 	@POST
 	@Path("/loanSchedule/createLoanSchedule")
-	public FinScheduleData createFinanceSchedule(FinScheduleData finScheduleData) throws ServiceException;
+	public FinScheduleData createFinanceSchedule(FinScheduleData schdData) throws ServiceException;
 
 	@GET
 	@Path("/loanSchedule/getLoanInquiry/{finReference}")
@@ -23,6 +23,6 @@ public interface FinanceScheduleRestService {
 
 	@POST
 	@Path("/loanSchedule/getEMIAmount")
-	public EmiResponse getEMIAmount(FinScheduleData finScheduleData) throws ServiceException;
+	public EmiResponse getEMIAmount(FinScheduleData schdData) throws ServiceException;
 
 }

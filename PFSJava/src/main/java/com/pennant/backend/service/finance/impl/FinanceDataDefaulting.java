@@ -58,81 +58,84 @@ public class FinanceDataDefaulting {
 		super();
 	}
 
-	// Constructor Details for Methods
-	public FinanceDetail defaultFinance(String vldGroup, FinanceDetail finDetail) {
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		FinScheduleData finScheduleData = finDetail.getFinScheduleData();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		finDetail.setCustomerDetails(new CustomerDetails());
-		finDetail.getCustomerDetails().setCustomer(null);
+	public FinanceDetail defaultFinance(String vldGroup, FinanceDetail fd) {
+		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		fd.setCustomerDetails(new CustomerDetails());
+		fd.getCustomerDetails().setCustomer(null);
+
+		String coreBankId = fm.getCoreBankId();
+		String custCIF = fm.getCustCIF();
+
 		Customer customer = null;
 
 		// Get the logged in users one time and set to avoid multiple calls
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		finMain.setUserDetails(userDetails);
+		fm.setUserDetails(userDetails);
 
-		// customer Defaulting
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
-			if (StringUtils.isNotBlank(finMain.getCoreBankId())) {
-				customer = customerDAO.getCustomerByCoreBankId(finMain.getCoreBankId(), "");
+
+			if (StringUtils.isNotBlank(coreBankId)) {
+				customer = customerDAO.getCustomerByCoreBankId(coreBankId, "");
 				if (customer != null) {
-					finMain.setLovDescCustCIF(customer.getCustCIF());
-					finMain.setLovDescCustCIF(customer.getCustCIF());
+					fm.setLovDescCustCIF(customer.getCustCIF());
 				} else {
 					String[] valueParm = new String[2];
 					valueParm[0] = "CoreBankId";
-					valueParm[1] = finMain.getCoreBankId();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-					finScheduleData.setErrorDetails(errorDetails);
-					return finDetail;
+					valueParm[1] = coreBankId;
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
+					schdData.setErrorDetails(errors);
+					return fd;
 				}
 			}
 
 			// Get Customer information
 			if (!StringUtils.equals("CRTSCHD", vldGroup)) {
 				if (customer == null) {
-					customer = customerDAO.getCustomerByCIF(finMain.getCustCIF(), "");
+					customer = customerDAO.getCustomerByCIF(custCIF, "");
 					if (customer == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = finMain.getLovDescCustCIF();
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
-						finScheduleData.setErrorDetails(errorDetails);
-						return finDetail;
+						valueParm[0] = fm.getLovDescCustCIF();
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90101", valueParm)));
+						schdData.setErrorDetails(errors);
+						return fd;
 					}
 				}
-				finMain.setCustID(customer.getCustID());
-				finDetail.getCustomerDetails().setCustomer(customer);
+				fm.setCustID(customer.getCustID());
+				fd.getCustomerDetails().setCustomer(customer);
 			}
 		}
 
 		// Date formats
-		setDefaultDateFormats(finMain);
+		setDefaultDateFormats(fm);
 
-		if (finMain.getFinStartDate() == null) {
-			finMain.setFinStartDate(SysParamUtil.getAppDate());
+		if (fm.getFinStartDate() == null) {
+			fm.setFinStartDate(SysParamUtil.getAppDate());
 		}
 
 		// Validate Fields data (Excluding Base & Special rates Validations)
-		validateMasterData(vldGroup, finDetail);
+		validateMasterData(vldGroup, fd);
 
-		if (!finScheduleData.getErrorDetails().isEmpty()) {
-			return finDetail;
+		if (!schdData.getErrorDetails().isEmpty()) {
+			return fd;
 		}
 
 		// Basic Details Defaulting
-		basicDefaulting(vldGroup, finDetail);
+		basicDefaulting(vldGroup, fd);
 
 		// Grace Details Defaulting
-		graceDefaulting(vldGroup, finDetail);
+		graceDefaulting(vldGroup, fd);
 
 		// Repayments Details Defaulting
-		repayDefaulting(vldGroup, finDetail);
+		repayDefaulting(vldGroup, fd);
 
 		// Overdue penalty rates defaulting
 		if (StringUtils.equals(PennantConstants.VLD_CRT_LOAN, vldGroup)) {
-			overdueDefaulting(vldGroup, finDetail);
+			overdueDefaulting(vldGroup, fd);
 		}
-		return finDetail;
+		return fd;
 
 	}
 

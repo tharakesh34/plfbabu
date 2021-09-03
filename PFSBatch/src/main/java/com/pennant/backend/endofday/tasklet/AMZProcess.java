@@ -1,46 +1,40 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  AMZProcess.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  24-12-2017															*
- *                                                                  
- * Modified Date    :  24-12-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : AMZProcess.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 24-12-2017 *
+ * 
+ * Modified Date : 24-12-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-12-2017 Pennant 0.1 * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.endofday.tasklet;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,8 +52,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -90,7 +84,7 @@ public class AMZProcess implements Tasklet {
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private ProjectedAmortizationService projectedAmortizationService;
 
-	private static final String financeSQL = "Select FinReference, CustID from AmortizationQueuing  Where ThreadID = ? and Progress = ?";
+	private static final String financeSQL = "Select FinID, CustID from AmortizationQueuing  Where ThreadID = ? and Progress = ?";
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
@@ -117,7 +111,18 @@ public class AMZProcess implements Tasklet {
 
 		cursorItemReader.setSql(financeSQL);
 		cursorItemReader.setDataSource(dataSource);
-		cursorItemReader.setRowMapper(BeanPropertyRowMapper.newInstance(AmortizationQueuing.class));
+		cursorItemReader.setRowMapper(new RowMapper<AmortizationQueuing>() {
+
+			@Override
+			public AmortizationQueuing mapRow(ResultSet rs, int rowNum) throws SQLException {
+				AmortizationQueuing amz = new AmortizationQueuing();
+
+				amz.setFinID(rs.getLong("FinID"));
+				amz.setCustID(rs.getLong("CustID"));
+
+				return amz;
+			}
+		});
 
 		cursorItemReader.setPreparedStatementSetter(new PreparedStatementSetter() {
 			@Override
@@ -137,7 +142,7 @@ public class AMZProcess implements Tasklet {
 		while ((amortizationQueuing = cursorItemReader.read()) != null) {
 			status.setProcessedRecords(processedCount++);
 			BatchUtil.setExecutionStatus(context, status);
-			String finReference = amortizationQueuing.getFinReference();
+			long finID = amortizationQueuing.getFinID();
 
 			try {
 				txStatus = this.transactionManager.getTransaction(txDef);
@@ -146,25 +151,25 @@ public class AMZProcess implements Tasklet {
 				// this.projectedAmortizationDAO.startEODForFinRef(finReference);
 
 				FinEODEvent finEODEvent = new FinEODEvent();
-				FinanceMain finMain = this.projectedAmortizationService.getFinanceForIncomeAMZ(finReference);
+				FinanceMain fm = this.projectedAmortizationService.getFinanceForIncomeAMZ(finID);
 
 				// get income/expense details
-				incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finReference);
+				incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finID);
 
 				// Actual Amortization Calculation and Saving (Table : ProjectedIncomeAMZ).
 				if (!incomeAMZList.isEmpty()) {
 					finEODEvent.setAppDate(appDate);
 					finEODEvent.setEventFromDate(amzMonth);
 
-					finEODEvent.setFinanceMain(finMain);
+					finEODEvent.setFinanceMain(fm);
 					finEODEvent.setIncomeAMZList(incomeAMZList);
 
-					if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
-							|| finMain.getClosedDate().compareTo(amzMonth) > 0) {
+					if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fm.getClosingStatus())
+							|| fm.getClosedDate().compareTo(amzMonth) > 0) {
 
 						// get future ACCRUALS
-						finProjAccList = this.projectedAmortizationDAO
-								.getFutureProjectedAccrualsByFinRef(finMain.getFinReference(), amzMonthStart);
+						finProjAccList = this.projectedAmortizationDAO.getFutureProjectedAccrualsByFinRef(finID,
+								amzMonthStart);
 						finEODEvent.setProjectedAccrualList(finProjAccList);
 					}
 
@@ -173,17 +178,17 @@ public class AMZProcess implements Tasklet {
 				}
 
 				// update status and commit transaction
-				this.projectedAmortizationDAO.updateStatus(finReference, AmortizationConstants.PROGRESS_SUCCESS);
+				this.projectedAmortizationDAO.updateStatus(finID, AmortizationConstants.PROGRESS_SUCCESS);
 				this.transactionManager.commit(txStatus);
 			} catch (Exception e) {
 				status.setFailedRecords(failedCount++);
 				logError(e);
 				transactionManager.rollback(txStatus);
 				exceptions.add(e);
-				updateFailed(finReference);
+				updateFailed(finID);
 			}
 
-			//clear data after the process
+			// clear data after the process
 			amortizationQueuing = null;
 		}
 		cursorItemReader.close();
@@ -199,10 +204,10 @@ public class AMZProcess implements Tasklet {
 		return RepeatStatus.FINISHED;
 	}
 
-	public void updateFailed(String finReference) {
+	public void updateFailed(long finID) {
 		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
 
-		amortizationQueuing.setFinReference(finReference);
+		amortizationQueuing.setFinID(finID);
 		amortizationQueuing.setEndTime(DateUtility.getSysDate());
 
 		// reset thread for reallocation and reset to "wait", to re run only failed cases.

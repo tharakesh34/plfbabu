@@ -7,6 +7,7 @@ import java.util.Date;
 public class ProjectedAccrual implements Serializable {
 	private static final long serialVersionUID = 7690656031696834080L;
 
+	private long finID;
 	private String finReference;
 	private String finType;
 	private Date accruedOn;
@@ -67,6 +68,7 @@ public class ProjectedAccrual implements Serializable {
 
 	public ProjectedAccrual copyEntity() {
 		ProjectedAccrual entity = new ProjectedAccrual();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setFinType(this.finType);
 		entity.setAccruedOn(this.accruedOn);
@@ -117,9 +119,13 @@ public class ProjectedAccrual implements Serializable {
 		return entity;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

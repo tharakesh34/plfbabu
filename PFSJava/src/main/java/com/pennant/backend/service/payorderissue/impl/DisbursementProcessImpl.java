@@ -310,8 +310,8 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 	}
 
 	@Override
-	public FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType) {
-		return financeMainDAO.getDisbursmentFinMainById(finReference, tableType);
+	public FinanceMain getDisbursmentFinMainById(long finID, TableType tableType) {
+		return financeMainDAO.getDisbursmentFinMainById(finID, tableType);
 	}
 
 	@Override

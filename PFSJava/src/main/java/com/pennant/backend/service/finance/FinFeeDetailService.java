@@ -75,7 +75,7 @@ public interface FinFeeDetailService {
 
 	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map, long custId);
 
-	long getFinFeeTypeIdByFeeType(String feeTypeCode, String finID);
+	long getFinFeeTypeIdByFeeType(String feeTypeCode, long finID);
 
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 

@@ -16,7 +16,7 @@ public interface DisbursementProcess {
 
 	List<FinAdvancePayments> getDisbRequestsByRespBatchId(long respBatchId);
 
-	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
+	FinanceMain getDisbursmentFinMainById(long finID, TableType tableType);
 
 	List<PaymentInstruction> getPaymentInstructionsByRespBatchId(long respBatchId);
 }

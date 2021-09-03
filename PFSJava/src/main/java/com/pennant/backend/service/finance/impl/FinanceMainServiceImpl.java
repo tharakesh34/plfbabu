@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  15-11-2011    														*
- *                                                                  						*
- * Modified Date    :  15-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 15-11-2011 * *
+ * Modified Date : 15-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 15-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 15-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.impl;
@@ -63,68 +45,37 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		super();
 	}
 
-	/**
-	 * getFinanceMainById fetch the details by using FinanceMainDAO's getFinanceMainById method.
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinanceMain
-	 */
 	@Override
-	public FinanceMain getFinanceMainById(String id, boolean isWIF) {
-		return financeMainDAO.getFinanceMainById(id, "_View", isWIF);
+	public FinanceMain getFinanceMainById(long finID, boolean isWIF) {
+		return financeMainDAO.getFinanceMainById(finID, "_View", isWIF);
 	}
 
 	@Override
-	public FinanceMain getFinanceMainByFinRef(String finRefernce) {
-		return financeMainDAO.getFinanceMainById(finRefernce, "", false);
+	public FinanceMain getFinanceMainByFinRef(long finID) {
+		return financeMainDAO.getFinanceMainById(finID, "", false);
 	}
 
-	/**
-	 * Method to get Finance related data.
-	 * 
-	 * @param financeReference
-	 *            (String)
-	 * @param isWIF
-	 *            (boolean)
-	 */
 	@Override
 	public List<FinanceEnquiry> getFinanceDetailsByCustId(long custId) {
 		return financeMainDAO.getFinanceDetailsByCustId(custId);
 	}
 
-	/**
-	 * Method for fetch number of records from financeMain using reference and mandateId
-	 * 
-	 * @param finReference
-	 * @param mandateID
-	 * @return Integer
-	 */
 	@Override
-	public int getFinanceCountById(String finReference, long mandateID) {
-		return financeMainDAO.getFinanceCountById(finReference, mandateID);
+	public int getFinanceCountById(long finID, long mandateID) {
+		return financeMainDAO.getFinanceCountById(finID, mandateID);
 	}
 
-	/**
-	 * Method for do mandate swapping against the finReference.
-	 * 
-	 * @param finReference
-	 * @param newMandateID
-	 * @return Integer
-	 */
 	@Override
-	public int loanMandateSwapping(String finReference, long newMandateID, String repayMethod, String type) {
-		return financeMainDAO.loanMandateSwapping(finReference, newMandateID, repayMethod, type);
+	public int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type) {
+		return financeMainDAO.loanMandateSwapping(finID, newMandateID, repayMethod, type);
 	}
 
 	/**
 	 * 
 	 */
 	@Override
-	public int getFinanceCountById(String finReference, boolean isWIF) {
-		return financeMainDAO.getFinanceCountById(finReference, "", isWIF);
+	public int getFinanceCountById(long finID, boolean isWIF) {
+		return financeMainDAO.getFinanceCountById(finID, "", isWIF);
 	}
 
 	@Override
@@ -132,49 +83,28 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		return financeMainDAO.updateFinanceBasicDetails(financeMain, "");
 	}
 
-	/**
-	 * Method to get Finance related data.
-	 * 
-	 * @param custId
-	 */
 	@Override
 	public List<FinanceMain> getFinanceByCustId(long custId, String type) {
 		return financeMainDAO.getFinanceByCustId(custId, type);
 	}
 
-	/**
-	 * Method to get Finance related data.
-	 * 
-	 * @param collateralRef
-	 */
 	@Override
 	public List<FinanceMain> getFinanceByCollateralRef(String collateralRef) {
 		return financeMainDAO.getFinanceByCollateralRef(collateralRef);
 	}
 
-	/**
-	 * Method to get FinanceReferences by Given MandateId.
-	 * 
-	 * @param mandateId
-	 */
 	@Override
-	public List<String> getFinReferencesByMandateId(long mandateId) {
+	public List<Long> getFinReferencesByMandateId(long mandateId) {
 		return financeMainDAO.getFinReferencesByMandateId(mandateId);
 	}
 
-	/**
-	 * Method to get FinanceReferences by Given custId with FinActiveStatus.
-	 * 
-	 * @param custId
-	 * @param finActiveStatus
-	 */
 	@Override
-	public List<String> getFinReferencesByCustID(long custId, String finActiveStatus) {
+	public List<Long> getFinReferencesByCustID(long custId, String finActiveStatus) {
 		return financeMainDAO.getFinReferencesByCustID(custId, finActiveStatus);
 	}
 
 	@Override
-	public List<String> getFinanceMainbyCustId(long custID, String type) {
+	public List<Long> getFinanceMainbyCustId(long custID, String type) {
 		return financeMainDAO.getFinanceMainbyCustId(custID, type);
 	}
 
@@ -183,48 +113,44 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		return financeMainDAO.getCustomerODLoanDetails(userID);
 	}
 
-	/**
-	 * @param financeMainDAO
-	 *            the financeMainDAO to set
-	 */
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
+	@Override
+	public FinanceMain getFinanceByFinReference(long finID, String type) {
+		return financeMainDAO.getFinanceDetailsByFinRefence(finID, type);
 	}
 
 	@Override
-	public FinanceMain getFinanceByFinReference(String reference, String type) {
-		return financeMainDAO.getFinanceDetailsByFinRefence(reference, type);
-	}
-
-	@Override
-	public String getFinanceTypeFinReference(String reference, String type) {
-		return financeMainDAO.getFinanceTypeFinReference(reference, type);
+	public String getFinanceTypeFinReference(long finID, String type) {
+		return financeMainDAO.getFinanceTypeFinReference(finID, type);
 
 	}
 
 	@Override
-	public Date getFinClosedDate(String finReference) {
-		return financeMainDAO.getClosedDate(finReference);
+	public Date getFinClosedDate(long finID) {
+		return financeMainDAO.getClosedDate(finID);
 	}
 
 	@Override
-	public ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate) {
-		// TODO Auto-generated method stub
+	public ErrorDetail rescheduleValidation(Date receiptDate, long finID, Date startDate) {
 		return null;
 	}
 
 	@Override
-	public long getLoanWorkFlowIdByFinRef(String loanReference, String type) {
-		return financeMainDAO.getLoanWorkFlowIdByFinRef(loanReference, type);
+	public long getLoanWorkFlowIdByFinRef(long finID, String type) {
+		return financeMainDAO.getLoanWorkFlowIdByFinRef(finID, type);
 	}
 
 	@Override
-	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
-		return financeMainDAO.getFinanceMain(finReference, columns, type);
+	public FinanceMain getFinanceMain(long finID, String[] columns, String type) {
+		return financeMainDAO.getFinanceMain(finID, columns, type);
 	}
 
 	@Override
-	public Date getClosedDateByFinRef(String finReference) {
-		return financeMainDAO.getClosedDateByFinRef(finReference);
+	public Date getClosedDateByFinRef(long finID) {
+		return financeMainDAO.getClosedDateByFinRef(finID);
 	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

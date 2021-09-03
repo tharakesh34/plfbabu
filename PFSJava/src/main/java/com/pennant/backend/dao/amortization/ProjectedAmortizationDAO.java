@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProjectedAmortizationDAO.java   	           	                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-01-2018    														*
- *                                                                  						*
- * Modified Date    :  23-01-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProjectedAmortizationDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-01-2018 * *
+ * Modified Date : 23-01-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-01-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-01-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amortization;
@@ -52,7 +34,7 @@ import com.pennant.backend.model.finance.ProjectedAccrual;
 public interface ProjectedAmortizationDAO {
 
 	// IncomeAmortization
-	List<ProjectedAmortization> getIncomeAMZDetailsByRef(String finRef);
+	List<ProjectedAmortization> getIncomeAMZDetailsByRef(long finID);
 
 	void saveBatchIncomeAMZ(List<ProjectedAmortization> amortizationList);
 
@@ -61,34 +43,25 @@ public interface ProjectedAmortizationDAO {
 	void updateBatchIncomeAMZAmounts(List<ProjectedAmortization> amortizationList);
 
 	// ProjectedAccruals
-	ProjectedAccrual getPrvProjectedAccrual(String finRef, Date prvMonthEndDate, String type);
+	ProjectedAccrual getPrvProjectedAccrual(long finID, Date prvMonthEndDate, String type);
 
 	void preparePrvProjectedAccruals(Date prvMonthEndDate);
 
-	List<ProjectedAccrual> getProjectedAccrualsByFinRef(String finRef);
+	List<ProjectedAccrual> getProjectedAccrualsByFinRef(long finID);
 
-	List<ProjectedAccrual> getFutureProjectedAccrualsByFinRef(String finRef, Date curMonthEnd);
+	List<ProjectedAccrual> getFutureProjectedAccrualsByFinRef(long finID, Date curMonthEnd);
 
 	int saveBatchProjAccruals(List<ProjectedAccrual> projAccrualList);
 
-	void deleteFutureProjAccrualsByFinRef(String finReference, Date curMonthStart);
+	void deleteFutureProjAccrualsByFinRef(long finID, Date curMonthStart);
 
-	void deleteAllProjAccrualsByFinRef(String finReference);
+	void deleteAllProjAccrualsByFinRef(long finID);
 
 	void deleteFutureProjAccruals(Date curMonthStart);
 
 	void deleteAllProjAccruals();
 
-	// ProjectedIncomeAMZ
-	List<ProjectedAmortization> getPrvProjIncomeAMZ(String finRef, Date prvMonthEndDate);
-
-	void saveBatchProjIncomeAMZ(List<ProjectedAmortization> projIncomeAMZ);
-
-	void deleteFutureProjAMZByFinRef(String finReference, Date curMonthEnd);
-
-	void deleteAllProjIncomeAMZByFinRef(String finReference);
-
-	//One Time Activity
+	// One Time Activity
 	Date getPrvAMZMonthLog();
 
 	long saveAmortizationLog(ProjectedAmortization proAmortization);
@@ -119,16 +92,14 @@ public interface ProjectedAmortizationDAO {
 
 	int updateThreadIDByRowNumber(Date date, long noOfRows, int threadId);
 
-	int startEODForFinRef(String finReference);
-
-	void updateStatus(String finReference, int progress);
+	void updateStatus(long finID, int progress);
 
 	void updateFailed(AmortizationQueuing amortizationQueuing);
 
 	void logAmortizationQueuing();
 
 	// Performance
-	String getAMZMethodByFinRef(String finReference);
+	String getAMZMethodByFinRef(long finID);
 
 	int prepareAMZFeeDetails(Date monthEndDate, Date appDate);
 

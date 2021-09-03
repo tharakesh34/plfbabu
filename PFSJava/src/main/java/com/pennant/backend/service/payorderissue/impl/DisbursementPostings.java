@@ -56,11 +56,12 @@ public class DisbursementPostings {
 			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug(Literal.ENTERING);
 
+		long finID = finMain.getFinID();
 		String finRef = finMain.getFinReference();
 
 		Map<Long, List<ReturnDataSet>> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finID, "");
 
 		if (CollectionUtils.isEmpty(approvedList)) {
 			return disbMap;
@@ -141,11 +142,12 @@ public class DisbursementPostings {
 			String usrBranch) throws InterfaceException {
 		logger.debug("Entering");
 
+		long finID = finMain.getFinID();
 		String finRef = finMain.getFinReference();
 
 		Map<Integer, Long> disbMap = new HashMap<>();
 
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finRef, "_AView");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsService.getFinAdvancePaymentsById(finID, "_AView");
 
 		if (advPaymentsList != null && !advPaymentsList.isEmpty()) {
 

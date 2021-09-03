@@ -16,10 +16,11 @@ import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinGuarantorDetailValidation {
-
 	private static final Logger logger = LogManager.getLogger(FinGuarantorDetailValidation.class);
+
 	private GuarantorDetailDAO guarantorDetailDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 
@@ -30,10 +31,10 @@ public class FinGuarantorDetailValidation {
 	}
 
 	public AuditHeader gurantorDetailsValidation(AuditHeader auditHeader, String method) {
-
 		AuditDetail auditDetail = validate(auditHeader.getAuditDetail(), method, auditHeader.getUsrLanguage());
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
 		return auditHeader;
 	}
 
@@ -48,46 +49,62 @@ public class FinGuarantorDetailValidation {
 			}
 			return details;
 		}
+
 		return new ArrayList<AuditDetail>();
 	}
 
 	private AuditDetail validate(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
-		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		GuarantorDetail guarantorDetail = (GuarantorDetail) auditDetail.getModelData();
-		GuarantorDetail tempGuarantorDetail = null;
-		if (guarantorDetail.isWorkflow()) {
-			tempGuarantorDetail = getGuarantorDetailDAO().getGuarantorDetailByRefId(guarantorDetail.getFinReference(),
-					guarantorDetail.getGuarantorId(), "_Temp");
-		}
-		GuarantorDetail befGuarantorDetail = getGuarantorDetailDAO()
-				.getGuarantorDetailByRefId(guarantorDetail.getFinReference(), guarantorDetail.getGuarantorId(), "");
+		logger.debug(Literal.ENTERING);
 
-		GuarantorDetail oldGuarantorDetail = guarantorDetail.getBefImage();
+		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
+
+		GuarantorDetail gd = (GuarantorDetail) auditDetail.getModelData();
+		GuarantorDetail tempGd = null;
+
+		long finID = gd.getFinID();
+		String finReference = gd.getFinReference();
+		long guarantorId = gd.getGuarantorId();
+		String guarantorCIF = gd.getGuarantorCIF();
+
+		if (gd.isWorkflow()) {
+			tempGd = guarantorDetailDAO.getGuarantorDetailByRefId(finID, guarantorId, "_Temp");
+		}
+
+		GuarantorDetail befGd = guarantorDetailDAO.getGuarantorDetailByRefId(finID, guarantorId, "");
+
+		GuarantorDetail oldGd = gd.getBefImage();
 
 		String[] errParm = new String[2];
 		String[] valueParm = new String[2];
-		valueParm[0] = guarantorDetail.getFinReference();
-		valueParm[1] = guarantorDetail.getGuarantorCIF();
+		valueParm[0] = finReference;
+
+		valueParm[1] = guarantorCIF;
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 		errParm[1] = PennantJavaUtil.getLabel("label_GuarantorCIF") + ":" + valueParm[1];
 
-		if (guarantorDetail.isNewRecord()) { // for New record or new record into work flow
+		if (gd.isNewRecord()) { // for New record or new record into work flow
 
-			if (!guarantorDetail.isWorkflow()
-					&& StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())) {// With out Work flow only new records  
-				if (befGuarantorDetail != null) { // Record Already Exists in the table then error  
+			if (!gd.isWorkflow() && StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, gd.getRecordType())) {// With
+																												// out
+																												// Work
+																												// flow
+																												// only
+																												// new
+																												// records
+				if (befGd != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (guarantorDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befGuarantorDetail != null || tempGuarantorDetail != null) { // if records already exists in the main table
+				if (gd.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																					// new
+					if (befGd != null || tempGd != null) { // if records already exists in the
+															// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befGuarantorDetail == null || tempGuarantorDetail != null) {
+					if (befGd == null || tempGd != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
@@ -95,16 +112,15 @@ public class FinGuarantorDetailValidation {
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!guarantorDetail.isWorkflow()) { // With out Work flow for update and delete
+			if (!gd.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befGuarantorDetail == null) { // if records not exists in the main table
+				if (befGd == null) { // if records not exists in the main table
 					/*
 					 * auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetails( PennantConstants.KEY_FIELD,
 					 * "41002", errParm, valueParm), usrLanguage));
 					 */
 				} else {
-					if (oldGuarantorDetail != null
-							&& !oldGuarantorDetail.getLastMntOn().equals(befGuarantorDetail.getLastMntOn())) {
+					if (oldGd != null && !oldGd.getLastMntOn().equals(befGd.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -119,22 +135,20 @@ public class FinGuarantorDetailValidation {
 				}
 			} else {
 
-				if (tempGuarantorDetail == null) { // if records not exists in the Work flow table 
+				if (tempGd == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempGuarantorDetail != null && oldGuarantorDetail != null
-						&& !oldGuarantorDetail.getLastMntOn().equals(tempGuarantorDetail.getLastMntOn())) {
+				if (tempGd != null && oldGd != null && !oldGd.getLastMntOn().equals(tempGd.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 			}
 		}
 		// If Guarantor Account is already utilized in GstDetails
-		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, guarantorDetail.getRecordType())) {
-			boolean guarantorExists = getFinanceTaxDetailDAO().isReferenceExists(guarantorDetail.getFinReference(),
-					guarantorDetail.getGuarantorCIF());
+		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, gd.getRecordType())) {
+			boolean guarantorExists = financeTaxDetailDAO.isReferenceExists(finID, guarantorCIF);
 			if (guarantorExists) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "65025", errParm, valueParm));
 			}
@@ -142,22 +156,16 @@ public class FinGuarantorDetailValidation {
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !guarantorDetail.isWorkflow()) {
-			auditDetail.setBefImage(befGuarantorDetail);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !gd.isWorkflow()) {
+			auditDetail.setBefImage(befGd);
 		}
-		return auditDetail;
-	}
 
-	public GuarantorDetailDAO getGuarantorDetailDAO() {
-		return guarantorDetailDAO;
+		logger.debug(Literal.LEAVING);
+		return auditDetail;
 	}
 
 	public void setGuarantorDetailDAO(GuarantorDetailDAO guarantorDetailDAO) {
 		this.guarantorDetailDAO = guarantorDetailDAO;
-	}
-
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
 	}
 
 	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {

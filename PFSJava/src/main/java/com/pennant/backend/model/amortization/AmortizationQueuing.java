@@ -9,6 +9,7 @@ public class AmortizationQueuing implements Serializable {
 
 	private Date eodDate;
 	private int threadId;
+	private long finID;
 	private String finReference;
 	private long custID;
 	private int progress;
@@ -22,6 +23,14 @@ public class AmortizationQueuing implements Serializable {
 
 	public AmortizationQueuing() {
 		super();
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

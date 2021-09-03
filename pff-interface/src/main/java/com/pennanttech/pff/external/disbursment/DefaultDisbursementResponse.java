@@ -99,6 +99,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 		logger.info("Total dibursemnt instructions: {}", totalRecords);
 
 		for (FinAdvancePayments fap : finAdvPayments) {
+			long finID = fap.getFinID();
 			String finReference = fap.getFinReference();
 			long paymentId = fap.getPaymentId();
 			String status = fap.getStatus();
@@ -109,9 +110,9 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			logger.info("Disbursement instruction status: {}", status);
 			logger.info("Disbursement instruction clearing status: {}", clearingStatus);
 
-			FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
+			FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.MAIN_TAB);
 			if (fm == null) {
-				fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.TEMP_TAB);
+				fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.TEMP_TAB);
 			}
 
 			fap.setDisbResponseBatchId(respBatchID);
@@ -122,9 +123,9 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 				validate(status, clearingStatus);
 
 				disbursementProcess.process(fm, fap);
-				
+
 				dataEngineStatus.setSuccessRecords(successRecords++);
-				
+
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				dataEngineStatus.setFailedRecords(failureRecords++);
@@ -149,7 +150,7 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 				validate(status, clearingStatus);
 
 				paymentProcess.process(pi);
-				
+
 				dataEngineStatus.setSuccessRecords(successRecords++);
 				dataEngineStatus.setProcessedRecords(processedRecords++);
 			} catch (Exception e) {
@@ -178,12 +179,12 @@ public class DefaultDisbursementResponse extends AbstractInterface implements Di
 			remarks.append(", Success: ");
 			remarks.append(successRecords);
 		}
-		
+
 		dataEngineStatus.setRemarks(remarks.toString());
 		updateDEStatus(dataEngineStatus);
 
 		dataEngineStatus.setDataEngineLogList(dataEngineConfig.getExceptions(respBatchID));
-		
+
 		logger.debug(Literal.LEAVING);
 	}
 

@@ -1,49 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProjectedAmortizationService.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-01-2018    														*
- *                                                                  						*
- * Modified Date    :  16-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProjectedAmortizationService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-01-2018 * *
+ * Modified Date : 16-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-01-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 09-03-2018       Satya	                 0.2          PSD Ticket : 124705               * 
- *                                                        IND AS : Income / Expense			*
- *                                                        Amortization.                     * 
- *                                                                                          * 
- * 16-05-2018       Satya	                 0.3          PSD Ticket : 126328               * 
- *                                                        IND AS : Performance related		* 
- *                                                        changes.					        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-01-2018 Pennant 0.1 * * 09-03-2018 Satya 0.2 PSD Ticket : 124705 * IND AS : Income / Expense * Amortization. * *
+ * 16-05-2018 Satya 0.3 PSD Ticket : 126328 * IND AS : Performance related * changes. * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -107,7 +84,6 @@ public class ProjectedAmortizationService {
 	public static List<ExpenseType> expenseTypes = new ArrayList<>();
 
 	public void prepareMonthEndAccruals(CustEODEvent custEODEvent) throws Exception {
-
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 		Date curMonthStart = eventProperties.getMonthStartDate();
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
@@ -868,8 +844,8 @@ public class ProjectedAmortizationService {
 		}
 
 		// Post Accounting
-		Long accountingSetId = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(),
-				AccountingEvent.INDAS, FinanceConstants.MODULEID_FINTYPE);
+		Long accountingSetId = AccountingConfigCache.getCacheAccountSetID(fm.getFinType(), AccountingEvent.INDAS,
+				FinanceConstants.MODULEID_FINTYPE);
 
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.INDAS);
@@ -1267,46 +1243,22 @@ public class ProjectedAmortizationService {
 		return projectedAccruals;
 	}
 
-	/**
-	 * 
-	 * @return
-	 */
 	public Date getPrvAMZMonthLog() {
 		return projectedAmortizationDAO.getPrvAMZMonthLog();
 	}
 
-	/**
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public FinanceMain getFinanceForIncomeAMZ(String finReference) {
-		return financeMainDAO.getFinanceForIncomeAMZ(finReference);
+	public FinanceMain getFinanceForIncomeAMZ(long finID) {
+		return financeMainDAO.getFinanceForIncomeAMZ(finID);
 	}
 
-	/**
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public FinanceMain getFinanceForAMZMethod(String finReference, boolean isActive) {
-		return financeMainDAO.getFinMainsForEODByFinRef(finReference, isActive);
+	public FinanceMain getFinanceForAMZMethod(long finID, boolean isActive) {
+		return financeMainDAO.getFinMainsForEODByFinRef(finID, isActive);
 	}
 
-	/**
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
-		return profitDetailsDAO.getFinProfitForAMZ(finReference);
+	public FinanceProfitDetail getFinProfitForAMZ(long finID) {
+		return profitDetailsDAO.getFinProfitForAMZ(finID);
 	}
 
-	/**
-	 * 
-	 * @param curMonthStart
-	 * @return
-	 */
 	public List<FinanceMain> getFinListForIncomeAMZ(Date curMonthStart) {
 		return financeMainDAO.getFinListForIncomeAMZ(curMonthStart);
 	}
@@ -1445,8 +1397,8 @@ public class ProjectedAmortizationService {
 		return BigDecimal.ZERO;
 	}
 
-	void updateAMZMethod(String finReference, String amzMethod) {
-		profitDetailsDAO.updateAMZMethod(finReference, amzMethod);
+	void updateAMZMethod(long finID, String amzMethod) {
+		profitDetailsDAO.updateAMZMethod(finID, amzMethod);
 	}
 
 	public void setProjectedAmortizationDAO(ProjectedAmortizationDAO projectedAmortizationDAO) {

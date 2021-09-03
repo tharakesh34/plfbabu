@@ -117,8 +117,6 @@ public class PresentmentResponseProcess implements Runnable {
 	public void run() {
 		List<PresentmentDetail> presentmentDetails = presentmentDetailDAO.getPresentmentDetails(headerId, threadId);
 
-		// Need to remove
-
 		for (PresentmentDetail pd : presentmentDetails) {
 			try {
 				pd.setAppDate(this.appDate);
@@ -136,6 +134,8 @@ public class PresentmentResponseProcess implements Runnable {
 
 		PresentmentDetailExtract.recordCount.incrementAndGet();
 		String presentmentReference = pd.getPresentmentRef();
+
+		long finID = pd.getFinID();
 		String finReference = pd.getFinReference();
 		String finType = pd.getFinType();
 		String mandateType = pd.getMandateType();
@@ -188,7 +188,7 @@ public class PresentmentResponseProcess implements Runnable {
 
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(pd.getAppDate());
-		setLoanDetails(custEODEvent, finReference, finIsActive);
+		setLoanDetails(custEODEvent, finID, finIsActive);
 		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
 
 		boolean processReceipt = false;
@@ -296,8 +296,8 @@ public class PresentmentResponseProcess implements Runnable {
 
 	private boolean processInactiveLoan(CustEODEvent custEODEvent, PresentmentDetail pd) {
 		logger.info(Literal.ENTERING);
-		String finReference = pd.getFinReference();
 		Long receiptID = pd.getReceiptID();
+		long finID = pd.getFinID();
 		boolean finIsActive = pd.isFinisActive();
 
 		FinEODEvent finEODEvent = custEODEvent.getFinEODEvents().get(0);
@@ -336,19 +336,19 @@ public class PresentmentResponseProcess implements Runnable {
 
 		logger.info("Re-loading finance data...");
 
-		setLoanDetails(custEODEvent, finReference, finIsActive);
+		setLoanDetails(custEODEvent, finID, finIsActive);
 
 		logger.info(Literal.LEAVING);
 		return true;
 
 	}
 
-	private void setLoanDetails(CustEODEvent custEODEvent, String finReference, boolean finIsActive) {
+	private void setLoanDetails(CustEODEvent custEODEvent, long finID, boolean finIsActive) {
 		logger.info("Loading finance data...");
 
 		FinEODEvent finEODEvent = new FinEODEvent();
 
-		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finReference, finIsActive);
+		FinanceMain fm = financeMainDAO.getFinMainsForEODByFinRef(finID, finIsActive);
 
 		fm.setEventProperties(this.eventProperties);
 
@@ -359,12 +359,12 @@ public class PresentmentResponseProcess implements Runnable {
 			customer = customerDAO.getCustomerEOD(fm.getCustID());
 		}
 
-		List<FinODDetails> finODDetails = finODDetailsDAO.getFinODBalByFinRef(finReference);
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
+		List<FinODDetails> finODDetails = finODDetailsDAO.getFinODBalByFinRef(finID);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 		FinanceProfitDetail pftDetail = null;
 
 		/* The last parameter false will get the records irrespective of status */
-		pftDetail = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finReference);
+		pftDetail = financeProfitDetailDAO.getFinProfitDetailsByFinRef(finID);
 
 		finEODEvent.setFinType(financeType);
 		finEODEvent.setFinanceMain(fm);
@@ -415,17 +415,22 @@ public class PresentmentResponseProcess implements Runnable {
 	}
 
 	private AEEvent doPresentmentStageAccounting(PresentmentDetail pd) {
+		long finID = pd.getFinID();
 		String finReference = pd.getFinReference();
 		Date schDate = pd.getSchDate();
-		FinanceMain fm = presentmentDetailService.getDefualtPostingDetails(finReference, schDate);
+
+		FinanceMain fm = presentmentDetailService.getDefualtPostingDetails(finID, schDate);
+
+		String finType = fm.getFinType();
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setFinReference(fm.getFinReference());
+		aeEvent.setFinReference(finReference);
 		aeEvent.setCustID(fm.getCustID());
-		aeEvent.setFinType(fm.getFinType());
+
+		aeEvent.setFinType(finType);
 		aeEvent.setBranch(fm.getFinBranch());
 		aeEvent.setCcy(fm.getFinCcy());
-		aeEvent.setPostingUserBranch(fm.getFinType());
+		aeEvent.setPostingUserBranch(finType);
 		aeEvent.setValueDate(pd.getSchDate());
 		aeEvent.setPostDate(SysParamUtil.getAppDate());
 		aeEvent.setEntityCode(fm.getEntityCode());
@@ -434,7 +439,7 @@ public class PresentmentResponseProcess implements Runnable {
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes.setFinType(fm.getFinType());
+		amountCodes.setFinType(finType);
 		amountCodes.setPartnerBankAc(fm.getPartnerBankAc());
 		amountCodes.setPartnerBankAcType(fm.getPartnerBankAcType());
 
@@ -445,8 +450,8 @@ public class PresentmentResponseProcess implements Runnable {
 		aeEvent.setDataMap(dataMap);
 
 		try {
-			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(),
-					AccountingEvent.PRSNTRSP, FinanceConstants.MODULEID_FINTYPE));
+			aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finType, AccountingEvent.PRSNTRSP,
+					FinanceConstants.MODULEID_FINTYPE));
 			aeEvent.setDataMap(dataMap);
 			aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		} catch (Exception e) {
@@ -472,6 +477,7 @@ public class PresentmentResponseProcess implements Runnable {
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		List<FinODDetails> overDueList = finEODEvent.getFinODDetails();
 
+		long finID = pd.getFinID();
 		String finReference = pd.getFinReference();
 
 		try {
@@ -481,8 +487,8 @@ public class PresentmentResponseProcess implements Runnable {
 		}
 
 		if (!fm.isFinIsActive()) {
-			financeMainDAO.updateMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false, pd.getSchDate());
-			financeProfitDetailDAO.updateFinPftMaturity(finReference, FinanceConstants.CLOSE_STATUS_MATURED, false);
+			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, pd.getSchDate());
+			financeProfitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 		}
 
 		if (CollectionUtils.isNotEmpty(overDueList)) {

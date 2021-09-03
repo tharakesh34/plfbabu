@@ -5,8 +5,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinanceMaintenanceService {
 
-	FinanceDetail getFinanceDetailById(String finReference, String type, String userRole, String procEdtEvent,
-			String eventCode);
+	FinanceDetail getFinanceDetailById(long finID, String type, String userRole, String procEdtEvent, String eventCode);
 
 	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws Exception;
 
@@ -14,8 +13,8 @@ public interface FinanceMaintenanceService {
 
 	AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception;
 
-	boolean isFinActive(String finReference);
+	boolean isFinActive(long finID);
 
-	int getSchdVersion(String finReference);
+	int getSchdVersion(long finID);
 
 }

@@ -42,32 +42,25 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 	private FinanceDetailController financeDetailController;
 	private ValidationUtility validationUtility;
 	private FinanceMainDAO financeMainDAO;
-
 	private FinanceDataDefaulting financeDataDefaulting;
 	private FinanceDataValidation financeDataValidation;
 	private FinPlanEmiHolidayDAO finPlanEmiHolidayDAO;
 
-	/**
-	 * Create finance schedule (WIF) by receiving the request from interface.<br>
-	 * The request object may include basic details, fees, insurance and stepping details.<br>
-	 * 
-	 * @param finScheduleData
-	 */
 	@Override
-	public FinScheduleData createFinanceSchedule(FinScheduleData finScheduleData) {
+	public FinScheduleData createFinanceSchedule(FinScheduleData schdData) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail finDetail = new FinanceDetail();
-		finDetail.setFinScheduleData(finScheduleData);
+		FinanceDetail fd = new FinanceDetail();
+		fd.setFinScheduleData(schdData);
 
-		FinScheduleData finScheduleDataNew = null;
+		FinScheduleData newSchdData = null;
 
-		// do Basic mandatory validations using hibernate validator
-		validationUtility.validate(finScheduleData, SaveValidationGroup.class);
+		validationUtility.validate(schdData, SaveValidationGroup.class);
 
 		try {
-			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			if (financeMain == null) {
+			FinanceMain fm = schdData.getFinanceMain();
+
+			if (fm == null) {
 				FinScheduleData response = new FinScheduleData();
 				doEmptyResponseObject(response);
 				String[] valueParm = new String[1];
@@ -76,77 +69,59 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 				return response;
 			}
 
-			// for logging purpose
 			String[] logFields = new String[3];
-			logFields[0] = financeMain.getCustCIF();
-			logFields[1] = financeMain.getFinType();
-			logFields[2] = String.valueOf(financeMain.getFinAmount());
+			logFields[0] = fm.getCustCIF();
+			logFields[1] = fm.getFinType();
+			logFields[2] = String.valueOf(fm.getFinAmount());
+
 			APIErrorHandlerService.logKeyFields(logFields);
-			//setting finAmount to FinCurAssetValue
-			financeMain.setFinCurrAssetValue(financeMain.getFinAmount());
+			fm.setFinCurrAssetValue(fm.getFinAmount());
 
-			// validate and Data defaulting and resetting again becuase of some new() was used in called class
-			finDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finDetail);
-			finScheduleData = finDetail.getFinScheduleData();
+			fd = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, fd);
+			schdData = fd.getFinScheduleData();
 
-			if (!finScheduleData.getErrorDetails().isEmpty()) {
-				return getErrorMessage(finScheduleData);
+			if (!schdData.getErrorDetails().isEmpty()) {
+				return getErrorMessage(schdData);
 			}
 
-			// FIXME: PV 28AUG19 to be removed as already handled in financedatadefaulting.defaultFinance()
-			// validate finance data
-			/*
-			 * FinanceDetail financeDetail = null; if
-			 * (!StringUtils.isBlank(finScheduleData.getFinanceMain().getLovDescCustCIF())) { financeDetail = new
-			 * FinanceDetail(); financeDetail.setFinScheduleData(finScheduleData); CustomerDetails customerDetails = new
-			 * CustomerDetails(); customerDetails.setCustomer(null); financeDetail.setCustomerDetails(customerDetails);
-			 * }
-			 */
-
 			// validate schedule details
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true, finDetail,
-					false);
-			if (!finScheduleData.getErrorDetails().isEmpty()) {
-				return getErrorMessage(finScheduleData);
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, schdData, true, fd, false);
+			if (!schdData.getErrorDetails().isEmpty()) {
+				return getErrorMessage(schdData);
 			}
 
 			// call doCreateFinanceSchedule method after successful validations
-			finScheduleDataNew = financeDetailController.doCreateFinanceSchedule(finScheduleData);
+			newSchdData = financeDetailController.doCreateFinanceSchedule(schdData);
 
-			if (finScheduleDataNew != null && finScheduleDataNew.getErrorDetails() != null) {
-				return getErrorMessage(finScheduleDataNew);
+			if (newSchdData != null && newSchdData.getErrorDetails() != null) {
+				return getErrorMessage(newSchdData);
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			FinScheduleData response = new FinScheduleData();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
 		// for logging purpose
-		if (finScheduleDataNew != null) {
-			APIErrorHandlerService.logReference(finScheduleDataNew.getFinReference());
+		if (newSchdData != null) {
+			APIErrorHandlerService.logReference(newSchdData.getFinReference());
 		}
 		logger.debug(Literal.LEAVING);
-		return finScheduleDataNew;
+		return newSchdData;
 	}
 
-	private FinScheduleData getErrorMessage(FinScheduleData financeSchdData) {
-		for (ErrorDetail erroDetail : financeSchdData.getErrorDetails()) {
+	private FinScheduleData getErrorMessage(FinScheduleData schdData) {
+		for (ErrorDetail ed : schdData.getErrorDetails()) {
 			FinScheduleData response = new FinScheduleData();
 			doEmptyResponseObject(response);
-			response.setReturnStatus(
-					APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 			return response;
 		}
-		return financeSchdData;
+
+		return schdData;
 	}
 
-	/**
-	 * Fetch requested finance details from PLF system.
-	 * 
-	 * @param finReference
-	 */
 	@Override
 	public FinScheduleData getFinanceInquiry(String finReference) {
 		logger.debug(Literal.ENTERING);
@@ -161,224 +136,212 @@ public class FinanceScheduleWebServiceImpl extends ExtendedTestClass
 		String type = APIConstants.FINANCE_ORIGINATION;
 
 		// validate Reference with WIF and Origination
-		int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getFinIDByFinReference(finReference, "", false);
+		if (finID == null) {
 			// checking WIF table
-			count = financeMainDAO.getFinanceCountById(finReference, "", true);
+			finID = financeMainDAO.getFinIDByFinReference(finReference, "", true);
 			type = APIConstants.FINANCE_WIF;
 		}
 
-		if (count <= 0) {
-			FinScheduleData response = new FinScheduleData();
-			doEmptyResponseObject(response);
+		if (finID == null) {
+			FinScheduleData schdData = new FinScheduleData();
+			doEmptyResponseObject(schdData);
 
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-			return response;
+			schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return schdData;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetailController.getFinanceInquiryDetails(finReference, type);
+		return financeDetailController.getFinanceInquiryDetails(finID, type);
 	}
 
 	@Override
-	public EmiResponse getEMIAmount(FinScheduleData finScheduleData) throws ServiceException {
+	public EmiResponse getEMIAmount(FinScheduleData schdData) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		EmiResponse response = null;
+		EmiResponse response = new EmiResponse();
 
-		FinanceDetail finDetail = new FinanceDetail();
-		finDetail.setFinScheduleData(finScheduleData);
-		FinanceMain oldfinaMain = null;
-		if (finScheduleData.getFinanceMain() != null
-				&& StringUtils.isNotBlank((finScheduleData.getFinanceMain().getFinReference()))) {
-			oldfinaMain = financeMainDAO.getFinanceMainById(finScheduleData.getFinanceMain().getFinReference(), "_View",
-					false);
-			if (oldfinaMain == null) {
-				response = new EmiResponse();
-				String[] valueParm = new String[1];
-				valueParm[0] = finScheduleData.getFinanceMain().getFinReference();
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
-				return response;
+		FinanceDetail fd = new FinanceDetail();
+		fd.setFinScheduleData(schdData);
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		if (fm == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "financeDetail";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return response;
+		}
+
+		String finReference = fm.getFinReference();
+
+		FinanceMain oldFm = financeMainDAO.getFinanceMainByRef(finReference, "_View", false);
+
+		if (oldFm == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParm));
+			return response;
+		}
+
+		long finID = oldFm.getFinID();
+
+		fm.setFinID(finID);
+
+		fm.setFinStartDate(oldFm.getFinStartDate());
+		fm.setNumberOfTerms(oldFm.getNumberOfTerms());
+		fm.setFinType(oldFm.getFinType());
+		fm.setFinAssetValue(oldFm.getFinAssetValue());
+		fm.setFinAmount(oldFm.getFinAssetValue());
+
+		if (oldFm.isPlanEMIHAlw()) {
+			fm.setPlanEMIHAlw((oldFm.isPlanEMIHAlw()));
+			fm.setPlanEMIHMethod((oldFm.getPlanEMIHMethod()));
+			fm.setPlanEMIHMax(oldFm.getPlanEMIHMax());
+			fm.setPlanEMIHLockPeriod(oldFm.getPlanEMIHLockPeriod());
+			fm.setPlanEMIHMaxPerYear(oldFm.getPlanEMIHMaxPerYear());
+
+			List<Integer> emiMonths = finPlanEmiHolidayDAO.getPlanEMIHMonthsByRef(finID, "_temp");
+			if (CollectionUtils.isEmpty(emiMonths)) {
+				emiMonths = finPlanEmiHolidayDAO.getPlanEMIHMonthsByRef(finID, "");
 			}
-			finDetail.getFinScheduleData().getFinanceMain().setFinStartDate(oldfinaMain.getFinStartDate());
-			finDetail.getFinScheduleData().getFinanceMain().setNumberOfTerms(oldfinaMain.getNumberOfTerms());
-			finDetail.getFinScheduleData().getFinanceMain().setFinType(oldfinaMain.getFinType());
-			finDetail.getFinScheduleData().getFinanceMain().setFinAssetValue(oldfinaMain.getFinAssetValue());
-			finDetail.getFinScheduleData().getFinanceMain().setFinAmount(oldfinaMain.getFinAssetValue());
+			List<FinPlanEmiHoliday> apiMonthList = new ArrayList<>();
 
-			if (oldfinaMain.isPlanEMIHAlw()) {
-				finDetail.getFinScheduleData().getFinanceMain().setPlanEMIHAlw((oldfinaMain.isPlanEMIHAlw()));
-				finDetail.getFinScheduleData().getFinanceMain().setPlanEMIHMethod((oldfinaMain.getPlanEMIHMethod()));
-				finDetail.getFinScheduleData().getFinanceMain().setPlanEMIHMax(oldfinaMain.getPlanEMIHMax());
-				finDetail.getFinScheduleData().getFinanceMain()
-						.setPlanEMIHLockPeriod(oldfinaMain.getPlanEMIHLockPeriod());
-				finDetail.getFinScheduleData().getFinanceMain()
-						.setPlanEMIHMaxPerYear(oldfinaMain.getPlanEMIHMaxPerYear());
-
-				List<Integer> emiMonths = finPlanEmiHolidayDAO
-						.getPlanEMIHMonthsByRef(finScheduleData.getFinanceMain().getFinReference(), "_temp");
-				if (CollectionUtils.isEmpty(emiMonths)) {
-					emiMonths = finPlanEmiHolidayDAO
-							.getPlanEMIHMonthsByRef(finScheduleData.getFinanceMain().getFinReference(), "");
+			if (emiMonths != null
+					&& StringUtils.equals(oldFm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				for (Integer detail : emiMonths) {
+					FinPlanEmiHoliday finPlanEmiHoliday = new FinPlanEmiHoliday();
+					finPlanEmiHoliday.setPlanEMIHMonth(detail);
+					apiMonthList.add(finPlanEmiHoliday);
 				}
-				List<FinPlanEmiHoliday> apiMonthList = new ArrayList<>();
-
-				if (emiMonths != null
-						&& StringUtils.equals(oldfinaMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-					for (Integer detail : emiMonths) {
-						FinPlanEmiHoliday finPlanEmiHoliday = new FinPlanEmiHoliday();
-						finPlanEmiHoliday.setPlanEMIHMonth(detail);
-						apiMonthList.add(finPlanEmiHoliday);
-					}
-					finDetail.getFinScheduleData().setApiplanEMIHmonths(apiMonthList);
-				}
-
+				fd.getFinScheduleData().setApiplanEMIHmonths(apiMonthList);
 			}
+
 		}
 
 		// do Basic mandatory validations using hibernate validator
-		validationUtility.validate(finScheduleData, SaveValidationGroup.class);
+		validationUtility.validate(schdData, SaveValidationGroup.class);
 
 		try {
-			if (finScheduleData.getFinanceMain() == null) {
-				response = new EmiResponse();
-				String[] valueParm = new String[1];
-				valueParm[0] = "financeDetail";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-				return response;
-			}
-
 			// for logging purpose
 			String[] logFields = new String[2];
-			//logFields[0] = finScheduleData.getFinanceMain().getCustCIF();
-			logFields[0] = finScheduleData.getFinanceMain().getFinType();
-			logFields[1] = String.valueOf(finScheduleData.getFinanceMain().getFinAmount());
+			// logFields[0] = finScheduleData.getFinanceMain().getCustCIF();
+			logFields[0] = fm.getFinType();
+			logFields[1] = String.valueOf(fm.getFinAmount());
 			APIErrorHandlerService.logKeyFields(logFields);
 
 			// validate and Data defaulting and resetting again becuase of some new() was used in called class
-			finDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, finDetail);
-			finDetail.getFinScheduleData().getFinanceMain().setFinIsAlwMD(false);
-			if (oldfinaMain != null) {
+			fd = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_SCHD, fd);
+			fm.setFinIsAlwMD(false);
 
-				if (StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getRepayRateBasis(),
-						CalculationConstants.RATE_BASIS_F)) {
-					finDetail.getFinScheduleData().getFinanceMain()
-							.setRepayProfitRate(oldfinaMain.getRepayProfitRate());
+			if (oldFm != null) {
+				if (StringUtils.equals(fm.getRepayRateBasis(), CalculationConstants.RATE_BASIS_F)) {
+					fm.setRepayProfitRate(oldFm.getRepayProfitRate());
 				} else {
-					finDetail.getFinScheduleData().getFinanceMain().setRepayBaseRate(oldfinaMain.getRepayBaseRate());
-					finDetail.getFinScheduleData().getFinanceMain()
-							.setRepaySpecialRate(oldfinaMain.getRepaySpecialRate());
-					finDetail.getFinScheduleData().getFinanceMain().setRepayMargin(oldfinaMain.getRepayMargin());
+					fm.setRepayBaseRate(oldFm.getRepayBaseRate());
+					fm.setRepaySpecialRate(oldFm.getRepaySpecialRate());
+					fm.setRepayMargin(oldFm.getRepayMargin());
 				}
 
-				finDetail.getFinScheduleData().getFinanceMain().setAlwBPI(oldfinaMain.isAlwBPI());
-				finDetail.getFinScheduleData().getFinanceMain().setBpiTreatment(oldfinaMain.getBpiTreatment());
+				fm.setAlwBPI(oldFm.isAlwBPI());
+				fm.setBpiTreatment(oldFm.getBpiTreatment());
 
-				if (oldfinaMain.isAllowGrcPeriod()) {
-					finDetail.getFinScheduleData().getFinanceMain().setAllowGrcPeriod(oldfinaMain.isAllowGrcPeriod());
-					//finDetail.getFinScheduleData().getFinanceMain().setGraceTerms(oldfinaMain.getGraceTerms());
-					finDetail.getFinScheduleData().getFinanceMain()
-							.setGrcPeriodEndDate(oldfinaMain.getGrcPeriodEndDate());
+				if (oldFm.isAllowGrcPeriod()) {
+					fm.setAllowGrcPeriod(oldFm.isAllowGrcPeriod());
+					// finDetail.getFinScheduleData().getFinanceMain().setGraceTerms(oldfinaMain.getGraceTerms());
+					fm.setGrcPeriodEndDate(oldFm.getGrcPeriodEndDate());
 
-					finDetail.getFinScheduleData().getFinanceMain().setGrcRateBasis(oldfinaMain.getGrcRateBasis());
-					if (StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getGrcRateBasis(),
-							CalculationConstants.RATE_BASIS_F)) {
-						finDetail.getFinScheduleData().getFinanceMain().setGrcPftRate(oldfinaMain.getGrcPftRate());
+					fm.setGrcRateBasis(oldFm.getGrcRateBasis());
+					if (StringUtils.equals(fm.getGrcRateBasis(), CalculationConstants.RATE_BASIS_F)) {
+						fm.setGrcPftRate(oldFm.getGrcPftRate());
 					} else {
-						finDetail.getFinScheduleData().getFinanceMain()
-								.setGraceBaseRate(oldfinaMain.getGraceBaseRate());
-						finDetail.getFinScheduleData().getFinanceMain()
-								.setGraceSpecialRate(oldfinaMain.getGraceSpecialRate());
-						finDetail.getFinScheduleData().getFinanceMain().setGrcMargin(oldfinaMain.getGrcMargin());
+						fm.setGraceBaseRate(oldFm.getGraceBaseRate());
+						fm.setGraceSpecialRate(oldFm.getGraceSpecialRate());
+						fm.setGrcMargin(oldFm.getGrcMargin());
 					}
-					finDetail.getFinScheduleData().getFinanceMain()
-							.setGrcProfitDaysBasis(oldfinaMain.getGrcProfitDaysBasis());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcPftFrq(oldfinaMain.getGrcPftFrq());
-					finDetail.getFinScheduleData().getFinanceMain().setNextGrcPftDate(oldfinaMain.getNextGrcPftDate());
-					finDetail.getFinScheduleData().getFinanceMain().setAllowGrcPftRvw(oldfinaMain.isAllowGrcPftRvw());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcPftRvwFrq(oldfinaMain.getGrcPftRvwFrq());
-					finDetail.getFinScheduleData().getFinanceMain()
-							.setNextGrcPftRvwDate(oldfinaMain.getNextGrcPftRvwDate());
-					finDetail.getFinScheduleData().getFinanceMain().setAllowGrcCpz(oldfinaMain.isAllowGrcCpz());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcCpzFrq(oldfinaMain.getGrcCpzFrq());
-					finDetail.getFinScheduleData().getFinanceMain().setNextGrcCpzDate(oldfinaMain.getNextGrcCpzDate());
-					finDetail.getFinScheduleData().getFinanceMain().setAllowGrcRepay(oldfinaMain.isAllowGrcRepay());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcSchdMthd(oldfinaMain.getGrcSchdMthd());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcMinRate(oldfinaMain.getGrcMinRate());
-					finDetail.getFinScheduleData().getFinanceMain().setGrcMaxRate(oldfinaMain.getGrcMaxRate());
+					fm.setGrcProfitDaysBasis(oldFm.getGrcProfitDaysBasis());
+					fm.setGrcPftFrq(oldFm.getGrcPftFrq());
+					fm.setNextGrcPftDate(oldFm.getNextGrcPftDate());
+					fm.setAllowGrcPftRvw(oldFm.isAllowGrcPftRvw());
+					fm.setGrcPftRvwFrq(oldFm.getGrcPftRvwFrq());
+					fm.setNextGrcPftRvwDate(oldFm.getNextGrcPftRvwDate());
+					fm.setAllowGrcCpz(oldFm.isAllowGrcCpz());
+					fm.setGrcCpzFrq(oldFm.getGrcCpzFrq());
+					fm.setNextGrcCpzDate(oldFm.getNextGrcCpzDate());
+					fm.setAllowGrcRepay(oldFm.isAllowGrcRepay());
+					fm.setGrcSchdMthd(oldFm.getGrcSchdMthd());
+					fm.setGrcMinRate(oldFm.getGrcMinRate());
+					fm.setGrcMaxRate(oldFm.getGrcMaxRate());
 				}
-				finDetail.getFinScheduleData().getFinanceMain().setRepayFrq(oldfinaMain.getRepayFrq());
-				finDetail.getFinScheduleData().getFinanceMain().setNextRepayDate(oldfinaMain.getNextRepayDate());
-				finDetail.getFinScheduleData().getFinanceMain().setRepayRvwFrq(oldfinaMain.getRepayRvwFrq());
-				finDetail.getFinScheduleData().getFinanceMain().setNextRepayRvwDate(oldfinaMain.getNextRepayRvwDate());
-				finDetail.getFinScheduleData().getFinanceMain().setRepayPftFrq(oldfinaMain.getRepayPftFrq());
-				finDetail.getFinScheduleData().getFinanceMain().setNextRepayPftDate(oldfinaMain.getNextRepayPftDate());
-				finDetail.getFinScheduleData().getFinanceMain()
-						.setEqualRepay(finDetail.getFinScheduleData().getFinanceType().isEqualRepayment());
+				fm.setRepayFrq(oldFm.getRepayFrq());
+				fm.setNextRepayDate(oldFm.getNextRepayDate());
+				fm.setRepayRvwFrq(oldFm.getRepayRvwFrq());
+				fm.setNextRepayRvwDate(oldFm.getNextRepayRvwDate());
+				fm.setRepayPftFrq(oldFm.getRepayPftFrq());
+				fm.setNextRepayPftDate(oldFm.getNextRepayPftDate());
+				fm.setEqualRepay(fd.getFinScheduleData().getFinanceType().isEqualRepayment());
 			}
 
-			finScheduleData = finDetail.getFinScheduleData();
+			schdData = fd.getFinScheduleData();
 
-			if (!finScheduleData.getErrorDetails().isEmpty()) {
+			if (!schdData.getErrorDetails().isEmpty()) {
 
-				for (ErrorDetail erroDetail : finScheduleData.getErrorDetails()) {
+				for (ErrorDetail ed : schdData.getErrorDetails()) {
 					response = new EmiResponse();
-					response.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 					return response;
 				}
 			}
 
 			// validate schedule details
-			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, finScheduleData, true, finDetail,
-					true);
-			if (!finScheduleData.getErrorDetails().isEmpty()) {
-				for (ErrorDetail erroDetail : finScheduleData.getErrorDetails()) {
+			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_SCHD, schdData, true, fd, true);
+			if (!schdData.getErrorDetails().isEmpty()) {
+				for (ErrorDetail ed : schdData.getErrorDetails()) {
 					response = new EmiResponse();
-					response.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(erroDetail.getCode(), erroDetail.getError()));
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 					return response;
 				}
 			}
 
 			// call doCreateFinanceSchedule method after successful validations
-			response = financeDetailController.getEMIAmount(finDetail);
+			response = financeDetailController.getEMIAmount(fd);
 
-			// for  logging purpose
+			// for logging purpose
 			if (response != null) {
 				APIErrorHandlerService.logReference(String.valueOf(response.getRepayAmount()));
 			}
 
 		} catch (Exception e) {
-			logger.error("Exception", e);
-			response = new EmiResponse();
+			logger.error(Literal.EXCEPTION, e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
+
 		logger.debug(Literal.LEAVING);
+
 		return response;
 	}
 
 	/**
 	 * Nullify the un-necessary objects to prepare response in a structured format specified in API.
 	 * 
-	 * @param response
+	 * @param schdData
 	 */
-	private void doEmptyResponseObject(FinScheduleData response) {
-		response.setDisbursementDetails(null);
-		response.setRepayInstructions(null);
-		response.setRateInstruction(null);
-		response.setFinFeeDetailList(null);
-		response.setStepPolicyDetails(null);
-		response.setFinanceScheduleDetails(null);
-		response.setPlanEMIHDates(null);
-		response.setPlanEMIHmonths(null);
-		response.setFinODDetails(null);
-		response.setApiPlanEMIHDates(null);
-		response.setApiplanEMIHmonths(null);
-		response.setVasRecordingList(null);
+	private void doEmptyResponseObject(FinScheduleData schdData) {
+		schdData.setDisbursementDetails(null);
+		schdData.setRepayInstructions(null);
+		schdData.setRateInstruction(null);
+		schdData.setFinFeeDetailList(null);
+		schdData.setStepPolicyDetails(null);
+		schdData.setFinanceScheduleDetails(null);
+		schdData.setPlanEMIHDates(null);
+		schdData.setPlanEMIHmonths(null);
+		schdData.setFinODDetails(null);
+		schdData.setApiPlanEMIHDates(null);
+		schdData.setApiplanEMIHmonths(null);
+		schdData.setVasRecordingList(null);
 	}
 
 	@Autowired

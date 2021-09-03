@@ -286,8 +286,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// CAST AND STORE THE SELECTED OBJECT
 			final FinanceMain aWIFFinanceMain = (FinanceMain) item.getAttribute("data");
-			final FinanceDetail financeDetail = getFinanceDetailService()
-					.getWIFFinance(aWIFFinanceMain.getFinReference(), reqCustDetails, FinServiceEvent.ORG);
+			final FinanceDetail financeDetail = getFinanceDetailService().getWIFFinance(aWIFFinanceMain.getFinID(),
+					reqCustDetails, FinServiceEvent.ORG);
 			if (!isFacilityWIF) {
 				financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
 			}

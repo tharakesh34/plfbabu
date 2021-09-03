@@ -11,6 +11,6 @@ public interface FinFeeConfigService {
 
 	void saveList(List<FinFeeConfig> finFeeDetailConfig, String type);
 
-	List<FinFeeConfig> getFinFeeConfigList(String finReference, String eventCode, boolean origination, String type);
+	List<FinFeeConfig> getFinFeeConfigList(long finID, String eventCode, boolean origination, String type);
 
 }

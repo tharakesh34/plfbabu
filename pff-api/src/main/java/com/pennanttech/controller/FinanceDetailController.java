@@ -1,6 +1,5 @@
 package com.pennanttech.controller;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
@@ -16,16 +15,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jaxen.JaxenException;
 
 import com.pennant.app.util.APIHeader;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.FeeScheduleCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
@@ -40,7 +38,6 @@ import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinFeeDetail;
-import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinPlanEmiHoliday;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -59,9 +56,11 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.util.APIConstants;
@@ -83,177 +82,164 @@ public class FinanceDetailController extends SummaryDetailService {
 	private FeeDetailService feeDetailService;
 	private FinFeeDetailService finFeeDetailService;
 
-	/**
-	 * Method for create Finance/WIFFinance
-	 * 
-	 * @param finCalculatorRequest
-	 * @return
-	 * @throws JaxenException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	public FinScheduleData doCreateFinanceSchedule(FinScheduleData finScheduleData)
-			throws JaxenException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Enteing");
+	public FinScheduleData doCreateFinanceSchedule(FinScheduleData schdData) throws AppException {
+		logger.debug(Literal.ENTERING);
 
-		if (finScheduleData != null) {
-
-			// financeMain details
-			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			financeMain.setFinType(finScheduleData.getFinanceType().getFinType());
-			String finReference = null;
-			if (StringUtils.isBlank(financeMain.getFinReference())) {
-				finReference = String
-						.valueOf(ReferenceGenerator.generateFinRef(financeMain, finScheduleData.getFinanceType()));
-			} else {
-				finReference = financeMain.getFinReference();
-			}
-			financeMain.setFinReference(finReference);
-			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			financeMain.setWorkflowId(0);
-			financeMain.setNewRecord(true);
-			financeMain.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			financeMain.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
-			// prepare required data
-			doSetRequiredData(finScheduleData);
-
-			try {
-				// call schedule calculator
-				finScheduleData = ScheduleGenerator.getNewSchd(finScheduleData);
-				if (finScheduleData.getFinanceScheduleDetails().size() != 0) {
-
-					finScheduleData = ScheduleCalculator.getCalSchd(finScheduleData, BigDecimal.ZERO);
-					finScheduleData.setSchduleGenerated(true);
-					if (!finScheduleData.getFinanceMain().isAllowGrcPeriod()) {
-						finScheduleData.getFinanceMain().setGrcSchdMthd(null);
-					}
-					// fees calculation
-					if (!finScheduleData.getFinFeeDetailList().isEmpty()) {
-						finScheduleData = FeeScheduleCalculator.feeSchdBuild(finScheduleData);
-					}
-				}
-
-				if (!finScheduleData.getErrorDetails().isEmpty()) {
-					return finScheduleData;
-				}
-
-				// set LastMntBy , LastMntOn and status fields to schedule details
-				for (FinanceScheduleDetail schdDetail : finScheduleData.getFinanceScheduleDetails()) {
-					schdDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					schdDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				}
-
-				// Reset Data
-				finScheduleData.getFinanceMain().setEqualRepay(financeMain.isEqualRepay());
-				finScheduleData.getFinanceMain().setRecalType(financeMain.getRecalType());
-				finScheduleData.getFinanceMain().setLastRepayDate(financeMain.getFinStartDate());
-				finScheduleData.getFinanceMain().setLastRepayPftDate(financeMain.getFinStartDate());
-				finScheduleData.getFinanceMain().setLastRepayRvwDate(financeMain.getFinStartDate());
-				finScheduleData.getFinanceMain().setLastRepayCpzDate(financeMain.getFinStartDate());
-
-				finScheduleData.getFinanceMain().setFinRemarks("SUCCESS");
-
-				// Finance detail object
-				FinanceDetail afinanceDetail = new FinanceDetail();
-				afinanceDetail.setUserAction("");
-				afinanceDetail.setExtSource(false);
-				afinanceDetail.setModuleDefiner(FinServiceEvent.ORG);
-
-				finScheduleData.setFinReference(financeMain.getFinReference());
-				doProcessPlanEMIHDays(finScheduleData);
-
-				if (finScheduleData.getErrorDetails() != null) {
-					for (ErrorDetail errorDetail : finScheduleData.getErrorDetails()) {
-						FinScheduleData response = new FinScheduleData();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-						return response;
-					}
-				}
-				afinanceDetail.setFinScheduleData(finScheduleData);
-
-				AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, afinanceDetail);
-				AuditHeader auditHeader = new AuditHeader(afinanceDetail.getFinScheduleData().getFinReference(), null,
-						null, null, auditDetail, financeMain.getUserDetails(),
-						new HashMap<String, List<ErrorDetail>>());
-				// get the header details from the request
-				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-						.get(APIHeader.API_HEADER_KEY);
-				// set the headerDetails to AuditHeader
-				auditHeader.setApiHeader(reqHeaderDetails);
-				// save the finance details into main table
-				auditHeader = getFinanceDetailService().doApprove(auditHeader, true);
-
-				FinScheduleData response = null;
-				if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
-					for (ErrorDetail errorDetail : auditHeader.getOverideMessage()) {
-						response = new FinScheduleData();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-						return response;
-					}
-				}
-				if (auditHeader.getErrorMessage() != null) {
-					for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
-						response = new FinScheduleData();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-						return response;
-					}
-				}
-
-				if (auditHeader.getAuditDetail().getErrorDetails() != null) {
-					for (ErrorDetail errorDetail : auditHeader.getAuditDetail().getErrorDetails()) {
-						response = new FinScheduleData();
-						doEmptyResponseObject(response);
-						response.setReturnStatus(
-								APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-						return response;
-					}
-				}
-
-				response = getFinanceScheduleResponse(auditHeader);
-				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-
-				// for failure case logging purpose
-				APIErrorHandlerService.logReference(response.getFinReference());
-
-				logger.debug("Leaving");
-				return response;
-			} catch (InterfaceException ex) {
-				logger.error("InterfaceException", ex);
-				FinScheduleData response = new FinScheduleData();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
-				return response;
-			} catch (Exception e) {
-				logger.error("Exception", e);
-				APIErrorHandlerService.logUnhandledException(e);
-				FinScheduleData response = new FinScheduleData();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-				return response;
-			}
+		if (schdData == null) {
+			return null;
 		}
-		return null;
+
+		FinanceMain fm = schdData.getFinanceMain();
+		fm.setFinType(schdData.getFinanceType().getFinType());
+
+		String finReference = null;
+		if (StringUtils.isBlank(fm.getFinReference())) {
+			finReference = String.valueOf(ReferenceGenerator.generateFinRef(fm, schdData.getFinanceType()));
+		} else {
+			finReference = fm.getFinReference();
+		}
+
+		fm.setFinReference(finReference);
+		fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		fm.setWorkflowId(0);
+		fm.setNewRecord(true);
+		fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		fm.setFinSourceID(PennantConstants.FINSOURCE_ID_API);
+		// prepare required data
+		doSetRequiredData(schdData);
+
+		try {
+			// call schedule calculator
+			schdData = ScheduleGenerator.getNewSchd(schdData);
+			if (schdData.getFinanceScheduleDetails().size() != 0) {
+
+				schdData = ScheduleCalculator.getCalSchd(schdData, BigDecimal.ZERO);
+				schdData.setSchduleGenerated(true);
+				if (!fm.isAllowGrcPeriod()) {
+					fm.setGrcSchdMthd(null);
+				}
+				// fees calculation
+				if (!schdData.getFinFeeDetailList().isEmpty()) {
+					schdData = FeeScheduleCalculator.feeSchdBuild(schdData);
+				}
+			}
+
+			if (!schdData.getErrorDetails().isEmpty()) {
+				return schdData;
+			}
+
+			// set LastMntBy , LastMntOn and status fields to schedule details
+			for (FinanceScheduleDetail schdDetail : schdData.getFinanceScheduleDetails()) {
+				schdDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				schdDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			}
+
+			// Reset Data
+			fm.setEqualRepay(fm.isEqualRepay());
+			fm.setRecalType(fm.getRecalType());
+			fm.setLastRepayDate(fm.getFinStartDate());
+			fm.setLastRepayPftDate(fm.getFinStartDate());
+			fm.setLastRepayRvwDate(fm.getFinStartDate());
+			fm.setLastRepayCpzDate(fm.getFinStartDate());
+
+			fm.setFinRemarks("SUCCESS");
+
+			// Finance detail object
+			FinanceDetail fd = new FinanceDetail();
+			fd.setFinScheduleData(schdData);
+			fd.setUserAction("");
+			fd.setExtSource(false);
+			fd.setModuleDefiner(FinServiceEvent.ORG);
+
+			schdData.setFinReference(fm.getFinReference());
+			doProcessPlanEMIHDays(schdData);
+
+			if (schdData.getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
+					FinScheduleData response = new FinScheduleData();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(
+							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+					return response;
+				}
+			}
+
+			AuditDetail auditDetail = new AuditDetail(PennantConstants.TRAN_WF, 1, null, fd);
+			AuditHeader auditHeader = new AuditHeader(schdData.getFinReference(), null, null, null, auditDetail,
+					fm.getUserDetails(), new HashMap<String, List<ErrorDetail>>());
+			// get the header details from the request
+			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
+					.get(APIHeader.API_HEADER_KEY);
+			// set the headerDetails to AuditHeader
+			auditHeader.setApiHeader(reqHeaderDetails);
+			// save the finance details into main table
+			auditHeader = financeDetailService.doApprove(auditHeader, true);
+
+			if (auditHeader.getOverideMessage() != null && auditHeader.getOverideMessage().size() > 0) {
+				for (ErrorDetail ed : auditHeader.getOverideMessage()) {
+					schdData = new FinScheduleData();
+					doEmptyResponseObject(schdData);
+					schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+					return schdData;
+				}
+			}
+			if (auditHeader.getErrorMessage() != null) {
+				for (ErrorDetail ed : auditHeader.getErrorMessage()) {
+					schdData = new FinScheduleData();
+					doEmptyResponseObject(schdData);
+					schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+					return schdData;
+				}
+			}
+
+			if (auditHeader.getAuditDetail().getErrorDetails() != null) {
+				for (ErrorDetail ed : auditHeader.getAuditDetail().getErrorDetails()) {
+					schdData = new FinScheduleData();
+					doEmptyResponseObject(schdData);
+					schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+					return schdData;
+				}
+			}
+
+			schdData = getFinanceScheduleResponse(auditHeader);
+			schdData.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+			// for failure case logging purpose
+			APIErrorHandlerService.logReference(schdData.getFinReference());
+
+			logger.debug(Literal.LEAVING);
+			return schdData;
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			schdData = new FinScheduleData();
+			doEmptyResponseObject(schdData);
+			schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
+			return schdData;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION);
+			APIErrorHandlerService.logUnhandledException(e);
+			schdData = new FinScheduleData();
+			doEmptyResponseObject(schdData);
+			schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return schdData;
+		}
 	}
 
-	private void doSetRequiredData(FinScheduleData finScheduleData)
-			throws IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+	private void doSetRequiredData(FinScheduleData schdData) throws AppException {
+		logger.debug(Literal.ENTERING);
 
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
+
+		for (VASRecording vasRecording : schdData.getVasRecordingList()) {
 			vasRecording.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			vasRecording.setNewRecord(true);
 			vasRecording.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			vasRecording.setVasReference(ReferenceUtil.generateVASRef());
 			vasRecording.setPostingAgainst(VASConsatnts.VASAGAINST_FINANCE);
 			vasRecording.setVasStatus("N");
+
 			List<ExtendedField> extendedFields = vasRecording.getExtendedDetails();
+
 			if (extendedFields != null) {
 				int seqNo = 0;
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
@@ -293,88 +279,90 @@ public class FinanceDetailController extends SummaryDetailService {
 				vasRecording.setExtendedFieldRender(exdFieldRender);
 			}
 		}
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceMain fm = schdData.getFinanceMain();
 
 		// user details
 
-		financeMain.setUserDetails(userDetails);
-		financeMain.setFinIsActive(true);
-		financeMain.setVersion(1);
-		financeMain.setLastMntBy(userDetails.getUserId());
-		financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		financeMain.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
+		fm.setUserDetails(userDetails);
+		fm.setFinIsActive(true);
+		fm.setVersion(1);
+		fm.setLastMntBy(userDetails.getUserId());
+		fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		fm.setFinStatus(financeDetailService.getCustStatusByMinDueDays());
 
-		financeMain.setMaturityDate(financeMain.getCalMaturity());
-		financeMain.setNumberOfTerms(financeMain.getCalTerms());
-		financeMain.setGrcPeriodEndDate(financeMain.getCalGrcEndDate());
-		financeMain.setGraceTerms(financeMain.getCalGrcTerms());
+		fm.setMaturityDate(fm.getCalMaturity());
+		fm.setNumberOfTerms(fm.getCalTerms());
+		fm.setGrcPeriodEndDate(fm.getCalGrcEndDate());
+		fm.setGraceTerms(fm.getCalGrcTerms());
 
 		// set Head branch
-		if (StringUtils.isBlank(financeMain.getFinBranch())) {
-			financeMain.setFinBranch(userDetails.getBranchCode());
+		if (StringUtils.isBlank(fm.getFinBranch())) {
+			fm.setFinBranch(userDetails.getBranchCode());
 		}
 
-		FinanceDetail financeDetail = new FinanceDetail();
-		financeDetail.setFinScheduleData(finScheduleData);
-		if (financeMain.getCustID() > 0) {
-			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
-			financeDetail.setCustomerDetails(custDetails);
+		FinanceDetail fd = new FinanceDetail();
+		fd.setFinScheduleData(schdData);
+
+		if (fm.getCustID() > 0) {
+			CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(fm.getCustID());
+			fd.setCustomerDetails(custDetails);
 		}
 
 		// Set VAS reference as feeCode for VAS related fees
-		for (FinFeeDetail feeDetail : finScheduleData.getFinFeeDetailList()) {
-			for (VASRecording vasRecording : finScheduleData.getVasRecordingList()) {
-				if (StringUtils.equals(feeDetail.getFinEvent(), AccountingEvent.VAS_FEE)
-						&& StringUtils.contains(feeDetail.getFeeTypeCode(), vasRecording.getProductCode())) {
-					feeDetail.setFeeTypeCode(vasRecording.getVasReference());
-					feeDetail.setVasReference(vasRecording.getVasReference());
-					feeDetail.setCalculatedAmount(vasRecording.getFee());
-					feeDetail.setFixedAmount(vasRecording.getFee());
-					feeDetail.setAlwDeviation(true);
-					feeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
+		for (FinFeeDetail fee : schdData.getFinFeeDetailList()) {
+			for (VASRecording vasRecording : schdData.getVasRecordingList()) {
+				if (StringUtils.equals(fee.getFinEvent(), AccountingEvent.VAS_FEE)
+						&& StringUtils.contains(fee.getFeeTypeCode(), vasRecording.getProductCode())) {
+					fee.setFeeTypeCode(vasRecording.getVasReference());
+					fee.setVasReference(vasRecording.getVasReference());
+					fee.setCalculatedAmount(vasRecording.getFee());
+					fee.setFixedAmount(vasRecording.getFee());
+					fee.setAlwDeviation(true);
+					fee.setMaxWaiverPerc(BigDecimal.valueOf(100));
 					// feeDetail.setAlwModifyFee(true);
-					feeDetail.setAlwModifyFeeSchdMthd(true);
-					feeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					fee.setAlwModifyFeeSchdMthd(true);
+					fee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
 					// Fee Details set to the VasRecording
-					vasRecording.setWaivedAmt(feeDetail.getWaivedAmount());
-					vasRecording.setPaidAmt(feeDetail.getPaidAmount());
+					vasRecording.setWaivedAmt(fee.getWaivedAmount());
+					vasRecording.setPaidAmt(fee.getPaidAmount());
 				}
 			}
 		}
 		// fetch finType fees details
 		String finEvent = "";
 		boolean enquiry = true;
-		if (CollectionUtils.isNotEmpty(financeDetail.getFinScheduleData().getFinFeeDetailList())) {
+		if (CollectionUtils.isNotEmpty(schdData.getFinFeeDetailList())) {
 			enquiry = false;
 		}
-		executeFeeCharges(financeDetail, finEvent, enquiry);
+
+		executeFeeCharges(fd, finEvent, enquiry);
 
 		// Step Policy Details
-		if (financeMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(financeMain.getCalcOfSteps())) {
-			String stepPolicyCode = financeMain.getStepPolicy();
+		if (fm.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
+			String stepPolicyCode = fm.getStepPolicy();
 			if (StringUtils.isNotBlank(stepPolicyCode)) {
-				List<StepPolicyDetail> stepPolicyList = getStepPolicyDetailDAO()
-						.getStepPolicyDetailListByID(stepPolicyCode, "_AView");
+				List<StepPolicyDetail> stepPolicyList = stepPolicyDetailDAO.getStepPolicyDetailListByID(stepPolicyCode,
+						"_AView");
 
 				// reset step policy details
-				finScheduleData.resetStepPolicyDetails(stepPolicyList);
+				schdData.resetStepPolicyDetails(stepPolicyList);
 
-				finScheduleData.getFinanceMain().setStepFinance(true);
-				finScheduleData.getFinanceMain().setStepPolicy(stepPolicyCode);
+				schdData.getFinanceMain().setStepFinance(true);
+				schdData.getFinanceMain().setStepPolicy(stepPolicyCode);
 
 				// fetch stepHeader details
 				StepPolicyHeader header = stepPolicyHeaderDAO.getStepPolicyHeaderByID(stepPolicyCode, "");
 				if (header != null) {
-					finScheduleData.getFinanceMain().setStepType(header.getStepType());
+					schdData.getFinanceMain().setStepType(header.getStepType());
 				}
 
-				List<FinanceStepPolicyDetail> finStepDetails = finScheduleData.getStepPolicyDetails();
+				List<FinanceStepPolicyDetail> finStepDetails = schdData.getStepPolicyDetails();
 
 				// method for prepare step installments
-				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
+				prepareStepInstallements(finStepDetails, fm.getNumberOfTerms());
 
 			} else {
-				List<FinanceStepPolicyDetail> finStepDetails = finScheduleData.getStepPolicyDetails();
+				List<FinanceStepPolicyDetail> finStepDetails = schdData.getStepPolicyDetails();
 				Collections.sort(finStepDetails, new Comparator<FinanceStepPolicyDetail>() {
 					@Override
 					public int compare(FinanceStepPolicyDetail b1, FinanceStepPolicyDetail b2) {
@@ -382,69 +370,64 @@ public class FinanceDetailController extends SummaryDetailService {
 					}
 				});
 				// method for prepare step installments
-				prepareStepInstallements(finStepDetails, financeMain.getNumberOfTerms());
+				prepareStepInstallements(finStepDetails, fm.getNumberOfTerms());
 			}
-		} else if (financeMain.isStepFinance()
-				&& PennantConstants.STEPPING_CALC_AMT.equals(financeMain.getCalcOfSteps())) {
+		} else if (fm.isStepFinance() && PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())) {
 
-			List<FinanceStepPolicyDetail> finStepPoliciesList = finScheduleData.getStepPolicyDetails();
+			List<FinanceStepPolicyDetail> finStepPoliciesList = schdData.getStepPolicyDetails();
 			List<FinanceStepPolicyDetail> graceSpdList = new ArrayList<>();
 			List<FinanceStepPolicyDetail> rpySpdList = new ArrayList<>();
-			financeMain.setRpyStps(false);
-			financeMain.setGrcStps(false);
+			fm.setRpyStps(false);
+			fm.setGrcStps(false);
+
 			for (FinanceStepPolicyDetail spd : finStepPoliciesList) {
 				if (PennantConstants.STEP_SPECIFIER_REG_EMI.equals(spd.getStepSpecifier())) {
 					rpySpdList.add(spd);
-					financeMain.setRpyStps(true);
+					fm.setRpyStps(true);
 				} else if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
 					graceSpdList.add(spd);
-					financeMain.setGrcStps(true);
+					fm.setGrcStps(true);
 				}
 			}
-			prepareStepInstallements(rpySpdList, financeMain.getNumberOfTerms());
-			prepareStepInstallements(graceSpdList, financeMain.getGraceTerms());
-			finScheduleData.setStepPolicyDetails(finStepPoliciesList, true);
+			prepareStepInstallements(rpySpdList, fm.getNumberOfTerms());
+			prepareStepInstallements(graceSpdList, fm.getGraceTerms());
+			schdData.setStepPolicyDetails(finStepPoliciesList, true);
 		}
 
-		finScheduleData.getFinanceMain().setCalculateRepay(true);// FIXME: why this field
+		schdData.getFinanceMain().setCalculateRepay(true);// FIXME: why this field
 
 		// Disbursement details
 		FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-		disbursementDetails.setDisbDate(financeMain.getFinStartDate());
-		disbursementDetails.setDisbAmount(financeMain.getFinAmount());
+		disbursementDetails.setDisbDate(fm.getFinStartDate());
+		disbursementDetails.setDisbAmount(fm.getFinAmount());
 		disbursementDetails.setDisbSeq(1);
 		disbursementDetails.setVersion(1);
-		disbursementDetails.setDisbReqDate(DateUtility.getAppDate());
-		disbursementDetails.setFeeChargeAmt(financeMain.getFeeChargeAmt());
-		finScheduleData.getDisbursementDetails().add(disbursementDetails);
+		disbursementDetails.setDisbReqDate(SysParamUtil.getAppDate());
+		disbursementDetails.setFeeChargeAmt(fm.getFeeChargeAmt());
+		schdData.getDisbursementDetails().add(disbursementDetails);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	private void executeFeeCharges(FinanceDetail financeDetail, String eventCode, boolean enquiry)
-			throws IllegalAccessException, InvocationTargetException {
-		FinScheduleData schData = financeDetail.getFinScheduleData();
+	private void executeFeeCharges(FinanceDetail fd, String eventCode, boolean enquiry) throws AppException {
+		FinScheduleData schData = fd.getFinScheduleData();
+
 		if (CollectionUtils.isEmpty(schData.getFinFeeDetailList())) {
 			if (StringUtils.isBlank(eventCode)) {
 				eventCode = PennantApplicationUtil.getEventCode(schData.getFinanceMain().getFinStartDate());
 			}
-			feeDetailService.doProcessFeesForInquiry(financeDetail, eventCode, null, enquiry);
+			feeDetailService.doProcessFeesForInquiry(fd, eventCode, null, enquiry);
 		} else {
-			feeDetailService.doExecuteFeeCharges(financeDetail, eventCode, null, enquiry);
+			feeDetailService.doExecuteFeeCharges(fd, eventCode, null, enquiry);
 		}
-		if (financeDetail.isStp()) {
+
+		if (fd.isStp()) {
 			for (FinFeeDetail feeDetail : schData.getFinFeeDetailList()) {
 				feeDetail.setWorkflowId(0);
 			}
 		}
 	}
 
-	/**
-	 * Method for prepare step installments
-	 * 
-	 * @param finStepDetails
-	 * @param totalTerms
-	 */
 	private void prepareStepInstallements(List<FinanceStepPolicyDetail> finStepDetails, int totalTerms) {
 		logger.debug("Entering");
 
@@ -480,275 +463,181 @@ public class FinanceDetailController extends SummaryDetailService {
 				}
 			}
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for prepare API response object
-	 * 
-	 * @param finReference
-	 * @return
-	 */
 	private FinScheduleData getFinanceScheduleResponse(AuditHeader auditHeader) {
-		logger.debug("Enteing");
+		logger.debug(Literal.ENTERING);
 
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 
 		// fetch finance basic details
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinScheduleData finScheduleData = new FinScheduleData();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = new FinScheduleData();
 
-		if (financeMain != null) {
-			finScheduleData.setFinReference(financeMain.getFinReference());
-			finScheduleData.setFinReference(financeMain.getFinReference());
-			finScheduleData.setFinFeeDetailList(financeDetail.getFinScheduleData().getFinFeeDetailList());
-			finScheduleData.setStepPolicyDetails(financeDetail.getFinScheduleData().getStepPolicyDetails());
-			finScheduleData.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
+		if (fm != null) {
+			schdData.setFinReference(fm.getFinReference());
+			schdData.setFinReference(fm.getFinReference());
+			schdData.setFinFeeDetailList(fd.getFinScheduleData().getFinFeeDetailList());
+			schdData.setStepPolicyDetails(fd.getFinScheduleData().getStepPolicyDetails());
+			schdData.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
 
 			// set fee paid amounts based on schedule method
-			finScheduleData.setFinFeeDetailList(getUpdatedFees(finScheduleData.getFinFeeDetailList()));
+			schdData.setFinFeeDetailList(getUpdatedFees(schdData.getFinFeeDetailList()));
 
 			// summary
 			FinanceDetail response = new FinanceDetail();
 			// used for AEAMOUNTS class
-			response.setFinReference(financeMain.getFinReference());
-			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			;
-			response.getFinScheduleData().setFinanceMain(financeMain);
+			response.setFinReference(fm.getFinReference());
+			fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			response.getFinScheduleData().setFinanceMain(fm);
 			response.getFinScheduleData()
-					.setFinanceScheduleDetails(financeDetail.getFinScheduleData().getFinanceScheduleDetails());
-			finScheduleData.setFinanceSummary(getFinanceSummary(response));
+					.setFinanceScheduleDetails(fd.getFinScheduleData().getFinanceScheduleDetails());
+			schdData.setFinanceSummary(getFinanceSummary(response));
 		}
 		// to remove un-necessary objects from response make them as null
-		finScheduleData.setDisbursementDetails(null);
-		finScheduleData.setRepayInstructions(null);
-		finScheduleData.setRateInstruction(null);
-		finScheduleData.setFinODPenaltyRate(null);
+		schdData.setDisbursementDetails(null);
+		schdData.setRepayInstructions(null);
+		schdData.setRateInstruction(null);
+		schdData.setFinODPenaltyRate(null);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
-		return finScheduleData;
+		return schdData;
 	}
 
-	private void doEmptyResponseObject(FinScheduleData response) {
-		response.setDisbursementDetails(null);
-		response.setRepayInstructions(null);
-		response.setRateInstruction(null);
-		response.setFinFeeDetailList(null);
-		response.setStepPolicyDetails(null);
-		response.setFinanceScheduleDetails(null);
-		response.setPlanEMIHDates(null);
-		response.setPlanEMIHmonths(null);
-		response.setApiPlanEMIHDates(null);
-		response.setApiplanEMIHmonths(null);
-		response.setFinODDetails(null);
+	private void doEmptyResponseObject(FinScheduleData schdData) {
+		schdData.setDisbursementDetails(null);
+		schdData.setRepayInstructions(null);
+		schdData.setRateInstruction(null);
+		schdData.setFinFeeDetailList(null);
+		schdData.setStepPolicyDetails(null);
+		schdData.setFinanceScheduleDetails(null);
+		schdData.setPlanEMIHDates(null);
+		schdData.setPlanEMIHmonths(null);
+		schdData.setApiPlanEMIHDates(null);
+		schdData.setApiplanEMIHmonths(null);
+		schdData.setFinODDetails(null);
 	}
 
-	/**
-	 * Method to process and fetch Finance Inquiry details
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public FinScheduleData getFinanceInquiryDetails(String finReference, String type) {
-		logger.debug("Enteing");
+	public FinScheduleData getFinanceInquiryDetails(long finID, String type) {
+		logger.debug(Literal.ENTERING);
 
-		FinScheduleData response = new FinScheduleData();
+		FinScheduleData schdData = new FinScheduleData();
 
-		try {
-			FinanceDetail financeDetail = null;
-			if (StringUtils.equals(type, APIConstants.FINANCE_ORIGINATION)) {
-				financeDetail = getFinanceDetailService().getFinanceDetailById(finReference, false, "", false,
-						FinServiceEvent.ORG, "");
-			} else {
-				financeDetail = getFinanceDetailService().getWIFFinance(finReference, false, null);
-			}
-
-			if (financeDetail != null) {
-				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-				// setting Disb first and lastDates
-				List<FinanceDisbursement> disbList = financeDetail.getFinScheduleData().getDisbursementDetails();
-				Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
-					@Override
-					public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-						return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
-					}
-				});
-
-				if (disbList != null && disbList.size() > 0) {
-					if (disbList.size() == 1) {
-						financeMain.setFirstDisbDate(disbList.get(0).getDisbDate());
-						financeMain.setLastDisbDate(disbList.get(0).getDisbDate());
-					} else {
-						financeMain.setFirstDisbDate(disbList.get(0).getDisbDate());
-						financeMain.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
-					}
-				}
-
-				// Avoid Grace Period details into the marshaling in case of Allow grace is false
-				if (!financeMain.isAllowGrcPeriod()) {
-					financeMain.setGrcPeriodEndDate(null);
-					financeMain.setGrcRateBasis(null);
-					financeMain.setGrcPftRate(null);
-					financeMain.setGraceBaseRate(null);
-					financeMain.setGraceSpecialRate(null);
-					financeMain.setGrcMargin(null);
-					financeMain.setGrcProfitDaysBasis(null);
-					financeMain.setGrcPftFrq(null);
-					financeMain.setNextGrcPftDate(null);
-					financeMain.setGrcPftRvwFrq(null);
-					financeMain.setNextGrcPftRvwDate(null);
-					financeMain.setGrcCpzFrq(null);
-					financeMain.setNextGrcCpzDate(null);
-					financeMain.setAllowGrcRepay(false);
-					financeMain.setGrcSchdMthd(null);
-					financeMain.setGrcMinRate(null);
-					financeMain.setGrcMaxRate(null);
-				}
-
-				// Summary details
-				response = financeDetail.getFinScheduleData();
-				// set fee paid amounts based on schedule method
-				response.setFinFeeDetailList(getUpdatedFees(response.getFinFeeDetailList()));
-				response.setFinanceSummary(getFinanceSummary(financeDetail));
-				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-				// get FinODDetails
-				List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
-				response.setFinODDetails(finODDetailsList);
-				// to remove un-necessary objects from response make them as null
-				response.setDisbursementDetails(null);
-				response.setRepayInstructions(null);
-				response.setRateInstruction(null);
-				response.setFinODPenaltyRate(null);
-			} else {
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			}
-
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
-			APIErrorHandlerService.logUnhandledException(e);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		FinanceDetail fd = null;
+		if (APIConstants.FINANCE_ORIGINATION.equals(type)) {
+			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
+		} else {
+			fd = financeDetailService.getWIFFinance(finID, false, null);
 		}
 
-		logger.debug("Leaving");
-		return response;
+		if (fd == null) {
+			schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+
+			return schdData;
+		}
+
+		try {
+
+			schdData = fd.getFinScheduleData();
+			FinanceMain fm = schdData.getFinanceMain();
+			// setting Disb first and lastDates
+			List<FinanceDisbursement> disbList = schdData.getDisbursementDetails();
+			Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
+				@Override
+				public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
+					return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
+				}
+			});
+
+			if (disbList != null && disbList.size() > 0) {
+				if (disbList.size() == 1) {
+					fm.setFirstDisbDate(disbList.get(0).getDisbDate());
+					fm.setLastDisbDate(disbList.get(0).getDisbDate());
+				} else {
+					fm.setFirstDisbDate(disbList.get(0).getDisbDate());
+					fm.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
+				}
+			}
+
+			// Avoid Grace Period details into the marshaling in case of Allow grace is false
+			if (!fm.isAllowGrcPeriod()) {
+				fm.setGrcPeriodEndDate(null);
+				fm.setGrcRateBasis(null);
+				fm.setGrcPftRate(null);
+				fm.setGraceBaseRate(null);
+				fm.setGraceSpecialRate(null);
+				fm.setGrcMargin(null);
+				fm.setGrcProfitDaysBasis(null);
+				fm.setGrcPftFrq(null);
+				fm.setNextGrcPftDate(null);
+				fm.setGrcPftRvwFrq(null);
+				fm.setNextGrcPftRvwDate(null);
+				fm.setGrcCpzFrq(null);
+				fm.setNextGrcCpzDate(null);
+				fm.setAllowGrcRepay(false);
+				fm.setGrcSchdMthd(null);
+				fm.setGrcMinRate(null);
+				fm.setGrcMaxRate(null);
+			}
+
+			schdData.setFinFeeDetailList(getUpdatedFees(schdData.getFinFeeDetailList()));
+			schdData.setFinanceSummary(getFinanceSummary(fd));
+			schdData.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			schdData.setFinODDetails(finODDetailsDAO.getFinODDByFinRef(finID, null));
+
+			schdData.setDisbursementDetails(null);
+			schdData.setRepayInstructions(null);
+			schdData.setRateInstruction(null);
+			schdData.setFinODPenaltyRate(null);
+
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			schdData.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+		}
+
+		logger.debug(Literal.LEAVING);
+		return schdData;
 	}
 
-	public EmiResponse getEMIAmount(FinanceDetail finDetail) {
-		logger.debug("Enteing");
+	public EmiResponse getEMIAmount(FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
 		EmiResponse response = new EmiResponse();
 		try {
-			FinanceMain finMain = finDetail.getFinScheduleData().getFinanceMain();
+			FinScheduleData schdData = fd.getFinScheduleData();
+			FinanceMain fm = schdData.getFinanceMain();
 
-			finMain.setMaturityDate(finMain.getCalMaturity());
+			fm.setMaturityDate(fm.getCalMaturity());
 
-			doSetRequiredData(finDetail.getFinScheduleData());
+			doSetRequiredData(schdData);
 
 			List<Integer> planEMIHmonths = new ArrayList<>();
-			if (CollectionUtils.isNotEmpty(finDetail.getFinScheduleData().getApiPlanEMIHmonths())
-					&& StringUtils.equals(finDetail.getFinScheduleData().getFinanceMain().getPlanEMIHMethod(),
-							FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				for (FinPlanEmiHoliday detail : finDetail.getFinScheduleData().getApiPlanEMIHmonths()) {
+			if (CollectionUtils.isNotEmpty(schdData.getApiPlanEMIHmonths()) && StringUtils
+					.equals(schdData.getFinanceMain().getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				for (FinPlanEmiHoliday detail : schdData.getApiPlanEMIHmonths()) {
 					planEMIHmonths.add(detail.getPlanEMIHMonth());
 				}
 			}
 
-			finDetail.getFinScheduleData().setPlanEMIHmonths(planEMIHmonths);
+			schdData.setPlanEMIHmonths(planEMIHmonths);
 
-			BigDecimal repayAmount = ScheduleCalculator.getEMIOnFinAssetValue(finDetail);
+			BigDecimal repayAmount = ScheduleCalculator.getEMIOnFinAssetValue(fd);
 
 			if (repayAmount.compareTo(BigDecimal.ZERO) > 0) {
 				response.setRepayAmount(repayAmount);
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Literal.EXCEPTION, e);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return response;
 
 	}
 
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	public StepPolicyDetailDAO getStepPolicyDetailDAO() {
-		return stepPolicyDetailDAO;
-	}
-
-	public void setStepPolicyDetailDAO(StepPolicyDetailDAO stepPolicyDetailDAO) {
-		this.stepPolicyDetailDAO = stepPolicyDetailDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
-	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
-		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
-	}
-
-	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
-		this.financeTypeDAO = financeTypeDAO;
-	}
-
-	public FinFeeChargesDAO getFinFeeChargesDAO() {
-		return finFeeChargesDAO;
-	}
-
-	public void setFinFeeChargesDAO(FinFeeChargesDAO finFeeChargesDAO) {
-		this.finFeeChargesDAO = finFeeChargesDAO;
-	}
-
-	public RuleService getRuleService() {
-		return ruleService;
-	}
-
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
-	}
-
-	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
-		this.customerDetailsService = customerDetailsService;
-	}
-
-	public void setStepPolicyHeaderDAO(StepPolicyHeaderDAO stepPolicyHeaderDAO) {
-		this.stepPolicyHeaderDAO = stepPolicyHeaderDAO;
-	}
-
-	public FeeDetailService getFeeDetailService() {
-		return feeDetailService;
-	}
-
-	public void setFeeDetailService(FeeDetailService feeDetailService) {
-		this.feeDetailService = feeDetailService;
-	}
-
-	public FinFeeDetailService getFinFeeDetailService() {
-		return finFeeDetailService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
-	}
 }

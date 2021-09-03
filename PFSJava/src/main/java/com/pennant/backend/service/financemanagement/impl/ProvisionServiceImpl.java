@@ -137,12 +137,12 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 	}
 
 	@Override
+	public Provision getProvisionByFinId(long finID) {
+		return provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
+	}
 
-	public Provision getProvisionById(String finReference, TableType tableType) {
-		Provision provision = provisionDAO.getProvisionByFinId(finReference, tableType, false);
-
-	public Provision getProvisionById(long finID, TableType tableType) {
-		Provision provision = provisionDAO.getProvisionById(finID, tableType, false);
+	public Provision getProvisionById(long id, TableType tableType) {
+		Provision provision = provisionDAO.getProvisionById(id, tableType, false);
 
 		if (provision != null) {
 			provision.setProvisionAmounts(provisionDAO.getProvisionAmounts(provision.getId(), tableType));
@@ -150,8 +150,8 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		return provision;
 	}
 
-	public Provision getApprovedProvisionById(String id) {
-		return provisionDAO.getProvisionByFinId(id, TableType.AVIEW, true);
+	public Provision getApprovedProvisionById(long finID) {
+		return provisionDAO.getProvisionByFinId(finID, TableType.AVIEW, true);
 	}
 
 	@Override
@@ -375,49 +375,47 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
 		Provision provision = (Provision) auditHeader.getAuditDetail().getModelData();
-		FinanceDetail financeDetail = provision.getFinanceDetail();
-		FinScheduleData schdule = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = schdule.getFinanceMain();
+		FinanceDetail fd = provision.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
 		String auditTranType = "";
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-			if (financeMain.isWorkflow()) {
+			if (fm.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
 
 		// Finance Document Details
-		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
-			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(financeDetail, auditTranType, method));
+		if (fd.getDocumentDetailsList() != null && fd.getDocumentDetailsList().size() > 0) {
+			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(fd, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
 		}
 
 		// Finance Check List Details
 		// =======================================
-		List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
+		List<FinanceCheckListReference> financeCheckList = fd.getFinanceCheckList();
 
 		if (StringUtils.equals(method, "saveOrUpdate")) {
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(
-						checkListDetailService.getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
+				auditDetails.addAll(checkListDetailService.getAuditDetail(auditDetailMap, fd, auditTranType, method));
 			}
 		} else {
 			String tableType = "_Temp";
-			if (PennantConstants.RECORD_TYPE_DEL.equals(schdule.getFinanceMain().getRecordType())) {
+			if (PennantConstants.RECORD_TYPE_DEL.equals(schdData.getFinanceMain().getRecordType())) {
 				tableType = "";
 			}
 
-			String finReference = schdule.getFinReference();
-			financeCheckList = checkListDetailService.getCheckListByFinRef(finReference, tableType);
-			financeDetail.setFinanceCheckList(financeCheckList);
+			long finID = fm.getFinID();
+			financeCheckList = checkListDetailService.getCheckListByFinRef(finID, tableType);
+			fd.setFinanceCheckList(financeCheckList);
 
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(
-						checkListDetailService.getAuditDetail(auditDetailMap, financeDetail, auditTranType, method));
+				auditDetails.addAll(checkListDetailService.getAuditDetail(auditDetailMap, fd, auditTranType, method));
 			}
 		}
 
-		financeDetail.setAuditDetailMap(auditDetailMap);
+		fd.setAuditDetailMap(auditDetailMap);
 		auditHeader.getAuditDetail().setModelData(provision);
 		auditHeader.setAuditDetails(auditDetails);
 		logger.debug("Leaving ");

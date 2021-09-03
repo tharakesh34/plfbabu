@@ -39,7 +39,7 @@ public interface ProvisionService {
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
-	Provision getApprovedProvisionById(String id);
+	Provision getProvisionByFinId(long finID);
 
 	AuditHeader delete(AuditHeader auditHeader);
 
@@ -49,7 +49,7 @@ public interface ProvisionService {
 
 	FinanceProfitDetail getProfitDetailById(long finID);
 
-	Provision getProvisionById(long finID, TableType tableType);
+	Provision getProvisionById(long id, TableType tableType);
 
 	List<ProvisionAmount> getProvisionAmounts(long id, TableType mainTab);
 

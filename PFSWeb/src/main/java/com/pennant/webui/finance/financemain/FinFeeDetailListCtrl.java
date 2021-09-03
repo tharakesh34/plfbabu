@@ -1051,7 +1051,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 			if (!aFinScheduleData.getFinanceMain().isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
 				List<FinFeeDetail> finFeeDetails = this.finFeeDetailService
-						.getFinFeeDetailById(aFinScheduleData.getFinanceMain().getFinReference(), isWif, "_Temp");
+						.getFinFeeDetailById(aFinScheduleData.getFinanceMain().getFinID(), isWif, "_Temp");
 
 				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 					for (FinFeeDetail feeDetail : finFeeDetails) {

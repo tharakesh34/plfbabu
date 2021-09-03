@@ -33,15 +33,15 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface FinanceMainService {
-	FinanceMain getFinanceMainById(String id, boolean isWIF);
+	FinanceMain getFinanceMainById(long finID, boolean isWIF);
 
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 
-	int getFinanceCountById(String finReference, long mandateID);
+	int getFinanceCountById(long finID, long mandateID);
 
-	int loanMandateSwapping(String finReference, long newMandateId, String repayMethod, String type);
+	int loanMandateSwapping(long finID, long newMandateId, String repayMethod, String type);
 
-	int getFinanceCountById(String finReference, boolean isWIF);
+	int getFinanceCountById(long finID, boolean isWIF);
 
 	int updateFinanceBasicDetails(FinanceMain financeMain);
 
@@ -51,26 +51,26 @@ public interface FinanceMainService {
 
 	List<Long> getFinReferencesByMandateId(long mandateId);
 
-	List<String> getFinReferencesByCustID(long custId, String finActiveStatus);
+	List<Long> getFinReferencesByCustID(long custId, String finActiveStatus);
 
-	List<String> getFinanceMainbyCustId(long custID, String type);
+	List<Long> getFinanceMainbyCustId(long custID, String type);
 
-	FinanceMain getFinanceMainByFinRef(String finRefernce);
+	FinanceMain getFinanceMainByFinRef(long finID);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
-	FinanceMain getFinanceByFinReference(String reference, String type);
+	FinanceMain getFinanceByFinReference(long finID, String type);
 
-	String getFinanceTypeFinReference(String reference, String type);
+	String getFinanceTypeFinReference(long finID, String type);
 
-	ErrorDetail rescheduleValidation(Date receiptDate, String finReference, Date startDate);
+	ErrorDetail rescheduleValidation(Date receiptDate, long finID, Date startDate);
 
-	long getLoanWorkFlowIdByFinRef(String loanReference, String type);
+	long getLoanWorkFlowIdByFinRef(long finID, String type);
 
-	FinanceMain getFinanceMain(String finReference, String[] columns, String type);
+	FinanceMain getFinanceMain(long finID, String[] columns, String type);
 
-	Date getClosedDateByFinRef(String finReference);
+	Date getClosedDateByFinRef(long finID);
 
-	Date getFinClosedDate(String finReference);
+	Date getFinClosedDate(long finID);
 
 }
