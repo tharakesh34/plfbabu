@@ -41,6 +41,7 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 
 	private static final long serialVersionUID = -1472467289111692722L;
 
+	private long finID;
 	private String finReference;
 	private String custCIF;
 	private String custShrtName;
@@ -137,6 +138,14 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 
 	public void setId(String id) {
 		this.finReference = id;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

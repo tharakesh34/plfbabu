@@ -55,6 +55,7 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 	private byte[] endUse;
 	private SynopsisDetails befImage;
 	private LoggedInUser userDetails;
+	private long finID;
 	private String finReference;
 	private String particulars;
 
@@ -95,6 +96,14 @@ public class SynopsisDetails extends AbstractWorkflowEntity {
 
 	public void setUserDetails(LoggedInUser userDetails) {
 		this.userDetails = userDetails;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PSLDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-06-2018    														*
- *                                                                  						*
- * Modified Date    :  20-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PSLDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-06-2018 * * Modified
+ * Date : 20-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.finance.financialSummary.impl;
@@ -47,8 +29,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.financialSummary.SynopsisDetailsDAO;
 import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
@@ -70,35 +50,35 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 	}
 
 	@Override
-	public SynopsisDetails getSynopsisDetails(String finReference) {
+	public SynopsisDetails getSynopsisDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" T1.Id, T1.FinReference, T1.CustomerBackground, T1.DetailedBusinessProfile");
-		sql.append(", T1.DetailsofGroupCompaniesIfAny, T1.PdDetails, T1.MajorProduct, T1.OtherRemarks");
-		sql.append(", T1.CmtOnCollateralDtls, T1.EndUse, T1.Version, T1.LastMntBy, T1.LastMntOn");
-		sql.append(", T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId");
-		sql.append(", T1.NextTaskId, T1.RecordType, T1.WorkflowId");
-		sql.append(" From SynopsisDetails_Temp T1");
-		sql.append(" Left Join FinanceMain T2 on T2.FinReference = T1.FinReference");
-		sql.append(" Where T1.FinReference = ?");
+		sql.append(" t1.Id, t2.FinID, t2.FinReference, t1.CustomerBackground, t1.DetailedBusinessProfile");
+		sql.append(", t1.DetailsofGroupCompaniesIfAny, t1.PdDetails, t1.MajorProduct, t1.OtherRemarks");
+		sql.append(", t1.CmtOnCollateralDtls, t1.EndUse, t1.Version, t1.LastMntBy, t1.LastMntOn");
+		sql.append(", t1.RecordStatus, t1.RoleCode, t1.NextRoleCode, t1.TaskId");
+		sql.append(", t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" From SynopsisDetails_Temp t1");
+		sql.append(" Left Join FinanceMain t2 on t2.FinID = t1.FinID");
+		sql.append(" Where T2.FinID = ?");
 		sql.append(" Union All");
-		sql.append(" Select T1.Id, T1.FinReference, T1.CustomerBackground, T1.DetailedBusinessProfile");
-		sql.append(", T1.DetailsofGroupCompaniesIfAny, T1.PdDetails, T1.MajorProduct, T1.OtherRemarks");
-		sql.append(", T1.CmtOnCollateralDtls, T1.EndUse, T1.Version, T1.LastMntBy, T1.LastMntOn");
-		sql.append(", T1.RecordStatus, T1.RoleCode, T1.NextRoleCode, T1.TaskId");
-		sql.append(", T1.NextTaskId, T1.RecordType, T1.WorkflowId");
-		sql.append(" FROM  SynopsisDetails T1");
-		sql.append(" Left Join FinanceMain T2 ON T2.finreference =  T1.finreference");
-		sql.append(" Where not exists (Select 1 From SynopsisDetails_TEMP Where Id = T1.Id)");
-		sql.append(" and T1.FinReference = ?");
+		sql.append(" Select t1.Id, t2.FinID, t2.FinReference, t1.CustomerBackground, t1.DetailedBusinessProfile");
+		sql.append(", t1.DetailsofGroupCompaniesIfAny, t1.PdDetails, t1.MajorProduct, t1.OtherRemarks");
+		sql.append(", t1.CmtOnCollateralDtls, t1.EndUse, t1.Version, t1.LastMntBy, t1.LastMntOn");
+		sql.append(", t1.RecordStatus, t1.RoleCode, t1.NextRoleCode, t1.TaskId");
+		sql.append(", t1.NextTaskId, t1.RecordType, t1.WorkflowId");
+		sql.append(" From SynopsisDetails t1");
+		sql.append(" Left Join FinanceMain t2 on t2.FinID =  t1.FinID");
+		sql.append(" Where not exists (Select 1 From SynopsisDetails_Temp Where Id = T1.Id)");
+		sql.append(" and T2.FinID = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, finReference },
-					(rs, i) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				SynopsisDetails sd = new SynopsisDetails();
 
-				sd.setId(JdbcUtil.getLong(rs.getLong("Id")));
+				sd.setId(rs.getLong("Id"));
+				sd.setFinID(JdbcUtil.getLong(rs.getLong("FinID")));
 				sd.setFinReference(rs.getString("FinReference"));
 				sd.setCustomerBackGround(rs.getBytes("CustomerBackground"));
 				sd.setDetailedBusinessProfile(rs.getBytes("DetailedBusinessProfile"));
@@ -120,112 +100,126 @@ public class SynopsisDetailsDAOImpl extends SequenceDao<SynopsisDetails> impleme
 				sd.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return sd;
-			});
+			}, finID, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Record is not found in SynopsisDetails and SynopsisDetails_Temp for the specified FinReference >> {}",
-					finReference);
+			//
 		}
 
 		return null;
 	}
 
 	@Override
-	public String save(SynopsisDetails synopsisDetails, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		if (synopsisDetails.getId() == Long.MIN_VALUE) {
-			synopsisDetails.setId(getNextValue("SeqSynopsisDetails"));
-			logger.debug("get NextID:" + synopsisDetails.getId());
+	public String save(SynopsisDetails sd, TableType tableType) {
+		if (sd.getId() == Long.MIN_VALUE) {
+			sd.setId(getNextValue("SeqSynopsisDetails"));
 		}
 
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into SynopsisDetails");
+		StringBuilder sql = new StringBuilder("Insert Into SynopsisDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"(id, finReference, customerBackGround, detailedBusinessProfile, detailsofGroupCompaniesIfAny, pdDetails, majorProduct, otherRemarks");
-		sql.append(" ,CmtOnCollateralDtls,EndUse");
-		sql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(
-				" :id, :finReference, :customerBackGround, :detailedBusinessProfile, :detailsofGroupCompaniesIfAny, :pdDetails, :majorProduct, :otherRemarks");
-		sql.append(" ,:CmtOnCollateralDtls,:EndUse");
-		sql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(" (Id, FinID, FinReference, CustomerBackGround, DetailedBusinessProfile");
+		sql.append(", DetailsofGroupCompaniesIfAny, PdDetails, MajorProduct, OtherRemarks");
+		sql.append(", CmtOnCollateralDtls, EndUse, Version, LastMntBy, LastMntOn, RecordStatus");
+		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(synopsisDetails);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, sd.getId());
+				ps.setLong(index++, sd.getFinID());
+				ps.setString(index++, sd.getFinReference());
+				ps.setBytes(index++, sd.getCustomerBackGround());
+				ps.setBytes(index++, sd.getDetailedBusinessProfile());
+				ps.setBytes(index++, sd.getDetailsofGroupCompaniesIfAny());
+				ps.setBytes(index++, sd.getPdDetails());
+				ps.setBytes(index++, sd.getMajorProduct());
+				ps.setBytes(index++, sd.getOtherRemarks());
+				ps.setBytes(index++, sd.getCmtOnCollateralDtls());
+				ps.setBytes(index++, sd.getEndUse());
+				ps.setInt(index++, sd.getVersion());
+				ps.setLong(index++, sd.getLastMntBy());
+				ps.setTimestamp(index++, sd.getLastMntOn());
+				ps.setString(index++, sd.getRecordStatus());
+				ps.setString(index++, sd.getRoleCode());
+				ps.setString(index++, sd.getNextRoleCode());
+				ps.setString(index++, sd.getTaskId());
+				ps.setString(index++, sd.getNextTaskId());
+				ps.setString(index++, sd.getRecordType());
+				ps.setLong(index++, sd.getWorkflowId());
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(synopsisDetails.getFinReference());
+		return String.valueOf(sd.getFinReference());
 	}
 
 	@Override
-	public void update(SynopsisDetails synopsisDetails, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update SynopsisDetails");
+	public void update(SynopsisDetails sd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Update SynopsisDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(
-				"  set customerBackGround = :customerBackGround, detailedBusinessProfile = :detailedBusinessProfile, detailsofGroupCompaniesIfAny = :detailsofGroupCompaniesIfAny");
-		sql.append(", pdDetails = :pdDetails, majorProduct = :majorProduct, otherRemarks = :otherRemarks");
-		sql.append(" ,CmtOnCollateralDtls=:CmtOnCollateralDtls,EndUse=:EndUse");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		sql.append(",RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where finReference = :finReference ");
-		//	sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set CustomerBackGround = ?, DetailedBusinessProfile = ?, DetailsofGroupCompaniesIfAny = ?");
+		sql.append(", PdDetails = ?, MajorProduct = ?, OtherRemarks = ?, CmtOnCollateralDtls = ?, EndUse = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(synopsisDetails);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setBytes(index++, sd.getCustomerBackGround());
+			ps.setBytes(index++, sd.getDetailedBusinessProfile());
+			ps.setBytes(index++, sd.getDetailsofGroupCompaniesIfAny());
+			ps.setBytes(index++, sd.getPdDetails());
+			ps.setBytes(index++, sd.getMajorProduct());
+			ps.setBytes(index++, sd.getOtherRemarks());
+			ps.setBytes(index++, sd.getCmtOnCollateralDtls());
+			ps.setBytes(index++, sd.getEndUse());
+			ps.setTimestamp(index++, sd.getLastMntOn());
+			ps.setString(index++, sd.getRecordStatus());
+			ps.setString(index++, sd.getRoleCode());
+			ps.setString(index++, sd.getNextRoleCode());
+			ps.setString(index++, sd.getTaskId());
+			ps.setString(index++, sd.getNextTaskId());
+			ps.setString(index++, sd.getRecordType());
+			ps.setLong(index++, sd.getWorkflowId());
+
+			ps.setLong(index++, sd.getFinID());
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void delete(SynopsisDetails synopsisDetails, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from SynopsisDetails");
+	public void delete(SynopsisDetails sd, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Delete From SynopsisDetails");
 		sql.append(tableType.getSuffix());
-		sql.append(" where finReference = :finReference ");
-		//sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Where FinID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(synopsisDetails);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, sd.getFinID());
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 }

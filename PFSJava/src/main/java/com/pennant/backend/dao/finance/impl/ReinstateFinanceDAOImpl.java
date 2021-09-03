@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReinstateFinanceDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReinstateFinanceDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -48,11 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.ReinstateFinanceDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -62,6 +39,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ReinstateFinance model</b> class.<br>
@@ -78,376 +56,359 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new ReinstateFinance
-	 * 
-	 * @return ReinstateFinance
-	 */
 	@Override
 	public ReinstateFinance getReinstateFinance() {
-		logger.debug("Entering");
-		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("ReinstateFinance");
-		ReinstateFinance reinstateFinance = new ReinstateFinance();
-		if (workFlowDetails != null) {
-			reinstateFinance.setWorkflowId(workFlowDetails.getWorkFlowId());
+		WorkFlowDetails wfd = WorkFlowUtil.getWorkFlowDetails("ReinstateFinance");
+		ReinstateFinance rf = new ReinstateFinance();
+
+		if (wfd != null) {
+			rf.setWorkflowId(wfd.getWorkFlowId());
 		}
-		logger.debug("Leaving");
-		return reinstateFinance;
+
+		return rf;
 	}
 
-	/**
-	 * This method get the module from method getReinstateFinance() and set the new record flag as true and return
-	 * ReinstateFinance()
-	 * 
-	 * @return ReinstateFinance
-	 */
 	@Override
 	public ReinstateFinance getNewReinstateFinance() {
-		logger.debug("Entering");
-		ReinstateFinance reinstateFinance = getReinstateFinance();
-		reinstateFinance.setNewRecord(true);
-		logger.debug("Leaving");
-		return reinstateFinance;
+		ReinstateFinance rf = getReinstateFinance();
+
+		rf.setNewRecord(true);
+
+		return rf;
 	}
 
-	/**
-	 * Fetch the Record ReinstateFinance Details details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return ReinstateFinance
-	 */
 	@Override
-	public ReinstateFinance getReinstateFinanceById(String finReference, String type) {
-		logger.debug("Entering");
-		ReinstateFinance reinstateFinance = new ReinstateFinance();
-		reinstateFinance.setFinReference(finReference);
-		StringBuilder selectSql = new StringBuilder();
+	public ReinstateFinance getReinstateFinanceById(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference");
 
-		selectSql.append(" Select FinReference,");
 		if (type.contains("View")) {
-			selectSql.append(" FinPreApprovedRef,");
+			sql.append(", FinPreApprovedRef");
 		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" FROM  ReinstateFinance");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
-		RowMapper<ReinstateFinance> typeRowMapper = BeanPropertyRowMapper.newInstance(ReinstateFinance.class);
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ReinstateFinance");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			reinstateFinance = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ReinstateFinance rf = new ReinstateFinance();
+
+				rf.setFinID(rs.getLong("FinID"));
+				rf.setFinReference(rs.getString("FinReference"));
+
+				if (type.contains("View")) {
+					rf.setFinPreApprovedRef(rs.getString("FinPreApprovedRef"));
+				}
+
+				rf.setVersion(rs.getInt("Version"));
+				rf.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				rf.setLastMntBy(rs.getLong("LastMntBy"));
+				rf.setRecordStatus(rs.getString("RecordStatus"));
+				rf.setRoleCode(rs.getString("RoleCode"));
+				rf.setNextRoleCode(rs.getString("NextRoleCode"));
+				rf.setTaskId(rs.getString("TaskId"));
+				rf.setNextTaskId(rs.getString("NextTaskId"));
+				rf.setRecordType(rs.getString("RecordType"));
+				rf.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return rf;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error("Exception: ", e);
-			reinstateFinance = null;
+			//
 		}
-		logger.debug("Leaving");
-		return reinstateFinance;
+
+		return null;
 	}
 
 	@Override
-	public ReinstateFinance getFinanceDetailsById(String finReference) {
-		logger.debug("Entering");
+	public ReinstateFinance getFinanceDetailsById(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" t1.FinID, t1.FinReference, t2.CustCIF, t2.CustShrtName, t1.FinType");
+		sql.append(", t3.FinTypeDesc LovDescFinTypeName, t1.FinBranch, t4.BranchDesc LovDescFinBranchName, t1.FinCcy");
+		sql.append(", FinAmount, DownPayment, FinStartDate, MaturityDate, TotalProfit, t7.UsrLogin RejectedBy");
+		sql.append(", t1.LastMntOn RejectedOn, t9.Activity RejectStatus, t9.Remarks RejectRemarks");
+		sql.append(", t1.ScheduleMethod, t1.GrcPeriodEndDate, t1.AllowGrcPeriod, t1.ProfitDaysBasis, t3.Product");
+		sql.append(" From RejectFinanceMain t1");
+		sql.append(" Left Outer Join Customers t2 on t1.CustID = t2.CustID");
+		sql.append(" Left Outer Join RMTFinanceTypes t3 on t1.FinType = t3.FinType");
+		sql.append(" Left Outer Join RMTBranches t4 on t1.FinBranch = t4.BranchCode");
+		sql.append(" Left Outer Join BMTRejectCodes t6 on t1.RejectStatus = t6.RejectCode");
+		sql.append(" Left Outer Join SecUsers t7 on t1.LastMntBy = t7.UsrID");
+		sql.append(" Left Outer Join (Select Reference, max(Id) as Id From ReasonHeader group by Reference) t8");
+		sql.append(" on T8.Reference = t1.FinReference");
+		sql.append(" Left Join ReasonHeader t9 on t9.Id = t8.Id and t9.Reference = T1.FinReference");
+		sql.append(" Where FinID = ?");
 
-		ReinstateFinance reinstateFinance = new ReinstateFinance();
-		reinstateFinance.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" SELECT T1.FinReference, T2.CustCIF, T2.CustShrtName, T1.FinType, ");
-		selectSql.append(
-				" T3.FinTypeDesc LovDescFinTypeName, T1.FinBranch, T4.BranchDesc LovDescFinBranchName, T1.FinCcy,  ");
-		selectSql.append(
-				" FinAmount, DownPayment, FinStartDate, MaturityDate, TotalProfit, T7.UsrLogin RejectedBy, T1.LastMntOn RejectedOn, ");
-		selectSql.append(" T9.Activity RejectStatus, T9.Remarks RejectRemarks ");
-		selectSql
-				.append(" ,T1.ScheduleMethod, T1.GrcPeriodEndDate, T1.AllowGrcPeriod, T1.ProfitDaysBasis, T3.Product ");
-		selectSql.append(" From RejectFinanceMain T1 LEFT OUTER JOIN  ");
-		selectSql.append(" Customers T2 ON T1.CustID = T2.CustID LEFT OUTER JOIN  ");
-		selectSql.append(" RMTFinanceTypes T3 ON T1.FinType = T3.FinType LEFT OUTER JOIN  ");
-		selectSql.append(" RMTBranches T4 ON T1.FinBranch = T4.BranchCode LEFT OUTER JOIN  ");
-		selectSql.append(" BMTRejectCodes T6 ON T1.RejectStatus = T6.RejectCode LEFT OUTER JOIN  ");
-		selectSql.append(" SecUsers T7 ON T1.LastMntBy = T7.UsrID LEFT OUTER JOIN");
-		selectSql.append(
-				" (SELECT REFERENCE,MAX(ID) AS ID FROM REASONHEADER GROUP BY REFERENCE)  T8 ON T8.REFERENCE = T1.FINREFERENCE");
-		selectSql.append(
-				" LEFT JOIN REASONHEADER T9 ON T9.ID=T8.ID AND T9.REFERENCE = T1.FINREFERENCE Where FinReference = :FinReference");
-
-		SqlParameterSource sqlParameterSource = new BeanPropertySqlParameterSource(reinstateFinance);
-		RowMapper<ReinstateFinance> rowMapper = BeanPropertyRowMapper.newInstance(ReinstateFinance.class);
-
-		logger.debug("Leaving");
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), sqlParameterSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ReinstateFinance rf = new ReinstateFinance();
+
+				rf.setFinID(rs.getLong("FinID"));
+				rf.setFinReference(rs.getString("FinReference"));
+				rf.setCustCIF(rs.getString("CustCIF"));
+				rf.setCustShrtName(rs.getString("CustShrtName"));
+				rf.setFinType(rs.getString("FinType"));
+				rf.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
+				rf.setFinBranch(rs.getString("FinBranch"));
+				rf.setLovDescFinBranchName(rs.getString("LovDescFinBranchName"));
+				rf.setFinCcy(rs.getString("FinCcy"));
+				rf.setFinAmount(rs.getBigDecimal("FinAmount"));
+				rf.setDownPayment(rs.getBigDecimal("DownPayment"));
+				rf.setFinStartDate(rs.getDate("FinStartDate"));
+				rf.setMaturityDate(rs.getDate("MaturityDate"));
+				rf.setTotalProfit(rs.getBigDecimal("TotalProfit"));
+				rf.setRejectedBy(rs.getString("RejectedBy"));
+				rf.setRejectedOn(rs.getDate("RejectedOn"));
+				rf.setRejectStatus(rs.getString("RejectStatus"));
+				rf.setRejectRemarks(rs.getString("RejectRemarks"));
+				rf.setScheduleMethod(rs.getString("ScheduleMethod"));
+				rf.setGrcPeriodEndDate(rs.getDate("GrcPeriodEndDate"));
+				rf.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
+				rf.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+				rf.setProduct(rs.getString("Product"));
+
+				return rf;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			return null;
+			//
 		}
+
+		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the BMTReinstateFinances or BMTReinstateFinances_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete ReinstateFinance Details by key ReinstateFinanceLevel
-	 * 
-	 * @param ReinstateFinance
-	 *            Details (reinstateFinance)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(ReinstateFinance reinstateFinance, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(ReinstateFinance rf, String type) {
+		StringBuilder sql = new StringBuilder("Delete From ReinstateFinance");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From ReinstateFinance");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where  FinReference =:FinReference ");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, rf.getFinID());
+			});
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
+
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into BMTReinstateFinances or BMTReinstateFinances_Temp.
-	 * 
-	 * save ReinstateFinance Details
-	 * 
-	 * @param ReinstateFinance
-	 *            Details (reinstateFinance)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public String save(ReinstateFinance reinstateFinance, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder();
+	public String save(ReinstateFinance rf, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into ReinstateFinance");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		insertSql.append("Insert Into ReinstateFinance");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference,");
-		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		insertSql.append(" RecordType, WorkflowId)");
-		insertSql.append(" Values(:FinReference, ");
-		insertSql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, ");
-		insertSql.append(" :RecordType, :WorkflowId)");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("Leaving");
-		return reinstateFinance.getFinReference();
+			ps.setLong(index++, rf.getFinID());
+			ps.setString(index++, rf.getFinReference());
+			ps.setInt(index++, rf.getVersion());
+			ps.setLong(index++, rf.getLastMntBy());
+			ps.setTimestamp(index++, rf.getLastMntOn());
+			ps.setString(index++, rf.getRecordStatus());
+			ps.setString(index++, rf.getRoleCode());
+			ps.setString(index++, rf.getNextRoleCode());
+			ps.setString(index++, rf.getTaskId());
+			ps.setString(index++, rf.getNextTaskId());
+			ps.setString(index++, rf.getRecordType());
+			ps.setLong(index++, rf.getWorkflowId());
+		});
+
+		return rf.getFinReference();
 	}
 
-	/**
-	 * This method updates the Record BMTReinstateFinances or BMTReinstateFinances_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004. update ReinstateFinance Details by key ReinstateFinanceLevel and
-	 * Version
-	 * 
-	 * @param ReinstateFinance
-	 *            Details (reinstateFinance)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(ReinstateFinance reinstateFinance, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-		StringBuilder updateSql = new StringBuilder();
+	public void update(ReinstateFinance rf, String type) {
+		StringBuilder sql = new StringBuilder("Update ReinstateFinance");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
 
-		updateSql.append("Update ReinstateFinance");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		updateSql.append(
-				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		updateSql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append("  Where FinReference =:FinReference ");
 		if (!type.endsWith("_Temp")) {
-			updateSql.append(" AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setInt(index++, rf.getVersion());
+			ps.setLong(index++, rf.getLastMntBy());
+			ps.setTimestamp(index++, rf.getLastMntOn());
+			ps.setString(index++, rf.getRecordStatus());
+			ps.setString(index++, rf.getRoleCode());
+			ps.setString(index++, rf.getNextRoleCode());
+			ps.setString(index++, rf.getTaskId());
+			ps.setString(index++, rf.getNextTaskId());
+			ps.setString(index++, rf.getRecordType());
+			ps.setLong(index++, rf.getWorkflowId());
+
+			ps.setLong(index++, rf.getFinID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, rf.getVersion() - 1);
+			}
+
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	//Reinstating Finance and Child Details From Rejected Details
-
 	@Override
-	public void processReInstateFinance(FinanceMain financeMain) {
-		logger.debug("Entering");
-
-		//Saving finance  child details into finance related tables.
-
-		String finRef = financeMain.getFinReference();
+	public void processReInstateFinance(FinanceMain fm) {
+		long finID = fm.getFinID();
 
 		saveFinanceChildDetail(
-				"INSERT INTO DocumentDetails_Temp SELECT * FROM  RejectDocumentDetails WHERE ReferenceId = :FinReference",
-				finRef);
-		saveFinanceChildDetail("FinAgreementDetail_Temp", "RejectFinAgreementDetail", finRef);
-		saveFinanceChildDetail("FinanceEligibilityDetail", "RejectFinanceEligibilityDetail", finRef);
-		saveFinanceChildDetail("FinanceScoreHeader", "RejectFinanceScoreHeader", finRef);
-		saveFinanceChildDetail("FinContributorHeader_Temp", "RejectFinContributorHeader", finRef);
-		saveFinanceChildDetail("FinContributorDetail_Temp", "RejectFinContributorDetail", finRef);
-		saveFinanceChildDetail("FinDisbursementDetails_Temp", "RejectFinDisbursementdetails", finRef);
-		saveFinanceChildDetail("FinRepayinstruction_Temp", "RejectFinRepayinstruction", finRef);
-		saveFinanceChildDetail("FinScheduledetails_Temp", "RejectFinScheduledetails", finRef);
-		saveFinanceChildDetail("FinDedupDetail", "RejectFinDedupDetail", finRef);
-		saveFinanceChildDetail("FinBlackListDetail", "RejectFinBlackListDetail", finRef);
-		saveFinanceChildDetail("FinODPenaltyRates_Temp", "RejectFinODPenaltyRates", finRef);
-		saveFinanceChildDetail("FinFeeCharges_Temp", "RejectFinFeeCharges", finRef);
+				"Insert Into DocumentDetails_Temp Select * From  RejectDocumentDetails Where ReferenceId = ?",
+				fm.getFinReference());
+		saveFinanceChildDetail("FinAgreementDetail_Temp", "RejectFinAgreementDetail", finID);
+		saveFinanceChildDetail("FinanceEligibilityDetail", "RejectFinanceEligibilityDetail", finID);
+		saveFinanceChildDetail("FinanceScoreHeader", "RejectFinanceScoreHeader", finID);
+		saveFinanceChildDetail("FinContributorHeader_Temp", "RejectFinContributorHeader", finID);
+		saveFinanceChildDetail("FinContributorDetail_Temp", "RejectFinContributorDetail", finID);
+		saveFinanceChildDetail("FinDisbursementDetails_Temp", "RejectFinDisbursementdetails", finID);
+		saveFinanceChildDetail("FinRepayinstruction_Temp", "RejectFinRepayinstruction", finID);
+		saveFinanceChildDetail("FinScheduledetails_Temp", "RejectFinScheduledetails", finID);
+		saveFinanceChildDetail("FinDedupDetail", "RejectFinDedupDetail", finID);
+		saveFinanceChildDetail("FinBlackListDetail", "RejectFinBlackListDetail", finID);
+		saveFinanceChildDetail("FinODPenaltyRates_Temp", "RejectFinODPenaltyRates", finID);
+		saveFinanceChildDetail("FinFeeCharges_Temp", "RejectFinFeeCharges", finID);
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(
-				" INSERT INTO FinanceScoreDetail SELECT D.HeaderID,  D.SubGroupID, D.RuleId, D.MaxScore, D.ExecScore ");
-		insertSql
-				.append(" FROM RejectFinanceScoreDetail D INNER JOIN FinanceScoreHeader H ON D.HeaderID = H.HeaderId ");
-		insertSql.append(" WHERE FinReference = :FinReference ");
-		saveFinanceChildDetail(insertSql.toString(), finRef);
-		insertSql.delete(0, insertSql.length());
+		StringBuilder sql = new StringBuilder("Insert Into FinanceScoreDetail");
+		sql.append(" Select d.HeaderId, d.SubGroupId, d.RuleId, d.MaxScore, d.ExecScore");
+		sql.append(" From RejectFinanceScoreDetail d Inner Join FinanceScoreHeader h on d.HeaderId = h.HeaderId");
+		sql.append(" Where FinID = ?");
+		saveFinanceChildDetail(sql.toString(), finID);
+		sql.delete(0, sql.length());
 
-		//Deleting finance and child details from Reject Tables.
+		deleteChildDetailsByQuery("Delete From RejectDocumentDetails Where ReferenceId = ?", fm.getFinReference());
+		deleteChildDetailsByTableName("RejectFinAgreementDetail", finID);
+		deleteChildDetailsByTableName("RejectFinanceEligibilityDetail", finID);
+		deleteChildDetailsByTableName("RejectFinContributorDetail", finID);
+		deleteChildDetailsByTableName("RejectFinContributorHeader", finID);
+		deleteChildDetailsByTableName("RejectFinDisbursementdetails", finID);
+		deleteChildDetailsByTableName("RejectFinRepayinstruction", finID);
+		deleteChildDetailsByTableName("RejectFinScheduledetails", finID);
+		deleteChildDetailsByTableName("RejectFinDedupDetail", finID);
+		deleteChildDetailsByTableName("RejectFinBlackListDetail", finID);
+		deleteChildDetailsByTableName("RejectFinODPenaltyRates", finID);
+		deleteChildDetailsByTableName("RejectFinFeeCharges", finID);
 
-		deleteChildDetailsByQuery("Delete FROM  RejectDocumentDetails WHERE ReferenceId = :FinReference", finRef);
-		deleteChildDetailsByTableName("RejectFinAgreementDetail", finRef);
-		deleteChildDetailsByTableName("RejectFinanceEligibilityDetail", finRef);
-		deleteChildDetailsByTableName("RejectFinContributorDetail", finRef);
-		deleteChildDetailsByTableName("RejectFinContributorHeader", finRef);
-		deleteChildDetailsByTableName("RejectFinDisbursementdetails", finRef);
-		deleteChildDetailsByTableName("RejectFinRepayinstruction", finRef);
-		deleteChildDetailsByTableName("RejectFinScheduledetails", finRef);
-		deleteChildDetailsByTableName("RejectFinDedupDetail", finRef);
-		deleteChildDetailsByTableName("RejectFinBlackListDetail", finRef);
-		deleteChildDetailsByTableName("RejectFinODPenaltyRates", finRef);
-		deleteChildDetailsByTableName("RejectFinFeeCharges", finRef);
+		StringBuilder sql1 = new StringBuilder("Delete From RejectFinanceScoreDetail Where HeaderId in (");
+		sql1.append(" Select HeaderId From RejectFinanceScoreHeader");
+		sql1.append(" Where FinID = ?)");
+		deleteChildDetailsByQuery(sql1.toString(), finID);
+		sql1.delete(0, sql.length());
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From RejectFinanceScoreDetail Where HeaderID in (");
-		deleteSql.append(" SELECT HeaderID FROM RejectFinanceScoreHeader ");
-		deleteSql.append(" WHERE FinReference = :FinReference ) ");
-		deleteChildDetailsByQuery(deleteSql.toString(), finRef);
-		deleteSql.delete(0, insertSql.length());
-
-		deleteChildDetailsByTableName("RejectFinanceScoreHeader", finRef);
-
-		logger.debug("Leaving");
+		deleteChildDetailsByTableName("RejectFinanceScoreHeader", finID);
 	}
 
-	/**
-	 * This method insert new Records into FinanceMain_Temp.
-	 * 
-	 * save Finance Main Detail
-	 * 
-	 * @param Finance
-	 *            Main Detail (financeMain)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-	private void saveFinanceChildDetail(String parentTable, String childTable, String finReference) {
-		logger.debug("Entering");
+	private void saveFinanceChildDetail(String parentTable, String childTable, long finID) {
+		StringBuilder sql = new StringBuilder("Insert Into");
+		sql.append(parentTable);
+		sql.append("Select * From");
+		sql.append(childTable);
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource mapSource = new MapSqlParameterSource();
-		mapSource.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder insertSql = new StringBuilder();
-		insertSql.append(" INSERT INTO ");
-		insertSql.append(parentTable);
-		insertSql.append(" SELECT * FROM ");
-		insertSql.append(childTable);
-		insertSql.append(" WHERE FinReference = :FinReference ");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		this.jdbcTemplate.update(insertSql.toString(), mapSource);
-		logger.debug("Leaving");
+			ps.setLong(index++, finID);
+		});
 	}
 
-	private void saveFinanceChildDetail(String insertSql, String finReference) {
-		logger.debug("Entering");
+	private void saveFinanceChildDetail(String sql, String finReference) {
+		logger.debug(Literal.SQL + sql);
 
-		MapSqlParameterSource mapSource = new MapSqlParameterSource();
-		mapSource.addValue("FinReference", finReference);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		this.jdbcTemplate.update(insertSql, mapSource);
-		logger.debug("Leaving");
+			ps.setString(index++, finReference);
+		});
 	}
 
-	private void deleteChildDetailsByTableName(String tableName, String finReference) {
-		logger.debug("Entering");
+	private void saveFinanceChildDetail(String sql, long finID) {
+		logger.debug(Literal.SQL + sql);
 
-		MapSqlParameterSource mapSource = new MapSqlParameterSource();
-		mapSource.addValue("FinReference", finReference);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append(" Delete From ");
-		deleteSql.append(tableName);
-		deleteSql.append(" WHERE FinReference = :FinReference ");
-
-		this.jdbcTemplate.update(deleteSql.toString(), mapSource);
-		logger.debug("Leaving");
+			ps.setLong(index++, finID);
+		});
 	}
 
-	private void deleteChildDetailsByQuery(String deleteSql, String finReference) {
-		logger.debug("Entering");
+	private void deleteChildDetailsByTableName(String tableName, long finID) {
+		StringBuilder sql = new StringBuilder("Delete From");
+		sql.append(tableName);
+		sql.append(" Where FinID = ?");
 
-		MapSqlParameterSource mapSource = new MapSqlParameterSource();
-		mapSource.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		this.jdbcTemplate.update(deleteSql, mapSource);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+		});
 	}
 
-	/**
-	 * This method Deletes the Record from the RejectFinanceMain.
-	 * 
-	 * @param finReference
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
+	private void deleteChildDetailsByQuery(String sql, String finReference) {
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setString(index++, finReference);
+		});
+	}
+
+	private void deleteChildDetailsByQuery(String sql, long finID) {
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+		});
+	}
+
 	@Override
-	public void deleteRejectFinance(ReinstateFinance reinstateFinance) {
-		logger.debug("Entering");
+	public void deleteRejectFinance(ReinstateFinance rf) {
+		StringBuilder sql = new StringBuilder("Delete From RejectFinanceMain");
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From RejectFinanceMain ");
-		deleteSql.append(" Where  FinReference =:FinReference ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reinstateFinance);
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, rf.getFinID());
+
+		});
 	}
 }
