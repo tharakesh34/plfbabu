@@ -269,6 +269,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = rateChangeService.doValidations(fsi);
 
 		if (StringUtils.equals(UploadConstants.FRR, reqFrom)) {
@@ -294,8 +296,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return fd;
 			}
 		}
-
-		fsi.setFinID(finID);
 
 		fd = finServiceInstController.doAddRateChange(fsi, eventCode);
 
@@ -380,6 +380,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = addRepaymentService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -401,7 +403,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.doAddRepayment(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -485,6 +486,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = postponementService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -505,7 +508,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.doDefferment(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -589,6 +591,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = addTermsService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -609,7 +613,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.addTerms(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -703,6 +706,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = rmvTermsService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -722,8 +727,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return fd;
 			}
 		}
-
-		fsi.setFinID(finID);
 
 		fd = finServiceInstController.removeTerms(fsi, eventCode);
 
@@ -945,6 +948,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = recalService.doValidations(fsi);
 
 		if (auditDetail.getErrorDetails() != null) {
@@ -967,8 +972,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return fd;
 			}
 		}
-
-		fsi.setFinID(finID);
 
 		fd = finServiceInstController.doRecalculate(fsi, eventCode);
 
@@ -1053,6 +1056,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = changeProfitService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -1072,8 +1077,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return fd;
 			}
 		}
-
-		fsi.setFinID(finID);
 
 		fd = finServiceInstController.doChangeProfit(fsi, eventCode);
 
@@ -1161,6 +1164,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		fd = finServiceInstController.getFinanceDetails(fsi, eventCode);
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
@@ -1214,7 +1219,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.doAddDisbursement(fsi, fd, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -1323,8 +1327,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
-
 		fd = finServiceInstController.doChangeFrequency(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -1407,6 +1409,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = reScheduleService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -1429,7 +1433,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.doReSchedule(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -1901,6 +1904,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
+		fsi.setFinID(finID);
+
 		AuditDetail auditDetail = changeScheduleMethodService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -1921,7 +1926,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.doChangeScheduleMethod(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
@@ -2003,6 +2007,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			fd.setReturnStatus(returnStatus);
 			return fd;
 		}
+
+		fsi.setFinID(finID);
+
 		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail ed : errors) {
@@ -2013,7 +2020,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		fsi.setFinID(finID);
 		fd = finServiceInstController.doChangeGestationPeriod(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);

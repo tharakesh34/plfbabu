@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceSuspHeadDAOImpl.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-02-2012    														*
- *                                                                  						*
- * Modified Date    :  04-02-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceSuspHeadDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-02-2012 * *
+ * Modified Date : 04-02-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-02-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-02-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -133,34 +115,25 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 	}
 
 	@Override
-	public Date getFinSuspDate(String finReference) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinSuspDate");
-		sql.append(" From FinSuspHead");
-		sql.append(" Where FinReference = ? and FinIsInSusp = ?");
+	public Date getFinSuspDate(long finID) {
+		String sql = "Select FinSuspDate From FinSuspHead Where FinID = ? and FinIsInSusp = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.trace(Literal.SQL + sql);
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, 1 }, Date.class);
+			return jdbcOperations.queryForObject(sql, Date.class, finID, 1);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in FinSuspHead table for this FinReference >> {} ", finReference);
+			//
 		}
 
 		return null;
 	}
 
 	@Override
-	public List<String> getSuspFinanceList() {
-		logger.debug("Entering");
+	public List<Long> getSuspFinanceList() {
+		String sql = "Select FinID From FinSuspHead Where FinIsInSusp = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference From FinSuspHead ");
-		selectSql.append(" WHERE FinIsInSusp = 1 ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForList(selectSql.toString(), new BeanPropertySqlParameterSource(""),
-				String.class);
+		return jdbcOperations.queryForList(sql, Long.class, 1);
 	}
 
 	/**
@@ -168,10 +141,8 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 	 *
 	 * save FinanceSuspHead
 	 * 
-	 * @param FinanceSuspHead
-	 *            (financeSuspHead)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinanceSuspHead (financeSuspHead)
+	 * @param type            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -204,10 +175,8 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 	/**
 	 * This method updates the Record FinanceSuspHead . update FinanceSuspHead
 	 * 
-	 * @param FinanceSuspHead
-	 *            (financeSuspHead)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinanceSuspHead (financeSuspHead)
+	 * @param type            (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -244,10 +213,8 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 	 * This method Deletes the Record from the BMTAcademics or BMTAcademics_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Academic Details by key AcademicLevel
 	 * 
-	 * @param Academic
-	 *            Details (academic)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Academic Details (academic)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -347,24 +314,12 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 	 * This method updates the Record FinanceSuspHead Flag
 	 */
 	@Override
-	public void updateSuspFlag(String finReference) {
-		logger.debug("Entering");
+	public void updateSuspFlag(long finID) {
+		String sql = "Update FinSuspHead Set FinIsInSusp = 0  Where FinID = ?";
 
-		FinanceSuspHead suspHead = new FinanceSuspHead();
-		suspHead.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder updateSql = new StringBuilder(" Update FinSuspHead ");
-		updateSql.append(" Set FinIsInSusp = 0  Where FinReference =:FinReference");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspHead);
-		try {
-			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.debug("Exception: ", e);
-		}
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, finID);
 	}
 
 }

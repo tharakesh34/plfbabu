@@ -109,6 +109,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			String finReference = rcu.getFinReference();
 			String status = rcu.getStatus();
 			logger.info("Processing RateChange upload>> {}:", finReference);
+
 			if ("F".equals(status)) {
 				rateChangeUploadDAO.updateRateChangeDetails(rcu);
 				fail++;
@@ -121,9 +122,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			txStatus = this.transactionManager.getTransaction(txDef);
 
 			// Process Rate Change
-			FinServiceInstruction finInst = null;
+			FinServiceInstruction fsi = null;
 			try {
-				finInst = prepareFinServiceInstruction(rcu);
+				fsi = prepareFinServiceInstruction(rcu);
 			} catch (Exception e) {
 				rcu.setStatus("F");
 				rcu.setUploadStatusRemarks("Error While Preparing Service Instructions");
@@ -135,7 +136,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 			}
 
 			// validate service instruction data
-			AuditDetail auditDetail = rateChangeService.doValidations(finInst);
+			AuditDetail auditDetail = rateChangeService.doValidations(fsi);
 
 			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
 				rcu.setStatus("F");
@@ -148,12 +149,12 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			// fetch finance data
 			String eventCode = AccountingEvent.RATCHG;
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "_AView", false);
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailByRef(finReference, "_AView", false);
 
 			financeDetail.setAccountingEventCode(eventCode);
 			AuditHeader auditHeader = null;
 			try {
-				auditHeader = preFinSchdData(finInst, financeDetail);
+				auditHeader = preFinSchdData(fsi, financeDetail);
 			} catch (Exception e) {
 				txStatus = transactionManager.getTransaction(txDef);
 				rcu.setStatus("F");
@@ -366,7 +367,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			if (rcu.getFromDate() != null) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
 				List<Date> dates = new ArrayList<>();
 				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : finSchdDetails) {
@@ -394,7 +395,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			if (rcu.getToDate() != null) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
 				List<Date> dates = new ArrayList<>();
 				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : finSchdDetails) {
@@ -421,7 +422,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			if (StringUtils.equals(rcu.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
 				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 				Date befinst = DateUtility.addMonths(fm.getMaturityDate(), -1);
 				if (DateUtility.compare(rcu.getRecalFromDate(), fm.getMaturityDate()) == 0
@@ -442,7 +443,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			if (StringUtils.equals(rcu.getRecalType(), CalculationConstants.RPYCHG_TILLDATE)) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
 				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 				if (DateUtility.compare(rcu.getRecalToDate(), fm.getMaturityDate()) == 0) {
 					if (remarks.length() > 0) {
@@ -460,7 +461,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			if (StringUtils.equals(rcu.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
 				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-				FinanceDetail fd = financeDetailService.getFinSchdDetailById(rcu.getFinReference(), "_AView", false);
+				FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
 				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 				if (DateUtil.compare(rcu.getRecalFromDate(), fm.getMaturityDate()) == 0) {
 					if (remarks.length() > 0) {
@@ -529,7 +530,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			if (StringUtils.isNotBlank(rateChange.getBaseRateCode())) {
 				error = "Interest Rate Codes not available for the Schedule date.";
-				FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(rateChange.getFinReference(),
+				FinanceDetail financeDetail = financeDetailService.getFinSchdDetailByRef(rateChange.getFinReference(),
 						"_AView", false);
 				FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 				List<BaseRate> baseRatesHist = baseRateDAO.getBaseRateHistByType(rateChange.getBaseRateCode(),

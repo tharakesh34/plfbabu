@@ -6,9 +6,8 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 
 public interface RateChangeService {
 
-	FinScheduleData getRateChangeDetails(FinScheduleData finscheduleData, FinServiceInstruction finServiceInstruction,
-			String moduleDefiner);
+	FinScheduleData getRateChangeDetails(FinScheduleData schdData, FinServiceInstruction fis, String moduleDefiner);
 
-	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
+	AuditDetail doValidations(FinServiceInstruction fsi);
 
 }

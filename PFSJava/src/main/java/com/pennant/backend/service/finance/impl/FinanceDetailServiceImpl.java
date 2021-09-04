@@ -1528,19 +1528,52 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public FinanceDetail getFinSchdDetailById(long finID, String type, boolean isWIF) {
+	public FinanceDetail getFinSchdDetailByRef(String finReference, String type, boolean isWIF) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail fd = new FinanceDetail();
-
-		FinanceMain fm = financeMainDAO.getFinanceMainByID(finID, type, isWIF);
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, type, isWIF);
 
 		if (fm == null) {
 			logger.debug(Literal.LEAVING);
 			return fd;
 		}
 
+		fd.getFinScheduleData().setFinanceMain(fm);
+
+		setFinanceDetails(fd, type, isWIF);
+
+		logger.debug(Literal.LEAVING);
+		return fd;
+	}
+
+	@Override
+	public FinanceDetail getFinSchdDetailById(long finID, String type, boolean isWIF) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail fd = new FinanceDetail();
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, isWIF);
+
+		if (fm == null) {
+			logger.debug(Literal.LEAVING);
+			return fd;
+		}
+
+		fd.getFinScheduleData().setFinanceMain(fm);
+
+		setFinanceDetails(fd, type, isWIF);
+
+		logger.debug(Literal.LEAVING);
+		return fd;
+	}
+
+	private void setFinanceDetails(FinanceDetail fd, String type, boolean isWIF) {
+
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
 		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		schdData.setFinReference(finReference);
@@ -1621,8 +1654,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Overdue Penalty Rate Details
 		if (!isWIF) {
-
-			// Finance Flag Details
 			fd.setFinFlagsDetails(finFlagDetailsDAO.getFinFlagsByFinRef(finID, FinanceConstants.MODULE_NAME, type));
 
 		}
@@ -1669,8 +1700,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			fd.setCollaterals(collateralSetupList);
 			fd = setCollateralAssignments(fd, assignmentListMain, assignmentListTemp);
 		}
-
-		logger.debug(Literal.LEAVING);
 		return fd;
 	}
 
@@ -10598,138 +10627,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public List<RepayInstruction> getRepayInstructions(String finReference, String type, boolean isWIF) {
 		return repayInstructionDAO.getRepayInstructions(finReference, type, isWIF);
-	}
-
-	/**
-	 * Method to fetch finance details by id from given table type
-	 * 
-	 * @param finReference (String)
-	 * @param type         (String)
-	 * @return FinanceDetail
-	 */
-	@Override
-	public FinanceDetail getFinSchdDetailByRef(String finReference, String type, boolean isWIF) {
-		logger.debug(Literal.ENTERING);
-
-		// Finance Details
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(finReference);
-		scheduleData.setFinanceMain(financeMainDAO.getFinanceMainById(finReference, type, isWIF));
-
-		if (scheduleData.getFinanceMain() != null) {
-
-			// Finance Type Details
-			FinanceType financeType = getFinanceTypeDAO()
-					.getOrgFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_ORGView");
-			if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getPromotionCode())) {
-				// Fetching Promotion Details
-				Promotion promotion = this.promotionDAO
-						.getPromotionById(scheduleData.getFinanceMain().getPromotionCode(), "_AView");
-				financeType.setFInTypeFromPromotiion(promotion);
-			}
-			scheduleData.setFinanceType(financeType);
-
-			// Step Policy Details List
-			if (scheduleData.getFinanceMain().isStepFinance()) {
-				scheduleData.setStepPolicyDetails(getFinanceStepDetailDAO().getFinStepDetailListByFinRef(finReference,
-						isWIF ? "_View" : "_TView", isWIF));
-			}
-
-			// Finance Schedule Details
-			scheduleData.setFinanceScheduleDetails(
-					financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, isWIF));
-
-			// Finance Disbursement Details
-			scheduleData.setDisbursementDetails(
-					financeDisbursementDAO.getFinanceDisbursementDetails(finReference, isWIF ? "_View" : type, isWIF));
-
-			// Finance Repayments Instruction Details
-			scheduleData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, isWIF));
-
-			// Fee Details
-			List<FinFeeDetail> finOriginationFeeList = getFinFeeDetailDAO().getFinScheduleFees(finReference, false,
-					"_View");
-			scheduleData.setFinFeeDetailList(finOriginationFeeList);
-
-			// Finance Fee Schedule Details
-			if (finOriginationFeeList != null && !finOriginationFeeList.isEmpty()) {
-				List<Long> feeIDList = new ArrayList<>();
-				for (FinFeeDetail feeDetail : finOriginationFeeList) {
-					feeIDList.add(feeDetail.getFeeID());
-					feeDetail.setRcdVisible(false);
-				}
-
-				if (!feeIDList.isEmpty()) {
-					List<FinFeeScheduleDetail> feeScheduleList = getFinFeeScheduleDetailDAO()
-							.getFeeScheduleByFinID(feeIDList, false, "");
-
-					if (feeScheduleList != null && !feeScheduleList.isEmpty()) {
-						HashMap<Long, List<FinFeeScheduleDetail>> schFeeMap = new HashMap<>();
-						for (int i = 0; i < feeScheduleList.size(); i++) {
-							FinFeeScheduleDetail schdFee = feeScheduleList.get(i);
-
-							List<FinFeeScheduleDetail> schList = new ArrayList<>();
-							if (schFeeMap.containsKey(schdFee.getFeeID())) {
-								schList = schFeeMap.get(schdFee.getFeeID());
-								schFeeMap.remove(schdFee.getFeeID());
-							}
-							schList.add(schdFee);
-							schFeeMap.put(schdFee.getFeeID(), schList);
-
-						}
-
-						for (int i = 0; i < finOriginationFeeList.size(); i++) {
-							FinFeeDetail feeDetail = finOriginationFeeList.get(i);
-							if (schFeeMap.containsKey(feeDetail.getFeeID())) {
-								feeDetail.setFinFeeScheduleDetailList(schFeeMap.get(feeDetail.getFeeID()));
-							}
-						}
-					}
-				}
-			}
-
-			// Finance Overdue Penalty Rate Details
-			if (!isWIF) {
-
-				// Finance Flag Details
-				financeDetail.setFinFlagsDetails(
-						getFinFlagDetailsDAO().getFinFlagsByFinRef(finReference, FinanceConstants.MODULE_NAME, type));
-
-			}
-
-			if (scheduleData.getFinanceMain().istDSApplicable()) {
-				scheduleData.setLowerTaxDeductionDetails(getLowerTaxDeductionDAO()
-						.getLowerTaxDeductionDetails(scheduleData.getFinanceMain().getFinReference(), ""));
-			}
-
-			if (!isWIF) {
-
-				String tableType = "";
-				if (StringUtils.isNotBlank(scheduleData.getFinanceMain().getRecordType())) {
-					tableType = "_Temp";
-				}
-
-				// Overdue Penalty Rates
-				scheduleData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference,
-						StringUtils.equals(tableType, "") ? type : tableType));
-
-				// Overdraft Schedule Detail
-				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-						scheduleData.getFinanceMain().getProductCategory())) {
-					scheduleData.setOverdraftScheduleDetails(getOverdraftScheduleDetailDAO()
-							.getOverdraftScheduleDetails(finReference, tableType, isWIF));
-				}
-
-			}
-
-			// set advancepayments
-			financeDetail.setAdvancePaymentsList(
-					getFinAdvancePaymentsService().getFinAdvancePaymentsById(finReference, type));
-
-		}
-		logger.debug(Literal.LEAVING);
-		return financeDetail;
 	}
 
 	private void processPricingLoans(FinanceDetail financeDetail, String tableType, String auditTranType) {

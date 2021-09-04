@@ -174,16 +174,17 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 	}
 
 	@Override
-	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction) {
+	public AuditDetail doValidations(FinServiceInstruction fis) {
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
-		String finReference = finServiceInstruction.getFinReference();
-		Date fromDate = finServiceInstruction.getFromDate();
-		//Repayment Schedule Method (If not blanks validation already happens in defaulting)
-		if (!StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
-				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)
-				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
-				&& !StringUtils.equals(finServiceInstruction.getSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
+		long finID = fis.getFinID();
+		String finReference = fis.getFinReference();
+		Date fromDate = fis.getFromDate();
+		// Repayment Schedule Method (If not blanks validation already happens in defaulting)
+		if (!StringUtils.equals(fis.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
+				&& !StringUtils.equals(fis.getSchdMethod(), CalculationConstants.SCHMTHD_PFT)
+				&& !StringUtils.equals(fis.getSchdMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
+				&& !StringUtils.equals(fis.getSchdMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Schedule method";
 			valueParm[1] = CalculationConstants.SCHMTHD_EQUAL + ", " + CalculationConstants.SCHMTHD_PFT + ", "
@@ -192,18 +193,19 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 			return auditDetail;
 		}
 		// validate Instruction details
-		boolean isWIF = finServiceInstruction.isWif();
+		boolean isWIF = fis.isWif();
 		// It shouldn't be past date when compare to appdate
-		if (DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtility.compare(fis.getFromDate(), appDate) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(DateUtility.getAppDate());
+			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
 
 		boolean isValidFromDate = false;
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 		if (schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
 				if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
@@ -216,14 +218,14 @@ public class ChangeScheduleMethodServiceImpl implements ChangeScheduleMethodServ
 
 			if (!isValidFromDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
+				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fis.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 				return auditDetail;
 			}
 		}
 		// FromDate should be Unpaid Date
-		FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(finReference,
-				fromDate, "", isWIF);
+		FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(finID, fromDate,
+				"", isWIF);
 		BigDecimal paidAmount = finScheduleDetail.getSchdPriPaid()
 				.add(finScheduleDetail.getSchdFeePaid().add(finScheduleDetail.getSchdPftPaid()));
 

@@ -60,17 +60,18 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		FinanceDetail fd = null;
 
 		// Check in main and temp rather than instruction
+		long finID = instBasedSchd.getFinID();
 		String finReference = instBasedSchd.getFinReference();
-		String nxtRoleCd = financeDetailService.getNextRoleCodeByRef(finReference);
-		boolean isLoanApproved = instBasedSchdDetailDAO.getFinanceIfApproved(finReference);
+		String nxtRoleCd = financeDetailService.getNextRoleCodeByRef(finID);
+		boolean isLoanApproved = instBasedSchdDetailDAO.getFinanceIfApproved(finID);
 
 		// Check if Loan is not Approveda
 		if (!isLoanApproved) {
-			fd = financeDetailService.getOriginationFinance(finReference, nxtRoleCd, FinServiceEvent.ORG, "");
+			fd = financeDetailService.getOriginationFinance(finID, nxtRoleCd, FinServiceEvent.ORG, "");
 			fd.setModuleDefiner(FinServiceEvent.ORG);
 		} else if (StringUtils.isNotBlank(nxtRoleCd)) {
-			fd = financeDetailService.getServicingFinanceForQDP(finReference, AccountingEvent.ADDDBSN,
-					FinServiceEvent.ADDDISB, nxtRoleCd);
+			fd = financeDetailService.getServicingFinanceForQDP(finID, AccountingEvent.ADDDBSN, FinServiceEvent.ADDDISB,
+					nxtRoleCd);
 		} else {
 			fd = financeDetailService.getFinSchdDetailByRef(finReference, "", false);
 		}

@@ -172,6 +172,8 @@ public interface FinanceDetailService {
 
 	FinanceDetail getFinanceOrgDetails(FinanceMain financeMain, String type);
 
+	FinanceDetail getFinSchdDetailByRef(String finReference, String type, boolean isWIF);
+
 	FinanceDetail getFinSchdDetailById(long finID, String type, boolean isWIF);
 
 	TATDetail getTATDetail(String reference, String rolecode);
