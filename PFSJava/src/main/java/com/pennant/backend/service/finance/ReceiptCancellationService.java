@@ -23,10 +23,10 @@ public interface ReceiptCancellationService {
 
 	List<ReturnDataSet> getPostingsByPostRef(long postRef);
 
-	PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode,
-			String bounceRemarks) throws Exception;
+	PresentmentDetail presentmentCancellation(PresentmentDetail pd, String returnCode, String bounceRemarks)
+			throws Exception;
 
-	Map<String, Object> getGLSubHeadCodes(String reference);
+	Map<String, Object> getGLSubHeadCodes(long finID);
 
 	// ### 16-12-2020, ST#1627
 	AuditHeader doApproveNonLanReceipt(AuditHeader auditHeader) throws Exception;

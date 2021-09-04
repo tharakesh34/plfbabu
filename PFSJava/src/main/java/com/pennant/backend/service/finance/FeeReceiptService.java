@@ -26,7 +26,7 @@ public interface FeeReceiptService {
 	AuditHeader doApprove(AuditHeader aAuditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException;
 
-	List<FinFeeDetail> getPaidFinFeeDetails(String finReference, long receiptID, String type);
+	List<FinFeeDetail> getPaidFinFeeDetails(long finID, long receiptID, String type);
 
 	ErrorDetail processFeePayment(FinServiceInstruction finServInst) throws Exception;
 
