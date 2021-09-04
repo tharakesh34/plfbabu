@@ -259,7 +259,11 @@ public interface FinanceMainDAO {
 
 	void updateRejectFinanceMain(FinanceMain financeMain, TableType tempTab, boolean isWIF);
 
-	FinanceMain getFinanceMainStutusById(long finID, String type);
+	FinanceMain getLoanStatus(String finReference);
+
+	FinanceMain getGetDeviation(String finReference);
+
+	FinanceMain getUserActions(String finReference);
 
 	FinanceMain getFinanceDetailsForInsurance(long finID, String type);
 
@@ -346,4 +350,13 @@ public interface FinanceMainDAO {
 	FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String string);
 
 	Long getFinID(String finReference);
+
+	Long getActiveFinID(String finReference);
+
+	Long getFinID(String finReference, TableType tableType);
+
+	Long getActiveFinID(String finReference, TableType tableType);
+
+	Long getActiveWIFFinID(String finReference, TableType tableType);
+
 }

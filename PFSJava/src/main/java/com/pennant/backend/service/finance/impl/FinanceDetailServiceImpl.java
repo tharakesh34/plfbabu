@@ -337,10 +337,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private TATDetailDAO tatDetailDAO;
 	private IRRScheduleDetailDAO irrScheduleDetailDAO;
 	private LinkedFinancesService linkedFinancesService;
-
 	private LimitManagement limitManagement;
 	private LimitCheckDetails limitCheckDetails;
-
 	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
 	private FlagDetailValidation flagDetailValidation;
 	private FinFlagDetailsDAO finFlagDetailsDAO;
@@ -354,19 +352,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
 	private PSLDetailDAO pSLDetailDAO;
 	private FinanceTaxDetailService financeTaxDetailService;
-
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private ExtendedFieldDetailDAO extendedFieldDetailDAO;
 	private FinReceiptHeaderDAO finReceiptHeaderDAO;
-
 	private CustomServiceTask customServiceTask;
 	private CustomerService customerService;
-
 	@Autowired(required = false)
 	private CreditInformation creditInformation;
 	private ReasonDetailDAO reasonDetailDAO;
-
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
 	private FinIRRDetailsDAO finIRRDetailsDAO;
@@ -1187,12 +1181,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String procEdtEvent, String userRole) {
 		logger.debug(Literal.ENTERING);
 
-		// Finance Details
 		FinanceDetail fd = getFinSchdDetailById(finID, "_View", isWIF);
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		// Finance Service Instructions
 		schdData.setFinServiceInstructions(
 				finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp", procEdtEvent));
 

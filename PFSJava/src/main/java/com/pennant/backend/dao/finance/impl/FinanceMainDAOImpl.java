@@ -1594,7 +1594,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? And FinIsActive = ?");
+		sql.append(" Where FinID = ? and FinIsActive = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -3683,7 +3683,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinCategory, FinType, FinBranch, MandateID, CustID");
 		sql.append(" From FinanceMain");
 		sql.append(" Where FinID = (Select FinID From Financemain_Extension Where HostReference = ?)");
-		sql.append(" And FinIsActive = ?");
+		sql.append(" and FinIsActive = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -3782,12 +3782,41 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinanceMainStutusById(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(" From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ?");
+	public FinanceMain getLoanStatus(String finReference) {
+		StringBuilder sql = new StringBuilder("Select RecordStatus, RoleCode, NextRoleCode From (");
+		sql.append(" Select RecordStatus, RoleCode, NextRoleCode From FinanceMain Where FinReference = ?");
+		sql.append(" Union All");
+		sql.append(" Select RecordStatus, RoleCode, NextRoleCode From FinanceMain_Temp fm Where FinReference = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" ) fm");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setRecordStatus(rs.getString("RecordStatus"));
+				fm.setRoleCode(rs.getString("RoleCode"));
+				fm.setNextRoleCode(rs.getString("NextRoleCode"));
+
+				return fm;
+
+			}, finReference, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public FinanceMain getGetDeviation(String finReference) {
+		StringBuilder sql = new StringBuilder("Select FinID, WorkflowId From (");
+		sql.append(" Select FinID, WorkflowId From FinanceMain Where FinReference = ?");
+		sql.append(" Union All");
+		sql.append(" Select FinID, WorkflowId From FinanceMain_Temp fm Where FinReference = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" ) fm");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -3796,14 +3825,34 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				FinanceMain fm = new FinanceMain();
 
 				fm.setFinID(rs.getLong("FinID"));
-				fm.setFinReference(rs.getString("FinReference"));
-				fm.setRecordStatus(rs.getString("RecordStatus"));
-				fm.setRoleCode(rs.getString("RoleCode"));
+				fm.setWorkflowId(rs.getLong("WorkflowId"));
 				fm.setNextRoleCode(rs.getString("NextRoleCode"));
 
 				return fm;
 
-			}, finID);
+			}, finReference, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public FinanceMain getUserActions(String finReference) {
+		String sql = "Select FinType, NextRoleCode From FinanceMain_Temp Where FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinType(rs.getString("FinType"));
+				fm.setNextRoleCode(rs.getString("NextRoleCode"));
+
+				return fm;
+
+			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -5440,13 +5489,44 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
-	@Override
 	public Long getFinID(String finReference) {
-		StringBuilder sql = new StringBuilder("Select distinct FinID From (");
+		StringBuilder sql = new StringBuilder("Select FinID From (");
 		sql.append(" Select FinID From FinanceMain Where FinReference = ?");
-		sql.append(" Union all");
-		sql.append(" Select FinID From FinanceMain_Temp Where FinReference = ?");
+		sql.append(" Union All");
+		sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
 		sql.append(" ) fm");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	public Long getActiveFinID(String finReference) {
+		StringBuilder sql = new StringBuilder("Select FinID From (");
+		sql.append(" Select FinID From FinanceMain Where FinReference = ? and FinIsActive = ?");
+		sql.append(" Union All");
+		sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ? and FinIsActive = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" ) fm");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1, finReference, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	public Long getFinID(String finReference, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID From FinanceMain").append(tableType.getSuffix());
+		sql.append(" Where FinReference = ?");
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
@@ -5456,4 +5536,33 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
+
+	public Long getActiveFinID(String finReference, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID From FinanceMain").append(tableType.getSuffix());
+		sql.append(" Where FinReference = ? and FinIsActive = ?");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	public Long getActiveWIFFinID(String finReference, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID From WIFFinanceMain").append(tableType.getSuffix());
+		sql.append(" Where FinReference = ? and FinIsActive = ?");
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
 }

@@ -97,6 +97,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 public class FinanceDetail implements Serializable {
 	private static final long serialVersionUID = 3947699402597772444L;
 
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement(name = "financeSchedule")
@@ -317,6 +318,14 @@ public class FinanceDetail implements Serializable {
 		excludeFields.add("isOrigination");
 
 		return excludeFields;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
