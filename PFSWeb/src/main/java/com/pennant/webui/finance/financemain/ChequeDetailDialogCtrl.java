@@ -235,7 +235,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			if (arguments.containsKey("finHeaderList")) {
 				appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 			} else {
-				setFinanceDetail(chequeHeaderService.getFinanceDetailById(getChequeHeader().getFinReference()));
+				setFinanceDetail(chequeHeaderService.getFinanceDetailById(getChequeHeader().getFinID()));
 				appendFinBasicDetails(getFinBasicDetails(getFinanceDetail()));
 			}
 

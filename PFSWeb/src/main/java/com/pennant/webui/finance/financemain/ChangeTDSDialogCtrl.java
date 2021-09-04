@@ -422,7 +422,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
 			lowerTxDeduction.setFinReference(this.financeMain.getFinReference());
 			getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails().clear();
-			lowerTxDeduction.setSeqno(1);
+			lowerTxDeduction.setSeqNo(1);
 
 			try {
 				lowerTxDeduction.setPercentage(this.tdsPercentage.getValue());

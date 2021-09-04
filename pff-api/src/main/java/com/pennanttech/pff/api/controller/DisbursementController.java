@@ -261,6 +261,7 @@ public class DisbursementController extends ExtendedTestClass {
 					}
 
 					String finReference = request.getFinReference();
+
 					FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
 
 					if (fm == null) {
