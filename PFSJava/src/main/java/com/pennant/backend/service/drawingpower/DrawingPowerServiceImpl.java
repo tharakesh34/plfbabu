@@ -19,6 +19,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
@@ -49,13 +50,13 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 	 * Validating the customer drawing power, revolving limit based on configuration.
 	 */
 	@Override
-	public AuditDetail validate(AuditDetail auditDetail, FinanceDetail financeDetail) {
+	public AuditDetail validate(AuditDetail auditDetail, FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
-		String userAction = financeDetail.getUserAction();
-		String moduleDefiner = financeDetail.getModuleDefiner();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
+		String userAction = fd.getUserAction();
+		String moduleDefiner = fd.getModuleDefiner();
+		FinanceMain financeMain = fd.getFinScheduleData().getFinanceMain();
+		FinanceType financeType = fd.getFinScheduleData().getFinanceType();
 
 		// Add disbursement validations.
 		if (moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
@@ -65,7 +66,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 				// Revolving limit checking
 				if (financeMain.isAllowRevolving()) {
-					ErrorDetail errorDetail = doRevolvingValidations(financeDetail);
+					ErrorDetail errorDetail = doRevolvingValidations(fd);
 					if (errorDetail != null) {
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
@@ -75,7 +76,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 			// If revolving limit exists then check customer drawing power
 			// limit.
-			ErrorDetail errorDetail = doDrawingPowerCheck(financeDetail, moduleDefiner);
+			ErrorDetail errorDetail = doDrawingPowerCheck(fd, moduleDefiner);
 			if (errorDetail != null) {
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
@@ -84,13 +85,12 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		// LOS validations.
 		if (financeType.isAllowDrawingPower()) {
-			if (StringUtils.isEmpty(moduleDefiner)
-					|| StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
+			if (StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 
 				if (!"Cancel".equalsIgnoreCase(userAction) && !"Resubmit".equalsIgnoreCase(userAction)
 						&& !"Reject".equalsIgnoreCase(userAction) && "Submit".equalsIgnoreCase(userAction)) {
 
-					ErrorDetail errorDetail = doDrawingPowerCheck(financeDetail, moduleDefiner);
+					ErrorDetail errorDetail = doDrawingPowerCheck(fd, moduleDefiner);
 					if (errorDetail != null) {
 						auditDetail.setErrorDetail(errorDetail);
 						return auditDetail;
@@ -101,14 +101,15 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		return auditDetail;
 	}
 
-	public ErrorDetail doRevolvingValidations(FinanceDetail financeDetail) {
+	public ErrorDetail doRevolvingValidations(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-		int ccyFormat = CurrencyUtil.getFormat(financeMain.getFinCcy());
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType financeType = schdData.getFinanceType();
+		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
 
-		List<FinServiceInstruction> instructions = financeDetail.getFinScheduleData().getFinServiceInstructions();
+		List<FinServiceInstruction> instructions = schdData.getFinServiceInstructions();
 
 		BigDecimal disbAmt = BigDecimal.ZERO;
 
@@ -124,16 +125,15 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		BigDecimal availableLimit = BigDecimal.ZERO;
 		if (financeType.isAllowRevolving()) {
 
-			FinanceMain main = financeMainDAO.getFinanceMainById(financeMain.getFinReference(), "", false);
+			FinanceMain main = financeMainDAO.getFinanceMainById(fm.getFinReference(), "", false);
 
 			BigDecimal currAssetVal = BigDecimal.ZERO;
 			if (main != null) {
 				currAssetVal = main.getFinCurrAssetValue();
 			} else {
-				currAssetVal = financeMain.getFinCurrAssetValue();
+				currAssetVal = fm.getFinCurrAssetValue();
 			}
-			availableLimit = financeMain.getFinAssetValue().subtract(currAssetVal)
-					.add(financeMain.getFinRepaymentAmount());
+			availableLimit = fm.getFinAssetValue().subtract(currAssetVal).add(fm.getFinRepaymentAmount());
 
 			logger.debug("Available Amt " + disbAmt);
 			if (disbAmt.compareTo(availableLimit) > 0) {
@@ -177,8 +177,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 			}
 		}
 
-		if (!StringUtils.isEmpty(moduleDefiner)
-				&& (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG))) {
+		if (!StringUtils.isEmpty(moduleDefiner) && (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG))) {
 			if (profitDetail == null) {
 				profitDetail = this.financeProfitDetailDAO.getFinProfitDetailsById(financeMain.getFinReference());
 			}
@@ -206,7 +205,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 																	// Receivable
 				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
 						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any
-																																								// Charges
+																		// Charges
 				if (CollectionUtils.isNotEmpty(advises)) {
 					for (ManualAdvise manualAdvise : advises) {
 						totOutStanding = totOutStanding.add(manualAdvise.getAdviseAmount()
@@ -219,8 +218,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		if (financeMain.isAllowDrawingPower()) {
 			if (drawingPower != null) {
 				BigDecimal drawingPowerAmt = drawingPower.getDrawingPower(financeMain.getFinReference());
-				if (StringUtils.isEmpty(moduleDefiner)
-						|| StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
+				if (StringUtils.isEmpty(moduleDefiner) || StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 					checkingAmt = financeMain.getFinCurrAssetValue();
 					if (checkingAmt.compareTo(drawingPowerAmt) > 0) {
 

@@ -44,7 +44,6 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
-		// TODO Auto-generated method stub
 		return getFinMaintainInstructionDAO().getFinMaintainInstructionByFinRef(finreference, event, "_Temp");
 	}
 

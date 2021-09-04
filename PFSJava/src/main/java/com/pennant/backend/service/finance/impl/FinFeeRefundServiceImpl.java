@@ -110,7 +110,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			auditHeader.setAuditDetails(list);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -130,7 +130,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		FinFeeRefundHeader refundHeader = new FinFeeRefundHeader();
 		BeanUtils.copyProperties((FinFeeRefundHeader) auditHeader.getAuditDetail().getModelData(), refundHeader);
 
-		//PROCESS ACCOUNTING
+		// PROCESS ACCOUNTING
 		AEEvent aeEvent = processAccounting(refundHeader);
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -177,7 +177,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				finFeeRefundDao.update(refundHeader, TableType.MAIN_TAB.getSuffix());
 			}
 		}
-		//Process FinFeeRefundDetails
+		// Process FinFeeRefundDetails
 		if (CollectionUtils.isNotEmpty(refundHeader.getFinFeeRefundDetails())) {
 			List<AuditDetail> details = refundHeader.getAuditDetailMap().get("FeeRefundDetails");
 			List<AuditDetail> list = processFinFeeRefundDetails(details, TableType.MAIN_TAB.getSuffix(),
@@ -189,12 +189,12 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		finFeeRefundDao.deleteFinFeeRefundHeader(refundHeader, TableType.TEMP_TAB);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(refundHeader);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -211,7 +211,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		}
 		FinFeeRefundHeader refundHeader = (FinFeeRefundHeader) auditHeader.getAuditDetail().getModelData();
 
-		//Process FinFeeRefundDetails
+		// Process FinFeeRefundDetails
 		if (CollectionUtils.isNotEmpty(refundHeader.getFinFeeRefundDetails())) {
 			List<AuditDetail> details = refundHeader.getAuditDetailMap().get("FeeRefundDetails");
 			List<AuditDetail> list = processFinFeeRefundDetails(details, TableType.TEMP_TAB.getSuffix(),
@@ -222,7 +222,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		finFeeRefundDao.deleteFinFeeRefundHeader(refundHeader, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -241,26 +241,18 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		FinFeeRefundHeader refundHeader = (FinFeeRefundHeader) auditHeader.getAuditDetail().getModelData();
 		finFeeRefundDao.deleteFinFeeRefundHeader(refundHeader, TableType.MAIN_TAB);
 
-		//Process FinFeeRefundDetails
+		// Process FinFeeRefundDetails
 		if (CollectionUtils.isNotEmpty(refundHeader.getFinFeeRefundDetails())) {
 			List<AuditDetail> details = refundHeader.getAuditDetailMap().get("FeeRefundDetails");
 			List<AuditDetail> list = processFinFeeRefundDetails(details, TableType.MAIN_TAB.getSuffix(),
 					auditHeader.getAuditTranType(), refundHeader.getHeaderId());
 			auditHeader.setAuditDetails(list);
 		}
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
@@ -390,14 +382,15 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 		if (refundDetails.isNewRecord()) { // for New record or new record into work flow
 
-			if (!refundDetails.isWorkflow()) {// With out Work flow only new records  
-				if (befRefundDetail != null) { // Record Already Exists in the table then error  
+			if (!refundDetails.isWorkflow()) {// With out Work flow only new records
+				if (befRefundDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (refundDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befRefundDetail != null || tempRefundDetail != null) { // if records already exists in the main table
+					if (befRefundDetail != null || tempRefundDetail != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -432,7 +425,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				}
 			} else {
 
-				if (tempRefundDetail == null) { // if records not exists in the Work flow table 
+				if (tempRefundDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -454,15 +447,6 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		return auditDetail;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from finFeeRefundDao.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
-	 * the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug(Literal.ENTERING);
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
@@ -487,14 +471,15 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 		if (refundHeader.isNewRecord()) { // for New record or new record into work flow
 
-			if (!refundHeader.isWorkflow()) {// With out Work flow only new records  
-				if (befRefundHeader != null) { // Record Already Exists in the table then error  
+			if (!refundHeader.isWorkflow()) {// With out Work flow only new records
+				if (befRefundHeader != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (refundHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befRefundHeader != null || tempRefundHeader != null) { // if records already exists in the main table
+					if (befRefundHeader != null || tempRefundHeader != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -529,7 +514,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				}
 			} else {
 
-				if (tempRefundHeader == null) { // if records not exists in the Work flow table 
+				if (tempRefundHeader == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -672,7 +657,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			for (FinFeeRefundDetails refundDetail : finFeeRefundDetails) {
 				FinFeeDetail finFeeDetail = getFeeDetailByFeeID(list, refundDetail.getFeeId());
 				if (finFeeDetail != null) {
-					//Tax Details
+					// Tax Details
 					Long headerId = finFeeDetail.getTaxHeaderId();
 					if (headerId != null && headerId > 0) {
 						List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
@@ -698,7 +683,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 					continue;
 				}
 
-				//Tax Details
+				// Tax Details
 				Long headerId = finFeeDetail.getTaxHeaderId();
 				if (headerId != null && headerId > 0) {
 					List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
@@ -773,7 +758,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		for (FinFeeRefundDetails refundDetail : finFeeRefundDtlsList) {
 			FinFeeDetail finFeeDetail = getFeeDetailByFeeID(list, refundDetail.getFeeId());
 			PrvsFinFeeRefund prvsFinFeeRefund = getPrvsRefundsByFeeId(refundDetail.getFeeId());
-			//Incase of Vas FEE
+			// Incase of Vas FEE
 			if (AccountingEvent.VAS_FEE.equals(refundDetail.getFinEvent())) {
 				BigDecimal vasPaidFee = (BigDecimal) dataMap.get("ae_refundVasFee");
 				vasPaidFee = vasPaidFee.add(refundDetail.getRefundAmtOriginal());
@@ -837,7 +822,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			FinExcessAmount excess = null;
 			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(refundHeader.getFinReference(),
 					RepayConstants.EXCESSADJUSTTO_EXCESS);
-			//Creating Excess
+			// Creating Excess
 			if (excess == null) {
 				excess = new FinExcessAmount();
 				excess.setFinReference(refundHeader.getFinReference());
@@ -852,7 +837,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				excess.setAmount(excess.getAmount().add(excessAmt));
 				finExcessAmountDAO.updateExcess(excess);
 			}
-			//Creating ExcessMoment
+			// Creating ExcessMoment
 			FinExcessMovement excessMovement = new FinExcessMovement();
 			excessMovement.setExcessID(excess.getExcessID());
 			excessMovement.setAmount(excessAmt);
@@ -877,20 +862,22 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		return financeDetail;
 	}
 
-	public void processGSTInvoicePreparation(FinFeeRefundHeader feeRefundHeader) {
+	private void processGSTInvoicePreparation(FinFeeRefundHeader feeRefundHeader) {
 		long linkedTranId = feeRefundHeader.getLinkedTranId();
 		String finReference = feeRefundHeader.getFinReference();
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinanceMain financeMain = this.financeMainDAO.getFinanceMainById(finReference, "_View", false);
-		financeDetail.setCustomerDetails(null);
-		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+		FinanceDetail fd = new FinanceDetail();
+		FinanceMain fm = this.financeMainDAO.getFinanceMainByRef(finReference, "_View", false);
+		fd.setCustomerDetails(null);
+		fd.getFinScheduleData().setFinanceMain(fm);
 
-		financeDetail.setFinanceTaxDetail(financeTaxDetailService.getFinanceTaxDetail(finReference));
-		List<FinFeeDetail> finFeeDetailsList = processFinFeeDetailForinvoice(feeRefundHeader, financeMain);
+		long finID = fm.getFinID();
+
+		fd.setFinanceTaxDetail(financeTaxDetailService.getFinanceTaxDetail(finID));
+		List<FinFeeDetail> finFeeDetailsList = processFinFeeDetailForinvoice(feeRefundHeader, fm);
 
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setLinkedTranId(linkedTranId);
-		invoiceDetail.setFinanceDetail(financeDetail);
+		invoiceDetail.setFinanceDetail(fd);
 		invoiceDetail.setFinFeeDetailsList(finFeeDetailsList);
 		invoiceDetail.setOrigination(false);
 		invoiceDetail.setWaiver(true);
@@ -907,7 +894,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 				}
 				taxHeader.setInvoiceID(dueInvoiceID);
 				String type = "";
-				if (!(financeMain.getRecordStatus().equalsIgnoreCase("Approved"))) {
+				if (!(fm.getRecordStatus().equalsIgnoreCase("Approved"))) {
 					type = "_TView";
 				}
 				this.taxHeaderDetailsDAO.update(taxHeader, type);
@@ -1022,18 +1009,6 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
-	public void setFinFeeRefundDao(FinFeeRefundDAO finFeeRefundDao) {
-		this.finFeeRefundDao = finFeeRefundDao;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
@@ -1052,6 +1027,14 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 
 	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
+	}
+
+	public void setFinFeeRefundDao(FinFeeRefundDAO finFeeRefundDao) {
+		this.finFeeRefundDao = finFeeRefundDao;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {

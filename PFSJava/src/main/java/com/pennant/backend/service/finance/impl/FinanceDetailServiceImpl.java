@@ -1079,16 +1079,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public FinanceDetail getWIFFinance(String finReference, boolean reqCustDetail, String procEdtEvent) {
+	public FinanceDetail getWIFFinance(long finID, boolean reqCustDetail, String procEdtEvent) {
 		logger.debug(Literal.ENTERING);
 
 		// Finance Details
-		FinanceDetail financeDetail = getFinSchdDetailById(finReference, "_View", true);
+		FinanceDetail financeDetail = getFinSchdDetailById(finID, "_View", true);
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		// Finance Fee Details
-		scheduleData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finReference, true, "_View"));
+		scheduleData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, true, "_View"));
 
 		if (scheduleData.getFinanceMain() != null) {
 			long custId = scheduleData.getFinanceMain().getCustID();
@@ -7113,7 +7113,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed
 		// to do an action
 		if (!StringUtils.equals(PennantConstants.RECORD_TYPE_NEW, financeMain.getRecordType())) {
-			int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(financeMain.getCustID());
+			int eodProgressCount = customerQueuingDAO.getProgressCountByCust(financeMain.getCustID());
 
 			// If Customer Exists in EOD Processing, Not allowed to Maintenance
 			// till completion
