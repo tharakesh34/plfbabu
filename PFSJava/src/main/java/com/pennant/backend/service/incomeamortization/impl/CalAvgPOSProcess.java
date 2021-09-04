@@ -83,7 +83,7 @@ public class CalAvgPOSProcess extends Thread {
 
 		for (FinanceMain fm : financeList) {
 			Date finMaturityDate = fm.getMaturityDate();
-			finScheduleDetails = getFinScheduleDetails(fm.getFinReference(), monthEndDate);
+			finScheduleDetails = getFinScheduleDetails(fm.getFinID(), monthEndDate);
 
 			if (CollectionUtils.isEmpty(finScheduleDetails)) {
 				continue;
@@ -109,16 +109,16 @@ public class CalAvgPOSProcess extends Thread {
 		return finEODEventsList;
 	}
 
-	private List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, Date monthEndDate) {
+	private List<FinanceScheduleDetail> getFinScheduleDetails(long finID, Date monthEndDate) {
 
 		List<FinanceScheduleDetail> financeScheduleDetails = new ArrayList<FinanceScheduleDetail>();
 
-		long logKey = this.incomeAmortizationService.getPrevSchedLogKey(finReference, monthEndDate);
+		long logKey = this.incomeAmortizationService.getPrevSchedLogKey(finID, monthEndDate);
 
 		if (logKey > 0) {
-			financeScheduleDetails = incomeAmortizationService.getFinScheduleDetails(finReference, "_Log", logKey);
+			financeScheduleDetails = incomeAmortizationService.getFinScheduleDetails(finID, "_Log", logKey);
 		} else {
-			financeScheduleDetails = incomeAmortizationService.getFinScheduleDetails(finReference, "", 0);
+			financeScheduleDetails = incomeAmortizationService.getFinScheduleDetails(finID, "", 0);
 		}
 
 		return financeScheduleDetails;

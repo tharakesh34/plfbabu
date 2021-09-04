@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  IncomeAmortizationServiceImpl.java									*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  24-12-2017															*
- *                                                                  
- * Modified Date    :  24-12-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : IncomeAmortizationServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 24-12-2017 *
+ * 
+ * Modified Date : 24-12-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.incomeamortization.impl;
@@ -99,8 +90,9 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 		this.projectedAmortizationService.prepareAMZDetails(monthEndDate, appDate);
 
 		for (FinanceMain finMain : financeList) {
+			long finID = finMain.getFinID();
 			String finReference = finMain.getFinReference();
-			incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finReference);
+			incomeAMZList = this.projectedAmortizationDAO.getIncomeAMZDetailsByRef(finID);
 
 			if (CollectionUtils.isEmpty(incomeAMZList)) {
 				continue;
@@ -115,7 +107,7 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 			finEODEvent.setIncomeAMZList(incomeAMZList);
 
 			if (!FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())) {
-				accruals = projectedAmortizationDAO.getFutureProjectedAccrualsByFinRef(finReference, curMonthStart);
+				accruals = projectedAmortizationDAO.getFutureProjectedAccrualsByFinRef(finID, curMonthStart);
 				finEODEvent.setProjectedAccrualList(accruals);
 			}
 
@@ -126,13 +118,13 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 	}
 
 	@Override
-	public long getPrevSchedLogKey(String finReference, Date date) {
-		return finLogEntryDetailDAO.getPrevSchedLogKey(finReference, date);
+	public long getPrevSchedLogKey(long finID, Date date) {
+		return finLogEntryDetailDAO.getPrevSchedLogKey(finID, date);
 	}
 
 	@Override
-	public List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String type, long logKey) {
-		return this.financeScheduleDetailDAO.getFinScheduleDetails(finReference, type, logKey);
+	public List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String type, long logKey) {
+		return this.financeScheduleDetailDAO.getFinScheduleDetails(finID, type, logKey);
 	}
 
 	@Override
@@ -223,12 +215,14 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 		}
 	}
 
+	@Override
 	public List<FinanceProfitDetail> getFinPftListForIncomeAMZ(Date curMonthStart) {
 		return profitDetailsDAO.getFinPftListForIncomeAMZ(curMonthStart);
 	}
 
-	public FinanceProfitDetail getFinProfitForAMZ(String finReference) {
-		return profitDetailsDAO.getFinProfitForAMZ(finReference);
+	@Override
+	public FinanceProfitDetail getFinProfitForAMZ(long finID) {
+		return profitDetailsDAO.getFinProfitForAMZ(finID);
 	}
 
 	public void setProjectedAmortizationService(ProjectedAmortizationService projectedAmortizationService) {

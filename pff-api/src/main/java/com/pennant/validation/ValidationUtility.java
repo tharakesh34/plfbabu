@@ -59,8 +59,8 @@ public class ValidationUtility {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public Object validate(Object object, Class groupName) {
 
+	public Object validate(Object object, Class groupName) {
 		Set<ConstraintViolation<Object>> violations = null;
 
 		// validate request object using hibernate validator

@@ -64,7 +64,7 @@ public interface JointAccountDetailService {
 
 	FinanceExposure getExposureSummaryDetail(List<FinanceExposure> exposerList);
 
-	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
+	List<JointAccountDetail> getJointAccountDetailByFinRef(long finID, String type);
 
 	BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail);
 

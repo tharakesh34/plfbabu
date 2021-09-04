@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SuspensePostingUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SuspensePostingUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -79,9 +70,8 @@ public class SuspenseService extends ServiceHelper {
 		super();
 	}
 
-	public void processSuspense(Date date, FinanceMain financeMain, FinRepayQueue finRepayQueue) throws Exception {
-
-		suspensePreparation(financeMain, finRepayQueue, date, false);
+	public void processSuspense(Date date, FinanceMain fm, FinRepayQueue finRepayQueue) throws Exception {
+		suspensePreparation(fm, finRepayQueue, date, false);
 		// SUSPENSE RELEASE
 		boolean releaseSuspemnse = false;
 		BigDecimal principlebal = finRepayQueue.getSchdPri().subtract(finRepayQueue.getSchdPriPaid());
@@ -96,25 +86,17 @@ public class SuspenseService extends ServiceHelper {
 		}
 
 		if (releaseSuspemnse) {
-			suspReleasePreparation(financeMain, finRepayQueue.getSchdPftPayNow(), finRepayQueue, date);
+			suspReleasePreparation(fm, finRepayQueue.getSchdPftPayNow(), finRepayQueue, date);
 		}
 
 	}
 
-	/**
-	 * Method for preparation of Finance Suspend Data
-	 * 
-	 * @param financeMain
-	 * @param details
-	 * @param valueDate
-	 * @param isEODProcess
-	 * @throws Exception
-	 */
-	private void suspensePreparation(FinanceMain financeMain, FinRepayQueue repayQueue, Date valueDate,
-			boolean isPastDeferment) throws Exception {
-		logger.debug("Entering");
+	private void suspensePreparation(FinanceMain fm, FinRepayQueue repayQueue, Date valueDate, boolean isPastDeferment)
+			throws Exception {
+		logger.debug(Literal.ENTERING);
 
-		int curOdDays = finODDetailsDAO.getFinCurSchdODDays(financeMain.getFinReference(), repayQueue.getRpyDate());
+		long finID = fm.getFinID();
+		int curOdDays = finODDetailsDAO.getFinCurSchdODDays(finID, repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = customerStatusCodeDAO.getFinanceSuspendStatus(curOdDays);
@@ -125,18 +107,18 @@ public class SuspenseService extends ServiceHelper {
 		FinanceType fintype = getFinanceType(repayQueue.getFinType());
 		// Check suspense has hold or not
 		boolean holdsuspense = finSuspHoldDAO.holdSuspense(fintype.getFinCategory(), fintype.getFinType(),
-				repayQueue.getFinReference(), financeMain.getCustID());
+				repayQueue.getFinReference(), fm.getCustID());
 		if (holdsuspense) {
 			return;
 		}
 
-		FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(financeMain.getFinReference(), "");
+		FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(finID, "");
 		if (suspHead != null && suspHead.isFinIsInSusp()) {
 			return;
 		}
 
-		//Finance Related Details Fetching
-		BigDecimal suspAmount = financeScheduleDetailDAO.getSuspenseAmount(financeMain.getFinReference(), valueDate);
+		// Finance Related Details Fetching
+		BigDecimal suspAmount = financeScheduleDetailDAO.getSuspenseAmount(finID, valueDate);
 
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -145,10 +127,10 @@ public class SuspenseService extends ServiceHelper {
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setSchdDate(valueDate);
 
-		//FIXME: PV 07MAY17: To be addressed when suspense related changes released.
-		//Postings Process and save all postings related to finance for one time accounts update
+		// FIXME: PV 07MAY17: To be addressed when suspense related changes released.
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
-		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		// finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		long linkedTranId = aeEvent.getLinkedTranId();
 
 		if (suspHead != null) {
@@ -176,27 +158,17 @@ public class SuspenseService extends ServiceHelper {
 				valueDate, repayQueue.getRpyDate(), "S", valueDate, linkedTranId);
 		financeSuspHeadDAO.saveSuspenseDetails(suspDetails, "");
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for update of Finance Suspend Data for Release
-	 * 
-	 * @param fm
-	 * @param profitDetail
-	 * @param details
-	 * @param valueDate
-	 * @param isEODProcess
-	 * @throws Exception
-	 */
 	private void suspReleasePreparation(FinanceMain fm, BigDecimal releasePftAmount, FinRepayQueue repayQueue,
 			Date valueDate) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		String finReference = repayQueue.getFinReference();
+		long finID = repayQueue.getFinID();
 
 		// Fetch the Finance Suspend head
-		FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(finReference, "");
+		FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(finID, "");
 		if (suspHead == null || !suspHead.isFinIsInSusp()) {
 			return;
 		}
@@ -209,7 +181,7 @@ public class SuspenseService extends ServiceHelper {
 
 		// Pending OverDue Details for that particular Schedule date and overDue
 		// For
-		int curOverDueDays = finODDetailsDAO.getPendingOverDuePayment(finReference);
+		int curOverDueDays = finODDetailsDAO.getPendingOverDuePayment(finID);
 		int suspenceGraceDays = SysParamUtil.getValueAsInt("SUSP_AFTER");
 
 		if (curOverDueDays > suspenceGraceDays) {
@@ -240,10 +212,10 @@ public class SuspenseService extends ServiceHelper {
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
-		//FIXME: PV: 07MAY17 to be addressed when suspense related changes released
-		//Postings Process and save all postings related to finance for one time accounts update
+		// FIXME: PV: 07MAY17 to be addressed when suspense related changes released
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
-		//finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
+		// finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		long linkedTranId = aeEvent.getLinkedTranId();
 

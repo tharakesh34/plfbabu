@@ -82,7 +82,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				continue;
 			}
 
-			//Not Review Date
+			// Not Review Date
 			if (!curSchd.isRepayOnSchDate() && !financeMain.isFinRepayPftOnFrq() && !curSchd.isPftOnSchDate()) {
 				if (curSchd.isDisbOnSchDate()) {
 					curSchd.setDisbOnSchDate(false);
@@ -183,7 +183,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		List<FinanceScheduleDetail> finSchdDetails = scheduleData.getFinanceScheduleDetails();
 		int sdSize = finSchdDetails.size();
 
-		//Add Disbursement amount to existing record if found
+		// Add Disbursement amount to existing record if found
 		List<FinanceDisbursement> finDisbDetails = scheduleData.getDisbursementDetails();
 		FinanceScheduleDetail curSchd = null;
 		Date schdDate = financeMain.getFinStartDate();
@@ -213,12 +213,12 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 				curSchd = finSchdDetails.get(i);
 				schdDate = curSchd.getSchDate();
 
-				//Schedule Date before event from date
+				// Schedule Date before event from date
 				if (schdDate.before(curDisbDate)) {
 					disbIndex = i;
 					continue;
 
-					//Schedule Date matches event from date
+					// Schedule Date matches event from date
 				} else if (schdDate.compareTo(curDisbDate) == 0) {
 					isDisbDateFoundInSD = true;
 					curSchd.setDisbAmount(curSchd.getDisbAmount().add(curDisb.getDisbAmount()));
@@ -227,13 +227,13 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 					disbIndex = i;
 					break;
 
-					//Event from date not found
+					// Event from date not found
 				} else {
 					break;
 				}
 			}
 
-			//If new disbursement date add a record in schedule
+			// If new disbursement date add a record in schedule
 			if (!isDisbDateFoundInSD) {
 				scheduleData = addSchdRcd(scheduleData, curDisbDate, disbIndex);
 				prvSchd = finSchdDetails.get(disbIndex);
@@ -351,24 +351,25 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 	/**
 	 * Method for validate change frequency instructions
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction) {
+	public AuditDetail doValidations(FinServiceInstruction fsi) {
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 
 		// validate Instruction details
-		boolean isWIF = finServiceInstruction.isWif();
-		String finReference = finServiceInstruction.getFinReference();
+		boolean isWIF = fsi.isWif();
+		long finID = fsi.getFinID();
+		String finReference = fsi.getFinReference();
 
-		FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(finReference, "", isWIF);
+		FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(finID, "", isWIF);
 
 		// validate frqDay and frequency
-		String frqday = String.valueOf(finServiceInstruction.getFrqDay());
+		String frqday = String.valueOf(fsi.getFrqDay());
 		frqday = frqday.length() == 1 ? "0".concat(frqday) : frqday;
 		String newRepayFrq = StringUtils.substring(financeMain.getRepayFrq(), 0, financeMain.getRepayFrq().length() - 2)
 				.concat(frqday);
@@ -384,7 +385,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		}
 
 		// validate from date
-		Date fromDate = finServiceInstruction.getFromDate();
+		Date fromDate = fsi.getFromDate();
 		if (fromDate == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FromDate";
@@ -393,10 +394,11 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		}
 
 		// It shouldn't be past date when compare to appdate
-		if (DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtility.compare(fsi.getFromDate(), appDate) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(DateUtility.getAppDate());
+			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -413,7 +415,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		}
 
 		boolean isValidFromDate = false;
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 		if (schedules != null) {
 			for (FinanceScheduleDetail schDetail : schedules) {
 				if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
@@ -426,7 +428,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 
 			if (!isValidFromDate) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
+				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 			}
 		}

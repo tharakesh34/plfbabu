@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.TaskOwnersDAO;
@@ -53,13 +52,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	private FinanceDeviationsDAO deviationDetailsDAO;
 	private FinanceMainDAO financeMainDAO;
 	private TaskOwnersDAO taskOwnersDAO;
-
 	private FinanceTypeDAO financeTypeDAO;
 	private CustomerDetailsService customerDetailsService;
 	private EligibilityDetailService eligibilityDetailService;
 	private CheckListDetailService checkListDetailService;
 	private FinanceScoreHeaderDAO financeScoreHeaderDAO;
-	@Autowired
 	private DeviationHelper deviationHelper;
 
 	public FinanceDeviationsServiceImpl() {
@@ -67,8 +64,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	}
 
 	@Override
-	public List<FinanceDeviations> getApprovedFinanceDeviations(String finReference) {
-		List<FinanceDeviations> list = deviationDetailsDAO.getFinanceDeviations(finReference, "");
+	public List<FinanceDeviations> getApprovedFinanceDeviations(long finID) {
+		List<FinanceDeviations> list = deviationDetailsDAO.getFinanceDeviations(finID, "");
 		if (list != null && !list.isEmpty()) {
 			for (FinanceDeviations financeDeviations : list) {
 				financeDeviations.setApproved(true);
@@ -78,42 +75,42 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	}
 
 	@Override
-	public List<FinanceDeviations> getFinanceDeviations(String finReference) {
-		return deviationDetailsDAO.getFinanceDeviations(finReference, TableType.TEMP_TAB.getSuffix());
+	public List<FinanceDeviations> getFinanceDeviations(long finID) {
+		return deviationDetailsDAO.getFinanceDeviations(finID, TableType.TEMP_TAB.getSuffix());
 	}
 
 	@Override
-	public FinanceMain getFinanceMain(String finReference) {
-		return financeMainDAO.getFinanceMainById(finReference, "_View", false);
+	public FinanceMain getFinanceMain(long finID) {
+		return financeMainDAO.getFinanceMainById(finID, "_View", false);
 	}
 
 	@Override
-	public FinanceDetail getFinanceDetailById(String finRef) {
-		logger.debug(" Entering ");
-		FinanceDetail finDetail = new FinanceDetail();
-		FinScheduleData scheduleData = finDetail.getFinScheduleData();
-		scheduleData.setFinReference(finRef);
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finRef, "_View", false);
-		String finType = financeMain.getFinType();
-		long custID = financeMain.getCustID();
-		String finPreApprovedRef = financeMain.getFinPreApprovedRef();
-		BigDecimal finAmount = financeMain.getFinAmount();
-		String finCcy = financeMain.getFinCcy();
-		boolean newRecord = financeMain.isNewRecord();
+	public FinanceDetail getFinanceDetailById(long finID) {
+		logger.debug(Literal.ENTERING);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData scheduleData = fd.getFinScheduleData();
+		scheduleData.setFinReference(fm.getFinReference());
+		String finType = fm.getFinType();
+		long custID = fm.getCustID();
+		String finPreApprovedRef = fm.getFinPreApprovedRef();
+		BigDecimal finAmount = fm.getFinAmount();
+		String finCcy = fm.getFinCcy();
+		boolean newRecord = fm.isNewRecord();
 
 		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finType, "_AView");
 		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(custID, true, "_View");
 
-		finDetail.setCustomerDetails(customerDetails);
-		scheduleData.setFinanceMain(financeMain);
+		fd.setCustomerDetails(customerDetails);
+		scheduleData.setFinanceMain(fm);
 		scheduleData.setFinanceType(financeType);
 
-		List<FinanceDeviations> financeDeviations = getFinanceDeviations(finRef);
-		List<FinanceDeviations> approvedFinDeviations = getApprovedFinanceDeviations(finRef);
-		deviationHelper.setDeviationDetails(finDetail, financeDeviations, approvedFinDeviations);
+		List<FinanceDeviations> financeDeviations = getFinanceDeviations(finID);
+		List<FinanceDeviations> approvedFinDeviations = getApprovedFinanceDeviations(finID);
+		deviationHelper.setDeviationDetails(fd, financeDeviations, approvedFinDeviations);
 
-		//Finance Eligibility Rule Details List
-		//=======================================
+		// Finance Eligibility Rule Details List
+		// =======================================
 		String screenEvent = "";
 		if (StringUtils.trimToEmpty(finPreApprovedRef).equals(FinServiceEvent.PREAPPROVAL)) {
 			screenEvent = FinServiceEvent.PREAPPROVAL;
@@ -121,17 +118,17 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 			screenEvent = FinServiceEvent.ORG;
 		}
 
-		finDetail.setElgRuleList(eligibilityDetailService.setFinanceEligibilityDetails(finRef, finCcy, finAmount,
-				newRecord, finType, "", screenEvent));
+		fd.setElgRuleList(eligibilityDetailService.setFinanceEligibilityDetails(finID, finCcy, finAmount, newRecord,
+				finType, "", screenEvent));
 
-		//Check List Details 
-		checkListDetailService.setFinanceCheckListDetails(finDetail, finType, FinServiceEvent.ORG, "");
+		// Check List Details
+		checkListDetailService.setFinanceCheckListDetails(fd, finType, FinServiceEvent.ORG, "");
 
-		//Set Scoring details
-		List<FinanceScoreHeader> list = financeScoreHeaderDAO.getFinScoreHeaderList(finRef, "_View");
+		// Set Scoring details
+		List<FinanceScoreHeader> list = financeScoreHeaderDAO.getFinScoreHeaderList(finID, "_View");
 
 		if (list != null && !list.isEmpty()) {
-			finDetail.setFinScoreHeaderList(list);
+			fd.setFinScoreHeaderList(list);
 			List<Long> headerIds = new ArrayList<Long>(list.size());
 			for (FinanceScoreHeader financeScoreHeader : list) {
 				headerIds.add(financeScoreHeader.getHeaderId());
@@ -139,7 +136,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 			List<FinanceScoreDetail> dellist = financeScoreHeaderDAO.getFinScoreDetailList(headerIds, "_View");
 
 			if (dellist != null) {
-				Map<Long, List<FinanceScoreDetail>> map = finDetail.getScoreDetailListMap();
+				Map<Long, List<FinanceScoreDetail>> map = fd.getScoreDetailListMap();
 				for (FinanceScoreDetail financeScoreDetail : dellist) {
 					if (map.containsKey(financeScoreDetail.getHeaderId())) {
 						map.get(financeScoreDetail.getHeaderId()).add(financeScoreDetail);
@@ -151,13 +148,13 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				}
 			}
 		}
-		logger.debug(" Leaving ");
-		return finDetail;
+		logger.debug(Literal.LEAVING);
+		return fd;
 	}
 
 	@Override
-	public void processDevaitions(String finreference, List<FinanceDeviations> newlist, AuditHeader auditHeader) {
-		logger.debug(" Entering ");
+	public void processDevaitions(long finID, List<FinanceDeviations> newlist, AuditHeader auditHeader) {
+		logger.debug(Literal.ENTERING);
 
 		if (newlist == null) {
 			return;
@@ -165,12 +162,12 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 		String tableType = "_Temp";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		List<FinanceDeviations> oldList = getFinanceDeviations(finreference);
+		List<FinanceDeviations> oldList = getFinanceDeviations(finID);
 		int count = 0;
 
-		//Checking records to save and Update
+		// Checking records to save and Update
 		for (FinanceDeviations newfindev : newlist) {
-			//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+			// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
 			if (!(StringUtils.isEmpty(newfindev.getApprovalStatus())
 					|| StringUtils.equals(newfindev.getApprovalStatus(), PennantConstants.List_Select))) {
 				continue;
@@ -201,7 +198,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 			}
 		}
 
-		//Delete the records which are not there in new List
+		// Delete the records which are not there in new List
 		for (FinanceDeviations finDeviation : oldList) {
 			FinanceDeviations delRecod = getFinanceDeviationByID(newlist, finDeviation);
 			if (delRecod == null) {
@@ -211,8 +208,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				auditDetails.add(finDeviationAudit);
 			}
 		}
-		//### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
-		//if status is approved then processApproval
+		// ### 01-05-2018 - Start - story #361(tuleap server) Manual Deviations
+		// if status is approved then processApproval
 		for (FinanceDeviations financeDeviations : newlist) {
 			if (financeDeviations.isMarkDeleted()) {
 				deviationDetailsDAO.updateMarkDeleted(financeDeviations.getDeviationId(),
@@ -234,7 +231,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 		}
 		// ### 01-05-2018 - End
-		//Add audit if any changes
+		// Add audit if any changes
 		if (auditDetails.isEmpty()) {
 			return;
 		}
@@ -243,12 +240,11 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		devAuditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(devAuditHeader);
 
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public void processApprovedDevaitions(String finReference, List<FinanceDeviations> deviations,
-			AuditHeader auditHeader) {
+	public void processApprovedDevaitions(long finID, List<FinanceDeviations> deviations, AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		if (deviations == null) {
@@ -268,8 +264,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	 * 
 	 */
 	@Override
-	public void processApproval(List<FinanceDeviations> list, AuditHeader auditHeader, String finreference) {
-		logger.debug(" Entering ");
+	public void processApproval(List<FinanceDeviations> list, AuditHeader auditHeader, long finID) {
+		logger.debug(Literal.ENTERING);
 		if (list != null && !list.isEmpty()) {
 
 			List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -289,9 +285,9 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 			}
 
-			//Add audit if any changes
+			// Add audit if any changes
 			if (auditDetails.isEmpty()) {
-				logger.debug(" Leaving ");
+				logger.debug(Literal.LEAVING);
 				return;
 			}
 
@@ -299,43 +295,44 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 			auditHeaderDAO.addAudit(auditHeader);
 		}
 
-		//if approval for all records came then remove for the deviation approval
-		//update finance reference to remove for approval
-		checkFinalApproval(finreference);
-		logger.debug(" Leaving ");
+		// if approval for all records came then remove for the deviation approval
+		// update finance reference to remove for approval
+		checkFinalApproval(finID);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * @param finref
 	 */
-	private void checkFinalApproval(String finref) {
-		logger.debug(" Entering ");
-		List<FinanceDeviations> list = deviationDetailsDAO.getFinanceDeviations(finref, TableType.TEMP_TAB.getSuffix());
+	private void checkFinalApproval(long finID) {
+		logger.debug(Literal.ENTERING);
+		List<FinanceDeviations> list = deviationDetailsDAO.getFinanceDeviations(finID, TableType.TEMP_TAB.getSuffix());
 		if (list != null && !list.isEmpty()) {
-			//since there are some deviation which are pending for approval 
+			// since there are some deviation which are pending for approval
 			return;
 		}
 
-		list = deviationDetailsDAO.getFinanceDeviations(finref, false, TableType.MAIN_TAB.getSuffix());
+		list = deviationDetailsDAO.getFinanceDeviations(finID, false, TableType.MAIN_TAB.getSuffix());
 
+		String finReference = null;
 		if (list != null && !list.isEmpty()) {
 			boolean deviationApproved = true;
 			boolean rejected = false;
 			for (FinanceDeviations finDeviations : list) {
-				finref = finDeviations.getFinReference();
+				finReference = finDeviations.getFinReference();
 				String status = StringUtils.trimToEmpty(finDeviations.getApprovalStatus());
-				//Check for at least one reject and then proceed
+				// Check for at least one reject and then proceed
 				if (status.equals(PennantConstants.RCD_STATUS_REJECTED)) {
 					rejected = true;
 				}
 
 			}
 
-			//if approval for all records came then remove for the deviation approval
-			//update finance reference to remove for approval
+			// if approval for all records came then remove for the deviation approval
+			// update finance reference to remove for approval
 			if (deviationApproved) {
 
-				FinanceMain finmain = financeMainDAO.getFinanceMainById(finref, "_Temp", false);
+				FinanceMain finmain = financeMainDAO.getFinanceMainById(finID, "_Temp", false);
 
 				// Load the work-flow engine.
 				long workflowId = finmain.getWorkflowId();
@@ -391,7 +388,7 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				}
 
 				if (queueChanged) {
-					//if queue assignment process then
+					// if queue assignment process then
 					if (StringUtils.isNotEmpty(nextUserid) && Long.parseLong(nextUserid) != 0) {
 						/*
 						 * 1. get the record with role code and finance reference 2. Update finance with the current
@@ -401,10 +398,10 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 						if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("ALLOW_LOAN_APP_LOCK"))) {
 							finmain.setNextUserId(null);
 						} else {
-							TaskOwners taskowner = taskOwnersDAO.getTaskOwner(finref, roleCode);
+							TaskOwners taskowner = taskOwnersDAO.getTaskOwner(finReference, roleCode);
 							if (taskowner != null) {
 								finmain.setNextUserId(String.valueOf(taskowner.getCurrentOwner()));
-								taskOwnersDAO.deviationReject(finref, roleCode, nextRoleCode);
+								taskOwnersDAO.deviationReject(finReference, roleCode, nextRoleCode);
 							} else {
 								finmain.setNextUserId(String.valueOf(0));
 							}
@@ -416,10 +413,10 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 				}
 
 				financeMainDAO.updateDeviationApproval(finmain, rejected, "_Temp");
-				deviationDetailsDAO.updateDeviProcessed(finref, "");
+				deviationDetailsDAO.updateDeviProcessed(finID, "");
 			}
 		}
-		logger.debug(" Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private FinanceDeviations getFinanceDeviationByID(List<FinanceDeviations> list, FinanceDeviations devNew) {
@@ -432,29 +429,32 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		return null;
 	}
 
-	//### 01-05-2018 - story #361(tuleap server) Manual Deviations
+	// ### 01-05-2018 - story #361(tuleap server) Manual Deviations
 	@Override
 	public AuditHeader doCheckDeviationApproval(AuditHeader auditHeader) {
 		AuditDetail auditDetail = auditHeader.getAuditDetail();
-		FinanceDetail financeDetail = (FinanceDetail) auditDetail.getModelData();
-		String userRole = financeDetail.getFinScheduleData().getFinanceMain().getRoleCode();
+		FinanceDetail fd = (FinanceDetail) auditDetail.getModelData();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String userRole = fm.getRoleCode();
 		// Get the list of finance deviations that were finalized.
-		List<FinanceDeviations> financedeviations = deviationDetailsDAO
-				.getFinanceDeviations(financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "");
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+		List<FinanceDeviations> financedeviations = deviationDetailsDAO.getFinanceDeviations(finID, "");
 		List<FinanceDeviations> deviations = new ArrayList<>();
 		for (FinanceDeviations financeDeviation : financedeviations) {
 			deviations.add(financeDeviation);
 		}
 
 		// Add the pending manual deviations.
-		List<FinanceDeviations> pendingDeviations = financeDetail.getManualDeviations();
+		List<FinanceDeviations> pendingDeviations = fd.getManualDeviations();
 
 		if (pendingDeviations != null && !pendingDeviations.isEmpty()) {
 			deviations.addAll(pendingDeviations);
 		}
 
 		// Add the pending auto (along with custom) deviations.
-		List<FinanceDeviations> pendingAutoDeviations = financeDetail.getFinanceDeviations();
+		List<FinanceDeviations> pendingAutoDeviations = fd.getFinanceDeviations();
 
 		if (pendingAutoDeviations != null && !pendingAutoDeviations.isEmpty()) {
 			deviations.addAll(pendingAutoDeviations);
@@ -485,8 +485,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	}
 
 	@Override
-	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(String finReference, long deviationId, String type) {
-		return deviationDetailsDAO.getFinanceDeviationsByIdAndFinRef(finReference, deviationId, type);
+	public FinanceDeviations getFinanceDeviationsByIdAndFinRef(long finID, long deviationId, String type) {
+		return deviationDetailsDAO.getFinanceDeviationsByIdAndFinRef(finID, deviationId, type);
 	}
 
 	private AuditHeader getAuditHeader(AuditHeader auditHeader) {
@@ -510,6 +510,22 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 
 	}
 
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setDeviationDetailsDAO(FinanceDeviationsDAO deviationDetailsDAO) {
+		this.deviationDetailsDAO = deviationDetailsDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setTaskOwnersDAO(TaskOwnersDAO taskOwnersDAO) {
+		this.taskOwnersDAO = taskOwnersDAO;
+	}
+
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
@@ -526,24 +542,12 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		this.checkListDetailService = checkListDetailService;
 	}
 
-	public void setTaskOwnersDAO(TaskOwnersDAO taskOwnersDAO) {
-		this.taskOwnersDAO = taskOwnersDAO;
-	}
-
 	public void setFinanceScoreHeaderDAO(FinanceScoreHeaderDAO financeScoreHeaderDAO) {
 		this.financeScoreHeaderDAO = financeScoreHeaderDAO;
 	}
 
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public void setDeviationDetailsDAO(FinanceDeviationsDAO deviationDetailsDAO) {
-		this.deviationDetailsDAO = deviationDetailsDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
+	public void setDeviationHelper(DeviationHelper deviationHelper) {
+		this.deviationHelper = deviationHelper;
 	}
 
 }

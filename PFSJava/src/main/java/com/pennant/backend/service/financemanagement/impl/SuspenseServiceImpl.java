@@ -538,8 +538,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 				tableType = "";
 			}
 
-			String finReference = schdData.getFinReference();
-			financeCheckList = checkListDetailService.getCheckListByFinRef(finReference, tableType);
+			long finID = fm.getFinID();
+			financeCheckList = checkListDetailService.getCheckListByFinRef(finID, tableType);
 			fd.setFinanceCheckList(financeCheckList);
 
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {

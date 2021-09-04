@@ -35,8 +35,10 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
@@ -67,47 +69,30 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 */
 	@Override
 	public FinReceiptHeader getFinReceiptHeaderById(long receiptID, String type) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Receipt Header Details
 		FinReceiptHeader receiptHeader = null;
-		receiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptID, "_View");
+		receiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptID, "_View");
 
 		// Fetch Receipt Detail List
 		if (receiptHeader != null) {
-			List<FinReceiptDetail> receiptDetailList = getFinReceiptDetailDAO().getReceiptHeaderByID(receiptID,
-					"_AView");
+			List<FinReceiptDetail> receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "_AView");
 			receiptHeader.setReceiptDetails(receiptDetailList);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return receiptHeader;
 	}
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * FinReceiptHeader/FinReceiptHeader_Temp by using FinReceiptHeaderDAO's save method b) Update the Record in the
-	 * table. based on the module workFlow Configuration. by using FinReceiptHeaderDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @return auditHeader
-	 * @throws AccountNotFoundException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws AppException {
+		logger.debug(Literal.ENTERING);
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return aAuditHeader;
 		}
 
@@ -124,9 +109,9 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		// =======================================
 		if (receiptHeader.isNewRecord()) {
 			receiptHeader.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-			getFinReceiptHeaderDAO().save(receiptHeader, tableType);
+			finReceiptHeaderDAO.save(receiptHeader, tableType);
 		} else {
-			getFinReceiptHeaderDAO().update(receiptHeader, tableType);
+			finReceiptHeaderDAO.update(receiptHeader, tableType);
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
@@ -134,56 +119,54 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 				receiptHeader.getBefImage(), receiptHeader));
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getFinReceiptHeaderDAO().delete with parameters finReceiptHeader,"_Temp" 3) Audit the
-	 * record in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using finReceiptHeaderDAO.delete with parameters finReceiptHeader,"_Temp" 3) Audit the record
+	 * in to AuditHeader and AdtFinReceiptHeader by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.LEAVING);
 			return auditHeader;
 		}
 		FinReceiptHeader receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Delete Receipt Header
-		getFinReceiptHeaderDAO().deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		finReceiptHeaderDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	/**
 	 * doApprove method do the following steps. Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. based on the Record type do
-	 * following actions Update record in the main table by using getFinReceiptHeaderDAO().update with parameters
+	 * following actions Update record in the main table by using finReceiptHeaderDAO.update with parameters
 	 * FinReceiptHeader. Audit the record in to AuditHeader and AdtFinReceiptHeader by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws AccountNotFoundException
 	 * @throws InvocationTargetException
@@ -192,7 +175,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	@Override
 	public AuditHeader doApprove(AuditHeader aAuditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
@@ -204,62 +187,62 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-		FinReceiptHeader receiptHeader = finReceiptData.getReceiptHeader();
+		FinReceiptHeader rch = finReceiptData.getReceiptHeader();
 
 		// Receipt Header Updation
 		// =======================================
 		tranType = PennantConstants.TRAN_UPD;
-		receiptHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-		receiptHeader.setRcdMaintainSts(null);
-		receiptHeader.setRecordType("");
-		receiptHeader.setRoleCode("");
-		receiptHeader.setNextRoleCode("");
-		receiptHeader.setTaskId("");
-		receiptHeader.setNextTaskId("");
-		receiptHeader.setWorkflowId(0);
-		getFinReceiptHeaderDAO().update(receiptHeader, TableType.MAIN_TAB);
+		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		rch.setRcdMaintainSts(null);
+		rch.setRecordType("");
+		rch.setRoleCode("");
+		rch.setNextRoleCode("");
+		rch.setTaskId("");
+		rch.setNextTaskId("");
+		rch.setWorkflowId(0);
+		finReceiptHeaderDAO.update(rch, TableType.MAIN_TAB);
 
 		// Update Receipt Details based on Receipt Mode
-		for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
-			FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
+		for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
+			FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
 			if (StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_DD)) {
-				getFinReceiptDetailDAO().updateReceiptStatus(receiptDetail.getReceiptID(),
-						receiptDetail.getReceiptSeqID(), RepayConstants.PAYSTATUS_REALIZED);
+				finReceiptDetailDAO.updateReceiptStatus(receiptDetail.getReceiptID(), receiptDetail.getReceiptSeqID(),
+						RepayConstants.PAYSTATUS_REALIZED);
 				break;
 			}
 		}
 
 		// Making Finance Inactive Incase of Schedule Payment
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-			List<FinanceScheduleDetail> schdList = getFinanceScheduleDetailDAO()
-					.getFinScheduleDetails(receiptHeader.getReference(), "", false);
-			if (isSchdFullyPaid(receiptHeader.getReference(), schdList)) {
-				getFinanceMainDAO().updateMaturity(receiptHeader.getReference(), FinanceConstants.CLOSE_STATUS_MATURED,
-						false, null);
+		long finID = rch.getFinID();
+		String reference = rch.getReference();
+		if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
+			List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
+			if (isSchdFullyPaid(finID, schdList)) {
+				financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, null);
 			}
 		}
 
 		// updating fixexcess amount after realization
-		if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-			FinRepayHeader rph = receiptHeader.getReceiptDetails().get(0).getRepayHeader();
+		if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
+			FinRepayHeader rph = rch.getReceiptDetails().get(0).getRepayHeader();
 			if (rph != null && rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-				finExcessAmountDAO.updExcessAfterRealize(receiptHeader.getReference(),
-						receiptHeader.getExcessAdjustTo(), rph.getExcessAmount());
+				finExcessAmountDAO.updExcessAfterRealize(finID, rch.getExcessAdjustTo(), rph.getExcessAmount());
 			}
 		}
 
 		// Delete Save Receipt Detail List by Reference
-		finReceiptDetailDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		long receiptID = rch.getReceiptID();
+		finReceiptDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
 		// Receipt Allocation Details
-		allocationDetailDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		allocationDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
 		// Delete Manual Advise Movements
-		manualAdviseDAO.deleteMovementsByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB.getSuffix());
+		manualAdviseDAO.deleteMovementsByReceiptID(receiptID, TableType.TEMP_TAB.getSuffix());
 
 		// Delete Receipt Header
-		finReceiptHeaderDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		finReceiptHeaderDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
 		// Preparing Before Image for Audit
 		FinReceiptHeader befRctHeader = null;
@@ -291,7 +274,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		aAuditHeader.setAuditDetails(tempAuditDetailList);
 		aAuditHeader.setAuditModule("Receipt");
-		getAuditHeaderDAO().addAudit(aAuditHeader);
+		auditHeaderDAO.addAudit(aAuditHeader);
 
 		if (orgReceiptData.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			tranType = PennantConstants.TRAN_ADD;
@@ -314,7 +297,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 			}
 		}
 
-		//FinReceiptHeader Audit
+		// FinReceiptHeader Audit
 		auditHeader.setAuditDetail(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], befRctHeader,
 				finReceiptData.getReceiptHeader()));
 
@@ -323,11 +306,11 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("Receipt");
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		// Reset Finance Detail Object for Service Task Verifications
-		//receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
+		// receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -338,7 +321,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * @param scheduleDetails
 	 * @return
 	 */
-	private boolean isSchdFullyPaid(String finReference, List<FinanceScheduleDetail> scheduleDetails) {
+	private boolean isSchdFullyPaid(long finID, List<FinanceScheduleDetail> scheduleDetails) {
 		// Check Total Finance profit Amount
 		boolean fullyPaid = true;
 		for (int i = 1; i < scheduleDetails.size(); i++) {
@@ -365,7 +348,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		// Check Penalty Paid Fully or not
 		if (fullyPaid) {
-			FinODDetails overdue = getFinODDetailsDAO().getTotals(finReference);
+			FinODDetails overdue = finODDetailsDAO.getTotals(finID);
 			if (overdue != null) {
 				BigDecimal balPenalty = overdue.getTotPenaltyAmt().subtract(overdue.getTotPenaltyPaid())
 						.add(overdue.getLPIAmt().subtract(overdue.getLPIPaid()));
@@ -383,21 +366,20 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID
-	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
+	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -411,7 +393,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	 * @return
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinReceiptData finReceiptData = (FinReceiptData) auditDetail.getModelData();
@@ -419,10 +401,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		FinReceiptHeader tempReceiptHeader = null;
 		if (receiptHeader.isWorkflow()) {
-			tempReceiptHeader = getFinReceiptHeaderDAO().getReceiptHeaderByID(receiptHeader.getReceiptID(), "_Temp");
+			tempReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptHeader.getReceiptID(), "_Temp");
 		}
-		FinReceiptHeader beFinReceiptHeader = getFinReceiptHeaderDAO()
-				.getReceiptHeaderByID(receiptHeader.getReceiptID(), "");
+		FinReceiptHeader beFinReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptHeader.getReceiptID(),
+				"");
 		FinReceiptHeader oldReceiptHeader = receiptHeader.getBefImage();
 
 		String[] errParm = new String[1];
@@ -436,7 +418,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 			if (!receiptHeader.isWorkflow()) {// With out Work flow only new
 				// records
 				if (beFinReceiptHeader != null) { // Record Already Exists in
-														// the
+													// the
 													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
@@ -463,7 +445,7 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 				// and delete
 
 				if (beFinReceiptHeader == null) { // if records not exists in
-														// the
+													// the
 													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
@@ -507,60 +489,28 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		return auditDetail;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public FinReceiptHeaderDAO getFinReceiptHeaderDAO() {
-		return finReceiptHeaderDAO;
-	}
-
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
-	}
-
-	public FinReceiptDetailDAO getFinReceiptDetailDAO() {
-		return finReceiptDetailDAO;
 	}
 
 	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
 		this.finReceiptDetailDAO = finReceiptDetailDAO;
 	}
 
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public FinODDetailsDAO getFinODDetailsDAO() {
-		return finODDetailsDAO;
 	}
 
 	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
 		this.finODDetailsDAO = finODDetailsDAO;
 	}
 
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	public void setAllocationDetailDAO(ReceiptAllocationDetailDAO allocationDetailDAO) {
@@ -569,6 +519,10 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 }

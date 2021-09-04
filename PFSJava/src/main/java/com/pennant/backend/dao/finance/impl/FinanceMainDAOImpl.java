@@ -3782,62 +3782,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getLoanStatus(String finReference) {
-		StringBuilder sql = new StringBuilder("Select RecordStatus, RoleCode, NextRoleCode From (");
-		sql.append(" Select RecordStatus, RoleCode, NextRoleCode From FinanceMain Where FinReference = ?");
-		sql.append(" Union All");
-		sql.append(" Select RecordStatus, RoleCode, NextRoleCode From FinanceMain_Temp fm Where FinReference = ?");
-		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
-		sql.append(" ) fm");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceMain fm = new FinanceMain();
-
-				fm.setRecordStatus(rs.getString("RecordStatus"));
-				fm.setRoleCode(rs.getString("RoleCode"));
-				fm.setNextRoleCode(rs.getString("NextRoleCode"));
-
-				return fm;
-
-			}, finReference, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return null;
-	}
-
-	@Override
-	public FinanceMain getGetDeviation(String finReference) {
-		StringBuilder sql = new StringBuilder("Select FinID, WorkflowId From (");
-		sql.append(" Select FinID, WorkflowId From FinanceMain Where FinReference = ?");
-		sql.append(" Union All");
-		sql.append(" Select FinID, WorkflowId From FinanceMain_Temp fm Where FinReference = ?");
-		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
-		sql.append(" ) fm");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceMain fm = new FinanceMain();
-
-				fm.setFinID(rs.getLong("FinID"));
-				fm.setWorkflowId(rs.getLong("WorkflowId"));
-				fm.setNextRoleCode(rs.getString("NextRoleCode"));
-
-				return fm;
-
-			}, finReference, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return null;
-	}
-
-	@Override
 	public FinanceMain getUserActions(String finReference) {
 		String sql = "Select FinType, NextRoleCode From FinanceMain_Temp Where FinReference = ?";
 
@@ -5486,6 +5430,48 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			//
 		}
 
+		return null;
+	}
+
+	@Override
+	public FinanceMain getFinanceMain(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinType, CustID, RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+		sql.append(", FinIsActive, FinStartDate, MaturityDate, CalMaturity From (");
+		sql.append(" Select FinID, FinType, CustID, RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+		sql.append(", FinIsActive, FinStartDate, MaturityDate, CalMaturity ");
+		sql.append(" From FinanceMain Where FinReference = ?");
+		sql.append(" Union All");
+		sql.append(" Select FinID, FinType, CustID, RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+		sql.append(", FinIsActive, FinStartDate, MaturityDate, CalMaturity ");
+		sql.append(" From FinanceMain_Temp Where FinReference = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" ) fm");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setRecordStatus(rs.getString("RecordStatus"));
+				fm.setRoleCode(rs.getString("RoleCode"));
+				fm.setNextRoleCode(rs.getString("NextRoleCode"));
+				fm.setCustID(rs.getLong("WorkflowId"));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setMaturityDate(rs.getDate("MaturityDate"));
+				fm.setCalMaturity(rs.getDate("CalMaturity"));
+
+				return fm;
+
+			}, finReference, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
 		return null;
 	}
 

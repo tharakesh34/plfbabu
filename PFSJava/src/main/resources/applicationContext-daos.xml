@@ -5688,6 +5688,7 @@
 		<property name="taskOwnersDAO" ref="taskOwnersDAO" />
 		<property name="financeScoreHeaderDAO" ref="financeScoreHeaderDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="deviationHelper" ref="deviationHelper" />
 	</bean>
 
 	<bean name="deviationHelper" class="com.pennant.backend.delegationdeviation.DeviationHelper" />

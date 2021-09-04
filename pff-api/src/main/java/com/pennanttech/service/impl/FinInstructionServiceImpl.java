@@ -170,7 +170,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private ChangeScheduleMethodService changeScheduleMethodService;
 	private FeeDetailService feeDetailService;
 	private ReceiptCalculator receiptCalculator;
-
 	private FinanceMainDAO financeMainDAO;
 	private ValidationUtility validationUtility;
 	private FinanceValidationService financeValidationService;
@@ -205,102 +204,103 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	/**
 	 * Method for perform addRateChange operation
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 */
 	@Override
-	public FinanceDetail addRateChange(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail addRateChange(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, AddRateChangeGroup.class);
 
-		if (StringUtils.equals(UploadConstants.FRR, finServiceInstruction.getReqFrom())) {
-			returnStatus = validateFinReference(finServiceInstruction);
-			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(returnStatus);
-				return financeDetail;
-			}
-		}
-		// bean validations
-		validationUtility.validate(finServiceInstruction, AddRateChangeGroup.class);
+		String finReference = fsi.getFinReference();
+		String eventCode = AccountingEvent.RATCHG;
+		String reqFrom = fsi.getReqFrom();
 
-		// for logging purpose
-		String finReference = finServiceInstruction.getFinReference();
 		APIErrorHandlerService.logReference(finReference);
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-		// Set null for Empty values
-		setDefaultForReferenceFields(finServiceInstruction);
-		// validate ReqType
-		returnStatus = validateReqType(finServiceInstruction.getReqType());
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = new WSReturnStatus();
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-
-			return financeDetail;
-		}
-
-		// service level validations
-		if (!(StringUtils.equals(UploadConstants.FRR, finServiceInstruction.getReqFrom()))) {
-			returnStatus = validateFinReference(finServiceInstruction);
-
-			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(returnStatus);
-
-				return financeDetail;
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
 
-		// validate service instruction data
-		AuditDetail auditDetail = rateChangeService.doValidations(finServiceInstruction);
-
-		if (StringUtils.equals(UploadConstants.FRR, finServiceInstruction.getReqFrom())) {
-			finServiceInstruction = (FinServiceInstruction) auditDetail.getModelData();
-		}
-		returnStatus = isWriteoffLoan(finReference);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		setDefaultDateFormats(fsi);
+		setDefaultForReferenceFields(fsi);
+
+		returnStatus = validateReqType(fsi.getReqType());
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = rateChangeService.doValidations(fsi);
+
+		if (StringUtils.equals(UploadConstants.FRR, reqFrom)) {
+			fsi = (FinServiceInstruction) auditDetail.getModelData();
 		}
 
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 
-				return financeDetail;
+				return fd;
 			}
 		}
 
-		// validate fees
-		String eventCode = AccountingEvent.RATCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
 
-		// call addRateChange service
-		financeDetail = finServiceInstController.doAddRateChange(finServiceInstruction, eventCode);
+		fsi.setFinID(finID);
+
+		fd = finServiceInstController.doAddRateChange(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
@@ -309,76 +309,103 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	 * @param loanServicing
 	 */
 	@Override
-	public FinanceDetail changeRepayAmt(FinServiceInstruction finServiceInstruction) throws ServiceException {
+	public FinanceDetail changeRepayAmt(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, ChangeRepaymentGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, ChangeRepaymentGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String finReference = fsi.getFinReference();
+		String eventCode = AccountingEvent.SCDCHG;
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		APIErrorHandlerService.logReference(finReference);
 
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
 
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-		// restrict FLEXI Finances
-		// FIXME Open when the flexi is comes in core
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeRepaymentAmount"); }
-		 */
-		// validate service instruction data
-		AuditDetail auditDetail = addRepaymentService.doValidations(finServiceInstruction);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
-		// validate fees
-		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = addRepaymentService.doValidations(fsi);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(
 						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+				return fd;
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doAddRepayment(finServiceInstruction, eventCode);
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.doAddRepayment(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
@@ -388,77 +415,101 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	 * @throws JaxenException
 	 */
 	@Override
-	public FinanceDetail deferments(FinServiceInstruction finServiceInstruction) throws ServiceException {
+	public FinanceDetail deferments(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(finServiceInstruction, DefermentsGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, DefermentsGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Deferments"); }
-		 */
-		// validate service instruction data
-		AuditDetail auditDetail = postponementService.doValidations(finServiceInstruction);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-
-		// validate fees
+		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.DEFRPY;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+
+		APIErrorHandlerService.logReference(finReference);
+
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
 
-		// call change repay amount service
-		financeDetail = finServiceInstController.doDefferment(finServiceInstruction, eventCode);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = postponementService.doValidations(fsi);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.doDefferment(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
@@ -468,102 +519,101 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	 * @throws JaxenException
 	 */
 	@Override
-	public FinanceDetail addTerms(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail addTerms(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, AddTermsGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, AddTermsGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		// service level validations
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
-
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("AddTerms"); }
-		 */
-		// validate service instruction data
-		AuditDetail auditDetail = addTermsService.doValidations(finServiceInstruction);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-
-		// validate fees
+		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+
+		APIErrorHandlerService.logReference(finReference);
+
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
 
-		// call addRateChange service
-		financeDetail = finServiceInstController.addTerms(finServiceInstruction, eventCode);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = addTermsService.doValidations(fsi);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.addTerms(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
-	}
-
-	private FinanceDetail flexiNotAllowed(String service) {
-		String[] valueParm = new String[2];
-		valueParm[0] = "HFLEXI Loans";
-		valueParm[1] = service;
-		WSReturnStatus returnStatus = APIErrorHandlerService.getFailedStatus("90329", valueParm);
-		FinanceDetail financeDetail = new FinanceDetail();
-		doEmptyResponseObject(financeDetail);
-		financeDetail.setReturnStatus(returnStatus);
-		return financeDetail;
-	}
-
-	/**
-	 * 
-	 * @param finServiceInstruction
-	 * @return
-	 */
-	private boolean restrictFlexiFinances(FinServiceInstruction finServiceInstruction) {
-
-		FinanceMain financeMain = financeMainDAO.isFlexiLoan(finServiceInstruction.getFinReference());
-		return financeMain.isAlwFlexi();
+		return fd;
 	}
 
 	/**
@@ -573,184 +623,210 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	 * @throws JaxenException
 	 */
 	@Override
-	public FinanceDetail removeTerms(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail removeTerms(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, RemoveTermsGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, RemoveTermsGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String finReference = fsi.getFinReference();
+		String recalType = fsi.getRecalType();
+		String eventCode = AccountingEvent.SCDCHG;
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		APIErrorHandlerService.logReference(finReference);
 
-		// service level validations
-		WSReturnStatus returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
+		setDefaultDateFormats(fsi);
 
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("RemoveTerms"); }
-		 */
-		// validate RecalType
-		if (StringUtils.isNotBlank(finServiceInstruction.getRecalType())) {
-			if (!StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)
-					&& !StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = null;
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
 				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getRecalType();
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		if (StringUtils.isNotBlank(recalType)) {
+			if (!CalculationConstants.RPYCHG_ADJMDT.equals(recalType)
+					&& !CalculationConstants.RPYCHG_TILLMDT.equals(recalType)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = recalType;
 				returnStatus = APIErrorHandlerService.getFailedStatus("91104", valueParm);
 			}
 		}
 
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
 
-		// validate service instruction data
-		AuditDetail auditDetail = rmvTermsService.doValidations(finServiceInstruction);
+		AuditDetail auditDetail = rmvTermsService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
-		// validate fees
-		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
-		// call removeRateChange service
-		financeDetail = finServiceInstController.removeTerms(finServiceInstruction, eventCode);
+
+		fsi.setFinID(finID);
+
+		fd = finServiceInstController.removeTerms(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
-	public FinanceDetail feePayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
+	public FinanceDetail feePayment(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		APIErrorHandlerService.logReference(fsi.getFinReference());
 
 		// bean validations
-		validationUtility.validate(finServiceInstruction, UpfrontFeesGroup.class);
+		validationUtility.validate(fsi, UpfrontFeesGroup.class);
 
-		if (StringUtils.isBlank(finServiceInstruction.getFinReference())
-				&& StringUtils.isBlank(finServiceInstruction.getExternalReference())) {
+		if (StringUtils.isBlank(fsi.getFinReference()) && StringUtils.isBlank(fsi.getExternalReference())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "finReference";
 			valueParm[1] = "externalReference";
 			return errorDetails("90123", valueParm);
-		} else if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())
-				&& StringUtils.isNotBlank(finServiceInstruction.getExternalReference())) {
+		} else if (StringUtils.isNotBlank(fsi.getFinReference())
+				&& StringUtils.isNotBlank(fsi.getExternalReference())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "finReference";
 			valueParm[1] = "externalReference";
 			return errorDetails("30511", valueParm);
 		}
 
-		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())) {
-			finServiceInstruction.setFromBranch("");
-			finServiceInstruction.setToBranch("");
-			finServiceInstruction.setFinType("");
-			finServiceInstruction.setCustCIF("");
+		if (StringUtils.isNotBlank(fsi.getFinReference())) {
+			fsi.setFromBranch("");
+			fsi.setToBranch("");
+			fsi.setFinType("");
+			fsi.setCustCIF("");
 		} else {
 			// for logging purpose
-			APIErrorHandlerService.logReference(finServiceInstruction.getExternalReference());
+			APIErrorHandlerService.logReference(fsi.getExternalReference());
 
-			if (StringUtils.isBlank(finServiceInstruction.getFromBranch())) {
+			if (StringUtils.isBlank(fsi.getFromBranch())) {
 				String valueParm[] = new String[1];
 				valueParm[0] = "fromBranch";
 				return errorDetails("90502", valueParm);
 			}
 
-			if (StringUtils.isBlank(finServiceInstruction.getFinType())) {
+			if (StringUtils.isBlank(fsi.getFinType())) {
 				String valueParm[] = new String[1];
 				valueParm[0] = "finType";
 				return errorDetails("90502", valueParm);
 			}
 
-			if (StringUtils.isBlank(finServiceInstruction.getCustCIF())) {
+			if (StringUtils.isBlank(fsi.getCustCIF())) {
 				String valueParm[] = new String[1];
 				valueParm[0] = "cif";
 				return errorDetails("90502", valueParm);
 			}
 
-			Branch fromBranch = branchDAO.getBranchById(finServiceInstruction.getFromBranch(), "");
+			Branch fromBranch = branchDAO.getBranchById(fsi.getFromBranch(), "");
 			if (fromBranch == null) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finServiceInstruction.getFromBranch();
+				valueParm[0] = fsi.getFromBranch();
 				return errorDetails("90129", valueParm);
 			}
 
-			Customer customer = customerDetailsService.checkCustomerByCIF(finServiceInstruction.getCustCIF(),
+			Customer customer = customerDetailsService.checkCustomerByCIF(fsi.getCustCIF(),
 					TableType.MAIN_TAB.getSuffix());
 			if (customer == null) {
 				String valueParm[] = new String[1];
-				valueParm[0] = finServiceInstruction.getCustCIF();
+				valueParm[0] = fsi.getCustCIF();
 				return errorDetails("90101", valueParm);
 			}
-			finServiceInstruction.setCustID(customer.getCustID());
+			fsi.setCustID(customer.getCustID());
 
 			int count = receiptService.geFeeReceiptCountByExtReference(Objects.toString(customer.getCustID(), ""),
-					FinServiceEvent.FEEPAYMENT, finServiceInstruction.getExternalReference());
+					FinServiceEvent.FEEPAYMENT, fsi.getExternalReference());
 			if (count > 0) {
 				String valueParm[] = new String[3];
 				valueParm[0] = "Invalid CIF";
-				valueParm[1] = finServiceInstruction.getCustCIF();
+				valueParm[1] = fsi.getCustCIF();
 				valueParm[2] = "externalreference is already assigned to another customer.";
 				return errorDetails("30550", valueParm);
 			}
 		}
 
-		if (finServiceInstruction.getAmount() == null) {
-			finServiceInstruction.setAmount(BigDecimal.ZERO);
+		if (fsi.getAmount() == null) {
+			fsi.setAmount(BigDecimal.ZERO);
 		}
 
 		String moduleDefiner = FinServiceEvent.FEEPAYMENT;
 
 		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		setDefaultDateFormats(fsi);
 
 		FinanceDetail financeDetail = null;
 
 		// vlidate duplicate record
-		boolean dedupFound = checkUpFrontDuplicateRequest(finServiceInstruction, moduleDefiner);
+		boolean dedupFound = checkUpFrontDuplicateRequest(fsi, moduleDefiner);
 		if (dedupFound) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "transaction";
 			return errorDetails("41014", valueParm);
 		}
 		// execute manual payment service
-		financeDetail = finServiceInstController.doFeePayment(finServiceInstruction);
+		financeDetail = finServiceInstController.doFeePayment(fsi);
 
 		logger.debug(Literal.LEAVING);
 		return financeDetail;
@@ -796,469 +872,645 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	/**
 	 * Method for validate the request receiving from API and do schedule recalculation
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail recalculate(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail recalculate(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, RecalculateGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, RecalculateGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String finReference = fsi.getFinReference();
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		APIErrorHandlerService.logReference(finReference);
 
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
 
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
 		}
 
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
 
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Recalculate"); }
-		 */
-		// validate service instruction data
-		AuditDetail auditDetail = recalService.doValidations(finServiceInstruction);
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = recalService.doValidations(fsi);
 
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 
-				return financeDetail;
+				return fd;
 			}
 		}
 		// validate fees
 		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
 
-		// call change repay amount service
-		financeDetail = finServiceInstController.doRecalculate(finServiceInstruction, eventCode);
+		fsi.setFinID(finID);
+
+		fd = finServiceInstController.doRecalculate(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
 	 * Method for validate request object and do ChangeInterest action
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail changeInterest(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail changeInterest(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, ChangeInterestGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, ChangeInterestGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ChangeInterest"); }
-		 */
-		// validate service instruction data
-		AuditDetail auditDetail = changeProfitService.doValidations(finServiceInstruction);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-		// validate fees
+		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+
+		APIErrorHandlerService.logReference(finReference);
+
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doChangeProfit(finServiceInstruction, eventCode);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = changeProfitService.doValidations(fsi);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		fsi.setFinID(finID);
+
+		fd = finServiceInstController.doChangeProfit(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
-	/**
-	 * Method for process add disbursement request received from API.
-	 * 
-	 * @param finServiceInstruction
-	 * @return FinanceDetail
-	 * 
-	 */
 	@Override
-	public FinanceDetail addDisbursement(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail addDisbursement(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail financeDetail = null;
-		validationUtility.validate(finServiceInstruction, AddDisbursementGroup.class);
+		validationUtility.validate(fsi, AddDisbursementGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_POST)
-				&& finServiceInstruction.getDisbursementDetails() == null) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			String valueParm[] = new String[1];
-			valueParm[0] = "DisbursementDetails";
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return financeDetail;
-		}
-
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
+		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.ADDDBSN;
 
-		financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
-		List<FinFeeDetail> feeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		APIErrorHandlerService.logReference(finReference);
 
-		List<FinFeeDetail> newList = new ArrayList<>();
-		for (FinFeeDetail fd : feeDetailList) {
-			if (!fd.isOriginationFee()) {
-				newList.add(fd);
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		setDefaultDateFormats(fsi);
+
+		if (APIConstants.REQTYPE_POST.equals(fsi.getReqType()) && fsi.getDisbursementDetails() == null) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			String valueParm[] = new String[1];
+			valueParm[0] = "DisbursementDetails";
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return fd;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
-		financeDetail.getFinScheduleData().setFinFeeDetailList(newList);
 
-		if (StringUtils.equals(finServiceInstruction.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
-			finServiceInstruction.setToDate(financeDetail.getFinScheduleData().getFinanceMain().getMaturityDate());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
 
-		int count = validateBlockedFinances(finServiceInstruction.getFinReference());
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		fd = finServiceInstController.getFinanceDetails(fsi, eventCode);
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
+
+		List<FinFeeDetail> maintFeeList = new ArrayList<>();
+		for (FinFeeDetail fee : feeList) {
+			if (!fee.isOriginationFee()) {
+				maintFeeList.add(fee);
+			}
+		}
+
+		schdData.setFinFeeDetailList(maintFeeList);
+
+		if (CalculationConstants.RPYCHG_TILLMDT.equals(fsi.getRecalType())) {
+			fsi.setToDate(fm.getMaturityDate());
+		}
+
+		int count = validateBlockedFinances(finID);
 		if (count > 0) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
 			String valueParm[] = new String[2];
 			valueParm[0] = "Disbursement";
-			valueParm[1] = "FinReference: " + finServiceInstruction.getFinReference();
-			financeDetail.setReturnStatus(APIErrorHandlerService.getFailedStatus("90204", valueParm));
-			return financeDetail;
+			valueParm[1] = "FinReference: " + finReference;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90204", valueParm));
+			return fd;
 		}
-		financeDetail.setAdvancePaymentsList(finServiceInstruction.getDisbursementDetails());
-		AuditDetail auditDetail = addDisbursementService.doValidations(financeDetail, finServiceInstruction);
+
+		fd.setAdvancePaymentsList(fsi.getDisbursementDetails());
+		AuditDetail auditDetail = addDisbursementService.doValidations(fd, fsi);
+
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
+
 		// validate fees
-		financeDetail.setAccountingEventCode(AccountingEvent.ADDDBSN);
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		fd.setAccountingEventCode(eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doAddDisbursement(finServiceInstruction, financeDetail, eventCode);
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.doAddDisbursement(fsi, fd, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
-	private int validateBlockedFinances(String finReference) {
-		return financeMainDAO.getCountByBlockedFinances(finReference);
+	private int validateBlockedFinances(long finID) {
+		return financeMainDAO.getCountByBlockedFinances(finID);
 	}
 
 	/**
 	 * Method for process changeInstallement frequency received from API
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail changeInstallmentFrq(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail changeInstallmentFrq(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, ChangeInstallmentFrequencyGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, ChangeInstallmentFrequencyGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
-
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		// validate service instruction data
-		AuditDetail auditDetail = changeFrequencyService.doValidations(finServiceInstruction);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return financeDetail;
-			}
-		}
-		// validate fees
+		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+
+		APIErrorHandlerService.logReference(finReference);
+
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doChangeFrequency(finServiceInstruction, eventCode);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		fsi.setFinID(finID);
+		AuditDetail auditDetail = changeFrequencyService.doValidations(fsi);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		fsi.setFinID(finID);
+
+		fd = finServiceInstController.doChangeFrequency(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
 	 * Method for perform Re-Scheduling action with specified Instructions.
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail reScheduling(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail reScheduling(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, ReSchedulingGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, ReSchedulingGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String finReference = fsi.getFinReference();
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		APIErrorHandlerService.logReference(finReference);
 
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
 
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
 		}
 
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("ReScheduling"); }
-		 */
-		// validate service instruction data
-		AuditDetail auditDetail = reScheduleService.doValidations(finServiceInstruction);
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		AuditDetail auditDetail = reScheduleService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
 
-				return financeDetail;
+				return fd;
 			}
 		}
-		// validate fees
+
 		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doReSchedule(finServiceInstruction, eventCode);
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.doReSchedule(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
 	 * Method for perform updateLoanBasicDetails
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @throws JaxenException
 	 */
 	@Override
-	public WSReturnStatus updateLoanBasicDetails(FinServiceInstruction finServiceInstruction) {
+	public WSReturnStatus updateLoanBasicDetails(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, UpdateLoanBasicDetailsGroup.class);
-		WSReturnStatus returnStatus = validateFinReference(finServiceInstruction);
+		validationUtility.validate(fsi, UpdateLoanBasicDetailsGroup.class);
+
+		String finReference = fsi.getFinReference();
+
+		APIErrorHandlerService.logReference(finReference);
+
+		setDefaultDateFormats(fsi);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+		}
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
 
 		// call service level validations which include business validations
-		FinanceMain financeMain = new FinanceMain();
-		financeMain.setFinReference(finServiceInstruction.getFinReference());
-		financeMain.setDsaCode(finServiceInstruction.getDsaCode());
-		financeMain.setSalesDepartment(finServiceInstruction.getSalesDepartment());
-		financeMain.setDmaCode(finServiceInstruction.getDmaCode());
-		financeMain.setAccountsOfficer(finServiceInstruction.getAccountsOfficer());
-		financeMain.setReferralId(finServiceInstruction.getReferralId());
+		FinanceMain fm = new FinanceMain();
+		fm.setFinID(finID);
+		fm.setFinReference(finReference);
+		fm.setDsaCode(fsi.getDsaCode());
+		fm.setSalesDepartment(fsi.getSalesDepartment());
+		fm.setDmaCode(fsi.getDmaCode());
+		fm.setAccountsOfficer(fsi.getAccountsOfficer());
+		fm.setReferralId(fsi.getReferralId());
 
-		returnStatus = financeValidationService.validateFinBasicDetails(financeMain);
+		returnStatus = financeValidationService.validateFinBasicDetails(fm);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
-		// call addRateChange service
-		returnStatus = finServiceInstController.updateLoanBasicDetails(financeMain);
+		returnStatus = finServiceInstController.updateLoanBasicDetails(fm);
 
 		logger.debug(Literal.LEAVING);
 		return returnStatus;
@@ -1267,96 +1519,128 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	/**
 	 * Method for perform updateLoanPenaltyDetails
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @throws JaxenException
 	 */
 	@Override
-	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction finServiceInstruction) {
+	public WSReturnStatus updateLoanPenaltyDetails(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, UpdateLoanPenaltyDetailGroup.class);
+		validationUtility.validate(fsi, UpdateLoanPenaltyDetailGroup.class);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+		String finReference = fsi.getFinReference();
 
-		if (finServiceInstruction.getFinODPenaltyRate() != null) {
-			if (finServiceInstruction.getFinODPenaltyRate().isApplyODPenalty()) {
-				if (finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc() == null) {
-					finServiceInstruction.getFinODPenaltyRate().setODChargeAmtOrPerc(BigDecimal.ZERO);
+		APIErrorHandlerService.logReference(finReference);
+
+		FinODPenaltyRate odPenaltyRate = fsi.getFinODPenaltyRate();
+		if (odPenaltyRate != null) {
+			if (odPenaltyRate.isApplyODPenalty()) {
+				if (odPenaltyRate.getODChargeAmtOrPerc() == null) {
+					odPenaltyRate.setODChargeAmtOrPerc(BigDecimal.ZERO);
 				}
-				if (finServiceInstruction.getFinODPenaltyRate().getODMaxWaiverPerc() == null) {
-					finServiceInstruction.getFinODPenaltyRate().setODMaxWaiverPerc(BigDecimal.ZERO);
+				if (odPenaltyRate.getODMaxWaiverPerc() == null) {
+					odPenaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 				}
-				if (finServiceInstruction.getFinODPenaltyRate().getODGraceDays() <= 0) {
+				if (odPenaltyRate.getODGraceDays() <= 0) {
 					return beanValidation("odGraceDays");
 				}
-				if (StringUtils.isBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeType())) {
+				if (StringUtils.isBlank(odPenaltyRate.getODChargeType())) {
 					return beanValidation("odChargeType");
 				}
-				if (StringUtils.isBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())
-						&& StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+				if (StringUtils.isBlank(odPenaltyRate.getODChargeCalOn())
+						&& StringUtils.equals(odPenaltyRate.getODChargeType(),
 								FinanceConstants.PENALTYTYPE_PERC_ONETIME)
-						|| StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+						|| StringUtils.equals(odPenaltyRate.getODChargeType(),
 								FinanceConstants.PENALTYTYPE_PERC_ON_DUEDAYS)
-						|| StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
+						|| StringUtils.equals(odPenaltyRate.getODChargeType(),
 								FinanceConstants.PENALTYTYPE_PERC_ON_PD_MTH)) {
 					return beanValidation("odChargeCalOn");
 				}
-				if (finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) < 0) {
+				if (odPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) < 0) {
 					return beanValidation("odChargeAmtOrPerc");
 				}
-				if (finServiceInstruction.getFinODPenaltyRate().isODAllowWaiver()) {
-					if (finServiceInstruction.getFinODPenaltyRate().getODMaxWaiverPerc()
-							.compareTo(BigDecimal.ZERO) < 0) {
+				if (odPenaltyRate.isODAllowWaiver()) {
+					if (odPenaltyRate.getODMaxWaiverPerc().compareTo(BigDecimal.ZERO) < 0) {
 						return beanValidation("odMaxWaiverPerc");
 					}
 				}
 			} else {
-				if (finServiceInstruction.getFinODPenaltyRate().isODIncGrcDays()
-						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeType())
-						|| StringUtils.isNotBlank(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn())
-						|| finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc()
-								.compareTo(BigDecimal.ZERO) > 0
-						|| finServiceInstruction.getFinODPenaltyRate().isODAllowWaiver()) {
+				if (odPenaltyRate.isODIncGrcDays() || StringUtils.isNotBlank(odPenaltyRate.getODChargeType())
+						|| StringUtils.isNotBlank(odPenaltyRate.getODChargeCalOn())
+						|| odPenaltyRate.getODChargeAmtOrPerc().compareTo(BigDecimal.ZERO) > 0
+						|| odPenaltyRate.isODAllowWaiver()) {
 					String[] valueParm = new String[1];
 					return APIErrorHandlerService.getFailedStatus("90315", valueParm);
 				}
 			}
-			if (StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
-					FinanceConstants.PENALTYTYPE_FLAT)
-					|| StringUtils.equals(finServiceInstruction.getFinODPenaltyRate().getODChargeType(),
-							FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
-				finServiceInstruction.getFinODPenaltyRate().setODChargeCalOn("");
+			if (StringUtils.equals(odPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_FLAT) || StringUtils
+					.equals(odPenaltyRate.getODChargeType(), FinanceConstants.PENALTYTYPE_FLAT_ON_PD_MTH)) {
+				odPenaltyRate.setODChargeCalOn("");
 			}
 		} else {
 			return beanValidation("overdue");
 		}
 
-		WSReturnStatus returnStatus = validateFinReference(finServiceInstruction);
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
 		// call service level validations which include business validations
 		FinODPenaltyRate finODPenaltyRate = new FinODPenaltyRate();
-		finODPenaltyRate.setFinReference(finServiceInstruction.getFinReference());
-		finODPenaltyRate.setApplyODPenalty(finServiceInstruction.getFinODPenaltyRate().isApplyODPenalty());
-		finODPenaltyRate.setODIncGrcDays(finServiceInstruction.getFinODPenaltyRate().isODIncGrcDays());
-		finODPenaltyRate.setODGraceDays(finServiceInstruction.getFinODPenaltyRate().getODGraceDays());
-		finODPenaltyRate.setODChargeType(finServiceInstruction.getFinODPenaltyRate().getODChargeType());
-		finODPenaltyRate.setODChargeCalOn(finServiceInstruction.getFinODPenaltyRate().getODChargeCalOn());
-		finODPenaltyRate.setODChargeAmtOrPerc(finServiceInstruction.getFinODPenaltyRate().getODChargeAmtOrPerc());
-		finODPenaltyRate.setODAllowWaiver(finServiceInstruction.getFinODPenaltyRate().isODAllowWaiver());
-		finODPenaltyRate.setODMaxWaiverPerc(finServiceInstruction.getFinODPenaltyRate().getODMaxWaiverPerc());
-		finODPenaltyRate.setFinEffectDate(DateUtility.getAppDate());
+		finODPenaltyRate.setFinID(finID);
+		finODPenaltyRate.setFinReference(finReference);
+		finODPenaltyRate.setApplyODPenalty(odPenaltyRate.isApplyODPenalty());
+		finODPenaltyRate.setODIncGrcDays(odPenaltyRate.isODIncGrcDays());
+		finODPenaltyRate.setODGraceDays(odPenaltyRate.getODGraceDays());
+		finODPenaltyRate.setODChargeType(odPenaltyRate.getODChargeType());
+		finODPenaltyRate.setODChargeCalOn(odPenaltyRate.getODChargeCalOn());
+		finODPenaltyRate.setODChargeAmtOrPerc(odPenaltyRate.getODChargeAmtOrPerc());
+		finODPenaltyRate.setODAllowWaiver(odPenaltyRate.isODAllowWaiver());
+		finODPenaltyRate.setODMaxWaiverPerc(odPenaltyRate.getODMaxWaiverPerc());
+		finODPenaltyRate.setFinEffectDate(SysParamUtil.getAppDate());
 
 		returnStatus = validatefinODPenaltyRate(finODPenaltyRate);
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
-		// call addRateChange service
 		returnStatus = finServiceInstController.updateLoanPenaltyDetails(finODPenaltyRate);
 
 		logger.debug(Literal.LEAVING);
@@ -1366,15 +1650,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	/**
 	 * Method for process Early settlement request received from API.
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail earlySettlement(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail earlySettlement(FinServiceInstruction fsi) {
 		try {
 			String moduleDefiner = FinServiceEvent.EARLYSETTLE;
-			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
-			return financeDetail;
+			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
+			return fd;
 		} catch (AppException ex) {
 			logger.error("AppException", ex);
 			FinanceDetail response = new FinanceDetail();
@@ -1396,12 +1680,12 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public FinanceDetail partialSettlement(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail partialSettlement(FinServiceInstruction fsi) {
 		try {
 			String moduleDefiner = FinServiceEvent.EARLYRPY;
-			finServiceInstruction.setReceivedDate(finServiceInstruction.getReceiptDetail().getReceivedDate());
-			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
-			return financeDetail;
+			fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
+			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
+			return fd;
 		} catch (AppException ex) {
 			logger.error("AppException", ex);
 			FinanceDetail response = new FinanceDetail();
@@ -1422,11 +1706,11 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public FinanceDetail manualPayment(FinServiceInstruction finServiceInstruction) throws ServiceException {
+	public FinanceDetail manualPayment(FinServiceInstruction fsi) throws ServiceException {
 		try {
 			String moduleDefiner = FinServiceEvent.SCHDRPY;
-			FinanceDetail financeDetail = receiptTransaction(finServiceInstruction, moduleDefiner);
-			return financeDetail;
+			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
+			return fd;
 		} catch (AppException ex) {
 			logger.error("AppException", ex);
 			FinanceDetail response = new FinanceDetail();
@@ -1474,8 +1758,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// Method for validate instruction details
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
 
 		if (fsi.getValueDate() == null) {
 			fsi.setValueDate(fsi.getReceiptDetail().getReceivedDate());
@@ -1483,236 +1767,279 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
-		finScheduleData.setFinServiceInstruction(fsi);
-		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
+		schdData.setFinServiceInstruction(fsi);
+		fd = validateInstructions(fd, moduleDefiner, eventCode);
 		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
-		FinReceiptData receiptData = receiptService.doReceiptValidations(financeDetail, moduleDefiner);
-		financeDetail = receiptData.getFinanceDetail();
-		finScheduleData = financeDetail.getFinScheduleData();
+		FinReceiptData receiptData = receiptService.doReceiptValidations(fd, moduleDefiner);
+		fd = receiptData.getFinanceDetail();
+		schdData = fd.getFinScheduleData();
 
-		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
 			logger.debug("Leaving - doReceiptValidations Error");
-			return setReturnStatus(financeDetail);
+			return setReturnStatus(fd);
 		}
 
 		receiptService.setReceiptData(receiptData);
-		financeDetail = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
+		fd = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
 
-		if (financeDetail.getFinScheduleData() != null && financeDetail.getFinScheduleData().getErrorDetails() != null
-				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			financeDetail = setReturnStatus(financeDetail);
+		if (fd.getFinScheduleData() != null && fd.getFinScheduleData().getErrorDetails() != null
+				&& !fd.getFinScheduleData().getErrorDetails().isEmpty()) {
+			fd = setReturnStatus(fd);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
-	public FinanceDetail setReturnStatus(FinanceDetail financeDetail) {
-
+	public FinanceDetail setReturnStatus(FinanceDetail fd) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
-		ErrorDetail errorDetail = financeDetail.getFinScheduleData().getErrorDetails().get(0);
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		ErrorDetail errorDetail = schdData.getErrorDetails().get(0);
+
 		returnStatus.setReturnCode(errorDetail.getCode());
 		returnStatus.setReturnText(errorDetail.getError());
-		financeDetail.setFinScheduleData(null);
-		financeDetail.setDocumentDetailsList(null);
-		financeDetail.setJointAccountDetailList(null);
-		financeDetail.setGurantorsDetailList(null);
-		financeDetail.setCollateralAssignmentList(null);
-		financeDetail.setReturnDataSetList(null);
-		financeDetail.setInterfaceDetailList(null);
-		financeDetail.setFinFlagsDetails(null);
-		financeDetail.setCustomerDetails(null);
-		financeDetail.setReturnStatus(returnStatus);
-		return financeDetail;
+
+		fd.setFinScheduleData(null);
+		fd.setDocumentDetailsList(null);
+		fd.setJointAccountDetailList(null);
+		fd.setGurantorsDetailList(null);
+		fd.setCollateralAssignmentList(null);
+		fd.setReturnDataSetList(null);
+		fd.setInterfaceDetailList(null);
+		fd.setFinFlagsDetails(null);
+		fd.setCustomerDetails(null);
+		fd.setReturnStatus(returnStatus);
+
+		return fd;
 	}
 
 	/**
 	 * Method for perform Schedule method Change action by taking specified instructions.
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail scheduleMethodChange(FinServiceInstruction finServiceInstruction) throws ServiceException {
+	public FinanceDetail scheduleMethodChange(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, ScheduleMethodGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, ScheduleMethodGroup.class);
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
+		String finReference = fsi.getFinReference();
+		String eventCode = AccountingEvent.SCDCHG;
 
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		setDefaultDateFormats(fsi);
+
+		FinanceDetail fd = null;
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
 
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
 		}
 
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
-		// restrict FLEXI Finances
-		// FIXME Used only when flexi changes comes to core
-		/*
-		 * if (restrictFlexiFinances(finServiceInstruction)) { return flexiNotAllowed("Schedule Change Method"); }
-		 */
-		// Step Loan not accepted FIXME
-		FinanceMain finMain = financeMainDAO.getFinanceMainByRef(finServiceInstruction.getFinReference(), "",
-				finServiceInstruction.isWif());
-		if (finMain.isStepFinance()) {
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", fsi.isWif());
+		if (fm.isStepFinance()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Step Loan";
 			valueParm[1] = "Schedule Change Method";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90329", valueParm);
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
 		}
-		// validate service instruction data
-		AuditDetail auditDetail = changeScheduleMethodService.doValidations(finServiceInstruction);
-		if (auditDetail.getErrorDetails() != null) {
-			for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 
-				return financeDetail;
+		AuditDetail auditDetail = changeScheduleMethodService.doValidations(fsi);
+		if (auditDetail.getErrorDetails() != null) {
+			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
-		// validate fees
-		String eventCode = AccountingEvent.SCDCHG;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
+
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doChangeScheduleMethod(finServiceInstruction, eventCode);
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.doChangeScheduleMethod(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
 	 * Method for perform changePureflexiTenure action by taking specified instructions.
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return FinanceDetail
 	 */
 	@Override
-	public FinanceDetail changeGestationPeriod(FinServiceInstruction finServiceInstruction) throws ServiceException {
+	public FinanceDetail changeGestationPeriod(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// bean validations
-		validationUtility.validate(finServiceInstruction, ChangeGestationGroup.class);
-		FinanceDetail financeDetail = null;
+		validationUtility.validate(fsi, ChangeGestationGroup.class);
 
-		// set Default date formats
-		setDefaultDateFormats(finServiceInstruction);
-
-		// validate ReqType
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = validateFinReference(finServiceInstruction);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		returnStatus = isWriteoffLoan(finServiceInstruction.getFinReference());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			financeDetail = new FinanceDetail();
-			doEmptyResponseObject(financeDetail);
-			financeDetail.setReturnStatus(returnStatus);
-			return financeDetail;
-		}
-
-		// validate fees
+		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.GRACEEND;
-		List<ErrorDetail> errors = doProcessServiceFees(finServiceInstruction, eventCode);
-		if (!errors.isEmpty()) {
-			for (ErrorDetail errorDetails : errors) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetails.getCode(), errorDetails.getError()));
-				return financeDetail;
+
+		FinanceDetail fd = null;
+
+		setDefaultDateFormats(fsi);
+
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID != null) {
+			fsi.setWif(false);
+		} else {
+			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
+			if (finID != null) {
+				fsi.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
-		// call change repay amount service
-		financeDetail = finServiceInstController.doChangeGestationPeriod(finServiceInstruction, eventCode);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
+		if (writeoffLoan) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "";
+			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
+		if (!errors.isEmpty()) {
+			for (ErrorDetail ed : errors) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
+			}
+		}
+
+		fsi.setFinID(finID);
+		fd = finServiceInstController.doChangeGestationPeriod(fsi, eventCode);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
-	/**
-	 * Method for validate instruction details
-	 * 
-	 * @param finServiceInstruction
-	 * @param moduleDefiner
-	 * @param eventCode
-	 * @return
-	 */
-	/**
-	 * Method for validate instruction details
-	 * 
-	 * @param finServiceInstruction
-	 * @param moduleDefiner
-	 * @param eventCode
-	 * @return
-	 */
-	private FinanceDetail validateInstructions(FinanceDetail financeDetail, String moduleDefiner, String eventCode) {
+	private FinanceDetail validateInstructions(FinanceDetail fd, String moduleDefiner, String eventCode) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinServiceInstruction finServiceInstruction = finScheduleData.getFinServiceInstruction();
-		String finReference = finServiceInstruction.getFinReference();
-		financeDetail.setFinReference(finReference);
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
+		String finReference = fsi.getFinReference();
+		fd.setFinReference(finReference);
 		ErrorDetail errorDetail = new ErrorDetail();
 
-		WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			errorDetail.setCode(returnStatus.getReturnCode());
 			errorDetail.setMessage(returnStatus.getReturnText());
 			errorDetail.setExtendedMessage(returnStatus.getReturnText());
-			finScheduleData.setErrorDetail(errorDetail);
-			return financeDetail;
+			schdData.setErrorDetail(errorDetail);
+			return fd;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	private WSReturnStatus beanValidation(String valueParam) {
@@ -1804,21 +2131,12 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	}
 
-	/**
-	 * Method for prepare response object with errorDetails.
-	 * 
-	 * @param errorCode
-	 * @param valueParm
-	 * @return
-	 */
 	public WSReturnStatus getErrorDetails(String errorCode, String[] valueParm) {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
 		response = APIErrorHandlerService.getFailedStatus(errorCode, valueParm);
 
-		// set default error code and description in case of Error code does not
-		// exists.
 		if (StringUtils.isBlank(response.getReturnCode())) {
 			response = APIErrorHandlerService.getFailedStatus(APIConstants.RES_FAILED_CODE,
 					APIConstants.RES_FAILED_DESC);
@@ -1836,88 +2154,41 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	 */
 	private WSReturnStatus validateReqType(String reqType) {
 		logger.debug(Literal.ENTERING);
-		WSReturnStatus status = new WSReturnStatus();
 
-		if (!StringUtils.equals(reqType, APIConstants.REQTYPE_INQUIRY)
-				&& !StringUtils.equals(reqType, APIConstants.REQTYPE_POST)) {
+		if (!APIConstants.REQTYPE_INQUIRY.equals(reqType) && !APIConstants.REQTYPE_POST.equals(reqType)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = reqType;
-			status = APIErrorHandlerService.getFailedStatus("91113", valueParm);
+			return APIErrorHandlerService.getFailedStatus("91113", valueParm);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return status;
+		return new WSReturnStatus();
 	}
 
-	/**
-	 * Method for validate finance reference and check existence in origination or WIF
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	private WSReturnStatus validateFinReference(FinServiceInstruction serviceInst) {
+	private List<ErrorDetail> doProcessServiceFees(FinServiceInstruction fsi, String eventCode) {
 		logger.debug(Literal.ENTERING);
 
-		WSReturnStatus returnStatus = new WSReturnStatus();
-
-		// check records in origination and WIF
-		String finReference = serviceInst.getFinReference();
-		int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-		if (count > 0) {
-			serviceInst.setWif(false);
-		} else {
-			count = financeMainDAO.getFinanceCountById(finReference, "", true);
-			if (count > 0) {
-				serviceInst.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		// Validate Loan is INPROGRESS in any Other Servicing Event or NOT ?
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			return returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return returnStatus;
-	}
-
-	/**
-	 * Method for process servicing fees
-	 * 
-	 * @param finSrvcInst
-	 * @param eventCode
-	 * @return
-	 */
-	private List<ErrorDetail> doProcessServiceFees(FinServiceInstruction finSrvcInst, String eventCode) {
-		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
-		if (StringUtils.equals(finSrvcInst.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			if (finSrvcInst.getFinFeeDetails() != null && !finSrvcInst.getFinFeeDetails().isEmpty()) {
-				errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
+		if (APIConstants.REQTYPE_INQUIRY.equals(fsi.getReqType())) {
+			if (fsi.getFinFeeDetails() != null && !fsi.getFinFeeDetails().isEmpty()) {
+				errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, fsi, eventCode);
 			}
 		} else {
-			if (finSrvcInst.isReceiptUpload()) {// FIXME
+			if (fsi.isReceiptUpload()) {// FIXME
 				FinanceDetail financeDetail = new FinanceDetail();
-				financeDetail = receiptService.getFinanceDetail(finSrvcInst, eventCode, financeDetail);
+				financeDetail = receiptService.getFinanceDetail(fsi, eventCode, financeDetail);
 				try {
-					BigDecimal dueAmount = getDueAmount(finSrvcInst, financeDetail, eventCode);
-					BigDecimal extraAmount = finSrvcInst.getAmount().subtract(dueAmount);
+					BigDecimal dueAmount = getDueAmount(fsi, financeDetail, eventCode);
+					BigDecimal extraAmount = fsi.getAmount().subtract(dueAmount);
 					financeDetail.getFinScheduleData().getFinanceMain().setRepayAmount(extraAmount);
-					feeDetailService.doProcessFeesForInquiryForUpload(financeDetail, eventCode, finSrvcInst, true);
-					buildFinFeeForUpload(finSrvcInst);
+					feeDetailService.doProcessFeesForInquiryForUpload(financeDetail, eventCode, fsi, true);
+					buildFinFeeForUpload(fsi);
 
 				} catch (Exception e) {
 					logger.error("Exception: " + e);
 				}
 			}
-			errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, finSrvcInst, eventCode);
+			errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, fsi, eventCode);
 		}
 		logger.debug(Literal.LEAVING);
 		return errors;
@@ -1967,72 +2238,84 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public FinanceTaxDetail fetchGSTDetails(String finReference) throws ServiceException {
-
 		logger.info(Literal.ENTERING);
 
-		FinanceTaxDetail financeTaxDetails = null;
-		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
-		if (count <= 0) {
-			financeTaxDetails = new FinanceTaxDetail();
+		FinanceTaxDetail td = null;
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+		if (finID == null) {
+			td = new FinanceTaxDetail();
+			String[] valueParam = new String[1];
+			valueParam[0] = finReference;
+			td.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return td;
+		}
+
+		td = financeTaxDetailService.getApprovedFinanceTaxDetail(finID);
+		if (null == td) {
+			td = new FinanceTaxDetail();
 			String[] valueParam = new String[1];
 			valueParam[0] = finReference;
 
-			financeTaxDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
-			return financeTaxDetails;
-		} else {
-			financeTaxDetails = financeTaxDetailService.getApprovedFinanceTaxDetail(finReference);
-			if (null == financeTaxDetails) {
-				financeTaxDetails = new FinanceTaxDetail();
-				String[] valueParam = new String[1];
-				valueParam[0] = finReference;
-
-				financeTaxDetails.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParam));
-				return financeTaxDetails;
-			}
+			td.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", valueParam));
+			return td;
 		}
 
 		logger.info(Literal.LEAVING);
 
-		return financeTaxDetails;
+		return td;
 	}
 
 	@Override
-	public WSReturnStatus addGSTDetails(final FinanceTaxDetail financeTaxDetail) throws ServiceException {
-
+	public WSReturnStatus addGSTDetails(final FinanceTaxDetail td) throws ServiceException {
 		logger.info(Literal.ENTERING);
+		String finReference = td.getFinReference();
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
-		returnStatus = isWriteoffLoan(financeTaxDetail.getFinReference());
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
-		List<ErrorDetail> validationErrors = financeTaxDetailService.doGSTValidations(financeTaxDetail);
-		if (CollectionUtils.isEmpty(validationErrors)) {
-			List<ErrorDetail> coApplicantErrors = financeTaxDetailService.verifyCoApplicantDetails(financeTaxDetail);
-			if (CollectionUtils.isEmpty(coApplicantErrors)) {
-				int taxDetailRecords = financeTaxDetailService
-						.getFinanceTaxDetailsByCount(financeTaxDetail.getFinReference());
-				if (taxDetailRecords > 0) {
-					String[] valueParm = new String[1];
-					valueParm[0] = financeTaxDetail.getFinReference();
+		returnStatus = isWriteoffLoan(finID);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
 
-					return APIErrorHandlerService.getFailedStatus("90248", valueParm);
-				}
+		List<ErrorDetail> validationErrors = financeTaxDetailService.doGSTValidations(td);
 
-				returnStatus = finServiceInstController.saveGSTDetails(financeTaxDetail);
-			} else {
-				for (ErrorDetail errorDetail : coApplicantErrors) {
-					returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-							errorDetail.getParameters());
-				}
-			}
-		} else {
-			for (ErrorDetail errorDetail : validationErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
+		if (CollectionUtils.isNotEmpty(validationErrors)) {
+			for (ErrorDetail ed : validationErrors) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
+				return returnStatus;
 			}
 		}
+
+		List<ErrorDetail> coApplicantErrors = financeTaxDetailService.verifyCoApplicantDetails(td);
+
+		if (CollectionUtils.isNotEmpty(coApplicantErrors)) {
+			for (ErrorDetail ed : coApplicantErrors) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
+				return returnStatus;
+			}
+		}
+
+		int taxDetailRecords = financeTaxDetailService.getFinanceTaxDetailsByCount(finID);
+		if (taxDetailRecords > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+
+			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+		}
+
+		returnStatus = finServiceInstController.saveGSTDetails(td);
 
 		logger.info(Literal.LEAVING);
 
@@ -2040,48 +2323,65 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public WSReturnStatus updateGSTDetails(final FinanceTaxDetail financeTaxDetail) throws ServiceException {
-
+	public WSReturnStatus updateGSTDetails(final FinanceTaxDetail td) throws ServiceException {
 		logger.info(Literal.ENTERING);
 
-		String finReference = financeTaxDetail.getFinReference();
+		String finReference = td.getFinReference();
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
-		List<ErrorDetail> validationErrors = financeTaxDetailService.doGSTValidations(financeTaxDetail);
-		if (CollectionUtils.isEmpty(validationErrors)) {
-			FinanceTaxDetail currentFinanceTaxData = finServiceInstController.getFinanceTaxDetails(finReference);
-			if (null != currentFinanceTaxData) {
-				List<ErrorDetail> coApplicantErrors = financeTaxDetailService
-						.verifyCoApplicantDetails(financeTaxDetail);
-				if (CollectionUtils.isEmpty(coApplicantErrors)) {
-					int taxDetailRecords = financeTaxDetailService
-							.getFinanceTaxDetailsByCount(financeTaxDetail.getFinReference());
-					if (taxDetailRecords > 0) {
-						String[] valueParm = new String[1];
-						valueParm[0] = financeTaxDetail.getFinReference();
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
 
-						return APIErrorHandlerService.getFailedStatus("90248", valueParm);
-					}
-					returnStatus = finServiceInstController.rejuvenateGSTDetails(financeTaxDetail,
-							currentFinanceTaxData.getVersion());
-				} else {
-					for (ErrorDetail errorDetail : coApplicantErrors) {
-						returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-								errorDetail.getParameters());
-					}
-				}
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = financeTaxDetail.getFinReference();
-				returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		returnStatus = isWriteoffLoan(finID);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		List<ErrorDetail> validationErrors = financeTaxDetailService.doGSTValidations(td);
+
+		if (CollectionUtils.isNotEmpty(validationErrors)) {
+			for (ErrorDetail ed : validationErrors) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 				return returnStatus;
 			}
-		} else {
-			for (ErrorDetail errorDetail : validationErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
-						errorDetail.getParameters());
+		}
+
+		FinanceTaxDetail currentFinanceTaxData = finServiceInstController.getFinanceTaxDetails(finReference);
+
+		if (currentFinanceTaxData == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			return returnStatus;
+		}
+
+		List<ErrorDetail> coApplicantErrors = financeTaxDetailService.verifyCoApplicantDetails(td);
+
+		if (CollectionUtils.isNotEmpty(coApplicantErrors)) {
+			for (ErrorDetail ed : coApplicantErrors) {
+				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
+				return returnStatus;
 			}
 		}
+
+		int taxDetailRecords = financeTaxDetailService.getFinanceTaxDetailsByCount(finID);
+		if (taxDetailRecords > 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+
+			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
+		}
+		returnStatus = finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
 
 		logger.info(Literal.LEAVING);
 
@@ -2090,25 +2390,34 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus approveDisbursementResponse(DisbRequest disbRequest) throws ServiceException {
+		String finReference = disbRequest.getFinReference();
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
-		// validation
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
+		returnStatus = isWriteoffLoan(finID);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			return returnStatus;
+		}
+
 		returnStatus = validateDisbursementResponse(disbRequest);
 
-		if (StringUtils.isNotBlank(isWriteoffLoan(disbRequest.getFinReference()).getReturnCode())) {
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
-		if (returnStatus != null) {
-			return returnStatus;
-		}
-		int count = financeMainDAO.getFinanceCountById(disbRequest.getFinReference(), " ", false);
-		if (count <= 0) {
-			String[] valueParam = new String[1];
-			valueParam[0] = disbRequest.getFinReference();
-			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
-		} else {
-			returnStatus = finServiceInstController.approveDisbursementResponse(disbRequest);
-		}
+
+		returnStatus = finServiceInstController.approveDisbursementResponse(disbRequest);
 		return returnStatus;
 	}
 
@@ -2218,8 +2527,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FinAdvPaymentDetail response = new FinAdvPaymentDetail();
 
 		// validation
-		int count = financeMainDAO.getFinanceCountById(finReference, " ", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
@@ -2229,7 +2538,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		/* Fetching Disbursement instructions */
-		disbResponse.addAll(getDisbInstructions(finReference));
+		disbResponse.addAll(getDisbInstructions(finID));
 
 		/* Fetching VAS instructions */
 		disbResponse.addAll(getVasInstructions(finReference));
@@ -2294,9 +2603,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return vasInstructions;
 	}
 
-	private List<DisbResponse> getDisbInstructions(String finReference) {
+	private List<DisbResponse> getDisbInstructions(long finID) {
 		List<DisbResponse> disbInstructions = new ArrayList<>();
-		List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finReference, " ");
+		List<FinAdvancePayments> fapList = finAdvancePaymentsService.getFinAdvancePaymentsById(finID, " ");
 		for (FinAdvancePayments fap : fapList) {
 			DisbResponse detail = new DisbResponse();
 			detail.setPaymentId(fap.getPaymentId());
@@ -2311,18 +2620,18 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public WSReturnStatus updateCovenants(FinanceDetail financeDetail) throws ServiceException {
+	public WSReturnStatus updateCovenants(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errorDetails;
 
 		try {
 			FinanceMain financeMain = null;
-			String finReference = financeDetail.getFinReference();
-			List<Covenant> covenantsList = financeDetail.getCovenants();
+			String finReference = fd.getFinReference();
+			List<Covenant> covenantsList = fd.getCovenants();
 
 			// validating the covenants if same covenant type and same category name
 
-			boolean origination = financeDetail.isOrigination();
+			boolean origination = fd.isOrigination();
 
 			if (finReference == null) {
 				String[] valueParm = new String[1];
@@ -2330,23 +2639,11 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
-			String[] columns = new String[] { "FinIsActive", "FinStartDate",
-					"MaturityDate, WorkFlowId, CustId, FinReference, calMaturity" };
-
-			if (origination) {
-				financeMain = financeMainDAO.getFinanceMain(finReference, columns, "_Temp");
-				if (financeMain == null || !financeMain.isFinIsActive()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finReference;
-					return APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				}
-			} else {
-				financeMain = financeMainDAO.getFinanceMain(finReference, columns, "");
-				if (financeMain == null || !financeMain.isFinIsActive()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finReference;
-					return APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				}
+			financeMain = financeMainDAO.getFinanceMain(finReference);
+			if (financeMain == null || !financeMain.isFinIsActive()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 
 			financeMain.setUserDetails(SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser()));
@@ -2377,16 +2674,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public WSReturnStatus saveChequeDetails(FinanceDetail financeDetail) throws ServiceException {
+	public WSReturnStatus saveChequeDetails(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
+
+		String finReference = fd.getFinReference();
+
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		List<ErrorDetail> errorDetails;
 		try {
 			FinanceMain fm = null;
-			String finReference = financeDetail.getFinReference();
-			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
-			FinScheduleData schdData = financeDetail.getFinScheduleData();
+			ChequeHeader chequeHeader = fd.getChequeHeader();
+
+			FinScheduleData schdData = fd.getFinScheduleData();
 			if (finReference == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FinReference";
@@ -2400,7 +2700,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				} else {
 					schdData.setFinanceMain(fm);
 				}
-				returnStatus = isWriteoffLoan(finReference);
+				returnStatus = isWriteoffLoan(fm.getFinID());
 				if (returnStatus != null) {
 					return returnStatus;
 				}
@@ -2414,8 +2714,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
-			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_save,
-					"");
+			errorDetails = chequeHeaderService.chequeValidationForUpdate(fd, PennantConstants.method_save, "");
 			for (ErrorDetail errorDetail : errorDetails) {
 				returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 						errorDetail.getParameters());
@@ -2426,14 +2725,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(financeDetail);
+			validateChequeDetails(fd);
 
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
 				}
 			}
-			returnStatus = finServiceInstController.processChequeDetail(financeDetail, "");
+			returnStatus = finServiceInstController.processChequeDetail(fd, "");
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION + e);
@@ -2514,7 +2813,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				} else {
 					schdData.setFinanceMain(fm);
 				}
-				returnStatus = isWriteoffLoan(finReference);
+
+				long finID = fm.getFinID();
+
+				returnStatus = isWriteoffLoan(finID);
 				if (returnStatus != null) {
 					return returnStatus;
 				}
@@ -2679,43 +2981,42 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	/**
 	 * Set Default date formats for calculation purpose.
 	 * 
-	 * @param finServInst
+	 * @param fsi
 	 */
-	private void setDefaultDateFormats(FinServiceInstruction finServInst) {
-		if (finServInst.getFromDate() != null) {
-			finServInst.setFromDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getFromDate(), PennantConstants.DBDateFormat)));
+	private void setDefaultDateFormats(FinServiceInstruction fsi) {
+		if (fsi.getFromDate() != null) {
+			fsi.setFromDate(
+					DateUtility.getDBDate(DateUtility.format(fsi.getFromDate(), PennantConstants.DBDateFormat)));
 		}
 
-		if (finServInst.getToDate() != null) {
-			finServInst.setToDate(
-					DateUtility.getDBDate(DateUtility.format(finServInst.getToDate(), PennantConstants.DBDateFormat)));
+		if (fsi.getToDate() != null) {
+			fsi.setToDate(DateUtility.getDBDate(DateUtility.format(fsi.getToDate(), PennantConstants.DBDateFormat)));
 		}
-		if (finServInst.getRecalFromDate() != null) {
-			finServInst.setRecalFromDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRecalFromDate(), PennantConstants.DBDateFormat)));
+		if (fsi.getRecalFromDate() != null) {
+			fsi.setRecalFromDate(
+					DateUtility.getDBDate(DateUtility.format(fsi.getRecalFromDate(), PennantConstants.DBDateFormat)));
 		}
-		if (finServInst.getRecalToDate() != null) {
-			finServInst.setRecalToDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getRecalToDate(), PennantConstants.DBDateFormat)));
+		if (fsi.getRecalToDate() != null) {
+			fsi.setRecalToDate(
+					DateUtility.getDBDate(DateUtility.format(fsi.getRecalToDate(), PennantConstants.DBDateFormat)));
 		}
-		if (finServInst.getGrcPeriodEndDate() != null) {
-			finServInst.setGrcPeriodEndDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
+		if (fsi.getGrcPeriodEndDate() != null) {
+			fsi.setGrcPeriodEndDate(DateUtility
+					.getDBDate(DateUtility.format(fsi.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
 		}
-		if (finServInst.getNextGrcRepayDate() != null) {
-			finServInst.setNextGrcRepayDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
+		if (fsi.getNextGrcRepayDate() != null) {
+			fsi.setNextGrcRepayDate(DateUtility
+					.getDBDate(DateUtility.format(fsi.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
 		}
-		if (finServInst.getNextRepayDate() != null) {
-			finServInst.setNextRepayDate(DateUtility
-					.getDBDate(DateUtility.format(finServInst.getNextRepayDate(), PennantConstants.DBDateFormat)));
+		if (fsi.getNextRepayDate() != null) {
+			fsi.setNextRepayDate(
+					DateUtility.getDBDate(DateUtility.format(fsi.getNextRepayDate(), PennantConstants.DBDateFormat)));
 		}
 	}
 
-	private void setDefaultForReferenceFields(FinServiceInstruction finServiceInstruction) {
-		if (StringUtils.isBlank(finServiceInstruction.getBaseRate())) {
-			finServiceInstruction.setBaseRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()));
+	private void setDefaultForReferenceFields(FinServiceInstruction fisi) {
+		if (StringUtils.isBlank(fisi.getBaseRate())) {
+			fisi.setBaseRate(StringUtils.trimToNull(fisi.getBaseRate()));
 		}
 	}
 
@@ -2868,18 +3169,20 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParm[0] = "finReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
-		} else {
-			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
-			if (count <= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-				return response;
-			}
 		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return response;
+		}
+
 		try {
-			response = chequeHeaderDAO.getChequeHeaderByRef(finReference, "_View");
+			response = chequeHeaderDAO.getChequeHeaderByRef(finID, "_View");
 			if (response == null) {
+				response = new ChequeHeader();
 				String[] valueParm = new String[1];
 				valueParm[0] = "No Cheque Details";
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
@@ -2901,27 +3204,26 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction finServiceInstRequest)
-			throws ServiceException {
+	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
 
 		// for logging purpose
-		String finReference = finServiceInstRequest.getFinReference();
+		String finReference = fsi.getFinReference();
 		APIErrorHandlerService.logReference(finReference);
 
 		// set Default date formats
-		setDefaultDateFormats(finServiceInstRequest);
+		setDefaultDateFormats(fsi);
 
-		int countRef = financeMainDAO.getFinanceCountById(finReference, "", false);
-		if (countRef < 0) {
+		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
 
-		int count = validateBlockedFinances(finReference);
+		int count = validateBlockedFinances(finID);
 		if (count > 0) {
 			String valueParm[] = new String[2];
 			valueParm[0] = "Disbursement";
@@ -2929,14 +3231,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90204", valueParm);
 		}
 
-		long paymentId = finServiceInstRequest.getPaymentId();
+		long paymentId = fsi.getPaymentId();
 		if (paymentId == Long.MIN_VALUE && paymentId <= 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "PaymentId";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		int paymentIdCount = finAdvancePaymentsService.getCountByPaymentId(finReference, paymentId);
+		int paymentIdCount = finAdvancePaymentsService.getCountByPaymentId(finID, paymentId);
 		if (paymentIdCount <= 0) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "PaymentId";
@@ -2948,7 +3250,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FinAdvancePayments finAdv = finAdvancePaymentsDAO.getFinAdvancePaymentsById(finAdvancePayments, "");
 
 		if (DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
-			List<FinAdvancePayments> disbursementDetailsList = finServiceInstRequest.getDisbursementDetails();
+			List<FinAdvancePayments> disbursementDetailsList = fsi.getDisbursementDetails();
 			if (CollectionUtils.isEmpty(disbursementDetailsList)) {
 				String valueParm[] = new String[1];
 				valueParm[0] = "DisbursementDetails";
@@ -2956,9 +3258,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 
 			String eventCode = AccountingEvent.ADDDBSN;
-			FinanceDetail financeDetail = finServiceInstController.getFinanceDetails(finServiceInstRequest, eventCode);
-			financeDetail.setAdvancePaymentsList(disbursementDetailsList);
-			AuditDetail auditDetail = addDisbursementService.doCancelDisbValidations(financeDetail);
+			FinanceDetail fd = finServiceInstController.getFinanceDetails(fsi, eventCode);
+			fd.setAdvancePaymentsList(disbursementDetailsList);
+			AuditDetail auditDetail = addDisbursementService.doCancelDisbValidations(fd);
 
 			if (CollectionUtils.isNotEmpty(auditDetail.getErrorDetails())) {
 				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
@@ -2966,8 +3268,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				}
 			}
 
-			financeDetail.getAdvancePaymentsList().add(finAdv);
-			response = finServiceInstController.doCancelDisbursementInstructions(financeDetail);
+			fd.getAdvancePaymentsList().add(finAdv);
+			response = finServiceInstController.doCancelDisbursementInstructions(fd);
 		} else {
 			String[] valueParam = new String[2];
 			valueParam[0] = "Cancel Disbursement Instructions";
@@ -3022,11 +3324,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			BigDecimal amount = sub.getAmount();
 			Date vdate = sub.getValueDate();
 			Date pdate = sub.getPostDate();
+
 			if (StringUtils.isEmpty(finReference)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "FinReference";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			} else if (!financeMainDAO.isFinReferenceExists(finReference, "", false)) {
+			}
+
+			if (financeMainDAO.getFinID(finReference, TableType.MAIN_TAB) == null) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "Fin";
 				valueParm[1] = "Reference";
@@ -3034,16 +3339,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				valueParm[3] = "exists";
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
+
 			if (StringUtils.isEmpty(finType)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Fin type";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
+
 			if (StringUtils.isEmpty(referenceCode)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Reference Code";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
+
 			if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Amount";
@@ -3092,49 +3400,47 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public FinanceDetail partCancellation(FinServiceInstruction finServiceInstruction) {
+	public FinanceDetail partCancellation(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
-		FinanceDetail financeDetail = null;
+		FinanceDetail fd = null;
 
 		try {
-
-			validationUtility.validate(finServiceInstruction, PartCancellationGroup.class);
+			validationUtility.validate(fsi, PartCancellationGroup.class);
 
 			// for logging purpose
-			APIErrorHandlerService.logReference(finServiceInstruction.getFinReference());
+			APIErrorHandlerService.logReference(fsi.getFinReference());
 
 			// set Default date formats
-			setDefaultDateFormats(finServiceInstruction);
+			setDefaultDateFormats(fsi);
 
 			// validate ReqType
-			WSReturnStatus returnStatus = validateReqType(finServiceInstruction.getReqType());
+			WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
 			if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-				financeDetail = new FinanceDetail();
-				doEmptyResponseObject(financeDetail);
-				financeDetail.setReturnStatus(returnStatus);
-				return financeDetail;
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(returnStatus);
+				return fd;
 			}
 
 			String eventCode = AccountingEvent.PART_CANCELATION;
-			financeDetail = finServiceInstController.getFinanceDetails(finServiceInstruction, eventCode);
+			fd = finServiceInstController.getFinanceDetails(fsi, eventCode);
 
 			// validate service instruction data
-			AuditDetail auditDetail = partCancellationService.validateRequest(finServiceInstruction, financeDetail);
+			AuditDetail auditDetail = partCancellationService.validateRequest(fsi, fd);
 			if (auditDetail.getErrorDetails() != null) {
-				for (ErrorDetail errorDetail : auditDetail.getErrorDetails()) {
-					financeDetail = new FinanceDetail();
-					doEmptyResponseObject(financeDetail);
-					financeDetail.setReturnStatus(
-							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-					return financeDetail;
+				for (ErrorDetail ed : auditDetail.getErrorDetails()) {
+					fd = new FinanceDetail();
+					doEmptyResponseObject(fd);
+					fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+					return fd;
 				}
 			}
 
 			// call part cancellation service
-			financeDetail = partCancellationService.doPartCancellation(finServiceInstruction, financeDetail);
+			fd = partCancellationService.doPartCancellation(fsi, fd);
 
-			if (financeDetail.getFinScheduleData().getErrorDetails() != null) {
-				for (ErrorDetail errorDetail : financeDetail.getFinScheduleData().getErrorDetails()) {
+			if (fd.getFinScheduleData().getErrorDetails() != null) {
+				for (ErrorDetail errorDetail : fd.getFinScheduleData().getErrorDetails()) {
 					FinanceDetail response = new FinanceDetail();
 					doEmptyResponseObject(response);
 					response.setReturnStatus(
@@ -3144,7 +3450,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 
 			// Get the response
-			financeDetail = finServiceInstController.getResponse(financeDetail, finServiceInstruction);
+			fd = finServiceInstController.getResponse(fd, fsi);
 
 		} catch (InterfaceException ex) {
 			logger.error("InterfaceException", ex);
@@ -3162,11 +3468,11 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
-	private WSReturnStatus isWriteoffLoan(String finReference) {
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finReference, "");
+	private WSReturnStatus isWriteoffLoan(long finID) {
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
 		if (writeoffLoan) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "";
@@ -3179,7 +3485,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public List<CovenantStatus> getCovenantDocumentStatus(String finReference) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		CovenantStatus response = new CovenantStatus();
-		FinanceMain financeMain = null;
 		List<CovenantStatus> covenantStatus = new ArrayList<>();
 
 		try {
@@ -3190,9 +3495,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				covenantStatus.add(response);
 				return covenantStatus;
 			}
-			financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinReference" },
-					"_View");
-			if (financeMain == null || !financeMain.isFinIsActive()) {
+
+			Long finID = financeMainDAO.getActiveFinID(finReference);
+			if (finID == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
@@ -3247,7 +3552,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public AgreementData getCovenantAggrement(AgreementRequest agreementRequest) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		AgreementData aggrementData = new AgreementData();
-		FinanceMain financeMain = null;
 
 		String finReference = agreementRequest.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
@@ -3258,9 +3562,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return aggrementData;
 			}
 		}
-		financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinIsActive", "FinReference" },
-				"_View");
-		if (financeMain == null || !financeMain.isFinIsActive()) {
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+
+		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			aggrementData.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
@@ -3331,7 +3636,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus processFeeWaiver(FeeWaiverHeader feeWaiverHeader) throws ServiceException {
-		FinanceMain financeMain = null;
 		FeeWaiverHeader feeWaiver = new FeeWaiverHeader();
 		List<FeeWaiverDetail> actaulfeeWaiverDetails = new ArrayList<>();
 
@@ -3342,9 +3646,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		financeMain = financeMainDAO.getFinanceMain(finReference,
-				new String[] { "FinIsActive", "FinReference", "CustID" }, "_View");
-		if (financeMain == null || !financeMain.isFinIsActive()) {
+		FinanceMain fm = financeMainDAO.getFinanceMain(finReference);
+		if (fm == null || !fm.isFinIsActive()) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -3357,7 +3660,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		int eodProgressCount = financeDetailService.getProgressCountByCust(financeMain.getCustID());
+		int eodProgressCount = financeDetailService.getProgressCountByCust(fm.getCustID());
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 		if (eodProgressCount > 0) {
@@ -3365,7 +3668,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("60203", valueParm);
 		}
 		// validating with the rcdmaintainsts
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finReference, "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(fm.getFinID(), "_View");
 
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEWAIVERS.equals(rcdMntnSts)) {
 			String valueParm[] = new String[4];

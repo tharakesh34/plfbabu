@@ -202,7 +202,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				financeWriteoff.setUnPaidSchdPft(detail.getPftAccrued());
 			}
 
-			Provision provision = provisionDAO.getProvisionByFinId(finReference, TableType.MAIN_TAB, false);
+			Provision provision = provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
 			if (provision != null) {
 				financeWriteoff.setProvisionedAmount(provision.getProvisionedAmt());
 			}
@@ -308,7 +308,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		// =======================================
 		if (fm.isNewRecord()) {
 
-			getFinanceMainDAO().save(fm, tableType, false);
+			financeMainDAO.save(fm, tableType, false);
 
 			int seqNo = financeWriteoffDAO.getMaxFinanceWriteoffSeq(finID, writeoff.getWriteoffDate(), "");
 			writeoff.setSeqNo(seqNo + 1);
@@ -602,7 +602,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (auditHeader.getErrorMessage() == null || auditHeader.getErrorMessage().size() == 0) {
 			// save Postings
 			if (accountingSetEntries != null && !accountingSetEntries.isEmpty()) {
-				getPostingsDAO().saveBatch(accountingSetEntries);
+				postingsDAO.saveBatch(accountingSetEntries);
 			}
 
 			// Save/Update Finance Profit Details
@@ -820,7 +820,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		}
 
 		// Checking , if Customer is in EOD process or not. if Yes, not allowed to do an action
-		int eodProgressCount = getCustomerQueuingDAO().getProgressCountByCust(fm.getCustID());
+		int eodProgressCount = customerQueuingDAO.getProgressCountByCust(fm.getCustID());
 
 		// If Customer Exists in EOD Processing, Not allowed to Maintenance till completion
 		if (eodProgressCount > 0) {
@@ -882,7 +882,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			}
 
 			String finReference = schdData.getFinReference();
-			financeCheckList = checkListDetailService.getCheckListByFinRef(finReference, tableType);
+			financeCheckList = checkListDetailService.getCheckListByFinRef(fm.getFinID(), tableType);
 			fd.setFinanceCheckList(financeCheckList);
 
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {

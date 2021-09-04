@@ -259,10 +259,6 @@ public interface FinanceMainDAO {
 
 	void updateRejectFinanceMain(FinanceMain financeMain, TableType tempTab, boolean isWIF);
 
-	FinanceMain getLoanStatus(String finReference);
-
-	FinanceMain getGetDeviation(String finReference);
-
 	FinanceMain getUserActions(String finReference);
 
 	FinanceMain getFinanceDetailsForInsurance(long finID, String type);
@@ -348,6 +344,8 @@ public interface FinanceMainDAO {
 	Map<String, Object> getGSTDataMapForDealer(long manufacturerDealerId);
 
 	FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String string);
+
+	FinanceMain getFinanceMain(String finReference);
 
 	Long getFinID(String finReference);
 

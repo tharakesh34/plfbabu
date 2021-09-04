@@ -30,7 +30,7 @@ public interface FeeReceiptService {
 
 	ErrorDetail processFeePayment(FinServiceInstruction finServInst) throws Exception;
 
-	Map<String, Object> getGLSubHeadCodes(String finRef);
+	Map<String, Object> getGLSubHeadCodes(long finID);
 
 	Long getAccountingSetId(String eventCode, String accSetCode);
 

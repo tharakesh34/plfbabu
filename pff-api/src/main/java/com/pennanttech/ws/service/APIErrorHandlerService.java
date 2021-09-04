@@ -94,10 +94,10 @@ public class APIErrorHandlerService {
 	 */
 	public static WSReturnStatus getFailedStatus(String errorCode, String parameter[]) {
 		WSReturnStatus status = new WSReturnStatus();
-		ErrorDetail errorDetail = errorDetailService.getErrorDetailById(errorCode);
+		ErrorDetail ed = errorDetailService.getErrorDetailById(errorCode);
 		status.setReturnCode(errorCode);
-		if (errorDetail != null) {
-			String errorMessage = getErrorMessage(errorDetail.getMessage(), parameter);
+		if (ed != null) {
+			String errorMessage = getErrorMessage(ed.getMessage(), parameter);
 			status.setReturnText(errorMessage);
 		} else {
 			String errorMessage = "";
@@ -147,7 +147,7 @@ public class APIErrorHandlerService {
 	 * 
 	 * @param reference
 	 */
-	//TODO: Need to move Method
+	// TODO: Need to move Method
 	public static void logReference(String reference) {
 		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_LOG_KEY);
@@ -156,7 +156,7 @@ public class APIErrorHandlerService {
 		}
 	}
 
-	//TODO: Need to move Method
+	// TODO: Need to move Method
 	public static void logKeyFields(String[] keyFields) {
 		APILogDetail apiLogDetail = (APILogDetail) PhaseInterceptorChain.getCurrentMessage().getExchange()
 				.get(APIHeader.API_LOG_KEY);

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ProvisionCalculationUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ProvisionCalculationUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -71,6 +62,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -91,32 +83,22 @@ public class ProvisionCalculationUtil implements Serializable {
 		super();
 	}
 
-	/**
-	 * Method for Processing Provision Calculations
-	 * 
-	 * @param procProvision
-	 * @param dateValueDate
-	 * @param isProvRelated
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
 	public ErrorDetail processProvCalculations(Provision procProvision, Date dateValueDate, boolean isProvRelated,
 			boolean isScrnLvlProc, boolean isFromCore)
 			throws IllegalAccessException, InvocationTargetException, InterfaceException {
 
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		BigDecimal provCalculated = BigDecimal.ZERO;
 
-		FinanceProfitDetail pftDetail = getFinanceProfitDetailDAO()
-				.getFinProfitDetailsByRef(procProvision.getFinReference());
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(procProvision.getFinReference());
-		List<FinanceScheduleDetail> schdDetails = getFinanceScheduleDetailDAO()
-				.getFinSchdDetailsForBatch(procProvision.getFinReference());
+		long finID = procProvision.getFinID();
+		String finReference = procProvision.getFinReference();
+		FinanceProfitDetail pftDetail = financeProfitDetailDAO.getFinProfitDetailsByRef(finID);
+		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(finID);
+		List<FinanceScheduleDetail> schdDetails = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
 
-		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
-				AccountingEvent.PROVSN, dateValueDate, procProvision.getProvisionDate());
+		AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail, AccountingEvent.PROVSN,
+				dateValueDate, procProvision.getProvisionDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		/*
@@ -129,25 +111,25 @@ public class ProvisionCalculationUtil implements Serializable {
 		aeEvent.setDataMap(dataMap);
 
 		if (isFromCore) {
-			//provCalculated = procProvision.getProvisionAmtCal();
+			// provCalculated = procProvision.getProvisionAmtCal();
 		} else {
 			/*
 			 * if (isScrnLvlProc && procProvision.isUseNFProv()) { //provCalculated = procProvision.getNonFormulaProv();
 			 * } else { provCalculated = getEngineExecution().getProvisionExecResults(dataMap); }
 			 */
 		}
-		//Search For Provision Record in case of OverDue
+		// Search For Provision Record in case of OverDue
 		Provision provision = null;
 		boolean isRcdFound = true;
 		if (!isProvRelated) {
-			//provision = getProvisionDAO().getProvisionById(procProvision.getFinReference(), "");
+			// provision = getProvisionDAO().getProvisionById(procProvision.getFinReference(), "");
 			if (provision == null) {
 				isRcdFound = false;
 			}
 		}
 
 		boolean isProceedFurthur = true;
-		//Case for Provision Record not Found
+		// Case for Provision Record not Found
 		if (!isRcdFound) {
 
 			if (provCalculated.compareTo(BigDecimal.ZERO) == 0) {
@@ -166,9 +148,9 @@ public class ProvisionCalculationUtil implements Serializable {
 			isProceedFurthur = false;
 			BigDecimal prvProvCalAmt = null;
 			if (!isProvRelated) {
-				//prvProvCalAmt = provision.getProvisionAmtCal();
+				// prvProvCalAmt = provision.getProvisionAmtCal();
 			} else {
-				//prvProvCalAmt = procProvision.getProvisionAmtCal();
+				// prvProvCalAmt = procProvision.getProvisionAmtCal();
 			}
 			provision = procProvision;
 
@@ -195,13 +177,13 @@ public class ProvisionCalculationUtil implements Serializable {
 		ProvisionMovement movement = null;
 		ErrorDetail errorDetails = null;
 		if (isProceedFurthur) {
-			//Provision Movement record update
+			// Provision Movement record update
 			/*
 			 * if (provision.getProvisionDue().compareTo(BigDecimal.ZERO) == 0) { // Nothing to do , loop repetation }
 			 * else { movement = prepareProvisionMovementData(provision, dateValueDate); }
 			 */
 
-			//Provision Posting Process for Screen Level Process
+			// Provision Posting Process for Screen Level Process
 			boolean isPostingsSuccess = true;
 			if ((isScrnLvlProc || isFromCore) && movement != null) {
 				amountCodes
@@ -209,7 +191,7 @@ public class ProvisionCalculationUtil implements Serializable {
 
 				aeEvent.setAccountingEvent(AccountingEvent.PROVSN);
 				aeEvent.setValueDate(dateValueDate);
-				//aeEvent.setSchdDate(procProvision.getProvisionCalDate());
+				// aeEvent.setSchdDate(procProvision.getProvisionCalDate());
 				Date dateAppDate = DateUtility.getAppDate();
 				aeEvent.setAppDate(dateAppDate);
 
@@ -218,7 +200,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				aeEvent.setDataMap(dataMap);
 
 				try {
-					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+					aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 				} catch (AccountNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -236,21 +218,21 @@ public class ProvisionCalculationUtil implements Serializable {
 					movement.setLinkedTranId(aeEvent.getLinkedTranId());
 					movement.setUserDetails(procProvision.getUserDetails());
 
-					//Update Provision Movement Details
+					// Update Provision Movement Details
 					if (!isFromCore) {
-						//getProvisionDAO().updateProvAmt(movement, "");
-						getProvisionMovementDAO().update(movement, "");
+						// getProvisionDAO().updateProvAmt(movement, "");
+						provisionMovementDAO.update(movement, "");
 					}
 
 				}
 			}
 
-			//Provision Details Save or Update
+			// Provision Details Save or Update
 			if (isPostingsSuccess || !isScrnLvlProc) {
 
 				if (isPostingsSuccess && isScrnLvlProc && movement != null) {
 					provision.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
-					//provision.setProvisionDue(BigDecimal.ZERO);
+					// provision.setProvisionDue(BigDecimal.ZERO);
 				}
 
 				if (isFromCore) {
@@ -261,15 +243,15 @@ public class ProvisionCalculationUtil implements Serializable {
 				}
 
 				if (!isRcdFound) {
-					//	getProvisionDAO().save(provision, "");
+					// getProvisionDAO().save(provision, "");
 					if (isFromCore) {
-						//getProvisionDAO().saveProcessedProvisions(provision);
+						// getProvisionDAO().saveProcessedProvisions(provision);
 					}
 				} else {
-					//getProvisionDAO().update(provision, "");
+					// getProvisionDAO().update(provision, "");
 				}
 
-				//Provision Movement Details
+				// Provision Movement Details
 				if (movement != null) {
 
 					if (isScrnLvlProc && movement != null) {
@@ -279,7 +261,7 @@ public class ProvisionCalculationUtil implements Serializable {
 						movement.setLinkedTranId(aeEvent.getLinkedTranId());
 					}
 
-					getProvisionMovementDAO().save(movement, "");
+					provisionMovementDAO.save(movement, "");
 				}
 			}
 
@@ -287,7 +269,7 @@ public class ProvisionCalculationUtil implements Serializable {
 
 		amountCodes = null;
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 
 		return errorDetails;
 	}
@@ -305,47 +287,47 @@ public class ProvisionCalculationUtil implements Serializable {
 	 */
 	private Provision prepareProvisionData(Provision provision, Date valueDate, BigDecimal provCalculated,
 			boolean isScrnLvlProc, AEAmountCodes aeAmountCodes, int scenarioSeq) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Scenario 1
 		if (scenarioSeq == 1) {
 			provision.setProvisionedAmt(BigDecimal.ZERO);
-			//provision.setProvisionAmtCal(provCalculated);
-			//provision.setProvisionDue(provCalculated);
-			//provision.setNonFormulaProv(BigDecimal.ZERO);
+			// provision.setProvisionAmtCal(provCalculated);
+			// provision.setProvisionDue(provCalculated);
+			// provision.setNonFormulaProv(BigDecimal.ZERO);
 			if (!isScrnLvlProc) {
-				//provision.setUseNFProv(false);
-				//provision.setAutoReleaseNFP(false);
+				// provision.setUseNFProv(false);
+				// provision.setAutoReleaseNFP(false);
 			}
 		}
 
 		// Scenario 2
 		if (scenarioSeq == 2) {
-			//provision.setProvisionAmtCal(provCalculated);
-			//provision.setProvisionDue(provision.getProvisionAmtCal().subtract(provision.getProvisionedAmt()));
+			// provision.setProvisionAmtCal(provCalculated);
+			// provision.setProvisionDue(provision.getProvisionAmtCal().subtract(provision.getProvisionedAmt()));
 		}
 
 		// Scenario 3
 		if (scenarioSeq == 3) {
-			//provision.setProvisionAmtCal(BigDecimal.ZERO);
-			//provision.setProvisionDue(BigDecimal.ZERO.subtract(provision.getProvisionedAmt()));
+			// provision.setProvisionAmtCal(BigDecimal.ZERO);
+			// provision.setProvisionDue(BigDecimal.ZERO.subtract(provision.getProvisionedAmt()));
 		}
 
 		// Scenario 4
 		if (scenarioSeq == 4) {
-			//provision.setProvisionAmtCal(provision.getNonFormulaProv());
-			//provision.setProvisionDue(provision.getProvisionAmtCal().subtract(provision.getProvisionedAmt()));
+			// provision.setProvisionAmtCal(provision.getNonFormulaProv());
+			// provision.setProvisionDue(provision.getProvisionAmtCal().subtract(provision.getProvisionedAmt()));
 		}
 
-		//Common Changes for all Scenario's
-		//provision.setProvisionCalDate(valueDate);
-		//	provision.setPrincipalDue(aeAmountCodes.getPriAB());
-		//provision.setProfitDue(aeAmountCodes.getPftAB());
+		// Common Changes for all Scenario's
+		// provision.setProvisionCalDate(valueDate);
+		// provision.setPrincipalDue(aeAmountCodes.getPriAB());
+		// provision.setProfitDue(aeAmountCodes.getPftAB());
 		Date curBussDate = SysParamUtil.getAppDate();
 		provision.setDueFromDate(DateUtil.addDays(curBussDate, -aeAmountCodes.getODDays()));
 		provision.setLastFullyPaidDate(DateUtil.addDays(curBussDate, -aeAmountCodes.getDaysFromFullyPaid()));
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return provision;
 	}
 
@@ -356,91 +338,68 @@ public class ProvisionCalculationUtil implements Serializable {
 	 * @param valueDate
 	 */
 	private ProvisionMovement prepareProvisionMovementData(Provision provision, Date valueDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		ProvisionMovement provisionMovement = getProvisionMovementDAO()
-				.getProvisionMovementById(provision.getFinReference(), valueDate, "");
+		long finID = provision.getFinID();
+		String finReference = provision.getFinReference();
+		ProvisionMovement provisionMovement = provisionMovementDAO.getProvisionMovementById(finID, valueDate, "");
 
 		ProvisionMovement movement = new ProvisionMovement();
-		movement.setFinReference(provision.getFinReference());
+		movement.setFinReference(finReference);
 		movement.setProvMovementDate(valueDate);
 
-		//If Record is not exist in database
+		// If Record is not exist in database
 		if (provisionMovement == null) {
 			movement.setProvMovementSeq(1);
 		} else {
 
 			/*
 			 * if (provision.getProvisionAmtCal().compareTo(provisionMovement.getProvisionAmtCal()) == 0) {
-			 * logger.debug("Leaving"); return provisionMovement; }
+			 * logger.debug(Literal.LEAVING); return provisionMovement; }
 			 */
 
 			movement.setProvMovementSeq(provisionMovement.getProvMovementSeq() + 1);
 		}
 		movement.setProvCalDate(valueDate);
 		movement.setProvisionedAmt(provision.getProvisionedAmt());
-		//movement.setProvisionAmtCal(provision.getProvisionAmtCal());
-		//movement.setProvisionDue(provision.getProvisionDue());
+		// movement.setProvisionAmtCal(provision.getProvisionAmtCal());
+		// movement.setProvisionDue(provision.getProvisionDue());
 		movement.setProvisionPostSts("R");
-		//movement.setNonFormulaProv(provision.getNonFormulaProv());
-		//movement.setUseNFProv(provision.isUseNFProv());
-		//movement.setAutoReleaseNFP(provision.isAutoReleaseNFP());
-		//movement.setPrincipalDue(provision.getPrincipalDue());
-		//movement.setProfitDue(provision.getProfitDue());
+		// movement.setNonFormulaProv(provision.getNonFormulaProv());
+		// movement.setUseNFProv(provision.isUseNFProv());
+		// movement.setAutoReleaseNFP(provision.isAutoReleaseNFP());
+		// movement.setPrincipalDue(provision.getPrincipalDue());
+		// movement.setProfitDue(provision.getProfitDue());
 		movement.setDueFromDate(provision.getDueFromDate());
 		movement.setLastFullyPaidDate(provision.getLastFullyPaidDate());
 		movement.setLinkedTranId(0);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return movement;
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
+	public static void setLogger(Logger logger) {
+		ProvisionCalculationUtil.logger = logger;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
-		return financeProfitDetailDAO;
 	}
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
-	public ProvisionDAO getProvisionDAO() {
-		return provisionDAO;
-	}
-
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
 	}
 
-	public ProvisionMovementDAO getProvisionMovementDAO() {
-		return provisionMovementDAO;
-	}
-
 	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
 		this.provisionMovementDAO = provisionMovementDAO;
-	}
-
-	public AccountEngineExecution getEngineExecution() {
-		return engineExecution;
 	}
 
 	public void setEngineExecution(AccountEngineExecution engineExecution) {
@@ -449,14 +408,6 @@ public class ProvisionCalculationUtil implements Serializable {
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
 	}
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {

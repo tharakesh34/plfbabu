@@ -26,9 +26,16 @@ import com.pennanttech.ws.model.finance.FinAdvPaymentDetail;
 @Produces("application/json")
 public interface FinServiceInstRESTService {
 
+	/***
+	 * Method for process add disbursement request received from API.
+	 * 
+	 * @param fsi
+	 * @return
+	 * @throws ServiceException
+	 */
 	@POST
 	@Path("/loanInstructionService/addRateChangeRequest")
-	public FinanceDetail addRateChange(FinServiceInstruction finServiceInstRequest) throws ServiceException;
+	public FinanceDetail addRateChange(FinServiceInstruction fsi) throws ServiceException;
 
 	@POST
 	@Path("/loanInstructionService/changeRepaymentAmountRequest")
