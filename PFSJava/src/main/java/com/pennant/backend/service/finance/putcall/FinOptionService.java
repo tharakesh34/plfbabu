@@ -9,7 +9,7 @@ import com.pennanttech.pff.core.TableType;
 
 public interface FinOptionService {
 
-	List<FinOption> getFinOptions(String finreference, TableType tableType);
+	List<FinOption> getFinOptions(long finID, TableType tableType);
 
 	List<AuditDetail> saveOrUpdate(List<FinOption> FinOptions, TableType tableType, String auditTranType);
 
@@ -28,6 +28,6 @@ public interface FinOptionService {
 
 	List<AuditDetail> validateFinOptions(List<AuditDetail> auditDetails, String usrLanguage, String method);
 
-	FinanceDetail getFinanceDetailById(String id, String type, String userRole, String moduleDefiner,
+	FinanceDetail getFinanceDetailById(long finID, String type, String userRole, String moduleDefiner,
 			String eventCodeRef);
 }

@@ -43,8 +43,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	private FinanceMainDAO financeMainDAO;
 
 	@Override
-	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
-		return getFinMaintainInstructionDAO().getFinMaintainInstructionByFinRef(finreference, event, "_Temp");
+	public FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event) {
+		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finID, event, "_Temp");
 	}
 
 	@Override
@@ -59,35 +59,33 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (finMaintainInstruction.isWorkflow()) {
+		if (fmi.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
-		if (finMaintainInstruction.isNewRecord()) {
-			finMaintainInstruction.setFinMaintainId(
-					Long.parseLong(getFinMaintainInstructionDAO().save(finMaintainInstruction, tableType)));
-			auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
-			auditHeader.setAuditReference(String.valueOf(finMaintainInstruction.getFinMaintainId()));
+		if (fmi.isNewRecord()) {
+			fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
+			auditHeader.getAuditDetail().setModelData(fmi);
+			auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
 		} else {
-			getFinMaintainInstructionDAO().update(finMaintainInstruction, tableType);
+			finMaintainInstructionDAO.update(fmi, tableType);
 		}
 
-		List<FinOption> finOptions = finMaintainInstruction.getFinOptions();
+		List<FinOption> finOptions = fmi.getFinOptions();
 		if (CollectionUtils.isNotEmpty(finOptions)) {
 			auditDetails.addAll(finOptionService.processFinOptions(finOptions, TableType.TEMP_TAB,
 					auditHeader.getAuditTranType(), false));
 		}
 
 		String rcdMaintainSts = FinServiceEvent.PUTCALL;
-		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), rcdMaintainSts);
+		financeMainDAO.updateMaintainceStatus(fmi.getFinID(), rcdMaintainSts);
 
 		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -198,26 +196,23 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			return auditHeader;
 		}
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.MAIN_TAB);
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+		finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
 
-		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(finMaintainInstruction, "", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "", auditHeader.getAuditTranType())));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	public List<AuditDetail> listDeletion(FinMaintainInstruction finMaintainInstruction, String tableType,
-			String auditTranType) {
+	public List<AuditDetail> listDeletion(FinMaintainInstruction fmi, String tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
 
-		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			FinCovenantType finCovenantType = new FinCovenantType();
 			String[] fields = PennantJavaUtil.getFieldDetails(finCovenantType, finCovenantType.getExcludeFields());
@@ -226,7 +221,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
 						covenant.getBefImage(), covenant));
 			}
-			finOptionDAO.deleteByFinRef(finMaintainInstruction.getFinReference(), tableType);
+			finOptionDAO.deleteByFinRef(fmi.getFinID(), tableType);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -292,74 +287,71 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
-		BeanUtils.copyProperties((FinMaintainInstruction) auditHeader.getAuditDetail().getModelData(),
-				finMaintainInstruction);
+		FinMaintainInstruction fmi = new FinMaintainInstruction();
+		BeanUtils.copyProperties((FinMaintainInstruction) auditHeader.getAuditDetail().getModelData(), fmi);
 
-		if (!PennantConstants.RECORD_TYPE_NEW.equals(finMaintainInstruction.getRecordType())) {
-			auditHeader.getAuditDetail().setBefImage(finMaintainInstructionDAO
-					.getFinMaintainInstructionById(finMaintainInstruction.getFinMaintainId(), ""));
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(fmi.getRecordType())) {
+			auditHeader.getAuditDetail()
+					.setBefImage(finMaintainInstructionDAO.getFinMaintainInstructionById(fmi.getFinMaintainId(), ""));
 		}
 
-		if (finMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+		if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 
 			tranType = PennantConstants.TRAN_DEL;
-			getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.MAIN_TAB);
-			auditDetails.addAll(listDeletion(finMaintainInstruction, "", auditHeader.getAuditTranType()));
+			finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
+			auditDetails.addAll(listDeletion(fmi, "", auditHeader.getAuditTranType()));
 
 		} else {
 
-			finMaintainInstruction.setRoleCode("");
-			finMaintainInstruction.setNextRoleCode("");
-			finMaintainInstruction.setTaskId("");
-			finMaintainInstruction.setNextTaskId("");
-			finMaintainInstruction.setWorkflowId(0);
+			fmi.setRoleCode("");
+			fmi.setNextRoleCode("");
+			fmi.setTaskId("");
+			fmi.setNextTaskId("");
+			fmi.setWorkflowId(0);
 
-			if (finMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+			if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				finMaintainInstruction.setRecordType("");
-				getFinMaintainInstructionDAO().save(finMaintainInstruction, TableType.MAIN_TAB);
+				fmi.setRecordType("");
+				finMaintainInstructionDAO.save(fmi, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				finMaintainInstruction.setRecordType("");
-				getFinMaintainInstructionDAO().update(finMaintainInstruction, TableType.MAIN_TAB);
+				fmi.setRecordType("");
+				finMaintainInstructionDAO.update(fmi, TableType.MAIN_TAB);
 			}
 		}
 
-		List<FinCovenantType> covenantTypes = finMaintainInstruction.getFinCovenantTypeList();
+		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
-			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinCovenants");
-			details = processingFinOptionList(details, finMaintainInstruction.getFinReference(), TableType.VIEW);
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinCovenants");
+			details = processingFinOptionList(details, fmi.getFinReference(), TableType.VIEW);
 			auditDetails.addAll(details);
 		}
 
-		List<FinOption> finOptions = finMaintainInstruction.getFinOptions();
+		List<FinOption> finOptions = fmi.getFinOptions();
 		if (CollectionUtils.isNotEmpty(finOptions)) {
 			auditDetails.addAll(finOptionService.processFinOptions(finOptions, TableType.MAIN_TAB,
 					auditHeader.getAuditTranType(), true));
 		}
 
-		getFinMaintainInstructionDAO().delete(finMaintainInstruction, TableType.TEMP_TAB);
+		finMaintainInstructionDAO.delete(fmi, TableType.TEMP_TAB);
 
-		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
+		financeMainDAO.updateMaintainceStatus(fmi.getFinID(), "");
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		auditHeader.setAuditDetails(
-				getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditHeader.getAuditTranType())));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "_Temp", auditHeader.getAuditTranType())));
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 				auditHeader.getAuditDetail().getBefImage(), auditHeader.getAuditDetail().getModelData()));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		// Audit for Before And After Images
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
-		auditHeader.getAuditDetail().setModelData(finMaintainInstruction);
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
-				finMaintainInstruction.getBefImage(), finMaintainInstruction));
+		auditHeader.getAuditDetail().setModelData(fmi);
+		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fmi.getBefImage(), fmi));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -376,50 +368,20 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			return auditHeader;
 		}
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		finMaintainInstructionDAO.delete(finMaintainInstruction, TableType.TEMP_TAB);
-		financeMainDAO.updateMaintainceStatus(finMaintainInstruction.getFinReference(), "");
+		finMaintainInstructionDAO.delete(fmi, TableType.TEMP_TAB);
+		financeMainDAO.updateMaintainceStatus(fmi.getFinID(), "");
 
 		String auditTranType = auditHeader.getAuditTranType();
-		auditHeader.setAuditDetail(
-				new AuditDetail(auditTranType, 1, finMaintainInstruction.getBefImage(), finMaintainInstruction));
-		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(finMaintainInstruction, "_Temp", auditTranType)));
+		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fmi.getBefImage(), fmi));
+		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "_Temp", auditTranType)));
 
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinOptionDAO getFinOptionDAO() {
-		return finOptionDAO;
-	}
-
-	public void setFinOptionDAO(FinOptionDAO finOptionDAO) {
-		this.finOptionDAO = finOptionDAO;
-	}
-
-	public FinMaintainInstructionDAO getFinMaintainInstructionDAO() {
-		return finMaintainInstructionDAO;
-	}
-
-	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
-		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
-	}
-
-	public void setFinOptionService(FinOptionService finOptionService) {
-		this.finOptionService = finOptionService;
 	}
 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -432,13 +394,12 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditHeader.getAuditDetail()
-				.getModelData();
-		String usrLanguage = finMaintainInstruction.getUserDetails().getLanguage();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = fmi.getUserDetails().getLanguage();
 
-		List<FinOption> finOptions = finMaintainInstruction.getFinOptions();
+		List<FinOption> finOptions = fmi.getFinOptions();
 		if (CollectionUtils.isNotEmpty(finOptions)) {
-			List<AuditDetail> details = finMaintainInstruction.getAuditDetailMap().get("FinOptions");
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinOptions");
 			auditDetails.addAll(finOptionService.validateFinOptions(details, usrLanguage, method));
 		}
 
@@ -457,18 +418,14 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		logger.debug(Literal.ENTERING);
 
 		// Get the model object.
-		FinMaintainInstruction finMaintainInstruction = (FinMaintainInstruction) auditDetail.getModelData();
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (isUniqueCheckReq && finMaintainInstruction.isNewRecord()
-				&& finMaintainInstructionDAO.isDuplicateKey(finMaintainInstruction.getEvent(),
-						finMaintainInstruction.getFinReference(),
-						finMaintainInstruction.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+		if (isUniqueCheckReq && fmi.isNewRecord() && finMaintainInstructionDAO.isDuplicateKey(fmi.getEvent(),
+				fmi.getFinID(), fmi.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
-			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": "
-					+ finMaintainInstruction.getEvent();
-			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : "
-					+ finMaintainInstruction.getFinReference();
+			parameters[0] = PennantJavaUtil.getLabel("label_FinMaintainInstruction_Event") + ": " + fmi.getEvent();
+			parameters[1] = PennantJavaUtil.getLabel("label_FinReference") + " : " + fmi.getFinReference();
 
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", parameters, null));
 		}
@@ -568,6 +525,22 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFinOptionDAO(FinOptionDAO finOptionDAO) {
+		this.finOptionDAO = finOptionDAO;
+	}
+
+	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
+		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
+	}
+
+	public void setFinOptionService(FinOptionService finOptionService) {
+		this.finOptionService = finOptionService;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {

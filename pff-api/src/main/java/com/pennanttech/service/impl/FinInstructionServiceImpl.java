@@ -737,33 +737,34 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail feePayment(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		// for logging purpose
-		APIErrorHandlerService.logReference(fsi.getFinReference());
-
-		// bean validations
 		validationUtility.validate(fsi, UpfrontFeesGroup.class);
 
-		if (StringUtils.isBlank(fsi.getFinReference()) && StringUtils.isBlank(fsi.getExternalReference())) {
+		String finReference = fsi.getFinReference();
+		String externalReference = fsi.getExternalReference();
+
+		if (StringUtils.isBlank(finReference) && StringUtils.isBlank(externalReference)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "finReference";
 			valueParm[1] = "externalReference";
 			return errorDetails("90123", valueParm);
-		} else if (StringUtils.isNotBlank(fsi.getFinReference())
-				&& StringUtils.isNotBlank(fsi.getExternalReference())) {
+		}
+
+		if (StringUtils.isNotBlank(finReference) && StringUtils.isNotBlank(externalReference)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "finReference";
 			valueParm[1] = "externalReference";
 			return errorDetails("30511", valueParm);
 		}
 
-		if (StringUtils.isNotBlank(fsi.getFinReference())) {
+		if (StringUtils.isNotBlank(finReference)) {
+			APIErrorHandlerService.logReference(finReference);
 			fsi.setFromBranch("");
 			fsi.setToBranch("");
 			fsi.setFinType("");
 			fsi.setCustCIF("");
+
 		} else {
-			// for logging purpose
-			APIErrorHandlerService.logReference(fsi.getExternalReference());
+			APIErrorHandlerService.logReference(externalReference);
 
 			if (StringUtils.isBlank(fsi.getFromBranch())) {
 				String valueParm[] = new String[1];
@@ -800,7 +801,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			fsi.setCustID(customer.getCustID());
 
 			int count = receiptService.geFeeReceiptCountByExtReference(Objects.toString(customer.getCustID(), ""),
-					FinServiceEvent.FEEPAYMENT, fsi.getExternalReference());
+					FinServiceEvent.FEEPAYMENT, externalReference);
 			if (count > 0) {
 				String valueParm[] = new String[3];
 				valueParm[0] = "Invalid CIF";
@@ -816,23 +817,21 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		String moduleDefiner = FinServiceEvent.FEEPAYMENT;
 
-		// set Default date formats
 		setDefaultDateFormats(fsi);
 
-		FinanceDetail financeDetail = null;
+		FinanceDetail fd = null;
 
-		// vlidate duplicate record
 		boolean dedupFound = checkUpFrontDuplicateRequest(fsi, moduleDefiner);
 		if (dedupFound) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "transaction";
 			return errorDetails("41014", valueParm);
 		}
-		// execute manual payment service
-		financeDetail = finServiceInstController.doFeePayment(fsi);
+
+		fd = finServiceInstController.doFeePayment(fsi);
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	private FinanceDetail errorDetails(String errorCode, String parameter[]) {
@@ -843,26 +842,25 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return financeDetail;
 	}
 
-	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction finServiceInstruction, String moduleDefiner) {
+	private boolean checkUpFrontDuplicateRequest(FinServiceInstruction fsi, String moduleDefiner) {
 
 		List<FinReceiptDetail> receiptDetails = null;
-		if (StringUtils.isNotBlank(finServiceInstruction.getFinReference())) {
-			receiptDetails = finReceiptDetailDAO
-					.getFinReceiptDetailByReference(finServiceInstruction.getFinReference());
+		if (StringUtils.isNotBlank(fsi.getFinReference())) {
+			receiptDetails = finReceiptDetailDAO.getFinReceiptDetailByReference(fsi.getFinReference());
 		} else {
-			receiptDetails = finReceiptDetailDAO
-					.getFinReceiptDetailByReference(Objects.toString(finServiceInstruction.getCustID(), ""));
+			receiptDetails = finReceiptDetailDAO.getFinReceiptDetailByReference(Objects.toString(fsi.getCustID(), ""));
 		}
-		String paymentMode = finServiceInstruction.getPaymentMode();
+
+		String paymentMode = fsi.getPaymentMode();
+
 		if (paymentMode.equals(RepayConstants.RECEIPTMODE_RTGS) || paymentMode.equals(RepayConstants.RECEIPTMODE_NEFT)
 				|| paymentMode.equals(RepayConstants.RECEIPTMODE_IMPS)
 				|| paymentMode.equals(RepayConstants.RECEIPTMODE_ESCROW)) {
-			if (finServiceInstruction.getReceiptDetail() != null) {
+			if (fsi.getReceiptDetail() != null) {
 				if (receiptDetails != null && !receiptDetails.isEmpty()) {
 					for (FinReceiptDetail finReceiptDetail : receiptDetails) {
-						if (finReceiptDetail.getAmount().compareTo(finServiceInstruction.getAmount()) == 0
-								&& StringUtils.equals(finReceiptDetail.getTransactionRef(),
-										finServiceInstruction.getReceiptDetail().getTransactionRef())) {
+						if (finReceiptDetail.getAmount().compareTo(fsi.getAmount()) == 0 && StringUtils.equals(
+								finReceiptDetail.getTransactionRef(), fsi.getReceiptDetail().getTransactionRef())) {
 							return true;
 						}
 					}
@@ -2362,7 +2360,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		FinanceTaxDetail currentFinanceTaxData = finServiceInstController.getFinanceTaxDetails(finReference);
+		FinanceTaxDetail currentFinanceTaxData = finServiceInstController.getFinanceTaxDetails(finID);
 
 		if (currentFinanceTaxData == null) {
 			String[] valueParm = new String[1];
@@ -3217,6 +3215,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		// for logging purpose
 		String finReference = fsi.getFinReference();
+		String eventCode = AccountingEvent.ADDDBSN;
 		APIErrorHandlerService.logReference(finReference);
 
 		// set Default date formats
@@ -3263,7 +3262,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
-			String eventCode = AccountingEvent.ADDDBSN;
+			fsi.setFinID(finID);
 			FinanceDetail fd = finServiceInstController.getFinanceDetails(fsi, eventCode);
 			fd.setAdvancePaymentsList(disbursementDetailsList);
 			AuditDetail auditDetail = addDisbursementService.doCancelDisbValidations(fd);
@@ -3275,6 +3274,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 
 			fd.getAdvancePaymentsList().add(finAdv);
+
+			fd.getFinScheduleData().getFinanceMain().setFinID(finID);
 			response = finServiceInstController.doCancelDisbursementInstructions(fd);
 		} else {
 			String[] valueParam = new String[2];

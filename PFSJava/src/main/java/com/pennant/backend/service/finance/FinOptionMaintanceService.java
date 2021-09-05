@@ -5,7 +5,7 @@ import com.pennant.backend.model.finance.FinMaintainInstruction;
 
 public interface FinOptionMaintanceService {
 
-	FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event);
+	FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 

@@ -1464,9 +1464,9 @@ public class FinServiceInstController extends SummaryDetailService {
 			return fd;
 		}
 
-		FinODPenaltyRate finODPenaltyRate = receiptData.getFinanceDetail().getFinScheduleData().getFinODPenaltyRate();
+		FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
 		if (finODPenaltyRate == null) {
-			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinReference(), "_AView");
+			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "_AView");
 		}
 
 		if (CollectionUtils.isNotEmpty(allocationList)) {
@@ -1921,8 +1921,8 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 	}
 
-	private Map<String, String> validateRepayAmount(FinScheduleData finScheduleData,
-			FinServiceInstruction finServiceInst, BigDecimal totReceiptAmt) {
+	private Map<String, String> validateRepayAmount(FinScheduleData schdData, FinServiceInstruction fsi,
+			BigDecimal totReceiptAmt) {
 
 		Map<String, String> returnMap = new HashMap<String, String>();
 		returnMap.put("ReturnCode", "");
@@ -1935,27 +1935,30 @@ public class FinServiceInstController extends SummaryDetailService {
 		BigDecimal schFeeBal = BigDecimal.ZERO;
 		BigDecimal tdsReturns = BigDecimal.ZERO;
 
-		Date curBussniessDate = finServiceInst.getReceiptDetail().getReceivedDate();
+		Date curBussniessDate = fsi.getReceiptDetail().getReceivedDate();
 		boolean partAccrualReq = true;
 		FinanceScheduleDetail curSchd = null;
 		FinanceScheduleDetail prvSchd = null;
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		if (totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
-			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
-					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
+			if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
+					|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
 				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
 				returnMap.put("ReturnCode", status.getReturnCode());
 				returnMap.put("ReturnText", status.getReturnText());
-			} else if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYRPY)
-					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
+			} else if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYRPY)
+					|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
 				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90331");
 				returnMap.put("ReturnCode", status.getReturnCode());
 				returnMap.put("ReturnText", status.getReturnText());
 			}
-			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYRPY)) {
-				boolean isInSubvention = receiptService.isInSubVention(finScheduleData.getFinanceMain(),
-						curBussniessDate);
+			if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYRPY)) {
+				boolean isInSubvention = receiptService.isInSubVention(fm, curBussniessDate);
 				if (isInSubvention) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "Not allowed to do Partial Settlement in Subvention Period.";
@@ -1966,8 +1969,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		if (!StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
-			FinanceMain financeMain = finScheduleData.getFinanceMain();
+		if (!StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
+			FinanceMain financeMain = fm;
 			BigDecimal tdsMultiplier = BigDecimal.ONE;
 			if (TDSCalculator.isTDSApplicable(financeMain)) {
 				BigDecimal tdsPerc = new BigDecimal(
@@ -1978,7 +1981,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 
-			List<FinanceScheduleDetail> tempScheduleDetails = finScheduleData.getFinanceScheduleDetails();
+			List<FinanceScheduleDetail> tempScheduleDetails = schdData.getFinanceScheduleDetails();
 			for (int i = 0; i < tempScheduleDetails.size(); i++) {
 				curSchd = tempScheduleDetails.get(i);
 				if (i != 0) {
@@ -2009,8 +2012,8 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				} else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
 
-					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
-							|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)) {
+					if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
+							|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)) {
 
 						BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
 						pftBalance = pftBalance.add(curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()));
@@ -2041,8 +2044,8 @@ public class FinServiceInstController extends SummaryDetailService {
 						}
 					}
 				} else {
-					if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
-							|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)) {
+					if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
+							|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)) {
 						if (partAccrualReq && prvSchd != null) {
 							partAccrualReq = false;
 							BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
@@ -2076,12 +2079,12 @@ public class FinServiceInstController extends SummaryDetailService {
 			BigDecimal latePayPftBal = BigDecimal.ZERO;
 			BigDecimal penaltyBal = BigDecimal.ZERO;
 			List<FinODDetails> overdueList = null;
-			if (DateUtility.compare(curBussniessDate, DateUtility.getAppDate()) == 0) {
-				overdueList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
+			if (DateUtility.compare(curBussniessDate, SysParamUtil.getAppDate()) == 0) {
+				overdueList = finODDetailsDAO.getFinODDByFinRef(finID, null);
 			} else {
 				// Calculate overdue Penalties
-				overdueList = receiptService.getValueDatePenalties(finScheduleData, totReceiptAmt, curBussniessDate,
-						null, true);
+				overdueList = receiptService.getValueDatePenalties(schdData, totReceiptAmt, curBussniessDate, null,
+						true);
 			}
 
 			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
@@ -2096,7 +2099,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 			}
 
-			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finReference,
+			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
 					FinanceConstants.MANUAL_ADVISE_RECEIVABLE, " ");
 			BigDecimal bounceCharge = BigDecimal.ZERO;
 			if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
@@ -2112,8 +2115,8 @@ public class FinServiceInstController extends SummaryDetailService {
 			returnMap.put("partPaidAmt", String.valueOf(partialPaidAmt));
 
 			// calculate Remaining balance after
-			if (StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
-					|| StringUtils.equals(finServiceInst.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
+			if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
+					|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
 				if (totReceiptAmt.compareTo(remBal) < 0) {
 					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
 					returnMap.put("ReturnCode", status.getReturnCode());
@@ -2172,7 +2175,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		try {
 			// save the OdPenaltyDetais
 			FinODPenaltyRate oldFinODPenaltyRate = finODPenaltyRateDAO
-					.getFinODPenaltyRateByRef(finODPenaltyRate.getFinReference(), "");
+					.getFinODPenaltyRateByRef(finODPenaltyRate.getFinID(), "");
 			finODPenaltyRateDAO.saveLog(oldFinODPenaltyRate, "_Log");
 			finODPenaltyRateDAO.update(finODPenaltyRate, "");
 		} catch (Exception e) {
@@ -2673,13 +2676,13 @@ public class FinServiceInstController extends SummaryDetailService {
 	public FinanceDetail getFinanceDetails(FinServiceInstruction fsi, String eventCode) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail financeDetail = null;
+		FinanceDetail fd = null;
 
 		long finID = fsi.getFinID();
 		if (!fsi.isWif()) {
-			financeDetail = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
+			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 		} else {
-			financeDetail = financeDetailService.getWIFFinance(finID, false, null);
+			fd = financeDetailService.getWIFFinance(finID, false, null);
 		}
 
 		/*
@@ -2688,9 +2691,9 @@ public class FinServiceInstController extends SummaryDetailService {
 		 */
 
 		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
-		if (financeDetail != null) {
-			if (financeDetail.getFinScheduleData().getFinFeeDetailList() != null) {
-				for (FinFeeDetail feeDetail : financeDetail.getFinScheduleData().getFinFeeDetailList()) {
+		if (fd != null) {
+			if (fd.getFinScheduleData().getFinFeeDetailList() != null) {
+				for (FinFeeDetail feeDetail : fd.getFinScheduleData().getFinFeeDetailList()) {
 					if (feeDetail.isOriginationFee()) {
 						feeDetail.setOriginationFee(true);
 						feeDetail.setRcdVisible(false);
@@ -2700,15 +2703,15 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 				}
 			}
-			financeDetail.getFinScheduleData().setFinFeeDetailList(newList);
-			financeDetail.setAccountingEventCode(eventCode);
+			fd.getFinScheduleData().setFinFeeDetailList(newList);
+			fd.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
+			fd.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
 		}
 
 		logger.debug(Literal.LEAVING);
 
-		return financeDetail;
+		return fd;
 	}
 
 	/**
@@ -2743,18 +2746,9 @@ public class FinServiceInstController extends SummaryDetailService {
 		return schedules;
 	}
 
-	/**
-	 * get first Installment Date
-	 * 
-	 * @param schedules
-	 * @return
-	 */
-	Date getFirstInstDate(List<FinanceScheduleDetail> schedules) {
-
-		// Finding First Installment Date
+	public Date getFirstInstDate(List<FinanceScheduleDetail> schedules) {
 		Date firstInstDate = null;
 		for (FinanceScheduleDetail schedule : schedules) {
-
 			BigDecimal repayAmt = schedule.getProfitSchd().add(schedule.getPrincipalSchd())
 					.subtract(schedule.getPartialPaidAmt());
 
@@ -2767,69 +2761,84 @@ public class FinServiceInstController extends SummaryDetailService {
 		return firstInstDate;
 	}
 
-	public FinanceDetail doFeePayment(FinServiceInstruction finServiceInst) {
+	public FinanceDetail doFeePayment(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail response = null;
+		String finReference = fsi.getFinReference();
+		String[] valueParm = null;
 
-		// Validate given Request Receipt Data is valid or not.
-		WSReturnStatus returnStatus = validateReceiptData(finServiceInst);
-		if (returnStatus != null) {
-			response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(returnStatus);
-			return response;
+		WSReturnStatus returnStatus = null;
+		Long finID = financeMainDAO.getFinID(finReference, TableType.TEMP_TAB);
+
+		if (finID == null) {
+			valueParm = new String[1];
+			valueParm[0] = fsi.getFinReference();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
-		// Fee validations
-		List<ErrorDetail> errorDetails = upfrontFeeValidations(finServiceInst);
+
+		FinanceDetail fd = null;
+		if (returnStatus != null) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		returnStatus = validateReceiptData(fsi);
+		if (returnStatus != null) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		List<ErrorDetail> errorDetails = upfrontFeeValidations(fsi);
 		if (errorDetails != null) {
-			for (ErrorDetail errorDetail : errorDetails) {
-				response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return response;
+			for (ErrorDetail ed : errorDetails) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
 		}
 
 		try {
-			ErrorDetail errorDetail = feeReceiptService.processFeePayment(finServiceInst);
-			if (errorDetail != null) {
-				response = new FinanceDetail();
-				doEmptyResponseObject(response);
-				response.setReturnStatus(
-						APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
-				return response;
+			ErrorDetail ed = feeReceiptService.processFeePayment(fsi);
+			if (ed != null) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+				return fd;
 			}
-			response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			response.setReceiptId(finServiceInst.getReceiptId());
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+			fd.setReceiptId(fsi.getReceiptId());
 		} catch (InterfaceException ex) {
 			logger.error("InterfaceException", ex);
-			response = new FinanceDetail();
-			doEmptyResponseObject(response);
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
 			APIErrorHandlerService.logUnhandledException(ex);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
-			return response;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
+			return fd;
 		} catch (AppException appEx) {
 			logger.error("AppException", appEx);
-			response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", appEx.getMessage()));
 			APIErrorHandlerService.logUnhandledException(appEx);
-			return response;
+			return fd;
 		} catch (Exception e) {
 			logger.error("Exception", e);
 			APIErrorHandlerService.logUnhandledException(e);
-			response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return fd;
 		}
 
 		logger.debug(Literal.LEAVING);
-		return response;
+		return fd;
 	}
 
 	private List<ErrorDetail> upfrontFeeValidations(FinServiceInstruction fsi) {
@@ -3006,16 +3015,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		String finReference = fsi.getFinReference();
 		String[] valueParm = null;
 
-		// validate FinReference
-		if (StringUtils.isNotBlank(finReference)) {
-			boolean isValidRef = financeMainDAO.isFinReferenceExists(finReference, TableType.TEMP_TAB.getSuffix(),
-					false);
-			if (!isValidRef) {
-				valueParm = new String[1];
-				valueParm[0] = fsi.getFinReference();
-				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
+		Date appDate = SysParamUtil.getAppDate();
 
 		// better to check any unpaid fess us there or not
 
@@ -3064,7 +3064,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			valueParm[0] = "receivedDate";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		} else {
-			Date appDate = DateUtility.getAppDate();
 			if (DateUtility.compare(fsi.getReceiptDetail().getReceivedDate(), appDate) > 0) {
 				valueParm = new String[1];
 				valueParm[0] = DateUtility.formatToLongDate(appDate);
@@ -3117,7 +3116,6 @@ public class FinServiceInstController extends SummaryDetailService {
 				return APIErrorHandlerService.getFailedStatus("90220", valueParm);
 			}
 			// value Date
-			Date appDate = DateUtility.getAppDate();
 			if (finReceiptDetail.getValueDate() == null) {
 				valueParm = new String[1];
 				valueParm[0] = "valueDate";
@@ -3243,17 +3241,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		return financeMainService.getCustomerODLoanDetails(userID);
 	}
 
-	/**
-	 * Method <b>getFinanceTaxDetails(finReference)</b> - Retrieves Finance Tax Details for finReference
-	 * 
-	 * @param finReference - {@link String}
-	 * @return {@link WSReturnStatus}
-	 */
-	public FinanceTaxDetail getFinanceTaxDetails(String finReference) {
-
+	public FinanceTaxDetail getFinanceTaxDetails(long finID) {
 		logger.info(Literal.ENTERING);
 
-		FinanceTaxDetail financeTaxDetail = financeTaxDetailService.getApprovedFinanceTaxDetail(finReference);
+		FinanceTaxDetail financeTaxDetail = financeTaxDetailService.getApprovedFinanceTaxDetail(finID);
 
 		logger.info(Literal.LEAVING);
 
@@ -3364,9 +3355,12 @@ public class FinServiceInstController extends SummaryDetailService {
 		String REJECTED_STATUS = "R";
 
 		String finReference = disbRequest.getFinReference();
+
+		Long finID = financeMainDAO.getFinID(finReference);
+
 		String type = disbRequest.getType();
 		if (StringUtils.isNotBlank(type) && DisbursementConstants.CHANNEL_DISBURSEMENT.equals(type)) {
-			int count = finAdvancePaymensDAO.getCountByPaymentId(finReference, paymentId);
+			int count = finAdvancePaymensDAO.getCountByPaymentId(finID, paymentId);
 			if (count <= 0) {
 				String[] valueParam = new String[1];
 				valueParam[0] = "PaymentId";
@@ -3388,13 +3382,13 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 
 			if (ImplementationConstants.HOLD_DISB_INST_POST) {
-				FinanceMain fm = financeMainDAO.getFinanceMainById(finReference, "", false);
+				FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
 				if (DisbursementConstants.STATUS_AWAITCON.equals(status)) {
 					finAdv.setStatus(DisbursementConstants.STATUS_APPROVED);
 				} else {
 					finAdv.setStatus(DisbursementConstants.STATUS_AWAITCON);
 				}
-				fm.setEntityCode(financeMainDAO.getLovDescEntityCode(fm.getFinReference(), "_View"));
+				fm.setEntityCode(financeMainDAO.getLovDescEntityCode(finID, "_View"));
 				fm.setLovDescEntityCode(fm.getEntityCode());
 				FinanceDetail financeDetail = new FinanceDetail();
 				List<FinAdvancePayments> finAdvList = new ArrayList<FinAdvancePayments>();
@@ -4224,17 +4218,18 @@ public class FinServiceInstController extends SummaryDetailService {
 		return response;
 	}
 
-	public WSReturnStatus doCancelDisbursementInstructions(FinanceDetail financeDetail) {
+	public WSReturnStatus doCancelDisbursementInstructions(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
-		FinScheduleData schd = financeDetail.getFinScheduleData();
+		FinScheduleData schd = fd.getFinScheduleData();
 		FinanceMain fm = schd.getFinanceMain();
+		long finID = fm.getFinID();
 
-		List<FinAdvancePayments> advancePayments = financeDetail.getAdvancePaymentsList();
+		List<FinAdvancePayments> advancePayments = fd.getAdvancePaymentsList();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
-		int paymentSeq = finAdvancePaymensDAO.getCountByFinReference(fm.getFinReference());
+		int paymentSeq = finAdvancePaymensDAO.getCountByFinReference(finID);
 		for (FinAdvancePayments advPayment : advancePayments) {
 			if (DisbursementConstants.STATUS_PAID.equals(advPayment.getStatus())) {
 				advPayment.setRecordType(PennantConstants.RCD_DEL);
@@ -4277,7 +4272,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		PayOrderIssueHeader poih = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(fm.getFinReference(), "");
+		PayOrderIssueHeader poih = payOrderIssueHeaderDAO.getPayOrderIssueByHeaderRef(finID, "");
 
 		poih.setVersion(poih.getVersion() + 1);
 		poih.setFinAdvancePaymentsList(advancePayments);

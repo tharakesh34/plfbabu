@@ -16,6 +16,7 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -36,8 +37,8 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 	private CustomerDetailsService customerDetailsService;
 
 	@Override
-	public List<FinOption> getFinOptions(String finreference, TableType tableType) {
-		return finOptionDAO.getFinOptions(finreference, tableType);
+	public List<FinOption> getFinOptions(long finID, TableType tableType) {
+		return finOptionDAO.getFinOptions(finID, tableType);
 	}
 
 	@Override
@@ -355,34 +356,32 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 	}
 
 	@Override
-	public FinanceDetail getFinanceDetailById(String finreference, String type, String userRole, String moduleDefiner,
+	public FinanceDetail getFinanceDetailById(long finID, String type, String userRole, String moduleDefiner,
 			String eventCodeRef) {
 		logger.debug(Literal.ENTERING);
 
-		//Finance Details
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(finreference);
-		scheduleData.setFinanceMain(financeMainDAO.getFinanceMainById(finreference, type, false));
-		scheduleData.setFinanceType(
-				financeTypeDAO.getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData scheduleData = fd.getFinScheduleData();
+		scheduleData.setFinReference(fm.getFinReference());
+		scheduleData.setFinanceMain(fm);
+		scheduleData.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), "_AView"));
 
-		//Finance Schedule Details
-		scheduleData
-				.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finreference, type, false));
+		// Finance Schedule Details
+		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
 
-		//Finance Customer Details			
+		// Finance Customer Details
 		if (scheduleData.getFinanceMain().getCustID() != 0
 				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-			financeDetail.setCustomerDetails(customerDetailsService
+			fd.setCustomerDetails(customerDetailsService
 					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
 		}
 
-		List<FinOption> finOption = finOptionDAO.getFinOptions(finreference, TableType.VIEW);
+		List<FinOption> finOption = finOptionDAO.getFinOptions(finID, TableType.VIEW);
 
-		financeDetail.setFinOptions(finOption);
+		fd.setFinOptions(finOption);
 
-		return financeDetail;
+		return fd;
 	}
 
 }
