@@ -52,39 +52,10 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	private static final Logger logger = LogManager.getLogger(WIFFinanceScheduleDetailServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-
 	private WIFFinanceScheduleDetailDAO wIFFinanceScheduleDetailDAO;
 
 	public WIFFinanceScheduleDetailServiceImpl() {
 		super();
-	}
-
-	/**
-	 * @return the auditHeaderDAO
-	 */
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	/**
-	 * @param auditHeaderDAO the auditHeaderDAO to set
-	 */
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	/**
-	 * @return the wIFFinanceScheduleDetailDAO
-	 */
-	public WIFFinanceScheduleDetailDAO getWIFFinanceScheduleDetailDAO() {
-		return wIFFinanceScheduleDetailDAO;
-	}
-
-	/**
-	 * @param wIFFinanceScheduleDetailDAO the wIFFinanceScheduleDetailDAO to set
-	 */
-	public void setWIFFinanceScheduleDetailDAO(WIFFinanceScheduleDetailDAO wIFFinanceScheduleDetailDAO) {
-		this.wIFFinanceScheduleDetailDAO = wIFFinanceScheduleDetailDAO;
 	}
 
 	/**
@@ -117,12 +88,12 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 		}
 
 		if (wIFFinanceScheduleDetail.isNewRecord()) {
-			getWIFFinanceScheduleDetailDAO().save(wIFFinanceScheduleDetail, tableType);
+			wIFFinanceScheduleDetailDAO.save(wIFFinanceScheduleDetail, tableType);
 		} else {
-			getWIFFinanceScheduleDetailDAO().update(wIFFinanceScheduleDetail, tableType);
+			wIFFinanceScheduleDetailDAO.update(wIFFinanceScheduleDetail, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -149,9 +120,9 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 
 		FinanceScheduleDetail wIFFinanceScheduleDetail = (FinanceScheduleDetail) auditHeader.getAuditDetail()
 				.getModelData();
-		getWIFFinanceScheduleDetailDAO().delete(wIFFinanceScheduleDetail, "");
+		wIFFinanceScheduleDetailDAO.delete(wIFFinanceScheduleDetail, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -166,8 +137,8 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 */
 
 	@Override
-	public FinanceScheduleDetail getWIFFinanceScheduleDetailById(String id) {
-		return getWIFFinanceScheduleDetailDAO().getWIFFinanceScheduleDetailById(id, "_View");
+	public FinanceScheduleDetail getWIFFinanceScheduleDetailById(long finID) {
+		return wIFFinanceScheduleDetailDAO.getWIFFinanceScheduleDetailById(finID, "_View");
 	}
 
 	/**
@@ -178,23 +149,22 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	 * @param id (String)
 	 * @return WIFFinanceScheduleDetail
 	 */
-
-	public FinanceScheduleDetail getApprovedWIFFinanceScheduleDetailById(String id) {
-		return getWIFFinanceScheduleDetailDAO().getWIFFinanceScheduleDetailById(id, "_AView");
+	@Override
+	public FinanceScheduleDetail getApprovedWIFFinanceScheduleDetailById(long finID) {
+		return wIFFinanceScheduleDetailDAO.getWIFFinanceScheduleDetailById(finID, "_AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using
-	 * getWIFFinanceScheduleDetailDAO().delete with parameters wIFFinanceScheduleDetail,"" b) NEW Add new record in to
-	 * main table by using getWIFFinanceScheduleDetailDAO().save with parameters wIFFinanceScheduleDetail,"" c) EDIT
-	 * Update record in the main table by using getWIFFinanceScheduleDetailDAO().update with parameters
-	 * wIFFinanceScheduleDetail,"" 3) Delete the record from the workFlow table by using
-	 * getWIFFinanceScheduleDetailDAO().delete with parameters wIFFinanceScheduleDetail,"_Temp" 4) Audit the record in
-	 * to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit
-	 * the record in to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader) based on
-	 * the transaction Type.
+	 * following actions a) DELETE Delete the record from the main table by using wIFFinanceScheduleDetailDAO.delete
+	 * with parameters wIFFinanceScheduleDetail,"" b) NEW Add new record in to main table by using
+	 * wIFFinanceScheduleDetailDAO.save with parameters wIFFinanceScheduleDetail,"" c) EDIT Update record in the main
+	 * table by using wIFFinanceScheduleDetailDAO.update with parameters wIFFinanceScheduleDetail,"" 3) Delete the
+	 * record from the workFlow table by using wIFFinanceScheduleDetailDAO.delete with parameters
+	 * wIFFinanceScheduleDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtWIFFinScheduleDetails by using
+	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
+	 * AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -214,7 +184,7 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 		if (wIFFinanceScheduleDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getWIFFinanceScheduleDetailDAO().delete(wIFFinanceScheduleDetail, "");
+			wIFFinanceScheduleDetailDAO.delete(wIFFinanceScheduleDetail, "");
 
 		} else {
 			wIFFinanceScheduleDetail.setRoleCode("");
@@ -226,23 +196,23 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 			if (wIFFinanceScheduleDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				wIFFinanceScheduleDetail.setRecordType("");
-				getWIFFinanceScheduleDetailDAO().save(wIFFinanceScheduleDetail, "");
+				wIFFinanceScheduleDetailDAO.save(wIFFinanceScheduleDetail, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				wIFFinanceScheduleDetail.setRecordType("");
-				getWIFFinanceScheduleDetailDAO().update(wIFFinanceScheduleDetail, "");
+				wIFFinanceScheduleDetailDAO.update(wIFFinanceScheduleDetail, "");
 			}
 		}
 
-		getWIFFinanceScheduleDetailDAO().delete(wIFFinanceScheduleDetail, "_Temp");
+		wIFFinanceScheduleDetailDAO.delete(wIFFinanceScheduleDetail, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(wIFFinanceScheduleDetail);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -251,9 +221,9 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getWIFFinanceScheduleDetailDAO().delete with parameters wIFFinanceScheduleDetail,"_Temp"
-	 * 3) Audit the record in to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader)
-	 * for Work flow
+	 * workFlow table by using wIFFinanceScheduleDetailDAO.delete with parameters wIFFinanceScheduleDetail,"_Temp" 3)
+	 * Audit the record in to AuditHeader and AdtWIFFinScheduleDetails by using auditHeaderDAO.addAudit(auditHeader) for
+	 * Work flow
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -271,9 +241,9 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 				.getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getWIFFinanceScheduleDetailDAO().delete(wIFFinanceScheduleDetail, "_Temp");
+		wIFFinanceScheduleDetailDAO.delete(wIFFinanceScheduleDetail, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -282,8 +252,8 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getWIFFinanceScheduleDetailDAO().getErrorDetail with
-	 * Error ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * for any mismatch conditions Fetch the error details from wIFFinanceScheduleDetailDAO.getErrorDetail with Error ID
+	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -302,43 +272,42 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {
 		logger.debug("Entering");
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
-		FinanceScheduleDetail wIFFinanceScheduleDetail = (FinanceScheduleDetail) auditDetail.getModelData();
+		FinanceScheduleDetail wIFFd = (FinanceScheduleDetail) auditDetail.getModelData();
 
-		FinanceScheduleDetail tempWIFFinanceScheduleDetail = null;
-		if (wIFFinanceScheduleDetail.isWorkflow()) {
-			tempWIFFinanceScheduleDetail = getWIFFinanceScheduleDetailDAO()
-					.getWIFFinanceScheduleDetailById(wIFFinanceScheduleDetail.getFinReference(), "_Temp");
+		FinanceScheduleDetail temWIFFd = null;
+		long finID = wIFFd.getFinID();
+		if (wIFFd.isWorkflow()) {
+			temWIFFd = wIFFinanceScheduleDetailDAO.getWIFFinanceScheduleDetailById(finID, "_Temp");
 		}
-		FinanceScheduleDetail befWIFFinanceScheduleDetail = getWIFFinanceScheduleDetailDAO()
-				.getWIFFinanceScheduleDetailById(wIFFinanceScheduleDetail.getFinReference(), "");
+		FinanceScheduleDetail befWIFd = wIFFinanceScheduleDetailDAO.getWIFFinanceScheduleDetailById(finID, "");
 
-		FinanceScheduleDetail oldWIFFinanceScheduleDetail = wIFFinanceScheduleDetail.getBefImage();
+		FinanceScheduleDetail oldWIFFd = wIFFd.getBefImage();
 
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
-		valueParm[0] = wIFFinanceScheduleDetail.getFinReference();
+		valueParm[0] = wIFFd.getFinReference();
 		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 
-		if (wIFFinanceScheduleDetail.isNewRecord()) { // for New record or new record into work flow
+		if (wIFFd.isNewRecord()) { // for New record or new record into work flow
 
-			if (!wIFFinanceScheduleDetail.isWorkflow()) {// With out Work flow only new records
-				if (befWIFFinanceScheduleDetail != null) { // Record Already Exists in the table then error
+			if (!wIFFd.isWorkflow()) {// With out Work flow only new records
+				if (befWIFd != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (wIFFinanceScheduleDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records
-																											// type is
-																											// new
-					if (befWIFFinanceScheduleDetail != null || tempWIFFinanceScheduleDetail != null) { // if records
-																										// already
-																										// exists in the
-																										// main table
+				if (wIFFd.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records
+																						// type is
+																						// new
+					if (befWIFd != null || temWIFFd != null) { // if records
+																// already
+																// exists in the
+																// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befWIFFinanceScheduleDetail == null || tempWIFFinanceScheduleDetail != null) {
+					if (befWIFd == null || temWIFFd != null) {
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 					}
@@ -346,14 +315,13 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 			}
 		} else {
 			// for work flow process records or (Record to update or Delete with out work flow)
-			if (!wIFFinanceScheduleDetail.isWorkflow()) { // With out Work flow for update and delete
+			if (!wIFFd.isWorkflow()) { // With out Work flow for update and delete
 
-				if (befWIFFinanceScheduleDetail == null) { // if records not exists in the main table
+				if (befWIFd == null) { // if records not exists in the main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
-					if (oldWIFFinanceScheduleDetail != null && !oldWIFFinanceScheduleDetail.getLastMntOn()
-							.equals(befWIFFinanceScheduleDetail.getLastMntOn())) {
+					if (oldWIFFd != null && !oldWIFFd.getLastMntOn().equals(befWIFd.getLastMntOn())) {
 						if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 								.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
@@ -368,14 +336,12 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 				}
 			} else {
 
-				if (tempWIFFinanceScheduleDetail == null) { // if records not exists in the Work flow table
+				if (temWIFFd == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
 
-				if (tempWIFFinanceScheduleDetail != null && oldWIFFinanceScheduleDetail != null
-						&& !oldWIFFinanceScheduleDetail.getLastMntOn()
-								.equals(tempWIFFinanceScheduleDetail.getLastMntOn())) {
+				if (temWIFFd != null && oldWIFFd != null && !oldWIFFd.getLastMntOn().equals(temWIFFd.getLastMntOn())) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -384,11 +350,19 @@ public class WIFFinanceScheduleDetailServiceImpl extends GenericService<FinanceS
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !wIFFinanceScheduleDetail.isWorkflow()) {
-			wIFFinanceScheduleDetail.setBefImage(befWIFFinanceScheduleDetail);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !wIFFd.isWorkflow()) {
+			wIFFd.setBefImage(befWIFd);
 		}
 
 		return auditDetail;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setwIFFinanceScheduleDetailDAO(WIFFinanceScheduleDetailDAO wIFFinanceScheduleDetailDAO) {
+		this.wIFFinanceScheduleDetailDAO = wIFFinanceScheduleDetailDAO;
 	}
 
 }

@@ -957,11 +957,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public FinanceDetail getServicingFinance(String finReference, String eventCodeRef, String serviceEvent,
-			String userrole) {
+	public FinanceDetail getServicingFinance(long finID, String eventCodeRef, String serviceEvent, String userrole) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceDetail fd = getFinSchdDetailById(finReference, "_View", false);
+		FinanceDetail fd = getFinSchdDetailById(finID, "_View", false);
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 

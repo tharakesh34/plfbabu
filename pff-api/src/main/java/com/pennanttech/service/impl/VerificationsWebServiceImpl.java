@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VerificationsWebServiceImpl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-02-2021    														*
- *                                                                  						*
- * Modified Date    :  08-02-2021    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VerificationsWebServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-02-2021 * *
+ * Modified Date : 08-02-2021 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-02-2021       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-02-2021 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennanttech.service.impl;
 
 import java.math.BigDecimal;
@@ -156,15 +138,22 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 		WSReturnStatus response = new WSReturnStatus();
 		String keyReference = verification.getKeyReference();
-		//validate loan reference
+
 		if (StringUtils.isBlank(keyReference)) {
 			String valueParm[] = new String[2];
 			valueParm[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		//get financedetails data'
-		FinanceDetail financeDetail = getFinanceDetails(keyReference);
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+
+		if (finID == null) {
+			String[] valueParam = new String[1];
+			valueParam[0] = keyReference;
+			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
+		}
+
+		FinanceDetail financeDetail = getFinanceDetails(finID);
 
 		if (financeDetail == null) {
 			String valueParm[] = new String[2];
@@ -191,10 +180,6 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 	}
 
-	/**
-	 * @param verification
-	 * @return {@link FinanceDetail}
-	 */
 	private FinanceDetail getFinanceDetails(String keyReference, VerificationType verificationtype, String type) {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = new FinanceDetail();
@@ -204,17 +189,12 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		return financeDetail;
 	}
 
-	/**
-	 * @param verification
-	 * @return {@link FinanceDetail}
-	 */
-	private FinanceDetail getFinanceDetails(String keyReference) {
+	private FinanceDetail getFinanceDetails(long finID) {
 		logger.debug(Literal.ENTERING);
-		FinanceDetail financeDetail = new FinanceDetail();
-		financeDetail = financeDetailService.getFinanceDetailById(keyReference, false, "", true,
-				FinServiceEvent.ORG, "");
+		FinanceDetail fd = new FinanceDetail();
+		fd = financeDetailService.getFinanceDetailById(finID, false, "", true, FinServiceEvent.ORG, "");
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**
@@ -225,7 +205,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 	 */
 	private WSReturnStatus validateFIinitiation(Verification verification, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		//validate customer details		
+		// validate customer details
 		customerDetails = financeDetail.getCustomerDetails();
 		if (customerDetails == null) {
 			String valueParm[] = new String[1];
@@ -244,7 +224,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			}
 		}
 
-		//validate verificationType
+		// validate verificationType
 		List<Verification> verificationsList = verification.getVerifications();
 		VerificationType verificationType = null;
 		if (verification.getVerificationType() > 0) {
@@ -302,7 +282,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					return getErrorDetails("21005", valueParm);
 				}
 			}
-			//validate RequestType
+			// validate RequestType
 			RequestType requestType = RequestType.getType(vrf.getRequestType());
 			Map<String, String> requestTypeMap = getRequestTypeValues();
 			if (requestType == null) {
@@ -313,7 +293,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				return getErrorDetails("21005", valueParm);
 			}
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
-				//Reason values are set to be null in case values are processed with API 
+				// Reason values are set to be null in case values are processed with API
 				if (vrf.getReason() == null || vrf.getReason() <= 0) {
 					vrf.setReason(null);
 				}
@@ -325,7 +305,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					VehicleDealer agencyDetails = getAgencyById(vrf.getAgency(), Agencies.FIAGENCY.getKey());
 					if (agencyDetails == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());//value should provide from AMTVehicleDealer_AView Dealerid
+						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());// value should provide from
+																						// AMTVehicleDealer_AView
+																						// Dealerid
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setAgencyName(agencyDetails.getDealerName());
@@ -335,7 +317,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 			}
 			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
-				//Agency values are set to be null in case values are processed with API
+				// Agency values are set to be null in case values are processed with API
 				if (vrf.getAgency() != null || vrf.getAgency() > 0) {
 					vrf.setAgency(null);
 				}
@@ -347,7 +329,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					ReasonCode reasonCode = getReasonCode(vrf.getReason(), WaiverReasons.FIWRES.getKey());
 					if (reasonCode == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = String.valueOf(vrf.getReason());//value should provide from Reasons_AView id
+						valueParm[0] = String.valueOf(vrf.getReason());// value should provide from Reasons_AView id
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setReasonName(reasonCode.getReasonTypeDesc());
@@ -402,8 +384,8 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return verifications;
 		}
 
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "FinReference";
 			returnstatus = APIErrorHandlerService.getFailedStatus("90201", valueParam);
@@ -511,6 +493,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 		String keyReference = fieldInvestigation.getKeyReference();
 		WSReturnStatus response = null;
+
 		if (StringUtils.isBlank(keyReference)) {
 			if (StringUtils.isBlank(keyReference)) {
 				String valueParm[] = new String[1];
@@ -518,8 +501,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
@@ -530,7 +514,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			valueParm[0] = "verificationId";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		//AddressType Validations
+		// AddressType Validations
 		List<Verification> veriFications = verificationDAO.getVeriFications(keyReference, VerificationType.FI.getKey());
 		List<String> vrfAddress = veriFications.stream().map(a -> a.getReferenceFor()).collect(Collectors.toList());
 		if (!vrfAddress.contains(fieldInvestigation.getAddressType())) {
@@ -538,7 +522,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			valueParm[0] = "AddressType";
 			return APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
 		}
-		//get Verification Id's from Verifications Table with keyreference
+		// get Verification Id's from Verifications Table with keyreference
 		List<Long> verificationIds = verificationDAO.getVerificationIds(keyReference, VerificationType.FI.getKey(),
 				RequestType.INITIATE.getKey());
 		if (CollectionUtils.isEmpty(verificationIds)) {
@@ -726,22 +710,24 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 	@Override
 	public WSReturnStatus initiatePDVerification(Verification verification) {
 		logger.debug(Literal.ENTERING);
+
 		WSReturnStatus response = new WSReturnStatus();
 		String keyReference = verification.getKeyReference();
-		//validate loan reference
+
 		if (StringUtils.isBlank(keyReference)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
-		//get financedetail object
-		FinanceDetail financeDetail = getFinanceDetails(keyReference);
+		// get financedetail object
+		FinanceDetail financeDetail = getFinanceDetails(finID);
 		if (financeDetail == null) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "loan data not found";
@@ -767,7 +753,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 	private WSReturnStatus validatePDinitiation(Verification verification, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
-		//validate customer details		
+		// validate customer details
 		customerDetails = financeDetail.getCustomerDetails();
 		if (customerDetails == null) {
 			String valueParm[] = new String[1];
@@ -786,7 +772,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			}
 		}
 
-		//validate verificationType
+		// validate verificationType
 		List<Verification> verificationsList = verification.getVerifications();
 		VerificationType verificationType = null;
 		if (verification.getVerificationType() > 0) {
@@ -835,7 +821,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					return getErrorDetails("21005", valueParm);
 				}
 			}
-			//validate RequestType
+			// validate RequestType
 			RequestType requestType = RequestType.getType(vrf.getRequestType());
 			Map<String, String> requestTypeMap = getRequestTypeValues();
 			if (requestType == null) {
@@ -846,7 +832,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				return getErrorDetails("21005", valueParm);
 			}
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
-				//Reason values are set to be null in case values are processed with API 
+				// Reason values are set to be null in case values are processed with API
 				if (vrf.getReason() == null || vrf.getReason() <= 0) {
 					vrf.setReason(null);
 				}
@@ -858,7 +844,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					VehicleDealer agencyDetails = getAgencyById(vrf.getAgency(), Agencies.PDAGENCY.getKey());
 					if (agencyDetails == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());//value should provide from AMTVehicleDealer_AView Dealerid
+						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());// value should provide from
+																						// AMTVehicleDealer_AView
+																						// Dealerid
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setAgencyName(agencyDetails.getDealerName());
@@ -868,7 +856,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 			}
 			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
-				//Agency values are set to be null in case values are processed with API
+				// Agency values are set to be null in case values are processed with API
 				if (vrf.getAgency() == null || vrf.getAgency() <= 0) {
 					vrf.setAgency(null);
 				}
@@ -880,7 +868,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					ReasonCode reasonCode = getReasonCode(vrf.getReason(), WaiverReasons.PDWRES.getKey());
 					if (reasonCode == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = String.valueOf(vrf.getReason());//value should provide from Reasons_AView id
+						valueParm[0] = String.valueOf(vrf.getReason());// value should provide from Reasons_AView id
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setReasonName(reasonCode.getReasonTypeDesc());
@@ -922,8 +910,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 	}
 
 	/**
-	 * @param personalDiscussion
-	 *            validations based on the API Request
+	 * @param personalDiscussion validations based on the API Request
 	 */
 	public WSReturnStatus validateFields(PersonalDiscussion personalDiscussion) {
 		logger.debug(Literal.ENTERING);
@@ -936,19 +923,23 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			return returnStatus;
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
-		//AddressType Validations
+
+		// AddressType Validations
 		if (StringUtils.isBlank(personalDiscussion.getAddressType())) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "AddressType";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			return returnStatus;
 		}
+
 		List<Verification> veriFications = verificationDAO.getVeriFications(keyReference, VerificationType.PD.getKey());
 		List<String> vrfAddress = veriFications.stream().map(a -> a.getReferenceFor()).collect(Collectors.toList());
 		if (!vrfAddress.contains(personalDiscussion.getAddressType())) {
@@ -965,7 +956,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return returnStatus;
 		}
 
-		//get Verification Id's from Verifications Table with keyreference
+		// get Verification Id's from Verifications Table with keyreference
 		List<Long> verificationIds = verificationDAO.getVerificationIds(keyReference, VerificationType.PD.getKey(),
 				RequestType.INITIATE.getKey());
 		if (CollectionUtils.isEmpty(verificationIds)) {
@@ -1063,7 +1054,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 		}
 
-		//Extended Fields Validations
+		// Extended Fields Validations
 		List<ExtendedField> extendedDetails = personalDiscussion.getExtendedDetails();
 		if (CollectionUtils.isEmpty(personalDiscussion.getExtendedDetails())) {
 			List<ErrorDetail> errorDetails = validateExtendedFileds(extendedDetails, VerificationType.PD.getValue());
@@ -1110,8 +1101,8 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return returnStatus;
 		}
 
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
@@ -1162,7 +1153,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			return returnStatus;
 		}
-		//get Verification Id's from Verifications Table with keyreference
+		// get Verification Id's from Verifications Table with keyreference
 		List<Long> verificationIds = verificationDAO.getVerificationIds(keyReference, VerificationType.TV.getKey(),
 				RequestType.INITIATE.getKey());
 		if (CollectionUtils.isEmpty(verificationIds)) {
@@ -1200,7 +1191,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		if (DateUtility.compare(verifiedDate, SysParamUtil.getAppDate()) != 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationDate";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);//FIXME	
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
 			return returnStatus;
 		}
 
@@ -1267,7 +1258,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return returnStatus;
 		}
 
-		//Extended Fields Validations
+		// Extended Fields Validations
 		List<ExtendedField> extendedDetails = technicalVerification.getExtendedDetails();
 		if (CollectionUtils.isEmpty(technicalVerification.getExtendedDetails())) {
 			List<ErrorDetail> errorDetails = validateTVExtendedFileds(extendedDetails, collateralType);
@@ -1340,8 +1331,8 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return returnStatus;
 		}
 
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
@@ -1351,7 +1342,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		if (verificationId <= 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationId";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);//FIXME	
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
 			return returnStatus;
 		}
 
@@ -1359,20 +1350,20 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		if (verificationDate == null) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationDate";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);//FIXME	
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
 			return returnStatus;
 		}
 		if (DateUtility.compare(verificationDate, SysParamUtil.getAppDate()) != 0) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "VerificationDate";
-			returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParm);//FIXME	
+			returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParm);// FIXME
 			return returnStatus;
 		}
 		String agentName = riskContainmentUnit.getAgentName();
 		if (StringUtils.isBlank(agentName)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "AgentName";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);//FIXME	
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
 			return returnStatus;
 		}
 
@@ -1421,7 +1412,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				}
 			}
 
-		} //get Verification Id's from Verifications Table with keyreference
+		} // get Verification Id's from Verifications Table with keyreference
 		List<Long> verificationIds = verificationDAO.getVerificationIds(keyReference, VerificationType.RCU.getKey(),
 				RequestType.INITIATE.getKey());
 		if (CollectionUtils.isEmpty(verificationIds)) {
@@ -1454,7 +1445,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		if (org.apache.commons.collections4.CollectionUtils.isEmpty(rcuDocuments)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "RcuDocuments";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);//FIXME	
+			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);// FIXME
 			return returnStatus;
 		}
 
@@ -1625,8 +1616,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			response.setReturnStatus(returnStatus);
 			return response;
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParam);
@@ -1821,7 +1813,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				}
 			}
 
-			//CustomerDocuments
+			// CustomerDocuments
 			List<CustomerDocument> customerDocumentsList = financeDetails.getCustomerDetails()
 					.getCustomerDocumentsList();
 			if (CollectionUtils.isNotEmpty(customerDocumentsList)) {
@@ -1833,7 +1825,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				}
 				response.setCustomerDocumentsList(customerDocumentsList);
 			}
-			//LoanDocuments
+			// LoanDocuments
 			List<DocumentDetails> documentDetailsList = financeDetails.getDocumentDetailsList();
 			if (CollectionUtils.isNotEmpty(documentDetailsList)) {
 				for (DocumentDetails documentDetails : documentDetailsList) {
@@ -1845,7 +1837,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				response.setLoanDocumentsList(documentDetailsList);
 			}
 
-			//CoApplicant Documents
+			// CoApplicant Documents
 			CustomerDetails cd = new CustomerDetails();
 			List<CustomerDocument> coApplicatnDocs = new ArrayList<>();
 			List<JointAccountDetail> jointAccountDetails = financeDetails.getJointAccountDetailList();
@@ -1876,7 +1868,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			}
 
 			CustomerDetails customerDetailsLV = financeDetails.getCustomerDetails();
-			//ColletralDocuments
+			// ColletralDocuments
 			List<CollateralAssignment> collateralsDocLV = financeDetails.getCollateralAssignmentList();
 			List<DocumentDetails> collateralDocumentsLV;
 			if (CollectionUtils.isNotEmpty(collateralsDocLV)) {
@@ -1908,7 +1900,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				return response;
 			}
 
-			//CustomerDocuments
+			// CustomerDocuments
 			List<CustomerDocument> customerDocumentsListLV = financeDetails.getCustomerDetails()
 					.getCustomerDocumentsList();
 			if (CollectionUtils.isNotEmpty(customerDocumentsListLV)) {
@@ -1922,7 +1914,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				}
 				response.setCustomerDocumentsList(customerDocumentsListLV);
 			}
-			//LoanDocuments
+			// LoanDocuments
 			List<DocumentDetails> documentDetailsListLV = financeDetails.getDocumentDetailsList();
 			if (CollectionUtils.isNotEmpty(documentDetailsListLV)) {
 				for (DocumentDetails documentDetails : documentDetailsListLV) {
@@ -1956,19 +1948,21 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = new WSReturnStatus();
 		String keyReference = verification.getKeyReference();
-		//validate loan reference
+		// validate loan reference
 		if (StringUtils.isBlank(keyReference)) {
 			String valueParm[] = new String[2];
 			valueParm[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
-		//get financedetail object
+		// get financedetail object
 		FinanceDetail financeDetail = getFinanceDetails(keyReference, VerificationType.TV, "_View");
 		if (financeDetail == null) {
 			String valueParm[] = new String[1];
@@ -1996,11 +1990,11 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 	private WSReturnStatus validateTVnitiation(Verification verification, FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
-		//validate collaterals  details	
+		// validate collaterals details
 		List<CollateralAssignment> collaterals = financeDetail.getCollateralAssignmentList();
 		VehicleDealer agencyDetails = null;
 
-		//validate verificationType
+		// validate verificationType
 		List<Verification> verificationsList = verification.getVerifications();
 		VerificationType verificationType = null;
 
@@ -2045,7 +2039,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					return getErrorDetails("21005", valueParm);
 				}
 			}
-			//validate collateral details
+			// validate collateral details
 			if (CollectionUtils.isEmpty(collaterals)) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "No Collaterals";
@@ -2083,7 +2077,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				valueParm[0] = "VerificationCategory";
 				return getErrorDetails("RU0040", valueParm);
 			}
-			//validate RequestType
+			// validate RequestType
 			RequestType requestType = RequestType.getType(vrf.getRequestType());
 			Map<String, String> requestTypeMap = getRequestTypeValues();
 			if (requestType == null) {
@@ -2094,7 +2088,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				return getErrorDetails("21005", valueParm);
 			}
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
-				//Reason values are set to be null in case values are processed with API 
+				// Reason values are set to be null in case values are processed with API
 				if (vrf.getReason() != null && vrf.getReason() > 0) {
 					vrf.setReason(null);
 				}
@@ -2119,7 +2113,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					}
 					if (agencyDetails == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());//value should provide from AMTVehicleDealer_AView Dealerid
+						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());// value should provide from
+																						// AMTVehicleDealer_AView
+																						// Dealerid
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setAgencyName(agencyDetails.getDealerName());
@@ -2128,7 +2124,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				}
 			}
 			if (vrf.getRequestType() == RequestType.NOT_REQUIRED.getKey()) {
-				//Agency values are set to be null in case values are processed with API
+				// Agency values are set to be null in case values are processed with API
 				if (vrf.getAgency() != null && vrf.getAgency() > 0) {
 					vrf.setAgency(null);
 				}
@@ -2140,7 +2136,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					ReasonCode reasonCode = getReasonCode(vrf.getReason(), WaiverReasons.TVWRES.getKey());
 					if (reasonCode == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = String.valueOf(vrf.getReason());//value should provide from Reasons_AView id
+						valueParm[0] = String.valueOf(vrf.getReason());// value should provide from Reasons_AView id
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setReasonName(reasonCode.getReasonTypeDesc());
@@ -2169,19 +2165,21 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = new WSReturnStatus();
 		String keyReference = verification.getKeyReference();
-		//validate loan reference
+		// validate loan reference
 		if (StringUtils.isBlank(keyReference)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
-		//get financedetail object
+		// get financedetail object
 		FinanceDetail financeDetail = getFinanceDetails(keyReference, VerificationType.RCU, "_View");
 		if (financeDetail == null) {
 			String valueParm[] = new String[1];
@@ -2327,7 +2325,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					VehicleDealer agencyDetails = getAgencyById(vrf.getAgency(), Agencies.RCUVAGENCY.getKey());
 					if (agencyDetails == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());//value should provide from AMTVehicleDealer_AView Dealerid
+						valueParm[0] = "Agency Id :" + String.valueOf(vrf.getAgency());// value should provide from
+																						// AMTVehicleDealer_AView
+																						// Dealerid
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setAgencyName(agencyDetails.getDealerName());
@@ -2349,7 +2349,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 					ReasonCode reasonCode = getReasonCode(vrf.getReason(), WaiverReasons.RCUWRES.getKey());
 					if (reasonCode == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = String.valueOf(vrf.getReason());//value should provide from Reasons_AView id
+						valueParm[0] = String.valueOf(vrf.getReason());// value should provide from Reasons_AView id
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setReasonName(reasonCode.getReasonTypeDesc());
@@ -2384,8 +2384,10 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			valueParm[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = "keyReference";
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
@@ -2569,8 +2571,9 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return returnStatus;
 		}
 
-		int count = financeMainDAO.getFinanceCountById(keyReference, "_View", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+
+		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParam);
