@@ -113,7 +113,7 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 			FinanceDetail financeDetail = new FinanceDetail();
 			CustomerDetails customerDetails = new CustomerDetails();
 
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(collateral.getFinReference(), "_aview", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(collateral.getFinReference(), "_aview", false);
 			financeMain.setUserDetails(new LoggedInUser());
 
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
@@ -126,7 +126,7 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 			if (customerDetails.getCustomer() == null) {
 				return;
 			}
-			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			// For Customers marked as DND true are not allow to Trigger a Mail.
 			if (customerDetails.getCustomer().isDnd()) {
 				return;
 			}

@@ -399,6 +399,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setUsrEmailId(StringUtils.trimToEmpty(usrEmail));
 		FinanceMain financeMain = detail.getFinScheduleData().getFinanceMain();
 
+		long finID = financeMain.getFinID();
 		String finRef = financeMain.getFinReference();
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 		String finProduct = financeMain.getFinCategory();
@@ -2007,7 +2008,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			// Populate the PSL Details in Agreements
 			if (aggModuleDetails.contains(PennantConstants.AGG_PSLMODL)) {
-				setPSLDetails(agreement, finRef, formatter);
+				setPSLDetails(agreement, finID, formatter);
 			}
 
 			if (aggModuleDetails.contains(PennantConstants.AGG_SMPMODL)) {
@@ -2328,9 +2329,9 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 		agreement.setSmplResubmitReasonDesc(StringUtils.trimToEmpty(sampling.getResubmitReasonDesc()));
 	}
 
-	private void setPSLDetails(AgreementDetail agreement, String finRef, int formatter) {
+	private void setPSLDetails(AgreementDetail agreement, long finID, int formatter) {
 		logger.debug("Start of PSL Details in Agreements");
-		PSLDetail pslDetail = pSLDetailService.getPSLDetail(finRef);
+		PSLDetail pslDetail = pSLDetailService.getPSLDetail(finID);
 
 		if (null == pslDetail) {
 			return;
