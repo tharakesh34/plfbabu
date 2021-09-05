@@ -78,6 +78,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.SubReceiptPaymentModes;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
@@ -374,8 +375,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			this.row_receiptDues.setVisible(false);
 			this.row_ReceiptMode.setVisible(false);
 			this.row_ReceiptPurpose.setVisible(false);
-			fillComboBox(this.receiptPurpose, FinServiceEvent.EARLYSETTLE,
-					PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,SchdlRepayment,EarlyPayment,");
+			fillComboBox(this.receiptPurpose, FinServiceEvent.EARLYSETTLE, PennantStaticListUtil.getReceiptPurpose(),
+					",FeePayment,SchdlRepayment,EarlyPayment,");
 		} else {
 			fillComboBox(this.receiptPurpose, "", PennantStaticListUtil.getReceiptPurpose(), ",FeePayment,");
 			fillComboBox(this.receiptMode, "", PennantStaticListUtil.getReceiptPaymentModes(), ",DIGITAL,");
@@ -492,6 +493,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		BigDecimal receiptAmount = this.receiptAmount.getActualValue();
 		receiptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount, formatter);
 
+		long finID = ComponentUtil.getFinID(this.finReference);
+
 		if (!((FinanceMain) this.finReference.getObject()).isFinIsActive()) {
 			ErrorDetail errorDetails = null;
 			String[] valueParm = new String[1];
@@ -526,11 +529,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
 		}
 
-		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY)
-				|| receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY) || receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
 			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
-			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(),
-					this.finReference.getValue(), startDate);
+			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(), finID, startDate);
 		}
 
 		/*
@@ -541,8 +542,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		 */
 
 		// PSD:138262
-		if (receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)
-				|| receiptPurpose.equals(FinServiceEvent.EARLYRPY)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYSETTLE) || receiptPurpose.equals(FinServiceEvent.EARLYRPY)) {
 			boolean initiated = receiptService
 					.isEarlySettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
 			if (initiated) {
@@ -554,8 +554,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 		// PSD:138262
-		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY)
-				|| receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY) || receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
 			boolean initiated = receiptService
 					.isPartialSettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
 			if (initiated) {
@@ -571,7 +570,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
 
 		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
 		if (FinServiceEvent.WRITEOFF.equals(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -604,6 +603,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	private ErrorDetail validateEarlySettle() {
 		ErrorDetail errorDetail = null;
 		String receiptPurpose = "";
+		long finID = ComponentUtil.getFinID(this.finReference);
 
 		if (isForeClosure) {
 			receiptPurpose = FinServiceEvent.EARLYSETTLE;
@@ -611,11 +611,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
 		}
 
-		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY)
-				|| receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
+		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY) || receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
 			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
-			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(),
-					this.finReference.getValue(), startDate);
+			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(), finID, startDate);
 		}
 
 		return errorDetail;
@@ -645,8 +643,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinScheduleData fsd = financeDetail.getFinScheduleData();
 		FinanceMain finMain = fsd.getFinanceMain();
 
-		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(),
-				FinServiceEvent.EARLYSETTLE)
+		if (StringUtils.equals(this.receiptPurpose.getSelectedItem().getValue(), FinServiceEvent.EARLYSETTLE)
 				&& DateUtility.compare(valueDate.getValue(), finMain.getMaturityDate()) > 0) {
 			MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("RM0001", null)));
 			return;
@@ -686,8 +683,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			BigDecimal receiptDues = this.receiptDues.getActualValue();
 			BigDecimal knockOffAmount = this.receiptAmount.getActualValue();
 			String receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
-			if (FinServiceEvent.SCHDRPY.equals(receiptPurpose)
-					&& knockOffAmount.compareTo(receiptDues) > 0) {
+			if (FinServiceEvent.SCHDRPY.equals(receiptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
 				MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff"));
 				return;
 			}
@@ -828,8 +824,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		 * buttons.
 		 */
 		boolean isEnquiry = receiptData.isEnquiry();
-		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode,
-				FinServiceEvent.RECEIPT, "");
+		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode, FinServiceEvent.RECEIPT, "");
 		receiptData.setEnquiry(isEnquiry);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
@@ -935,15 +930,15 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			String workflowTye = "";
 			if (isKnockOff) {
 				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType,
-						FinServiceEvent.RECEIPTKNOCKOFF, isPromotion
-								? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
+						FinServiceEvent.RECEIPTKNOCKOFF, isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION
+								: PennantConstants.WORFLOW_MODULE_FINANCE);
 			} else if (isForeClosure) {
 				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType,
-						FinServiceEvent.RECEIPTFORECLOSURE, isPromotion
-								? PennantConstants.WORFLOW_MODULE_PROMOTION : PennantConstants.WORFLOW_MODULE_FINANCE);
+						FinServiceEvent.RECEIPTFORECLOSURE, isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION
+								: PennantConstants.WORFLOW_MODULE_FINANCE);
 			} else {
-				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType,
-						FinServiceEvent.RECEIPT, isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION
+				workflowTye = getFinanceWorkFlowService().getFinanceWorkFlowType(finType, FinServiceEvent.RECEIPT,
+						isPromotion ? PennantConstants.WORFLOW_MODULE_PROMOTION
 								: PennantConstants.WORFLOW_MODULE_FINANCE);
 			}
 			if (workflowTye != null) {
@@ -1154,7 +1149,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			wve.add(we);
 		}
 
-		Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finReference.getValue());
+		long finID = ComponentUtil.getFinID(this.finReference);
+
+		Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finID);
 
 		if (DateUtil.compare(maxValueDate, this.receiptDate.getValue()) > 0) {
 			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
@@ -1235,8 +1232,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		if (!financeMain.isFinIsActive()
 				|| DateUtility.compare(SysParamUtil.getAppDate(), financeMain.getMaturityDate()) > 0) {
-			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY,
-					PennantStaticListUtil.getReceiptPurpose(), ",EarlyPayment, EarlySettlement, FeePayment,");
+			fillComboBox(receiptPurpose, FinServiceEvent.SCHDRPY, PennantStaticListUtil.getReceiptPurpose(),
+					",EarlyPayment, EarlySettlement, FeePayment,");
 			receiptPurpose.setDisabled(true);
 		} else if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)) {
 			String excludeFields = ",FeePayment,EarlySettlement,";

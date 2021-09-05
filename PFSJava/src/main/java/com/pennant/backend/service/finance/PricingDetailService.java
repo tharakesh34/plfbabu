@@ -10,20 +10,20 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 
 public interface PricingDetailService {
 
-	FinanceType getFinanceTypeById(String id);
+	FinanceType getFinanceTypeById(String finType);
 
 	List<FinTypeVASProducts> getVASProductsByFinType(String finType);
 
-	List<FinFeeDetail> getFinFeeDetailById(String id, boolean isWIF, String type);
+	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type);
 
-	List<FinanceMain> getFinanceMains(String id, String type);
+	List<FinanceMain> getFinanceMains(long finID, String type);
 
-	List<String> getInvestmentRefifAny(String finReference, String type);
+	List<Long> getInvestmentRefifAny(String investmentRef, String type);
 
 	String getConfiguredTopUpFintype(String finType);
 
-	List<VASRecording> getVASRecordingsByLinkRef(String finReference, String type);
+	List<VASRecording> getVASRecordingsByLinkRef(String finID, String type);
 
-	List<String> getParentRefifAny(String finReference, String type);
+	List<Long> getParentRefifAny(String parentRef, String type);
 
 }

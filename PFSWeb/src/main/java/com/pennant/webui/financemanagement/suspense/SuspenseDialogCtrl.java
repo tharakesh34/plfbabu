@@ -597,8 +597,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 			doLoadWorkFlow(getSuspHead());
 
 			// Fetch Total Finance Details Object
-			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinReference(),
-					"_View", false);
+			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinID(), "_View",
+					false);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
 			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
@@ -674,8 +674,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				doLoadWorkFlow(getSuspHead());
 
 				// Fetch Total Finance Details Object
-				FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinReference(),
-						"_View", false);
+				FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(main.getFinID(), "_View",
+						false);
 				financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
 				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 						financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));

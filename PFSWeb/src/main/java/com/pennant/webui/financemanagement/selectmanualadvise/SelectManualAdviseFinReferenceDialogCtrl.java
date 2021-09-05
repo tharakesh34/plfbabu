@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectFinReferenceDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-08-2016    														*
- *                                                                  						*
- * Modified Date    :  30-08-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectFinReferenceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-08-2016 * *
+ * Modified Date : 30-08-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.selectmanualadvise;
@@ -84,6 +66,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
@@ -233,15 +216,18 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (!doFieldValidation()) {
 			return;
 		}
+
+		long finID = ComponentUtil.getFinID(this.finReference);
+
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(this.finReference.getValue(), "_View");
-		if (StringUtils.isNotEmpty(rcdMntnSts) && (!FinServiceEvent.MANUALADVISE.equals(rcdMntnSts)
-				|| !FinServiceEvent.HOLDDISB.equals(rcdMntnSts))) {
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		if (StringUtils.isNotEmpty(rcdMntnSts)
+				&& (!FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) || !FinServiceEvent.HOLDDISB.equals(rcdMntnSts))) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;
 		}
 
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(this.finReference.getValue(), "");
+		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
 		if (writeoffLoan) {
 			MessageUtil.showMessage(Labels.getLabel("label_Writeoff_Loan"));
 			return;
@@ -251,11 +237,11 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		if (StringUtils.equals(moduleDefiner, "holdDisbursement")) {
 			arg.put("holdDisbursement", holdDisbursement);
 			arg.put("holdDisbursementListCtrl", holdDisbursementListCtrl);
-			//arg.put("financeMain", financeMain);
+			// arg.put("financeMain", financeMain);
 			try {
-				//FinanceMain financeMain = (FinanceMain) this.finReference.getObject();
-				//holdDisbursement.setDisbursedAmount(financeMain.getFinCurrAssetValue());
-				//holdDisbursement.setTotalLoanAmt(financeMain.getFinAssetValue());
+				// FinanceMain financeMain = (FinanceMain) this.finReference.getObject();
+				// holdDisbursement.setDisbursedAmount(financeMain.getFinCurrAssetValue());
+				// holdDisbursement.setTotalLoanAmt(financeMain.getFinAssetValue());
 				holdDisbursement.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul", null,
 						arg);
@@ -284,8 +270,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			}
 
 		} else {
-			FinanceMain financeMain = manualAdviseService
-					.getFinanceDetails(StringUtils.trimToEmpty(this.finReference.getValue()));
+			FinanceMain financeMain = manualAdviseService.getFinanceDetails(finID);
 
 			arg.put("manualAdvise", manualAdvise);
 			arg.put("manualAdviseListCtrl", manualAdviseListCtrl);
@@ -315,20 +300,21 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
+			long finID = ComponentUtil.getFinID(this.finReference);
+
 			if (StringUtils.trimToNull(this.finReference.getValue()) == null) {
 				throw new WrongValueException(this.finReference, Labels.getLabel("CHECK_NO_EMPTY",
 						new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
 			}
 			if (StringUtils.equals(moduleDefiner, FINCHANGECUSTOMER)) {
-				boolean count = getFinChangeCustomerService().isFinReferenceProcess(this.finReference.getValue());
+				boolean count = getFinChangeCustomerService().isFinReferenceProcess(finID);
 
 				if (count) {
 					throw new WrongValueException(this.finReference, Labels.getLabel("DATA_ALREADY_EXISTS",
 							new String[] { Labels.getLabel("label_SelectPaymentHeaderDialog_FinaType.value") }));
 				}
 
-				joinAccountDetail = getJointAccountDetailService().getJoinAccountDetail(this.finReference.getValue(),
-						"_View");
+				joinAccountDetail = getJointAccountDetailService().getJoinAccountDetail(finID, "_View");
 
 				if (joinAccountDetail != null && joinAccountDetail.size() == 0) {
 					throw new WrongValueException(this.finReference, Labels.getLabel("NO_COAPPLICANTS",
@@ -337,8 +323,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			}
 
 			if (moduleDefiner.equals("holdDisbursement")) {
-				if (getHoldDisbursementService().isFinServiceInstructionExist(this.finReference.getValue(), "_temp",
-						"AddDisbursement")) {
+				if (getHoldDisbursementService().isFinServiceInstructionExist(finID, "_temp", "AddDisbursement")) {
 					throw new WrongValueException(this.finReference, "Not Allowed for Hold Disbursement");
 				}
 			}

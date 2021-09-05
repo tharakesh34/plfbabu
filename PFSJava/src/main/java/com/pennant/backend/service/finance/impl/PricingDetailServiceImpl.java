@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
@@ -32,33 +31,22 @@ public class PricingDetailServiceImpl implements PricingDetailService {
 	private FinTypeVASProductsDAO finTypeVASProductsDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
 	private FinanceMainDAO financeMainDAO;
-	@Autowired
 	private VASRecordingDAO vasRecordingDAO;
 
 	public PricingDetailServiceImpl() {
 		super();
 	}
 
-	/**
-	 * It fetches the records from RMTFinanceType_View and other details
-	 * 
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return FinanceType
-	 */
 	@Override
 	public FinanceType getFinanceTypeById(String finType) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(finType, "_View");
+		FinanceType financeType = financeTypeDAO.getFinanceTypeByID(finType, "_View");
 
 		if (financeType != null) {
-			financeType.setFinTypeFeesList(getFinTypeFeesDAO().getFinTypeFeesList(finType,
-					AccountingEvent.ADDDBSP, "_AView", true, FinanceConstants.MODULEID_FINTYPE));
-			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View"));
+			financeType.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(finType, AccountingEvent.ADDDBSP, "_AView",
+					true, FinanceConstants.MODULEID_FINTYPE));
+			financeType.setFinTypeVASProductsList(finTypeVASProductsDAO.getVASProductsByFinType(finType, "_View"));
 
 		}
 		logger.debug(Literal.LEAVING);
@@ -67,26 +55,26 @@ public class PricingDetailServiceImpl implements PricingDetailService {
 	}
 
 	@Override
-	public List<FinFeeDetail> getFinFeeDetailById(String finReference, boolean isWIF, String type) {
-		logger.debug("Entering");
-		List<FinFeeDetail> finFeeDetails = getFinFeeDetailDAO().getFinFeeDetailByFinRef(finReference, isWIF, type);
-		logger.debug("Leaving");
+	public List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type) {
+		logger.debug(Literal.ENTERING);
+		List<FinFeeDetail> finFeeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type);
+		logger.debug(Literal.LEAVING);
 		return finFeeDetails;
 	}
 
 	@Override
-	public List<VASRecording> getVASRecordingsByLinkRef(String finReference, String type) {
-		logger.debug("Entering");
-		List<VASRecording> vASRecordings = getVasRecordingDAO().getVASRecordingsByLinkRef(finReference, type);
-		logger.debug("Leaving");
+	public List<VASRecording> getVASRecordingsByLinkRef(String finID, String type) {
+		logger.debug(Literal.ENTERING);
+		List<VASRecording> vASRecordings = vasRecordingDAO.getVASRecordingsByLinkRef(finID, type);
+		logger.debug(Literal.LEAVING);
 		return vASRecordings;
 	}
 
 	@Override
-	public List<FinanceMain> getFinanceMains(String finReference, String type) {
-		logger.debug("Entering");
-		List<FinanceMain> finMains = getFinanceMainDAO().getFinanceByInvReference(finReference, type);
-		logger.debug("Leaving");
+	public List<FinanceMain> getFinanceMains(long finID, String type) {
+		logger.debug(Literal.ENTERING);
+		List<FinanceMain> finMains = financeMainDAO.getFinanceByInvReference(finID, type);
+		logger.debug(Literal.LEAVING);
 		return finMains;
 	}
 
@@ -96,70 +84,42 @@ public class PricingDetailServiceImpl implements PricingDetailService {
 	}
 
 	@Override
-	public List<String> getInvestmentRefifAny(String finReference, String type) {
-		return getFinanceMainDAO().getInvestmentFinRef(finReference, type);
+	public List<Long> getInvestmentRefifAny(String investmentRef, String type) {
+		return financeMainDAO.getInvestmentFinRef(investmentRef, type);
 	}
 
 	@Override
-	public List<String> getParentRefifAny(String finReference, String type) {
-		return getFinanceMainDAO().getParentRefifAny(finReference, type, false);
+	public List<Long> getParentRefifAny(String parentRef, String type) {
+		return financeMainDAO.getParentRefifAny(parentRef, type, false);
 	}
 
-	public FinanceTypeDAO getFinanceTypeDAO() {
-		return financeTypeDAO;
+	@Override
+	public List<FinTypeVASProducts> getVASProductsByFinType(String finType) {
+		return finTypeVASProductsDAO.getVASProductsByFinType(finType, "_View");
 	}
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
 		this.financeTypeDAO = financeTypeDAO;
 	}
 
-	public PricingDetailDAO getPricingDetailDAO() {
-		return pricingDetailDAO;
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
 	}
 
 	public void setPricingDetailDAO(PricingDetailDAO pricingDetailDAO) {
 		this.pricingDetailDAO = pricingDetailDAO;
 	}
 
-	public FinTypeFeesDAO getFinTypeFeesDAO() {
-		return finTypeFeesDAO;
-	}
-
-	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
-		this.finTypeFeesDAO = finTypeFeesDAO;
-	}
-
-	@Override
-	public List<FinTypeVASProducts> getVASProductsByFinType(String finType) {
-		return getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View");
-	}
-
-	public FinTypeVASProductsDAO getFinTypeVASProductsDAO() {
-		return finTypeVASProductsDAO;
-	}
-
 	public void setFinTypeVASProductsDAO(FinTypeVASProductsDAO finTypeVASProductsDAO) {
 		this.finTypeVASProductsDAO = finTypeVASProductsDAO;
-	}
-
-	public FinFeeDetailDAO getFinFeeDetailDAO() {
-		return finFeeDetailDAO;
 	}
 
 	public void setFinFeeDetailDAO(FinFeeDetailDAO finFeeDetailDAO) {
 		this.finFeeDetailDAO = finFeeDetailDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
-	}
-
-	public VASRecordingDAO getVasRecordingDAO() {
-		return vasRecordingDAO;
 	}
 
 	public void setVasRecordingDAO(VASRecordingDAO vasRecordingDAO) {

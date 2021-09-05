@@ -11322,6 +11322,7 @@
 		<property name="pricingDetailDAO" ref="pricingDetailDAO" />
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="vasRecordingDAO" ref="vasRecordingDAO" />
 	</bean>
 
 	<!--============ Vas Movement Details ============== -->
