@@ -1,44 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AbstractMandateProcess.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-07-2017    														*
- *                                                                  						*
- * Modified Date    :  28-05-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AbstractMandateProcess.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-07-2017 * *
+ * Modified Date : 28-05-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-07-2017       Pennant	                 0.1                                            * 
- * 28-05-2018       Srikanth.m	             0.2          Add additional fields             * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-07-2017 Pennant 0.1 * 28-05-2018 Srikanth.m 0.2 Add additional fields * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennanttech.pff.external.mandate;
@@ -67,9 +48,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.transaction.TransactionStatus;
 import org.zkoss.util.media.AMedia;
 import org.zkoss.util.media.Media;
@@ -97,6 +76,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.ftp.FtpClient;
 import com.pennanttech.pennapps.core.ftp.SftpClient;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -352,8 +332,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	/**
 	 * Returns list of files from the FTP server contained in the given path
 	 * 
-	 * @param pathname
-	 *            The path name in the FTP server.
+	 * @param pathname The path name in the FTP server.
 	 * @return Returns list of files from the FTP server contained in the given path
 	 */
 	@SuppressWarnings("rawtypes")
@@ -454,29 +433,45 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 	@Override
 	public void receiveResponse(long respBatchId, DataEngineStatus status) throws Exception {
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
-		List<Mandate> mandates = null;
-		RowMapper<Mandate> rowMapper = null;
-
 		long approved = 0;
 		long rejected = 0;
 		long notMatched = 0;
 
-		sql = new StringBuilder();
-		sql.append(" SELECT MANDATEID, FINREFERENCE, CUSTCIF, MICR_CODE MICR, IFSC_CODE IFSC, ACCT_NUMBER AccNumber,");
-		sql.append(" case when OPENFLAG = 'Y' THEN 'New Open ECS' ELSE 'No Open ECS' END lovValue,");
-		sql.append(" MANDATE_TYPE MandateType, MANDATE_REG_NO mandateRef, STATUS, REMARKS reason");
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" MANDATEID, FinID, FINREFERENCE, CUSTCIF, MICR_CODE, IFSC_CODE, ACCT_NUMBER,");
+		sql.append(" case when OPENFLAG = 'Y' THEN 'New Open ECS' ELSE 'No Open ECS' END LovValue,");
+		sql.append(" MANDATE_TYPE, MANDATE_REG_NO, STATUS, REMARKS");
 		sql.append(" FROM MANDATE_RESPONSE");
-		sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
+		sql.append(" WHERE RESP_BATCH_ID = ?");
 
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("RESP_BATCH_ID", respBatchId);
+		logger.debug(Literal.SQL + sql.toString());
 
-		rowMapper = BeanPropertyRowMapper.newInstance(Mandate.class);
-		mandates = namedJdbcTemplate.query(sql.toString(), paramMap, rowMapper);
+		List<Mandate> mandates = jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		if (mandates == null || mandates.isEmpty()) {
+			ps.setLong(index++, respBatchId);
+		}, (rs, rowNum) -> {
+			Mandate m = new Mandate();
+
+			m.setMandateID(rs.getLong("MANDATEID"));
+			m.setFinID(rs.getLong("FinID"));
+			m.setFinReference(rs.getString("FINREFERENCE"));
+			m.setCustCIF(rs.getString("CUSTCIF"));
+			m.setMICR(rs.getString("MICR_CODE"));
+			m.setmICR(rs.getString("MICR_CODE"));
+			m.setIFSC(rs.getString("IFSC_CODE"));
+			m.setiFSC(rs.getString("IFSC_CODE"));
+			m.setAccNumber(rs.getString("ACCT_NUMBER"));
+			m.setLovValue(rs.getString("LovValue"));
+			m.setMandateType(rs.getString("MANDATE_TYPE"));
+			m.setMandateRef(rs.getString("MANDATE_REG_NO"));
+			m.setStatus(rs.getString("STATUS"));
+			m.setReason(rs.getString("REMARKS"));
+
+			return m;
+		});
+
+		if (mandates.isEmpty()) {
 			return;
 		}
 
@@ -488,7 +483,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				Mandate mandate = getMandateById(respMandate.getMandateID());
 
 				StringBuilder remarks = new StringBuilder();
-
 				if (mandate == null) {
 					respMandate.setReason("Mandate request not exist or already processed.");
 					respMandate.setStatus("F");
@@ -550,60 +544,93 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 			}
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		} finally {
 			updateRemarks(respBatchId, approved, rejected, notMatched, status);
 		}
 	}
 
 	protected Mandate getMandateById(final long id) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
-		StringBuilder sql = new StringBuilder();
-
-		sql.append("SELECT ID RequestID, MandateID, FINREFERENCE, CUSTCIF,  MICR_CODE MICR, IFSC_CODE IFSC");
-		sql.append(", ACCT_NUMBER AccNumber, OPENFLAG lovValue, MANDATE_TYPE MandateType, STATUS ");
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" ID, MandateID, FINID, FINREFERENCE, CUSTCIF,  MICR_CODE, IFSC_CODE");
+		sql.append(", ACCT_NUMBER, OPENFLAG, MANDATE_TYPE, STATUS");
 		sql.append(" From MANDATE_REQUESTS");
-		sql.append(" Where MandateID =:MandateID and RESP_BATCH_ID IS NULL");
-		source = new MapSqlParameterSource();
-		source.addValue("MandateID", id);
+		sql.append(" Where MandateID = ? and RESP_BATCH_ID IS NULL");
 
-		RowMapper<Mandate> typeRowMapper = BeanPropertyRowMapper.newInstance(Mandate.class);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return this.namedJdbcTemplate.queryForObject(sql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Mandate m = new Mandate();
+
+				m.setRequestID(rs.getLong("ID"));
+				m.setMandateID(rs.getLong("MandateID"));
+				m.setFinID(rs.getLong("FINID"));
+				m.setFinReference(rs.getString("FINREFERENCE"));
+				m.setCustCIF(rs.getString("CUSTCIF"));
+				m.setMICR(rs.getString("MICR_CODE"));
+				m.setmICR(rs.getString("MICR_CODE"));
+				m.setiFSC(rs.getString("IFSC_CODE"));
+				m.setIFSC(rs.getString("IFSC_CODE"));
+				m.setAccNumber(rs.getString("ACCT_NUMBER"));
+				m.setLovValue(rs.getString("OPENFLAG"));
+				m.setMandateType(rs.getString("MANDATE_TYPE"));
+				m.setStatus(rs.getString("STATUS"));
+
+				return m;
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	protected void updateMandateResponse(Mandate respmandate) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "Update MANDATE_RESPONSE  set REMARKS = ?, STATUS = ? Where MANDATEID = ?";
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("update MANDATE_RESPONSE");
-		sql.append(" set REMARKS = :REMARKS , STATUS = :STATUS");
-		sql.append(" where MANDATEID = :MANDATEID");
-
-		paramMap.addValue("MANDATEID", respmandate.getMandateID());
-		paramMap.addValue("REMARKS", respmandate.getReason());
-		paramMap.addValue("STATUS", respmandate.getStatus());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			this.namedJdbcTemplate.update(sql.toString(), paramMap);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			this.jdbcOperations.update(sql, ps -> {
+				int index = 1;
 
-		logger.debug(Literal.LEAVING);
+				ps.setString(index++, respmandate.getReason());
+				ps.setString(index++, respmandate.getStatus());
+				ps.setLong(index++, respmandate.getMandateID());
+			});
+		} catch (Exception e) {
+			//
+		}
 	}
 
 	protected void logMandate(long respBatchId, Mandate respMandate) {
-		SqlParameterSource beanParameters = null;
+		prepareLog(respBatchId, respMandate);
+
+		String sql = "INSERT INTO DATA_ENGINE_LOG (StatusId, KeyId, Status, Reason) VALUES(?, ?, ?, ?)";
+
+		try {
+			this.jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setLong(index++, respBatchId);
+				ps.setString(index++, String.valueOf(respMandate.getMandateID()));
+
+				if (respMandate.getStatus() != null && respMandate.getStatus().length() == 1) {
+					ps.setString(index++, respMandate.getStatus());
+				} else {
+					ps.setString(index++, "Y");
+				}
+
+				ps.setString(index++, respMandate.getReason());
+
+			});
+		} catch (Exception e) {
+			//
+		}
+	}
+
+	private void prepareLog(long respBatchId, Mandate respMandate) {
 		DataEngineLog log = new DataEngineLog();
 
 		log.setStatusId(respBatchId);
@@ -617,18 +644,6 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		}
 
 		MANDATES_IMPORT.getDataEngineLogList().add(log);
-
-		StringBuffer query = new StringBuffer();
-		query.append(" INSERT INTO DATA_ENGINE_LOG");
-		query.append(" (StatusId, KeyId, Status, Reason)");
-		query.append(" VALUES(:StatusId, :KeyId, :Status, :Reason)");
-
-		try {
-			beanParameters = new BeanPropertySqlParameterSource(log);
-			this.namedJdbcTemplate.update(query.toString(), beanParameters);
-		} catch (Exception e) {
-			logger.error("Exception:", e);
-		}
 	}
 
 	protected void validateMandate(Mandate respMandate, Mandate mandate, StringBuilder remarks) {
@@ -661,11 +676,9 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			}
 			remarks.append("Account No.");
 		}
-
 	}
 
 	protected void updateMandates(Mandate respmandate) {
-		logger.debug(Literal.ENTERING);
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
@@ -679,6 +692,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			sql.append(" AND ORGREFERENCE = :FINREFERENCE");
 		}
 		sql.append(" AND STATUS = :AC");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		paramMap.addValue("MANDATEID", respmandate.getMandateID());
 
@@ -698,57 +713,48 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		this.namedJdbcTemplate.update(sql.toString(), paramMap);
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	protected void logMandateHistory(Mandate respmandate, long requestId) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "Insert Into MandatesStatus (MandateID, Status, Reason, ChangeDate, FileID) Values (?, ?, ?, ?, ?)";
 
-		StringBuilder sql = new StringBuilder("Insert Into MandatesStatus");
-		sql.append(" (mandateID, status, reason, changeDate, fileID)");
-		sql.append(" Values(:mandateID, :STATUS, :REASON, :changeDate,:fileID)");
+		logger.debug(Literal.SQL + sql);
 
-		paramMap.addValue("mandateID", respmandate.getMandateID());
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		if ("Y".equals(respmandate.getStatus())) {
-			paramMap.addValue("STATUS", "REJECTED");
-		} else {
-			paramMap.addValue("STATUS", "APPROVED");
-		}
+			ps.setLong(index++, requestId);
 
-		paramMap.addValue("REASON", respmandate.getReason());
-		paramMap.addValue("changeDate", SysParamUtil.getAppDate());
-		paramMap.addValue("fileID", requestId);
+			if ("Y".equals(respmandate.getStatus())) {
+				ps.setString(index++, "REJECTED");
+			} else {
+				ps.setString(index++, "APPROVED");
+			}
 
-		this.namedJdbcTemplate.update(sql.toString(), paramMap);
-		logger.debug(Literal.LEAVING);
+			ps.setString(index++, respmandate.getReason());
+			ps.setDate(index++, JdbcUtil.getDate(SysParamUtil.getAppDate()));
+			ps.setLong(index++, requestId);
+
+		});
 	}
 
 	protected void updateMandateRequest(Mandate respmandate, long id) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "Update Mandate_Requests Set STATUS = ?, REJECT_REASON = ?, RESP_BATCH_ID = ? Where MANDATEID = ?";
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update Mandate_Requests");
-		sql.append(" Set STATUS = :STATUS, REJECT_REASON = :REASON, RESP_BATCH_ID = :RESP_BATCH_ID");
-		sql.append("  Where MANDATEID = :MANDATEID");
+		logger.debug(Literal.SQL + sql);
 
-		paramMap.addValue("MANDATEID", respmandate.getMandateID());
-		paramMap.addValue("STATUS", respmandate.getStatus());
-		paramMap.addValue("MANDATEREF", respmandate.getMandateRef());
-		paramMap.addValue("REASON", respmandate.getReason());
-		paramMap.addValue("RESP_BATCH_ID", id);
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		this.namedJdbcTemplate.update(sql.toString(), paramMap);
-
-		logger.debug(Literal.LEAVING);
+			ps.setString(index++, respmandate.getStatus());
+			ps.setString(index++, respmandate.getReason());
+			ps.setLong(index++, id);
+			ps.setLong(index++, respmandate.getMandateID());
+		});
 	}
 
 	protected void updateRemarks(long respBatchId, long approved, long rejected, long notMatched,
 			DataEngineStatus status) {
-		MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-
 		StringBuilder remarks = new StringBuilder(status.getRemarks());
 		remarks.append(", Approved: ");
 		remarks.append(approved);
@@ -759,112 +765,90 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		status.setRemarks(remarks.toString());
 
-		StringBuffer query = new StringBuffer();
-		query.append(" UPDATE DATA_ENGINE_STATUS set EndTime = :EndTime, Remarks = :Remarks ");
-		query.append(" WHERE Id = :Id");
-
-		parameterSource.addValue("EndTime", DateUtil.getSysDate());
-		parameterSource.addValue("Remarks", remarks.toString());
-		parameterSource.addValue("Id", respBatchId);
+		String sql = "UPDATE DATA_ENGINE_STATUS set EndTime = ?, Remarks = ? WHERE Id = ?";
 
 		try {
-			this.namedJdbcTemplate.update(query.toString(), parameterSource);
+			this.jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
+				ps.setString(index++, remarks.toString());
+				ps.setLong(index++, respBatchId);
+			});
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 	}
 
 	protected void processSecondaryMandate(Mandate respMandate) {
-
-		boolean secondaryMandate = checkSecondaryMandate(respMandate.getMandateID());
-		if (secondaryMandate) {
+		if (checkSecondaryMandate(respMandate.getMandateID())) {
 			makeSecondaryMandateInActive(respMandate.getMandateID());
-			loanMandateSwapping(respMandate.getFinReference(), respMandate.getMandateID(),
-					respMandate.getMandateType());
-
+			loanMandateSwapping(respMandate.getFinID(), respMandate.getMandateID(), respMandate.getMandateType());
 		}
 
 	}
 
 	protected void processSwappedMandate(Mandate respMandate) {
-
-		boolean swappedMandate = checkSwappedMandate(respMandate.getMandateID());
-		if (swappedMandate) {
-			loanMandateSwapping(respMandate.getFinReference(), respMandate.getMandateID(),
-					respMandate.getMandateType());
-
+		if (checkSwappedMandate(respMandate.getMandateID())) {
+			loanMandateSwapping(respMandate.getFinID(), respMandate.getMandateID(), respMandate.getMandateType());
 		}
 	}
 
 	private boolean checkSecondaryMandate(long mandateID) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "SELECT Count(PRIMARYMANDATEID) FROM MANDATES WHERE PRIMARYMANDATEID = ? AND ACTIVE = ?";
 
-		StringBuilder selectSql = new StringBuilder("SELECT Count(*) FROM MANDATES");
-		selectSql.append(" WHERE PRIMARYMANDATEID = :PRIMARYMANDATEID AND ACTIVE = :ACTIVE");
-		paramMap.addValue("PRIMARYMANDATEID", mandateID);
-		paramMap.addValue("ACTIVE", 1);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			if (namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, Integer.class) > 0) {
-				return true;
-			}
+			return jdbcOperations.queryForObject(sql, Integer.class, mandateID, 1) > 0;
 		} catch (Exception e) {
 			throw e;
 		}
-		return false;
 	}
 
 	private boolean checkSwappedMandate(long mandateID) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "SELECT SWAPISACTIVE FROM MANDATES WHERE MANDATEID = ?";
 
-		StringBuilder selectSql = new StringBuilder("SELECT SWAPISACTIVE  FROM MANDATES");
-		selectSql.append(" WHERE MANDATEID = :MANDATEID");
-		paramMap.addValue("MANDATEID", mandateID);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return namedJdbcTemplate.queryForObject(selectSql.toString(), paramMap, Boolean.class);
+			return jdbcOperations.queryForObject(sql, Boolean.class, mandateID);
 		} catch (Exception e) {
 			throw e;
 		}
 	}
 
-	private void loanMandateSwapping(String finReference, long mandateId, String repayMethod) {
-		logger.debug(Literal.ENTERING);
+	private void loanMandateSwapping(long finID, long mandateId, String repayMethod) {
+		String sql = "Update FinanceMain Set MandateID = ?, FinRepayMethod = ? Where FinID = ?";
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
-
-		StringBuilder sql = new StringBuilder("Update FinanceMain");
-		sql.append(" Set MandateID =:MandateID ");
-		sql.append(" ,FinRepayMethod =:FinRepayMethod");
-		sql.append(" Where FinReference =:FinReference");
-
-		source.addValue("MandateID", mandateId);
-		source.addValue("FinReference", finReference);
-		source.addValue("FinRepayMethod", repayMethod);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			namedJdbcTemplate.update(sql.toString(), source);
+			jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setLong(index++, mandateId);
+				ps.setString(index++, repayMethod);
+				ps.setLong(index++, finID);
+
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			//
 		}
-
-		logger.debug("updateSql: " + source.toString());
-
 	}
 
 	private void makeSecondaryMandateInActive(long mandateID) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "UPDATE MANDATES SET ACTIVE = ? WHERE PRIMARYMANDATEID = ?";
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE MANDATES SET ACTIVE = :ACTIVE WHERE  PRIMARYMANDATEID = :MANDATEID");
-
-		paramMap.addValue("MANDATEID", mandateID);
-		paramMap.addValue("ACTIVE", 0);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			namedJdbcTemplate.update(sql.toString(), paramMap);
+			jdbcOperations.update(sql, ps -> {
+				ps.setInt(1, 0);
+				ps.setLong(2, mandateID);
+			});
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
+			//
 		}
 	}
 
@@ -872,26 +856,30 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	public void processUploadToDownLoadFile(long userId, File file, Media media, DataEngineStatus status)
 			throws Exception {
 		logger.debug(Literal.ENTERING);
-		String configName = status.getName();
-		String name = "";
-		if (file != null) {
-			name = file.getName();
-		} else if (media != null) {
-			name = media.getName();
-		}
-		status.reset();
-		status.setFileName(name);
-		status.setRemarks("initiated Mandate Upload To Download file [ " + name + " ] processing..");
-		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, SysParamUtil.getAppValueDate(),
-				status);
-		dataEngine.setFile(file);
-		dataEngine.setMedia(media);
-		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
-		dataEngine.setValidateRecord(uploadToDownloadValidationImpl);
+
+		Date appValueDate = SysParamUtil.getAppValueDate();
+
 		Map<String, Object> parameterMap = new HashMap<>();
 		parameterMap.put("APP_DATE", SysParamUtil.getAppDate());
+
+		if (file != null) {
+			status.setFileName(file.getName());
+		} else if (media != null) {
+			status.setFileName(media.getName());
+		} else {
+			status.setFileName("");
+		}
+
+		status.reset();
+		status.setRemarks("initiated Mandate Upload To Download file [ " + status.getFileName() + " ] processing..");
+
+		dataEngine = new DataEngineImport(dataSource, userId, App.DATABASE.name(), true, appValueDate, status);
+		dataEngine.setFile(file);
+		dataEngine.setMedia(media);
+		dataEngine.setValueDate(appValueDate);
+		dataEngine.setValidateRecord(uploadToDownloadValidationImpl);
 		dataEngine.setParameterMap(parameterMap);
-		dataEngine.importData(configName);
+		dataEngine.importData(status.getName());
 
 		do {
 			if ("S".equals(status.getStatus()) || "F".equals(status.getStatus())) {
@@ -906,27 +894,23 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	public void processResponse(long respBatchId, DataEngineStatus status) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		setExceptionLog(status);
+		status.setDataEngineLogList(getExceptions(status.getId()));
 
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = new StringBuilder();
-		sql.append(" SELECT MANDATEID");
-		sql.append(" FROM MANDATEUPLOADTODOWNLOAD");
-		sql.append(" WHERE RESP_BATCH_ID = :RESP_BATCH_ID");
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("RESP_BATCH_ID", respBatchId);
+		String sql = "SELECT MANDATEID FROM MANDATEUPLOADTODOWNLOAD WHERE RESP_BATCH_ID = ?";
 
-		List<Long> mandateIdList = namedJdbcTemplate.queryForList(sql.toString(), paramMap, Long.class);
+		List<Long> mandateIdList = jdbcOperations.queryForList(sql, Long.class, respBatchId);
 
-		if (mandateIdList == null || mandateIdList.isEmpty()) {
+		if (mandateIdList.isEmpty()) {
 			return;
 		}
-		//Updating the mandate status as 'NEW' for download
+
 		updateMandateStatus(mandateIdList);
+
 		try {
 			MandateData mandateData = new MandateData();
 			mandateData.setMandateIdList(mandateIdList);
 			MandateProcessThread process = new MandateProcessThread(mandateData, respBatchId);
+
 			Thread thread = new Thread(process);
 			thread.start();
 		} catch (Exception e) {
@@ -956,79 +940,62 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	private void updateResponseStatus(List<Long> mandateIdList, long batchId) {
-		logger.debug(Literal.ENTERING);
-		try {
-			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
-					"update MANDATEUPLOADTODOWNLOAD set status = ?, remarks = ? where mandateId=? and RESP_BATCH_ID=?",
-					new BatchPreparedStatementSetter() {
-						public void setValues(PreparedStatement ps, int i) throws SQLException {
-							ps.setString(1, "SUCCESS");
-							ps.setString(2, "Sent for Registration Process");
-							ps.setLong(3, mandateIdList.get(i));
-							ps.setLong(4, batchId);
-						}
+		String sql = "Update MandateUploadToDownload set Status = ?, Remarks = ? Where MandateId = ? and Resp_Batch_Id = ?";
 
-						public int getBatchSize() {
-							return mandateIdList.size();
-						}
-					});
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					ps.setString(1, "SUCCESS");
+					ps.setString(2, "Sent for Registration Process");
+					ps.setLong(3, mandateIdList.get(i));
+					ps.setLong(4, batchId);
+				}
+
+				public int getBatchSize() {
+					return mandateIdList.size();
+				}
+			});
 		} catch (DataAccessException e) {
 			e.printStackTrace();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	public void updateMandateStatus(List<Long> mandateIdList) throws Exception {
-		logger.debug(Literal.ENTERING);
-		try {
-			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
-					"update mandates set status = ? where mandateId=? and status!='NEW'",
-					new BatchPreparedStatementSetter() {
-						public void setValues(PreparedStatement ps, int i) throws SQLException {
-							ps.setString(1, "NEW");
-							ps.setLong(2, mandateIdList.get(i));
-						}
+		String sql = "Update Mandates Set Status = ? Where MandateId = ? and Status != ?";
 
-						public int getBatchSize() {
-							return mandateIdList.size();
-						}
-					});
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+				public void setValues(PreparedStatement ps, int i) throws SQLException {
+					ps.setString(1, "NEW");
+					ps.setLong(2, mandateIdList.get(i));
+					ps.setString(3, "NEW");
+				}
+
+				public int getBatchSize() {
+					return mandateIdList.size();
+				}
+			});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		logger.debug(Literal.LEAVING);
 	}
 
-	//Setting the exception log data engine status.
-	private void setExceptionLog(DataEngineStatus status) {
-		List<DataEngineLog> engineLogs = getExceptions(status.getId());
-		if (CollectionUtils.isNotEmpty(engineLogs)) {
-			status.setDataEngineLogList(engineLogs);
-		}
-	}
-
-	// Getting the exception log
 	public List<DataEngineLog> getExceptions(long batchId) {
-		RowMapper<DataEngineLog> rowMapper = null;
-		MapSqlParameterSource parameterMap = null;
-		StringBuilder sql = null;
+		String sql = "Select * from DATA_ENGINE_LOG where StatusId = ?";
 
-		try {
-			sql = new StringBuilder("Select * from DATA_ENGINE_LOG where StatusId = :ID");
-			parameterMap = new MapSqlParameterSource();
-			parameterMap.addValue("ID", batchId);
-			rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
-			return namedJdbcTemplate.query(sql.toString(), parameterMap, rowMapper);
-		} catch (Exception e) {
-		} finally {
-			rowMapper = null;
-			sql = null;
-		}
-		return null;
+		logger.debug(Literal.SQL + sql);
+
+		RowMapper<DataEngineLog> rowMapper = BeanPropertyRowMapper.newInstance(DataEngineLog.class);
+
+		return jdbcOperations.query(sql, rowMapper, batchId);
 	}
 
 	protected void addCustomParameter(Map<String, Object> parameterMap) {
-
+		//
 	}
 
 	public boolean registerMandate(Mandate mandate) throws Exception {
@@ -1036,15 +1003,11 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 	}
 
 	public void updateMandateStatus() throws Exception {
-
+		//
 	}
 
 	public void processMandateResponse() throws Exception {
-
-	}
-
-	public DataEngineConfig getDataEngineConfig() {
-		return dataEngineConfig;
+		//
 	}
 
 	public void setDataEngineConfig(DataEngineConfig dataEngineConfig) {

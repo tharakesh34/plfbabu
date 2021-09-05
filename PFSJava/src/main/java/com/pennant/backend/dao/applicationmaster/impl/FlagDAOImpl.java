@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FlagDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-07-2015    														*
- *                                                                  						*
- * Modified Date    :  14-07-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FlagDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-07-2015 * * Modified Date :
+ * 14-07-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-07-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-07-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,17 +30,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -74,55 +52,51 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		super();
 	}
 
-	/**
-	 * Fetch the Record Flags details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return Flag
-	 */
 	@Override
 	public Flag getFlagById(final String id, String type) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FlagCode, FlagDesc, Active");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From Flags");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FlagCode = ?");
 
-		Flag flag = new Flag();
-
-		flag.setId(id);
-
-		StringBuilder selectSql = new StringBuilder("Select FlagCode, FlagDesc, Active");
-		selectSql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append("");
-		}
-		selectSql.append(" From Flags");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FlagCode =:FlagCode");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
-		RowMapper<Flag> typeRowMapper = BeanPropertyRowMapper.newInstance(Flag.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			flag = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Flag flag = new Flag();
+
+				flag.setFlagCode(rs.getString("FlagCode"));
+				flag.setFlagDesc(rs.getString("FlagDesc"));
+				flag.setActive(rs.getBoolean("Active"));
+				flag.setVersion(rs.getInt("Version"));
+				flag.setLastMntBy(rs.getLong("LastMntBy"));
+				flag.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				flag.setRecordStatus(rs.getString("RecordStatus"));
+				flag.setRoleCode(rs.getString("RoleCode"));
+				flag.setNextRoleCode(rs.getString("NextRoleCode"));
+				flag.setTaskId(rs.getString("TaskId"));
+				flag.setNextTaskId(rs.getString("NextTaskId"));
+				flag.setRecordType(rs.getString("RecordType"));
+				flag.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return flag;
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			flag = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return flag;
+		return null;
 	}
 
 	@Override
 	public boolean isDuplicateKey(String flagCode, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
 		String sql;
-		String whereClause = "FlagCode =:FlagCode";
+		String whereClause = "FlagCode = ?";
+
+		Object[] obj = new Object[] { flagCode };
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -133,106 +107,120 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "Flags_Temp", "Flags" }, whereClause);
+
+			obj = new Object[] { flagCode };
+
 			break;
 		}
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("FlagCode", flagCode);
+		logger.debug(Literal.SQL + sql);
 
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return exists;
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 
 	@Override
 	public String save(Flag flag, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("insert into Flags");
+		StringBuilder sql = new StringBuilder("Insert into Flags");
 		sql.append(tableType.getSuffix());
 		sql.append(" (FlagCode, FlagDesc, Active");
-		sql.append(
-				", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(:FlagCode, :FlagDesc, :Active");
-		sql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
 
 		try {
-			jdbcTemplate.update(sql.toString(), beanParameters);
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, flag.getFlagCode());
+				ps.setString(index++, flag.getFlagDesc());
+				ps.setBoolean(index++, flag.isActive());
+				ps.setInt(index++, flag.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(flag.getLastMntBy()));
+				ps.setTimestamp(index++, flag.getLastMntOn());
+				ps.setString(index++, flag.getRecordStatus());
+				ps.setString(index++, flag.getRoleCode());
+				ps.setString(index++, flag.getNextRoleCode());
+				ps.setString(index++, flag.getTaskId());
+				ps.setString(index++, flag.getNextTaskId());
+				ps.setString(index++, flag.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(flag.getWorkflowId()));
+			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return flag.getFlagCode();
 	}
 
 	@Override
 	public void update(Flag flag, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("update Flags");
+		StringBuilder sql = new StringBuilder("Update Flags");
 		sql.append(tableType.getSuffix());
-		sql.append(" set FlagDesc = :FlagDesc, Active = :Active");
-		sql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where FlagCode =:FlagCode");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" Set FlagDesc = ?, Active = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FlagCode = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
-		int recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		// Check for the concurrency failure.
+			ps.setString(index++, flag.getFlagDesc());
+			ps.setBoolean(index++, flag.isActive());
+			ps.setInt(index++, flag.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(flag.getLastMntBy()));
+			ps.setTimestamp(index++, flag.getLastMntOn());
+			ps.setString(index++, flag.getRecordStatus());
+			ps.setString(index++, flag.getRoleCode());
+			ps.setString(index++, flag.getNextRoleCode());
+			ps.setString(index++, flag.getTaskId());
+			ps.setString(index++, flag.getNextTaskId());
+			ps.setString(index++, flag.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(flag.getWorkflowId()));
+
+			ps.setString(index++, flag.getFlagCode());
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index++, flag.getPrevMntOn());
+			} else {
+				ps.setInt(index++, flag.getVersion() - 1);
+			}
+		});
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void delete(Flag flag, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from Flags");
+		StringBuilder sql = new StringBuilder("Delete from Flags");
 		sql.append(tableType.getSuffix());
-		sql.append(" where FlagCode =:FlagCode");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(" where FlagCode = ?");
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(flag);
-		int recordCount = 0;
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = jdbcTemplate.update(sql.toString(), beanParameters);
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setString(index++, flag.getFlagCode());
+				if (tableType == TableType.TEMP_TAB) {
+					ps.setTimestamp(index++, flag.getPrevMntOn());
+				} else {
+					ps.setInt(index++, flag.getVersion() - 1);
+				}
+			});
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 }

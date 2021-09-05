@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 
 public class DisbursementRequestsQueries {
 	private static Logger logger = LogManager.getLogger(DisbursementRequestsQueries.class);
@@ -17,14 +16,12 @@ public class DisbursementRequestsQueries {
 	private static String selectMovementQuery = null;
 	private static String insertMovement = null;
 	private static String insertLogMovement = null;
-	private static String updateMovementFlag = null;
 
 	private DisbursementRequestsQueries() {
 		super();
 	}
 
-	public static String getSelectAllQuery(DisbursementRequest requestData) {
-
+	public static String getSelectAllQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PAYMENTID DISBURSEMENT_ID, CUSTCIF, FINID, FINREFERENCE, AMTTOBERELEASED DISBURSEMENT_AMOUNT");
 		sql.append(", DISBURSEMENT_TYPE, LLDATE DISBURSEMENT_DATE, PAYABLELOC DRAWEE_LOCATION");
@@ -39,37 +36,43 @@ public class DisbursementRequestsQueries {
 		sql.append(", PAYMENT_DETAIL4, PAYMENT_DETAIL5, PAYMENT_DETAIL6, PAYMENT_DETAIL7, STATUS, REMARKS, CHANNEL");
 		sql.append(", PARTNERBANK_ID PARTNER_BANK_ID, PARTNERBANK_CODE PARTNER_BANK_CODE, PARTNERBANK_ACCOUNT");
 		sql.append(", ALWFILEDOWNLOAD ALW_FILE_DOWNLOAD, CHEQUE_NUMBER, FINAMOUNT");
-		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW ");
-		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID=(:HEADER_ID))");
+		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW");
+		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID= (?))");
 
 		logger.debug(Literal.SQL + sql.toString());
+
 		return sql.toString();
 	}
 
 	public static String getSelectQuery() {
 		if (selectQuery != null) {
+			logger.debug(Literal.SQL + selectQuery);
+
 			return selectQuery;
 		}
 
-		StringBuilder sql = new StringBuilder();
-		sql = new StringBuilder();
-		sql.append("SELECT PAYMENTID, PAYMENTTYPE, FA.PARTNERBANKID, PARTNERBANKCODE, ALWFILEDOWNLOAD, CHANNEL FROM (");
+		StringBuilder sql = new StringBuilder("SELECT");
+		sql.append(" PAYMENTID, PAYMENTTYPE, FA.PARTNERBANKID, PARTNERBANKCODE, ALWFILEDOWNLOAD, CHANNEL FROM (");
 		sql.append(" SELECT PAYMENTID, PAYMENTTYPE, PARTNERBANKID, STATUS, 'D' CHANNEL");
 		sql.append(" FROM FINADVANCEPAYMENTS");
 		sql.append(" UNION ALL");
 		sql.append(" SELECT PAYMENTINSTRUCTIONID PAYMENTID, PAYMENTTYPE, PARTNERBANKID, STATUS, 'P' CHANNEL");
-		sql.append(" FROM PAYMENTINSTRUCTIONS");
-		sql.append(" ) FA");
+		sql.append(" FROM PAYMENTINSTRUCTIONS ) FA");
 		sql.append(" INNER JOIN PARTNERBANKS PB ON PB.PARTNERBANKID = FA.PARTNERBANKID");
-		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID = :HEADER_ID)");
-		sql.append(" AND FA.STATUS = :APPROVED");
+		sql.append(" WHERE PAYMENTID IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER WHERE ID = ?)");
+		sql.append(" AND FA.STATUS = ?");
+
 		selectQuery = sql.toString();
+
+		logger.debug(Literal.SQL + selectQuery);
 
 		return selectQuery;
 	}
 
 	public static String getInsertQuery() {
 		if (insertQuery != null) {
+			logger.debug(Literal.SQL + insertQuery);
+
 			return insertQuery;
 		}
 
@@ -87,63 +90,66 @@ public class DisbursementRequestsQueries {
 		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID");
 		sql.append(", PARTNERBANK_ID, PARTNERBANK_CODE, PARTNERBANK_ACCOUNT, CHEQUE_NUMBER, DOWNLOADED_ON)");
 		sql.append(" Values (");
-		sql.append(" :DisbursementId, :CustCIF, :FinID, :FinReference, :DisbursementAmount, :DisbursementType");
-		sql.append(", :DisbursementDate, :DraweeLocation, :PrintLocation, :CustomerName, :CustomerMobile");
-		sql.append(", :CustomerEmail, :CustomerState, :CustomerCity, :CustomerAddress1, :CustomerAddress2");
-		sql.append(", :CustomerAddress3, :CustomerAddress4, :CustomerAddress5, :BenficiaryBank, :BenficiaryBranch");
-		sql.append(", :BenficiaryBranchState, :BenficiaryBranchCity, :MicrCode, :IfscCode");
-		sql.append(", :BenficiaryAccount, :BenficiaryName, :BenficiaryMobile, :BenficiryEmail, :BenficiryState");
-		sql.append(", :BenficiryCity, :BenficiaryAddress1, :BenficiaryAddress2, :BenficiaryAddress3");
-		sql.append(", :BenficiaryAddress4, :BenficiaryAddress5, :PaymentDetail1, :PaymentDetail2, :PaymentDetail3");
-		sql.append(", :PaymentDetail4, :PaymentDetail5, :PaymentDetail6, :PaymentDetail7, :Status, :Remarks");
-		sql.append(", :Channel, :HeaderId, :AutoDownload, :HeaderId");
-		sql.append(", :PartnerBankId, :PartnerBankCode, :PartnerBankAccount, :ChequeNumber, :DownloadedOn)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		insertQuery = sql.toString();
-		logger.trace(Literal.SQL + insertQuery.toString());
+
+		logger.debug(Literal.SQL + insertQuery);
+
 		return insertQuery;
 	}
 
 	public static String getInsertHeaderQuery() {
 		if (insertHeaderQuery != null) {
+			logger.debug(Literal.SQL + insertHeaderQuery);
+
 			return insertHeaderQuery;
 		}
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("INSERT INTO DISBURSEMENT_REQUESTS_HEADER");
-		sql.append(" SELECT :HEADER_ID, CHANNEL, PAYMENTID, :CREATEDBY, :CREATEDON FROM (");
-		sql.append(" SELECT  PAYMENTID, 'D' CHANNEL, STATUS FROM FINADVANCEPAYMENTS");
-		sql.append(" UNION ALL");
-		sql.append(" SELECT  PAYMENTINSTRUCTIONID PAYMENTID, 'P' CHANNEL, STATUS FROM PAYMENTINSTRUCTIONS");
-		sql.append(" UNION ALL");
-		sql.append(" SELECT  ID PAYMENTID, 'I' CHANNEL, STATUS FROM INSURANCEPAYMENTINSTRUCTIONS) T");
-		sql.append(" WHERE T.PAYMENTID IN (:PAYMENTID) AND T.STATUS = :APPROVED");
-		sql.append(" AND T.PAYMENTID NOT IN (SELECT PAYMENTID FROM DISBURSEMENT_REQUESTS_HEADER)");
+		sql.append(" Select ?, Channel, PaymentID, ?, ? From (");
+		sql.append(" Select PaymentID, 'D' Channel, Status From FinAdvancePayments");
+		sql.append(" Union All");
+		sql.append(" Select PaymentInstructionID PaymentID, 'P' Channel, Status From PaymentInstructions");
+		sql.append(" Union All");
+		sql.append(" Select ID PaymentID, 'I' Channel, Status From InsurancePaymentInstructions) t");
+		sql.append(" Where t.PaymentID in (?) and t.Status = ?");
+		sql.append(" and T.PaymentID not in (Select PaymentID From Disbursement_Requests_Header)");
 
 		insertHeaderQuery = sql.toString();
+
+		logger.debug(Literal.SQL + insertHeaderQuery);
+
 		return insertHeaderQuery;
 
 	}
 
 	public static String getInsertMovement() {
 		if (insertMovement != null) {
+			logger.debug(Literal.SQL + insertMovement);
+
 			return insertMovement;
 		}
 
 		StringBuilder sql = new StringBuilder("INSERT INTO DISBURSEMENT_MOVEMENTS");
 		sql.append("(HEADER_ID, BATCH_ID, TARGET_TYPE, FILE_NAME, FILE_LOCATION");
 		sql.append(", DATA_ENGINE_CONFIG, POST_EVENTS, CREATED_ON, CREATED_BY, PROCESSED_ON, FAILURE_REASON)");
-		sql.append(" VALUES");
-		sql.append("(:HEADER_ID, :BATCH_ID, :TARGET_TYPE, :FILE_NAME, :FILE_LOCATION");
-		sql.append(", :DATA_ENGINE_CONFIG, :POST_EVENTS, :CREATED_ON, :CREATED_BY, :PROCESSED_ON, :FAILURE_REASON)");
+		sql.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		insertMovement = sql.toString();
+
+		logger.debug(Literal.SQL + insertMovement);
+
 		return insertMovement;
 
 	}
 
 	public static String getInsertLogMovement() {
 		if (insertLogMovement != null) {
+			logger.debug(Literal.SQL + insertLogMovement);
+
 			return insertLogMovement;
 		}
 
@@ -151,49 +157,40 @@ public class DisbursementRequestsQueries {
 		sql.append("(HEADER_ID, BATCH_ID, TARGET_TYPE, FILE_NAME, FILE_LOCATION");
 		sql.append(", DATA_ENGINE_CONFIG, POST_EVENTS, CREATED_ON, CREATED_BY, PROCESS_FLAG");
 		sql.append(", PROCESSED_ON, FAILURE_REASON)");
-		sql.append(" VALUES (");
-		sql.append(":HEADER_ID, :BATCH_ID, :TARGET_TYPE, :FILE_NAME, :FILE_LOCATION");
-		sql.append(", :DATA_ENGINE_CONFIG, :POST_EVENTS, :CREATED_ON, :CREATED_BY, :PROCESS_FLAG");
-		sql.append(", :PROCESSED_ON, :FAILURE_REASON)");
+		sql.append(" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		insertLogMovement = sql.toString();
+
+		logger.debug(Literal.SQL + insertLogMovement);
+
 		return insertLogMovement;
 
 	}
 
 	public static String getMovementListQuery() {
 		if (selectMovementListQuery != null) {
+			logger.debug(Literal.SQL + selectMovementListQuery);
+
 			return selectMovementListQuery;
 		}
 
-		selectMovementListQuery = "SELECT ID FROM DISBURSEMENT_MOVEMENTS WHERE PROCESS_FLAG = :PROCESS_FLAG";
+		selectMovementListQuery = "SELECT ID FROM DISBURSEMENT_MOVEMENTS WHERE PROCESS_FLAG = ?";
+
+		logger.debug(Literal.SQL + selectMovementListQuery);
 
 		return selectMovementListQuery;
 	}
 
-	public static String getUpdateMovementFlag() {
-		if (updateMovementFlag != null) {
-			return updateMovementFlag;
-		}
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("UPDATE DISBURSEMENT_MOVEMENTS SET");
-		sql.append(" PROCESS_FLAG = :PROCESS_FLAG");
-		sql.append(", FAILURE_REASON = :FAILURE_REASON");
-		sql.append(", PROCESSED_ON = :PROCESSED_ON");
-		sql.append(" WHERE ID = :ID");
-
-		updateMovementFlag = sql.toString();
-
-		return updateMovementFlag;
-	}
-
 	public static String getMovementQuery() {
 		if (selectMovementQuery != null) {
+			logger.debug(Literal.SQL + selectMovementQuery);
+
 			return selectMovementQuery;
 		}
 
-		selectMovementQuery = "SELECT * FROM DISBURSEMENT_MOVEMENTS WHERE ID = :ID";
+		selectMovementQuery = "SELECT * FROM DISBURSEMENT_MOVEMENTS WHERE ID = ?";
+
+		logger.debug(Literal.SQL + selectMovementQuery);
 
 		return selectMovementQuery;
 	}

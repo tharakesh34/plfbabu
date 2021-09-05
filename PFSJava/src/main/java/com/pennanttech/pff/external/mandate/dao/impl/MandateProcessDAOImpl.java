@@ -76,6 +76,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 		sql.append(" PHONENUMBER CUSTOMER_PHONE,");
 		sql.append(" CUSTEMAIL CUSTOMER_EMAIL,");
 		sql.append(" FINTYPE,");
+		sql.append(" FINID,");
 		sql.append(" FINREFERENCE,");
 		sql.append(" CUST_EMI,");
 		sql.append(" EMI,");

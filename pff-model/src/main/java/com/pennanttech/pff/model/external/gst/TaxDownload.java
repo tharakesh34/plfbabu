@@ -85,6 +85,7 @@ public class TaxDownload {
 	private String interIntraState;
 	private String entityCode;
 	private BigDecimal amount;
+	private long finID;
 	private String finReference;
 	private String branchProvince;
 
@@ -718,6 +719,14 @@ public class TaxDownload {
 
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

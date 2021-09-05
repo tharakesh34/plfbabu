@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 
 import javax.sql.DataSource;
 
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -19,6 +20,7 @@ public class AbstractInterface {
 
 	protected JdbcTemplate jdbcTemplate;
 	protected NamedParameterJdbcTemplate namedJdbcTemplate;
+	protected JdbcOperations jdbcOperations;
 
 	protected DataSourceTransactionManager transManager;
 	protected DefaultTransactionDefinition transDef;
@@ -31,6 +33,8 @@ public class AbstractInterface {
 		this.dataSource = dataSource;
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		this.namedJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcOperations = namedJdbcTemplate.getJdbcOperations();
+
 		setTransManager(dataSource);
 	}
 

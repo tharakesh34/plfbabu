@@ -161,6 +161,7 @@ public class Mandate extends AbstractWorkflowEntity {
 	private long primaryMandateId = 0;
 	private boolean secondaryMandate;
 
+	private long finID;
 	private String finReference;
 	private long applId;
 	private Date diDate;
@@ -246,6 +247,7 @@ public class Mandate extends AbstractWorkflowEntity {
 		excludeFields.add("loanBranch");
 		excludeFields.add("machineFlagUploadDate");
 		excludeFields.add("amountInWords");
+		excludeFields.add("finID");
 		excludeFields.add("finReference");
 		excludeFields.add("entityDesc");
 		excludeFields.add("approveMandate");
@@ -692,6 +694,14 @@ public class Mandate extends AbstractWorkflowEntity {
 
 	public void setValidateMandate(Mandate validateMandate) {
 		this.validateMandate = validateMandate;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
