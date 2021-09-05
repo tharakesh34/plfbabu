@@ -18,6 +18,7 @@ import com.pennanttech.controller.DocumentController;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.document.DocumentService;
 import com.pennanttech.pffws.DocumentRestService;
 import com.pennanttech.pffws.DocumentSoapService;
@@ -45,8 +46,8 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 
 		// validate finReference
 		if (StringUtils.isNotBlank(documentDetails.getReferenceId())) {
-			int count = financeMainDAO.getFinanceCountById(documentDetails.getReferenceId(), "", false);
-			if (count <= 0) {
+			Long finID = financeMainDAO.getActiveFinID(documentDetails.getReferenceId(), TableType.MAIN_TAB);
+			if (finID == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "finreference: " + documentDetails.getReferenceId();
 				return APIErrorHandlerService.getFailedStatus("90266", valueParm);
@@ -90,7 +91,7 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 		validationUtility.validate(documentDetails, GetFinDocumentDetailsGroup.class);
 
 		// validate given finReference is valid or not.
-		if (!financeMainDAO.isFinReferenceExists(documentDetails.getReferenceId(), type, false)) {
+		if (financeMainDAO.getActiveFinID(documentDetails.getReferenceId(), TableType.MAIN_TAB) == null) {
 			response = new DocumentDetails();
 			String[] valueParm = new String[1];
 			valueParm[0] = "finreference: " + documentDetails.getReferenceId();
@@ -120,15 +121,15 @@ public class DocumentWebServiceImpl extends ExtendedTestClass implements Documen
 			return response;
 		}
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finReferance, "_View", false);
-		if (financeMain == null) {
+		FinanceMain fm = financeMainDAO.getFinanceMain(finReferance);
+		if (fm == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReferance;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return response;
 		}
 
-		response = documentController.getCustAndLoanDocuments(finReferance, financeMain.getCustID());
+		response = documentController.getCustAndLoanDocuments(finReferance, fm.getCustID());
 
 		logger.debug(Literal.LEAVING);
 		return response;
