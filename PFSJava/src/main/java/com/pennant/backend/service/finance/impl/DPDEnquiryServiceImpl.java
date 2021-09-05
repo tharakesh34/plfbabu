@@ -19,9 +19,8 @@ public class DPDEnquiryServiceImpl implements DPDEnquiryService {
 	}
 
 	@Override
-	public List<FinStatusDetail> getFinStatusDetailByRefId(String finReference) {
-
-		return getFinStatusDetailDAO().getFinStatusDetailByRefId(finReference);
+	public List<FinStatusDetail> getFinStatusDetailByRefId(long finID) {
+		return finStatusDetailDAO.getFinStatusDetailByRefId(finID);
 	}
 
 }

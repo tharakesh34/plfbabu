@@ -12,9 +12,9 @@ public interface DMSService {
 
 	public byte[] getById(long id);
 
-	public Long getCustomerIdByFin(String FinReference);
+	public Long getCustomerIdByFin(long finID);
 
-	public Long getCustomerIdByCollateral(String FinReference);
+	public Long getCustomerIdByCollateral(String finReference);
 
 	public Long getCustomerIdByCIF(String custCIF);
 

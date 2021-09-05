@@ -713,7 +713,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			financeDetail.getFinScheduleData().setFinReference(this.finReference);
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 
-			List<FinOption> finOptions = finOptionService.getFinOptions(this.finReference, TableType.VIEW);
+			List<FinOption> finOptions = finOptionService.getFinOptions(this.finID, TableType.VIEW);
 
 			financeDetail.setFinOptions(finOptions);
 
@@ -729,7 +729,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DPDEnquiry.value"));
 			List<FinStatusDetail> finStatusDetails;
 
-			finStatusDetails = getDpdEnquiryService().getFinStatusDetailByRefId(this.finReference);
+			finStatusDetails = getDpdEnquiryService().getFinStatusDetailByRefId(this.finID);
 
 			map.put("finStatusDetails", finStatusDetails);
 			map.put("finReference", this.finReference);

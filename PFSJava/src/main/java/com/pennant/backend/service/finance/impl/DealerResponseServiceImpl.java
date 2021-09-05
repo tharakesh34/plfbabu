@@ -34,8 +34,8 @@ public class DealerResponseServiceImpl implements DealerResponseService {
 	}
 
 	@Override
-	public int getCountByProcessed(String finReference, boolean processed) {
-		return getDealerResponseDAO().getCountByProcessed(finReference, processed, "");
+	public int getCountByProcessed(long finID, boolean processed) {
+		return getDealerResponseDAO().getCountByProcessed(finID, processed, "");
 	}
 
 }

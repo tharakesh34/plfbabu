@@ -235,6 +235,7 @@ public class DMSServiceImpl implements DMSService {
 		Long custId = null;
 		DMSModule module = dmsQueue.getModule();
 		DMSModule subModule = dmsQueue.getSubModule();
+		Long finID = dmsQueue.getFinID();
 		String finRefernce = StringUtils.trimToNull(dmsQueue.getFinReference());
 		String reference = StringUtils.trimToNull(dmsQueue.getReference());
 
@@ -242,11 +243,11 @@ public class DMSServiceImpl implements DMSService {
 			if (subModule == DMSModule.COLLATERAL && reference != null) {
 				custId = collateralSetupDAO.getCustomerIdByCollateral(reference);
 			} else if (subModule == DMSModule.QUERY_MGMT && finRefernce != null) {
-				custId = financeMainDAO.getCustomerIdByFin(finRefernce);
+				custId = financeMainDAO.getCustomerIdByFin(finID);
 			} else if (subModule == DMSModule.VAS && reference != null) {
 				custId = vASRecordingDAO.getCustomerId(reference);
 			} else {
-				custId = financeMainDAO.getCustomerIdByFin(finRefernce);
+				custId = financeMainDAO.getCustomerIdByFin(finID);
 			}
 		}
 		dmsQueue.setCustId(custId);
@@ -276,8 +277,8 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
-	public Long getCustomerIdByFin(String FinReference) {
-		return financeMainDAO.getCustomerIdByFin(FinReference);
+	public Long getCustomerIdByFin(long finID) {
+		return financeMainDAO.getCustomerIdByFin(finID);
 	}
 
 	@Override

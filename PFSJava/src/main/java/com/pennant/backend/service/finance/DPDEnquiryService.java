@@ -5,6 +5,6 @@ import java.util.List;
 import com.pennant.backend.model.finance.FinStatusDetail;
 
 public interface DPDEnquiryService {
-	List<FinStatusDetail> getFinStatusDetailByRefId(String finReference);
+	List<FinStatusDetail> getFinStatusDetailByRefId(long finID);
 
 }

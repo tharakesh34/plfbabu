@@ -66,6 +66,8 @@ public interface JointAccountDetailService {
 
 	List<JointAccountDetail> getJointAccountDetailByFinRef(long finID, String type);
 
+	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
+
 	BigDecimal doFillExposureDetails(List<FinanceExposure> primaryList, JointAccountDetail detail);
 
 	List<AuditDetail> saveOrUpdate(List<JointAccountDetail> jointAcDetailList, String tableType, String auditTranType);

@@ -289,9 +289,9 @@ public class FinanceDeviationsDialogCtrl extends GFCBaseCtrl<FinanceDeviations> 
 		FinanceMain fianncemain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		List<FinanceDeviations> list = doWriteComponentsToBean();
 		getDeviationDetailsService().processApproval(list, getAuditHeader(fianncemain.getFinReference()),
-				fianncemain.getFinReference());
+				fianncemain.getFinID());
 		// get the update finance main
-		FinanceMain finmain = getDeviationDetailsService().getFinanceMain(fianncemain.getFinReference());
+		FinanceMain finmain = getDeviationDetailsService().getFinanceMain(fianncemain.getFinID());
 		// Show status after moved from delegation approval queue.
 		if (finmain != null && !finmain.isDeviationApproval()) {
 			String msg = PennantApplicationUtil.getSavingStatus(finmain.getRoleCode(), finmain.getNextRoleCode(),

@@ -21,6 +21,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 1L;
 
 	private long custId = Long.MIN_VALUE;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	private String finEvent;
@@ -92,7 +93,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	}
 	// ******************************************************//
 	// ****************** getter / setter *******************//
-	// ******************************************************//	
+	// ******************************************************//
 
 	public long getCustId() {
 		return custId;
@@ -100,6 +101,14 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 
 	public void setCustId(long custId) {
 		this.custId = custId;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

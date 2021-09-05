@@ -222,7 +222,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		this.finAssetValue.setProperties(false, formatter);
 		this.finCurrentAssetValue.setProperties(false, formatter);
 
-		//Field visibility & Naming for FinAsset value and finCurrent asset value by  OD/NONOD.
+		// Field visibility & Naming for FinAsset value and finCurrent asset value by OD/NONOD.
 		setFinAssetFieldVisibility(fintype);
 		logger.debug("Leaving");
 	}
@@ -335,8 +335,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -347,8 +346,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -368,8 +366,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					CurrencyUtil.getFormat(getFinanceMain().getFinCcy())));
 		}
 
-		aFinanceDetail.setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		aFinanceDetail.setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 
 		// Fill Remaining Tab Details
 		// ============================================
@@ -402,7 +399,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		if ("Accounting".equals(getTaskTabs(getTaskId(getRole())))) {
 			appendAccountingDetailTab(true);
 		}
-		//Showing Product Details for Promotion Type
+		// Showing Product Details for Promotion Type
 		this.finDivisionName.setValue(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision() + " - "
 				+ aFinanceDetail.getFinScheduleData().getFinanceType().getLovDescFinDivisionName());
 		if (StringUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinanceType().getProduct())) {
@@ -414,8 +411,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 
-		List<ReasonHeader> details = getFinanceCancellationService()
-				.getCancelReasonDetails(aFinanceMain.getFinReference());
+		List<ReasonHeader> details = getFinanceCancellationService().getCancelReasonDetails(aFinanceMain.getFinID());
 		String data = "";
 		if (details.size() > 0) {
 			for (ReasonHeader header : details) {
@@ -495,8 +491,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 * @param aFinanceSchData (FinScheduleData)
 	 * @throws Exception
 	 */
 	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData)
@@ -562,7 +557,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 
 		try {
 			if (isOverDraft) {
-				//validate Overdraft Limit with configured finmin and fin max amounts
+				// validate Overdraft Limit with configured finmin and fin max amounts
 				this.label_FinanceMainDialog_FinAssetValue
 						.setValue(Labels.getLabel("label_FinanceMainDialog_ODFinAssetValue.value"));
 
@@ -578,7 +573,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 				}
 			}
 			if (this.row_FinAssetValue.isVisible()) {
-				//Validate if the total disbursement amount exceeds maximum disbursement Amount 
+				// Validate if the total disbursement amount exceeds maximum disbursement Amount
 				if (((StringUtils.isEmpty(moduleDefiner)
 						|| StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner)))) {
 					if (this.finCurrentAssetValue.getActualValue() != null
@@ -590,16 +585,17 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 												String.valueOf(label_FinanceMainDialog_FinAssetValue.getValue()) }));
 					}
 				}
-				aFinanceMain.setFinAssetValue(PennantAppUtil.unFormateAmount(this.finAssetValue.isReadonly()
-						? this.finAssetValue.getActualValue() : this.finAssetValue.getValidateValue(), formatter));
+				aFinanceMain.setFinAssetValue(PennantAppUtil
+						.unFormateAmount(this.finAssetValue.isReadonly() ? this.finAssetValue.getActualValue()
+								: this.finAssetValue.getValidateValue(), formatter));
 			}
-			//Validation  on finAsset And fin Current Asset value based on field visibility
+			// Validation on finAsset And fin Current Asset value based on field visibility
 
 			if (!isOverDraft) {
 				if (financeType.isFinIsAlwMD()) {
 					if (this.row_FinAssetValue.isVisible() && StringUtils.isEmpty(moduleDefiner)) {
 
-						//If max disbursement amount less than prinicpal amount validate the amount
+						// If max disbursement amount less than prinicpal amount validate the amount
 						aFinanceMain.setFinAssetValue(
 								PennantAppUtil.unFormateAmount(this.finAssetValue.getActualValue(), formatter));
 						aFinanceMain.setFinCurrAssetValue(
@@ -1438,8 +1434,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 		logger.debug("Entering");
 		buildEvent = false;
 		doWriteComponentsToBean(getFinanceDetail().getFinScheduleData());
-		getFinanceDetail().setModuleDefiner(
-				StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
+		getFinanceDetail().setModuleDefiner(StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner);
 		logger.debug("Leaving");
 		return getFinanceDetail();
 	}

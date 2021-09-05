@@ -274,6 +274,21 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 	}
 
 	@Override
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		JointAccountDetailRowMapper rowMapper = new JointAccountDetailRowMapper(type);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, finReference);
+		}, rowMapper);
+	}
+
+	@Override
 	public List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jad) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" T1.FinType, T6.FinTypeDesc, T1.FinID, T1.FinReference");

@@ -539,8 +539,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		doLoadWorkFlow(aFinanceMain.isWorkflow(), aFinanceMain.getWorkflowId(), aFinanceMain.getNextTaskId());
-		final FinanceDetail financeDetail = getFinanceDetailService().getOriginationFinance(
-				aFinanceMain.getFinReference(), aFinanceMain.getNextRoleCode(), screenEvent, getRole());
+		final FinanceDetail financeDetail = getFinanceDetailService().getOriginationFinance(aFinanceMain.getFinID(),
+				aFinanceMain.getNextRoleCode(), screenEvent, getRole());
 
 		if (financeDetail == null) {
 			String[] errParm = new String[1];
@@ -577,8 +577,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Check swap customer or not
-		boolean finReferenceProcess = getFinChangeCustomerService()
-				.isFinReferenceProcess(aFinanceMain.getFinReference());
+		boolean finReferenceProcess = getFinChangeCustomerService().isFinReferenceProcess(aFinanceMain.getFinID());
 
 		if (finReferenceProcess) {
 			String[] errParm = new String[1];

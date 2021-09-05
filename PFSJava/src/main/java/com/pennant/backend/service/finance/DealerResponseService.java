@@ -6,6 +6,6 @@ public interface DealerResponseService {
 
 	void save(DealerResponse dealerResponse);
 
-	int getCountByProcessed(String finReference, boolean processed);
+	int getCountByProcessed(long finID, boolean processed);
 
 }

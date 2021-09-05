@@ -2803,7 +2803,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		FinMaintainInstruction fmi = new FinMaintainInstruction();
 
 		if (moduleDefiner.equals(fm.getRcdMaintainSts())) {
-			fmi = finOptionMaintanceService.getFinMaintainInstructionByFinRef(finReference, moduleDefiner);
+			fmi = finOptionMaintanceService.getFinMaintainInstructionByFinRef(finID, moduleDefiner);
 		} else {
 			fmi.setNewRecord(true);
 		}
@@ -3004,6 +3004,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 		final FinanceMain fm = (FinanceMain) item.getAttribute("data");
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		// Set WorkFlow Details
@@ -3016,8 +3017,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// FinMaintainInstruction
 		String type = "";
 
-		FinMaintainInstruction fmi = linkedFinancesService.getFinMaintainInstructionByFinRef(finReference,
-				moduleDefiner);
+		FinMaintainInstruction fmi = linkedFinancesService.getFinMaintainInstructionByFinRef(finID, moduleDefiner);
 		if (fmi == null) {
 			type = "_AView";
 			fmi = new FinMaintainInstruction();
@@ -3030,8 +3030,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		FinanceDetail fd = new FinanceDetail();
 		fd.getFinScheduleData().setFinanceMain(fm);
 
+		long tempFinID = fmi.getFinID();
 		String tempRef = fmi.getFinReference();
-		List<LinkedFinances> list = linkedFinancesService.getLinkedFinancesByRef(tempRef, type);
+		List<LinkedFinances> list = linkedFinancesService.getLinkedFinancesByRef(tempFinID, type);
 		fd.setLinkedFinancesList(list);
 		fd.getFinScheduleData().setFinMaintainInstruction(fmi);
 

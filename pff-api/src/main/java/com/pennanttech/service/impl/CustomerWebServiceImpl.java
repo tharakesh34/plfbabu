@@ -3617,15 +3617,15 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 					response.getCustomerFinanceDetailList().addAll(customerFinanceDetail);
 				}
 				if (CollectionUtils.isNotEmpty(response.getCustomerFinanceDetailList())) {
-					response.getCustomerFinanceDetailList().forEach(customerFinDetail -> {
+					response.getCustomerFinanceDetailList().forEach(cfd -> {
 						List<JointAccountDetail> jointAccountDetailList = jointAccountDetailDAO
-								.getJointAccountDetailByFinRef(customerFinDetail.getFinReference(), "_View");
-						customerFinDetail.setJointAccountDetails(jointAccountDetailList);
+								.getJointAccountDetailByFinRef(cfd.getFinID(), "_View");
+						cfd.setJointAccountDetails(jointAccountDetailList);
 					});
 
 					for (CustomerFinanceDetail cfd : response.getCustomerFinanceDetailList()) {
 						cfd.setStage(cfd.getNextRoleCode());
-						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinReference()));
+						cfd.setCurOddays(financeProfitDetailDAO.getCurOddays(cfd.getFinID()));
 					}
 				}
 				customerDetailsList.add(response);

@@ -5276,20 +5276,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public FinanceMain getFinCategoryByFinRef(long finID) {
-		String sql = "Select FinCategory From FinanceMain Where FinID = ?";
+	public String getFinCategory(String finReference) {
+		String sql = "Select FinCategory From FinanceMain Where FinReference = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
-				FinanceMain fm = new FinanceMain();
-
-				fm.setFinCategory(rs.getString("FinCategory"));
-
-				return fm;
-
-			}, finID);
+			return this.jdbcOperations.queryForObject(sql, String.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

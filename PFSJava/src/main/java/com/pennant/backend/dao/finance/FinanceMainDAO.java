@@ -327,7 +327,7 @@ public interface FinanceMainDAO {
 
 	void updateWriteOffStatus(long finID, boolean writeoffLoan);
 
-	FinanceMain getFinCategoryByFinRef(long finID);
+	String getFinCategory(String finReference);
 
 	void updateMaintainceStatus(long finID, String rcdMaintainSts);
 

@@ -1124,6 +1124,11 @@ public class JointAccountDetailServiceImpl extends GenericService<JointAccountDe
 	}
 
 	@Override
+	public List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type) {
+		return getJointAccountDetailDAO().getJointAccountDetailByFinRef(finReference, type);
+	}
+
+	@Override
 	public JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type) {
 		return getJointAccountDetailDAO().getJointAccountDetailByRef(finID, custCIF, type);
 	}

@@ -417,6 +417,11 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 	}
 
 	@Override
+	public List<FinanceCheckListReference> getCheckListByFinRef(long finID, String type) {
+		return financeCheckListReferenceDAO.getCheckListByFinRef(finID, null, type);
+	}
+
+	@Override
 	public List<AuditDetail> delete(FinanceDetail fd, String tableType, String auditTranType) {
 		logger.debug(Literal.ENTERING);
 		List<AuditDetail> auditList = new ArrayList<AuditDetail>();

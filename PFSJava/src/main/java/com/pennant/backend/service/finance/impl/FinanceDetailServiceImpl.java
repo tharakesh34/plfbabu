@@ -964,8 +964,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		long finID = fm.getFinID();
-
 		List<FinServiceInstruction> siList = finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp",
 				serviceEvent);
 
@@ -1044,7 +1042,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Restructure Details
 		if (FinServiceEvent.RESTRUCTURE.equals(serviceEvent)) {
-			RestructureDetail restructure = restructureService.getRestructureDetailByRef(finReference, "_View");
+			RestructureDetail restructure = restructureService.getRestructureDetailByRef(finID, "_View");
 			schdData.setRestructureDetail(restructure);
 			if (CollectionUtils.isNotEmpty(fd.getFinTypeFeesList())) {
 				fd.setFinTypeFeesList(new ArrayList<FinTypeFees>());

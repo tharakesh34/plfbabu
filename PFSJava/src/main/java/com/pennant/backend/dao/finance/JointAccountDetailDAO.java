@@ -51,6 +51,8 @@ public interface JointAccountDetailDAO {
 
 	List<JointAccountDetail> getJointAccountDetailByFinRef(long finID, String type);
 
+	List<JointAccountDetail> getJointAccountDetailByFinRef(String finReference, String type);
+
 	List<FinanceExposure> getPrimaryExposureList(JointAccountDetail jointAccountDetail);
 
 	List<FinanceExposure> getSecondaryExposureList(JointAccountDetail jointAccountDetail);

@@ -28,7 +28,6 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennanttech.dataengine.DataEngineImport;
 import com.pennanttech.dataengine.ValidateRecord;
@@ -147,9 +146,9 @@ public class DefaultMerchantUTRUploadProcess extends AbstractInterface implement
 
 	private void updateMerchantUTRNumber(List<MerchantUTRUpload> merchantUTRUploads) {
 		for (MerchantUTRUpload merchantUTRUpload : merchantUTRUploads) {
-			FinanceMain financeMain = financeMainDAO.getFinCategoryByFinRef(merchantUTRUpload.getLanReference());
-			if (financeMain != null) {
-				String tableName = ExtendedFieldConstants.MODULE_LOAN + ("_") + financeMain.getFinCategory() + ("_")
+			String finCategory = financeMainDAO.getFinCategory(merchantUTRUpload.getLanReference());
+			if (finCategory != null) {
+				String tableName = ExtendedFieldConstants.MODULE_LOAN + ("_") + finCategory + ("_")
 						+ (ExtendedFieldConstants.MODULE_MAINTENANCE) + ("_ED");
 				extendedFieldServiceHook.processExtendedFields(tableName, merchantUTRUpload);
 			}
