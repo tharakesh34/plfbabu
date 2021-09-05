@@ -616,12 +616,13 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		FinScheduleData fsd = fd.getFinScheduleData();
 		FinanceMain fm = fsd.getFinanceMain();
 		FinanceType financeType = fsd.getFinanceType();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		EventProperties eventProperties = fm.getEventProperties();
 
 		// Tax Details fetching
 		if (fd.getFinanceTaxDetail() == null) {
-			fd.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_AView"));
+			fd.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finID, "_AView"));
 		}
 
 		// Invoice Transaction Preparation
@@ -663,7 +664,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 
 		// Checking Finance Branch exist or not
 		if (StringUtils.isBlank(fm.getFinBranch())) {
-			String loanBranch = financeMainDAO.getFinBranch(finReference);
+			String loanBranch = financeMainDAO.getFinBranch(finID);
 			if (StringUtils.isBlank(loanBranch)) {
 				logger.warn("Fin Branch not avilabe for FinReference {}", finReference);
 
@@ -819,12 +820,13 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		return invoice;
 	}
 
-	private GSTInvoiceTxn getGSTTransactionForDealer(String invoiceType, long linkedTranId,
-			FinanceDetail financeDetail) {
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
-		String finReference = financeMain.getFinReference();
+	private GSTInvoiceTxn getGSTTransactionForDealer(String invoiceType, long linkedTranId, FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType financeType = schdData.getFinanceType();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		// Invoice Transaction Preparation
 		GSTInvoiceTxn invoice = new GSTInvoiceTxn();
@@ -832,7 +834,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		invoice.setInvoiceType(invoiceType);
 		invoice.setInvoice_Status(PennantConstants.GST_INVOICE_STATUS_INITIATED);
 
-		switch (financeMain.getSubVentionFrom()) {
+		switch (fm.getSubVentionFrom()) {
 		case FinanceConstants.SUBVN_FROM_DEALER:
 			invoice.setInvoiceFor("D");
 			break;
@@ -843,15 +845,15 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			break;
 		}
 
-		if (financeMain.getEodValueDate() != null) {
-			invoice.setInvoiceDate(financeMain.getEodValueDate());
+		if (fm.getEodValueDate() != null) {
+			invoice.setInvoiceDate(fm.getEodValueDate());
 		} else {
 			/* Need to confirm either it is system date or application date */
 			invoice.setInvoiceDate(SysParamUtil.getAppDate());
 		}
 
 		Entity entity = null;
-		String lovDescEntityCode = financeMain.getLovDescEntityCode();
+		String lovDescEntityCode = fm.getLovDescEntityCode();
 
 		if (StringUtils.isNotBlank(lovDescEntityCode)) {
 			entity = this.entityDAO.getEntity(lovDescEntityCode, "_AView");
@@ -859,7 +861,7 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			if (financeType != null) {
 				entity = this.entityDAO.getEntityByFinDivision(financeType.getFinDivision(), "_AView");
 			} else {
-				entity = this.entityDAO.getEntityByFinType(financeMain.getFinType(), "_AView");
+				entity = this.entityDAO.getEntityByFinType(fm.getFinType(), "_AView");
 			}
 		}
 
@@ -876,8 +878,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		invoice.setLoanAccountNo(finReference);
 
 		// Checking Finance Branch exist or not
-		if (StringUtils.isBlank(financeMain.getFinBranch())) {
-			String loanBranch = financeMainDAO.getFinBranch(finReference);
+		if (StringUtils.isBlank(fm.getFinBranch())) {
+			String loanBranch = financeMainDAO.getFinBranch(finID);
 			if (StringUtils.isBlank(loanBranch)) {
 				logger.warn("Fin Brance not avilabe for FinReference {}", finReference);
 
@@ -885,10 +887,10 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						+ " --> Loan branch is empty.");
 				return null; // write this case as a error message
 			}
-			financeMain.setFinBranch(loanBranch);
+			fm.setFinBranch(loanBranch);
 		}
 
-		Branch fromBranch = branchDAO.getBranchById(financeMain.getFinBranch(), "_AView");
+		Branch fromBranch = branchDAO.getBranchById(fm.getFinBranch(), "_AView");
 
 		if (fromBranch == null) {
 			logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
@@ -967,10 +969,9 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 		 * } else {
 		 */
 
-		if (StringUtils.isNotEmpty(financeMain.getSubVentionFrom())) {
+		if (StringUtils.isNotEmpty(fm.getSubVentionFrom())) {
 
-			VehicleDealer dealer = vehicleDealerDAO.getVehicleDealerById(financeMain.getManufacturerDealerId(),
-					"_AView");
+			VehicleDealer dealer = vehicleDealerDAO.getVehicleDealerById(fm.getManufacturerDealerId(), "_AView");
 			if (dealer == null) {
 				logger.warn("Linked Transaction ID : " + linkedTranId + " & Invoice Type : " + invoiceType
 						+ " --> Customer Address Details are Empty.");

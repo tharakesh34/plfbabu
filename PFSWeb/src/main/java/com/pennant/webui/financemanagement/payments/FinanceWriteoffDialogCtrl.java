@@ -659,8 +659,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Reset only Schedule Details Data
 		Cloner cloner = new Cloner();
 		FinanceWriteoffHeader schdData = cloner.deepClone(financeWriteoffHeader);
-		schdData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
-				getFinanceWriteoffService().getFinScheduleDetails(financeMain.getFinReference()));
+		schdData.getFinanceDetail().getFinScheduleData()
+				.setFinanceScheduleDetails(financeWriteoffService.getFinScheduleDetails(financeMain.getFinID()));
 
 		calScheduleWriteOffDetails(schdData);
 		doStoreInitValues();
@@ -1414,7 +1414,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
-		} catch (IllegalAccessException | InvocationTargetException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 

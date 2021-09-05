@@ -2004,7 +2004,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		if (accountingID != null && accountingID != Long.MIN_VALUE) {
 
-			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
 
 			FinanceDetail detail = new FinanceDetail();
 			detail.setFinScheduleData(scheduleData);

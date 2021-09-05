@@ -214,10 +214,11 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 					.getFinanceMainByHostReference(String.valueOf(settlementMapdata.getValue("HostReference")), true);
 
 			if (!ImplementationConstants.HOLD_DISB_INST_POST) {
+				long finID = finMain.getFinID();
 				String finReference = finMain.getFinReference();
-				List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finReference,
+				List<FinAdvancePayments> advPayments = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finID,
 						"_AView");
-				finMain.setEntityCode(financeMainDAO.getLovDescEntityCode(finReference, "_View"));
+				finMain.setEntityCode(financeMainDAO.getLovDescEntityCode(finID, "_View"));
 				finMain.setLovDescEntityCode(finMain.getEntityCode());
 
 				FinanceDetail fd = new FinanceDetail();
@@ -268,7 +269,7 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				throw new AppException("HostReference is not avilable in PLF or inactive");
 			}
 		}
-		List<FinFeeDetail> feeList = finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinReference(), "");
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinID(), "");
 		BigDecimal feeAmount = BigDecimal.ZERO;
 
 		for (FinFeeDetail finFeeDetail : feeList) {
@@ -276,8 +277,8 @@ public class SettlementProcessUploadResponce extends BasicDao<SettlementProcess>
 				feeAmount = feeAmount.add(finFeeDetail.getActualAmount());
 			}
 		}
-		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO
-				.getFinAdvancePaymentsByFinRef(finMain.getFinReference(), "");
+		List<FinAdvancePayments> approvedList = finAdvancePaymentsDAO.getFinAdvancePaymentsByFinRef(finMain.getFinID(),
+				"");
 
 		BigDecimal tranAmount = BigDecimal.ZERO;
 		for (FinAdvancePayments detail : approvedList) {

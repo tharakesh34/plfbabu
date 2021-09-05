@@ -158,7 +158,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 			}
 
 			if (lppAmount.compareTo(BigDecimal.ZERO) > 0 || lpiAmount.compareTo(BigDecimal.ZERO) > 0) {
-				gstDataMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+				gstDataMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 				taxPercmap = GSTCalculator.getTaxPercentages(gstDataMap, fm.getFinCcy());
 			}
 

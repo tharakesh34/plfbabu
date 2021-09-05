@@ -497,7 +497,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 				}
 				BigDecimal lppBal = fod.getTotPenaltyBal();
 				if (StringUtils.equals(lppTaxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					lppBal = lppBal.add(getGST(fod.getFinReference(), fod.getTotPenaltyBal(), lppTaxType));
+					lppBal = lppBal.add(getGST(fod.getFinID(), fod.getTotPenaltyBal(), lppTaxType));
 				}
 				cashBackAmount = cashBackAmount.subtract(lppBal);
 
@@ -524,11 +524,11 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 					// Bounce Amount
 					if (adv.getBounceID() > 0) {
 						if (StringUtils.equals(bounceTaxType, FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							balAmt = balAmt.add(getGST(adv.getFinReference(), balAmt, bounceTaxType));
+							balAmt = balAmt.add(getGST(adv.getFinID(), balAmt, bounceTaxType));
 						}
 					} else {
 						if (StringUtils.equals(adv.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-							balAmt = balAmt.add(getGST(adv.getFinReference(), balAmt, adv.getTaxComponent()));
+							balAmt = balAmt.add(getGST(adv.getFinID(), balAmt, adv.getTaxComponent()));
 						}
 					}
 					cashBackAmount = cashBackAmount.subtract(balAmt);
@@ -551,7 +551,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return tds;
 	}
 
-	private BigDecimal getGST(String finReference, BigDecimal amount, String taxType) {
+	private BigDecimal getGST(long finID, BigDecimal amount, String taxType) {
 
 		// No AMount to calculate Tax
 		if (amount.compareTo(BigDecimal.ZERO) == 0) {
@@ -565,7 +565,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 		// Fetch and store Tax percentages one time
 		if (tgstPerc.compareTo(BigDecimal.ZERO) == 0) {
-			setTaxPercValues(finReference);
+			setTaxPercValues(finID);
 		}
 
 		if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
@@ -577,9 +577,9 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return BigDecimal.ZERO;
 	}
 
-	private void setTaxPercValues(String finReference) {
+	private void setTaxPercValues(long finID) {
 
-		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(finReference);
+		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(finID);
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = SysParamUtil.getAppCurrency();
 

@@ -151,8 +151,7 @@ public class RepaymentPostingsUtil {
 
 	public List<Object> postingProcess(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail financeProfitDetail,
-			FinRepayQueueHeader rpyQueueHeader, String eventCode, Date valuedate, Date postDate)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			FinRepayQueueHeader rpyQueueHeader, String eventCode, Date valuedate, Date postDate) throws AppException {
 
 		return postingProcessExecution(financeMain, scheduleDetails, finFeeDetailList, financeProfitDetail,
 				rpyQueueHeader, eventCode, valuedate, postDate);
@@ -160,8 +159,7 @@ public class RepaymentPostingsUtil {
 
 	private List<Object> postingProcessExecution(FinanceMain financeMain, List<FinanceScheduleDetail> scheduleDetails,
 			List<FinFeeDetail> finFeeDetailList, FinanceProfitDetail financeProfitDetail,
-			FinRepayQueueHeader rpyQueueHeader, String eventCode, Date valuedate, Date postDate)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+			FinRepayQueueHeader rpyQueueHeader, String eventCode, Date valuedate, Date postDate) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> actReturnList = null;
@@ -1261,7 +1259,7 @@ public class RepaymentPostingsUtil {
 		addZeroifNotContainsObj(dataMap, "bounceCharge_CESS_P");
 
 		// #PSD138017
-		Map<String, Object> dataMapTemp = GSTCalculator.getGSTDataMap(fm.getFinReference());
+		Map<String, Object> dataMapTemp = GSTCalculator.getGSTDataMap(fm.getFinID());
 
 		if (dataMapTemp != null && !dataMapTemp.isEmpty()) {
 			dataMap.putAll(dataMapTemp);
@@ -1574,7 +1572,7 @@ public class RepaymentPostingsUtil {
 			if (financeProfitDetail.isPftInSusp()) {
 
 				// Check Manual Suspense
-				FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(fm.getFinReference(), "");
+				FinanceSuspHead suspHead = financeSuspHeadDAO.getFinanceSuspHeadById(fm.getFinID(), "");
 				if (suspHead.isManualSusp()) {
 					execEventCode = null;
 					proceedFurther = false;

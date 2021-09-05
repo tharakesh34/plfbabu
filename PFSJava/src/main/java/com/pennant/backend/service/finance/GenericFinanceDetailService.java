@@ -1541,7 +1541,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinBranch(), custDftBranch, highPriorityState,
 					custResdSts, highPriorityCountry, fd.getFinanceTaxDetail());
 		} else {
-			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 		}
 
 		// Based on Each service instruction on every Servicing action postings should be done(Multiple times)
@@ -1946,7 +1946,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			return auditHeader;
 		}
 
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finMain.getFinReference());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finMain.getFinID());
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		aeEvent = AEAmounts.procAEAmounts(finMain, financeDetail.getFinScheduleData().getFinanceScheduleDetails(),
@@ -2609,7 +2609,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finMain.getFinReference());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finMain.getFinID());
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);
@@ -2668,7 +2668,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		}
 
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finMain.getFinReference());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finMain.getFinID());
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
 				if (StringUtils.isNotBlank(key)) {

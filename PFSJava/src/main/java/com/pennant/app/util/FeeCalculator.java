@@ -60,8 +60,9 @@ public class FeeCalculator {
 	private FinTypeFeesDAO finTypeFeesDAO;
 
 	public FinReceiptData calculateFees(FinReceiptData rd) {
+		long finID = rd.getFinID();
 		String finReference = rd.getFinReference();
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
 
 		convertToFinanceFees(rd, taxPercentages);
 
@@ -185,7 +186,7 @@ public class FeeCalculator {
 		if (!schdData.getGstExecutionMap().isEmpty()) {
 			gstExecutionMap = schdData.getGstExecutionMap();
 		} else {
-			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+			gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 			schdData.setGstExecutionMap(gstExecutionMap);
 		}
 		List<Object> objectList = new ArrayList<Object>();
@@ -288,7 +289,7 @@ public class FeeCalculator {
 			}
 
 			if (finFeeConfig.isTaxApplicable()) {
-				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
+				Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 				this.finFeeDetailService.convertGSTFinFeeConfig(fee, finFeeConfig, fd, taxPercentages);
 			} else {
 				fee.setActualAmountOriginal(finFeeConfig.getAmount());

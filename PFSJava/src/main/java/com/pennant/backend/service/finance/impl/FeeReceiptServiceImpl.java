@@ -481,7 +481,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		aeEvent.getAcSetIDList().add(accountingSetID);
 
 		// GST parameters
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(rch.getReference());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(rch.getFinID());
 
 		if (gstExecutionMap != null) {
 			for (String mapkey : gstExecutionMap.keySet()) {

@@ -63,14 +63,14 @@ public class GSTCalculator {
 	/**
 	 * This method will calculate the total GST on the specified taxableAmount by executing the GST rules configured.
 	 * 
-	 * @param finReference  The finRefernce to prepare the data map required to execute the GST rules.
+	 * @param finID         The finID to prepare the data map required to execute the GST rules.
 	 * @param taxableAmount The amount in which the GST will be calculated.
 	 * @param taxComponent  The taxable component either whether the GST is include in <code>taxableAmount</code> or
 	 *                      exclude.
 	 * @return The total calculated GST.
 	 */
-	public static BigDecimal getTotalGST(String finReference, BigDecimal taxableAmount, String taxComponent) {
-		Map<String, BigDecimal> gstPercentages = getTaxPercentages(finReference);
+	public static BigDecimal getTotalGST(long finID, BigDecimal taxableAmount, String taxComponent) {
+		Map<String, BigDecimal> gstPercentages = getTaxPercentages(finID);
 		return getGSTTaxSplit(taxableAmount, gstPercentages, taxComponent).gettGST();
 	}
 
@@ -341,10 +341,10 @@ public class GSTCalculator {
 	/**
 	 * This method will return the GST percentages by executing the GST rules configured.
 	 * 
-	 * @param finReference
+	 * @param finID
 	 * @return The GST percentages MAP
 	 */
-	public static Map<String, BigDecimal> getTaxPercentages(String finReference) {
+	public static Map<String, BigDecimal> getTaxPercentages(long finID) {
 		Map<String, BigDecimal> gstPercentages = new HashMap<>();
 
 		gstPercentages.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
@@ -354,7 +354,7 @@ public class GSTCalculator {
 		gstPercentages.put(RuleConstants.CODE_CESS, BigDecimal.ZERO);
 		gstPercentages.put(RuleConstants.CODE_TOTAL_GST, BigDecimal.ZERO);
 
-		Map<String, Object> dataMap = getGSTDataMap(finReference);
+		Map<String, Object> dataMap = getGSTDataMap(finID);
 
 		String finCCY = (Object) dataMap.get("FinCCY") == null ? "" : String.valueOf((Object) dataMap.get("FinCCY"));
 
@@ -440,11 +440,11 @@ public class GSTCalculator {
 		return taxPercMap;
 	}
 
-	public static Map<String, Object> getGSTDataMap(String finReference) {
-		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.MAIN_TAB);
+	public static Map<String, Object> getGSTDataMap(long finID) {
+		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finID, TableType.MAIN_TAB);
 
 		if (MapUtils.isEmpty(dataMap)) {
-			dataMap = financeMainDAO.getGSTDataMap(finReference, TableType.TEMP_TAB);
+			dataMap = financeMainDAO.getGSTDataMap(finID, TableType.TEMP_TAB);
 		}
 
 		String finBranch = (String) dataMap.computeIfAbsent("FinBranch", ft -> "");
@@ -454,7 +454,7 @@ public class GSTCalculator {
 		String custResdSts = (Object) dataMap.get("ResidentialStatus") == null ? ""
 				: String.valueOf((Object) dataMap.get("ResidentialStatus"));
 
-		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finReference, "_View");
+		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_View");
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
 		// setting the customer residential status

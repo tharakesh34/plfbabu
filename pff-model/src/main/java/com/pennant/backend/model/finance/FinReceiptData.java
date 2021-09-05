@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinScheduleData.java                                                 * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-03-2011    														*
- *                                                                  						*
- * Modified Date    :  22-03-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinScheduleData.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-03-2011 * * Modified Date
+ * : 22-03-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-03-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-03-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -59,6 +41,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinReceiptData implements Serializable {
 	private static final long serialVersionUID = -6980706459904425002L;
 
+	private Long finID = null;
 	private String finReference = null;
 	private String buildProcess = "";
 	private BigDecimal accruedTillLBD = BigDecimal.ZERO;
@@ -136,6 +119,7 @@ public class FinReceiptData implements Serializable {
 
 	public FinReceiptData copyEntity() {
 		FinReceiptData entity = new FinReceiptData();
+		entity.setFinID(this.finID);
 		entity.setFinReference(this.finReference);
 		entity.setBuildProcess(this.buildProcess);
 		entity.setAccruedTillLBD(this.accruedTillLBD);
@@ -204,8 +188,16 @@ public class FinReceiptData implements Serializable {
 		entity.getInProcessReceipts().addAll(this.inProcessReceipts);
 		entity.setActualOdPaid(this.actualOdPaid);
 		entity.setRcdIdx(this.rcdIdx);
-		
+
 		return entity;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

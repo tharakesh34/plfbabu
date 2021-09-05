@@ -548,8 +548,7 @@ public class ReceiptCalculator {
 							actualFeeDtl.setActPercentage(oldFinFeeDtl.getActPercentage());
 							actualFeeDtl.setPercentage(oldFinFeeDtl.getActPercentage());
 
-							Map<String, BigDecimal> taxPercentages = GSTCalculator
-									.getTaxPercentages(fm.getFinReference());
+							Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 							feeCalculator.calculateFeePercentageAmount(rd, taxPercentages);
 						}
 					}
@@ -3529,7 +3528,7 @@ public class ReceiptCalculator {
 		FinScheduleData schData = financeDetail.getFinScheduleData();
 		FinanceMain fm = schData.getFinanceMain();
 
-		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 
 		schData.setGstExecutionMap(dataMap);
 		Map<String, BigDecimal> taxPercMap = GSTCalculator.getTaxPercentages(dataMap, fm.getFinCcy());
@@ -4720,7 +4719,7 @@ public class ReceiptCalculator {
 
 		rd.setInProcessReceipts(receiptList);
 
-		List<FinanceRepayments> finRepayments = financeRepaymentsDAO.getInProcessRepaymnets(rch.getReference(),
+		List<FinanceRepayments> finRepayments = financeRepaymentsDAO.getInProcessRepaymnets(rch.getFinID(),
 				receiptList);
 		rd.setInProcRepayments(finRepayments);
 

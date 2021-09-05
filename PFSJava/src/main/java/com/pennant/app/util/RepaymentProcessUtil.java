@@ -379,10 +379,10 @@ public class RepaymentProcessUtil {
 		FinReceiptDetail rcd = rcdList.get(rcdList.size() - 1);
 		FinRepayHeader rph = rcd.getRepayHeader();
 
-		fm.setGlSubHeadCodes(financeMainDAO.getGLSubHeadCodes(finReference));
+		fm.setGlSubHeadCodes(financeMainDAO.getGLSubHeadCodes(finID));
 
 		// GST Mapping details
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finReference);
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finID);
 
 		/**
 		 * Defaulting with ZERO
@@ -399,7 +399,7 @@ public class RepaymentProcessUtil {
 
 		// Put Xcess Payables to Map along with GST
 		List<XcessPayables> xcessPayables = rch.getXcessPayables();
-		Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(finReference);
+		Map<String, BigDecimal> taxPercmap = GSTCalculator.getTaxPercentages(finID);
 		for (XcessPayables xcessPayable : xcessPayables) {
 			BigDecimal totPaidNow = xcessPayable.getTotPaidNow();
 			if (totPaidNow.compareTo(BigDecimal.ZERO) <= 0) {
@@ -439,7 +439,7 @@ public class RepaymentProcessUtil {
 				extDataMap.put((feeTypeCode + "_CESS_P"), xcessPayable.getPaidCESS());
 
 				if (taxPercmap == null) {
-					taxPercmap = GSTCalculator.getTaxPercentages(finReference);
+					taxPercmap = GSTCalculator.getTaxPercentages(finID);
 				}
 
 				payableAdvMovements.add(preparePayableMovement(taxPercmap, xcessPayable));
@@ -1702,10 +1702,10 @@ public class RepaymentProcessUtil {
 			if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
 				int recordCount = 0;
 				if (StringUtils.equals(rch.getReceiptModeStatus(), RepayConstants.PAYSTATUS_DEPOSITED)) {
-					recordCount = finExcessAmountDAO.updateExcessReserveByRef(rch.getReference(),
-							rch.getExcessAdjustTo(), rph.getExcessAmount());
+					recordCount = finExcessAmountDAO.updateExcessReserveByRef(rch.getFinID(), rch.getExcessAdjustTo(),
+							rph.getExcessAmount());
 				} else {
-					recordCount = finExcessAmountDAO.updateExcessBalByRef(rch.getReference(), rch.getExcessAdjustTo(),
+					recordCount = finExcessAmountDAO.updateExcessBalByRef(rch.getFinID(), rch.getExcessAdjustTo(),
 							rph.getExcessAmount());
 				}
 				// If record Not found then record count should be zero. Need to create new Excess Record
@@ -1963,7 +1963,7 @@ public class RepaymentProcessUtil {
 
 	private List<Object> doRepayPostings(FinanceDetail financeDetail, FinReceiptHeader rch,
 			Map<String, BigDecimal> extDataMap, Map<String, Object> gstExecutionMap, Date postDate, long repayID)
-			throws IllegalAccessException, InterfaceException, InvocationTargetException {
+			throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> returnList = new ArrayList<Object>();
@@ -2167,12 +2167,6 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader, eventCode, rch.getValueDate(), postDate);
 
 		} catch (InterfaceException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (IllegalAccessException e) {
-			logger.error("Exception: ", e);
-			throw e;
-		} catch (InvocationTargetException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		}

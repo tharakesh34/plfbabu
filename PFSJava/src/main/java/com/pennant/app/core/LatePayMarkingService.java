@@ -687,7 +687,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		aeEvent.getAeAmountCodes().setdLPPAmz(penaltyDue);
 		aeEvent.setDataMap(aeEvent.getAeAmountCodes().getDeclaredFieldValues());
 
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinReference());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {

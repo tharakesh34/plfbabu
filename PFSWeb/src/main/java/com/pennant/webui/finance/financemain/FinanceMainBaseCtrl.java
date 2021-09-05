@@ -3609,7 +3609,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (CollectionUtils.isNotEmpty(ltDetails)) {
 					for (LowerTaxDeduction lowerTaxDeduction : ltDetails) {
 
-						if (lowerTaxDeduction.getSeqno() == 1) {
+						if (lowerTaxDeduction.getSeqNo() == 1) {
 							this.tDSPercentage.setValue(lowerTaxDeduction.getPercentage());
 							this.tDSStartDate.setValue(appDate);
 							this.tDSEndDate.setValue(lowerTaxDeduction.getEndDate());
@@ -3629,7 +3629,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					for (LowerTaxDeduction lowerTaxDeduction : ltDetails) {
 
-						if (lowerTaxDeduction.getSeqno() == 1) {
+						if (lowerTaxDeduction.getSeqNo() == 1) {
 							this.tDSPercentage.setValue(lowerTaxDeduction.getPercentage());
 							this.tDSStartDate.setValue(lowerTaxDeduction.getStartDate());
 							this.tDSEndDate.setValue(lowerTaxDeduction.getEndDate());
@@ -7816,7 +7816,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			boolean branchOpsRole = false;
 			for (String role : roles) {
 				if (StringUtils.equals(getRole(), role)) {
-					List<String> invFinRefList = pricingDetailService.getInvestmentRefifAny(
+					List<Long> invFinRefList = pricingDetailService.getInvestmentRefifAny(
 							financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "_Temp");
 					if (CollectionUtils.isNotEmpty(invFinRefList)) {
 						noofTopUps = 1;
@@ -14431,7 +14431,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
 			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
 			lowerTxDeduction.setFinReference(aFinanceMain.getFinReference());
-			lowerTxDeduction.setSeqno(1);
+			lowerTxDeduction.setSeqNo(1);
 
 			try {
 				lowerTxDeduction.setPercentage(this.tDSPercentage.getValue());
@@ -14800,7 +14800,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
 
-			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
 
 			if (gstExecutionMap != null) {
 				for (String key : gstExecutionMap.keySet()) {

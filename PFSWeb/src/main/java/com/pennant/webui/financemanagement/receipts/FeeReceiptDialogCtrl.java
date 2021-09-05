@@ -590,7 +590,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				// setting data
 				customerID = main.getCustID();
 				setTaxPercentages(calcTaxPercentages());
-				doFillFeeDetails(feeReceiptService.getPaidFinFeeDetails(main.getFinReference(),
+				doFillFeeDetails(feeReceiptService.getPaidFinFeeDetails(main.getFinID(),
 						this.receiptHeader.getReceiptID(), "_TView"));
 			} else {
 				clearFields = true;
@@ -1666,7 +1666,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Map<String, Object> map = null;
 		long accountingSetID = 0;
 		if (this.groupbox_Finance.isVisible()) {
-			map = getFeeReceiptService().getGLSubHeadCodes(getReceiptHeader().getReference());
+			map = getFeeReceiptService().getGLSubHeadCodes(getReceiptHeader().getFinID());
 			accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
 					AccountingEvent.FEEPAY, FinanceConstants.MODULEID_FINTYPE);
 		} else {
@@ -1725,7 +1725,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			aeEvent.setDataMap(dataMap);
 
 			// GST parameters
-			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(getReceiptHeader().getReference());
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(getReceiptHeader().getFinID());
 			if (gstExecutionMap != null) {
 				for (String mapkey : gstExecutionMap.keySet()) {
 					if (StringUtils.isNotBlank(mapkey)) {

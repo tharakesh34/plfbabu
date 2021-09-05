@@ -197,8 +197,8 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 */
 
 	@Override
-	public FinanceMain getWIFFinanceMainById(String id) {
-		return getWIFFinanceMainDAO().getWIFFinanceMainById(id, "_View");
+	public FinanceMain getWIFFinanceMainById(long finID) {
+		return getWIFFinanceMainDAO().getWIFFinanceMainById(finID, "_View");
 	}
 
 	/**
@@ -208,9 +208,9 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 	 * @param id (String)
 	 * @return FinanceMain
 	 */
-
-	public FinanceMain getApprovedWIFFinanceMainById(String id) {
-		return getWIFFinanceMainDAO().getWIFFinanceMainById(id, "_AView");
+	@Override
+	public FinanceMain getApprovedWIFFinanceMainById(long finID) {
+		return getWIFFinanceMainDAO().getWIFFinanceMainById(finID, "_AView");
 	}
 
 	/**
@@ -337,12 +337,10 @@ public class WIFFinanceMainServiceImpl extends GenericService<FinanceMain> imple
 
 		FinanceMain tempWIFFinanceMain = null;
 		if (wIFFinanceMain.isWorkflow()) {
-			tempWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getFinReference(),
-					"_Temp");
+			tempWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getFinID(), "_Temp");
 		}
 
-		FinanceMain befWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getFinReference(),
-				"");
+		FinanceMain befWIFFinanceMain = getWIFFinanceMainDAO().getWIFFinanceMainById(wIFFinanceMain.getFinID(), "");
 
 		FinanceMain oldWIFFinanceMain = wIFFinanceMain.getBefImage();
 

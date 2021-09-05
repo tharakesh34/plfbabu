@@ -468,7 +468,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);
@@ -549,7 +549,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		// GST parameters
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinReference());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
 				if (StringUtils.isNotBlank(key)) {
