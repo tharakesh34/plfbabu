@@ -362,6 +362,36 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
+	public FinanceMain getFMForVAS(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, FinID, FinReference, FinType, FinBranch, FinCcy");
+		sql.append(" From Financemain");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setFinCcy(rs.getString("FinCcy"));
+
+				return fm;
+
+			}, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
 	public FinanceMain getFinanceMainForBatch(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, GrcPeriodEndDate, FinRepaymentAmount");
@@ -376,7 +406,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", MinDownPayPerc, PromotionCode, FinIsActive, SanBsdSchdle, PromotionSeqId");
 		sql.append(", SvAmount, CbAmount, EmployeeName, SchdVersion");
 		sql.append(" From Financemain");
-		sql.append("  Where FinID = ?");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql);
 

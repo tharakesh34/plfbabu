@@ -357,4 +357,6 @@ public interface FinanceMainDAO {
 
 	Long getActiveWIFFinID(String finReference, TableType tableType);
 
+	FinanceMain getFMForVAS(String finReference);
+
 }

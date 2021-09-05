@@ -87,17 +87,6 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	private VASConfigurationDAO vASConfigurationDAO;
 	private VASRecordingDAO vASRecordingDAO;
 
-	/**
-	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
-	 * businessValidation(auditHeader) method if there is any error or warning message then return the auditHeader. 2)
-	 * Do Add or Update the Record a) Add new Record for the new record in the DB table
-	 * BMTInsuranceDetailss/BMTInsuranceDetailss_Temp by using InsuranceDetailsDAO's save method b) Update the Record in
-	 * the table. based on the module workFlow Configuration. by using InsuranceDetailsDAO's update method 3) Audit the
-	 * record in to AuditHeader and AdtBMTInsuranceDetailss by using auditHeaderDAO.addAudit(auditHeader)
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	@Override
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
@@ -117,19 +106,18 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		}
 
 		if (insuranceDetails.isNewRecord()) {
-			insuranceDetails
-					.setId(getInsuranceDetailDAO().saveInsuranceDetails(insuranceDetails, tableType.getSuffix()));
+			insuranceDetails.setId(insuranceDetailDAO.saveInsuranceDetails(insuranceDetails, tableType.getSuffix()));
 			auditHeader.getAuditDetail().setModelData(insuranceDetails);
 			auditHeader.setAuditReference(String.valueOf(insuranceDetails.getId()));
 		} else {
-			getInsuranceDetailDAO().updateInsuranceDetails(insuranceDetails, tableType.getSuffix());
+			insuranceDetailDAO.updateInsuranceDetails(insuranceDetails, tableType.getSuffix());
 		}
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
@@ -150,16 +138,16 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		InsuranceDetails insuranceDetails = new InsuranceDetails();
 		BeanUtils.copyProperties((InsuranceDetails) auditHeader.getAuditDetail().getModelData(), insuranceDetails);
 
-		getInsuranceDetailDAO().delete(insuranceDetails, TableType.TEMP_TAB.getSuffix());
+		insuranceDetailDAO.delete(insuranceDetails, TableType.TEMP_TAB.getSuffix());
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(insuranceDetails.getRecordType())) {
 			auditHeader.getAuditDetail()
-					.setBefImage(getInsuranceDetailDAO().getInsurenceDetailsById(insuranceDetails.getId(), ""));
+					.setBefImage(insuranceDetailDAO.getInsurenceDetailsById(insuranceDetails.getId(), ""));
 		}
 
 		if (insuranceDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getInsuranceDetailDAO().delete(insuranceDetails, TableType.MAIN_TAB.getSuffix());
+			insuranceDetailDAO.delete(insuranceDetails, TableType.MAIN_TAB.getSuffix());
 		} else {
 			insuranceDetails.setRoleCode("");
 			insuranceDetails.setNextRoleCode("");
@@ -177,16 +165,16 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 				tranType = PennantConstants.TRAN_ADD;
 				insuranceDetails.setRecordType("");
 				insuranceDetails.setReconStatus(InsuranceConstants.RECON_STATUS_AUTO);
-				getInsuranceDetailDAO().saveInsuranceDetails(insuranceDetails, TableType.MAIN_TAB.getSuffix());
+				insuranceDetailDAO.saveInsuranceDetails(insuranceDetails, TableType.MAIN_TAB.getSuffix());
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				insuranceDetails.setRecordType("");
-				getInsuranceDetailDAO().updateInsuranceDetails(insuranceDetails, TableType.MAIN_TAB.getSuffix());
+				insuranceDetailDAO.updateInsuranceDetails(insuranceDetails, TableType.MAIN_TAB.getSuffix());
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -196,7 +184,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -214,13 +202,13 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 		InsuranceDetails insuranceDetails = (InsuranceDetails) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getInsuranceDetailDAO().delete(insuranceDetails, TableType.TEMP_TAB.getSuffix());
+		insuranceDetailDAO.delete(insuranceDetails, TableType.TEMP_TAB.getSuffix());
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -237,24 +225,17 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		}
 
 		InsuranceDetails insuranceDetails = (InsuranceDetails) auditHeader.getAuditDetail().getModelData();
-		getInsuranceDetailDAO().delete(insuranceDetails, TableType.MAIN_TAB.getSuffix());
+		insuranceDetailDAO.delete(insuranceDetails, TableType.MAIN_TAB.getSuffix());
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new InsuranceDetails(), insuranceDetails.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				insuranceDetails.getBefImage(), insuranceDetails));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage());
@@ -265,15 +246,6 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getInsuranceDetailsDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage) {
 		logger.debug(Literal.ENTERING);
 
@@ -281,7 +253,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		InsuranceDetails detail = (InsuranceDetails) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (detail.isNewRecord() && getInsuranceDetailDAO().isDuplicateKey(detail.getId(), detail.getReference(),
+		if (detail.isNewRecord() && insuranceDetailDAO.isDuplicateKey(detail.getId(), detail.getReference(),
 				detail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[2];
 			parameters[0] = PennantJavaUtil.getLabel("label_InsuranceReconciliationList_Reference.value") + ": "
@@ -326,35 +298,35 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		}
 		// Based on VAS Created Against, details will be captured
 		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
-			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
-			amountCodes.setFinType(financeMain.getFinType());
-			aeEvent.setBranch(financeMain.getFinBranch());
-			aeEvent.setCcy(financeMain.getFinCcy());
-			aeEvent.setCustID(financeMain.getCustID());
+			FinanceMain fm = financeMainDAO.getFMForVAS(vASRecording.getPrimaryLinkRef());
+			amountCodes.setFinType(fm.getFinType());
+			aeEvent.setBranch(fm.getFinBranch());
+			aeEvent.setCcy(fm.getFinCcy());
+			aeEvent.setCustID(fm.getCustID());
 		} else if (StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())) {
-			Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(), "");
+			Customer customer = customerDAO.getCustomerByCIF(vASRecording.getPrimaryLinkRef(), "");
 			aeEvent.setBranch(customer.getCustDftBranch());
 			aeEvent.setCcy(customer.getCustBaseCcy());
 			aeEvent.setCustID(customer.getCustID());
 		} else if (StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())) {
-			CollateralSetup collateralSetup = getCollateralSetupDAO()
+			CollateralSetup collateralSetup = collateralSetupDAO
 					.getCollateralSetupByRef(vASRecording.getPrimaryLinkRef(), "");
-			Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(), "");
+			Customer customer = customerDAO.getCustomerByID(collateralSetup.getDepositorId(), "");
 			aeEvent.setCcy(collateralSetup.getCollateralCcy());
 			aeEvent.setCustID(collateralSetup.getDepositorId());
 			aeEvent.setBranch(customer.getCustDftBranch());
 		}
 
-		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(vASRecording.getProductCode());
+		VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vASRecording.getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSADJ, AccountingEvent.INSADJ);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.INSADJ, AccountingEvent.INSADJ);
 		aeEvent.getAcSetIDList().add(accountsetId);
-		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
@@ -365,24 +337,24 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		insuranceDetailDAO.updateLinkTranId(instructions.getId(), linkTranId);
 	}
 
-	private long executeInsPaymentsAccountingProcess(InsurancePaymentInstructions details) {
-
+	private long executeInsPaymentsAccountingProcess(InsurancePaymentInstructions ipi) {
 		AEEvent aeEvent = new AEEvent();
-		if (details.getUserDetails() != null) {
-			aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
-			aeEvent.setBranch(details.getUserDetails().getBranchCode());
+
+		if (ipi.getUserDetails() != null) {
+			aeEvent.setPostingUserBranch(ipi.getUserDetails().getBranchCode());
+			aeEvent.setBranch(ipi.getUserDetails().getBranchCode());
 		} else {
-			FinanceMain financeMain = financeMainDAO.getDisbursmentFinMainById(details.getFinReference(),
-					TableType.VIEW);
+			FinanceMain financeMain = financeMainDAO.getDisbursmentFinMainById(ipi.getFinID(), TableType.VIEW);
 			aeEvent.setPostingUserBranch(financeMain.getFinBranch());
 			aeEvent.setBranch(financeMain.getFinBranch());// FIXME Branch
 		}
-		aeEvent.setEntityCode(details.getEntityCode());
+
+		aeEvent.setEntityCode(ipi.getEntityCode());
 		aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
 		// Setting FinReference instead of provider ID
-		aeEvent.setFinReference(details.getVasReference());
+		aeEvent.setFinReference(ipi.getVasReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
-		aeEvent.setCcy(details.getPaymentCCy());
+		aeEvent.setCcy(ipi.getPaymentCCy());
 		aeEvent.setCcy("INR");
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
@@ -390,19 +362,19 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			amountCodes = new AEAmountCodes();
 		}
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(details.getFinReference());
+		FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(ipi.getFinID());
 		amountCodes.setFinType(financeMain.getFinType());
 
-		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCode(details.getProviderId());
+		VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCode(ipi.getProviderId());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-		details.getDeclaredFieldValues(aeEvent.getDataMap());
+		ipi.getDeclaredFieldValues(aeEvent.getDataMap());
 
 		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.INSPAY,
 				FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
-		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
 	}
@@ -425,20 +397,20 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 		// Based on VAS Created Against, details will be captured
 		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
-			FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
-			amountCodes.setFinType(financeMain.getFinType());
-			aeEvent.setBranch(financeMain.getFinBranch());
-			aeEvent.setCcy(financeMain.getFinCcy());
-			aeEvent.setCustID(financeMain.getCustID());
+			FinanceMain fm = financeMainDAO.getFMForVAS(vASRecording.getPrimaryLinkRef());
+			amountCodes.setFinType(fm.getFinType());
+			aeEvent.setBranch(fm.getFinBranch());
+			aeEvent.setCcy(fm.getFinCcy());
+			aeEvent.setCustID(fm.getCustID());
 		} else if (StringUtils.equals(VASConsatnts.VASAGAINST_CUSTOMER, vASRecording.getPostingAgainst())) {
-			Customer customer = getCustomerDAO().getCustomerByCIF(vASRecording.getPrimaryLinkRef(), "");
+			Customer customer = customerDAO.getCustomerByCIF(vASRecording.getPrimaryLinkRef(), "");
 			aeEvent.setBranch(customer.getCustDftBranch());
 			aeEvent.setCcy(customer.getCustBaseCcy());
 			aeEvent.setCustID(customer.getCustID());
 		} else if (StringUtils.equals(VASConsatnts.VASAGAINST_COLLATERAL, vASRecording.getPostingAgainst())) {
 			CollateralSetup collateralSetup = collateralSetupDAO
 					.getCollateralSetupByRef(vASRecording.getPrimaryLinkRef(), "");
-			Customer customer = getCustomerDAO().getCustomerByID(collateralSetup.getDepositorId(), "");
+			Customer customer = customerDAO.getCustomerByID(collateralSetup.getDepositorId(), "");
 			aeEvent.setCcy(collateralSetup.getCollateralCcy());
 			aeEvent.setCustID(collateralSetup.getDepositorId());
 			aeEvent.setBranch(customer.getCustDftBranch());
@@ -448,35 +420,35 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 			aeEvent.setCcy(SysParamUtil.getAppCurrency());
 		}
 		// For GL Code
-		VehicleDealer vehicleDealer = getVehicleDealerService().getDealerShortCodes(vASRecording.getProductCode());
+		VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vASRecording.getProductCode());
 		amountCodes.setProductCode(vehicleDealer.getProductShortCode());
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		details.getDeclaredFieldValues(aeEvent.getDataMap());
 
-		long accountsetId = getAccountingSetDAO().getAccountingSetId(AccountingEvent.INSPAY, AccountingEvent.INSPAY);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.INSPAY, AccountingEvent.INSPAY);
 		aeEvent.getAcSetIDList().add(accountsetId);
-		aeEvent = getPostingsPreparationUtil().postAccounting(aeEvent);
+		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
 		return aeEvent.getLinkedTranId();
 	}
 
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode) {
-		return getvASConfigurationService().getApprovedVASConfigurationByCode(productCode, false);
+		return vASConfigurationService.getApprovedVASConfigurationByCode(productCode, false);
 	}
 
 	@Override
 	public List<ManualAdvise> getManualAdviseByRefAndFeeId(int adviseType, long feeTypeId) {
-		return getManualAdviseDAO().getManualAdviseByRefAndFeeId(adviseType, feeTypeId);
+		return manualAdviseDAO.getManualAdviseByRefAndFeeId(adviseType, feeTypeId);
 	}
 
 	@Override
 	public void saveInsurancePayments(InsurancePaymentInstructions details) {
 		logger.debug(Literal.ENTERING);
 
-		details.setId(getInsuranceDetailDAO().getSeqNumber());
+		details.setId(insuranceDetailDAO.getSeqNumber());
 		if (details.getAdviseRefMap().size() > 0) {
 			processMaualAdvisePayments(details);
 		}
@@ -503,20 +475,20 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 				updatePaymentLinkedTranId(vasRecording.getVasReference(), linkedTranId);
 			}
 		}
-		getInsuranceDetailDAO().saveInsurancePayments(details, TableType.MAIN_TAB);
+		insuranceDetailDAO.saveInsurancePayments(details, TableType.MAIN_TAB);
 		updateVasPaymentId(details.getVasRecordindList(), details.getId());
 
 		logger.debug(Literal.LEAVING);
 	}
 
 	private void updatePaymentLinkedTranId(String vasReference, long linkedTranId) {
-		getInsuranceDetailDAO().updatePaymentLinkedTranId(vasReference, linkedTranId);
+		insuranceDetailDAO.updatePaymentLinkedTranId(vasReference, linkedTranId);
 	}
 
 	private void updateVasPaymentId(List<VASRecording> vasRecordings, long paymentInsId) {
 		if (CollectionUtils.isNotEmpty(vasRecordings)) {
 			for (VASRecording vasRecording : vasRecordings) {
-				getvASRecordingService().updateVasPaymentId(vasRecording.getVasReference(), paymentInsId);
+				vASRecordingService.updateVasPaymentId(vasRecording.getVasReference(), paymentInsId);
 			}
 		}
 	}
@@ -530,7 +502,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		Map<Long, String> adviseRefMap = instructions.getAdviseRefMap();
 		for (Long feeTypeId : adviseRefMap.keySet()) {
 			boolean completed = false;
-			List<ManualAdvise> manualAdvises = getManualAdviseDAO()
+			List<ManualAdvise> manualAdvises = manualAdviseDAO
 					.getManualAdviseByRefAndFeeId(FinanceConstants.MANUAL_ADVISE_RECEIVABLE, feeTypeId);
 
 			for (ManualAdvise manualAdvise : manualAdvises) {
@@ -565,7 +537,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	private void updateUtilizedAmts(InsurancePaymentInstructions instructions, ManualAdvise manualAdvise) {
 		// Update PaidAmount
-		getManualAdviseDAO().updatePaidAmountOnly(manualAdvise.getAdviseID(), manualAdvise.getBalanceAmt());
+		manualAdviseDAO.updatePaidAmountOnly(manualAdvise.getAdviseID(), manualAdvise.getBalanceAmt());
 
 		// Payable Advise Movement Creation
 		ManualAdviseMovements movement = new ManualAdviseMovements();
@@ -575,10 +547,10 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		movement.setMovementDate(SysParamUtil.getAppDate());
 		movement.setMovementAmount(manualAdvise.getBalanceAmt());
 		movement.setPaidAmount(manualAdvise.getBalanceAmt());
-		getManualAdviseDAO().saveMovement(movement, TableType.MAIN_TAB.getSuffix());
+		manualAdviseDAO.saveMovement(movement, TableType.MAIN_TAB.getSuffix());
 
 		// Executing Accounting for partner receivables.
-		VASRecording vasRecording = getvASRecordingService().getVASRecordingByReference(manualAdvise.getFinReference());
+		VASRecording vasRecording = vASRecordingService.getVASRecordingByReference(manualAdvise.getFinReference());
 		if (vasRecording != null) {
 			InsurancePaymentInstructions instructionsForRecivable = new InsurancePaymentInstructions();
 			instructionsForRecivable.setPayableAmount(BigDecimal.ZERO);
@@ -643,12 +615,12 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	@Override
 	public InsuranceDetails getInsurenceDetailsById(long id) {
-		return getInsuranceDetailDAO().getInsurenceDetailsById(id, "_View");
+		return insuranceDetailDAO.getInsurenceDetailsById(id, "_View");
 	}
 
 	@Override
 	public InsuranceDetails getInsurenceDetailsByRef(String reference, String tableType) {
-		return getInsuranceDetailDAO().getInsurenceDetailsByRef(reference, tableType);
+		return insuranceDetailDAO.getInsurenceDetailsByRef(reference, tableType);
 	}
 
 	@Override
@@ -658,47 +630,47 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 
 	@Override
 	public void saveInsuranceDetails(InsuranceDetails insuranceDetail, String tableType) {
-		getInsuranceDetailDAO().saveInsuranceDetails(insuranceDetail, tableType);
+		insuranceDetailDAO.saveInsuranceDetails(insuranceDetail, tableType);
 	}
 
 	@Override
 	public VASRecording getVASRecordingByRef(String vasReference) {
-		return getvASRecordingService().getVASRecordingByReference(vasReference);
+		return vASRecordingService.getVASRecordingByReference(vasReference);
 	}
 
 	@Override
 	public VASRecording getVASRecording(String vasReference, String vasStatus) {
-		return getvASRecordingService().getVASRecording(vasReference, vasStatus);
+		return vASRecordingService.getVASRecording(vasReference, vasStatus);
 	}
 
 	@Override
 	public void updateVasStatus(String status, String vasReference) {
-		getvASRecordingService().updateVasStatus(status, vasReference);
+		vASRecordingService.updateVasStatus(status, vasReference);
 	}
 
 	@Override
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String entityCode, String tableType) {
-		return getvASProviderAccDetailService().getVASProviderAccDetByPRoviderId(providerId, entityCode, tableType);
+		return vASProviderAccDetailService.getVASProviderAccDetByPRoviderId(providerId, entityCode, tableType);
 	}
 
 	@Override
 	public VASProviderAccDetail getVASProviderAccDetByPRoviderId(long providerId, String tableType) {
-		return getvASProviderAccDetailService().getVASProviderAccDetByPRoviderId(providerId, tableType);
+		return vASProviderAccDetailService.getVASProviderAccDetByPRoviderId(providerId, tableType);
 	}
 
 	@Override
 	public VasCustomer getVasCustomerDetails(String finReference, String postingAgainst) {
-		return getvASRecordingService().getVasCustomerDetails(finReference, postingAgainst);
+		return vASRecordingService.getVasCustomerDetails(finReference, postingAgainst);
 	}
 
 	@Override
 	public BankBranch getBankBranchById(long bankBranchID, String tableType) {
-		return getBankBranchDAO().getBankBranchById(bankBranchID, tableType);
+		return bankBranchDAO.getBankBranchById(bankBranchID, tableType);
 	}
 
 	@Override
 	public VehicleDealer getProviderDetails(long dealerId, String tableType) {
-		return getVehicleDealerDAO().getVehicleDealerById(dealerId, tableType);
+		return vehicleDealerDAO.getVehicleDealerById(dealerId, tableType);
 	}
 
 	@Override
@@ -706,121 +678,60 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		return insuranceDetailDAO.updatePaymentStatus(instruction);
 	}
 
-	// Getters and setters
-	public InsuranceDetailDAO getInsuranceDetailDAO() {
-		return insuranceDetailDAO;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
 		this.insuranceDetailDAO = insuranceDetailDAO;
 	}
 
-	public VASRecordingService getvASRecordingService() {
-		return vASRecordingService;
-	}
-
-	public void setvASRecordingService(VASRecordingService vASRecordingService) {
-		this.vASRecordingService = vASRecordingService;
-	}
-
-	public VASProviderAccDetailService getvASProviderAccDetailService() {
-		return vASProviderAccDetailService;
-	}
-
-	public void setvASProviderAccDetailService(VASProviderAccDetailService vASProviderAccDetailService) {
-		this.vASProviderAccDetailService = vASProviderAccDetailService;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public BankBranchDAO getBankBranchDAO() {
-		return bankBranchDAO;
-	}
-
 	public void setBankBranchDAO(BankBranchDAO bankBranchDAO) {
 		this.bankBranchDAO = bankBranchDAO;
-	}
-
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
-	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
-		this.postingsPreparationUtil = postingsPreparationUtil;
-	}
-
-	public AccountingSetDAO getAccountingSetDAO() {
-		return accountingSetDAO;
-	}
-
-	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
-		this.accountingSetDAO = accountingSetDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-
-	public CollateralSetupDAO getCollateralSetupDAO() {
-		return collateralSetupDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
-	}
-
-	public VehicleDealerDAO getVehicleDealerDAO() {
-		return vehicleDealerDAO;
 	}
 
 	public void setVehicleDealerDAO(VehicleDealerDAO vehicleDealerDAO) {
 		this.vehicleDealerDAO = vehicleDealerDAO;
 	}
 
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
+	public void setvASRecordingService(VASRecordingService vASRecordingService) {
+		this.vASRecordingService = vASRecordingService;
 	}
 
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public VASConfigurationService getvASConfigurationService() {
-		return vASConfigurationService;
-	}
-
-	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
-		this.vASConfigurationService = vASConfigurationService;
-	}
-
-	public VehicleDealerService getVehicleDealerService() {
-		return vehicleDealerService;
+	public void setvASProviderAccDetailService(VASProviderAccDetailService vASProviderAccDetailService) {
+		this.vASProviderAccDetailService = vASProviderAccDetailService;
 	}
 
 	public void setVehicleDealerService(VehicleDealerService vehicleDealerService) {
 		this.vehicleDealerService = vehicleDealerService;
 	}
 
-	public VASProviderAccDetailDAO getvASProviderAccDetailDAO() {
-		return vASProviderAccDetailDAO;
+	public void setvASConfigurationService(VASConfigurationService vASConfigurationService) {
+		this.vASConfigurationService = vASConfigurationService;
+	}
+
+	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
+		this.postingsPreparationUtil = postingsPreparationUtil;
+	}
+
+	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {
+		this.accountingSetDAO = accountingSetDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	public void setvASProviderAccDetailDAO(VASProviderAccDetailDAO vASProviderAccDetailDAO) {

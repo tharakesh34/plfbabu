@@ -46,6 +46,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity {
 	private InsurancePaymentInstructions befImage;
 	@XmlTransient
 	private LoggedInUser userDetails;
+	private Long finID;
 	private String finReference;
 	private String vasReference;
 
@@ -61,6 +62,7 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity {
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
+		excludeFields.add("finID");
 		excludeFields.add("finReference");
 		excludeFields.add("vasReference");
 		return excludeFields;
@@ -288,6 +290,14 @@ public class InsurancePaymentInstructions extends AbstractWorkflowEntity {
 
 	public void setPartnerPremiumAmt(BigDecimal partnerPremiumAmt) {
 		this.partnerPremiumAmt = partnerPremiumAmt;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

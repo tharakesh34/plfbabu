@@ -40,12 +40,13 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 	}
 
 	@Override
-	public List<LinkedFinances> getLinkedFinancesByRef(String financeReference, String type) {
-		return linkedFinancesDAO.getLinkedFinancesByFinRef(financeReference, type);
+	public List<LinkedFinances> getLinkedFinancesByRef(long finID, String type) {
+		return linkedFinancesDAO.getLinkedFinancesByFinRef(finID, type);
 	}
 
-	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
-		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finreference, event, "_Temp");
+	@Override
+	public FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event) {
+		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finID, event, "_Temp");
 	}
 
 	@Override
@@ -163,14 +164,14 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 						.add(new AuditDetail(PennantConstants.TRAN_WF, ++j, fields[0], fields[1], null, linFinance));
 				if (!PennantConstants.RECORD_TYPE_NEW.equals(linFinance.getRecordType())) {
 					linkFin.setBefImage(linkedFinancesDAO.getLinkedFinancesByLinkRef(linFinance.getLinkedReference(),
-							linFinance.getFinReference(), ""));
+							linFinance.getFinID(), ""));
 				}
 			}
 
 			if (finMainInst.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 				tranType = PennantConstants.TRAN_DEL;
 				finMaintainInstructionDAO.delete(finMainInst, TableType.MAIN_TAB);
-				linkedFinancesDAO.delete(finMainInst.getFinReference(), TableType.MAIN_TAB.getSuffix());
+				linkedFinancesDAO.delete(finMainInst.getFinID(), TableType.MAIN_TAB.getSuffix());
 			} else {
 				finMainInst.setRoleCode("");
 				finMainInst.setNextRoleCode("");
@@ -192,8 +193,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 					linkFin.setVersion(linkFin.getVersion() + 1);
 
 					if (PennantConstants.RCD_DEL.equals(linkFin.getStatus())) {
-						linkedFinancesDAO.deleteByLinkedReference(linkFin.getLinkedReference(),
-								linkFin.getFinReference(), "");
+						linkedFinancesDAO.deleteByLinkedReference(linkFin.getLinkedReference(), linkFin.getFinID(), "");
 					} else {
 						if (linkFin.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							tranType = PennantConstants.TRAN_ADD;
@@ -224,7 +224,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 				}
 			}
 			finMaintainInstructionDAO.delete(finMainInst, TableType.TEMP_TAB);
-			linkedFinancesDAO.delete(finMainInst.getFinReference(), "_Temp");
+			linkedFinancesDAO.delete(finMainInst.getFinID(), "_Temp");
 
 			// WorkFlow Image For Audit
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -275,7 +275,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 					linkFin));
 		}
 
-		linkedFinancesDAO.delete(finMain.getFinReference(), "_Temp");
+		linkedFinancesDAO.delete(finMain.getFinID(), "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetail(getAuditDetail(finMainInst, 1, auditHeader.getAuditTranType()));
 		auditHeader.setAuditDetails(auditDetails);
@@ -385,7 +385,7 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		linkedFinancesDAO.delete(financeMain.getFinReference(), "_Temp");
+		linkedFinancesDAO.delete(financeMain.getFinID(), "_Temp");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new LinkedFinances(),
@@ -410,39 +410,38 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			linkedFinancesDAO.delete(financeMain.getFinReference(), "");
+			linkedFinancesDAO.delete(financeMain.getFinID(), "");
 		} else {
-			for (LinkedFinances linkedFinances : financeDetail.getLinkedFinancesList()) {
-				linkedFinances.setRoleCode("");
-				linkedFinances.setNextRoleCode("");
-				linkedFinances.setTaskId("");
-				linkedFinances.setNextTaskId("");
-				linkedFinances.setWorkflowId(0);
-				linkedFinances.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				linkedFinances.setLastMntBy(financeMain.getLastMntBy());
-				linkedFinances.setLastMntOn(financeMain.getLastMntOn());
-				linkedFinances.setVersion(financeMain.getVersion());
+			for (LinkedFinances lf : financeDetail.getLinkedFinancesList()) {
+				lf.setRoleCode("");
+				lf.setNextRoleCode("");
+				lf.setTaskId("");
+				lf.setNextTaskId("");
+				lf.setWorkflowId(0);
+				lf.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				lf.setLastMntBy(financeMain.getLastMntBy());
+				lf.setLastMntOn(financeMain.getLastMntOn());
+				lf.setVersion(financeMain.getVersion());
 
-				if (PennantConstants.RCD_DEL.equals(linkedFinances.getStatus())) {
+				if (PennantConstants.RCD_DEL.equals(lf.getStatus())) {
 					tranType = PennantConstants.TRAN_WF;
-					linkedFinancesDAO.deleteByLinkedReference(linkedFinances.getLinkedReference(),
-							linkedFinances.getFinReference(), "_Temp");
+					linkedFinancesDAO.deleteByLinkedReference(lf.getLinkedReference(), lf.getFinID(), "_Temp");
 				} else {
 					if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 						tranType = PennantConstants.TRAN_ADD;
-						linkedFinances.setRecordType("");
-						linkedFinances.setStatus(PennantConstants.RCD_STATUS_APPROVED);
-						linkedFinancesDAO.save(linkedFinances, "");
+						lf.setRecordType("");
+						lf.setStatus(PennantConstants.RCD_STATUS_APPROVED);
+						linkedFinancesDAO.save(lf, "");
 					} else {
 						tranType = PennantConstants.TRAN_UPD;
-						linkedFinances.setRecordType("");
-						linkedFinances.setStatus(PennantConstants.RCD_STATUS_APPROVED);
-						linkedFinancesDAO.update(linkedFinances, "");
+						lf.setRecordType("");
+						lf.setStatus(PennantConstants.RCD_STATUS_APPROVED);
+						linkedFinancesDAO.update(lf, "");
 					}
 				}
 			}
 		}
-		linkedFinancesDAO.delete(financeMain.getFinReference(), "_Temp");
+		linkedFinancesDAO.delete(financeMain.getFinID(), "_Temp");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		String[] fields = PennantJavaUtil.getFieldDetails(new LinkedFinances(),
@@ -463,8 +462,8 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 	}
 
 	@Override
-	public FinanceMain getFinMainByFinRef(String finReference) {
-		return financeMainDAO.getFinMainLinkedFinancesByFinRef(finReference, "_LFView");
+	public FinanceMain getFinMainByFinRef(long finID) {
+		return financeMainDAO.getFinMainLinkedFinancesByFinRef(finID, "_LFView");
 	}
 
 	@Override

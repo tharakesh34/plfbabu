@@ -36,7 +36,7 @@ import com.pennant.backend.model.finance.LinkedFinances;
 
 public interface LinkedFinancesService {
 
-	List<LinkedFinances> getLinkedFinancesByRef(String ref, String type);
+	List<LinkedFinances> getLinkedFinancesByRef(long finID, String type);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 
@@ -44,11 +44,11 @@ public interface LinkedFinancesService {
 
 	AuditHeader doReject(AuditHeader auditHeader);
 
-	FinanceMain getFinMainByFinRef(String finReference);
+	FinanceMain getFinMainByFinRef(long finID);
 
 	List<LinkedFinances> getFinIsLinkedActive(String finReference);
 
-	FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event);
+	FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event);
 
 	List<AuditDetail> saveOrUpdateLinkedFinanceList(FinanceDetail financeDetail, String type);
 
