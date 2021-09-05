@@ -63,6 +63,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 	public List<OverdueChargeRecovery> computeLPI(FinODDetails fod, Date valueDate, FinanceMain fm,
 			List<FinanceScheduleDetail> schedules, List<FinanceRepayments> repayments) {
+		long finID = fod.getFinID();
 		String finReference = fod.getFinReference();
 		logger.info("Computing LPI for FinReference >> {}", finReference);
 
@@ -76,7 +77,7 @@ public class LatePayInterestService extends ServiceHelper {
 		List<OverdueChargeRecovery> schdODCRecoveries = new ArrayList<>();
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 
-		//Add Schedule Date to the ODC Recovery
+		// Add Schedule Date to the ODC Recovery
 		odcr.setFinReference(finReference);
 		odcr.setFinODSchdDate(odDate);
 		odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
@@ -87,18 +88,18 @@ public class LatePayInterestService extends ServiceHelper {
 		schdODCRecoveries.add(odcr);
 
 		if (repayments == null) {
-			repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, odDate);
+			repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finID, odDate);
 		}
 
-		//Load Overdue Charge Recovery from Repayment Movements
+		// Load Overdue Charge Recovery from Repayment Movements
 		for (FinanceRepayments repayment : repayments) {
 
-			//check the payment made against the actual schedule date 
+			// check the payment made against the actual schedule date
 			if (repayment.getFinSchdDate().compareTo(odDate) != 0) {
 				continue;
 			}
 
-			//MAx OD amounts is same as repayment balance amounts
+			// MAx OD amounts is same as repayment balance amounts
 			if (repayment.getFinSchdDate().compareTo(repayment.getFinValueDate()) == 0) {
 				continue;
 			}
@@ -122,7 +123,7 @@ public class LatePayInterestService extends ServiceHelper {
 			fod.setLPIAmt(BigDecimal.ZERO);
 		}
 
-		//Add record with today date
+		// Add record with today date
 		boolean isAddTodayRcd = true;
 		for (OverdueChargeRecovery item : schdODCRecoveries) {
 			if (item.getMovementDate().compareTo(valueDate) == 0) {
@@ -140,7 +141,7 @@ public class LatePayInterestService extends ServiceHelper {
 			schdODCRecoveries.add(odcr);
 		}
 
-		//Calculate the Penalty
+		// Calculate the Penalty
 		String roundingMode = fm.getCalRoundingMode();
 		int roundingTarget = fm.getRoundingTarget();
 		String profitDaysBasis = fm.getProfitDaysBasis();
@@ -170,7 +171,7 @@ public class LatePayInterestService extends ServiceHelper {
 		fod.setLPIAmt(CalculationUtil.roundAmount(fod.getLPIAmt(), roundingMode, roundingTarget));
 		fod.setLPIBal(fod.getLPIAmt().subtract(fod.getLPIPaid()).subtract(fod.getLPIWaived()));
 
-		//if the record added for calculation it should not be displayed in screen.
+		// if the record added for calculation it should not be displayed in screen.
 		if (isAddTodayRcd) {
 			schdODCRecoveries.remove(schdODCRecoveries.size() - 1);
 		}

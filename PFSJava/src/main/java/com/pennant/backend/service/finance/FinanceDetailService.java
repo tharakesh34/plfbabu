@@ -289,8 +289,6 @@ public interface FinanceDetailService {
 
 	void saveFinSchdDetail(List<FinanceScheduleDetail> financeScheduleDetails, String finReference);
 
-	FinanceDetail getFinSchdDetailByRef(String finReference, String string, boolean b);
-
 	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String string, boolean b);
 
 	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(String finReference, String string, boolean b);

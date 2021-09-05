@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LoanDetailsEnquiryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LoanDetailsEnquiryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.enquiry;
@@ -933,7 +915,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		Customer customer = null;
 		customer = customerService.getCustomerById(aFinanceMain.getCustID());
 		setcustomerData(getFinScheduleData().getFinanceMain(), customer);
-		finFlagsDetailList = finFlagDetailsDAO.getFinFlagsByFinRef(aFinanceMain.getFinReference(),
+		finFlagsDetailList = finFlagDetailsDAO.getFinFlagsByFinRef(aFinanceMain.getFinID(),
 				FinanceConstants.MODULE_NAME, "_view");
 
 		if (aFinanceMain != null) {
@@ -1095,7 +1077,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			 * } else {
 			 */
 			FinanceProfitDetail financeProfitDetail = financeProfitDetailDAO
-					.getPftDetailForEarlyStlReport(aFinanceMain.getFinReference());
+					.getPftDetailForEarlyStlReport(aFinanceMain.getFinID());
 			int NOInst = 0;
 			if (financeProfitDetail != null) {
 				NOInst = financeProfitDetail.getNOInst();
@@ -1612,8 +1594,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_Subvention.setVisible(false);
 		}
 
-		List<ReasonHeader> details = getFinanceCancellationService()
-				.getCancelReasonDetails(aFinanceMain.getFinReference());
+		List<ReasonHeader> details = getFinanceCancellationService().getCancelReasonDetails(aFinanceMain.getFinID());
 		String data = "";
 		if (details.size() > 0) {
 			for (ReasonHeader header : details) {
@@ -1835,11 +1816,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>();
 			if (fromApproved) {
-				jointAccountDetailList = this.jointAccountDetailService
-						.getJoinAccountDetail(financeMain.getFinReference(), "_AView");
+				jointAccountDetailList = this.jointAccountDetailService.getJoinAccountDetail(financeMain.getFinID(),
+						"_AView");
 			} else {
-				jointAccountDetailList = this.jointAccountDetailService
-						.getJoinAccountDetail(financeMain.getFinReference(), "_View");
+				jointAccountDetailList = this.jointAccountDetailService.getJoinAccountDetail(financeMain.getFinID(),
+						"_View");
 			}
 
 			creditReviewDetail.setExtLiabilitiesjointAccDetails(jointAccountDetailList);

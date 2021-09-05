@@ -40,8 +40,6 @@ import com.pennanttech.pff.core.TableType;
 public class LoadFinanceData extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(LoadFinanceData.class);
 
-	private static final long serialVersionUID = -281578785120363314L;
-
 	public void prepareFinEODEvents(CustEODEvent custEODEvent, long custID) throws Exception {
 		List<FinanceMain> custFinMains = financeMainDAO.getFinMainsForEODByCustId(custID, true);
 		List<FinanceProfitDetail> custpftDet = financeProfitDetailDAO.getFinProfitDetailsByCustId(custID, true);
@@ -125,8 +123,10 @@ public class LoadFinanceData extends ServiceHelper {
 		Date valueDate = custEODEvent.getEodValueDate();
 		Date businessDate = custEODEvent.getEventProperties().getBusinessDate();
 
-		String finReference = finEODEvent.getFinanceMain().getFinReference();
-		boolean provisionExists = provisionDAO.isProvisionExists(finReference, TableType.MAIN_TAB);
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		long finID = fm.getFinID();
+
+		boolean provisionExists = provisionDAO.isProvisionExists(finID, TableType.MAIN_TAB);
 		boolean isAmountDue = false;
 
 		// Place schedule dates to Map
@@ -292,6 +292,7 @@ public class LoadFinanceData extends ServiceHelper {
 		for (FinEODEvent finEODEvent : finEODEvents) {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 
+			long finID = fm.getFinID();
 			String finRef = fm.getFinReference();
 			boolean updFinMain = finEODEvent.isUpdFinMain();
 			boolean rateReview = finEODEvent.isupdFinSchdForRateRvw();
@@ -395,7 +396,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 			if (updRepayInstruct) {
 				logger.info("Deleting Repay Instructions from the FinRepayInstruction table...");
-				int count = repayInstructionDAO.deleteInEOD(finRef);
+				int count = repayInstructionDAO.deleteInEOD(finID);
 
 				logger.info("{}  Repay Instructions deleted.", count);
 
@@ -484,9 +485,10 @@ public class LoadFinanceData extends ServiceHelper {
 	private void saveProvisions(FinEODEvent finEODEvent) {
 		for (Provision provision : finEODEvent.getProvisions()) {
 
+			long finID = provision.getFinID();
 			String finReference = provision.getFinReference();
 			logger.warn("Checking Old provision Details in PROVISIONS table..");
-			Provision oldProvision = provisionDAO.getProvisionByFinId(finReference, TableType.MAIN_TAB, false);
+			Provision oldProvision = provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
 
 			long provisionId = Long.MIN_VALUE;
 			int count = 0;
@@ -620,6 +622,7 @@ public class LoadFinanceData extends ServiceHelper {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 
 			EventProperties eventProperties = fm.getEventProperties();
+			long finID = fm.getFinID();
 			String finReference = fm.getFinReference();
 
 			if (eventProperties.isParameterLoaded()) {
@@ -637,7 +640,7 @@ public class LoadFinanceData extends ServiceHelper {
 			List<LMSServiceLog> lmsServiceLogs = new ArrayList<>();
 
 			logger.info("Fetching Old Rate from FinScheduleDetails table...");
-			BigDecimal oldRate = finServiceInstructionDAO.getOldRate(finReference, appDate);
+			BigDecimal oldRate = finServiceInstructionDAO.getOldRate(finID, appDate);
 			logger.info("The Old Rate is {}", oldRate);
 
 			List<FinanceScheduleDetail> scheduleDetail = finEODEvent.getFinanceScheduleDetails();
@@ -744,18 +747,19 @@ public class LoadFinanceData extends ServiceHelper {
 
 	private void listDeletion(FinEODEvent finEODEvent, String finEvent, String tableType) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 		if (CollectionUtils.isNotEmpty(schedules)) {
 			logger.info("Deleting FinScheduleDetails{} for the FinEvent >> {}", tableType, finEvent);
-			financeScheduleDetailDAO.deleteByFinReference(finReference, tableType, false, 0);
+			financeScheduleDetailDAO.deleteByFinReference(finID, tableType, false, 0);
 		}
 
 		List<RepayInstruction> repayInstructions = finEODEvent.getRepayInstructions();
 		if (CollectionUtils.isNotEmpty(repayInstructions) && finEODEvent.isUpdRepayInstruct()) {
 			logger.info("Deleting FinRepayInstruction{} for the FinEvent >> {}", tableType, finEvent);
-			repayInstructionDAO.deleteByFinReference(finReference, tableType, false, 0);
+			repayInstructionDAO.deleteByFinReference(finID, tableType, false, 0);
 		}
 	}
 

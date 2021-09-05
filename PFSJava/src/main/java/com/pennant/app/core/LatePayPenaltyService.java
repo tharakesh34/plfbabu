@@ -69,7 +69,6 @@ import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class LatePayPenaltyService extends ServiceHelper {
-	private static final long serialVersionUID = 6161809223570900644L;
 
 	/**
 	 * Default constructor
@@ -142,10 +141,10 @@ public class LatePayPenaltyService extends ServiceHelper {
 
 		default:
 			/* On Due Days (or) Rule Fixed amount by Due Days */
-			String finReference = fod.getFinReference();
+			long finID = fod.getFinID();
 			Date odDate = fod.getFinODSchdDate();
 			if (repayments == null) {
-				repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finReference, odDate);
+				repayments = financeRepaymentsDAO.getByFinRefAndSchdDate(finID, odDate);
 			}
 
 			String pftDaysBasis = fm.getProfitDaysBasis();
@@ -195,6 +194,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 	private void prepareDueDateData(FinODDetails fod, Date valueDate, String idb, List<FinanceRepayments> rpdList,
 			FinanceMain fm, List<FinanceScheduleDetail> schedules) {
 
+		long finID = fod.getFinID();
 		String finReference = fod.getFinReference();
 		Date odDate = fod.getFinODSchdDate();
 
@@ -378,7 +378,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 			// If charge calculation Type is Rule Fixed amount by Due Days
 			if (FinanceConstants.PENALTYTYPE_RULEFXDD.equals(fod.getODChargeType())) {
 				int dueDays = DateUtil.getDaysBetween(datePrv, dateCur);
-				FinanceProfitDetail pfd = financeProfitDetailDAO.getFinProfitDetailsById(finReference);
+				FinanceProfitDetail pfd = financeProfitDetailDAO.getFinProfitDetailsById(finID);
 
 				Map<String, Object> datamap = new HashMap<>();
 				datamap.put("fm_finType", fod.getFinType());
@@ -395,8 +395,7 @@ public class LatePayPenaltyService extends ServiceHelper {
 				datamap.put("ft_product", fm.getFinCategory());
 
 				List<ExtendedField> extData = extendedFieldDetailsService.getExtndedFieldDetails(
-						ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), FinServiceEvent.ORG,
-						finReference);
+						ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), FinServiceEvent.ORG, finReference);
 
 				if (extData != null && !extData.isEmpty()) {
 					for (ExtendedField extendedField : extData) {

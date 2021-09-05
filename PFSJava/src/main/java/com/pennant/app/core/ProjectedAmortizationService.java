@@ -149,10 +149,11 @@ public class ProjectedAmortizationService {
 	}
 
 	private void processMonthEndAccruals(FinEODEvent finEODEvent, Date amzMonth) throws Exception {
-		FinanceMain finMain = finEODEvent.getFinanceMain();
-		String finReference = finMain.getFinReference();
+		FinanceMain fm = finEODEvent.getFinanceMain();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
-		EventProperties eventProperties = finMain.getEventProperties();
+		EventProperties eventProperties = fm.getEventProperties();
 
 		Date curMonthStart = DateUtil.getMonthStart(amzMonth);
 		Date prvMonthEndDate = DateUtil.addDays(curMonthStart, -1);
@@ -167,8 +168,7 @@ public class ProjectedAmortizationService {
 		}
 
 		if (!calFromFinStartDate) {
-			prvProjAccrual = this.projectedAmortizationDAO.getPrvProjectedAccrual(finReference, prvMonthEndDate,
-					"_WORK");
+			prvProjAccrual = this.projectedAmortizationDAO.getPrvProjectedAccrual(finID, prvMonthEndDate, "_WORK");
 		}
 
 		// calculate month end and partial settlements ACCRUALS / POS

@@ -181,6 +181,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Menubar menubar;
 
 	protected String enquiryType = "";
+	private long finID;
 	protected String finReference = "";
 	protected String module = "";
 
@@ -279,6 +280,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (arguments.containsKey("financeEnquiry")) {
 				this.setFinanceEnquiry((FinanceEnquiry) arguments.get("financeEnquiry"));
+				this.finID = getFinanceEnquiry().getFinID();
 				this.finReference = getFinanceEnquiry().getFinReference();
 			}
 
@@ -378,15 +380,14 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.window_FinEnqHeaderDialog.onClose();
 				}
 				FinanceSummary summary = finScheduleData.getFinanceSummary();
-				List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false,
-						"");
+				List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false, "");
 				calculateFeeChargeDetails(feeDetails, summary);
 			} else {
 				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_View", true);
 				if (finScheduleData != null) {
 					FinanceSummary summary = finScheduleData.getFinanceSummary();
-					List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference,
-							false, "_View");
+					List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false,
+							"_View");
 					calculateFeeChargeDetails(feeDetails, summary);
 				}
 			}
@@ -455,8 +456,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("RPYENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RepaymentEnuiry.value"));
-			List<FinanceRepayments> financeRepayments = getManualPaymentService()
-					.getFinRepayListByFinRef(this.finReference, false, "");
+			List<FinanceRepayments> financeRepayments = getManualPaymentService().getFinRepayListByFinRef(this.finID,
+					false, "");
 			map.put("financeRepayments", financeRepayments);
 			map.put("finAmountformatter", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryDialog.zul";
@@ -471,7 +472,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("SUSENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_SuspenseEnquiry.value"));
-			FinanceSuspHead suspHead = getSuspenseService().getFinanceSuspHeadById(this.finReference, true, "", "");
+			FinanceSuspHead suspHead = getSuspenseService().getFinanceSuspHeadById(this.finID, true, "", "");
 			map.put("suspHead", suspHead);
 			path = "/WEB-INF/pages/Enquiry/SuspInquiry/SuspDetailEnquiryDialog.zul";
 
@@ -480,11 +481,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CheckListEnquiry.value"));
 			List<FinanceCheckListReference> financeCheckListReference;
 			if (fromApproved) {
-				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference,
-						"_AView");
+				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finID, "_AView");
 			} else {
-				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finReference,
-						"_View");
+				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finID, "_View");
 			}
 
 			map.put("FinanceCheckListReference", financeCheckListReference);
@@ -494,7 +493,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_EligibilityListEnquiry.value"));
 			List<FinanceEligibilityDetail> eligibilityDetails = getEligibilityDetailService()
-					.getFinElgDetailList(this.finReference);
+					.getFinElgDetailList(this.finID);
 			map.put("eligibilityList", eligibilityDetails);
 			map.put("finAmountformatter", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityEnquiryDialog.zul";
@@ -553,9 +552,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("DEVENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_DeviationEnquiry"));
 			List<FinanceDeviations> approvalLoanEnqList = getDeviationDetailsService()
-					.getApprovedFinanceDeviations(this.finReference);
+					.getApprovedFinanceDeviations(this.finID);
 			List<FinanceDeviations> inprocessLoanEnqList = getDeviationDetailsService()
-					.getFinanceDeviations(this.finReference);
+					.getFinanceDeviations(this.finID);
 			map.put("loanEnquiry", "");
 			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
@@ -640,9 +639,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinFeeEnquiry.value"));
 			List<FinFeeDetail> feeDetails;
 			if (fromApproved) {
-				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "_AView");
+				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false, "_AView");
 			} else {
-				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finReference, false, "_View");
+				feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false, "_View");
 			}
 
 			map.put("feeDetails", feeDetails);
@@ -737,19 +736,18 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/DPDEnquiryDialog.zul";
 		} else if ("EXCESSENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ExcessEnquiry"));
-			List<FinExcessAmount> excessDetails = getFinExcessAmountDAO().getExcessAmountsByRef(this.finReference);
+			List<FinExcessAmount> excessDetails = getFinExcessAmountDAO().getExcessAmountsByRef(this.finID);
 			map.put("excessDetails", excessDetails);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExcessEnquiryDialog.zul";
 		} else if ("OCRENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OCREnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
-			FinanceMain financeMain = financeMainDAO.getFinanceMain(finReference, new String[] { "FinType",
+			FinanceMain financeMain = financeMainDAO.getFinanceMain(this.finID, new String[] { "FinType",
 					"FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue", "FinOcrRequired" }, "");
-			FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View");
+			FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(this.finID, "_View");
 			if (finOcrHeader != null && StringUtils.isNotEmpty(financeMain.getParentRef())) {
-				FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(financeMain.getParentRef(),
-						"_View");
+				FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(this.finID, "_View");
 				if (parentFinOcrHeader != null) {
 					finOcrHeader.setOcrDetailList(parentFinOcrHeader.getOcrDetailList());
 				}
@@ -764,7 +762,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("CREENQ".equals(this.enquiryType)) {
 
 			FinanceDetail financeDetail = new FinanceDetail();
-			FinanceMain financeMain = financeMainDAO.getFinanceMain(this.finReference,
+			FinanceMain financeMain = financeMainDAO.getFinanceMain(this.finID,
 					new String[] { "FinIsActive, FinReference, FinCategory, LovEligibilityMethod" }, "_View");
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			if (enquiry.getCustID() != 0 && enquiry.getCustID() != Long.MIN_VALUE) {
@@ -788,11 +786,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>();
 				if (fromApproved) {
-					jointAccountDetailList = this.jointAccountDetailService
-							.getJoinAccountDetail(financeMain.getFinReference(), "_AView");
+					jointAccountDetailList = this.jointAccountDetailService.getJoinAccountDetail(financeMain.getFinID(),
+							"_AView");
 				} else {
-					jointAccountDetailList = this.jointAccountDetailService
-							.getJoinAccountDetail(financeMain.getFinReference(), "_View");
+					jointAccountDetailList = this.jointAccountDetailService.getJoinAccountDetail(financeMain.getFinID(),
+							"_View");
 				}
 
 				creditReviewDetail.setExtLiabilitiesjointAccDetails(jointAccountDetailList);

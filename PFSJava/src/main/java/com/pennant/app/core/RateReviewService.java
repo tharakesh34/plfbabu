@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RateReview.java														*                           
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  						*
- * Creation Date    :  26-04-2011															*
- *                                                                  						*
- * Modified Date    :  30-07-2011															*
- *                                                                  						*
- * Description 		:												 						*                                 
- *                                                                                          *
+ * * FileName : RateReview.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-04-2011 * * Modified Date :
+ * 30-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -71,14 +53,12 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class RateReviewService extends ServiceHelper {
-
-	private static final long serialVersionUID = -4939080414435712845L;
 	private Logger logger = LogManager.getLogger(RateReviewService.class);
 
 	private FinanceRateReviewDAO financeRateReviewDAO;
 	private AccrualService accrualService;
 
-	//fetch rates changed yesterday or effective date is today
+	// fetch rates changed yesterday or effective date is today
 
 	public RateReviewService() {
 		super();
@@ -105,15 +85,15 @@ public class RateReviewService extends ServiceHelper {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
 
-		//Reverify really Rate Review Required
+		// Reverify really Rate Review Required
 		finEODEvent.setRateReviewExist(false);
 
-		//No Rate Review on start date
+		// No Rate Review on start date
 		if (valueDate.compareTo(fm.getFinStartDate()) == 0) {
 			return;
 		}
 
-		//No Rate Review on Maturity date
+		// No Rate Review on Maturity date
 		if (valueDate.compareTo(fm.getMaturityDate()) == 0) {
 			return;
 		}
@@ -136,14 +116,14 @@ public class RateReviewService extends ServiceHelper {
 			}
 		}
 
-		//Never Happens
+		// Never Happens
 		if (iEvtFrom == 0) {
 			return;
 		}
 
 		FinanceScheduleDetail curSchd = null;
 
-		//SET Event From Date in case Unpaid Schedules only
+		// SET Event From Date in case Unpaid Schedules only
 		if (CalculationConstants.RATEREVIEW_RVWUPR.equals(fm.getRvwRateApplFor())) {
 			for (int i = iEvtFrom; i < schedules.size(); i++) {
 				curSchd = schedules.get(i);
@@ -169,7 +149,7 @@ public class RateReviewService extends ServiceHelper {
 			return;
 		}
 
-		//SET RECAL From Date
+		// SET RECAL From Date
 		finEODEvent.setRecalType(fm.getSchCalOnRvw());
 
 		if (StringUtils.isEmpty(finEODEvent.getRecalType())) {
@@ -235,14 +215,14 @@ public class RateReviewService extends ServiceHelper {
 		// Finance Profit Details
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 		if (profitDetail.getFinReference() == null) {
-			profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinReference());
+			profitDetail = financeProfitDetailDAO.getFinProfitDetailsById(fm.getFinID());
 		}
 
 		BigDecimal totalPftSchdOld = profitDetail.getTotalPftSchd();
 		BigDecimal totalPftCpzOld = profitDetail.getTotalPftCpz();
 
-		//finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
-		//finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
+		// finScheduleData.getFinanceMain().setCalRoundingMode(finScheduleData.getFinanceType().getRoundingMode());
+		// finScheduleData.getFinanceMain().setRoundingTarget(finScheduleData.getFinanceType().getRoundingTarget());
 
 		// Rate Changes applied for Finance Schedule Data
 		schdData = ScheduleCalculator.refreshRates(schdData);
@@ -250,8 +230,8 @@ public class RateReviewService extends ServiceHelper {
 		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
 		newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
 		// Amount Codes Details Preparation
-		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountingEvent.RATCHG,
-				valueDate, valueDate);
+		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountingEvent.RATCHG, valueDate,
+				valueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		BigDecimal totalPftSchdNew = newProfitDetail.getTotalPftSchd();
@@ -271,7 +251,7 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setFinanceScheduleDetails(schdData.getFinanceScheduleDetails());
 		finEODEvent.setRepayInstructions(schdData.getRepayInstructions());
 
-		//Saving Rate Review Details
+		// Saving Rate Review Details
 		FinanceRateReview rateReview = new FinanceRateReview();
 		rateReview.setFinReference(finReference);
 		rateReview.setRateType(finEODEvent.getRateOnChgDate());
@@ -295,34 +275,30 @@ public class RateReviewService extends ServiceHelper {
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 		aeEvent.setPostDate(custEODEvent.getCustomer().getCustAppDate());
-		//Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 
 		logger.info("Rate review Completed for the FinReference >>{}", finReference);
 	}
 
-	/**
-	 * Method for fetching Finance Schedule Data based on FinReference
-	 * 
-	 * @param finRef
-	 * @param type
-	 * @return
-	 */
 	public FinScheduleData getFinSchDataByFinRef(FinEODEvent finEodEvent) {
-
 		FinScheduleData schdData = new FinScheduleData();
 		FinanceMain fm = finEodEvent.getFinanceMain();
+
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+
 		schdData.setFinReference(finReference);
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(finEodEvent.getFinanceScheduleDetails());
+
 		FinanceType fintype = getFinanceType(fm.getFinType());
 		schdData.setFinanceType(fintype);
 		finEodEvent.setFinType(fintype);
 
-		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finReference);
-		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "", false);
+		List<RepayInstruction> repayInstructions = repayInstructionDAO.getRepayInstrEOD(finID);
+		List<FinanceDisbursement> fd = financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false);
 
 		schdData.setRepayInstructions(repayInstructions);
 		finEodEvent.setRepayInstructions(repayInstructions);
@@ -346,12 +322,12 @@ public class RateReviewService extends ServiceHelper {
 			if (i == iEvtFrom) {
 				continue;
 			}
-			//Since schedule is presented it should not considered for rate review.
+			// Since schedule is presented it should not considered for rate review.
 			if (schd.getPresentmentId() != 0) {
 				continue;
 			}
 
-			//SET RECAL FROMDATE
+			// SET RECAL FROMDATE
 			if (schd.isPftOnSchDate() || schd.isRepayOnSchDate()) {
 				if (schd.getSchdPriPaid().compareTo(BigDecimal.ZERO) == 0
 						&& schd.getSchdPftPaid().compareTo(BigDecimal.ZERO) == 0) {
