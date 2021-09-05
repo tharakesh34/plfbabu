@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ManualAdviseServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-04-2017    														*
- *                                                                  						*
- * Modified Date    :  21-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ManualAdviseServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-04-2017 * *
+ * Modified Date : 21-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
@@ -90,67 +72,15 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	private AuditHeaderDAO auditHeaderDAO;
 	private FinTaxUploadDetailDAO finTaxUploadDetailDAO;
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
-	private PinCodeDAO PinCodeDAO;
+	private PinCodeDAO pinCodeDAO;
 	private FinanceMainDAO financeMainDAO;
 	private CustomerDAO customerDAO;
 	private ProvinceDAO provinceDAO;
 	private JointAccountDetailService jointAccountDetailService;
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public FinTaxUploadDetailDAO getFinTaxUploadDetailDAO() {
-		return finTaxUploadDetailDAO;
-	}
-
-	public void setFinTaxUploadDetailDAO(FinTaxUploadDetailDAO finTaxUploadDetailDAO) {
-		this.finTaxUploadDetailDAO = finTaxUploadDetailDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public FinanceTaxDetailDAO getFinanceTaxDetailDAO() {
-		return financeTaxDetailDAO;
-	}
-
-	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
-		this.financeTaxDetailDAO = financeTaxDetailDAO;
-	}
-
 	@Override
 	public List<FinTaxUploadDetail> getFinTaxDetailUploadById(String reference, String type, String status) {
 		return finTaxUploadDetailDAO.getFinTaxDetailUploadById(reference, type, status);
-	}
-
-	public PinCodeDAO getPinCodeDAO() {
-		return PinCodeDAO;
-	}
-
-	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
-		PinCodeDAO = pinCodeDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-
-	public void setProvinceDAO(ProvinceDAO provinceDAO) {
-		this.provinceDAO = provinceDAO;
-	}
-
-	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
-		this.jointAccountDetailService = jointAccountDetailService;
 	}
 
 	@Override
@@ -173,9 +103,9 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		}
 
 		if (finTaxUploadHeader.isNewRecord()) {
-			getFinTaxUploadDetailDAO().save(finTaxUploadHeader, tableType);
+			finTaxUploadDetailDAO.save(finTaxUploadHeader, tableType);
 		} else {
-			getFinTaxUploadDetailDAO().update(finTaxUploadHeader, tableType);
+			finTaxUploadDetailDAO.update(finTaxUploadHeader, tableType);
 		}
 
 		if (finTaxUploadHeader.getFinTaxUploadDetailList() != null
@@ -192,7 +122,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		}
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -268,15 +198,15 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			}
 
 			if (saveRecord) {
-				getFinTaxUploadDetailDAO().saveFintaxDetail(finTaxUploadDetail, type);
+				finTaxUploadDetailDAO.saveFintaxDetail(finTaxUploadDetail, type);
 			}
 
 			if (updateRecord) {
-				getFinTaxUploadDetailDAO().updateFintaxDetail(finTaxUploadDetail, type);
+				finTaxUploadDetailDAO.updateFintaxDetail(finTaxUploadDetail, type);
 			}
 
 			if (deleteRecord) {
-				getFinTaxUploadDetailDAO().deleteFintaxDetail(finTaxUploadDetail, type);
+				finTaxUploadDetailDAO.deleteFintaxDetail(finTaxUploadDetail, type);
 			}
 
 			if (approveRec) {
@@ -400,7 +330,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			String aggrementNo = taxuploadDetail.getAggrementNo();
 			errParm[0] = String.valueOf(aggrementNo);
 
-			//--------Length validations-----------------------------------
+			// --------Length validations-----------------------------------
 
 			if (StringUtils.isEmpty(aggrementNo)) {
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("99015", null), usrLanguage));
@@ -485,69 +415,69 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
 			}
 
-			//Validate the GST number
+			Long finID = null;
 			if (StringUtils.isNotBlank(aggrementNo)) {
+				finID = financeMainDAO.getFinID(aggrementNo);
+			}
 
-				FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(aggrementNo, "_View", false);
-				//if Aggrement number alone not valid
-				if (financeMain == null) {
-					String[] errParams = new String[2];
+			if (finID == null) {
+				String[] errParams = new String[2];
 
-					errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
-					errParams[1] = aggrementNo;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-							new ErrorDetail(PennantConstants.KEY_FIELD, "99008", errParams, valueParm), usrLanguage));
+				errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
+				errParams[1] = aggrementNo;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "99008", errParams, valueParm), usrLanguage));
+			}
 
-				} else {
-					//if finance exist with that aggrement number. proceed with primary/co-applicant customer
-					if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
-							PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER)) {
-						//get the customer attached to the finance
-						Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
-						//check wether excel provided and finance related customer both are same
-						if (!StringUtils.equals(customer.getCustCIF(), taxuploadDetail.getApplicant())) {
-							String[] errParams = new String[2];
-							errParams[0] = PennantJavaUtil.getLabel("listheader_Applicant.label") + ":"
-									+ taxuploadDetail.getApplicant();
-							errParams[1] = aggrementNo;
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
-									usrLanguage));
-						} else {
-							//if customer validated to true proceed with the GST number validation
-							validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, financeMain,
-									customer);
+			// Validate the GST number
+			if (StringUtils.isNotBlank(aggrementNo)) {
+				FinanceMain fm = financeMainDAO.getFinanceDetailsForService(finID, "_View", false);
+				// if finance exist with that aggrement number. proceed with primary/co-applicant customer
+				if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
+						PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER)) {
+					// get the customer attached to the finance
+					Customer customer = customerDAO.getCustomerByID(fm.getCustID());
+					// check wether excel provided and finance related customer both are same
+					if (!StringUtils.equals(customer.getCustCIF(), taxuploadDetail.getApplicant())) {
+						String[] errParams = new String[2];
+						errParams[0] = PennantJavaUtil.getLabel("listheader_Applicant.label") + ":"
+								+ taxuploadDetail.getApplicant();
+						errParams[1] = aggrementNo;
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+								usrLanguage));
+					} else {
+						// if customer validated to true proceed with the GST number validation
+						validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, fm, customer);
+					}
+
+				} else if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
+						PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT)) {
+					// get the co-applicants attached to the finance
+					List<JointAccountDetail> jointAccountDetailList = jointAccountDetailService
+							.getJoinAccountDetail(fm.getFinID(), "_View");
+					// chek for one match
+					for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
+						if (StringUtils.equals(jointAccountDetail.getCustCIF(), taxuploadDetail.getApplicant())) {
+							idExist = true;
+							break;
 						}
-
-					} else if (StringUtils.equals(taxuploadDetail.getApplicableFor(),
-							PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT)) {
-						//get the co-applicants attached to the finance
-						List<JointAccountDetail> jointAccountDetailList = jointAccountDetailService
-								.getJoinAccountDetail(financeMain.getFinReference(), "_View");
-						//chek for one match
-						for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
-							if (StringUtils.equals(jointAccountDetail.getCustCIF(), taxuploadDetail.getApplicant())) {
-								idExist = true;
-								break;
-							}
-						}
-						if (!idExist) { //if Co-Applicant is not available then validate
-							errParm[0] = taxuploadDetail.getApplicant();
-							errParm[1] = aggrementNo;
-							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-									new ErrorDetail(PennantConstants.KEY_FIELD, "99009", errParm, valueParm),
-									usrLanguage));
-						} else {
-							//if co applicant available then get the customer object related to the co-applicant
-							Customer customer = customerDAO.getCustomerByCIF(taxuploadDetail.getApplicant(), "_View");
-							financeMain.setCustID(customer.getCustID());
-							validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, financeMain,
-									customer);
-						}
+					}
+					if (!idExist) { // if Co-Applicant is not available then validate
+						errParm[0] = taxuploadDetail.getApplicant();
+						errParm[1] = aggrementNo;
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "99009", errParm, valueParm), usrLanguage));
+					} else {
+						// if co applicant available then get the customer object related to the co-applicant
+						Customer customer = customerDAO.getCustomerByCIF(taxuploadDetail.getApplicant(), "_View");
+						fm.setCustID(customer.getCustID());
+						validateGstNumber(auditDetail, usrLanguage, taxuploadDetail, valueParm, fm, customer);
 					}
 				}
 			}
-			//Validate applicable flag.
+
+			// Validate applicable flag.
 			if (!(StringUtils.equals(taxuploadDetail.getApplicableFor(),
 					PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER)
 					|| StringUtils.equals(taxuploadDetail.getApplicableFor(),
@@ -560,19 +490,19 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 			}
 
-			//pincode validations against the system .
+			// pincode validations against the system .
 			if (taxuploadDetail.getPinCode() != null) {
-				PinCode pincode = getPinCodeDAO().getPinCode(taxuploadDetail.getPinCode(), "_View");
+				PinCode pincode = pinCodeDAO.getPinCode(taxuploadDetail.getPinCode(), "_View");
 				String[] errParams = new String[2];
 				if (pincode == null) {
-					//if pin code is not  available  then validate
+					// if pin code is not available then validate
 					errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label") + ":"
 							+ taxuploadDetail.getPinCode();
 					errParams[1] = aggrementNo;
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 				} else {
-					//if pin code is   available  then validate against city and province and country
+					// if pin code is available then validate against city and province and country
 					if (!StringUtils.equals(pincode.getCity(), taxuploadDetail.getCity())) {
 						errParams[0] = PennantJavaUtil.getLabel("listheader_City.label") + ":"
 								+ taxuploadDetail.getCity();
@@ -600,7 +530,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 				}
 			} else {
-				//pin code no givne then validate
+				// pin code no givne then validate
 				String[] errParams = new String[2];
 				errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label");
 				errParams[1] = aggrementNo;
@@ -608,7 +538,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
 			}
 
-			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(aggrementNo, "_Temp");
+			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_Temp");
 			if (financeTaxDetail != null) {
 				String[] errParams = new String[1];
 				errParams[0] = aggrementNo;
@@ -618,18 +548,19 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 		}
 		return auditDetail;
+
 	}
 
 	private void validateGstNumber(AuditDetail auditDetail, String usrLanguage, FinTaxUploadDetail taxuploadDetail,
 			String[] valueParm, FinanceMain financeMain, Customer customer) {
 
-		//if customer cif not equal to the provied customer CIF.
+		// if customer cif not equal to the provied customer CIF.
 		if (StringUtils.isNotBlank(taxuploadDetail.getTaxCode())) {
 			String gstStateCode = null;
 			String panNumber = customer.getCustCRCPR();
-			//if GST Number is already exist or not
-			int count = getFinanceTaxDetailDAO().getGSTNumberCount(financeMain.getCustID(),
-					taxuploadDetail.getTaxCode(), "_View");
+			// if GST Number is already exist or not
+			int count = financeTaxDetailDAO.getGSTNumberCount(financeMain.getCustID(), taxuploadDetail.getTaxCode(),
+					"_View");
 			if (count != 0) {
 				String[] parameters = new String[2];
 				parameters[0] = PennantJavaUtil.getLabel("listheader_TaxNumber.label") + ": ";
@@ -652,7 +583,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99017", errParm, valueParm), usrLanguage));
 			} else {
-				if (StringUtils.isNotBlank(gstStateCode)) { //if GST State Code is not available
+				if (StringUtils.isNotBlank(gstStateCode)) { // if GST State Code is not available
 					if (!StringUtils.equalsIgnoreCase(gstStateCode, taxuploadDetail.getTaxCode().substring(0, 2))) {
 						String[] errParams = new String[2];
 						errParams[0] = taxuploadDetail.getApplicant();
@@ -662,7 +593,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 					}
 				}
 
-				if (StringUtils.isNotBlank(panNumber)) { //if PAN number is not available in GST Number
+				if (StringUtils.isNotBlank(panNumber)) { // if PAN number is not available in GST Number
 					if (!StringUtils.equalsIgnoreCase(panNumber, taxuploadDetail.getTaxCode().substring(2, 12))) {
 						String[] errParams = new String[2];
 						errParams[0] = taxuploadDetail.getApplicant();
@@ -686,11 +617,11 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		}
 
 		FinTaxUploadHeader finTaxUploadHeader = (FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData();
-		getFinTaxUploadDetailDAO().delete(finTaxUploadHeader, "");
+		finTaxUploadDetailDAO.delete(finTaxUploadHeader, "");
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(finTaxUploadHeader, "", auditHeader.getAuditTranType())));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -783,17 +714,17 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		FinTaxUploadHeader finTaxUploadHeader = new FinTaxUploadHeader();
 		BeanUtils.copyProperties((FinTaxUploadHeader) auditHeader.getAuditDetail().getModelData(), finTaxUploadHeader);
 		if (finTaxUploadHeader.isTotalSelected()) {
-			getFinTaxUploadDetailDAO().delete(finTaxUploadHeader, "_Temp");
+			finTaxUploadDetailDAO.delete(finTaxUploadHeader, "_Temp");
 		}
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(finTaxUploadHeader.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(
-					getFinTaxUploadDetailDAO().getFinTaxUploadHeaderByRef(finTaxUploadHeader.getBatchReference(), ""));
+					finTaxUploadDetailDAO.getFinTaxUploadHeaderByRef(finTaxUploadHeader.getBatchReference(), ""));
 		}
 
 		if (finTaxUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(listDeletion(finTaxUploadHeader, "", auditHeader.getAuditTranType()));
-			getFinTaxUploadDetailDAO().delete(finTaxUploadHeader, "");
+			finTaxUploadDetailDAO.delete(finTaxUploadHeader, "");
 		} else {
 			finTaxUploadHeader.setRoleCode("");
 			finTaxUploadHeader.setNextRoleCode("");
@@ -805,12 +736,12 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				tranType = PennantConstants.TRAN_ADD;
 				finTaxUploadHeader.setRecordType("");
 				if (finTaxUploadHeader.isTotalSelected()) {
-					getFinTaxUploadDetailDAO().save(finTaxUploadHeader, "");
+					finTaxUploadDetailDAO.save(finTaxUploadHeader, "");
 				}
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				finTaxUploadHeader.setRecordType("");
-				getFinTaxUploadDetailDAO().update(finTaxUploadHeader, "");
+				finTaxUploadDetailDAO.update(finTaxUploadHeader, "");
 			}
 
 			if (finTaxUploadHeader.getFinTaxUploadDetailList() != null
@@ -824,32 +755,31 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(finTaxUploadHeader, "_Temp", auditHeader.getAuditTranType())));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
-		//update or insert based on availability.
+		// update or insert based on availability.
 
-		for (FinTaxUploadDetail finTaxUploadDetail : finTaxUploadHeader.getFinTaxUploadDetailList()) {
-			FinanceTaxDetail financeTaxDetail = getFinanceTaxDetailDAO()
-					.getFinanceTaxDetail(finTaxUploadDetail.getAggrementNo(), "_View");
+		for (FinTaxUploadDetail tud : finTaxUploadHeader.getFinTaxUploadDetailList()) {
+			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(tud.getAggrementNo(), "_View");
 			if (financeTaxDetail != null) {
-				Customer customer = customerDAO.getCustomerByCIF(finTaxUploadDetail.getApplicant(), "_View");
+				Customer customer = customerDAO.getCustomerByCIF(tud.getApplicant(), "_View");
 				financeTaxDetail.setTaxCustId(customer.getCustID());
-				preparefinTaxDetail(finTaxUploadDetail, financeTaxDetail);
-				getFinanceTaxDetailDAO().update(financeTaxDetail, TableType.MAIN_TAB);
+				preparefinTaxDetail(tud, financeTaxDetail);
+				financeTaxDetailDAO.update(financeTaxDetail, TableType.MAIN_TAB);
 			} else {
 				FinanceTaxDetail detail = new FinanceTaxDetail();
-				Customer customer = customerDAO.getCustomerByCIF(finTaxUploadDetail.getApplicant(), "_View");
+				Customer customer = customerDAO.getCustomerByCIF(tud.getApplicant(), "_View");
 				detail.setTaxCustId(customer.getCustID());
 				detail.setNewRecord(true);
-				preparefinTaxDetail(finTaxUploadDetail, detail);
-				getFinanceTaxDetailDAO().save(detail, TableType.MAIN_TAB);
+				preparefinTaxDetail(tud, detail);
+				financeTaxDetailDAO.save(detail, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(finTaxUploadHeader);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -888,12 +818,12 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		if (StringUtils.equals(uploadHeader.getRecordStatus(), PennantConstants.RCD_STATUS_CANCELLED)
 				|| uploadHeader.isTotalSelected()) {
-			getFinTaxUploadDetailDAO().delete(uploadHeader, "_Temp");
+			finTaxUploadDetailDAO.delete(uploadHeader, "_Temp");
 		}
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(uploadHeader, "_Temp", auditHeader.getAuditTranType())));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -901,6 +831,38 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 	@Override
 	public FinTaxUploadHeader getFinTaxUploadHeaderByRef(long ref) {
 		return finTaxUploadDetailDAO.getFinTaxUploadHeaderByRef(ref, "_View");
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFinTaxUploadDetailDAO(FinTaxUploadDetailDAO finTaxUploadDetailDAO) {
+		this.finTaxUploadDetailDAO = finTaxUploadDetailDAO;
+	}
+
+	public void setFinanceTaxDetailDAO(FinanceTaxDetailDAO financeTaxDetailDAO) {
+		this.financeTaxDetailDAO = financeTaxDetailDAO;
+	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setProvinceDAO(ProvinceDAO provinceDAO) {
+		this.provinceDAO = provinceDAO;
+	}
+
+	public void setJointAccountDetailService(JointAccountDetailService jointAccountDetailService) {
+		this.jointAccountDetailService = jointAccountDetailService;
 	}
 
 }

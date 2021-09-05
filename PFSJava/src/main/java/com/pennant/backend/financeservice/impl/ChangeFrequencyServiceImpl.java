@@ -364,7 +364,6 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		// validate Instruction details
 		boolean isWIF = fsi.isWif();
 		long finID = fsi.getFinID();
-		String finReference = fsi.getFinReference();
 
 		FinanceMain financeMain = financeMainDAO.getFinanceDetailsForService(finID, "", isWIF);
 

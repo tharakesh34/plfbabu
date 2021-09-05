@@ -95,6 +95,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/tax/FinanceTaxDetail/financeTaxDetailDialog.zul file. <br>
@@ -442,10 +443,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		} else {
 			FinanceMain financeMain = (FinanceMain) dataObject;
 			if (financeMain != null) {
+				long finID = financeMain.getFinID();
 				String finRef = financeMain.getFinReference();
 				this.finReference.setValue(finRef, "");
-				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finRef, "_AView"));
-				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finRef, "_AView"));
+				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finID, "_AView"));
+				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finID, "_AView"));
 				this.taxCustId = financeMain.getCustID();
 			}
 		}
@@ -630,8 +632,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				addressList = this.financeDetail.getCustomerDetails().getAddressList();
 			} else {
 				String finRef = this.finReference.getValue();
+				Long finID = ComponentUtil.getFinID(this.finReference);
+
 				if (StringUtils.isNotBlank(finRef)) {
-					FinanceMain finMain = this.financeTaxDetailService.getFinanceDetailsForService(finRef, "_View",
+					FinanceMain finMain = this.financeTaxDetailService.getFinanceDetailsForService(finID, "_View",
 							false);
 					customer = this.financeTaxDetailService.getCustomerByID(finMain.getCustID());
 					if (StringUtils.isNotBlank(addressDetail.getValue())) {
@@ -1137,6 +1141,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	public void doWriteBeanToComponents(FinanceTaxDetail aFinanceTaxDetail) {
 		logger.debug(Literal.ENTERING);
 
+		long finID = aFinanceTaxDetail.getFinID();
 		String finRef = aFinanceTaxDetail.getFinReference();
 		this.finReference.setValue(finRef);
 
@@ -1149,8 +1154,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (!fromLoan) {
 			this.recordStatus.setValue(aFinanceTaxDetail.getRecordStatus());
 			if (!aFinanceTaxDetail.isNewRecord()) {
-				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finRef, "_AView"));
-				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finRef, "_AView"));
+				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finID, "_AView"));
+				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finID, "_AView"));
 			}
 		}
 
@@ -2062,9 +2067,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			} else {
 				String finRef = this.finReference.getValue();
 				if (StringUtils.isNotBlank(finRef)) {
-					FinanceMain finMain = this.financeTaxDetailService.getFinanceDetailsForService(finRef, "_View",
-							false);
-					customer = this.financeTaxDetailService.getCustomerByID(finMain.getCustID());
+					long finID = ComponentUtil.getFinID(this.finReference);
+					FinanceMain fm = this.financeTaxDetailService.getFinanceDetailsForService(finID, "_View", false);
+					customer = this.financeTaxDetailService.getCustomerByID(fm.getCustID());
 				}
 			}
 			if (customer != null) {
