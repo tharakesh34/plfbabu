@@ -74,7 +74,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.eod.EODUtil;
 
 public class LatePayDueCreationService extends ServiceHelper {
-	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(LatePayDueCreationService.class);
 
 	private FinanceTaxDetailDAO financeTaxDetailDAO;
@@ -191,7 +190,9 @@ public class LatePayDueCreationService extends ServiceHelper {
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = new AEAmountCodes();
 
+		Long finID = pfd.getFinID();
 		String finReference = pfd.getFinReference();
+		aeEvent.setFinID(finID);
 		aeEvent.setFinReference(finReference);
 		aeEvent.setPostDate(custEODEvent.getEodValueDate());
 		aeEvent.setValueDate(custEODEvent.getEodValueDate());
@@ -381,14 +382,16 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 	private void saveOrUpdateReceivable(AEEvent aeEvent, Map<String, BigDecimal> calGstMap, String feeTypeCode) {
 		AEAmountCodes aeAmountCodes = aeEvent.getAeAmountCodes();
+		long finID = aeEvent.getFinID();
 		String finReference = aeEvent.getFinReference();
 
 		BigDecimal amzAmount = BigDecimal.ZERO;
 
-		FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finReference, feeTypeCode);
+		FinTaxReceivable taxRcv = finODAmzTaxDetailDAO.getFinTaxReceivable(finID, feeTypeCode);
 		boolean isSave = false;
 		if (taxRcv == null) {
 			taxRcv = new FinTaxReceivable();
+			taxRcv.setFinID(finID);
 			taxRcv.setFinReference(finReference);
 			taxRcv.setTaxFor(feeTypeCode);
 			isSave = true;
@@ -487,8 +490,8 @@ public class LatePayDueCreationService extends ServiceHelper {
 		FinanceMain fm = schdData.getFinanceMain();
 
 		if (fd.getFinanceTaxDetail() == null) {
-			String finReference = fm.getFinReference();
-			fd.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finReference, ""));
+			long finID = fm.getFinID();
+			fd.setFinanceTaxDetail(financeTaxDetailDAO.getFinanceTaxDetail(finID, ""));
 		}
 
 		CustomerAddres addres = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");

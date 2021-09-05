@@ -43,6 +43,7 @@ public class AEEvent implements Serializable {
 
 	private long custID;
 	private String custCIF;
+	private long finID;
 	private String finReference;
 	private String cmtReference;
 	private String finType;
@@ -53,7 +54,7 @@ public class AEEvent implements Serializable {
 	private String postingUserBranch;
 	private String entityCode;
 
-	//VAS
+	// VAS
 	private String vasPostAgainst;
 	private String collateralRef;
 	private int transOrder = 0;
@@ -68,7 +69,7 @@ public class AEEvent implements Serializable {
 
 	private EventProperties eventProperties = new EventProperties();
 
-	//Cash Management
+	// Cash Management
 	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 
 	private long paymentId;
@@ -167,6 +168,14 @@ public class AEEvent implements Serializable {
 
 	public void setCustCIF(String custCIF) {
 		this.custCIF = custCIF;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

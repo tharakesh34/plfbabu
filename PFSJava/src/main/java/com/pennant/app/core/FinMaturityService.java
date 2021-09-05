@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  FinMaturityService.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  24-12-2017															*
- *                                                                  
- * Modified Date    :  24-12-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : FinMaturityService.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 24-12-2017 *
+ * 
+ * Modified Date : 24-12-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -76,8 +67,6 @@ import com.pennanttech.pff.eod.EODUtil;
 import com.pennanttech.pff.eod.step.StepUtil;
 
 public class FinMaturityService extends ServiceHelper {
-
-	private static final long serialVersionUID = 1442146139821584760L;
 	private Logger logger = LogManager.getLogger(FinMaturityService.class);
 
 	private DataSource dataSource;
@@ -130,7 +119,7 @@ public class FinMaturityService extends ServiceHelper {
 			String amzMethodRule = null;
 			String methodRule = AmortizationConstants.AMZ_METHOD_RULE;
 
-			//Get the Rules 
+			// Get the Rules
 			if (EODUtil.isEod()) {
 				amzMethodRule = RuleConfigCache.getCacheRuleCode(methodRule, methodRule, methodRule);
 			} else {
@@ -147,19 +136,19 @@ public class FinMaturityService extends ServiceHelper {
 			while (rs.next()) {
 				StepUtil.PROCESS_INACTIVE_FINANCES.setProcessedRecords(rs.getRow());
 
+				long finID = rs.getLong("FinID");
 				String finReference = rs.getString("FinReference");
 				String amzMethod = rs.getString("AMZMethod");
 				String finType = rs.getString("FinType");
 
 				// NO Schedule Details Available (OD Loans)
-				schdDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", false);
+				schdDetails = this.financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 				if (CollectionUtils.isEmpty(schdDetails)) {
 					continue;
 				}
 
 				// Previous ProjectedAccrual
-				prvProjAccrual = this.projectedAmortizationDAO.getPrvProjectedAccrual(finReference, prvMonthEndDate,
-						"_WORK");
+				prvProjAccrual = this.projectedAmortizationDAO.getPrvProjectedAccrual(finID, prvMonthEndDate, "_WORK");
 
 				// Maturity Month ProjectedAccrual
 				projAccrual = this.projectedAmortizationService.prepareMaturityMonthProjAcc(prvProjAccrual, schdDetails,
@@ -170,10 +159,10 @@ public class FinMaturityService extends ServiceHelper {
 				if (StringUtils.isBlank(amzMethod)) {
 
 					// AMZ Method : execute rule and get amortization method
-					finEODEvent = prepareFinEODEvent(finType, finReference);
+					finEODEvent = prepareFinEODEvent(finType, finID);
 					amzMethod = this.projectedAmortizationService.identifyAMZMethod(finEODEvent, amzMethodRule);
 
-					this.projectedAmortizationService.updateAMZMethod(finReference, amzMethod);
+					this.projectedAmortizationService.updateAMZMethod(finID, amzMethod);
 				}
 			}
 
@@ -200,32 +189,26 @@ public class FinMaturityService extends ServiceHelper {
 	 */
 	private String prepareSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select T1.FinReference, T1.CustID, T1.FinType, T1.MaturityDate, T1.ClosedDate, T2.AMZMethod");
-		sql.append(" From FinanceMain T1 ");
-		sql.append(" INNER JOIN FinPftDetails T2 ON T1.FinReference = T2.FinReference");
-		sql.append(" WHERE T1.FinIsActive = 0 AND T1.ClosedDate >= ? AND T1.ClosedDate <= ?");
+		sql.append(" Select fm.FinReference, fm.CustID, fm.FinType, fm.MaturityDate, fm.ClosedDate, pd.AMZMethod");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join FinPftDetails pd ON pd.FinID = fm.FinID");
+		sql.append(" WHERE fm.FinIsActive = 0 and fm.ClosedDate >= ? and fm.ClosedDate <= ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 		return sql.toString();
 	}
 
-	/**
-	 * 
-	 * @param finType
-	 * @param finReference
-	 * @return
-	 */
-	private FinEODEvent prepareFinEODEvent(String finType, String finReference) {
+	private FinEODEvent prepareFinEODEvent(String finType, long finID) {
 
 		FinEODEvent finEODEvent = new FinEODEvent();
 
 		FinanceType financeType = FinanceConfigCache.getCacheFinanceType(StringUtils.trimToEmpty(finType));
 		finEODEvent.setFinType(financeType);
 
-		FinanceProfitDetail finProfitDetail = this.projectedAmortizationService.getFinProfitForAMZ(finReference);
+		FinanceProfitDetail finProfitDetail = this.projectedAmortizationService.getFinProfitForAMZ(finID);
 		finEODEvent.setFinProfitDetail(finProfitDetail);
 
-		FinanceMain finMain = this.projectedAmortizationService.getFinanceForAMZMethod(finReference, false);
+		FinanceMain finMain = this.projectedAmortizationService.getFinanceForAMZMethod(finID, false);
 		finEODEvent.setFinanceMain(finMain);
 
 		return finEODEvent;
