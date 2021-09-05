@@ -131,7 +131,7 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 
 	@Override
 	public List<Long> getSuspFinanceList() {
-		String sql = "Select FinID From FinSuspHead Where FinIsInSusp = ?");
+		String sql = "Select FinID From FinSuspHead Where FinIsInSusp = ?";
 
 		return jdbcOperations.queryForList(sql, Long.class, 1);
 	}
