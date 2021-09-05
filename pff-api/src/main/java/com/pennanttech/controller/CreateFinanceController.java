@@ -4299,40 +4299,46 @@ public class CreateFinanceController extends SummaryDetailService {
 		return agreements;
 	}
 
-	public WSReturnStatus updateDeviationStatus(FinanceDeviations financeDeviations) {
+	public WSReturnStatus updateDeviationStatus(FinanceDeviations deviation) {
 		logger.debug(Literal.ENTERING);
+
+		long finID = deviation.getFinID();
+		long workflowId = deviation.getWorkflowId();
+		String finReference = deviation.getFinReference();
+		long deviationId = deviation.getDeviationId();
 
 		WSReturnStatus response = new WSReturnStatus();
 		List<FinanceDeviations> list = new ArrayList<>();
 
-		FinanceDeviations aFinanceDeviations = deviationDetailsService.getFinanceDeviationsByIdAndFinRef(
-				financeDeviations.getFinReference(), financeDeviations.getDeviationId(), "_View");
-		if (aFinanceDeviations == null) {
+		FinanceDeviations aDeviation = deviationDetailsService.getFinanceDeviationsByIdAndFinRef(finID, deviationId,
+				"_View");
+
+		if (aDeviation == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = financeDeviations.getFinReference() + " and " + financeDeviations.getDeviationId();
+			valueParm[0] = finReference + " and " + deviationId;
 			response = APIErrorHandlerService.getFailedStatus("90266", valueParm);
 			return response;
-		} else {
-			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			aFinanceDeviations.setFinReference(financeDeviations.getFinReference());
-			aFinanceDeviations.setDeviationId(financeDeviations.getDeviationId());
-			aFinanceDeviations.setApprovalStatus(financeDeviations.getApprovalStatus());
-			aFinanceDeviations.setLastMntBy(userDetails.getUserId());
-			aFinanceDeviations.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			aFinanceDeviations.setDelegatedUserId(String.valueOf(userDetails.getUserId()));
-			if (StringUtils.isNotBlank(financeDeviations.getDelegationRole())) {
-				aFinanceDeviations.setDelegationRole(financeDeviations.getDelegationRole());
-			}
-			list.add(aFinanceDeviations);
-
 		}
+
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		aDeviation.setFinReference(finReference);
+		aDeviation.setDeviationId(deviationId);
+		aDeviation.setApprovalStatus(deviation.getApprovalStatus());
+		aDeviation.setLastMntBy(userDetails.getUserId());
+		aDeviation.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		aDeviation.setDelegatedUserId(String.valueOf(userDetails.getUserId()));
+
+		if (StringUtils.isNotBlank(deviation.getDelegationRole())) {
+			aDeviation.setDelegationRole(deviation.getDelegationRole());
+		}
+
+		list.add(aDeviation);
+
 		try {
-			if (StringUtils.isNotBlank(financeDeviations.getDelegationRole())) {
-				deviationDetailsService.processDevaitions(financeDeviations.getFinReference(), list,
-						getAuditHeader(financeDeviations.getFinReference()));
+			if (StringUtils.isNotBlank(deviation.getDelegationRole())) {
+				deviationDetailsService.processDevaitions(finID, list, getAuditHeader(finReference));
 			} else {
-				deviationDetailsService.processApproval(list, getAuditHeader(financeDeviations.getFinReference()),
-						financeDeviations.getFinReference());
+				deviationDetailsService.processApproval(list, getAuditHeader(finReference), finID);
 			}
 			response = APIErrorHandlerService.getSuccessStatus();
 		} catch (Exception e) {

@@ -1151,7 +1151,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 			}
 
-			FinanceMain fm = financeMainDAO.getLoanStatus(finReference);
+			FinanceMain fm = financeMainDAO.getFinanceMain(finReference);
 			if (fm == null) {
 				response = new LoanStatus();
 
@@ -1609,17 +1609,40 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
-	public WSReturnStatus updateLoanDeviation(FinanceDeviations financeDeviations) throws ServiceException {
+	public WSReturnStatus updateLoanDeviation(FinanceDeviations deviation) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus response = new WSReturnStatus();
-		response = validateUpdateDeviationRequest(financeDeviations);
+
+		String finReference = deviation.getFinReference();
+
+		if (StringUtils.isBlank(finReference)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			response = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+			return response;
+		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(finReference);
+		if (fm == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			return response;
+		}
+
+		long finID = fm.getFinID();
+		long workflowId = fm.getWorkflowId();
+		deviation.setFinID(finID);
+		deviation.setWorkflowId(workflowId);
+
+		response = validateUpdateDeviationRequest(deviation);
 
 		if (response.getReturnCode() != null) {
 			return response;
 		}
 
-		response = createFinanceController.updateDeviationStatus(financeDeviations);
+		response = createFinanceController.updateDeviationStatus(deviation);
 
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -1629,25 +1652,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus wsrs = new WSReturnStatus();
-
-		String finReference = deviation.getFinReference();
-
-		if (StringUtils.isBlank(finReference)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = "FinReference";
-			wsrs = APIErrorHandlerService.getFailedStatus("90502", valueParm);
-			return wsrs;
-		}
-
-		FinanceMain fm = financeMainDAO.getGetDeviation(finReference);
-		if (fm == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			wsrs = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			return wsrs;
-		}
-
-		long workflowId = fm.getWorkflowId();
 
 		if (deviation.getDeviationId() == Long.MIN_VALUE) {
 			String[] valueParm = new String[1];
@@ -1679,7 +1683,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		if (StringUtils.isNotBlank(deviation.getDelegationRole())) {
 			StringBuilder roles = new StringBuilder();
 			boolean roleFound = false;
-			List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(workflowId);
+			List<ValueLabel> delegators = deviationHelper.getRoleAndDesc(deviation.getWorkflowId());
 			if (CollectionUtils.isNotEmpty(delegators)) {
 				for (ValueLabel details : delegators) {
 					roles.append(details.getValue() + ",");
