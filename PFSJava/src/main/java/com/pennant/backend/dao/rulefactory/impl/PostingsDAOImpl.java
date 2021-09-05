@@ -330,13 +330,22 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getPostingsByVasref(long finID, String[] finEvent) {
+	public List<ReturnDataSet> getPostingsByVasref(String vasReference, String[] finEvents) {
+		List<String> list = Arrays.asList(finEvents);
+
 		StringBuilder sql = getSelectQuery();
-		sql.append(" Where FinID = ? and FinEvent in(");
+		sql.append(" Where FinReference = ? and FinEvent in(");
+		sql.append(JdbcUtil.getInCondition(list));
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
 		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, vasReference);
+
+			for (String finEvent : list) {
+				ps.setString(index++, finEvent);
+			}
 
 		}, new ReturnDataSetRowMapper());
 	}

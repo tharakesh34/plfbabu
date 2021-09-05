@@ -63,7 +63,7 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsbyFinanceBranch(String branchCode);
 
-	List<ReturnDataSet> getPostingsByVasref(long finID, String[] finEvent);
+	List<ReturnDataSet> getPostingsByVasref(String vasReference, String[] finEvent);
 
 	List<ReturnDataSet> getPostingsByFinRef(long finID, boolean reqReversals);
 

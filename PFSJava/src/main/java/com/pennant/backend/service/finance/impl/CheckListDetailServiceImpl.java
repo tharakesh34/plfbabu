@@ -412,8 +412,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 	}
 
 	@Override
-	public List<FinanceCheckListReference> getCheckListByFinRef(long finID, String type) {
-		return financeCheckListReferenceDAO.getCheckListByFinRef(finID, null, type);
+	public List<FinanceCheckListReference> getCheckListByFinRef(String reference, String type) {
+		return financeCheckListReferenceDAO.getCheckListByFinRef(reference, null, type);
 	}
 
 	@Override
