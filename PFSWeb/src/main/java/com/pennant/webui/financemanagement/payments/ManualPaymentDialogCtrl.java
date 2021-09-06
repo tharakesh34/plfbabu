@@ -613,8 +613,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		if (isChgRpy) {
 
-			FinScheduleData data = getFinanceDetailService().getFinSchDataById(financeMain.getFinReference(), "_AView",
-					false);
+			FinScheduleData data = getFinanceDetailService().getFinSchDataById(financeMain.getFinID(), "_AView", false);
 			aFinanceMain = data.getFinanceMain();
 			aFinanceMain.setWorkflowId(financeMain.getWorkflowId());
 			aFinanceMain.setVersion(financeMain.getVersion());
@@ -709,7 +708,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.accruedPft.setValue(PennantAppUtil.formateAmount(getRepayMain().getAccrued(), finformatter));
 
 		// Total Overdue Penalty Amount
-		BigDecimal pendingODC = getOverdueChargeRecoveryService().getPendingODCAmount(aFinanceMain.getFinReference());
+		BigDecimal pendingODC = getOverdueChargeRecoveryService().getPendingODCAmount(aFinanceMain.getFinID());
 		repayData.setPendingODC(pendingODC);
 		this.pendingODC.setValue(PennantAppUtil.formateAmount(pendingODC, finformatter));
 
@@ -717,7 +716,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (moduleDefiner.equals(FinServiceEvent.EARLYSETTLE) || moduleDefiner.equals(FinServiceEvent.EARLYSTLENQ)) {
 
 			// Fetch Total Repayment Amount till Maturity date for Early Settlement
-			BigDecimal repayAmt = getFinanceDetailService().getTotalRepayAmount(aFinanceMain.getFinReference());
+			BigDecimal repayAmt = getFinanceDetailService().getTotalRepayAmount(aFinanceMain.getFinID());
 			this.rpyAmount.setValue(PennantAppUtil.formateAmount(repayAmt, finformatter));
 			this.row_EarlySettleDate.setVisible(true);
 
@@ -1926,10 +1925,10 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		int format = CurrencyUtil.getFormat(finMain.getFinCcy());
-		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getAppValueDate();
+		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinID());
+		Date dateValueDate = SysParamUtil.getAppValueDate();
 
-		Date curBDay = DateUtility.getAppDate();
+		Date curBDay = SysParamUtil.getAppDate();
 		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
 				profitDetail, eventCode, curBDay, dateValueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -2276,7 +2275,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		} catch (InterfaceException e) {
 			MessageUtil.showError(e);
-		} catch (IllegalAccessException | InvocationTargetException e) {
+		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 
@@ -2968,7 +2967,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
 		FinanceProfitDetail profitDetail = getManualPaymentService()
-				.getPftDetailForEarlyStlReport(financeMain.getFinReference());
+				.getPftDetailForEarlyStlReport(financeMain.getFinID());
 		if (profitDetail != null) {
 			BigDecimal financeAmount = financeMain.getFinAmount()
 					.add(financeMain.getFeeChargeAmt() != null ? financeMain.getFeeChargeAmt() : BigDecimal.ZERO)

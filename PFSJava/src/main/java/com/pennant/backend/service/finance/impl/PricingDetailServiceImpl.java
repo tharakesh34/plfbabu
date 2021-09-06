@@ -71,11 +71,11 @@ public class PricingDetailServiceImpl implements PricingDetailService {
 	}
 
 	@Override
-	public List<FinanceMain> getFinanceMains(long finID, String type) {
+	public FinanceMain getFinanceMain(long finID, String type) {
 		logger.debug(Literal.ENTERING);
-		List<FinanceMain> finMains = financeMainDAO.getFinanceByInvReference(finID, type);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
 		logger.debug(Literal.LEAVING);
-		return finMains;
+		return fm;
 	}
 
 	@Override

@@ -25,6 +25,24 @@ public class FinOCRHeaderDAOImpl extends SequenceDao<FinOCRHeader> implements Fi
 	}
 
 	@Override
+	public FinOCRHeader getFinOCRHeaderByRef(String parentRef, String type) {
+		StringBuilder sql = sqlSelectedQuery(type);
+		sql.append(" Where FinReference = ?");
+
+		FinOCRHeaderRowMapper rowMapper = new FinOCRHeaderRowMapper();
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, parentRef);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
 	public FinOCRHeader getFinOCRHeaderByRef(long finID, String type) {
 		StringBuilder sql = sqlSelectedQuery(type);
 		sql.append(" Where FinID = ?");

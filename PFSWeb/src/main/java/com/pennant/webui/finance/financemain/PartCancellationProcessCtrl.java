@@ -34,6 +34,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/PartCancellationProcess.zul file.
@@ -71,8 +72,7 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_PartCancellationProcess(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
@@ -121,8 +121,7 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 	 * The framework calls this event handler when user clicks the Get Schedule button. Show the dialog page with a new
 	 * entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnGetSchedule(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -135,8 +134,7 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 	 * The framework calls this event handler when user clicks the Post Schedule button. Show the dialog page with a new
 	 * entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnPostSchedule(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -168,12 +166,14 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 
 		FinServiceInstruction finServiceInstc = new FinServiceInstruction();
 
-		String finref = this.finReference.getValue();
+		long finID = ComponentUtil.getFinID(this.finReference);
+		String finReference = this.finReference.getValue();
 		Date refunddate = this.refundDate.getValue();
 		BigDecimal refundAmt = this.refundAmt.getActualValue();
 		refundAmt = PennantApplicationUtil.unFormateAmount(refundAmt, 2);
 
-		finServiceInstc.setFinReference(finref);
+		finServiceInstc.setFinID(finID);
+		finServiceInstc.setFinReference(finReference);
 		finServiceInstc.setRefund(refundAmt);
 		finServiceInstc.setPftChg(refundAmt);
 		finServiceInstc.setFinEvent(FinServiceEvent.PART_CANCELLATION);
@@ -186,7 +186,7 @@ public class PartCancellationProcessCtrl extends GFCBaseListCtrl<FinServiceInstr
 		String eventCode = AccountingEvent.PART_CANCELATION;
 		FinanceDetail finDetails = partCancellationService.getFinanceDetails(finServiceInstc, eventCode);
 
-		// service level validations 
+		// service level validations
 		AuditDetail auditDetail = partCancellationService.validateRequest(finServiceInstc, finDetails);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail detail : auditDetail.getErrorDetails()) {

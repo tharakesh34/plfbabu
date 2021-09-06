@@ -131,7 +131,7 @@ public interface FinanceDetailService {
 
 	FinanceSummary getFinanceProfitDetails(String finRef);
 
-	FinanceProfitDetail getFinProfitDetailsById(String finReference);
+	FinanceProfitDetail getFinProfitDetailsById(long finID);
 
 	boolean checkFirstTaskOwnerAccess(Set<String> userroles, String event, String moduleName);
 
@@ -195,7 +195,7 @@ public interface FinanceDetailService {
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String finEvent, String type, boolean origination,
 			int moduleId);
 
-	BigDecimal getTotalRepayAmount(String finReference);
+	BigDecimal getTotalRepayAmount(long finId);
 
 	List<String> getUsersLoginList(List<String> nextRoleCodes);
 

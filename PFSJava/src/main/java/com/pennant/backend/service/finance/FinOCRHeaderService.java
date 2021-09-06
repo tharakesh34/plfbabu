@@ -9,6 +9,8 @@ import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinOCRHeaderService {
 
+	FinOCRHeader getFinOCRHeaderByRef(String parentRef, String type);
+
 	FinOCRHeader getFinOCRHeaderByRef(long finID, String type);
 
 	FinOCRHeader getFinOCRHeaderById(long headerId, String type);

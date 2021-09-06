@@ -294,17 +294,17 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				this.role = (String) arguments.get("Role");
 			}
 
-			List<String> invFinRefList = getPricingDetailService().getInvestmentRefifAny(
-					financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "_Temp");
-			if (CollectionUtils.isNotEmpty(invFinRefList)) {
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
+			FinanceMain fm = schdData.getFinanceMain();
+			List<Long> finIdList = getPricingDetailService().getInvestmentRefifAny(fm.getFinReference(), "_Temp");
+			if (CollectionUtils.isNotEmpty(finIdList)) {
 				partiallySplitted = true;
 				noofTopUps = 1;
 			}
 
-			if (CollectionUtils.isEmpty(invFinRefList)) {
-				invFinRefList = getPricingDetailService().getParentRefifAny(
-						financeDetail.getFinScheduleData().getFinanceMain().getFinReference(), "_Temp");
-				if (CollectionUtils.isNotEmpty(invFinRefList)) {
+			if (CollectionUtils.isEmpty(finIdList)) {
+				finIdList = getPricingDetailService().getParentRefifAny(fm.getFinReference(), "_Temp");
+				if (CollectionUtils.isNotEmpty(finIdList)) {
 					partiallySplitted = true;
 					splitted = true;
 				}
@@ -315,31 +315,33 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 			List<FinFeeDetail> tempFeeList = new ArrayList<FinFeeDetail>();
 			List<VASRecording> tempVASList = new ArrayList<VASRecording>();
 
-			if (CollectionUtils.isNotEmpty(invFinRefList)) {
+			if (CollectionUtils.isNotEmpty(finIdList)) {
 				PricingDetail detail = new PricingDetail();
 
-				for (String invFinRef : invFinRefList) {
-					List<FinanceMain> finMains = getPricingDetailService().getFinanceMains(invFinRef, "_TView");
-					tempList.addAll(finMains);
-					for (FinanceMain financeMain : finMains) {
-						if (topUpFinType == null) {
-							topUpFinType = getPricingDetailService().getFinanceTypeById(financeMain.getFinType());
-						}
-						finAssetValue = finAssetValue.add(financeMain.getFinAssetValue());
+				for (Long finID : finIdList) {
+					FinanceMain finMain = getPricingDetailService().getFinanceMain(finID, "_TView");
+					tempList.add(finMain);
+
+					String finReference = finMain.getFinReference();
+
+					if (topUpFinType == null) {
+						topUpFinType = getPricingDetailService().getFinanceTypeById(finMain.getFinType());
 					}
 
-					detail.setFinanceMains(finMains);
-					List<FinFeeDetail> finFeeDetailList = getPricingDetailService().getFinFeeDetailById(invFinRef,
-							false, "_View");
-					finFeeDetailMap.put(invFinRef, finFeeDetailList);
+					finAssetValue = finAssetValue.add(finMain.getFinAssetValue());
+
+					detail.getFinanceMains().add(finMain);
+					List<FinFeeDetail> finFeeDetailList = getPricingDetailService().getFinFeeDetailById(finID, false,
+							"_View");
+					finFeeDetailMap.put(finReference, finFeeDetailList);
 
 					tempFeeList.addAll(finFeeDetailList);
 					detail.setTopUpFinFeeDetails(finFeeDetailList);
 					pricingDetail.setTopUpFinFeeDetails(finFeeDetailList);
 
-					List<VASRecording> vasList = getPricingDetailService().getVASRecordingsByLinkRef(invFinRef,
+					List<VASRecording> vasList = getPricingDetailService().getVASRecordingsByLinkRef(finReference,
 							"_View");
-					vasRecordingMap.put(invFinRef, vasList);
+					vasRecordingMap.put(finReference, vasList);
 					tempVASList.addAll(vasList);
 					pricingDetail.setTopUpVasDetails(vasList);
 
@@ -413,7 +415,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		FinanceMain fm = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 
 		List<FinFeeDetail> templist = pricingDetail.getActualFinFeeDetails();
 		for (FinFeeDetail finFeeDetail : aFinanceDetail.getFinScheduleData().getFinFeeDetailList()) {

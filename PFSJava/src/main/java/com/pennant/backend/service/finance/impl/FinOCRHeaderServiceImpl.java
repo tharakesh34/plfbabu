@@ -54,6 +54,18 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 	}
 
 	@Override
+	public FinOCRHeader getFinOCRHeaderByRef(String parentRefr, String type) {
+		FinOCRHeader ocrHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(parentRefr, type);
+
+		if (ocrHeader != null) {
+			ocrHeader.setOcrDetailList(finOCRDetailDAO.getFinOCRDetailsByHeaderID(ocrHeader.getHeaderID(), type));
+			ocrHeader.setFinOCRCapturesList(finOCRCaptureDAO.getFinOCRCaptureDetailsByRef(ocrHeader.getFinID(), type));
+		}
+
+		return ocrHeader;
+	}
+
+	@Override
 	public FinOCRHeader getFinOCRHeaderByRef(long finID, String type) {
 		FinOCRHeader finOCRHeader = finOCRHeaderDAO.getFinOCRHeaderByRef(finID, type);
 

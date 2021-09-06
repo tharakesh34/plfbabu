@@ -1679,7 +1679,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			//
 		}
 
-		return 0;
+		return null;
 	}
 
 	@Override

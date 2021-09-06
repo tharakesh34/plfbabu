@@ -1290,8 +1290,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 
 		try {
 
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(getOverdueChargeRecovery().getFinReference(),
-					"", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(getOverdueChargeRecovery().getFinID(), "",
+					false);
 			Date dateValueDate = DateUtility.getAppValueDate();
 			Date SchdDate = getOverdueChargeRecovery().getFinODSchdDate();
 			String finODFor = getOverdueChargeRecovery().getFinODFor();

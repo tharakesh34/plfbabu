@@ -489,7 +489,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		FinRepayHeader rph = repayData.getFinRepayHeader();
-		cancelStageAccounting(fm.getFinReference(), rph.getFinEvent());
+		cancelStageAccounting(finID, rph.getFinEvent());
 
 		listDeletion(finID, "_Temp", false);
 		finFeeChargesDAO.deleteChargesBatch(finID, rph.getFinEvent(), false, "_Temp");

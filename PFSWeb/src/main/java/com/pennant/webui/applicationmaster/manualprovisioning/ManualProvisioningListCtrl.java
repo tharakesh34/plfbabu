@@ -96,8 +96,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ManualProvisioningList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -135,8 +134,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ManualProvisioningList_ManualProvisioningSearch(Event event) {
 		search();
@@ -145,8 +143,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -178,8 +175,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onManualProvisionItemDoubleClicked(Event event) {
@@ -190,17 +186,16 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		final Provision aProvision = (Provision) selectedItem.getAttribute("data");
 
 		String finType = null;
-		Provision provision = provisionService.getProvisionById(aProvision.getFinReference(), TableType.VIEW);
+		Provision provision = provisionService.getProvisionById(aProvision.getFinID(), TableType.VIEW);
 
 		if (provision == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		} else {
-			FinanceDetail financeDetail = this.financeDetailService.getFinSchdDetailById(provision.getFinReference(),
+			FinanceDetail financeDetail = this.financeDetailService.getFinSchdDetailById(provision.getFinID(),
 					TableType.AVIEW.getSuffix(), false);
 
-			FinanceProfitDetail finPftDetail = this.financeDetailService
-					.getFinProfitDetailsById(provision.getFinReference());
+			FinanceProfitDetail finPftDetail = this.financeDetailService.getFinProfitDetailsById(provision.getFinID());
 			if (finPftDetail != null) {
 				financeDetail.getFinScheduleData().setFinPftDeatil(finPftDetail);
 				finType = finPftDetail.getFinType();
@@ -248,7 +243,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 				provision.setWorkflowId(getWorkFlowId());
 			}
 
-			Provision oldProvision = provisionService.getProvisionById(aProvision.getFinReference(), TableType.AVIEW);
+			Provision oldProvision = provisionService.getProvisionById(aProvision.getFinID(), TableType.AVIEW);
 			provision.setOldProvision(oldProvision);
 			doShowDialogPage(provision);
 		} else {
@@ -261,8 +256,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param assetclassificationheader
-	 *            The entity that need to be passed to the dialog.
+	 * @param assetclassificationheader The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Provision provision) {
 		logger.debug(Literal.ENTERING);
@@ -288,8 +282,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -298,8 +291,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
@@ -323,7 +315,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		search();
 	}
 
-	//Getters and Setters
+	// Getters and Setters
 	public FinanceDetailService getFinanceDetailService() {
 		return financeDetailService;
 	}

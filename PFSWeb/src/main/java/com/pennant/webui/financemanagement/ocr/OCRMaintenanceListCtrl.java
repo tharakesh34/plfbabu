@@ -72,7 +72,6 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	protected FinFeeDetailService finFeeDetailService;
 
-
 	/**
 	 * default constructor.<br>
 	 */
@@ -99,8 +98,7 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 		registerButton(button_OCRMaintenanceList_OCRMaintenanceSearchDialog);
 
 		registerField("finReference", listheader_OCRMaintenanceLoanReference, SortOrder.ASC, finReference,
-				sortOperator_loanReference,
-				Operators.STRING);
+				sortOperator_loanReference, Operators.STRING);
 		registerField("totalDemand", listheader_OCRMaintenanceTotalDemand, SortOrder.ASC, totalDemand,
 				sortOperator_totalDemand, Operators.NUMERIC);
 		registerField("ocrType", listheader_OCRMaintenanceOCRType, SortOrder.ASC, ocrType, sortOperator_ocrType,
@@ -119,12 +117,12 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 					.addWhereClause(" finreference in(select finreference from financemain where FinisActive=1)");
 		}
 	}
+
 	/**
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onOCRMaintenanceItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -134,7 +132,8 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 
 		// Get the selected entity.
 		String finReference = (String) selectedItem.getAttribute("id");
-		FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finReference, "_View");
+		long finID = (Long) selectedItem.getAttribute("finID");
+		FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finID, "_View");
 
 		if (finOcrHeader == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -162,10 +161,8 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 
 		}
 		FinanceDetail financeDetail = new FinanceDetail();
-		FinanceMain financeMain = financeMainService.getFinanceMain(finOcrHeader.getFinReference(),
-				new String[] { "FinType", "FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue",
-						"FinOcrRequired" },
-				"");
+		FinanceMain financeMain = financeMainService.getFinanceMain(finOcrHeader.getFinID(), new String[] { "FinType",
+				"FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue", "FinOcrRequired" }, "");
 		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
 			FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(financeMain.getParentRef(),
 					"_View");
@@ -175,9 +172,8 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 		}
 		FinanceType financeType = financeTypeService.getFinanceTypeByFinType(financeMain.getFinType());
 		List<FinAdvancePayments> finAdvPaymentList = finAdvancePaymentsService
-				.getFinAdvancePaymentsById(finOcrHeader.getFinReference(), "");
-		List<FinFeeDetail> feeDetails = finFeeDetailService.getFinFeeDetailById(finOcrHeader.getFinReference(), false,
-				"");
+				.getFinAdvancePaymentsById(finOcrHeader.getFinID(), "");
+		List<FinFeeDetail> feeDetails = finFeeDetailService.getFinFeeDetailById(finOcrHeader.getFinID(), false, "");
 		financeDetail.getFinScheduleData().setFinanceType(financeType);
 		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 		financeDetail.setFinOCRHeader(finOcrHeader);
@@ -200,8 +196,7 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_OCRMaintenanceList_OCRMaintenanceSearchDialog(Event event) {
 		search();
@@ -210,8 +205,7 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -221,8 +215,7 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -231,8 +224,7 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

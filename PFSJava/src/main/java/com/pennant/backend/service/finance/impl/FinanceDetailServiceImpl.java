@@ -9075,8 +9075,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public BigDecimal getTotalRepayAmount(String finReference) {
-		return financeScheduleDetailDAO.getTotalRepayAmount(finReference);
+	public BigDecimal getTotalRepayAmount(long finID) {
+		return financeScheduleDetailDAO.getTotalRepayAmount(finID);
 	}
 
 	// ******************************************************//

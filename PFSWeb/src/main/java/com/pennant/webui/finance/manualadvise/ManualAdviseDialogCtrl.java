@@ -484,10 +484,9 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		if (taxApplicable) {
 
 			this.gb_GSTDetails.setVisible(true);
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "",
-					false);
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinID(), "", false);
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
 
 			// For Calculating the GST amount, converting fees as FinFeeDetail
 			// and FinTypeFees and this is for inquiry purpose only, these
@@ -610,7 +609,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 			return;
 		}
 
-		FinanceDetail fd = financeDetailService.getFinSchdDetailById(financeMain.getFinReference(), "", false);
+		FinanceDetail fd = financeDetailService.getFinSchdDetailById(financeMain.getFinID(), "", false);
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		tdsApplicable = TDSCalculator.isTDSApplicable(fm);
 		this.gb_TDSDetails.setVisible(true);

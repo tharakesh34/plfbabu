@@ -16,7 +16,7 @@ public interface PricingDetailService {
 
 	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type);
 
-	List<FinanceMain> getFinanceMains(long finID, String type);
+	FinanceMain getFinanceMain(long finID, String type);
 
 	List<Long> getInvestmentRefifAny(String investmentRef, String type);
 

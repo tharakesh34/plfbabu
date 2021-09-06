@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  OverdueChargeRecoveryListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-05-2012    														*
- *                                                                  						*
- * Modified Date    :  11-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : OverdueChargeRecoveryListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-05-2012 * *
+ * Modified Date : 11-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.overduechargerecovery;
@@ -123,7 +105,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	protected Listheader listheader_FinODCCPenalty; // autowired
 	protected Listheader listheader_FinODCRecoverySts; // autowired
 
-	// Filtering Fields 
+	// Filtering Fields
 
 	protected Datebox finSchdDate; // autowired
 	protected Listbox sortOperator_finSchdDate; // autowired
@@ -162,7 +144,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private Textbox recoveryCode;
 	private String finReference = "";
-	//private int ccyFormatter = 0;
+	// private int ccyFormatter = 0;
 
 	/**
 	 * default constructor.<br>
@@ -301,7 +283,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 
 		}
-		//this.btnClose.setVisible(false);
+		// this.btnClose.setVisible(false);
 		logger.debug("Leaving");
 	}
 
@@ -379,7 +361,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			// CAST AND STORE THE SELECTED OBJECT
 			final OverdueChargeRecovery aOverdueChargeRecovery = (OverdueChargeRecovery) item.getAttribute("data");
 			final OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecoveryService()
-					.getOverdueChargeRecoveryById(aOverdueChargeRecovery.getId(),
+					.getOverdueChargeRecoveryById(aOverdueChargeRecovery.getFinID(),
 							aOverdueChargeRecovery.getFinODSchdDate(), aOverdueChargeRecovery.getFinODFor());
 
 			if (overdueChargeRecovery == null) {
@@ -429,8 +411,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param OverdueChargeRecovery
-	 *            (aOverdueChargeRecovery)
+	 * @param OverdueChargeRecovery (aOverdueChargeRecovery)
 	 * @throws Exception
 	 */
 	private void showDetailView(OverdueChargeRecovery aOverdueChargeRecovery) throws Exception {
@@ -576,7 +557,8 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 			// Scheduled Date
 			if (this.finSchdDate.getValue() != null) {
-				//searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(), this.finSchdDate.getValue() , "finSchdDate");
+				// searchObj = getSearchFilter(searchObj,this.sortOperator_finSchdDate.getSelectedItem(),
+				// this.finSchdDate.getValue() , "finSchdDate");
 
 				searchObj.addFilter(new Filter("finSchdDate",
 						DateUtility.format(this.finSchdDate.getValue(), PennantConstants.DBDateFormat),
@@ -584,27 +566,28 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 			// Overdue Date
 			if (this.finODDate.getValue() != null) {
-				//searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(), this.finODDate.getValue() , "finODDate");
+				// searchObj = getSearchFilter(searchObj,this.sortOperator_finODDate.getSelectedItem(),
+				// this.finODDate.getValue() , "finODDate");
 
 				searchObj.addFilter(new Filter("finODDate",
 						DateUtility.format(this.finODDate.getValue(), PennantConstants.DBDateFormat), Filter.OP_EQUAL));
 			}
-			// Overdue Principle 
+			// Overdue Principle
 			if (this.finODPrinciple.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODPrincpl.getSelectedItem(),
 						this.finODPrinciple.getValue(), "finODPri");
 			}
-			// Overdue Profit 
+			// Overdue Profit
 			if (this.finODProfit.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODProfit.getSelectedItem(),
 						this.finODProfit.getValue(), "finODPft");
 			}
-			// Overdue Total 
+			// Overdue Total
 			if (this.finODTotal.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODTotal.getSelectedItem(),
 						this.finODTotal.getValue(), "finODTot");
 			}
-			// Overdue Waived 
+			// Overdue Waived
 			if (this.finODWaived.getValue() != null) {
 				searchObj = getSearchFilter(searchObj, this.sortOperator_finODWaived.getSelectedItem(),
 						this.finODWaived.getValue(), "finODCWaiverPaid");

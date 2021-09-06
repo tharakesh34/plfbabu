@@ -72,17 +72,16 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		super();
 	}
 
-	public FinanceDetail getFinanceDetails(FinServiceInstruction finServiceInst, String eventCode) {
+	public FinanceDetail getFinanceDetails(FinServiceInstruction fsi, String eventCode) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = null;
 
-		String finReference = finServiceInst.getFinReference();
-		if (!finServiceInst.isWif()) {
-			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false,
-					FinServiceEvent.ORG, "");
+		Long finID = fsi.getFinID();
+		if (!fsi.isWif()) {
+			financeDetail = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 		} else {
-			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
+			financeDetail = financeDetailService.getWIFFinance(finID, false, null);
 		}
 
 		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
@@ -178,9 +177,9 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 			// financeScheduleDetailDAO.saveList(fsdList, "_Log", false);
 			// financeScheduleDetailDAO.deleteByFinReference(finReference, "", false, 0);
 			// financeScheduleDetailDAO.saveList(fsdList, "", false);
-			// update finance main 
+			// update finance main
 			// save repay instructions
-			// save service instructions 
+			// save service instructions
 		}
 	}
 
@@ -226,19 +225,21 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 
 	/**
 	 * 
-	 * @param finServiceInstruction
-	 * @param financeDetail
+	 * @param fsi
+	 * @param fd
 	 * @return auditDetail
 	 */
-	public AuditDetail validateRequest(FinServiceInstruction finServiceInstruction, FinanceDetail financeDetail) {
+	public AuditDetail validateRequest(FinServiceInstruction fsi, FinanceDetail fd) {
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 
 		// validate Instruction details
-		boolean isWIF = finServiceInstruction.isWif();
-		String finReference = finServiceInstruction.getFinReference();
+		boolean isWIF = fsi.isWif();
+		long finID = fsi.getFinID();
+		String finReference = fsi.getFinReference();
 
-		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
 		/**
 		 * Checking whether the finance details are available or not for the specified fin reference.
@@ -291,8 +292,8 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		/**
 		 * Checking whether the Refund Amount is greater than 0.
 		 */
-		BigDecimal refundAmount = finServiceInstruction.getRefund();
-		Date refundDate = finServiceInstruction.getValueDate();
+		BigDecimal refundAmount = fsi.getRefund();
+		Date refundDate = fsi.getValueDate();
 
 		if (refundAmount == null) {
 			String[] valueParm = new String[1];
@@ -361,11 +362,10 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		/**
 		 * Checking whether the part cancellation is on same date should be not be allowed more than once.
 		 */
-		Date eventDate = finServiceInstruction.getFromDate();
+		Date eventDate = fsi.getFromDate();
 		String eventCode = FinServiceEvent.PART_CANCELLATION;
 		List<FinServiceInstruction> serviceInstructions;
-		serviceInstructions = finServiceInstructionDAO.getFinServiceInstAddDisbDetail(finReference, eventDate,
-				eventCode);
+		serviceInstructions = finServiceInstructionDAO.getFinServiceInstAddDisbDetail(finID, eventDate, eventCode);
 		if (serviceInstructions != null && serviceInstructions.size() > 0) {
 			String[] valueParm = new String[4];
 			valueParm[0] = Labels.getLabel("label_PartCancellation_Valid_SameDate");
@@ -393,19 +393,19 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		/**
 		 * Checking whether refund date should be greater than last due date.
 		 */
-		List<FinanceScheduleDetail> fsdList = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> fsdList = schdData.getFinanceScheduleDetails();
 		Date lastDueDate = null;
 		FinanceScheduleDetail financeScheduleDetail = null;
-		//ArrayList<FinanceScheduleDetail> afsdList = new ArrayList<FinanceScheduleDetail>();
+		// ArrayList<FinanceScheduleDetail> afsdList = new ArrayList<FinanceScheduleDetail>();
 		for (int iFsd = 0; iFsd < fsdList.size(); iFsd++) {
 			FinanceScheduleDetail fsd = fsdList.get(iFsd);
 			Date schdate = fsd.getSchDate();
 			if (schdate.compareTo(appDate) < 0) {
-				//afsdList.add(fsd);
+				// afsdList.add(fsd);
 				financeScheduleDetail = fsd;
 			}
 		}
-		//lastDueDate = afsdList.get(afsdList.size() - 1).getSchDate();
+		// lastDueDate = afsdList.get(afsdList.size() - 1).getSchDate();
 
 		if (financeScheduleDetail != null) {
 			lastDueDate = financeScheduleDetail.getSchDate();
