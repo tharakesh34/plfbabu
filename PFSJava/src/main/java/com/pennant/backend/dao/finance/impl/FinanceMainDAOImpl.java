@@ -1785,7 +1785,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return null;

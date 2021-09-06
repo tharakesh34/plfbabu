@@ -21,7 +21,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
@@ -264,9 +263,6 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getCountByOldHostReference("1858799199");
 
-		financeMainDAO.getFinanceMainStutusById(5354, "");
-		financeMainDAO.getFinanceMainStutusById(500, "");
-
 		financeMainDAO.getFinanceDetailsForInsurance(5354, "");
 		financeMainDAO.getFinanceDetailsForInsurance(500, "");
 
@@ -320,12 +316,13 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.updateMaintainceStatus(5354, "");
 
-		financeMainDAO.getFinCategoryByFinRef(5354);
-		financeMainDAO.getFinCategoryByFinRef(500);
+		financeMainDAO.getFinCategory("");
 
 		financeMainDAO.getChildFinRefByParentRef("");
 
 		financeMainDAO.getSchdVersion(5354);
+
+		financeMainDAO.getSchdVersion(0);
 
 		// LovDescCustCIF column does not exist in FinanceMain
 		// financeMainDAO.getFinMainLinkedFinancesByFinRef(5354, "");
@@ -444,8 +441,7 @@ public class TestFinanceMainDAO {
 		fm = new FinanceMain();
 		fm = financeMainDAO.getFinanceMainById(5354, "", false);
 		financeDisbursementDAO.deleteByFinReference(5354, "", false, 0);
-		finODDetailsDAO.deleteAfterODDate("1500BUS0003280", JdbcUtil.getDate(dt1));
-		finODPenaltyRateDAO.delete("1500BUS0003280", "");
+		finODPenaltyRateDAO.delete(5354, "");
 		financeScheduleDetailDAO.deleteByFinReference(5354, "", false, 0);
 		financeMainDAO.delete(fm, TableType.MAIN_TAB, false, false);
 

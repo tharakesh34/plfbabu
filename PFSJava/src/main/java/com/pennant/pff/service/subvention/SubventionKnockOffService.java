@@ -178,7 +178,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 
 		logger.info("Extracting Processing fee details...");
 		for (Subvention subv : subvention.getSubventions()) {
-			int count = subventionUploadDAO.getSucessCount(subv.getFinReference(), "S");
+			int count = subventionUploadDAO.getSucessCount(subv.getFinID(), "S");
 			if (count == 0 && procFeeCode != null) {
 				List<FinFeeDetail> pffeeList = subventionUploadDAO.getFinFeeDetails(batchId, procFeeCode);
 				for (FinFeeDetail fee : pffeeList) {
@@ -202,6 +202,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 		for (Subvention subvention : header.getSubventions()) {
 			TransactionStatus txStatus = null;
 			String finReference = subvention.getFinReference();
+			long finID = subvention.getFinID();
 			String status = subvention.getStatus();
 			logger.info("Processing subvension fee for >> {}:", finReference);
 			if ("F".equals(status)) {
@@ -222,9 +223,9 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 
 				processFinfeeDetails(subvensionFee, subvAmt, fm, header.getUserBranch());
 
-				Subvention gstDetails = subventionUploadDAO.getGstDetails(finReference);
+				Subvention gstDetails = subventionUploadDAO.getGstDetails(finID);
 
-				subventionUploadDAO.updateFinFeeDetails(finReference, subvensionFee);
+				subventionUploadDAO.updateFinFeeDetails(finID, subvensionFee);
 
 				if (gstDetails == null) {
 					gstDetails = new Subvention();
@@ -303,7 +304,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 	}
 
 	private Map<String, BigDecimal> getDealerTaxPercentages(FinanceMain finMain, String userBranch) {
-		FinanceTaxDetail finTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finMain.getFinReference(), "");
+		FinanceTaxDetail finTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finMain.getFinID(), "");
 		String finBranch = finMain.getFinBranch();
 		String finCCY = finMain.getFinCcy();
 
@@ -508,8 +509,8 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 		eventMapping.put("ae_oemProcAmount", procAmt);
 
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountingEvent.OEMSBV, FinanceConstants.MODULEID_FINTYPE);
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.OEMSBV,
+				FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 
 		logger.debug(Literal.LEAVING);

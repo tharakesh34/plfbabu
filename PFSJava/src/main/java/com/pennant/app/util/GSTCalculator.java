@@ -77,6 +77,21 @@ public class GSTCalculator {
 	/**
 	 * This method will calculate the total GST on the specified taxableAmount by executing the GST rules configured.
 	 * 
+	 * @param finReference  The finReference to prepare the data map required to execute the GST rules.
+	 * @param taxableAmount The amount in which the GST will be calculated.
+	 * @param taxComponent  The taxable component either whether the GST is include in <code>taxableAmount</code> or
+	 *                      exclude.
+	 * @return The total calculated GST.
+	 */
+	public static BigDecimal getTotalGST(String finReference, BigDecimal taxableAmount, String taxComponent) {
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		return getTotalGST(finID, taxableAmount, taxComponent);
+	}
+
+	/**
+	 * This method will calculate the total GST on the specified taxableAmount by executing the GST rules configured.
+	 * 
 	 * @param taxableAmount  The amount in which the GST will be calculated.
 	 * @param gstPercentages The GST percentages
 	 * @param taxComponent   The taxable component either whether the GST is include in <code>taxableAmount</code> or

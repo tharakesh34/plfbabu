@@ -68,8 +68,8 @@ public class TestFinanceProfitDetailDAO {
 
 		profitDetailsDAO.UpdateActiveSts(4090, true);
 
-		profitDetailsDAO.getCurOddays(4090, "");
-		profitDetailsDAO.getCurOddays(500, "");
+		profitDetailsDAO.getCurOddays(4090);
+		profitDetailsDAO.getCurOddays(500);
 
 		profitDetailsDAO.isSuspenseFinance(4090);
 		profitDetailsDAO.isSuspenseFinance(500);
