@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  JointAccountDetailDialogCtrl.java                                    * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : JointAccountDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 10-05-2019		Srinivasa Varma			 0.2		  Development Item 82               *  
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * 10-05-2019 Srinivasa Varma 0.2 Development Item 82 * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -138,7 +120,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private boolean isFinanceProcess = false;
 	private String moduleName;
 	private PDVerificationDialogCtrl pdVerificationDialogCtrl;
-	//### 10-05-2018 Start Development Item 82
+	// ### 10-05-2018 Start Development Item 82
 	private Map<String, Object> rules = new HashMap<>();
 	private List<JointAccountDetail> tempJointAccountDetailList = null;
 
@@ -150,7 +132,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.rules = rules;
 	}
 
-	//### 10-05-2018 End Development Item 82
+	// ### 10-05-2018 End Development Item 82
 	/**
 	 * default constructor.<br>
 	 */
@@ -275,27 +257,27 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				List<JointAccountDetail> jointAccountDetailList = new ArrayList<JointAccountDetail>();
 				List<GuarantorDetail> gurantorsAccDetailList = new ArrayList<GuarantorDetail>();
 				if (fromApproved) {
-					jointAccountDetailList = this.jointAccountDetailService
-							.getJoinAccountDetail(financeMain.getFinReference(), "_AView");
+					jointAccountDetailList = this.jointAccountDetailService.getJoinAccountDetail(financeMain.getFinID(),
+							"_AView");
 				} else {
-					jointAccountDetailList = this.jointAccountDetailService
-							.getJoinAccountDetail(financeMain.getFinReference(), "_View");
+					jointAccountDetailList = this.jointAccountDetailService.getJoinAccountDetail(financeMain.getFinID(),
+							"_View");
 				}
 				if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
 					doFillJointDetails(jointAccountDetailList);
 				}
 				if (fromApproved) {
-					gurantorsAccDetailList = this.guarantorDetailService
-							.getGuarantorDetail(financeMain.getFinReference(), "_AView");
+					gurantorsAccDetailList = this.guarantorDetailService.getGuarantorDetail(financeMain.getFinID(),
+							"_AView");
 				} else {
-					gurantorsAccDetailList = this.guarantorDetailService
-							.getGuarantorDetail(financeMain.getFinReference(), "_View");
+					gurantorsAccDetailList = this.guarantorDetailService.getGuarantorDetail(financeMain.getFinID(),
+							"_View");
 				}
 				if (gurantorsAccDetailList != null && !gurantorsAccDetailList.isEmpty()) {
 					doFillGurantorsDetails(gurantorsAccDetailList);
 				}
 			}
-			//this.finBasicdetails.setVisible(false);
+			// this.finBasicdetails.setVisible(false);
 		} else {
 			// Rendering Joint Account Details
 			List<JointAccountDetail> jointAcctDetailList = financeDetail.getJointAccountDetailList();
@@ -410,7 +392,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("primaryCustID", custCIF);
 		map.put("ccy", ccy);
 		map.put("filter", setFilter(getjointAcFilter()));
-		map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
+		map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from getGurantorFilter()
 		if (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
 			map.put("jointAccountDetailList", tempJointAccountDetailList);
 			map.put("applicationNo", ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo());
@@ -433,7 +415,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.listBoxJointAccountDetails.getItems().clear();
 		setJointAccountDetailList(jointAccountDetails);
 		int count = 0;
-		//### 10-05-2018 Development Item 82
+		// ### 10-05-2018 Development Item 82
 		rules.put("Total_Co_Applicants_Income", BigDecimal.ZERO);
 		rules.put("Total_Co_Applicants_Expense", BigDecimal.ZERO);
 		rules.put("Co_Applicants_Obligation_Internal", BigDecimal.ZERO);
@@ -457,14 +439,16 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantApplicationUtil
-					.amountFormate(new BigDecimal(jointAccountDetail.getSecondaryExposure() != null
-							? jointAccountDetail.getSecondaryExposure() : "0"), ccDecimal));
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(
+					jointAccountDetail.getSecondaryExposure() != null ? jointAccountDetail.getSecondaryExposure()
+							: "0"),
+					ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
-			listcell = new Listcell(PennantApplicationUtil
-					.amountFormate(new BigDecimal(jointAccountDetail.getGuarantorExposure() != null
-							? jointAccountDetail.getGuarantorExposure() : "0"), ccDecimal));
+			listcell = new Listcell(PennantApplicationUtil.amountFormate(new BigDecimal(
+					jointAccountDetail.getGuarantorExposure() != null ? jointAccountDetail.getGuarantorExposure()
+							: "0"),
+					ccDecimal));
 			listcell.setStyle("text-align:right");
 			listitem.appendChild(listcell);
 			listcell = new Listcell(jointAccountDetail.getRecordType());
@@ -522,7 +506,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			}
 
 			// 1 Currency Conversion Required
-			// 2 Un Formate should be based on the Customer Base Currency. 
+			// 2 Un Formate should be based on the Customer Base Currency.
 			if (CollectionUtils.isNotEmpty(jointAccountDetail.getCustomerIncomeList())) {
 				for (CustomerIncome income : jointAccountDetail.getCustomerIncomeList()) {
 					if (income.getIncomeExpense().equals(PennantConstants.INCOME)) {
@@ -579,7 +563,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 				map.put("ccDecimal", ccDecimal);
 				map.put("ccy", ccy);
 				map.put("filter", setFilter(getjointAcFilter()));
-				map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from  getGurantorFilter()
+				map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from
+																		// getGurantorFilter()
 				map.put("jointAccountDetailList", tempJointAccountDetailList);
 				if (!enquiry) {
 					map.put("financeMain", getFinanceDetail().getFinScheduleData().getFinanceMain());
@@ -726,11 +711,11 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			this.listBoxGurantorsDetail.appendChild(listitem);
 		}
 
-		//### 10-05-2018 Start Development Item 82
+		// ### 10-05-2018 Start Development Item 82
 		rules.put("Guarantors_Bank_CustomerCount", customerCount);
 		rules.put("Guarantors_Other_CustomerCount", otherCount);
 		rules.put("Guarantors_Total_Count", customerCount + otherCount);
-		//### 10-05-2018 End Development Item 82
+		// ### 10-05-2018 End Development Item 82
 		logger.debug("Leaving");
 	}
 
@@ -880,7 +865,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 					cif[i] = " ";
 				}
 			}
-			//cif[cif.length]=custCIF;
+			// cif[cif.length]=custCIF;
 			return cif;
 		} else {
 			String cif[] = new String[1];
@@ -898,7 +883,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			for (int i = 0; i < jointAccountDetailList.size(); i++) {
 				cif[i] = jointAccountDetailList.get(i).getCustCIF();
 			}
-			//cif[cif.length-1]=custCIF;
+			// cif[cif.length-1]=custCIF;
 			return cif;
 		} else {
 			String cif[] = new String[1];

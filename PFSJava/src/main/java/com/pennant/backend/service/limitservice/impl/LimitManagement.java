@@ -127,26 +127,26 @@ public class LimitManagement {
 		return errors;
 	}
 
-	public List<ErrorDetail> processLoanDisbursments(FinanceDetail financeDetail, boolean overide, String tranType,
+	public List<ErrorDetail> processLoanDisbursments(FinanceDetail fd, boolean overide, String tranType,
 			boolean validateOnly) {
 		logger.debug(Literal.ENTERING);
 
 		List<ErrorDetail> errors = new ArrayList<>();
 
-		FinScheduleData finschData = financeDetail.getFinScheduleData();
-		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		FinanceMain finMain = finschData.getFinanceMain();
-		FinanceType finType = finschData.getFinanceType();
-		Date maturityDate = finMain.getMaturityDate();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		Customer customer = fd.getCustomerDetails().getCustomer();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+		Date maturityDate = fm.getMaturityDate();
 		Date valueDate = SysParamUtil.getAppDate();
 		BigDecimal tranAmt = BigDecimal.ZERO;
 
 		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
-				.getFinanceDisbursementDetails(finMain.getFinReference(), "", false);
+				.getFinanceDisbursementDetails(fm.getFinID(), "", false);
 		Date datemaxDate = SysParamUtil.getAppDate();
 
 		int disbSeq = 0;
-		for (FinanceDisbursement disbursement : finschData.getDisbursementDetails()) {
+		for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
 			/*
 			 * Check the current status is cancel if cancel check the approved status also as cancel
 			 */
@@ -187,26 +187,26 @@ public class LimitManagement {
 		limitHeader.setOverride(overide);
 		limitHeader.setValidateOnly(validateOnly);
 
-		errors.addAll(processLimits(limitHeader, customer, finMain, finType, SERVICING));
+		errors.addAll(processLimits(limitHeader, customer, fm, finType, SERVICING));
 
 		logger.debug(Literal.LEAVING);
 
 		return errors;
 	}
 
-	public void processLoanCancel(FinanceDetail financeDetail, boolean overide) {
+	public void processLoanCancel(FinanceDetail fd, boolean overide) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData finschData = financeDetail.getFinScheduleData();
-		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		FinanceMain finMain = finschData.getFinanceMain();
-		FinanceType finType = finschData.getFinanceType();
-		Date maturityDate = finMain.getMaturityDate();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		Customer customer = fd.getCustomerDetails().getCustomer();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+		Date maturityDate = fm.getMaturityDate();
 		Date valueDate = SysParamUtil.getAppDate();
 		BigDecimal tranAmt = BigDecimal.ZERO;
 
 		List<FinanceDisbursement> approvedDisbursments = financeDisbursementDAO
-				.getFinanceDisbursementDetails(finMain.getFinReference(), "", false);
+				.getFinanceDisbursementDetails(fm.getFinID(), "", false);
 
 		/* Loop through disbursements */
 		for (FinanceDisbursement disbursement : approvedDisbursments) {
@@ -214,13 +214,13 @@ public class LimitManagement {
 				continue;
 			}
 			tranAmt = tranAmt.add(disbursement.getDisbAmount()).add(disbursement.getFeeChargeAmt());
-			if (disbursement.getDisbDate().getTime() == finMain.getFinStartDate().getTime()) {
-				tranAmt = tranAmt.subtract(finMain.getDownPayment());
+			if (disbursement.getDisbDate().getTime() == fm.getFinStartDate().getTime()) {
+				tranAmt = tranAmt.subtract(fm.getDownPayment());
 			}
 		}
 
 		/* FinAssetValue is not disbursed completely but loan cancelled */
-		BigDecimal reservTranAmt = finMain.getFinAssetValue().subtract(finMain.getFinCurrAssetValue());
+		BigDecimal reservTranAmt = fm.getFinAssetValue().subtract(fm.getFinCurrAssetValue());
 
 		LimitHeader limitHeader = new LimitHeader();
 		limitHeader.setLoanMaturityDate(maturityDate);
@@ -233,25 +233,25 @@ public class LimitManagement {
 		limitHeader.setOverride(overide);
 		limitHeader.setValidateOnly(false);
 
-		processLimits(limitHeader, customer, finMain, finType, CANCELATION);
+		processLimits(limitHeader, customer, fm, finType, CANCELATION);
 
 		logger.debug(Literal.LEAVING);
 	}
 
-	public List<ErrorDetail> processLimitIncrease(FinanceDetail financeDetail, boolean override, boolean validateOnly) {
+	public List<ErrorDetail> processLimitIncrease(FinanceDetail fd, boolean override, boolean validateOnly) {
 		logger.debug(Literal.ENTERING);
 
 		List<ErrorDetail> errors = new ArrayList<>();
 
-		FinScheduleData finschData = financeDetail.getFinScheduleData();
-		Customer customer = financeDetail.getCustomerDetails().getCustomer();
-		FinanceMain finMain = finschData.getFinanceMain();
-		FinanceType finType = finschData.getFinanceType();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		Customer customer = fd.getCustomerDetails().getCustomer();
+		FinanceMain finMain = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
 		Date maturityDate = finMain.getMaturityDate();
 		Date valueDate = SysParamUtil.getAppDate();
 		BigDecimal tranAmt = BigDecimal.ZERO;
 
-		BigDecimal revReserved = financeMainDAO.getFinAssetValue(finMain.getFinReference());
+		BigDecimal revReserved = financeMainDAO.getFinAssetValue(finMain.getFinID());
 		BigDecimal currAssestValue = finMain.getFinAssetValue();
 		tranAmt = currAssestValue.subtract(revReserved);
 

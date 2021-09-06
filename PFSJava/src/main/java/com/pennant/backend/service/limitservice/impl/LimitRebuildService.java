@@ -1,42 +1,34 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  LimitRebuildService.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  23-06-2017															*
- *                                                                  
- * Modified Date    :  23-06-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : LimitRebuildService.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 23-06-2017 *
+ * 
+ * Modified Date : 23-06-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
-  *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -266,7 +258,7 @@ public class LimitRebuildService implements LimitRebuild {
 				} else {
 					transactionID = headerId;
 				}
-				//process rebuild
+				// process rebuild
 				if (!StringUtils.equals(finMain.getClosingStatus(), FinanceConstants.CLOSE_STATUS_CANCELLED)) {
 					processRebuild(finMain, limitHeader, transactionID, limitDetailsList, mapping);
 				}
@@ -397,23 +389,23 @@ public class LimitRebuildService implements LimitRebuild {
 		return new Customer();
 	}
 
-	private void processRebuild(FinanceMain finMain, LimitHeader limitHeader, long inProgressHeaderID,
-			List<LimitDetails> limitDetailsList, LimitReferenceMapping mapping) {
+	private void processRebuild(FinanceMain fm, LimitHeader lh, long inProgressHeaderID, List<LimitDetails> ldList,
+			LimitReferenceMapping mapping) {
 
-		String finRef = finMain.getFinReference();
-		String finCategory = finMain.getFinCategory();
-		String finCcy = finMain.getFinCcy();
-		String limitCcy = limitHeader.getLimitCcy();
+		long finID = fm.getFinID();
+		String finCategory = fm.getFinCategory();
+		String finCcy = fm.getFinCcy();
+		String limitCcy = lh.getLimitCcy();
 		List<LimitDetails> list = getCustomerLimitDetails(mapping);
 		String limitLine = mapping.getLimitLine();
 		boolean addTempblock = false;
 
 		// calculate reserve and utilized
-		BigDecimal tranReseervAmt = finMain.getFinAssetValue();
+		BigDecimal tranReseervAmt = fm.getFinAssetValue();
 
-		if (finMain.isLimitValid()) {
-			//check the there is block in not then don not proceed
-			LimitTransactionDetail transaction = getTransaction(finRef, inProgressHeaderID, 0);
+		if (fm.isLimitValid()) {
+			// check the there is block in not then don not proceed
+			LimitTransactionDetail transaction = getTransaction(finID, inProgressHeaderID, 0);
 			if (transaction == null) {
 				// then no need block the amount
 				return;
@@ -421,7 +413,7 @@ public class LimitRebuildService implements LimitRebuild {
 		}
 
 		BigDecimal tranUtilisedAmt = BigDecimal.ZERO;
-		List<FinanceDisbursement> disbursementDetailList = financeDisbursementDAO.getFinanceDisbursementDetails(finRef,
+		List<FinanceDisbursement> disbursementDetailList = financeDisbursementDAO.getFinanceDisbursementDetails(finID,
 				"", false);
 
 		for (FinanceDisbursement disbursement : disbursementDetailList) {
@@ -431,20 +423,20 @@ public class LimitRebuildService implements LimitRebuild {
 			tranUtilisedAmt = tranUtilisedAmt.add(disbursement.getDisbAmount()).add(disbursement.getFeeChargeAmt());
 		}
 
-		tranUtilisedAmt = tranUtilisedAmt.subtract(finMain.getDownPayment());
+		tranUtilisedAmt = tranUtilisedAmt.subtract(fm.getDownPayment());
 
-		if (finMain.getFinCurrAssetValue().compareTo(tranReseervAmt) == 0) {
+		if (fm.getFinCurrAssetValue().compareTo(tranReseervAmt) == 0) {
 			addTempblock = true;
 		}
 
 		// convert to limit currency
 		BigDecimal limitReserveAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranReseervAmt);
 		BigDecimal limitUtilisedAmt = CalculationUtil.getConvertedAmount(finCcy, limitCcy, tranUtilisedAmt);
-		BigDecimal osPriBal = CalculationUtil.getConvertedAmount(finCcy, limitCcy, finMain.getOsPriBal());
+		BigDecimal osPriBal = CalculationUtil.getConvertedAmount(finCcy, limitCcy, fm.getOsPriBal());
 
 		// update reserve and utilization
 		for (LimitDetails details : list) {
-			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
+			LimitDetails limitToUpdate = getLimitdetails(ldList, details);
 
 			if (limitToUpdate == null) {
 				continue;
@@ -453,18 +445,18 @@ public class LimitRebuildService implements LimitRebuild {
 			// add to reserve
 			limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(limitReserveAmt));
 
-			//add to osPriBal
+			// add to osPriBal
 			limitToUpdate.setOsPriBal(limitToUpdate.getOsPriBal().add(osPriBal));
 
 			// if records are not approved then we are considering reserve only
-			if (finMain.isLimitValid()) {
+			if (fm.isLimitValid()) {
 				continue;
 			}
 
-			//not required in case of multiple disbursement with max disbursement check
+			// not required in case of multiple disbursement with max disbursement check
 			if (addTempblock) {
 				// for Under process loans in addDisbursment
-				LimitTransactionDetail transaction = getTransaction(finRef, inProgressHeaderID, -1);
+				LimitTransactionDetail transaction = getTransaction(finID, inProgressHeaderID, -1);
 				if (transaction != null) {
 					// add to reserve
 					limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(transaction.getLimitAmount()));
@@ -483,16 +475,16 @@ public class LimitRebuildService implements LimitRebuild {
 		}
 
 		// if records are not approved then we are considering reserve only
-		if (finMain.isLimitValid()) {
+		if (fm.isLimitValid()) {
 			return;
 		}
 
 		// update revolving nature by payments made
-		BigDecimal repay = financeScheduleDetailDAO.getPriPaidAmount(finRef);
+		BigDecimal repay = financeScheduleDetailDAO.getPriPaidAmount(finID);
 		BigDecimal repayLimit = CalculationUtil.getConvertedAmount(finCcy, limitCcy, repay);
 
 		for (LimitDetails details : list) {
-			LimitDetails limitToUpdate = getLimitdetails(limitDetailsList, details);
+			LimitDetails limitToUpdate = getLimitdetails(ldList, details);
 
 			if (limitToUpdate == null) {
 				continue;
@@ -522,8 +514,8 @@ public class LimitRebuildService implements LimitRebuild {
 		return false;
 	}
 
-	private LimitTransactionDetail getTransaction(String finRef, long headerid, int type) {
-		return limitTransactionDetailsDAO.getTransaction(LimitConstants.FINANCE, finRef, LimitConstants.BLOCK, headerid,
+	private LimitTransactionDetail getTransaction(long finID, long headerid, int type) {
+		return limitTransactionDetailsDAO.getTransaction(LimitConstants.FINANCE, finID, LimitConstants.BLOCK, headerid,
 				type);
 	}
 

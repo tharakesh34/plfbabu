@@ -23,7 +23,6 @@ import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.customermasters.Customer;
-import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
@@ -47,6 +46,7 @@ import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.MandateController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.MandateRestService;
 import com.pennanttech.pffws.MandateSoapService;
 import com.pennanttech.util.APIConstants;
@@ -293,23 +293,31 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 	 * @param mandate
 	 * @return returnStatus
 	 */
-	private WSReturnStatus doValidation(MandateDetial mandateDetail) {
+	private WSReturnStatus doValidation(MandateDetial md) {
 		logger.debug("Entering");
 
 		WSReturnStatus returnStatus = null;
-		if (mandateDetail.getFinReference() == null) {
+
+		String finReference = md.getFinReference();
+		Long oldMandateId = md.getOldMandateId();
+		Long newMandateId = md.getNewMandateId();
+		Date appDate = SysParamUtil.getAppDate();
+
+		if (finReference == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FinReference";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			return returnStatus;
 		}
-		if (mandateDetail.getOldMandateId() == null || mandateDetail.getOldMandateId() <= 0) {
+
+		if (oldMandateId == null || oldMandateId <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "OldMandateId";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			return returnStatus;
 		}
-		if (mandateDetail.getNewMandateId() == null || mandateDetail.getNewMandateId() <= 0) {
+
+		if (newMandateId == null || newMandateId <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "NewMandateId";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
@@ -317,43 +325,40 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		}
 
 		// validate oldMandate
-		Mandate oldMandate = mandateService.getApprovedMandateById(mandateDetail.getOldMandateId());
+		Mandate oldMandate = mandateService.getApprovedMandateById(oldMandateId);
 		if (oldMandate == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getOldMandateId());
+			valueParm[0] = String.valueOf(oldMandateId);
 			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
 			return returnStatus;
 		}
 		// validate FinanceReference
-		int count = financeMainService.getFinanceCountById(mandateDetail.getFinReference(),
-				mandateDetail.getOldMandateId());
-		if (count <= 0) {
+		Long finID = financeMainDAO.getFinIDForMandate(finReference, oldMandateId);
+		if (finID == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = mandateDetail.getFinReference();
+			valueParm[0] = finReference;
 			return getErrorDetails("90201", valueParm);
 		}
 		// validate newMandateId
-		Mandate newMandate = mandateService.getApprovedMandateById(mandateDetail.getNewMandateId());
+		Mandate newMandate = mandateService.getApprovedMandateById(newMandateId);
 		if (newMandate == null) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			valueParm[0] = String.valueOf(newMandateId);
 			returnStatus = APIErrorHandlerService.getFailedStatus("90303", valueParm);
 			return returnStatus;
 		}
-		List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(mandateDetail.getFinReference(), "", false);
+
+		List<FinanceScheduleDetail> schdeules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 		BigDecimal repayAmt = BigDecimal.ZERO;
-		if (financeScheduleDetails != null) {
-			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
-						&& curSchd.isRepayOnSchDate()) {
-					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
-					break;
-				}
+
+		for (FinanceScheduleDetail curSchd : schdeules) {
+			if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
+				repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
+				break;
 			}
 		}
-		if (repayAmt.compareTo(newMandate.getMaxLimit()) > 0) {
+		BigDecimal maxLimit = newMandate.getMaxLimit();
+		if (repayAmt.compareTo(maxLimit) > 0) {
 			returnStatus = APIErrorHandlerService.getFailedStatus("90320");
 			return returnStatus;
 		}
@@ -366,14 +371,14 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		if (!MandateConstants.skipRegistration().contains(newMandate.getMandateType()))
 			if (StringUtils.isBlank(newMandate.getMandateRef())) {
 				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+				valueParm[0] = String.valueOf(newMandateId);
 				returnStatus = APIErrorHandlerService.getFailedStatus("90305", valueParm);
 				return returnStatus;
 			}
 		// validations for Status
 		if (StringUtils.equals(MandateConstants.STATUS_REJECTED, newMandate.getStatus())) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+			valueParm[0] = String.valueOf(newMandateId);
 			returnStatus = APIErrorHandlerService.getFailedStatus("90306", valueParm);
 			return returnStatus;
 		}
@@ -381,14 +386,14 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		if (!newMandate.isOpenMandate()) {
 			if (StringUtils.isNotBlank(newMandate.getOrgReference())) {
 				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(mandateDetail.getNewMandateId());
+				valueParm[0] = String.valueOf(newMandateId);
 				returnStatus = APIErrorHandlerService.getFailedStatus("90312", valueParm);
 				return returnStatus;
 			}
 		}
 
 		// set mandate type
-		mandateDetail.setMandateType(newMandate.getMandateType());
+		md.setMandateType(newMandate.getMandateType());
 
 		logger.debug("Leaving");
 		return returnStatus;
@@ -436,18 +441,20 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
 		 * "finReference"; return getErrorDetails("90502", valueParm); }
 		 */
+
+		Long finID = null;
 		boolean alwmandate = ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG;
 		if (StringUtils.isNotBlank(mandate.getOrgReference())) {
 			if (!alwmandate) {
-				int count = financeMainService.getFinanceCountById(mandate.getOrgReference(), false);
-				if (count <= 0) {
+				finID = financeMainDAO.getActiveFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
+				if (finID == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getOrgReference();
 					return getErrorDetails("90201", valueParm);
 				}
 			} else {
-				FinanceMain finMain = financeMainDAO.getFinanceMainParms(mandate.getOrgReference());
-				if (finMain == null) {
+				finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.TEMP_TAB);
+				if (finID == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = mandate.getOrgReference();
 					return getErrorDetails("90201", valueParm);
@@ -457,10 +464,10 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			if (alwmandate) {
 				type = "_View";
 			}
-			List<String> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(), type);
+			List<Long> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(), type);
 			boolean validFinrefernce = true;
-			for (String finReference : finRefList) {
-				if (StringUtils.equals(finReference, mandate.getOrgReference())) {
+			for (Long id : finRefList) {
+				if (id == finID) {
 					validFinrefernce = false;
 					break;
 				}
@@ -473,17 +480,14 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				return APIErrorHandlerService.getFailedStatus("90406", valueParm);
 			}
 
-			List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
-					.getFinScheduleDetails(mandate.getOrgReference(), type, false);
+			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false);
 			BigDecimal repayAmt = BigDecimal.ZERO;
-			if (financeScheduleDetails != null) {
-				for (int i = 0; i < financeScheduleDetails.size(); i++) {
-					FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-					if (DateUtility.compare(curSchd.getSchDate(), DateUtility.getAppDate()) >= 0
-							&& curSchd.isRepayOnSchDate()) {
-						repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
-						break;
-					}
+
+			Date appDate = SysParamUtil.getAppDate();
+			for (FinanceScheduleDetail curSchd : schedules) {
+				if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
+					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
+					break;
 				}
 			}
 			if (repayAmt.compareTo(mandate.getMaxLimit()) > 0) {
@@ -666,8 +670,8 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			}
 		}
 		if (mandate.getStartDate() != null) {
-			Date mandbackDate = DateUtility.addDays(DateUtility.getAppDate(),
-					-SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
+			Date appDate = SysParamUtil.getAppDate();
+			Date mandbackDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("MANDATE_STARTDATE"));
 			if (mandate.getStartDate().before(mandbackDate)
 					|| mandate.getStartDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 				String[] valueParm = new String[3];
@@ -816,13 +820,13 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 				return response;
 			}
 			if (mandate.isSwapIsActive()) {
-				// FinanceMain finMain = financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
-				String tableType = "";
+				TableType tableType = TableType.MAIN_TAB;
 				if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
-					tableType = "_View";
+					tableType = TableType.TEMP_TAB;
 				}
 
-				String finType = financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(), tableType);
+				String finType = financeMainDAO.getFinanceType(mandate.getOrgReference(), tableType);
+
 				String allowedRepayModes = StringUtils.trimToEmpty(financeTypeService.getAllowedRepayMethods(finType));
 				if (StringUtils.isNotBlank(allowedRepayModes)) {
 					boolean isTypeFound = false;
@@ -997,12 +1001,12 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			mandate.setMandateType(aMandate.getMandateType());
 			// FinanceMain finMain =
 			// financeMainService.getFinanceMainByFinRef(mandate.getOrgReference());
-			String tableType = "";
+			TableType tableType = TableType.MAIN_TAB;
 			if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
-				tableType = "_View";
+				tableType = TableType.TEMP_TAB;
 			}
 
-			String finType = financeMainService.getFinanceTypeFinReference(mandate.getOrgReference(), tableType);
+			String finType = financeMainDAO.getFinanceType(mandate.getOrgReference(), tableType);
 			String allowedRepayModes = financeTypeService.getAllowedRepayMethods(finType);
 			if (StringUtils.isNotBlank(allowedRepayModes)) {
 				boolean isTypeFound = false;

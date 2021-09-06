@@ -37,6 +37,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -134,6 +135,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private Textbox recoveryCode;
 	private String finReference = "";
+	private long finID;
 	// private int ccyFormatter = 0;
 
 	@Autowired
@@ -174,6 +176,10 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		if (arguments.containsKey("finReference")) {
 			this.finReference = (String) arguments.get("finReference");
+		}
+
+		if (arguments.containsKey("finID")) {
+			this.finID = (Long) arguments.get("finID");
 		}
 		/*
 		 * if (args.containsKey("ccyFormatter")) { this.ccyFormatter = (Integer) args.get("ccyFormatter"); }
@@ -285,17 +291,17 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 		List<OverdueChargeRecovery> lpiListTodisplay = new ArrayList<OverdueChargeRecovery>();
 
-		FinanceMain finMian = financeMainDAO.getFinanceMainById(finReference, "_View", false);
+		FinanceMain finMian = financeMainDAO.getFinanceMainById(finID, "_View", false);
 		if ((PennantConstants.YES.equals(this.recoveryCode.getValue())
 				&& StringUtils.equals(CalculationConstants.PDPFTCAL_NOTAPP, finMian.getPastduePftCalMthd()))) {
 			// If the enquiry type as a Interest over due enquiry, and past due
 			// calc method as a NotApplicable then no need show the enquiry.
 		} else {
-			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finReference);
-			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finReference);
+			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finID);
+			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
 			for (FinODDetails fod : list) {
 				List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod,
-						DateUtility.addDays(DateUtility.getAppDate(), -1), finMian, schlist, null);
+						DateUtility.addDays(SysParamUtil.getAppDate(), -1), finMian, schlist, null);
 				lpiListTodisplay.addAll(lpiList);
 			}
 		}
@@ -374,7 +380,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			// CAST AND STORE THE SELECTED OBJECT
 			final OverdueChargeRecovery aOverdueChargeRecovery = (OverdueChargeRecovery) item.getAttribute("data");
 			final OverdueChargeRecovery overdueChargeRecovery = getOverdueChargeRecoveryService()
-					.getOverdueChargeRecoveryById(aOverdueChargeRecovery.getId(),
+					.getOverdueChargeRecoveryById(aOverdueChargeRecovery.getFinID(),
 							aOverdueChargeRecovery.getFinODSchdDate(), aOverdueChargeRecovery.getFinODFor());
 
 			if (overdueChargeRecovery == null) {
@@ -425,8 +431,7 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param OverdueChargeRecovery
-	 *            (aOverdueChargeRecovery)
+	 * @param OverdueChargeRecovery (aOverdueChargeRecovery)
 	 * @throws Exception
 	 */
 	private void showDetailView(OverdueChargeRecovery aOverdueChargeRecovery) throws Exception {

@@ -1668,13 +1668,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public int getFinanceCountById(long finID, long mandateID) {
-		String sql = "Select count(FinID) From FinanceMain Where FinID = ? And MandateID = ? And FinIsActive = ?";
+	public Long getFinIDForMandate(String finReference, long mandateID) {
+		String sql = "Select FinID From FinanceMain Where FinID = ? And MandateID = ? And FinIsActive = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, Integer.class, finID, mandateID, 1);
+			return this.jdbcOperations.queryForObject(sql, Long.class, finReference, mandateID, 1);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -2741,10 +2741,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public String getFinanceTypeFinReference(long finID, String type) {
+	public String getFinanceType(long finID, TableType tabeType) {
 		StringBuilder sql = new StringBuilder("Select FinType");
 		sql.append(" From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(tabeType.getSuffix());
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -2756,7 +2756,24 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		return null;
+	}
 
+	@Override
+	public String getFinanceType(String finReference, TableType tabeType) {
+		StringBuilder sql = new StringBuilder("Select FinType");
+		sql.append(" From FinanceMain");
+		sql.append(tabeType.getSuffix());
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
 	@Override

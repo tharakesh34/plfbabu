@@ -37,11 +37,7 @@ public interface FinanceMainService {
 
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 
-	int getFinanceCountById(long finID, long mandateID);
-
 	int loanMandateSwapping(long finID, long newMandateId, String repayMethod, String type);
-
-	int getFinanceCountById(long finID, boolean isWIF);
 
 	int updateFinanceBasicDetails(FinanceMain financeMain);
 
@@ -60,8 +56,6 @@ public interface FinanceMainService {
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
 	FinanceMain getFinanceByFinReference(long finID, String type);
-
-	String getFinanceTypeFinReference(long finID, String type);
 
 	ErrorDetail rescheduleValidation(Date receiptDate, long finID, Date startDate);
 

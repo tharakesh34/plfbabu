@@ -40,6 +40,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.mandate.MandateDetial;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -297,17 +298,24 @@ public class MandateController extends ExtendedTestClass {
 	 * @param mandateID
 	 * @return Mandates
 	 */
-	public WSReturnStatus loanMandateSwapping(MandateDetial mandateDetail) {
+	public WSReturnStatus loanMandateSwapping(MandateDetial md) {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
 		try {
-			int count = financeMainService.loanMandateSwapping(mandateDetail.getFinReference(),
-					mandateDetail.getNewMandateId(), mandateDetail.getMandateType(), "");
+			String finReference = md.getFinReference();
+			Long newMandateId = md.getNewMandateId();
+			String mandateType = md.getMandateType();
+
+			Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+
+			int count = financeMainService.loanMandateSwapping(finID, newMandateId, mandateType, "");
+
 			if (count > 0) {
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {
 				response = APIErrorHandlerService.getFailedStatus();
 			}
+
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			APIErrorHandlerService.logUnhandledException(e);
@@ -350,20 +358,18 @@ public class MandateController extends ExtendedTestClass {
 
 				if (mandate.isSwapIsActive()) {
 					String type = "";
-					int count = 0;
-
-					count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "", false);
-					if (count > 0) {
+					Long finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
+					if (finID != null) {
 						type = "";
 					} else if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
-						count = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "_Temp", false);
-						if (count > 0) {
+						finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
+						if (finID != null) {
 							type = "_Temp";
 						}
 					}
 
-					financeMainService.loanMandateSwapping(response.getOrgReference(), response.getMandateID(),
-							mandate.getMandateType(), type);
+					financeMainService.loanMandateSwapping(finID, response.getMandateID(), mandate.getMandateType(),
+							type);
 				}
 				doEmptyResponseObject(response);
 			}
@@ -491,7 +497,8 @@ public class MandateController extends ExtendedTestClass {
 			count = mandateService.updateMandateStatus(mandate);
 			if (count > 0) {
 				MandateStatus mandateStatus = new MandateStatus();
-				mandateStatus.setMandateID(mandate.getMandateID());
+				long mandateID = mandate.getMandateID();
+				mandateStatus.setMandateID(mandateID);
 				mandateStatus.setStatus(mandate.getStatus());
 				mandateStatus.setReason(mandate.getReason());
 				mandateStatus.setChangeDate(SysParamUtil.getAppDate());
@@ -499,20 +506,20 @@ public class MandateController extends ExtendedTestClass {
 				if ((StringUtils.equals(MandateConstants.STATUS_APPROVED, mandate.getStatus())
 						|| StringUtils.equals("Accepted", mandate.getStatus())) && mandate.isSwapIsActive()) {
 					String type = "";
-					int tempCount = 0;
+					Long finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.MAIN_TAB);
 
-					tempCount = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "", false);
-					if (tempCount > 0) {
+					if (finID != null) {
 						type = "";
 					} else if (ImplementationConstants.ALW_APPROVED_MANDATE_IN_ORG) {
-						tempCount = financeMainDAO.getFinanceCountById(mandate.getOrgReference(), "_Temp", false);
-						if (tempCount > 0) {
+						finID = financeMainDAO.getFinID(mandate.getOrgReference(), TableType.TEMP_TAB);
+						if (finID != null) {
 							type = "_Temp";
 						}
 					}
 
-					financeMainService.loanMandateSwapping(mandate.getOrgReference(), mandate.getMandateID(),
-							mandate.getMandateType(), type);
+					String mandateType = mandate.getMandateType();
+					financeMainService.loanMandateSwapping(finID, mandateID, mandateType,
+							type);
 				}
 				response = APIErrorHandlerService.getSuccessStatus();
 			} else {

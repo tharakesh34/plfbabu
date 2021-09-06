@@ -106,7 +106,7 @@ public interface FinanceMainDAO {
 
 	int getFinanceCountByMandateId(long mandateID);
 
-	int getFinanceCountById(long finID, long mandateID);
+	Long getFinIDForMandate(String finReference, long mandateID);
 
 	int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type);
 
@@ -192,7 +192,9 @@ public interface FinanceMainDAO {
 
 	List<Long> getFinanceMainbyCustId(long custId, String type);
 
-	String getFinanceTypeFinReference(long finID, String type);
+	String getFinanceType(String finReference, TableType tabelType);
+
+	String getFinanceType(long finID, TableType tabelType);
 
 	void updateFinAssetValue(FinanceMain finMain);
 

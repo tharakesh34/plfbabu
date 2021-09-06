@@ -61,21 +61,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public int getFinanceCountById(long finID, long mandateID) {
-		return financeMainDAO.getFinanceCountById(finID, mandateID);
-	}
-
-	@Override
 	public int loanMandateSwapping(long finID, long newMandateID, String repayMethod, String type) {
 		return financeMainDAO.loanMandateSwapping(finID, newMandateID, repayMethod, type);
-	}
-
-	/**
-	 * 
-	 */
-	@Override
-	public int getFinanceCountById(long finID, boolean isWIF) {
-		return financeMainDAO.getFinanceCountById(finID, "", isWIF);
 	}
 
 	@Override
