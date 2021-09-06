@@ -19,7 +19,7 @@ public interface FinFlagDetailsDAO {
 
 	void deleteList(String finRef, String moduleName, String type);
 
-	List<FinFlagsDetail> getFinFlagsByFinRef(long finID, String moduleName, String type);
+	List<FinFlagsDetail> getFinFlagsByFinRef(String reference, String moduleName, String type);
 
 	FinFlagsDetail getFinFlagsByRef(String finReference, String flagcode, String moduleName, String type);
 

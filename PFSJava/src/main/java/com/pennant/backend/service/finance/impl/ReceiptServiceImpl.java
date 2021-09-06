@@ -4818,36 +4818,36 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public FinanceDetail getFinanceDetail(FinServiceInstruction finServiceInst, String eventCode,
-			FinanceDetail financeDetail) {
+	public FinanceDetail getFinanceDetail(FinServiceInstruction fsi, String eventCode, FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
-		String finReference = finServiceInst.getFinReference();
+		String finReference = fsi.getFinReference();
 		String finSerEvent = "";
-		if ("SP".equalsIgnoreCase(finServiceInst.getReceiptPurpose())) {
+
+		if ("SP".equalsIgnoreCase(fsi.getReceiptPurpose())) {
 			finSerEvent = FinServiceEvent.SCHDRPY;
-		} else if ("EP".equalsIgnoreCase(finServiceInst.getReceiptPurpose())) {
+		} else if ("EP".equalsIgnoreCase(fsi.getReceiptPurpose())) {
 			finSerEvent = FinServiceEvent.EARLYRPY;
 		} else {
 			finSerEvent = FinServiceEvent.EARLYSETTLE;
 		}
 
-		if (!finServiceInst.isWif()) {
-			financeDetail = financeDetailService.getFinanceDetailById(finReference, false, "", false, finSerEvent, "");
+		if (!fsi.isWif()) {
+			fd = financeDetailService.getFinanceDetailById(finReference, false, "", false, finSerEvent, "");
 		} else {
-			financeDetail = financeDetailService.getWIFFinance(finReference, false, null);
+			fd = financeDetailService.getWIFFinance(finReference, false, null);
 		}
 
 		List<FinFeeDetail> newList = new ArrayList<FinFeeDetail>();
-		if (financeDetail != null) {
-			financeDetail.getFinScheduleData().setFinFeeDetailList(newList);
-			financeDetail.setAccountingEventCode(eventCode);
+		if (fd != null) {
+			fd.getFinScheduleData().setFinFeeDetailList(newList);
+			fd.setAccountingEventCode(eventCode);
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			financeDetail.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
+			fd.getFinScheduleData().getFinanceMain().setUserDetails(userDetails);
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	@Override

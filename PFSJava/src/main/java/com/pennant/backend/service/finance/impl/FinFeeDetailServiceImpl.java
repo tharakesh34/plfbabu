@@ -41,7 +41,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
@@ -120,10 +119,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetais(long finID, long custId) {
+	public List<FinReceiptDetail> getFinReceiptDetais(String finReference, long custId) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinReceiptDetail> list = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finID, custId);
+		List<FinReceiptDetail> list = finReceiptDetailDAO.getFinReceiptDetailByRef(finReference, custId);
 
 		logger.debug(Literal.LEAVING);
 		return list;
@@ -529,32 +528,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return map;
 	}
 
-	@Override
-	public List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
-			String auditTranType, long finiD, long custId) {
-		logger.debug(Literal.ENTERING);
-
-		List<AuditDetail> auditDetails = new ArrayList<>();
-
-		Map<Long, List<FinFeeReceipt>> map = getUpfromtReceiptMap(finFeeReceipts);
-		if (!PennantConstants.TRAN_DEL.equals(auditTranType)) {
-			if (ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
-				createPayableAdvises(finiD, map, custId);
-			}
-		}
-
-		if (!ImplementationConstants.UPFRONT_ADJUST_PAYABLEADVISE) {
-			createExcessAmounts(finiD, map, custId);
-		}
-
-		updateUpfrontExcessAmount(finiD, map, custId);
-
-		auditDetails.addAll(processFinFeeReceipts(finFeeReceipts, tableType, auditTranType, true));
-
-		logger.debug(Literal.LEAVING);
-		return auditDetails;
-	}
-
 	public void createExcessAmounts(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
 		logger.debug(Literal.ENTERING);
 
@@ -578,9 +551,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId) {
-
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+	public BigDecimal getExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		for (FinReceiptDetail rcd : rcdList) {
@@ -599,8 +571,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	private void updateUpfrontExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
-
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finID, custId);
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
 
 		FinExcessAmount excessAmount = null;
 		for (FinReceiptDetail rcd : rcdList) {
@@ -644,7 +615,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		long feeTypeId = Long.parseLong(pfsParameter.getSysParmValue());
 		ManualAdvise manualAdvise = null;
 
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finID, custId);
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
 
 		Date appDate = SysParamUtil.getAppDate();
 
@@ -746,13 +717,13 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map, long custId) {
+	public void createExcessAmount(long finID, Map<Long, FinFeeReceipt> map, long custId) {
 		logger.debug(Literal.ENTERING);
 
 		FinFeeReceipt feeReceipt;
 		FinExcessAmount finExcessAmount;
 
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinRef(finReference, custId);
+		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
 
@@ -767,7 +738,8 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
 			finExcessAmount = new FinExcessAmount();
-			finExcessAmount.setFinReference(finReference);
+			finExcessAmount.setFinID(finID);
+			finExcessAmount.setFinReference(finID);
 			finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
 			finExcessAmount.setAmount(excessAmount);
 			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);

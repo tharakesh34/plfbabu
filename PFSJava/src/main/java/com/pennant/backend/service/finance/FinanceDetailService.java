@@ -104,7 +104,7 @@ public interface FinanceDetailService {
 	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroubBy, String type);
 
-	FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired);
+	FinScheduleData getFinSchDataById(long finID, String type, boolean summaryRequired);
 
 	AuditHeader doCheckLimits(AuditHeader auditHeader);
 
@@ -164,7 +164,7 @@ public interface FinanceDetailService {
 
 	String getNextRoleCodeByRef(long finID);
 
-	FinanceMain getFinanceMain(String finReference, String type);
+	// FinanceMain getFinanceMain(String finReference, String type);
 
 	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
 

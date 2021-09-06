@@ -80,7 +80,7 @@ public interface ReceiptService {
 	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);
 
 	// ### 29-10-2018, Ticket id:124998
-	FinanceDetail getFinanceDetail(FinServiceInstruction finSrvcInst, String eventCode, FinanceDetail financeDetail);
+	FinanceDetail getFinanceDetail(FinServiceInstruction fsi, String eventCode, FinanceDetail fd);
 
 	// ### 29-10-2018, Ticket id:124998
 	long CheckDedupSP(FinReceiptHeader receiptHeader, String purpose);

@@ -44,5 +44,8 @@ public interface FinanceCheckListReferenceDAO {
 
 	List<FinanceCheckListReference> getCheckListByFinRef(String reference, String showinStageCheckListIds, String type);
 
+	void delete(String finReference, String type);
+
 	void delete(long finID, String type);
+
 }

@@ -310,13 +310,13 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public List<ReasonHeader> getCancelReasonDetails(String reference) {
+	public List<ReasonHeader> getCancelReasonDetails(long reference) {
 		return reasonDetailDAO.getCancelReasonDetails(reference);
 	}
 
 	@Override
-	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(String finReference) {
-		return finAdvancePaymentsService.getFinAdvancePaymentByFinRef(finReference);
+	public List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(long finID) {
+		return finAdvancePaymentsService.getFinAdvancePaymentByFinRef(finID);
 	}
 
 	@Override
@@ -337,7 +337,6 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		long serviceUID = Long.MIN_VALUE;
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		for (FinServiceInstruction finServInst : schdData.getFinServiceInstructions()) {
 			serviceUID = finServInst.getInstructionUID();
@@ -345,7 +344,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(fm.getFinReference(), fd.getModuleDefiner());
+		cancelStageAccounting(finID, fd.getModuleDefiner());
 
 		// Fee charges deletion
 		finFeeChargesDAO.deleteChargesBatch(finID, fd.getModuleDefiner(), false, "_Temp");

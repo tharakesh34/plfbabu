@@ -33,13 +33,13 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	@Override
 	public FinCovenantType getFinCovenantTypeById(FinCovenantType fct, String type) {
 		StringBuilder sql = sqlSelectQuery(type, false);
-		sql.append(" Where FinID = ? and CovenantType = ?");
+		sql.append(" Where FinReference = ? and CovenantType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), new FinCovenantTypeRowMapper(type, false),
-					fct.getFinID(), fct.getCovenantType());
+					fct.getFinReference(), fct.getCovenantType());
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -48,15 +48,15 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	}
 
 	@Override
-	public List<FinCovenantType> getFinCovenantTypeByFinRef(final long finID, String type, boolean isEnquiry) {
+	public List<FinCovenantType> getFinCovenantTypeByFinRef(String finReference, String type, boolean isEnquiry) {
 		StringBuilder sql = sqlSelectQuery(type, isEnquiry);
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setString(index++, finReference);
 		}, new FinCovenantTypeRowMapper(type, isEnquiry));
 	}
 
@@ -64,7 +64,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	public void delete(FinCovenantType fct, String type) {
 		StringBuilder sql = new StringBuilder("Delete From FinCovenantType");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? and CovenantType = ?");
+		sql.append(" Where FinReference = ? and CovenantType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -72,7 +72,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, fct.getFinID());
+				ps.setString(index++, fct.getFinReference());
 				ps.setString(index++, fct.getCovenantType());
 			});
 		} catch (DataAccessException e) {
@@ -84,18 +84,17 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	public String save(FinCovenantType fct, String type) {
 		StringBuilder sql = new StringBuilder("Insert Into FinCovenantType");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(FinID, FinReference, CovenantType, Description, MandRole, AlwWaiver");
+		sql.append("(CovenantType, Description, MandRole, AlwWaiver");
 		sql.append(", AlwPostpone, PostponeDays, ReceivableDate, AlwOtc, InternalUse");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, fct.getFinID());
 			ps.setString(index++, fct.getFinReference());
 			ps.setString(index++, fct.getCovenantType());
 			ps.setString(index++, fct.getDescription());
@@ -129,7 +128,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		sql.append(", ReceivableDate = ?, AlwOtc = ?, InternalUse = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append("  Where FinID = ? and CovenantType = ?");
+		sql.append("  Where FinReference = ? and CovenantType = ?");
 
 		if (!type.endsWith("_Temp")) {
 			sql.append("  and Version = ? - 1");
@@ -158,7 +157,8 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 			ps.setString(index++, fct.getNextTaskId());
 			ps.setString(index++, fct.getRecordType());
 			ps.setLong(index++, fct.getWorkflowId());
-			ps.setLong(index++, fct.getFinID());
+
+			ps.setString(index++, fct.getFinReference());
 			ps.setString(index++, fct.getCovenantType());
 
 			if (!type.endsWith("_Temp")) {
@@ -172,27 +172,29 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	}
 
 	@Override
-	public void deleteByFinRef(long finID, String tableType) {
+	public void deleteByFinRef(String finReference, String tableType) {
 		StringBuilder sql = new StringBuilder("Delete From FinCovenantType");
 		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
-			ps.setLong(index++, finID);
+			ps.setString(index++, finReference);
 		});
 	}
 
 	@Override
-	public FinCovenantType getCovenantTypeById(long finID, String covenantType, String type) {
+	public FinCovenantType getCovenantTypeById(String finReference, String covenantType, String type) {
 		StringBuilder sql = sqlSelectQuery(type, false);
+		sql.append(" Where FinReference = ? and CovenantType = ?");
+
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new FinCovenantTypeRowMapper(type, false), finID,
-					covenantType);
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinCovenantTypeRowMapper(type, false),
+					finReference, covenantType);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -201,27 +203,27 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 	}
 
 	@Override
-	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(long finID, String type, boolean isEnquiry) {
+	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String finReferece, String type, boolean isEnquiry) {
 		StringBuilder sql = sqlSelectQuery(type, isEnquiry);
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 		sql.append(" and FinReference not in (Select ReferenceId From DocumentDetails");
 		sql.append(" Where FinReference = ReferenceId and CovenantType = DocCategory) ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new FinCovenantTypeRowMapper(type, isEnquiry), finID);
+		return this.jdbcOperations.query(sql.toString(), new FinCovenantTypeRowMapper(type, isEnquiry), finReferece);
 	}
 
 	@Override
 	public boolean isExists(FinCovenantType fct, String tableType) {
 		StringBuilder sql = new StringBuilder("Select Count(FinID) From FinCovenantType");
 		sql.append(StringUtils.trimToEmpty(tableType));
-		sql.append(" Where FinID = ? and CovenantType = ?");
+		sql.append(" Where FinReference = ? and CovenantType = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fct.getFinID(),
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, fct.getFinReference(),
 					fct.getCovenantType()) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			//
@@ -320,7 +322,7 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 
 	private StringBuilder sqlSelectQuery(String type, boolean isEnquiry) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinReference, CovenantType, Description, MandRole, AlwWaiver");
+		sql.append(" FinReference, CovenantType, Description, MandRole, AlwWaiver");
 		sql.append(", AlwPostpone, PostponeDays, ReceivableDate, AlwOtc, InternalUse");
 
 		if (isEnquiry) {
@@ -351,7 +353,6 @@ public class FinCovenantTypeDAOImpl extends BasicDao<FinCovenantType> implements
 		public FinCovenantType mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FinCovenantType fct = new FinCovenantType();
 
-			fct.setFinID(rs.getLong("FinID"));
 			fct.setFinReference(rs.getString("FinReference"));
 			fct.setCovenantType(rs.getString("CovenantType"));
 			fct.setDescription(rs.getString("Description"));

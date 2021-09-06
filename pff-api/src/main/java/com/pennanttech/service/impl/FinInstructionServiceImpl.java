@@ -210,66 +210,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail addRateChange(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceDetail fd = null;
+
+		String eventCode = AccountingEvent.RATCHG;
+
 		validationUtility.validate(fsi, AddRateChangeGroup.class);
 
-		String finReference = fsi.getFinReference();
-		String eventCode = AccountingEvent.RATCHG;
+		fd = validateInstruction(fsi, eventCode);
+
+		if (fd != null) {
+			return fd;
+		}
+
 		String reqFrom = fsi.getReqFrom();
-
-		APIErrorHandlerService.logReference(finReference);
-
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = new WSReturnStatus();
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		setDefaultDateFormats(fsi);
-		setDefaultForReferenceFields(fsi);
-
-		returnStatus = validateReqType(fsi.getReqType());
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = rateChangeService.doValidations(fsi);
 
@@ -312,75 +265,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail changeRepayAmt(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, ChangeRepaymentGroup.class);
+		FinanceDetail fd = null;
 
-		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
 
-		APIErrorHandlerService.logReference(finReference);
+		validationUtility.validate(fsi, ChangeRepaymentGroup.class);
 
-		setDefaultDateFormats(fsi);
+		fd = validateInstruction(fsi, eventCode);
 
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = addRepaymentService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -419,74 +314,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail deferments(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, DefermentsGroup.class);
+		FinanceDetail fd = null;
 
-		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.DEFRPY;
 
-		APIErrorHandlerService.logReference(finReference);
+		validationUtility.validate(fsi, DefermentsGroup.class);
 
-		setDefaultDateFormats(fsi);
+		fd = validateInstruction(fsi, eventCode);
 
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = postponementService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -524,74 +362,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail addTerms(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, AddTermsGroup.class);
+		FinanceDetail fd = null;
 
-		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
 
-		APIErrorHandlerService.logReference(finReference);
+		validationUtility.validate(fsi, AddTermsGroup.class);
 
-		setDefaultDateFormats(fsi);
+		fd = validateInstruction(fsi, eventCode);
 
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = addTermsService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -880,73 +661,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail recalculate(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceDetail fd = null;
+
+		String eventCode = AccountingEvent.SCDCHG;
+
 		validationUtility.validate(fsi, RecalculateGroup.class);
 
-		String finReference = fsi.getFinReference();
+		fd = validateInstruction(fsi, eventCode);
 
-		APIErrorHandlerService.logReference(finReference);
-
-		setDefaultDateFormats(fsi);
-
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = recalService.doValidations(fsi);
 
@@ -959,8 +684,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return fd;
 			}
 		}
-		// validate fees
-		String eventCode = AccountingEvent.SCDCHG;
+
 		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail ed : errors) {
@@ -987,74 +711,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail changeInterest(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, ChangeInterestGroup.class);
+		FinanceDetail fd = null;
 
-		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
 
-		APIErrorHandlerService.logReference(finReference);
+		validationUtility.validate(fsi, ChangeInterestGroup.class);
 
-		setDefaultDateFormats(fsi);
+		fd = validateInstruction(fsi, eventCode);
 
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = changeProfitService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -1082,87 +749,102 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return fd;
 	}
 
-	@Override
-	public FinanceDetail addDisbursement(FinServiceInstruction fsi) {
-		logger.debug(Literal.ENTERING);
-
-		validationUtility.validate(fsi, AddDisbursementGroup.class);
-
+	private FinanceDetail validateInstruction(FinServiceInstruction fsi, String eventCode) {
 		String finReference = fsi.getFinReference();
-		String eventCode = AccountingEvent.ADDDBSN;
+		String reqType = fsi.getReqType();
 
 		APIErrorHandlerService.logReference(finReference);
 
 		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+
+		if (!APIConstants.REQTYPE_INQUIRY.equals(reqType) && !APIConstants.REQTYPE_POST.equals(reqType)) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+
+			String valueParm[] = new String[1];
+			valueParm[0] = reqType;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("91113", valueParm));
 			return fd;
+		}
+
+		if (AccountingEvent.ADDDBSN.equals(eventCode)) {
+			if (APIConstants.REQTYPE_POST.equals(reqType) && fsi.getDisbursementDetails() == null) {
+				fd = new FinanceDetail();
+				doEmptyResponseObject(fd);
+				String valueParm[] = new String[1];
+				valueParm[0] = "DisbursementDetails";
+				fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+				return fd;
+			}
 		}
 
 		setDefaultDateFormats(fsi);
-
-		if (APIConstants.REQTYPE_POST.equals(fsi.getReqType()) && fsi.getDisbursementDetails() == null) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			String valueParm[] = new String[1];
-			valueParm[0] = "DisbursementDetails";
-			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return fd;
-		}
+		setDefaultForReferenceFields(fsi);
 
 		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
 		if (finID != null) {
 			fsi.setWif(false);
 		} else {
 			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
 			if (finID != null) {
 				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 		}
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (finID == null) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+			String valueParm[] = new String[1];
+			valueParm[0] = finReference;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return fd;
+		} else {
+			fsi.setFinID(finID);
 		}
 
 		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+			String valueParm[] = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("LMS001", valueParm));
 			return fd;
 		}
 
 		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
 		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+			String valueParm[] = new String[1];
+			valueParm[0] = "";
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("FWF001", valueParm));
 			return fd;
 		}
 
-		fsi.setFinID(finID);
+		return fd;
+
+	}
+
+	@Override
+	public FinanceDetail addDisbursement(FinServiceInstruction fsi) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail fd = null;
+
+		String eventCode = AccountingEvent.ADDDBSN;
+
+		validationUtility.validate(fsi, AddDisbursementGroup.class);
+
+		fd = validateInstruction(fsi, eventCode);
+
+		if (fd != null) {
+			return fd;
+		}
+
+		long finID = fsi.getFinID();
+		String finReference = fsi.getFinReference();
 
 		fd = finServiceInstController.getFinanceDetails(fsi, eventCode);
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -1237,74 +919,18 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail changeInstallmentFrq(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, ChangeInstallmentFrequencyGroup.class);
+		FinanceDetail fd = null;
 
-		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
 
-		APIErrorHandlerService.logReference(finReference);
+		validationUtility.validate(fsi, ChangeInstallmentFrequencyGroup.class);
 
-		setDefaultDateFormats(fsi);
+		fd = validateInstruction(fsi, eventCode);
 
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
 
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 		AuditDetail auditDetail = changeFrequencyService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
 			for (ErrorDetail ed : auditDetail.getErrorDetails()) {
@@ -1341,73 +967,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail reScheduling(FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceDetail fd = null;
+
+		String eventCode = AccountingEvent.SCDCHG;
+
 		validationUtility.validate(fsi, ReSchedulingGroup.class);
 
-		String finReference = fsi.getFinReference();
+		fd = validateInstruction(fsi, eventCode);
 
-		APIErrorHandlerService.logReference(finReference);
-
-		setDefaultDateFormats(fsi);
-
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		if (fd != null) {
 			return fd;
 		}
 
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
+		validationUtility.validate(fsi, ReSchedulingGroup.class);
 
 		AuditDetail auditDetail = reScheduleService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -1420,7 +992,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		String eventCode = AccountingEvent.SCDCHG;
 		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
 			for (ErrorDetail ed : errors) {
@@ -1825,84 +1396,30 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail scheduleMethodChange(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, ScheduleMethodGroup.class);
+		FinanceDetail fd = null;
 
-		String finReference = fsi.getFinReference();
 		String eventCode = AccountingEvent.SCDCHG;
 
-		setDefaultDateFormats(fsi);
+		validationUtility.validate(fsi, ScheduleMethodGroup.class);
 
-		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		fd = validateInstruction(fsi, eventCode);
+
+		if (fd != null) {
 			return fd;
 		}
 
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
+		long finID = fsi.getFinID();
 
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", fsi.isWif());
 		if (fm.isStepFinance()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Step Loan";
 			valueParm[1] = "Schedule Change Method";
-			returnStatus = APIErrorHandlerService.getFailedStatus("90329", valueParm);
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90329", valueParm));
 			return fd;
 		}
-
-		fsi.setFinID(finID);
 
 		AuditDetail auditDetail = changeScheduleMethodService.doValidations(fsi);
 		if (auditDetail.getErrorDetails() != null) {
@@ -1940,73 +1457,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail changeGestationPeriod(FinServiceInstruction fsi) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		validationUtility.validate(fsi, ChangeGestationGroup.class);
-
-		String finReference = fsi.getFinReference();
-		String eventCode = AccountingEvent.GRACEEND;
-
 		FinanceDetail fd = null;
 
-		setDefaultDateFormats(fsi);
+		String eventCode = AccountingEvent.GRACEEND;
 
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+		validationUtility.validate(fsi, ChangeGestationGroup.class);
+
+		fd = validateInstruction(fsi, eventCode);
+
+		if (fd != null) {
 			return fd;
 		}
-
-		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
-		if (finID != null) {
-			fsi.setWif(false);
-		} else {
-			finID = financeMainDAO.getActiveWIFFinID(finReference, TableType.MAIN_TAB);
-			if (finID != null) {
-				fsi.setWif(true);
-			} else {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-			}
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
-		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
-			String[] valueParm = new String[1];
-			valueParm[0] = rcdMaintainSts;
-			returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		boolean writeoffLoan = financeWriteoffDAO.isWriteoffLoan(finID, "");
-		if (writeoffLoan) {
-			String[] valueParam = new String[1];
-			valueParam[0] = "";
-			returnStatus = APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			fd = new FinanceDetail();
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
-			return fd;
-		}
-
-		fsi.setFinID(finID);
 
 		List<ErrorDetail> errors = doProcessServiceFees(fsi, eventCode);
 		if (!errors.isEmpty()) {
@@ -2179,13 +1640,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		} else {
 			if (fsi.isReceiptUpload()) {// FIXME
-				FinanceDetail financeDetail = new FinanceDetail();
-				financeDetail = receiptService.getFinanceDetail(fsi, eventCode, financeDetail);
+				FinanceDetail fd = new FinanceDetail();
+				fd = receiptService.getFinanceDetail(fsi, eventCode, fd);
 				try {
-					BigDecimal dueAmount = getDueAmount(fsi, financeDetail, eventCode);
+					BigDecimal dueAmount = getDueAmount(fsi, fd, eventCode);
 					BigDecimal extraAmount = fsi.getAmount().subtract(dueAmount);
-					financeDetail.getFinScheduleData().getFinanceMain().setRepayAmount(extraAmount);
-					feeDetailService.doProcessFeesForInquiryForUpload(financeDetail, eventCode, fsi, true);
+					fd.getFinScheduleData().getFinanceMain().setRepayAmount(extraAmount);
+					feeDetailService.doProcessFeesForInquiryForUpload(fd, eventCode, fsi, true);
 					buildFinFeeForUpload(fsi);
 
 				} catch (Exception e) {
@@ -3018,9 +2479,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 	}
 
-	private void setDefaultForReferenceFields(FinServiceInstruction fisi) {
-		if (StringUtils.isBlank(fisi.getBaseRate())) {
-			fisi.setBaseRate(StringUtils.trimToNull(fisi.getBaseRate()));
+	private void setDefaultForReferenceFields(FinServiceInstruction fsi) {
+		if (StringUtils.isBlank(fsi.getBaseRate())) {
+			fsi.setBaseRate(StringUtils.trimToNull(fsi.getBaseRate()));
 		}
 	}
 

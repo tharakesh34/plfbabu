@@ -46,7 +46,6 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 public class FinCovenantType extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = -6234931333270161797L;
 
-	private long finID;
 	private String finReference;
 	@XmlElement
 	private String covenantType;
@@ -105,7 +104,6 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		return excludeFields;
 	}
 
-
 	public String getId() {
 		return finReference;
 	}
@@ -114,14 +112,6 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		this.finReference = finReference;
 	}
 
-	public long getFinID() {
-		return finID;
-	}
-
-	public void setFinID(long finID) {
-		this.finID = finID;
-	}
-	
 	public String getFinReference() {
 		return finReference;
 	}

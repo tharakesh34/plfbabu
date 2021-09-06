@@ -43,7 +43,7 @@ public interface CollateralSetupDAO {
 
 	List<CollateralSetup> getApprovedCollateralByCustId(long depositorId, String tableType);
 
-	List<CollateralSetup> getCollateralSetupByFinRef(long finID, String tableType);
+	List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String tableType);
 
 	List<CollateralSetup> getCollateralByRef(String reference, long depositorId, String type);
 

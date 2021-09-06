@@ -14,6 +14,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinCovenantTypeService;
@@ -39,48 +40,52 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 	private FinanceMainDAO financeMainDAO;
 
 	@Override
-	public WSReturnStatus addFinCovenant(FinanceDetail financeDetail) throws ServiceException {
+	public WSReturnStatus addFinCovenant(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		String finReference = financeDetail.getFinReference();
+		String finReference = fd.getFinReference();
+
 		if (StringUtils.isBlank(finReference)) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "finReference";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		// for logging purpose
+
 		APIErrorHandlerService.logReference(finReference);
-		FinanceMain financeMain = null;
-		financeMain = financeDetailService.getFinanceMain(finReference, " _View");
-		if (financeMain == null) {
+		FinanceMain fm = null;
+
+		fm = financeMainDAO.getFinanceMainByRef(finReference, "_View", false);
+		if (fm == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
-		if (!financeMain.isFinIsActive() || StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
+		if (!fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
-		if (CollectionUtils.isEmpty(financeDetail.getCovenantTypeList())) {
+		if (CollectionUtils.isEmpty(fd.getCovenantTypeList())) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "covenants";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
-		List<ErrorDetail> errorDetails = null;
-		financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-		errorDetails = finCovenantTypeService.doCovenantValidation(financeDetail, false);
-		if (CollectionUtils.isNotEmpty(errorDetails)) {
-			for (ErrorDetail errorDetail : errorDetails) {
-				return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinanceMain(fm);
+
+		List<ErrorDetail> edList = finCovenantTypeService.doCovenantValidation(fd, false);
+		if (CollectionUtils.isNotEmpty(edList)) {
+			for (ErrorDetail ed : edList) {
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError());
 			}
 		}
 
 		WSReturnStatus response = null;
-		if (CollectionUtils.isEmpty(errorDetails)) {
-			response = finCovenantController.addFinCovenant(financeDetail);
+		if (CollectionUtils.isEmpty(edList)) {
+			response = finCovenantController.addFinCovenant(fd);
 		}
 		logger.debug(Literal.LEAVING);
 		return response;

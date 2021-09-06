@@ -32,23 +32,23 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 
 public interface FinCovenantTypeDAO {
 
-	FinCovenantType getFinCovenantTypeById(FinCovenantType finCovenantType, String type);
+	FinCovenantType getFinCovenantTypeById(FinCovenantType covenantType, String type);
 
-	void update(FinCovenantType finCovenantTypeDAO, String type);
+	void update(FinCovenantType covenantType, String type);
 
-	void delete(FinCovenantType finCovenantTypeDAO, String type);
+	void delete(FinCovenantType covenantType, String type);
 
-	String save(FinCovenantType finCovenantTypeDAO, String type);
+	String save(FinCovenantType covenantType, String type);
 
-	List<FinCovenantType> getFinCovenantTypeByFinRef(long finID, String type, boolean isEnquiry);
+	List<FinCovenantType> getFinCovenantTypeByFinRef(String finReference, String type, boolean isEnquiry);
 
-	List<FinCovenantType> getFinCovenantDocTypeByFinRef(long finID, String type, boolean isEnquiry);
+	List<FinCovenantType> getFinCovenantDocTypeByFinRef(String finReference, String type, boolean isEnquiry);
 
-	void deleteByFinRef(long finID, String tableType);
+	void deleteByFinRef(String finReference, String tableType);
 
-	FinCovenantType getCovenantTypeById(long finID, String covenantType, String type);
+	FinCovenantType getCovenantTypeById(String finReference, String covenantType, String type);
 
-	boolean isExists(FinCovenantType finCovenantType, String string);
+	boolean isExists(FinCovenantType covenantType, String string);
 
 	DocumentType isCovenantTypeExists(String covenantType);
 

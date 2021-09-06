@@ -73,6 +73,6 @@ public interface FinCovenantTypeService {
 
 	List<DocumentType> getPddOtcList();
 
-	public List<ErrorDetail> doCovenantValidation(FinanceDetail financeDetail, boolean isUpdate);
+	public List<ErrorDetail> doCovenantValidation(FinanceDetail fd, boolean isUpdate);
 
 }

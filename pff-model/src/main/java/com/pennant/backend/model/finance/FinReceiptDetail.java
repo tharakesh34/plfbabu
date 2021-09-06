@@ -63,6 +63,7 @@ public class FinReceiptDetail implements Serializable {
 	private boolean delRecord = false;
 	private String partnerBankAc;
 	private String partnerBankAcType;
+	private Long finID;
 	private String reference; // only for Fees
 	private String feeTypeCode;
 	private String feeTypeDesc;
@@ -133,6 +134,7 @@ public class FinReceiptDetail implements Serializable {
 		entity.setPartnerBankAc(this.partnerBankAc);
 		entity.setPartnerBankAcType(this.partnerBankAcType);
 		entity.setReference(this.reference);
+		entity.setFinID(this.finID);
 		entity.setFeeTypeCode(this.feeTypeCode);
 		entity.setFeeTypeDesc(this.feeTypeDesc);
 		entity.setNoReserve(this.noReserve);
@@ -161,6 +163,7 @@ public class FinReceiptDetail implements Serializable {
 		excludeFields.add("partialPaidAMount");
 		excludeFields.add("partnerBankAc");
 		excludeFields.add("partnerBankAcType");
+		excludeFields.add("finID");
 		excludeFields.add("reference");
 		excludeFields.add("receiptTaxDetail");
 		excludeFields.add("repayHeaders");
@@ -413,6 +416,14 @@ public class FinReceiptDetail implements Serializable {
 
 	public void setPartnerBankAcType(String partnerBankAcType) {
 		this.partnerBankAcType = partnerBankAcType;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 	public String getReference() {

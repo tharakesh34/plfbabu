@@ -1,45 +1,27 @@
 /**
-* Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralAssignmentDAOImpl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  07-05-2016    														*
- *                                                                  						*
- * Modified Date    :  07-05-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralAssignmentDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 07-05-2016 * *
+ * Modified Date : 07-05-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 07-05-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 16-05-2018       Srinivasa Varma          0.2          Development Item 82               * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 07-05-2016 Pennant 0.1 * * 16-05-2018 Srinivasa Varma 0.2 Development Item 82 * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.collateral.impl;
 
 import java.math.BigDecimal;
@@ -603,7 +585,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			sql.append(", DepositorCIF, CollateralType");
 		}
 
-		sql.append(" from CollateralAssignment");
+		sql.append(" From CollateralAssignment");
 		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}

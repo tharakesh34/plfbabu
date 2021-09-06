@@ -47,40 +47,34 @@ public interface FinFeeDetailService {
 
 	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type, String eventCodeRef);
 
-	List<AuditDetail> saveOrUpdate(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
-			boolean isWIF);
+	List<AuditDetail> saveOrUpdate(List<FinFeeDetail> feeList, String tableType, String auditTranType, boolean isWIF);
 
-	List<AuditDetail> doApprove(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType,
-			boolean isWIF);
+	List<AuditDetail> doApprove(List<FinFeeDetail> feeList, String tableType, String auditTranType, boolean isWIF);
 
-	List<AuditDetail> delete(List<FinFeeDetail> finFeeDetails, String tableType, String auditTranType, boolean isWIF);
+	List<AuditDetail> delete(List<FinFeeDetail> feeList, String tableType, String auditTranType, boolean isWIF);
 
-	List<AuditDetail> validate(List<FinFeeDetail> finFeeDetails, long workflowId, String method, String auditTranType,
+	List<AuditDetail> validate(List<FinFeeDetail> feeList, long workflowId, String method, String auditTranType,
 			String usrLanguage, boolean isWIF);
 
 	List<FinReceiptDetail> getFinReceiptDetais(String reference, long custId);
 
 	List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type);
 
-	List<AuditDetail> validateFinFeeReceipts(FinanceDetail financeDetail, long workflowId, String method,
-			String auditTranType, String usrLanguage, List<AuditDetail> auditDetails);
+	List<AuditDetail> validateFinFeeReceipts(FinanceDetail fee, long workflowId, String method, String auditTranType,
+			String usrLanguage, List<AuditDetail> auditDetails);
 
-	List<AuditDetail> saveOrUpdateFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType,
-			String auditTranType);
+	List<AuditDetail> saveOrUpdateFinFeeReceipts(List<FinFeeReceipt> feeList, String tableType, String auditTranType);
 
-	List<AuditDetail> doApproveFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String tranType,
-			String finReference, long custId);
+	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> feeReceipts, String tableType, String auditTranType);
 
-	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> finFeeReceipts, String tableType, String auditTranType);
-
-	void createExcessAmount(String finReference, Map<Long, FinFeeReceipt> map, long custId);
+	void createExcessAmount(long finID, Map<Long, FinFeeReceipt> map, long custId);
 
 	long getFinFeeTypeIdByFeeType(String feeTypeCode, long finID);
 
 	void updateTaxPercent(UploadTaxPercent taxPercent);
 
 	// GST
-	void processGSTCalForRule(FinFeeDetail finFeeDetail, BigDecimal taxableAmount, FinanceDetail financeDetail,
+	void processGSTCalForRule(FinFeeDetail fee, BigDecimal taxableAmount, FinanceDetail financeDetail,
 			Map<String, BigDecimal> taxPercentages, boolean apiRequest);
 
 	BigDecimal getFeeResult(String sqlRule, Map<String, Object> executionMap, String finCcy);
@@ -92,29 +86,27 @@ public interface FinFeeDetailService {
 	BigDecimal calculatePercentage(BigDecimal amount, BigDecimal gstPercentage, String taxRoundMode,
 			int taxRoundingTarget);
 
-	void processGSTCalForPercentage(FinFeeDetail finFeeDetail, BigDecimal calPercentageFee, FinanceDetail financeDetail,
+	void processGSTCalForPercentage(FinFeeDetail fee, BigDecimal calPercentageFee, FinanceDetail fd,
 			Map<String, BigDecimal> gstExecutionMap, boolean apiRequest);
 
-	void convertGSTFinTypeFees(FinFeeDetail finFeeDetail, FinTypeFees finTypeFee, FinanceDetail financeDetail,
+	void convertGSTFinTypeFees(FinFeeDetail fee, FinTypeFees finTypeFee, FinanceDetail fd,
 			Map<String, BigDecimal> taxPercentages);
 
 	boolean getFeeTypeId(long feeTypeId, String finType, int moduelId, boolean originationFee);
 
-	BigDecimal getExcessAmount(String finReference, Map<Long, List<FinFeeReceipt>> map, long custId);
+	BigDecimal getExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId);
 
 	Branch getBranchById(String branchCode, String type);
 
 	List<FinFeeDetail> getFinFeeDetailsByReferenceId(long referenceId, String eventCodeRef, String type); // TO get the
-																											// Servicing
-																											// Fees
 
-	void updateFeesFromUpfront(FinFeeDetail finFeeDetail, String type);
+	void updateFeesFromUpfront(FinFeeDetail fee, String type);
 
-	Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> finFeeReceipt);
+	Map<Long, List<FinFeeReceipt>> getUpfromtReceiptMap(List<FinFeeReceipt> feeReceipts);
 
-	BigDecimal calDropLineLPOS(FinScheduleData finScheduleData, Date appDate);
+	BigDecimal calDropLineLPOS(FinScheduleData schdData, Date appDate);
 
-	void convertGSTFinFeeConfig(FinFeeDetail finFeeDetail, FinFeeConfig finFeeConfig, FinanceDetail financeDetail,
+	void convertGSTFinFeeConfig(FinFeeDetail fee, FinFeeConfig finFeeConfig, FinanceDetail fd,
 			Map<String, BigDecimal> taxPercentages);
 
 	List<FinFeeDetail> getFinFeeDetailsByTran(String reference, boolean isWIF, String type);

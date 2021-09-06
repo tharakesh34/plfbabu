@@ -184,6 +184,16 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, finID));
 	}
 
+	public void delete(String Reference, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinanceCheckListRef");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setString(1, Reference));
+	}
+
 	@Override
 	public String save(FinanceCheckListReference fclr, String type) {
 		StringBuilder sql = new StringBuilder("Insert Into FinanceCheckListRef");

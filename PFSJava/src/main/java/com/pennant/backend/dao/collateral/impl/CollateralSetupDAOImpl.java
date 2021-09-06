@@ -247,15 +247,15 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 	}
 
 	@Override
-	public List<CollateralSetup> getCollateralSetupByFinRef(long finID, String type) {
+	public List<CollateralSetup> getCollateralSetupByFinRef(String finReference, String type) {
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where FinID = ? and Status is null");
+		sql.append(" Where FinReference = ? and Status is null");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		CollateralSetupRowMapper rowMapper = new CollateralSetupRowMapper(type);
 
-		return this.jdbcOperations.query(sql.toString(), rowMapper, finID);
+		return this.jdbcOperations.query(sql.toString(), rowMapper, finReference);
 	}
 
 	@Override

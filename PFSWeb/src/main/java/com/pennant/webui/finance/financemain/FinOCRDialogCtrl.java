@@ -253,8 +253,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 				if (isFinanceProcess && financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())
 						&& financeMain.isFinOcrRequired()) {
-					FinOCRHeader finOCRHeader = finOCRHeaderService
-							.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.VIEW.getSuffix());
+					FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
+							TableType.VIEW.getSuffix());
 					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
 							TableType.AVIEW.getSuffix());
 					if (getFinanceDetail() != null
@@ -612,8 +612,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 			FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 			if (StringUtils.isNotBlank(financeMain.getParentRef())) {
 				if (predicate.test(financeMain.getParentRef())) {
-					FinOCRHeader finOCRHeader = finOCRHeaderService
-							.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(), TableType.TEMP_TAB.getSuffix());
+					FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
+							TableType.TEMP_TAB.getSuffix());
 					if (finOCRHeader != null) {
 						MessageUtil.showError(Labels.getLabel("label_FinOCRCapture_OCRMaintenance.value"));
 						return;
@@ -968,7 +968,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
 			// Parent total demand amount
-			FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(),
+			FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
 					TableType.VIEW.getSuffix());
 			if (finOCRHeader != null) {
 				BigDecimal customerportion = getCurrentTranchAmount(finOCRHeader.getTotalDemand(),
@@ -1627,7 +1627,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (StringUtils.isNotBlank(financeMain.getParentRef())) {
 			if (predicate.test(financeMain.getParentRef())) {
-				FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(),
+				FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
 						TableType.TEMP_TAB.getSuffix());
 				if (finOCRHeader != null) {
 					MessageUtil.showError(Labels.getLabel("label_FinOCRCapture_OCRMaintenance.value"));
@@ -1987,7 +1987,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 
 		FinOCRHeader finOCRHeader = null;
 		if (StringUtils.isNotBlank(financeMain.getParentRef())) {
-			finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(),
+			finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
 					TableType.VIEW.getSuffix());
 		}
 		BigDecimal parentocrpaid = BigDecimal.ZERO;
@@ -2007,7 +2007,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 					continue;
 				}
 				finOCRHeader = null;
-				finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(childFinance.getFinReference(),
+				finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(childFinance.getFinID(),
 						TableType.VIEW.getSuffix());
 				if (finOCRHeader != null) {
 					for (FinOCRCapture cpr : finOCRHeader.getFinOCRCapturesList()) {
@@ -2032,7 +2032,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		FinOCRHeader finOCRHeader = null;
 
 		if (StringUtils.isNotBlank(financeMain.getParentRef())) {
-			finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getParentRef(),
+			finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
 					TableType.VIEW.getSuffix());
 		}
 		BigDecimal parentocrpaid = BigDecimal.ZERO;
@@ -2055,7 +2055,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 					continue;
 				}
 				finOCRHeader = null;
-				finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(childFinance.getFinReference(),
+				finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(childFinance.getFinID(),
 						TableType.VIEW.getSuffix());
 				if (finOCRHeader != null) {
 					for (FinOCRCapture cpr : finOCRHeader.getFinOCRCapturesList()) {

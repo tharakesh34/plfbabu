@@ -1043,162 +1043,162 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving");
 	}
 
-	public void processFeeDetails(FinScheduleData aFinScheduleData, boolean isWif) {
+	public void processFeeDetails(FinScheduleData schdData, boolean isWif) {
 		logger.debug("Entering");
 
-		if (aFinScheduleData != null) {
-			List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(aFinScheduleData, true);
+		if (schdData == null) {
+			return;
+		}
 
-			if (!aFinScheduleData.getFinanceMain().isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
-				List<FinFeeDetail> finFeeDetails = this.finFeeDetailService
-						.getFinFeeDetailById(aFinScheduleData.getFinanceMain().getFinID(), isWif, "_Temp");
+		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(schdData, true);
 
-				if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-					for (FinFeeDetail feeDetail : finFeeDetails) {
+		if (!schdData.getFinanceMain().isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
+			List<FinFeeDetail> finFeeDetails = this.finFeeDetailService
+					.getFinFeeDetailById(schdData.getFinanceMain().getFinID(), isWif, "_Temp");
 
-						if (AccountingEvent.VAS_FEE.equals(feeDetail.getFinEvent())) {
-							boolean found = false;
+			if (CollectionUtils.isNotEmpty(finFeeDetails)) {
+				for (FinFeeDetail feeDetail : finFeeDetails) {
 
-							if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-								for (FinFeeDetail fiinFeeDetail : finFeeDetailList) {
-									if (AccountingEvent.VAS_FEE.equals(fiinFeeDetail.getFinEvent())
-											&& StringUtils.equals(fiinFeeDetail.getVasReference(),
-													feeDetail.getVasReference())
-											&& (fiinFeeDetail.getFeeID() == feeDetail.getFeeID())) {
+					if (AccountingEvent.VAS_FEE.equals(feeDetail.getFinEvent())) {
+						boolean found = false;
 
-										found = true;
-										break;
-									}
+						if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
+							for (FinFeeDetail fiinFeeDetail : finFeeDetailList) {
+								if (AccountingEvent.VAS_FEE.equals(fiinFeeDetail.getFinEvent())
+										&& StringUtils.equals(fiinFeeDetail.getVasReference(),
+												feeDetail.getVasReference())
+										&& (fiinFeeDetail.getFeeID() == feeDetail.getFeeID())) {
+
+									found = true;
+									break;
 								}
 							}
+						}
 
-							if (!found) {
-								feeDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-								feeDetail.setDataModified(true);
-								finFeeDetailList.add(feeDetail);
-							}
+						if (!found) {
+							feeDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+							feeDetail.setDataModified(true);
+							finFeeDetailList.add(feeDetail);
 						}
 					}
 				}
 			}
-
-			boolean feeChanges = false;
-			boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
-			if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
-				readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
-			}
-			Cloner cloner = new Cloner();
-			finFeeDetailList = cloner.deepClone(finFeeDetailList);
-			if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
-				for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-					finFeeDetail.setFinReference(aFinScheduleData.getFinanceMain().getFinReference());
-					finFeeDetail.setRecordStatus(aFinScheduleData.getFinanceMain().getRecordStatus());
-					finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					finFeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-
-					if (!readOnly && !PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType())
-							&& finFeeDetail.isAlwModifyFee() && !feeChanges && finFeeDetail.isRcdVisible()) {
-						if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
-								finFeeDetail.getTaxComponent())) {
-							if (finFeeDetail.getNetAmount().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
-								feeChanges = true;
-							}
-						} else {
-							if (finFeeDetail.getActualAmountOriginal()
-									.compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
-								feeChanges = true;
-							}
-						}
-					}
-				}
-			}
-
-			// if we have any Difference between calculated fee amount and actual fee amount
-			if (feeChanges) {
-				final String msg = "Difference between calculated fee amount and actual fee amount. Do you want to proceed?";
-				MessageUtil.confirm(msg, evnt -> {
-					if (Messagebox.ON_NO.equals(evnt.getName())) {
-						ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
-						wve.add(new WrongValueException(
-								"Difference between calculated fee amount and actual fee amount."));
-						showErrorDetails(wve);
-					}
-				});
-			}
-
-			aFinScheduleData.setFinFeeDetailList(finFeeDetailList);
-
-			List<FinFeeReceipt> finFeeReceipts = null;
-			for (FinFeeReceipt oldFinFeeReceipt : aFinScheduleData.getFinFeeReceipts()) {
-
-				finFeeReceipts = this.finFeeReceiptMap.get(oldFinFeeReceipt.getReceiptID());
-				boolean receiptFound = false;
-				if (finFeeReceipts == null) {
-					continue;
-				}
-
-				for (FinFeeReceipt feeReceipt : finFeeReceipts) {
-
-					if (oldFinFeeReceipt.getFeeID() == feeReceipt.getFeeID()) {
-
-						if (StringUtils.isBlank(feeReceipt.getRecordType())) {
-							FinFeeReceipt befImage = new FinFeeReceipt();
-							BeanUtils.copyProperties(oldFinFeeReceipt, befImage);
-							oldFinFeeReceipt.setBefImage(befImage);
-
-							BigDecimal paidAmt = feeReceipt.getPaidAmount();
-							BeanUtils.copyProperties(oldFinFeeReceipt, feeReceipt);
-							feeReceipt.setPaidAmount(paidAmt);
-						}
-
-						receiptFound = true;
-					}
-				}
-
-				if (!receiptFound) {
-					oldFinFeeReceipt.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-					finFeeReceipts.add(oldFinFeeReceipt);
-				}
-			}
-
-			finFeeReceipts = new ArrayList<FinFeeReceipt>();
-			for (Long key : this.finFeeReceiptMap.keySet()) {
-
-				List<FinFeeReceipt> finFeeReceiptsList = new ArrayList<FinFeeReceipt>();
-				finFeeReceiptsList.addAll(this.finFeeReceiptMap.get(key));
-
-				for (int i = 0; i < finFeeReceiptsList.size(); i++) {
-
-					FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
-
-					if (StringUtils.isBlank(finFeeReceiptTemp.getRecordType())) {
-						finFeeReceiptTemp.setNewRecord(true);
-						finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
-					} else if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode()) && StringUtils
-							.equals(finFeeReceiptTemp.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
-						finFeeReceiptsList.add(finFeeReceiptTemp);
-					}
-
-					if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode())) {
-						finFeeReceiptsList.remove(i);
-						i = 0;
-					}
-				}
-				finFeeReceipts.addAll(finFeeReceiptsList);
-			}
-
-			if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
-				for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
-					finFeeReceipt.setRecordStatus(aFinScheduleData.getFinanceMain().getRecordStatus());
-					finFeeReceipt.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-					finFeeReceipt.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					finFeeReceipt.setUserDetails(getUserWorkspace().getLoggedInUser());
-				}
-			}
-
-			aFinScheduleData.setFinFeeReceipts(finFeeReceipts);
 		}
+
+		boolean feeChanges = false;
+		boolean readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance");
+		if (financeMain.isQuickDisb() && readOnly && StringUtils.isBlank(this.moduleDefiner)) {
+			readOnly = isReadOnly("FinFeeDetailListCtrl_AlwFeeMaintenance_QDP");
+		}
+		Cloner cloner = new Cloner();
+		finFeeDetailList = cloner.deepClone(finFeeDetailList);
+		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				finFeeDetail.setFinReference(schdData.getFinanceMain().getFinReference());
+				finFeeDetail.setRecordStatus(schdData.getFinanceMain().getRecordStatus());
+				finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				finFeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+
+				if (!readOnly && !PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType())
+						&& finFeeDetail.isAlwModifyFee() && !feeChanges && finFeeDetail.isRcdVisible()) {
+					if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
+							finFeeDetail.getTaxComponent())) {
+						if (finFeeDetail.getNetAmount().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+							feeChanges = true;
+						}
+					} else {
+						if (finFeeDetail.getActualAmountOriginal().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+							feeChanges = true;
+						}
+					}
+				}
+			}
+		}
+
+		// if we have any Difference between calculated fee amount and actual fee amount
+		if (feeChanges) {
+			final String msg = "Difference between calculated fee amount and actual fee amount. Do you want to proceed?";
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_NO.equals(evnt.getName())) {
+					ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+					wve.add(new WrongValueException("Difference between calculated fee amount and actual fee amount."));
+					showErrorDetails(wve);
+				}
+			});
+		}
+
+		schdData.setFinFeeDetailList(finFeeDetailList);
+
+		List<FinFeeReceipt> finFeeReceipts = null;
+		for (FinFeeReceipt oldFinFeeReceipt : schdData.getFinFeeReceipts()) {
+
+			finFeeReceipts = this.finFeeReceiptMap.get(oldFinFeeReceipt.getReceiptID());
+			boolean receiptFound = false;
+			if (finFeeReceipts == null) {
+				continue;
+			}
+
+			for (FinFeeReceipt feeReceipt : finFeeReceipts) {
+
+				if (oldFinFeeReceipt.getFeeID() == feeReceipt.getFeeID()) {
+
+					if (StringUtils.isBlank(feeReceipt.getRecordType())) {
+						FinFeeReceipt befImage = new FinFeeReceipt();
+						BeanUtils.copyProperties(oldFinFeeReceipt, befImage);
+						oldFinFeeReceipt.setBefImage(befImage);
+
+						BigDecimal paidAmt = feeReceipt.getPaidAmount();
+						BeanUtils.copyProperties(oldFinFeeReceipt, feeReceipt);
+						feeReceipt.setPaidAmount(paidAmt);
+					}
+
+					receiptFound = true;
+				}
+			}
+
+			if (!receiptFound) {
+				oldFinFeeReceipt.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+				finFeeReceipts.add(oldFinFeeReceipt);
+			}
+		}
+
+		finFeeReceipts = new ArrayList<FinFeeReceipt>();
+		for (Long key : this.finFeeReceiptMap.keySet()) {
+
+			List<FinFeeReceipt> finFeeReceiptsList = new ArrayList<FinFeeReceipt>();
+			finFeeReceiptsList.addAll(this.finFeeReceiptMap.get(key));
+
+			for (int i = 0; i < finFeeReceiptsList.size(); i++) {
+
+				FinFeeReceipt finFeeReceiptTemp = finFeeReceiptsList.get(i);
+
+				if (StringUtils.isBlank(finFeeReceiptTemp.getRecordType())) {
+					finFeeReceiptTemp.setNewRecord(true);
+					finFeeReceiptTemp.setRecordType(PennantConstants.RCD_ADD);
+				} else if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode())
+						&& StringUtils.equals(finFeeReceiptTemp.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+					finFeeReceiptsList.add(finFeeReceiptTemp);
+				}
+
+				if (StringUtils.isBlank(finFeeReceiptTemp.getFeeTypeCode())) {
+					finFeeReceiptsList.remove(i);
+					i = 0;
+				}
+			}
+			finFeeReceipts.addAll(finFeeReceiptsList);
+		}
+
+		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
+			for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
+				finFeeReceipt.setRecordStatus(schdData.getFinanceMain().getRecordStatus());
+				finFeeReceipt.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				finFeeReceipt.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				finFeeReceipt.setUserDetails(getUserWorkspace().getLoggedInUser());
+			}
+		}
+
+		schdData.setFinFeeReceipts(finFeeReceipts);
 
 		logger.debug("Leaving");
 	}
