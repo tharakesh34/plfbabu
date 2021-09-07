@@ -83,6 +83,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * ************************************************************<br>
@@ -487,7 +488,9 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		logger.debug("Entering");
 
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
-			FinanceMain financeMain = getFinanceMainService().getFinanceMainById(this.finReference.getValue(), false);
+
+			long finID = ComponentUtil.getFinID(this.finReference);
+			FinanceMain financeMain = getFinanceMainService().getFinanceMainById(finID, false);
 			this.customerId.setValue(Long.toString(financeMain.getCustID()));
 		} else {
 			this.customerId.setValue("");

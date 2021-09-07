@@ -49,136 +49,138 @@ public class SummaryDetailService extends ExtendedTestClass {
 	protected FinFeeDetailDAO finFeeDetailDAO;
 	protected ReceiptCalculator receiptCalculator;
 
-	public FinanceSummary getFinanceSummary(FinanceDetail financeDetail) {
+	public FinanceSummary getFinanceSummary(FinanceDetail fd) {
 		logger.debug("Entering");
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		String finReference = financeMain.getFinReference();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 		FinanceSummary summary = new FinanceSummary();
-		if (financeMain != null) {
-			financeDetail.setFinReference(finReference);
-			summary.setEffectiveRateOfReturn(financeMain.getEffectiveRateOfReturn());
-			summary.setTotalGracePft(financeMain.getTotalGracePft());
-			summary.setTotalGraceCpz(financeMain.getTotalGraceCpz());
-			summary.setTotalGrossGrcPft(financeMain.getTotalGrossGrcPft());
 
-			// calculate total paid fees
-			BigDecimal totFeeAmount = calculateTotFeeChargeAmt(financeDetail.getFinScheduleData());
-			summary.setFeeChargeAmt(totFeeAmount);
+		if (fm == null) {
+			return null;
+		}
 
-			// fetch summary details from FinPftDetails
-			FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
-			financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			FinScheduleData curSchd = resetScheduleDetail(financeDetail.getFinScheduleData());
-			finPftDetail = accrualService.calProfitDetails(financeMain, curSchd.getFinanceScheduleDetails(),
-					finPftDetail, SysParamUtil.getAppDate());
+		fd.setFinID(finID);
+		fd.setFinReference(finReference);
+		summary.setEffectiveRateOfReturn(fm.getEffectiveRateOfReturn());
+		summary.setTotalGracePft(fm.getTotalGracePft());
+		summary.setTotalGraceCpz(fm.getTotalGraceCpz());
+		summary.setTotalGrossGrcPft(fm.getTotalGrossGrcPft());
 
-			// override repay profit rate with FinProfitdetail calculated value(which is latest).
-			financeMain.setRepayProfitRate(finPftDetail.getCurReducingRate());
-			summary.setTotalCpz(finPftDetail.getTotalPftCpz());
-			summary.setTotalProfit(finPftDetail.getTotalPftSchd());
-			summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
-			summary.setNumberOfTerms(finPftDetail.getNOInst());
-			summary.setLoanTenor(
-					DateUtility.getMonthsBetween(financeMain.getFinStartDate(), financeMain.getMaturityDate()));
-			summary.setMaturityDate(finPftDetail.getMaturityDate());
-			summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
-			summary.setNextSchDate(finPftDetail.getNSchdDate());
-			summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
+		// calculate total paid fees
+		BigDecimal totFeeAmount = calculateTotFeeChargeAmt(fd.getFinScheduleData());
+		summary.setFeeChargeAmt(totFeeAmount);
 
-			// Total future Installments
-			// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
-			summary.setFutureInst(finPftDetail.getFutureInst());
-			summary.setFutureTenor(
-					DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
-			summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
-			summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
-			summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
-			summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));
-			summary.setFinLastRepayDate(finPftDetail.getPrvRpySchDate());
-			summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
-			summary.setOutStandProfit(finPftDetail.getTotalPftBal());
-			summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
-			summary.setPrincipal(finPftDetail.getTdSchdPriBal());
-			summary.setFuturePrincipal(finPftDetail.getTotalPriBal().subtract(finPftDetail.getTdSchdPriBal()));
-			summary.setInterest(finPftDetail.getTdSchdPftBal());
+		// fetch summary details from FinPftDetails
+		FinanceProfitDetail finPftDetail = new FinanceProfitDetail();
+		fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		FinScheduleData curSchd = resetScheduleDetail(fd.getFinScheduleData());
+		finPftDetail = accrualService.calProfitDetails(fm, curSchd.getFinanceScheduleDetails(), finPftDetail,
+				SysParamUtil.getAppDate());
 
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-				summary.setSanctionAmt(financeMain.getFinAssetValue());
-				summary.setUtilizedAmt(finPftDetail.getTotalPriBal());
-				summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));
-			}
+		// override repay profit rate with FinProfitdetail calculated value(which is latest).
+		fm.setRepayProfitRate(finPftDetail.getCurReducingRate());
+		summary.setTotalCpz(finPftDetail.getTotalPftCpz());
+		summary.setTotalProfit(finPftDetail.getTotalPftSchd());
+		summary.setTotalRepayAmt(finPftDetail.getTotalpriSchd().add(finPftDetail.getTotalPftSchd()));
+		summary.setNumberOfTerms(finPftDetail.getNOInst());
+		summary.setLoanTenor(DateUtility.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
+		summary.setMaturityDate(finPftDetail.getMaturityDate());
+		summary.setFirstEmiAmount(finPftDetail.getFirstRepayAmt());
+		summary.setNextSchDate(finPftDetail.getNSchdDate());
+		summary.setNextRepayAmount(finPftDetail.getNSchdPri().add(finPftDetail.getNSchdPft()));
 
-			// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
-			summary.setAdvPaymentAmount(BigDecimal.ZERO);
+		// Total future Installments
+		// int futureInst = financeMain.getCalTerms() - (finPftDetail.getNOPaidInst() + finPftDetail.getNOODInst());
+		summary.setFutureInst(finPftDetail.getFutureInst());
+		summary.setFutureTenor(
+				DateUtility.getMonthsBetween(finPftDetail.getNSchdDate(), finPftDetail.getMaturityDate()));
+		summary.setFirstInstDate(finPftDetail.getFirstRepayDate());
+		summary.setSchdPriPaid(finPftDetail.getTotalPriPaid());
+		summary.setSchdPftPaid(finPftDetail.getTotalPftPaid());
+		summary.setPaidTotal(finPftDetail.getTotalPriPaid().add(finPftDetail.getTotalPftPaid()));
+		summary.setFinLastRepayDate(finPftDetail.getPrvRpySchDate());
+		summary.setOutStandPrincipal(finPftDetail.getTotalPriBal());
+		summary.setOutStandProfit(finPftDetail.getTotalPftBal());
+		summary.setTotalOutStanding(finPftDetail.getTotalPriBal().add(finPftDetail.getTotalPftBal()));
+		summary.setPrincipal(finPftDetail.getTdSchdPriBal());
+		summary.setFuturePrincipal(finPftDetail.getTotalPriBal().subtract(finPftDetail.getTdSchdPriBal()));
+		summary.setInterest(finPftDetail.getTdSchdPftBal());
 
-			// set Finance closing status
-			if (StringUtils.isBlank(financeMain.getClosingStatus())) {
-				summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
+			summary.setSanctionAmt(fm.getFinAssetValue());
+			summary.setUtilizedAmt(finPftDetail.getTotalPriBal());
+			summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));
+		}
+
+		// As part of Bajaj implementation this field is required for GetLoan & SOA API's only.
+		summary.setAdvPaymentAmount(BigDecimal.ZERO);
+
+		// set Finance closing status
+		if (StringUtils.isBlank(fm.getClosingStatus())) {
+			summary.setFinStatus(APIConstants.CLOSE_STATUS_ACTIVE);
+		} else {
+			summary.setFinStatus(fm.getClosingStatus());
+		}
+
+		// setting first and last disbursement dates
+		List<FinanceDisbursement> disbList = financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false);
+		if (disbList != null && disbList.size() > 0) {
+			if (disbList.size() == 1) {
+				summary.setFirstDisbDate(disbList.get(0).getDisbDate());
+				summary.setLastDisbDate(disbList.get(0).getDisbDate());
 			} else {
-				summary.setFinStatus(financeMain.getClosingStatus());
-			}
-
-			// setting first and last disbursement dates
-			List<FinanceDisbursement> disbList = financeDisbursementDAO.getFinanceDisbursementDetails(finReference, "",
-					false);
-			if (disbList != null && disbList.size() > 0) {
-				if (disbList.size() == 1) {
-					summary.setFirstDisbDate(disbList.get(0).getDisbDate());
-					summary.setLastDisbDate(disbList.get(0).getDisbDate());
-				} else {
-					Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
-						@Override
-						public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
-							return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
-						}
-					});
-
-					summary.setFirstDisbDate(disbList.get(0).getDisbDate());
-					summary.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
-				}
-
-				BigDecimal totDisbAmt = BigDecimal.ZERO;
-				for (FinanceDisbursement finDisb : disbList) {
-					totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
-				}
-				BigDecimal assetValue = financeMain.getFinAssetValue() == null ? BigDecimal.ZERO
-						: financeMain.getFinAssetValue();
-				if (assetValue.compareTo(BigDecimal.ZERO) == 0 || assetValue.compareTo(totDisbAmt) == 0) {
-					summary.setFullyDisb(true);
-				}
-			}
-
-			// calculate OD Details
-			BigDecimal overDuePrincipal = BigDecimal.ZERO;
-			BigDecimal overDueProfit = BigDecimal.ZERO;
-			BigDecimal overDueCharges = BigDecimal.ZERO;
-			BigDecimal latePayPftBal = BigDecimal.ZERO;
-			BigDecimal totPenaltyBal = BigDecimal.ZERO;
-			int odInst = 0;
-			List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finReference, null);
-			if (finODDetailsList != null) {
-				for (FinODDetails odDetail : finODDetailsList) {
-					overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
-					overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
-					overDueCharges = overDueCharges.add(odDetail.getTotPenaltyAmt());
-					totPenaltyBal = totPenaltyBal.add(odDetail.getTotPenaltyBal());
-					latePayPftBal = latePayPftBal.add(odDetail.getLPIBal());
-					if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
-						odInst++;
+				Collections.sort(disbList, new Comparator<FinanceDisbursement>() {
+					@Override
+					public int compare(FinanceDisbursement b1, FinanceDisbursement b2) {
+						return (new Integer(b1.getDisbSeq()).compareTo(new Integer(b2.getDisbSeq())));
 					}
-				}
-				summary.setOverDuePrincipal(overDuePrincipal);
-				summary.setOverDueProfit(overDueProfit);
-				summary.setOverDueCharges(overDueCharges);
-				summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
-				summary.setDueCharges(totPenaltyBal.add(latePayPftBal));
-				summary.setTotalOverDueIncCharges(summary.getTotalOverDue().add(summary.getDueCharges()));
-				summary.setFinODDetail(finODDetailsList);
-				summary.setOverDueInstlments(odInst);
-				summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
-				financeDetail.getFinScheduleData().setFinODDetails(finODDetailsList);
+				});
+
+				summary.setFirstDisbDate(disbList.get(0).getDisbDate());
+				summary.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
 			}
+
+			BigDecimal totDisbAmt = BigDecimal.ZERO;
+			for (FinanceDisbursement finDisb : disbList) {
+				totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
+			}
+			BigDecimal assetValue = fm.getFinAssetValue() == null ? BigDecimal.ZERO : fm.getFinAssetValue();
+			if (assetValue.compareTo(BigDecimal.ZERO) == 0 || assetValue.compareTo(totDisbAmt) == 0) {
+				summary.setFullyDisb(true);
+			}
+		}
+
+		// calculate OD Details
+		BigDecimal overDuePrincipal = BigDecimal.ZERO;
+		BigDecimal overDueProfit = BigDecimal.ZERO;
+		BigDecimal overDueCharges = BigDecimal.ZERO;
+		BigDecimal latePayPftBal = BigDecimal.ZERO;
+		BigDecimal totPenaltyBal = BigDecimal.ZERO;
+		int odInst = 0;
+		List<FinODDetails> finODDetailsList = finODDetailsDAO.getFinODDByFinRef(finID, null);
+		if (finODDetailsList != null) {
+			for (FinODDetails odDetail : finODDetailsList) {
+				overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
+				overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
+				overDueCharges = overDueCharges.add(odDetail.getTotPenaltyAmt());
+				totPenaltyBal = totPenaltyBal.add(odDetail.getTotPenaltyBal());
+				latePayPftBal = latePayPftBal.add(odDetail.getLPIBal());
+				if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+					odInst++;
+				}
+			}
+			summary.setOverDuePrincipal(overDuePrincipal);
+			summary.setOverDueProfit(overDueProfit);
+			summary.setOverDueCharges(overDueCharges);
+			summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
+			summary.setDueCharges(totPenaltyBal.add(latePayPftBal));
+			summary.setTotalOverDueIncCharges(summary.getTotalOverDue().add(summary.getDueCharges()));
+			summary.setFinODDetail(finODDetailsList);
+			summary.setOverDueInstlments(odInst);
+			summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
+			fd.getFinScheduleData().setFinODDetails(finODDetailsList);
 		}
 		logger.debug("Leaving");
 		return summary;
@@ -187,14 +189,16 @@ public class SummaryDetailService extends ExtendedTestClass {
 	/**
 	 * Method for calculate total fees paid by customer.
 	 * 
-	 * @param finScheduleData
+	 * @param schdData
 	 * @return
 	 */
-	private BigDecimal calculateTotFeeChargeAmt(FinScheduleData finScheduleData) {
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
+	private BigDecimal calculateTotFeeChargeAmt(FinScheduleData schdData) {
+		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 		BigDecimal totFeeAmount = BigDecimal.ZERO;
 		// Fetch total fee details to capture total fee paid by customer
-		List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finReference, false, "");
+		List<FinFeeDetail> feeDetails = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, false, "");
 		if (feeDetails != null) {
 			for (FinFeeDetail feeDetail : feeDetails) {
 				if (StringUtils.equals(feeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)
@@ -351,9 +355,9 @@ public class SummaryDetailService extends ExtendedTestClass {
 	 * @param finReference
 	 * @return
 	 */
-	public BigDecimal getTotalAdvAmount(String finReference) {
+	public BigDecimal getTotalAdvAmount(long finID) {
 		BigDecimal totAdvAmount = BigDecimal.ZERO;
-		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finReference);
+		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
 		if (finExcessAmounts != null && !finExcessAmounts.isEmpty()) {
 			for (FinExcessAmount excessAmount : finExcessAmounts) {
 				totAdvAmount = totAdvAmount.add(excessAmount.getBalanceAmt());

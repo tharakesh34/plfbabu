@@ -1,42 +1,23 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
- *																							*
- * FileName    		:  FeeWaiverHeader.java                                 		        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-11-2017    														*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * FILE HEADER * * FileName : FeeWaiverHeader.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-11-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-11-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-11-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -163,8 +144,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_feeWaiverHeaderDialog(Event event) throws Exception {
@@ -284,8 +264,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		doSave();
@@ -294,8 +273,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		doEdit();
@@ -304,8 +282,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		MessageUtil.showHelpWindow(event, super.window);
@@ -314,8 +291,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		doCancel();
@@ -324,8 +300,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -499,8 +474,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param aFeeWaiverHeader
-	 *            The entity that need to be render.
+	 * @param aFeeWaiverHeader The entity that need to be render.
 	 */
 	public void doShowDialog(FeeWaiverHeader aFeeWaiverHeader) {
 		logger.debug("Entering");
@@ -652,8 +626,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * Set the workFlow Details List to Object
 	 * 
 	 * @param aFeeWaiverHeader
-	 * @param tranType
-	 *            (String)
+	 * @param tranType         (String)
 	 * @return boolean
 	 * @throws Exception
 	 */
@@ -739,8 +712,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * Get the result after processing DataBase Operations
 	 * 
-	 * @param auditHeader
-	 *            (AuditHeader)
+	 * @param auditHeader (AuditHeader)
 	 * @param method
 	 * 
 	 * @return boolean
@@ -1297,7 +1269,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		for (FeeWaiverDetail detail : getFeeWaiverDetails()) {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
-				//PSD#:145831
+				// PSD#:145831
 				BigDecimal balanceAmount = detail.getBalanceAmount();
 				if (balanceAmount.compareTo(amount) == -1) {
 
@@ -1328,22 +1300,22 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		logger.debug("Leaving");
 	}
 
-	private void prepareGST(FeeWaiverDetail feeWaiverDetail, BigDecimal waiverAmount) {
+	private void prepareGST(FeeWaiverDetail wd, BigDecimal waiverAmount) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, BigDecimal> gstPercentages = getTaxPercentages(feeWaiverDetail.getFinReference());
+		Map<String, BigDecimal> gstPercentages = getTaxPercentages(wd.getFinID());
 
-		if (feeWaiverDetail.isTaxApplicable()) {
+		if (wd.isTaxApplicable()) {
 			/* Always taking as Inclusive case here */
 			TaxAmountSplit taxSplit = GSTCalculator.getInclusiveGST(waiverAmount, gstPercentages);
-			GSTCalculator.calculateActualGST(feeWaiverDetail, taxSplit, gstPercentages);
+			GSTCalculator.calculateActualGST(wd, taxSplit, gstPercentages);
 
-			feeWaiverDetail.setCurrActualWaiver(waiverAmount.subtract(taxSplit.gettGST()));
-			feeWaiverDetail.setCurrWaiverGST(taxSplit.gettGST());
+			wd.setCurrActualWaiver(waiverAmount.subtract(taxSplit.gettGST()));
+			wd.setCurrWaiverGST(taxSplit.gettGST());
 
-			if (feeWaiverDetail.getTaxHeader() != null
-					&& CollectionUtils.isNotEmpty(feeWaiverDetail.getTaxHeader().getTaxDetails())) {
-				for (Taxes tax : feeWaiverDetail.getTaxHeader().getTaxDetails()) {
+			if (wd.getTaxHeader() != null
+					&& CollectionUtils.isNotEmpty(wd.getTaxHeader().getTaxDetails())) {
+				for (Taxes tax : wd.getTaxHeader().getTaxDetails()) {
 					if (RuleConstants.CODE_CGST.equals(tax.getTaxType())) {
 						tax.setWaivedTax(taxSplit.getcGST());
 					} else if (RuleConstants.CODE_SGST.equals(tax.getTaxType())) {
@@ -1362,10 +1334,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 				}
 			}
 		} else {
-			feeWaiverDetail.setWaivedAmount(waiverAmount);
-			feeWaiverDetail.setCurrWaiverAmount(waiverAmount);
-			feeWaiverDetail.setCurrActualWaiver(waiverAmount);
-			feeWaiverDetail.setCurrWaiverGST(BigDecimal.ZERO);
+			wd.setWaivedAmount(waiverAmount);
+			wd.setCurrWaiverAmount(waiverAmount);
+			wd.setCurrActualWaiver(waiverAmount);
+			wd.setCurrWaiverGST(BigDecimal.ZERO);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1374,8 +1346,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.feeWaiverHeader);
@@ -1438,10 +1409,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		return String.valueOf(this.feeWaiverHeader.getWaiverId());
 	}
 
-	private Map<String, BigDecimal> getTaxPercentages(String finReference) {
-
+	private Map<String, BigDecimal> getTaxPercentages(long finID) {
 		if (taxPercentages == null) {
-			taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+			taxPercentages = GSTCalculator.getTaxPercentages(finID);
 		}
 
 		return taxPercentages;

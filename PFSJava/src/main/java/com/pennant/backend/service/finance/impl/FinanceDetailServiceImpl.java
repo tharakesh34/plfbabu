@@ -1384,8 +1384,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public FinanceMain getFinanceMain(String finReference, String type) {
-		return financeMainDAO.getFinanceMainByRef(finReference, type, false);
+	public FinanceMain getFinanceMain(long finID, String type) {
+		return financeMainDAO.getFinanceMainByRef(finID, type, false);
 	}
 
 	/**
@@ -10694,7 +10694,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		for (FinanceMain fm : financeMains) {
 			fm.setFinStartDate(main.getFinStartDate());
 
-			String finType = financeMainDAO.getFinanceTypeFinReference(fm.getFinID(), "_Temp");
+			String finType = financeMainDAO.getFinanceType(fm.getFinID(), TableType.TEMP_TAB);
 			FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(finType,
 					FinServiceEvent.ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
 			if (financeWorkFlow != null) {

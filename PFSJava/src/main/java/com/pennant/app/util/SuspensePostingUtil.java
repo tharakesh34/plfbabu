@@ -76,7 +76,7 @@ public class SuspensePostingUtil implements Serializable {
 		super();
 	}
 
-	public List<Object> suspensePreparation(FinanceMain financeMain, FinRepayQueue repayQueue, Date valueDate,
+	public List<Object> suspensePreparation(FinanceMain fm, FinRepayQueue repayQueue, Date valueDate,
 			boolean isPastDeferment) throws AppException {
 		logger.debug("Entering");
 
@@ -84,8 +84,8 @@ public class SuspensePostingUtil implements Serializable {
 		boolean isPostingSuccess = true;
 
 		boolean isDueSuspNow = false;
-		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(financeMain.getFinReference(),
-				repayQueue.getRpyDate());
+		long finID = fm.getFinID();
+		int curOdDays = getFinODDetailsDAO().getFinCurSchdODDays(finID, repayQueue.getRpyDate());
 
 		// Check Profit will Suspend or not based upon Current Overdue Days
 		boolean suspendProfit = getCustomerStatusCodeDAO().getFinanceSuspendStatus(curOdDays);
@@ -96,7 +96,7 @@ public class SuspensePostingUtil implements Serializable {
 			return returnList;
 		}
 
-		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(financeMain.getFinReference(), "");
+		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finID, "");
 		if (suspHead != null && suspHead.isFinIsInSusp()) {
 			returnList.add(isPostingSuccess);
 			returnList.add(isDueSuspNow);
@@ -110,10 +110,10 @@ public class SuspensePostingUtil implements Serializable {
 		// Finance Related Details Fetching
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(financeMain.getFinReference(), valueDate);
+		suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(finID, valueDate);
 		suspFromDate = DateUtility.addDays(repayQueue.getRpyDate(), curOdDays);
 
-		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinReference(fm.getFinReference());
 		amountCodes.setSuspNow(suspAmount);
 		aeEvent.setAccountingEvent(AccountingEvent.NORM_PIS);
 		aeEvent.setValueDate(valueDate);
@@ -191,7 +191,7 @@ public class SuspensePostingUtil implements Serializable {
 	/**
 	 * Method for update of Finance Suspend Data for Release
 	 * 
-	 * @param financeMain
+	 * @param fm
 	 * @param profitDetail
 	 * @param details
 	 * @param valueDate
@@ -200,13 +200,12 @@ public class SuspensePostingUtil implements Serializable {
 	 * @throws IllegalAccessException
 	 * @throws InterfaceException
 	 */
-	public void suspReleasePreparation(FinanceMain financeMain, BigDecimal releasePftAmount,
-			FinRepayQueue finRepayQueue, Date valueDate, boolean isEODProcess)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void suspReleasePreparation(FinanceMain fm, BigDecimal releasePftAmount, FinRepayQueue finRepayQueue,
+			Date valueDate, boolean isEODProcess) throws AppException {
 		logger.debug("Entering");
 
 		// Fetch the Finance Suspend head
-		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finRepayQueue.getFinReference(), "");
+		FinanceSuspHead suspHead = getFinanceSuspHeadDAO().getFinanceSuspHeadById(finRepayQueue.getFinID(), "");
 		if (suspHead == null || !suspHead.isFinIsInSusp()) {
 			return;
 		}
@@ -218,7 +217,7 @@ public class SuspensePostingUtil implements Serializable {
 		Date suspFromDate = null;
 
 		// Pending OverDue Details for that particular Schedule date and overDue For
-		int curOverDueDays = getFinODDetailsDAO().getPendingOverDuePayment(finRepayQueue.getFinReference());
+		int curOverDueDays = getFinODDetailsDAO().getPendingOverDuePayment(finRepayQueue.getFinID());
 		int suspenceGraceDays = SysParamUtil.getValueAsInt("SUSP_AFTER");
 
 		if (curOverDueDays > suspenceGraceDays) {
@@ -243,7 +242,7 @@ public class SuspensePostingUtil implements Serializable {
 		}
 
 		// Creating DataSet using Finance Details
-		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinReference(fm.getFinReference());
 		amountCodes.setSuspRls(suspAmtToMove);
 		aeEvent.setAccountingEvent(AccountingEvent.PIS_NORM);
 		aeEvent.setValueDate(valueDate);

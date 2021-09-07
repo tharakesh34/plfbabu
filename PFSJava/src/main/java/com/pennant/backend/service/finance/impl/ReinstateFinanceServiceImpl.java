@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReinstateFinanceServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReinstateFinanceServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -145,8 +127,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	 * the table. based on the module workFlow Configuration. by using ReinstateFinanceDAO's update method 3) Audit the
 	 * record in to AuditHeader and AdtBMTReinstateFinances by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -187,8 +168,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	 * BMTReinstateFinances by using ReinstateFinanceDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtBMTReinstateFinances by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -213,31 +193,28 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	/**
 	 * getReinstateFinanceById fetch the details by using ReinstateFinanceDAO's getReinstateFinanceById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ReinstateFinance
 	 */
 	@Override
-	public ReinstateFinance getReinstateFinanceById(String finReference) {
-		return getReinstateFinanceDAO().getReinstateFinanceById(finReference, "_View");
+	public ReinstateFinance getReinstateFinanceById(long finID) {
+		return getReinstateFinanceDAO().getReinstateFinanceById(finID, "_View");
 	}
 
 	/**
 	 * getApprovedReinstateFinanceById fetch the details by using ReinstateFinanceDAO's getReinstateFinanceById method .
 	 * with parameter id and type as blank. it fetches the approved records from the BMTReinstateFinances.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return ReinstateFinance
 	 */
-	public ReinstateFinance getApprovedReinstateFinanceById(String finReference) {
-		return getReinstateFinanceDAO().getReinstateFinanceById(finReference, "_AView");
+	public ReinstateFinance getApprovedReinstateFinanceById(long finID) {
+		return getReinstateFinanceDAO().getReinstateFinanceById(finID, "_AView");
 	}
 
-	public ReinstateFinance getFinanceDetailsById(String finReference) {
-		return getReinstateFinanceDAO().getFinanceDetailsById(finReference);
+	public ReinstateFinance getFinanceDetailsById(long finID) {
+		return getReinstateFinanceDAO().getFinanceDetailsById(finID);
 	}
 
 	/**
@@ -252,8 +229,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	 * AuditHeader and AdtBMTReinstateFinances by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -273,11 +249,11 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(reinstateFinance.getFinReference(), "", true);
 		financeMain.setApproved(null);
 		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-		//Workflow fields 
-		//String finNextRoleCode = reinstateFinance.getLovDescNextRoleCode() ; 
+		// Workflow fields
+		// String finNextRoleCode = reinstateFinance.getLovDescNextRoleCode() ;
 		financeMain.setFinIsActive(true);
 
-		//Workflow fields 
+		// Workflow fields
 		String finNextRoleCode = financeMain.getRoleCode();
 		String nextTaskId = financeMain.getTaskId();
 		financeMain.setNextRoleCode(finNextRoleCode);
@@ -287,9 +263,10 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, false);
 		}
 
-		//getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false);
+		// getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false);
 
-		//getReinstateFinanceDAO().processReInstateFinance(financeMain); //Moving finance details from rejected tables to actual finance tables
+		// getReinstateFinanceDAO().processReInstateFinance(financeMain); //Moving finance details from rejected tables
+		// to actual finance tables
 
 		TaskOwners taskOwner = new TaskOwners();
 		taskOwner.setReference(financeMain.getFinReference());
@@ -325,8 +302,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	 * workFlow table by using getReinstateFinanceDAO().delete with parameters reinstateFinance,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtBMTReinstateFinances by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -352,8 +328,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -384,7 +359,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 
 		ReinstateFinance tempReinstateFinance = null;
 		if (reinstateFinance.isWorkflow()) {
-			tempReinstateFinance = getReinstateFinanceDAO().getReinstateFinanceById(reinstateFinance.getFinReference(),
+			tempReinstateFinance = getReinstateFinanceDAO().getReinstateFinanceById(reinstateFinance.getFinID(),
 					"_Temp");
 		}
 
@@ -406,7 +381,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 				 */
 			} else { // with work flow
 				if (reinstateFinance.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																										// is new
+																									// is new
 					if (tempReinstateFinance != null) { // if records already exists in
 						// the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));

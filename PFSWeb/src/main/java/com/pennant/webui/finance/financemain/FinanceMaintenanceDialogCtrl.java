@@ -1986,7 +1986,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
 				|| actionLabel.contains("Resubmit") || actionLabel.contains("Decline"))) {
 			if (!(PennantConstants.TRAN_WF.equals(aFinanceMain.getClosingStatus()))) {
-				if (!financeMaintenanceService.isFinActive(aFinanceMain.getFinReference())) {
+				if (!financeMaintenanceService.isFinActive(aFinanceMain.getFinID())) {
 					MessageUtil.showError(Labels.getLabel("label_Inactive_Loans"));
 					return;
 				}
@@ -1996,7 +1996,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// Check disbursement case
 		if (actionLabel != null && !("Cancel".equalsIgnoreCase(actionLabel) || actionLabel.contains("Reject")
 				|| actionLabel.contains("Resubmit"))) {
-			int schDVersion = financeMaintenanceService.getSchdVersion(aFinanceMain.getFinReference());
+			int schDVersion = financeMaintenanceService.getSchdVersion(aFinanceMain.getFinID());
 			if (schDVersion != aFinanceMain.getSchdVersion()) {
 				MessageUtil.showError(Labels.getLabel("FINSRV_Validation"));
 				return;

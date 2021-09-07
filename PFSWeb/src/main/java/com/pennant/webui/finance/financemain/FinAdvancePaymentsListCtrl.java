@@ -384,7 +384,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 			// if Disbursement Status as Approved and Record status as Resubmitted then we are not allowing to resubmit
 			FinanceMain financeMain = fm;
-			int count = finAdvancePaymentsService.getFinAdvCountByRef(financeMain.getFinReference(), "");
+			int count = finAdvancePaymentsService.getFinAdvCountByRef(financeMain.getFinID(), "");
 			if (count > 0 && userAction.contains("Resubmit")) {
 				MessageUtil.showError(
 						"Quick Disbursement loan should not Resubmit in disbursement instructions status as Approved.");

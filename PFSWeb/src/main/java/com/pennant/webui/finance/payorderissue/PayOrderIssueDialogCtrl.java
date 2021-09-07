@@ -1178,7 +1178,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 		try {
 			if (enquiry) {
 				List<ReturnDataSet> returnDataSetList = payOrderIssueService
-						.getDisbursementPostings(financeMain.getFinReference());
+						.getDisbursementPostings(financeMain.getFinID());
 				doFillAccounting(returnDataSetList);
 			} else {
 				List<ReturnDataSet> datasetList = new ArrayList<>();
@@ -1191,7 +1191,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 					datasetList.addAll(AccountingEngine.execute(AccountingEvent.DISBINS, fd, null));
 				}
 
-				datasetList.addAll(payOrderIssueService.getDisbursementPostings(financeMain.getFinReference()));
+				datasetList.addAll(payOrderIssueService.getDisbursementPostings(financeMain.getFinID()));
 
 				doFillAccounting(datasetList);
 			}

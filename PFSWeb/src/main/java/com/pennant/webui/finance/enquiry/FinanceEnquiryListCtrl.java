@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceEnquiryListCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :   1-02-2011    														*
- *                                                                  						*
- * Modified Date    :   1-02-2011      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceEnquiryListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 1-02-2011 * *
+ * Modified Date : 1-02-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  1-02-2011  s       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 1-02-2011 s Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.enquiry;
@@ -216,7 +198,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	public void onCreate$window_FinanceEnquiry(Event event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
-		//Listbox Sorting
+		// Listbox Sorting
 
 		this.listheader_FinType.setSortAscending(new FieldComparator("FinType", true));
 		this.listheader_FinType.setSortDescending(new FieldComparator("FinType", false));
@@ -251,7 +233,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		this.listheader_CurFinAmount.setSortAscending(new FieldComparator("FinRepaymentAmount", true));
 		this.listheader_CurFinAmount.setSortDescending(new FieldComparator("FinRepaymentAmount", false));
 
-		//Search boxes Rendering and Storing Items into Listboxes
+		// Search boxes Rendering and Storing Items into Listboxes
 
 		this.sortOperator_custCIF
 				.setModel(new ListModelList<SearchOperators>(new SearchOperators().getMultiStringOperators()));
@@ -291,12 +273,12 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			doFillFilterList(enquiryList);
 		}
 
-		//Check the rights
+		// Check the rights
 		doCheckRights();
 
 		this.searchObj = new JdbcSearchObject<FinanceEnquiry>(FinanceEnquiry.class);
 
-		//Set listbox height and set paging size
+		// Set listbox height and set paging size
 		this.borderlayout_Enquiry.setHeight(getBorderLayoutHeight());
 		this.listBoxEnquiryResult
 				.setHeight(getListBoxHeight(this.grid_enquiryDetails.getRows().getVisibleItemCount() + 1));
@@ -372,7 +354,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_FinType == Filter.OP_IN || this.oldVar_sortOperator_FinType == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceEnquiry, "FinanceType",
 					this.finType.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -404,7 +386,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 
 		if (this.oldVar_sortOperator_FinProduct == Filter.OP_IN
 				|| this.oldVar_sortOperator_FinProduct == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceEnquiry, "Product",
 					this.finProduct.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -435,7 +417,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_FinCcy == Filter.OP_IN || this.oldVar_sortOperator_FinCcy == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceEnquiry, "Currency",
 					this.finCcy.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -465,7 +447,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		logger.debug("Entering " + event.toString());
 		String selectedValues = null;
 		if (this.oldVar_sortOperator_FinCcy == Filter.OP_IN || this.oldVar_sortOperator_FinCcy == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			if (this.fromApproved.isChecked()) {
 				selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceEnquiry,
 						"FinanceMainTemp", this.finRef.getValue(), new Filter[] {});
@@ -506,7 +488,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		logger.debug("Entering  " + event.toString());
 
 		if (this.oldVar_sortOperator_Branch == Filter.OP_IN || this.oldVar_sortOperator_Branch == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_FinanceEnquiry, "Branch",
 					this.branchCode.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -635,7 +617,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				menuitem.setStyle("font-weight:bold;");
 				menuitem.addForward("onClick", this.window_FinanceEnquiry, "onFilterMenuItem", enquiry);
 
-				//Menu Item Selection
+				// Menu Item Selection
 				if ("SUSENQ".equals(this.enquiryType.getValue()) && "SUSFIN".equals(enquiry.getValue())) {
 					this.menupopup_filter.getChildren().clear();
 					this.menupopup_filter.appendChild(menuitem);
@@ -812,7 +794,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			this.searchObj.addFilterIn("FinRepayMethod", list, false);
 		}
 
-		//Condition checking for Filter selection
+		// Condition checking for Filter selection
 		this.row_RadioGroup.setVisible(true);
 		if ("CHQPRNT".equals(this.enquiryType.getValue())) {
 			this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
@@ -825,12 +807,12 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				value = PennantAppUtil.getValueDesc(this.menu_filter.getLabel(), enquiryList);
 			}
 			if ("ALLFIN".equals(value)) {
-				//Nothing to do
+				// Nothing to do
 			} else if ("ACTFIN".equals(value)) {
 				this.searchObj.addFilter(new Filter("FinIsActive", 1, Filter.OP_EQUAL));
 			} else if ("MATFIN".equals(value)) {
 				this.searchObj.addFilter(new Filter("FinIsActive", 0, Filter.OP_EQUAL));
-				//# BugFix 156796 Rejected loan should not be displayed in Maturity
+				// # BugFix 156796 Rejected loan should not be displayed in Maturity
 				this.searchObj.addFilter(
 						new Filter("RecordStatus", PennantConstants.RCD_STATUS_REJECTED, Filter.OP_NOT_EQUAL));
 			} else if ("ODCFIN".equals(value)) {
@@ -1140,8 +1122,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			} else {
 				ReinstateFinance aReinstateFinance = reinstateFinanceService
-						.getFinanceDetailsById(aFinanceEnquiry.getFinReference());
-				//#Bug Fix 137580 without refresh the list opening Re-initiated loan
+						.getFinanceDetailsById(aFinanceEnquiry.getFinID());
+				// #Bug Fix 137580 without refresh the list opening Re-initiated loan
 				if (aReinstateFinance == null) {
 					MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 					return;

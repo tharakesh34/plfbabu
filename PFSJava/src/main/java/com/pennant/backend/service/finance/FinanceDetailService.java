@@ -164,7 +164,7 @@ public interface FinanceDetailService {
 
 	String getNextRoleCodeByRef(long finID);
 
-	// FinanceMain getFinanceMain(String finReference, String type);
+	FinanceMain getFinanceMain(long finID, String type);
 
 	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
 
@@ -213,7 +213,7 @@ public interface FinanceDetailService {
 
 	FinScheduleData getFinSchDataForReceipt(String finReference, String type);
 
-	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(String finReference, String type, boolean isWIF);
+	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(long finID, String type, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleList(String finReference);
 

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related PayOrderIssueHeaders. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related PayOrderIssueHeaders. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * RepayOrderIssueHeaderion or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. RepayOrderIssueHeaderion or retransmission of
+ * the materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPaymentTxnsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-08-2019    														*
- *                                                                  						*
- * Modified Date    :  26-08-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPaymentTxnsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-08-2019 * *
+ * Modified Date : 26-08-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-08-2019       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-08-2019 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.applicationmaster.customerPaymentTransactions;
@@ -256,8 +238,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnPaymentSave.isVisible());
@@ -341,8 +322,8 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 		// set ReadOnly mode accordingly if the object is new or not.
 		try {
 			disbursementInstCtrl.init(this.listboxCustomerPaymentTxns, financeMain.getFinCcy(), false, getRole());
-			List<FinanceDisbursement> disbDataList = financeDisbursementDAO.getFinanceDisbursementDetails(
-					financeMain.getFinReference(), TableType.MAIN_TAB.getSuffix(), false);
+			List<FinanceDisbursement> disbDataList = financeDisbursementDAO
+					.getFinanceDisbursementDetails(financeMain.getFinID(), TableType.MAIN_TAB.getSuffix(), false);
 			disbursementInstCtrl.setFinanceDisbursement(disbDataList);
 			disbursementInstCtrl.setFinanceMain(financeMain);
 
@@ -459,8 +440,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -478,8 +458,7 @@ public class CustomerPaymentTxnsDialogCtrl extends GFCBaseCtrl<PaymentTransactio
 	/**
 	 * Method to fill list box in Accounting Tab <br>
 	 * 
-	 * @param accountingSetEntries
-	 *            (List)
+	 * @param accountingSetEntries (List)
 	 * 
 	 */
 	public void doFillAccounting(List<?> accountingSetEntries) {

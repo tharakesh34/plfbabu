@@ -68,10 +68,12 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -1314,12 +1316,15 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	private void executeAccounting(boolean onLoadProcess) throws Exception {
 		logger.debug("Entering");
 
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getAppValueDate();
+		FinanceDetail fd = getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
-				profitDetail, eventCode, dateValueDate, dateValueDate);
+		FinanceProfitDetail profitDetail = financeDetailService.getFinProfitDetailsById(fm.getFinID());
+		Date dateValueDate = SysParamUtil.getAppValueDate();
+
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		aeEvent = AEAmounts.procAEAmounts(fm, schedules, profitDetail, eventCode, dateValueDate, dateValueDate);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
@@ -1329,7 +1334,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		aeEvent.setDataMap(dataMap);
 
-		if (!getFinanceDetail().getFinScheduleData().getFinanceType().isAllowRIAInvestment()) {
+		if (!schdData.getFinanceType().isAllowRIAInvestment()) {
 			aeEvent.setDataMap(dataMap);
 			getEngineExecution().getAccEngineExecResults(aeEvent);
 

@@ -1902,8 +1902,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
 
-				financeStepPolicyDetailList = getFinanceDetailService()
-						.getFinStepPolicyDetails(financeMain.getFinReference(), "_AView", false);
+				financeStepPolicyDetailList = getFinanceDetailService().getFinStepPolicyDetails(financeMain.getFinID(),
+						"_AView", false);
 
 				getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList, true);
 			}
@@ -14784,7 +14784,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isEmpty(moduleDefiner)) {
 			profitDetail = new FinanceProfitDetail();
 		} else {
-			profitDetail = getFinanceDetailService().getFinProfitDetailsById(finScheduleData.getFinReference());
+			profitDetail = getFinanceDetailService().getFinProfitDetailsById(finScheduleData.getFinID());
 		}
 
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);
@@ -14977,6 +14977,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		long finID = financeMain.getFinID();
 		String finReference = financeMain.getFinReference();
 
 		List<FinFeeDetail> finFeeDetailList = getFinanceDetail().getFinScheduleData().getFinFeeDetailList();
@@ -15064,7 +15065,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		 */
 		Map<Long, List<FinFeeReceipt>> upfromtReceiptMap = finFeeDetailService
 				.getUpfromtReceiptMap(finScheduleData.getFinFeeReceipts());
-		BigDecimal excessAmount = finFeeDetailService.getExcessAmount(finReference, upfromtReceiptMap,
+		BigDecimal excessAmount = finFeeDetailService.getExcessAmount(finID, upfromtReceiptMap,
 				financeDetail.getCustomerDetails().getCustID());
 		amountCodes.setToExcessAmt(excessAmount);
 

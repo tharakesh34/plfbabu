@@ -1,43 +1,34 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  InstitutionLimitRebuild.java											*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  23-06-2017															*
- *                                                                  
- * Modified Date    :  23-06-2017															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : InstitutionLimitRebuild.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 23-06-2017 *
+ * 
+ * Modified Date : 23-06-2017 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-06-2017       Pennant	                 0.1          Added for Bajaj Demo.             * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-06-2017 Pennant 0.1 Added for Bajaj Demo. * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -214,6 +205,7 @@ public class InstitutionLimitRebuild {
 			List<LimitDetails> limitDetailsList, LimitReferenceMapping mapping) {
 		logger.debug(Literal.LEAVING);
 
+		long finID = finMain.getFinID();
 		String finRef = finMain.getFinReference();
 		String finCategory = finMain.getFinCategory();
 		String finCcy = finMain.getFinCcy();
@@ -235,7 +227,7 @@ public class InstitutionLimitRebuild {
 		}
 
 		BigDecimal tranUtilisedAmt = BigDecimal.ZERO;
-		List<FinanceDisbursement> disbursementDetailList = financeDisbursementDAO.getFinanceDisbursementDetails(finRef,
+		List<FinanceDisbursement> disbursementDetailList = financeDisbursementDAO.getFinanceDisbursementDetails(finID,
 				"", false);
 
 		for (FinanceDisbursement disbursement : disbursementDetailList) {
@@ -296,7 +288,7 @@ public class InstitutionLimitRebuild {
 		}
 
 		// update revolving nature by payments made
-		BigDecimal repay = financeScheduleDetailDAO.getPriPaidAmount(finRef);
+		BigDecimal repay = financeScheduleDetailDAO.getPriPaidAmount(finID);
 		BigDecimal repayLimit = CalculationUtil.getConvertedAmount(finCcy, limitCcy, repay);
 
 		for (LimitDetails details : list) {

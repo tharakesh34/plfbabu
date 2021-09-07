@@ -98,7 +98,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	public static boolean executing;
 
 	private CIBILService cibilService;
-	
+
 	private FinanceMainDAO financeMainDAO;
 	private OverdraftScheduleDetailDAO overdraftScheduleDetailDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -201,7 +201,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile))) {
 			new HeaderSegment(writer).write();
 			StringBuilder sql = new StringBuilder();
-			sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
+			sql.append("select CUSTID, FinID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
 			sql.append(" where segment_type = :segment_type ");
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
@@ -210,16 +210,17 @@ public class RetailCibilReport extends BasicDao<Object> {
 				public void processRow(ResultSet rs) throws SQLException {
 					processedRecords++;
 					EXTRACT_STATUS.setProcessedRecords(processedRecords);
+					long finID = rs.getLong("FinID");
 					String finreference = rs.getString("FINREFERENCE");
 					long customerId = rs.getLong("CUSTID");
 
 					try {
-						CustomerDetails customer = cibilService.getCustomerDetails(customerId, finreference,
+						CustomerDetails customer = cibilService.getCustomerDetails(customerId, finID,
 								PennantConstants.PFF_CUSTCTG_INDIV);
 
 						if (customer == null || customer.getCustomerFinance() == null) {
 							failedCount++;
-							cibilService.logFileInfoException(headerId, String.valueOf(customerId),
+							cibilService.logFileInfoException(headerId, finID, String.valueOf(customerId),
 									"Unable to fetch the details.");
 							return;
 						}
@@ -242,7 +243,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 					} catch (Exception e) {
 						logger.error(Literal.EXCEPTION, e);
 						EXTRACT_STATUS.setFailedRecords(failedCount++);
-						cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
+						cibilService.logFileInfoException(headerId, finID, String.valueOf(customerId), e.getMessage());
 
 					}
 				}
@@ -268,7 +269,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 					createFields(sheet, rowIndex++, HEADER_FIELDS);
 
 					StringBuilder sql = new StringBuilder();
-					sql.append("select CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
+					sql.append("select CUSTID, FinID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
 					sql.append(" where segment_type = :segment_type");
 					MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 					parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
@@ -278,13 +279,14 @@ public class RetailCibilReport extends BasicDao<Object> {
 							EXTRACT_STATUS.setProcessedRecords(processedRecords++);
 							xlsxRowCount++;
 							String finreference = rs.getString("FINREFERENCE");
+							long finID = rs.getLong("FinID");
 							long customerId = rs.getLong("CUSTID");
 							try {
-								CustomerDetails customer = cibilService.getCustomerDetails(customerId, finreference,
+								CustomerDetails customer = cibilService.getCustomerDetails(customerId, finID,
 										PennantConstants.PFF_CUSTCTG_INDIV);
 								if (customer == null) {
 									failedCount++;
-									cibilService.logFileInfoException(headerId, String.valueOf(customerId),
+									cibilService.logFileInfoException(headerId, finID, String.valueOf(customerId),
 											"Unable to fetch the details.");
 									return;
 								}
@@ -292,7 +294,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 								EXTRACT_STATUS.setSuccessRecords(successCount++);
 							} catch (Exception e) {
 								EXTRACT_STATUS.setFailedRecords(failedCount++);
-								cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
+								cibilService.logFileInfoException(headerId, finID, String.valueOf(customerId),
+										e.getMessage());
 								logger.error(Literal.EXCEPTION, e);
 							}
 						}
@@ -324,7 +327,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		cell = row.createCell(2);
 
 		cell.setCellValue(getCustGenCode(customer));
-		
+
 		cell = row.createCell(3);
 		cell.setCellValue(customer.getCustCRCPR());
 
@@ -423,7 +426,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 				}
 			}
 		}
-		
+
 		int count = 0;
 		for (CustomerAddres custAddr : addressList) {
 			count++;
@@ -501,7 +504,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		if (customerDetal.getCustomerFinance() != null) {
 			FinanceEnquiry finance = customerDetal.getCustomerFinance();
-			
+
 			/* Current New Account No */
 			cell = row.createCell(35);
 			cell.setCellValue(finance.getFinReference());
@@ -566,8 +569,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* EMI Amount */
 			cell = row.createCell(60);
-			BigDecimal emi = PennantApplicationUtil.formateAmount(getEmiAmount(finance.getFinReference()), 2).setScale(
-					0,
+			BigDecimal emi = PennantApplicationUtil.formateAmount(getEmiAmount(finance.getFinID()), 2).setScale(0,
 					RoundingMode.HALF_DOWN);
 			cell.setCellValue(String.valueOf(emi));
 
@@ -591,7 +593,6 @@ public class RetailCibilReport extends BasicDao<Object> {
 				} else {
 					cell.setCellValue(String.valueOf(writnAmount));
 				}
-
 
 				/* Written off Principal Amount */
 				cell = row.createCell(62);
@@ -638,11 +639,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			if (pastDues == 0) {
 				code = "01"; // Standard
-			} else{
+			} else {
 				code = "  ";
 			}
 			row.createCell(53);
-			//cell.setCellValue(code);
+			// cell.setCellValue(code);
 		}
 
 		/* Value of Collateral */
@@ -677,7 +678,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 		/* Monthly/Annual Income Indicator */
 		row.createCell(69);
-		
+
 		logger.info(Literal.LEAVING);
 	}
 
@@ -734,7 +735,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		} else if ("F".equals(customer.getCustGenderCode()) || "FEMALE".equals(customer.getCustGenderCode())) {
 			genderCode = "1";
 		}
-		
+
 		logger.info(Literal.LEAVING);
 		return genderCode;
 	}
@@ -770,16 +771,18 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	private BigDecimal amountOverDue(FinanceEnquiry customerFinance) {
 		logger.info(Literal.ENTERING);
-		
+
 		BigDecimal amountOverdue = BigDecimal.ZERO;
 		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
 		if (odDays > 0) {
-			//finScheduleData = financeDetailService.getFinSchDataById(customerFinance.getFinReference(), "_AView", true);
-			finScheduleData = getFinSchDataById(customerFinance.getFinReference(), "_AView", true);
-			FinanceSummary finSummary=finScheduleData.getFinanceSummary();
-			FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinReference());
+			// finScheduleData = financeDetailService.getFinSchDataById(customerFinance.getFinReference(), "_AView",
+			// true);
+			finScheduleData = getFinSchDataById(customerFinance.getFinID(), "_AView", true);
+			FinanceSummary finSummary = finScheduleData.getFinanceSummary();
+			FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinID());
 			int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
-			amountOverdue = PennantApplicationUtil.formateAmount(summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal()), formatter);
+			amountOverdue = PennantApplicationUtil
+					.formateAmount(summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal()), formatter);
 		} else {
 			amountOverdue = BigDecimal.ZERO;
 		}
@@ -954,8 +957,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 		builder.append(memberId);
 		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMyyyy"));
-		//builder.append("_");
-		//builder.append(DateUtil.getSysDate("Hms"));
+		// builder.append("_");
+		// builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".txt");
 		reportName = new File(builder.toString());
 		reportName.createNewFile();
@@ -976,8 +979,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 		builder.append(memberId);
 		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMyyyy"));
-		//builder.append("_");
-		//builder.append(DateUtil.getSysDate("Hms"));
+		// builder.append("_");
+		// builder.append(DateUtil.getSysDate("Hms"));
 		builder.append(".xlsx");
 		reportName = new File(builder.toString());
 		reportName.createNewFile();
@@ -1411,10 +1414,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * Append the value to StringBuilder
 	 * 
-	 * @param builder
-	 *            The StringBuilder to append the value.
-	 * @param value
-	 *            The value to be append.
+	 * @param builder The StringBuilder to append the value.
+	 * @param value   The value to be append.
 	 * 
 	 */
 	private void writeValue(StringBuilder builder, String value) {
@@ -1424,14 +1425,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * Append the fixed length tags to provided StringBuilder
 	 * 
-	 * @param builder
-	 *            The StringBuilder to append the tags.
-	 * @param fieldTag
-	 *            Filed Tag
-	 * @param value
-	 *            Filed value
-	 * @param size
-	 *            length of the value
+	 * @param builder  The StringBuilder to append the tags.
+	 * @param fieldTag Filed Tag
+	 * @param value    Filed value
+	 * @param size     length of the value
 	 */
 	private void writeValue(StringBuilder builder, String fieldTag, String value, String size) {
 		writeValue(builder, concat(fieldTag, size, value));
@@ -1444,14 +1441,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 	/**
 	 * Append variable length tags to provided StringBuilder
 	 * 
-	 * @param builder
-	 *            The StringBuilder tags.
-	 * @param fieldTag
-	 *            Filed Tag
-	 * @param value
-	 *            Filed Value
-	 * @param maxLength
-	 *            Max length of the tag
+	 * @param builder   The StringBuilder tags.
+	 * @param fieldTag  Filed Tag
+	 * @param value     Filed Value
+	 * @param maxLength Max length of the tag
 	 * @throws IllegalArgumentException
 	 */
 	private void writeValue(StringBuilder builder, String fieldTag, String value, int maxLength, String segment) {
@@ -1484,8 +1477,8 @@ public class RetailCibilReport extends BasicDao<Object> {
 		amount = amount.setScale(0, RoundingMode.HALF_DOWN);
 		writeValue(builder, fieldTag, amount.toString(), maxLength, segment);
 	}
-	
-	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+
+	// changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	private void initlize() {
 		memberDetails = cibilService.getMemberDetailsByType(PennantConstants.PFF_CUSTCTG_INDIV,
 				PennantConstants.PFF_CIBIL_TYPE_GENERATE);
@@ -1678,73 +1671,72 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return remarks.toString();
 	}
 
-	public FinScheduleData getFinSchDataById(String finReference, String type, boolean summaryRequired) {
+	public FinScheduleData getFinSchDataById(long finID, String type, boolean summaryRequired) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData finSchData = new FinScheduleData();
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, type, false);
-		setDasAndDmaData(financeMain);
-		if (financeMain == null) {
-			return finSchData;
+		FinScheduleData schdData = new FinScheduleData();
+		FinanceMain fm = getFinanceMainDAO().getFinanceMainById(finID, type, false);
+		setDasAndDmaData(fm);
+		if (fm == null) {
+			return schdData;
 		}
 
-		finSchData.setFinReference(financeMain.getFinReference());
-		finSchData.setFinanceMain(financeMain);
+		schdData.setFinReference(fm.getFinReference());
+		schdData.setFinanceMain(fm);
 
 		// Overdraft Schedule Details
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-			finSchData.setOverdraftScheduleDetails(
-					getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finReference, "_Temp", false));
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
+			schdData.setOverdraftScheduleDetails(
+					getOverdraftScheduleDetailDAO().getOverdraftScheduleDetails(finID, "_Temp", false));
 		}
 
 		// Schedule details
-		//finSchData.setFinanceScheduleDetails(
-		//	getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
+		// finSchData.setFinanceScheduleDetails(
+		// getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, type, false));
 
 		// Disbursement Details
-		//finSchData.setDisbursementDetails(
-		//	getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
+		// finSchData.setDisbursementDetails(
+		// getFinanceDisbursementDAO().getFinanceDisbursementDetails(finReference, type, false));
 
 		// Repay instructions
-		//finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
+		// finSchData.setRepayInstructions(getRepayInstructionDAO().getRepayInstructions(finReference, type, false));
 
 		// od penality details
-		//finSchData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
+		// finSchData.setFinODPenaltyRate(getFinODPenaltyRateDAO().getFinODPenaltyRateByRef(finReference, type));
 
 		if (summaryRequired) {
 
 			// Finance Type
 			// finSchData.setFinanceType(getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType()));
 			// Finance Type Details
-			FinanceType financeType = null;//getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType());
-			if (financeType != null && StringUtils.isNotBlank(financeMain.getPromotionCode())) {
+			FinanceType financeType = null;// getFinanceTypeDAO().getFinanceTypeByFinType(financeMain.getFinType());
+			if (financeType != null && StringUtils.isNotBlank(fm.getPromotionCode())) {
 				// Fetching Promotion Details
-				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(financeMain.getPromotionSeqId(),
-						"_AView");
+				Promotion promotion = this.promotionDAO.getPromotionByReferenceId(fm.getPromotionSeqId(), "_AView");
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
-			//finSchData.setFinanceType(financeType);
+			// finSchData.setFinanceType(financeType);
 
 			// Suspense
-			finSchData.setFinPftSuspended(false);
-			FinanceSuspHead financeSuspHead = null;//getFinanceSuspHeadDAO().getFinanceSuspHeadById(finReference, "");
+			schdData.setFinPftSuspended(false);
+			FinanceSuspHead financeSuspHead = null;// getFinanceSuspHeadDAO().getFinanceSuspHeadById(finReference, "");
 			if (financeSuspHead != null && financeSuspHead.isFinIsInSusp()) {
-				finSchData.setFinPftSuspended(true);
-				finSchData.setFinSuspDate(financeSuspHead.getFinSuspDate());
+				schdData.setFinPftSuspended(true);
+				schdData.setFinSuspDate(financeSuspHead.getFinSuspDate());
 			}
 
 			// Finance Summary Details Preparation
 			final Date curBussDate = SysParamUtil.getAppDate();
 			FinanceSummary summary = new FinanceSummary();
-			summary.setFinReference(financeMain.getFinReference());
+			summary.setFinReference(fm.getFinReference());
 			summary.setSchDate(curBussDate);
 
-			if (financeMain.isAllowGrcPeriod() && curBussDate.compareTo(financeMain.getNextGrcPftDate()) <= 0) {
-				summary.setNextSchDate(financeMain.getNextGrcPftDate());
-			} else if (financeMain.getNextRepayDate().compareTo(financeMain.getNextRepayPftDate()) < 0) {
-				summary.setNextSchDate(financeMain.getNextRepayDate());
+			if (fm.isAllowGrcPeriod() && curBussDate.compareTo(fm.getNextGrcPftDate()) <= 0) {
+				summary.setNextSchDate(fm.getNextGrcPftDate());
+			} else if (fm.getNextRepayDate().compareTo(fm.getNextRepayPftDate()) < 0) {
+				summary.setNextSchDate(fm.getNextRepayDate());
 			} else {
-				summary.setNextSchDate(financeMain.getNextRepayPftDate());
+				summary.setNextSchDate(fm.getNextRepayPftDate());
 			}
 
 			// commented because we are fetching total fees from FinfeeDeatail
@@ -1753,10 +1745,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 			 * summary = getFinanceScheduleDetailDAO().getFinanceSummaryDetails(summary); summary =
 			 * getFinFeeDetailDAO().getTotalFeeCharges(summary);
 			 */
-			//summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference, ""));
-			finSchData.setFinanceSummary(summary);
+			// summary.setFinCurODDays(getProfitDetailsDAO().getCurOddays(finReference, ""));
+			schdData.setFinanceSummary(summary);
 
-			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finReference);
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(finID);
 			if (finODDetails != null) {
 				summary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
 				summary.setFinODTotWaived(finODDetails.getTotWaived());
@@ -1766,11 +1758,11 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 
 		logger.debug(Literal.LEAVING);
-		return finSchData;
+		return schdData;
 	}
-	
-	private BigDecimal getEmiAmount(String finReference) {
-		List<FinanceScheduleDetail> list = getFinanceScheduleDetailDAO().getFinScheduleDetails(finReference, "", 0);
+
+	private BigDecimal getEmiAmount(long finID) {
+		List<FinanceScheduleDetail> list = getFinanceScheduleDetailDAO().getFinScheduleDetails(finID, "", 0);
 		BigDecimal emiAmount = BigDecimal.ZERO;
 		for (FinanceScheduleDetail schd : list) {
 			if ((schd.isRepayOnSchDate() || schd.isPftOnSchDate())
@@ -1826,7 +1818,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 	public void setCibilService(CIBILService cibilService) {
 		this.cibilService = cibilService;
 	}
-	
+
 	public FinanceMainDAO getFinanceMainDAO() {
 		return financeMainDAO;
 	}

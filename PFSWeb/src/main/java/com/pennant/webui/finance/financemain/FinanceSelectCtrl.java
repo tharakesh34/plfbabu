@@ -1881,7 +1881,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			boolean isPending = receiptService.isReceiptsPending(finRef, Long.MIN_VALUE);
+			boolean isPending = receiptService.isReceiptsPending(finID, Long.MIN_VALUE);
 			boolean receiptsQueue = receiptUploadDetailDAO.isReceiptsQueue(finRef);
 			boolean presentmentsInQueue = finReceiptHeaderDAO.checkPresentmentsInQueue(finID);
 			if (isPending || receiptsQueue || presentmentsInQueue) {

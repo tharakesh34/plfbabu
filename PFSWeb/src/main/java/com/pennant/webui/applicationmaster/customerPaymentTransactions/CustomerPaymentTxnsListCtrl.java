@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerPaymentTxnsListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  25-08-2019    														*
- *                                                                  						*
- * Modified Date    :  25-08-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerPaymentTxnsListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-08-2019 * *
+ * Modified Date : 25-08-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-08-2019       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-08-2019 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.applicationmaster.customerPaymentTransactions;
 
@@ -99,12 +81,12 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	protected Textbox finReference;
 	protected Textbox transactionModule;
 	protected Longbox paymentId;
-	//protected Textbox transactionStatus;
+	// protected Textbox transactionStatus;
 
 	protected Listbox sortOperator_Finreference;
 	protected Listbox sortOperator_TransactionModule;
 	protected Listbox sortOperator_PaymentId;
-	//protected Listbox sortOperator_TransactionStatus;
+	// protected Listbox sortOperator_TransactionStatus;
 
 	private transient FinanceMainService financeMainService;
 	private transient FinAdvancePaymentsDAO finAdvancePaymentsDAO;
@@ -191,8 +173,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch(Event event) {
 		search();
@@ -201,8 +182,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -213,8 +193,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onCustomerPaymentTxnsItemDoubleClicked(Event event) {
@@ -239,8 +218,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 
 			doShowDialogPage(paymentheader, paymentTransaction);
 		} else {
-			FinanceMain financeMain = this.financeMainService
-					.getFinanceMainByFinRef(paymentTransaction.getFinReference());
+			FinanceMain financeMain = this.financeMainService.getFinanceMainByFinRef(paymentTransaction.getFinID());
 			Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
 			financeMain.setLovDescCustCIF(customer.getCustCIF());
 			FinAdvancePayments finAdvancePayments = new FinAdvancePayments();
@@ -258,7 +236,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	private void doShowDialogPage(PaymentHeader paymentheader, PaymentTransaction paymentTransaction) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(paymentheader.getFinReference());
+		FinanceMain financeMain = paymentHeaderService.getFinanceDetails(paymentheader.getFinID());
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("paymentHeader", paymentheader);
 		arg.put("paymentTransaction", paymentTransaction);
@@ -300,8 +278,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -310,8 +287,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

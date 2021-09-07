@@ -108,23 +108,25 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				new HeaderSegment(writer).write();
 			}
 
-			String sql = "select distinct custid, finreference from cibil_customer_extract where segment_type = :segment_type";
+			String sql = "select distinct custid, FinID, finreference from cibil_customer_extract where segment_type = :segment_type";
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_CORP);
 			jdbcTemplate.query(sql, parameterSource, new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
+					long finID = rs.getLong("FinID");
 					long customerId = rs.getLong("custid");
 					String finreference = rs.getString("finreference");
 
 					CustomerDetails customer;
 					try {
-						customer = cibilService.getCustomerDetails(customerId, null, PennantConstants.PFF_CUSTCTG_CORP);
+						customer = cibilService.getCustomerDetails(customerId, finID,
+								PennantConstants.PFF_CUSTCTG_CORP);
 
 						if (customer == null) {
 							failedCount++;
-							cibilService.logFileInfoException(headerId, String.valueOf(customerId),
+							cibilService.logFileInfoException(headerId, finID, String.valueOf(customerId),
 									"Unable to fetch the details.");
 							return;
 						}
@@ -136,7 +138,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 					} catch (Exception e) {
 						EXTRACT_STATUS.setFailedRecords(failedCount++);
-						cibilService.logFileInfoException(headerId, String.valueOf(customerId), e.getMessage());
+						cibilService.logFileInfoException(headerId, finID, String.valueOf(customerId), e.getMessage());
 						logger.error(Literal.EXCEPTION, e);
 					}
 				}
@@ -204,8 +206,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		builder.append(memberId);
 		builder.append("_");
 		builder.append(DateUtil.getSysDate("ddMMyyyy"));
-		//builder.append("_");
-		//builder.append(DateUtil.getSysDate("Hmmss"));
+		// builder.append("_");
+		// builder.append(DateUtil.getSysDate("Hmmss"));
 		builder.append(".txt");
 		reportName = new File(builder.toString());
 
@@ -1431,7 +1433,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		}
 
 	}
-	//changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
+
+	// changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	private void initlize() {
 		memberDetails = cibilService.getMemberDetailsByType(PennantConstants.PFF_CUSTCTG_CORP,
 				PennantConstants.PFF_CIBIL_TYPE_GENERATE);
@@ -1440,7 +1443,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		successCount = 0;
 		failedCount = 0;
 
-		//EXTRACT_STATUS.reset();
+		// EXTRACT_STATUS.reset();
 	}
 
 	private String updateRemarks() {

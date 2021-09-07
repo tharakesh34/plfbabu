@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
@@ -251,9 +252,10 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Validation for not allowing Restructure when Presentment/Receipt's are in process.
-		boolean isPending = receiptService.isReceiptsPending(this.finReference.getValidatedValue(), Long.MIN_VALUE);
-		boolean presentmentsInQueue = finReceiptHeaderDAO
-				.checkPresentmentsInQueue(this.finReference.getValidatedValue());
+		long finID = ComponentUtil.getFinID(this.finReference);
+
+		boolean isPending = receiptService.isReceiptsPending(finID, Long.MIN_VALUE);
+		boolean presentmentsInQueue = finReceiptHeaderDAO.checkPresentmentsInQueue(finID);
 		if (isPending || presentmentsInQueue) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
 			return;

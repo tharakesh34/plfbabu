@@ -775,7 +775,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module) || FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finRcptHeader.getKnockOffType())) {
-				ErrorDetail ed = receiptService.receiptCancelValidation(reference, finReceiptHeader.getReceiptDate());
+				ErrorDetail ed = receiptService.receiptCancelValidation(finReceiptHeader.getFinID(),
+						finReceiptHeader.getReceiptDate());
 				if (ed != null) {
 					MessageUtil.showError(ed.getError());
 
@@ -794,12 +795,10 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 				eventCode = AccountingEvent.REPAY;
 
-			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinServiceEvent.EARLYRPY)) {
+			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
 				eventCode = AccountingEvent.EARLYPAY;
 
-			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinServiceEvent.EARLYSETTLE)) {
+			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
 				eventCode = AccountingEvent.EARLYSTL;
 
 			}

@@ -74,7 +74,7 @@ public interface ReceiptService {
 	Map<Long, String> getOrnamentDescriptions(List<Long> idList);
 
 	// ### Ticket id:124998
-	FinanceMain getClosingStatus(String finReference, TableType tempTab, boolean wif);
+	FinanceMain getClosingStatus(long finID, TableType tempTab, boolean wif);
 
 	// ### 29-10-2018, Ticket id:124998
 	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);
@@ -85,12 +85,12 @@ public interface ReceiptService {
 	// ### 29-10-2018, Ticket id:124998
 	long CheckDedupSP(FinReceiptHeader receiptHeader, String purpose);
 
-	BigDecimal getClosingBalance(String finReference, Date valueDate);// ## PSD
-																		// Ticket
-																		// id:124998,Receipt
-																		// Upload
+	BigDecimal getClosingBalance(long finID, Date valueDate);// ## PSD
+																// Ticket
+																// id:124998,Receipt
+																// Upload
 
-	boolean isReceiptsPending(String finreference, long receiptId);
+	boolean isReceiptsPending(long finID, long receiptId);
 
 	boolean canProcessReceipt(long receiptId);
 
@@ -102,17 +102,16 @@ public interface ReceiptService {
 
 	Date getFirstInstDate(List<FinanceScheduleDetail> financeScheduleDetails);
 
-	Date getManualAdviseMaxDate(String reference, Date valueDate);
+	Date getManualAdviseMaxDate(long finID, Date valueDate);
 
-	FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0);
+	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0);
 
-	FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0, String parm1);
+	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0, String parm1);
 
-	FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0, String parm1,
-			String parm2);
+	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0, String parm1, String parm2);
 
-	FinScheduleData setErrorToFSD(FinScheduleData finScheduleData, String errorCode, String parm0, String parm1,
-			String parm2, String parm3);
+	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0, String parm1, String parm2,
+			String parm3);
 
 	FinReceiptData setReceiptData(FinReceiptData receiptData);
 
@@ -138,7 +137,7 @@ public interface ReceiptService {
 
 	FinReceiptData adjustToExcess(FinReceiptData receiptData);
 
-	FinTaxReceivable getTaxReceivable(String finReference, String taxFor);
+	FinTaxReceivable getTaxReceivable(long finID, String taxFor);
 
 	// ## For MultiReceipt
 	void saveMultiReceipt(List<AuditHeader> auditHeaderList) throws Exception;
@@ -161,17 +160,17 @@ public interface ReceiptService {
 
 	String getLoanReferenc(String finreference, String fileName);
 
-	List<FinExcessAmount> xcessList(String finreference);
+	List<FinExcessAmount> xcessList(long finID);
 
 	FinReceiptData recalculateReceipt(FinReceiptData receiptData);
 
-	Date getLastWaiverDate(String finReference, Date appDate, Date receiptDate);
+	Date getLastWaiverDate(long finID, Date appDate, Date receiptDate);
 
 	int geFeeReceiptCountByExtReference(String reference, String receiptPurpose, String extReference);
 
-	ErrorDetail getWaiverValidation(String finReference, String receiptPurpose, Date valueDate);
+	ErrorDetail getWaiverValidation(long finID, String receiptPurpose, Date valueDate);
 
-	ErrorDetail receiptCancelValidation(String finReference, Date lastReceivedDate);
+	ErrorDetail receiptCancelValidation(long finID, Date lastReceivedDate);
 
 	List<ErrorDetail> dedupCheck(FinServiceInstruction fsi);
 }

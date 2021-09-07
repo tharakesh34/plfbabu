@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectFinReferenceDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-08-2016    														*
- *                                                                  						*
- * Modified Date    :  30-08-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectFinReferenceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-08-2016 * *
+ * Modified Date : 30-08-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.selectfinance;
@@ -89,6 +71,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/ SelectFinanceTypeDialog.zul file.
@@ -237,7 +220,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setSuspenseListCtrl(null);
 		}
 
-		//pmay
+		// pmay
 
 		if (arguments.containsKey("pmayListCtrl")) {
 			setPmayListCtrl((PMAYListCtrl) arguments.get("pmayListCtrl"));
@@ -362,7 +345,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				if (StringUtils.equals(eventCode, FinServiceEvent.REINSTATE)) {
 					BeanUtils.copyProperties(finMain, financeMain);
 				} else {
-					financeMain = getFinanceDetailService().getFinanceMain(this.finReference.getValue(), "_AView");
+					long finID = ComponentUtil.getFinID(this.finReference);
+					financeMain = getFinanceDetailService().getFinanceMain(finID, "_AView");
 				}
 			}
 
@@ -497,13 +481,12 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	private FinanceDetail getFinacneDetail() {
-		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(this.finReference.getValue(),
-				"_View", false);
-		financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
-		financeDetail.setCustomerDetails(custDetail);
-		financeDetail = getFinanceDetailService().getFinanceReferenceDetails(financeDetail, getRole(), "DDE", eventCode,
-				moduleDefiner, false);
-		return financeDetail;
+		long finID = ComponentUtil.getFinID(finReference);
+		FinanceDetail fd = getFinanceDetailService().getFinSchdDetailById(finID, "_View", false);
+		fd.getFinScheduleData().getFinanceMain().setNewRecord(true);
+		fd.setCustomerDetails(custDetail);
+		fd = financeDetailService.getFinanceReferenceDetails(fd, getRole(), "DDE", eventCode, moduleDefiner, false);
+		return fd;
 	}
 
 	// Getters and Setters

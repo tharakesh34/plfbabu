@@ -2841,8 +2841,9 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			}
 
 			finReference = financeMain.getFinReference();
+			long finID = financeMain.getFinID();
 			if (StringUtils.isNotBlank(finReference) && StringUtils.isNotBlank(moduleDefiner)) {
-				FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finReference);
+				FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finID);
 				if (finProfitDetail != null) {
 					BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(finReference);
 					executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());

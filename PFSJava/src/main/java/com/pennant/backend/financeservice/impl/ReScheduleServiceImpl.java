@@ -279,7 +279,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		List<FinanceScheduleDetail> finSchdDetails = scheduleData.getFinanceScheduleDetails();
 		int sdSize = finSchdDetails.size();
 
-		//Add Disbursement amount to existing record if found
+		// Add Disbursement amount to existing record if found
 		List<FinanceDisbursement> finDisbDetails = scheduleData.getDisbursementDetails();
 		FinanceScheduleDetail curSchd = null;
 		Date schdDate = financeMain.getFinStartDate();
@@ -309,12 +309,12 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				curSchd = finSchdDetails.get(i);
 				schdDate = curSchd.getSchDate();
 
-				//Schedule Date before event from date
+				// Schedule Date before event from date
 				if (schdDate.before(curDisbDate)) {
 					disbIndex = i;
 					continue;
 
-					//Schedule Date matches event from date
+					// Schedule Date matches event from date
 				} else if (schdDate.compareTo(curDisbDate) == 0) {
 					isDisbDateFoundInSD = true;
 					curSchd.setDisbAmount(curSchd.getDisbAmount().add(curDisb.getDisbAmount()));
@@ -323,13 +323,13 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					disbIndex = i;
 					break;
 
-					//Event from date not found
+					// Event from date not found
 				} else {
 					break;
 				}
 			}
 
-			//If new disbursement date add a record in schedule
+			// If new disbursement date add a record in schedule
 			if (!isDisbDateFoundInSD) {
 				scheduleData = addSchdRcd(scheduleData, curDisbDate, disbIndex);
 				FinanceScheduleDetail prvSchd = finSchdDetails.get(disbIndex);
@@ -392,7 +392,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 				}
 				chkFirstRpyDate = true;
 			}
-			
+
 			curSchd.setTDSApplicable(TDSCalculator.isTDSApplicable(financeMain));
 
 			if (fromDate.compareTo(financeMain.getGrcPeriodEndDate()) > 0) {
@@ -411,7 +411,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		}
 
-		//DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
+		// DE#1550(24-10-2020) - While doing the ReScheduling, RPS is not plotting properly in case of Grace.
 		/*
 		 * Date recalLockTill = finScheduleData.getFinanceMain().getRecalFromDate(); if (recalLockTill == null) {
 		 * recalLockTill = finScheduleData.getFinanceMain().getMaturityDate(); }
@@ -440,8 +440,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 					}
 					curSchd.setBaseRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()));
 					curSchd.setSplRate(StringUtils.trimToNull(finServiceInstruction.getSplRate()));
-					curSchd.setMrgRate(StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null
-							? BigDecimal.ZERO : finServiceInstruction.getMargin());
+					curSchd.setMrgRate(
+							StringUtils.trimToNull(finServiceInstruction.getBaseRate()) == null ? BigDecimal.ZERO
+									: finServiceInstruction.getMargin());
 					curSchd.setActRate(finServiceInstruction.getActualRate());
 				}
 			}
@@ -485,7 +486,7 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			financeMain.setSchPriDue(schPriDue);
 		}
 
-		//TODO: PV 19JAN17 schdMethod to be added
+		// TODO: PV 19JAN17 schdMethod to be added
 		financeMain.setRecalSchdMethod(financeMain.getScheduleMethod());
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
 
@@ -639,21 +640,22 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	/**
 	 * Validate Re-Schedule request object
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction) {
+	public AuditDetail doValidations(FinServiceInstruction fsi) {
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 
 		// validate Instruction details
-		boolean isWIF = finServiceInstruction.isWif();
-		String finReference = finServiceInstruction.getFinReference();
+		boolean isWIF = fsi.isWif();
+		long finID = fsi.getFinID();
+		String finReference = fsi.getFinReference();
 
-		Date fromDate = finServiceInstruction.getFromDate();
+		Date fromDate = fsi.getFromDate();
 		if (fromDate == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "FromDate";
@@ -661,41 +663,40 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 			return auditDetail;
 		}
 		// It shouldn't be past date when compare to appdate
-		if (DateUtility.compare(finServiceInstruction.getFromDate(), DateUtility.getAppDate()) < 0) {
+		Date appDate = SysParamUtil.getAppDate();
+		if (DateUtility.compare(fsi.getFromDate(), appDate) < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "From date";
-			valueParm[1] = "application date:" + DateUtility.formatToLongDate(DateUtility.getAppDate());
+			valueParm[1] = "application date:" + DateUtility.formatToLongDate(appDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 			return auditDetail;
 		}
 
 		boolean isValidFromDate = false;
-		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finReference, "", isWIF);
-		if (schedules != null) {
-			for (FinanceScheduleDetail schDetail : schedules) {
-				if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
-					isValidFromDate = true;
-					if (checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
-						return auditDetail;
-					}
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
+		for (FinanceScheduleDetail schDetail : schedules) {
+			if (DateUtility.compare(fromDate, schDetail.getSchDate()) == 0) {
+				isValidFromDate = true;
+				if (checkIsValidRepayDate(auditDetail, schDetail, "FromDate") != null) {
+					return auditDetail;
 				}
 			}
-
-			if (!isValidFromDate) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(finServiceInstruction.getFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
-				return auditDetail;
-			}
 		}
-		if (finServiceInstruction.getNextRepayDate() == null) {
+
+		if (!isValidFromDate) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FromDate:" + DateUtility.formatToShortDate(fsi.getFromDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
+			return auditDetail;
+		}
+		if (fsi.getNextRepayDate() == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "NextRepayDate";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));
 			return auditDetail;
 		}
 		// validate Next payment date with finStart date and maturity date
-		if (finServiceInstruction.getNextRepayDate().compareTo(fromDate) <= 0) {
+		if (fsi.getNextRepayDate().compareTo(fromDate) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Next RepayDate";
 			valueParm[1] = "From Date:" + DateUtility.formatToShortDate(fromDate);
@@ -704,10 +705,9 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		// FromDate should be Unpaid Date
-		FinanceScheduleDetail finScheduleDetail = financeScheduleDetailDAO.getFinanceScheduleDetailById(finReference,
-				fromDate, "", isWIF);
-		BigDecimal paidAmount = finScheduleDetail.getSchdPriPaid()
-				.add(finScheduleDetail.getSchdFeePaid().add(finScheduleDetail.getSchdPftPaid()));
+		FinanceScheduleDetail schedule = financeScheduleDetailDAO.getFinanceScheduleDetailById(finID, fromDate, "",
+				isWIF);
+		BigDecimal paidAmount = schedule.getSchdPriPaid().add(schedule.getSchdFeePaid().add(schedule.getSchdPftPaid()));
 
 		if (paidAmount.compareTo(BigDecimal.ZERO) > 0) {
 			String[] valueParm = new String[1];
@@ -716,15 +716,15 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		// validate repay frequency code
-		ErrorDetail errorDetail = FrequencyUtil.validateFrequency(finServiceInstruction.getRepayFrq());
+		ErrorDetail errorDetail = FrequencyUtil.validateFrequency(fsi.getRepayFrq());
 		if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finServiceInstruction.getRepayFrq();
+			valueParm[0] = fsi.getRepayFrq();
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90207", "", valueParm), lang));
 		}
 
 		// terms
-		if (finServiceInstruction.getTerms() <= 0) {
+		if (fsi.getTerms() <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Terms";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), lang));

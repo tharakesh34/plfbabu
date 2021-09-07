@@ -1,45 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScheduleDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScheduleDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 30-04-2018 		Vinay   				 0.2 		As Discussed with Raju and Siva, 	*
- * 													IRR Code calculation functionality		*
- * 													implemented.                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * 30-04-2018 Vinay 0.2 As Discussed with Raju and Siva, * IRR Code calculation functionality
+ * * implemented. * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -379,7 +360,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 					|| financeMainDialogCtrl instanceof LoanClosureEnquiryDialogCtrl) {
 				//
 			} else {
-				//logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
+				// logger.warn("Replace the below buy using instanceof " + financeMainDialogCtrl.getClass());
 				// FIXME MUR>> Replace me as above otherwise you don't know where i
 				// came.
 				this.setFinFeeDetailListCtrl((FinFeeDetailListCtrl) financeMainDialogCtrl.getClass()
@@ -746,8 +727,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Method to fill the Schedule Listbox with provided generated schedule.
 	 * 
-	 * @param FinScheduleData
-	 *            (aFinSchData)
+	 * @param FinScheduleData (aFinSchData)
 	 */
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -776,24 +756,17 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (isOverdraft) {
 			this.schdl_purchasePrice
 					.setValue(PennantAppUtil.formateAmount(financeMain.getFinAssetValue(), ccyFormatter));
-			totalCost = PennantAppUtil
-					.formateAmount(
-							financeMain.getFinAssetValue().subtract(financeMain.getDownPayment())
-									.add(financeMain.getFeeChargeAmt()),
-							ccyFormatter);
+			totalCost = PennantAppUtil.formateAmount(financeMain.getFinAssetValue()
+					.subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt()), ccyFormatter);
 		} else {
 			this.schdl_purchasePrice.setValue(PennantAppUtil.formateAmount(finAmount, ccyFormatter));
-			totalCost = PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment())
-					.add(financeMain.getFeeChargeAmt()), ccyFormatter);
+			totalCost = PennantAppUtil.formateAmount(
+					finAmount.subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt()), ccyFormatter);
 		}
 		this.schdl_otherExp.setValue(PennantAppUtil.formateAmount(financeMain.getFeeChargeAmt(), ccyFormatter));
 		this.schdl_totalPft.setValue(PennantAppUtil.formateAmount(financeMain.getTotalGrossPft(), ccyFormatter));
-		this.schdl_contractPrice
-				.setValue(
-						PennantAppUtil.formateAmount(
-								finAmount.subtract(financeMain.getDownPayment()).add(financeMain.getFeeChargeAmt())
-										.add(financeMain.getTotalGrossPft()),
-								ccyFormatter));
+		this.schdl_contractPrice.setValue(PennantAppUtil.formateAmount(finAmount.subtract(financeMain.getDownPayment())
+				.add(financeMain.getFeeChargeAmt()).add(financeMain.getTotalGrossPft()), ccyFormatter));
 		this.schdl_totalCost.setValue(totalCost);
 		financeMain.setTotalPriAmt(this.schdl_contractPrice.getValue());
 		if (financeMain.getEffectiveRateOfReturn() == null) {
@@ -1073,7 +1046,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			}
 		}
 
-		//SubventionDetails
+		// SubventionDetails
 		if (financeMain.isAllowSubvention()) {
 			String listBoxHeight = this.borderLayoutHeight - 270 + "px";
 			if (isWIF) {
@@ -1477,8 +1450,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			this.btnReCalcualte.setDisabled(!isAvailable);
 			/* PSD Ticket 130142 (LMS: Add term history is not correctly reflected on approval screen) */
 			FinanceMain fm = finScheduleData.getFinanceMain();
+			Long finID = fm.getFinID();
 			String finReference = fm.getFinReference();
-			FinanceProfitDetail pfd = financeDetailService.getFinProfitDetailsById(finReference);
+			FinanceProfitDetail pfd = financeDetailService.getFinProfitDetailsById(finID);
 			if (pfd != null) {
 				if (fm.isAlwGrcAdj()) {
 					fm.setNOInst(pfd.getNOInst() - fm.getGraceTerms());

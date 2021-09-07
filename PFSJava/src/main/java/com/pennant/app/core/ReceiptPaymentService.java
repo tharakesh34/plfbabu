@@ -79,6 +79,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 			}
 
 			FinanceMain fm = finEODEvent.getFinanceMain();
+			long finID = fm.getFinID();
 			String finReference = fm.getFinReference();
 
 			// check banking presentation exists
@@ -88,7 +89,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 			} else {
 				// if banking presentation not exists check advance EMI
-				FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
+				FinExcessAmount finExcessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 						RepayConstants.EXAMOUNTTYPE_EMIINADV);
 
 				if (finExcessAmount != null) {
@@ -304,11 +305,12 @@ public class ReceiptPaymentService extends ServiceHelper {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
 
-		List<FinanceScheduleDetail> scheduleDetails = finEODEvent.getFinanceScheduleDetails();
-		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, scheduleDetails, null, profitDetail, header,
-				businessDate, businessDate);
+		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+		repaymentProcessUtil.calcualteAndPayReceipt(fm, customer, schedules, null, profitDetail, header, businessDate,
+				businessDate);
 
-		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(fm.getFinReference(), scheduleDetails);
+		long finID = fm.getFinID();
+		boolean isFinFullyPaid = repaymentPostingsUtil.isSchdFullyPaid(finID, schedules);
 
 		if (isFinFullyPaid) {
 			EventProperties eventProperties = fm.getEventProperties();
@@ -320,8 +322,8 @@ public class ReceiptPaymentService extends ServiceHelper {
 				appDate = SysParamUtil.getAppDate();
 			}
 
-			financeMainDAO.updateMaturity(fm.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
-			profitDetailDAO.updateFinPftMaturity(fm.getFinReference(), FinanceConstants.CLOSE_STATUS_MATURED, false);
+			financeMainDAO.updateMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false, appDate);
+			profitDetailDAO.updateFinPftMaturity(finID, FinanceConstants.CLOSE_STATUS_MATURED, false);
 
 		}
 	}

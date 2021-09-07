@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PSLDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-06-2018    														*
- *                                                                  						*
- * Modified Date    :  20-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PSLDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-06-2018 * * Modified
+ * Date : 20-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.finance.financialsummary.impl;
@@ -84,8 +66,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -99,8 +80,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	 * by using PSLDetailsDAO's update method 3) Audit the record in to AuditHeader and AdtPSLDetails by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -156,8 +136,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	 * PSLDetails by using PSLDetailsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtPSLDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -212,13 +191,12 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	/**
 	 * getPSLDetails fetch the details by using PSLDetailsDAO's getPSLDetailsById method.
 	 * 
-	 * @param finReference
-	 *            finReference of the PSLDetail.
+	 * @param finReference finReference of the PSLDetail.
 	 * @return PSLDetails
 	 */
 	@Override
-	public SynopsisDetails getSynopsisDetails(String finReference) {
-		return getSynopsisDetailsDAO().getSynopsisDetails(finReference);
+	public SynopsisDetails getSynopsisDetails(long finID) {
+		return getSynopsisDetailsDAO().getSynopsisDetails(finID);
 	}
 
 	/**
@@ -232,8 +210,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPSLDetails by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -254,7 +231,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(synopsisDetails.getRecordType())) {
 			auditHeader.getAuditDetail()
-					.setBefImage(getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinReference()));
+					.setBefImage(getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinID()));
 		}
 
 		if (synopsisDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -297,8 +274,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	 * workFlow table by using getPSLDetailDAO().delete with parameters pSLDetail,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtPSLDetails by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -326,8 +302,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -385,11 +360,10 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 
 		SynopsisDetails tempSynopsisDetails = null;
 		if (synopsisDetails.isWorkflow()) {
-			tempSynopsisDetails = getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinReference());
+			tempSynopsisDetails = getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinID());
 
 		}
-		SynopsisDetails befSynopsisDetails = getSynopsisDetailsDAO()
-				.getSynopsisDetails(synopsisDetails.getFinReference());
+		SynopsisDetails befSynopsisDetails = getSynopsisDetailsDAO().getSynopsisDetails(synopsisDetails.getFinID());
 		SynopsisDetails oldSynopsisDetails = synopsisDetails.getBefImage();
 
 		String[] errParm = new String[1];
@@ -400,15 +374,15 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 		if (synopsisDetails.isNewRecord()) { // for New record or new record into work flow
 
 			if (!synopsisDetails.isWorkflow()) {// With out Work flow only new
-													// records
+												// records
 				if (befSynopsisDetails != null) { // Record Already Exists in the
-														// table then error
+													// table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (synopsisDetails.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																									// records
+																								// records
 																								// type
 																								// is
 																								// new
@@ -428,10 +402,10 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!synopsisDetails.isWorkflow()) { // With out Work flow for update
-														// and delete
+													// and delete
 
 				if (befSynopsisDetails == null) { // if records not exists in the
-														// main table
+													// main table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -452,7 +426,7 @@ public class SynopsisDetailsServiceImpl extends GenericService<SynopsisDetails> 
 			} else {
 
 				if (tempSynopsisDetails == null) { // if records not exists in
-														// the Work flow table
+													// the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

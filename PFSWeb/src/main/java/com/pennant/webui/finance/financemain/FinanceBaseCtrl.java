@@ -521,7 +521,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private String pdfExtTabPanelId;
 
 	// Bean Setters by application Context
-	private FinanceDetailService financeDetailService;
+	protected FinanceDetailService financeDetailService;
 	private AccountsService accountsService;
 	private AccountEngineExecution engineExecution;
 	private CustomerService customerService;

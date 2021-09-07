@@ -1,42 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RestructureDialogCtrl.java													*                           
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  						*
- * Creation Date    :  25-03-2021															*
- *                                                                  						*
- * Modified Date    :  															*
- *                                                                  						*
- * Description 		:												 						*                                 
- *                                                                                          *
+ * * FileName : RestructureDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-03-2021 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-03-2021       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-03-2021 Pennant 0.1 * * * * * * * *
  ********************************************************************************************
  */
 
@@ -260,8 +243,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -317,8 +299,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug(Literal.ENTERING);
@@ -420,15 +401,15 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		Date fromDate = null;
 		String frq = "";
 
-		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
-		FinanceProfitDetail fpd = restructureService.getFinProfitDetailsById(financeMain.getFinReference());
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
+		FinanceProfitDetail fpd = restructureService.getFinProfitDetailsById(fm.getFinID());
 		List<FinanceScheduleDetail> fsdList = getFinScheduleData().getFinanceScheduleDetails();
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 		RestructureDetail rstDetail;
 
 		if (getFinScheduleData().getRestructureDetail() != null) {
 			rstDetail = getFinScheduleData().getRestructureDetail();
-			rstDetail.setNewRecord(financeMain.isNewRecord());
+			rstDetail.setNewRecord(fm.isNewRecord());
 		} else {
 			rstDetail = new RestructureDetail();
 			rstDetail.setNewRecord(true);
@@ -437,10 +418,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().setFinPftDeatil(fpd);
 		boolean frqValid = true;
 
-		rstDetail.setFinReference(financeMain.getFinReference());
+		rstDetail.setFinID(fm.getFinID());
+		rstDetail.setFinReference(fm.getFinReference());
 		rstDetail.setOldTenure(fpd.getNOInst());
 		rstDetail.setOldBalTenure(fpd.getFutureInst());
-		rstDetail.setOldMaturity(financeMain.getMaturityDate());
+		rstDetail.setOldMaturity(fm.getMaturityDate());
 		rstDetail.setOldInterest(fpd.getTotalPftSchd());
 		rstDetail.setOldCpzInterest(fpd.getTotalPftCpz());
 		// As per BHFL team request we have consider the final EMI amount from last second schedule.
@@ -449,8 +431,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		rstDetail.setRepayProfitRate(lastSchd.getCalculatedRate());
 
 		// TODO:GANESH:Restructute Need to check with satish.k
-		String finStatus = financeMain.getFinStatus();
-		if (StringUtils.equals(financeMain.getFinStatus(), "S")) {
+		String finStatus = fm.getFinStatus();
+		if (StringUtils.equals(fm.getFinStatus(), "S")) {
 			finStatus = "0";
 		} else if (finStatus.startsWith("DPD ")) {
 			finStatus = finStatus.replace("DPD ", "");
@@ -462,19 +444,19 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		rstDetail.setOldDpd(fpd.getCurODDays());
 		rstDetail.setOldEmiOs((fpd.getTotalpriSchd().add(fpd.getTotalPftSchd()))
 				.subtract(fpd.getTdSchdPri().add(fpd.getTdSchdPft())));
-		rstDetail.setOldMaxUnplannedEmi(financeMain.getMaxUnplannedEmi());
-		rstDetail.setOldAvailedUnplanEmi(financeMain.getAvailedUnPlanEmi());
-		rstDetail.setActLoanAmount(financeMain.getFinAssetValue().add(financeMain.getFeeChargeAmt()));
-		rstDetail.setFinCurrAssetValue(financeMain.getFinCurrAssetValue().add(financeMain.getFeeChargeAmt()));
+		rstDetail.setOldMaxUnplannedEmi(fm.getMaxUnplannedEmi());
+		rstDetail.setOldAvailedUnplanEmi(fm.getAvailedUnPlanEmi());
+		rstDetail.setActLoanAmount(fm.getFinAssetValue().add(fm.getFeeChargeAmt()));
+		rstDetail.setFinCurrAssetValue(fm.getFinCurrAssetValue().add(fm.getFeeChargeAmt()));
 		rstDetail.setLastBilledDate(fpd.getPrvRpySchDate());
 		rstDetail.setAppDate(SysParamUtil.getAppDate());
 		rstDetail.setOldPOsAmount(fpd.getTotalpriSchd().subtract(fpd.getTdSchdPri()));
 		rstDetail.setOldEmiOverdue(fpd.getTdSchdPri().subtract(fpd.getTotalPriPaid()));
-		BigDecimal otherCharge = restructureService.getReceivableAmt(financeMain.getFinReference(), false);
-		BigDecimal bounceCharge = restructureService.getReceivableAmt(financeMain.getFinReference(), true);
+		BigDecimal otherCharge = restructureService.getReceivableAmt(fm.getFinID(), false);
+		BigDecimal bounceCharge = restructureService.getReceivableAmt(fm.getFinID(), true);
 		rstDetail.setBounceCharge(bounceCharge);
 		rstDetail.setOtherCharge(otherCharge);
-		BigDecimal penaltyAmount = restructureService.getTotalPenaltyBal(financeMain.getFinReference(), null);
+		BigDecimal penaltyAmount = restructureService.getTotalPenaltyBal(fm.getFinID(), null);
 		rstDetail.setOldPenaltyAmount(penaltyAmount);
 		rstDetail.setRestructureCharge(BigDecimal.ZERO);
 		rstDetail.setNewExtOdDays(fpd.getExtODDays());
@@ -484,7 +466,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// date
 		int rstHolidayPeriod = rstDetail.getEmiHldPeriod() + rstDetail.getPriHldPeriod();
 		int remainingRepayPeriods = 0;
-		Date prvPastDue = financeMain.getFinStartDate();
+		Date prvPastDue = fm.getFinStartDate();
 		Date restructureDate = null;
 
 		if (this.row_restructureDate.isVisible()) {
@@ -493,15 +475,14 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.restructureDate, Labels.getLabel("STATIC_INVALID",
 							new String[] { Labels.getLabel("label_RestructureDialog_RestructureDate.value") }));
 				}
-				if (((Date) this.restructureDate.getSelectedItem().getValue())
-						.compareTo(financeMain.getFinStartDate()) < 0
+				if (((Date) this.restructureDate.getSelectedItem().getValue()).compareTo(fm.getFinStartDate()) < 0
 						|| ((Date) this.restructureDate.getSelectedItem().getValue())
-								.compareTo(financeMain.getMaturityDate()) > 0) {
+								.compareTo(fm.getMaturityDate()) > 0) {
 					throw new WrongValueException(this.restructureDate,
 							Labels.getLabel("DATE_ALLOWED_RANGE",
 									new String[] { Labels.getLabel("label_RestructureDialog_RestructureDate.value"),
-											DateUtility.formatToLongDate(financeMain.getFinStartDate()),
-											DateUtility.formatToLongDate(financeMain.getMaturityDate()) }));
+											DateUtility.formatToLongDate(fm.getFinStartDate()),
+											DateUtility.formatToLongDate(fm.getMaturityDate()) }));
 				}
 				rstDetail.setRestructureDate((Date) this.restructureDate.getSelectedItem().getValue());
 			} catch (WrongValueException we) {
@@ -556,11 +537,10 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// FIXME: PV 30MAR20 TEMPORARY FIX FOR EXISTING ISSUES
-		List<RepayInstruction> riList = restructureService.getRepayInstructions(financeMain.getFinReference(), "_AView",
-				false);
+		List<RepayInstruction> riList = restructureService.getRepayInstructions(fm.getFinID(), "_AView", false);
 		if (riList.size() > 1) {
 			RepayInstruction ri = riList.get(riList.size() - 1);
-			if (ri.getRepayDate().compareTo(financeMain.getMaturityDate()) >= 0) {
+			if (ri.getRepayDate().compareTo(fm.getMaturityDate()) >= 0) {
 				riList.remove(riList.size() - 1);
 			}
 		}
@@ -659,7 +639,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		getFinScheduleData().setRestructureDetail(rstDetail);
-		finServiceInstruction.setFinReference(financeMain.getFinReference());
+		finServiceInstruction.setFinReference(fm.getFinReference());
 		finServiceInstruction.setFinEvent(FinServiceEvent.RESTRUCTURE);
 		BigDecimal oldPft = getFinScheduleData().getFinanceMain().getTotalGrossPft();
 

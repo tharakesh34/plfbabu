@@ -1153,7 +1153,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		PaymentDetail pd = null;
 		List<PaymentDetail> detailList = new ArrayList<PaymentDetail>();
 		List<FinExcessAmount> finExcessAmountList = this.paymentHeaderService
-				.getfinExcessAmount(this.financeMain.getFinReference());
+				.getfinExcessAmount(this.financeMain.getFinID());
 		if (finExcessAmountList != null && !finExcessAmountList.isEmpty()) {
 			finExcessAmountList = processFinExcessAmount(finExcessAmountList);
 			for (FinExcessAmount finExcessAmount : finExcessAmountList) {
@@ -1168,9 +1168,9 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		List<ManualAdvise> manualAdviseList = null;
 		if (enqiryModule) {
-			manualAdviseList = this.paymentHeaderService.getManualAdviseForEnquiry(this.financeMain.getFinReference());
+			manualAdviseList = this.paymentHeaderService.getManualAdviseForEnquiry(this.financeMain.getFinID());
 		} else {
-			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinReference());
+			manualAdviseList = this.paymentHeaderService.getManualAdvise(this.financeMain.getFinID());
 		}
 
 		if (CollectionUtils.isNotEmpty(manualAdviseList)) {
@@ -1219,7 +1219,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				if (taxPercMap == null) {
 					FinanceDetail financeDetail = new FinanceDetail();
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-					taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+					taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinID());
 				}
 
 				// GST Calculations
@@ -1637,7 +1637,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (detail.isTaxApplicable() && taxHeader != null) {
 
 			if (taxPercMap == null) {
-				taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinReference());
+				taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinID());
 			}
 
 			// GST Calculations

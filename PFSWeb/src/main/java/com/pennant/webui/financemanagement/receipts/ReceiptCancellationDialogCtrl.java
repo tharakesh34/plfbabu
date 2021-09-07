@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *********************************************************************************************
- *                                 FILE HEADER                                               *
+ * FILE HEADER *
  *********************************************************************************************
  *
- * FileName    		:  ReceiptCancellationDialogCtrl.java                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES              			
- *                                                                  
- * Creation Date    :  03-06-2011    
- *                                                                  
- * Modified Date    :  03-06-2011    
- *                                                                  
- * Description 		:                                             
- *                                                                                          
+ * FileName : ReceiptCancellationDialogCtrl.java
+ * 
+ * Author : PENNANT TECHONOLOGIES
+ * 
+ * Creation Date : 03-06-2011
+ * 
+ * Modified Date : 03-06-2011
+ * 
+ * Description :
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -152,7 +143,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Borderlayout borderlayout_Realization;
 	protected Label windowTitle;
 
-	//Receipt Details
+	// Receipt Details
 	protected Textbox finType;
 	protected Textbox finReference;
 	protected Textbox finCcy;
@@ -238,7 +229,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected Textbox posting_finBranch;
 
 	protected Groupbox gb_FeeDetail;
-	//TODO: labels are same
+	// TODO: labels are same
 	protected Listbox listBoxFeeDetail;
 
 	private FinReceiptHeader receiptHeader = null;
@@ -358,7 +349,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				this.hbox_ReceiptCancellationDialog_NextInstResetDate.setVisible(true);
 			}
 
-			//Reset Finance Repay Header Details
+			// Reset Finance Repay Header Details
 			doWriteBeanToComponents();
 			this.borderlayout_Realization.setHeight(getBorderLayoutHeight());
 			this.listBoxPayment.setHeight(getListBoxHeight(6));
@@ -391,7 +382,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 		// Bounce Reason Fields
 		readOnlyComponent(isReadOnly(this.pageRightName + "_bounceCode"), this.bounceCode);
-		//readOnlyComponent(isReadOnly("+this.pageRightName+"_bounceCharge"), this.bounceCharge);
+		// readOnlyComponent(isReadOnly("+this.pageRightName+"_bounceCharge"), this.bounceCharge);
 		readOnlyComponent(true, this.bounceCharge);
 		readOnlyComponent(isReadOnly(this.pageRightName + "_bounceRemarks"), this.bounceRemarks);
 		readOnlyComponent(isReadOnly(this.pageRightName + "_bounceDate"), this.bounceDate);
@@ -406,10 +397,10 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
 
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
-		//Receipts Details
+		// Receipts Details
 		this.receiptAmount.setProperties(true, formatter);
 
 		this.cancelReason.setModuleName("RejectDetail");
@@ -502,19 +493,19 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			}
 		}
 
-		//Post Branch
+		// Post Branch
 		this.postBranch.setModuleName("Branch");
 		this.postBranch.setValueColumn("BranchCode");
 		this.postBranch.setDescColumn("BranchDesc");
 		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
 
-		//Cashier Branch
+		// Cashier Branch
 		this.cashierBranch.setModuleName("Branch");
 		this.cashierBranch.setValueColumn("BranchCode");
 		this.cashierBranch.setDescColumn("BranchDesc");
 		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
 
-		//Fin Division
+		// Fin Division
 		this.finDivision.setModuleName("DivisionDetail");
 		this.finDivision.setValueColumn("DivisionCode");
 		this.finDivision.setDescColumn("DivisionCodeDesc");
@@ -537,7 +528,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		readOnlyComponent(true, this.allocationMethod);
 		readOnlyComponent(true, this.effScheduleMethod);
 
-		//Receipt Details
+		// Receipt Details
 		readOnlyComponent(true, this.favourNo);
 		readOnlyComponent(true, this.valueDate);
 		readOnlyComponent(true, this.bankCode);
@@ -564,8 +555,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -661,7 +651,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	public void doSave() throws Exception {
 		logger.debug("Entering");
 
-		//Duplicate Creation of Object
+		// Duplicate Creation of Object
 		Cloner cloner = new Cloner();
 		FinReceiptHeader aReceiptHeader = cloner.deepClone(getReceiptHeader());
 
@@ -746,7 +736,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			} catch (WrongValueException e) {
 				wve.add(e);
 			}
-			//Document Details Saving
+			// Document Details Saving
 			if (documentDetailDialogCtrl != null) {
 				aReceiptHeader.setDocumentDetails(documentDetailDialogCtrl.getDocumentDetailsList());
 			} else {
@@ -782,7 +772,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		try {
 			if (doProcess(aReceiptHeader, tranType)) {
 
-				//Customer Notification for Role Identification
+				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aReceiptHeader.getNextTaskId())) {
 					aReceiptHeader.setNextRoleCode("");
 				}
@@ -856,7 +846,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			Rule rule = getRuleService().getRuleById(bounceReason.getRuleID(), "");
 			BigDecimal bounceAmt = BigDecimal.ZERO;
 			int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
-			eventMapping = receiptCancellationService.getGLSubHeadCodes(receiptHeader.getReference());
+			eventMapping = receiptCancellationService.getGLSubHeadCodes(receiptHeader.getFinID());
 			if (rule != null) {
 
 				if (eventMapping != null) {
@@ -1006,7 +996,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			this.hbox_ReceiptCancellationDialog_BounceDate.setVisible(false);
 		}
 
-		//in case of Fee Bounce
+		// in case of Fee Bounce
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)
 				&& RepayConstants.RECEIPTMODE_CHEQUE.equalsIgnoreCase(this.receiptHeader.getReceiptMode())) {
 			this.row_CancelReason.setVisible(false);
@@ -1289,7 +1279,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	public void doFillRepaySchedules(List<RepayScheduleDetail> repaySchdList) {
 		logger.debug("Entering");
 
-		//setRepaySchdList(sortRpySchdDetails(repaySchdList));
+		// setRepaySchdList(sortRpySchdDetails(repaySchdList));
 		this.listBoxPayment.getItems().clear();
 		BigDecimal totalRefund = BigDecimal.ZERO;
 		BigDecimal totalWaived = BigDecimal.ZERO;
@@ -1365,7 +1355,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Fee Details
+				// Fee Details
 				lc = new Listcell(PennantApplicationUtil.amountFormate(repaySchd.getSchdFeePayNow(), finFormatter));
 				lc.setStyle("text-align:right;");
 				totSchdFeePaid = totSchdFeePaid.add(repaySchd.getSchdFeePayNow());
@@ -1390,7 +1380,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				this.listBoxPayment.appendChild(item);
 			}
 
-			//Summary Details
+			// Summary Details
 			Map<String, BigDecimal> paymentMap = new HashMap<String, BigDecimal>();
 			paymentMap.put("totalRefund", totalRefund);
 			paymentMap.put("totalCharge", totalCharge);
@@ -1419,7 +1409,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		Listcell lc;
 		Listitem item;
 
-		//Summary Details
+		// Summary Details
 		item = new Listitem();
 		lc = new Listcell(Labels.getLabel("listcell_summary.label"));
 		lc.setStyle("font-weight:bold;background-color: #C0EBDF;");
@@ -1627,7 +1617,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				aReceiptHeader.getManualAdvise().setRoleCode(getRole());
 				aReceiptHeader.getManualAdvise().setNextRoleCode(nextRoleCode);
 			}
-			//Document Details
+			// Document Details
 			if (CollectionUtils.isNotEmpty(aReceiptHeader.getDocumentDetails())) {
 				for (DocumentDetails details : aReceiptHeader.getDocumentDetails()) {
 					details.setReferenceId(String.valueOf(aReceiptHeader.getId()));
@@ -1729,7 +1719,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					processCompleted = true;
 
 					if (deleteNotes) {
-						//deleteNotes(getNotes(), true);
+						// deleteNotes(getNotes(), true);
 					}
 				}
 
@@ -1773,7 +1763,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			BigDecimal totalPaid = BigDecimal.ZERO;
 			this.gb_FeeDetail.setVisible(true);
 
-			//IMD Total Allocated Amount with GST
+			// IMD Total Allocated Amount with GST
 			Decimalbox totalPaidBox = getDecimalbox(finFormatter, true);
 			for (int i = 0; i < feeDetails.size(); i++) {
 				FinFeeDetail fee = feeDetails.get(i);
@@ -1781,18 +1771,18 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 				FinFeeReceipt feeReceipt = fee.getFinFeeReceipts().get(0);
 
-				//FeeType Desc
+				// FeeType Desc
 				lc = new Listcell(
 						StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() : fee.getFeeTypeDesc());
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 
-				//Net Amount Orginal
+				// Net Amount Orginal
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmountOriginal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Net Amount GST
+				// Net Amount GST
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmountGST(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -1802,12 +1792,12 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Total Net Amount
+				// Total Net Amount
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmount(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Allocated Amount total
+				// Allocated Amount total
 				Decimalbox allocAmtTotBox = getDecimalbox(finFormatter, true);
 				allocAmtTotBox.setValue(PennantApplicationUtil.formateAmount(feeReceipt.getPaidAmount(), finFormatter));
 				lc = new Listcell();
@@ -1840,7 +1830,7 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		Listcell lc;
 		Listitem item;
 
-		//Summary Details
+		// Summary Details
 		item = new Listitem();
 		item.setId("LISTITEM_SUMMARY");
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));

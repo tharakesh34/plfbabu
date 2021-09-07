@@ -87,7 +87,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		if (StringUtils.equals(schdData.getFinanceMain().getRecalType(), CalculationConstants.RPYCHG_STEPPOS)) {
 			if (StringUtils.isNotEmpty(moduleDefiner)) {
 				schdData.setStepPolicyDetails(
-						getFinanceStepDetailDAO().getFinStepDetailListByFinRef(schdData.getFinReference(), "", false));
+						getFinanceStepDetailDAO().getFinStepDetailListByFinRef(schdData.getFinID(), "", false));
 			}
 			isCalSchedule = false;
 		}
@@ -96,7 +96,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		// CalculationConstants.RPYCHG_STEPINST)) {
 		if (StringUtils.isNotEmpty(moduleDefiner) && schdData.getFinanceMain().isStepFinance()) {
 			schdData.setStepPolicyDetails(
-					getFinanceStepDetailDAO().getFinStepDetailListByFinRef(schdData.getFinReference(), "", false));
+					getFinanceStepDetailDAO().getFinStepDetailListByFinRef(schdData.getFinID(), "", false));
 		}
 		// }
 

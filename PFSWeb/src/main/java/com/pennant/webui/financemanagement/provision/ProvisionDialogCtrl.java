@@ -64,10 +64,12 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.AEAmounts;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -1208,61 +1210,65 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	public void doshowProvisionDialog() throws Exception {
 		logger.debug("Entering");
 		doSetFieldProperties();
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		int format = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
-		if (finMain != null) {
-			this.finReference.setValue(finMain.getFinReference());
-			// Workflow Details
-			setWorkflowDetails(finMain.getFinType());
-			getProvision().setWorkflowId(getWorkFlowId());
-			doLoadWorkFlow(getProvision());
-			getProvision().setFinReference(finMain.getFinReference());
-			getProvision().setFinBranch(finMain.getFinBranch());
-			getProvision().setFinType(finMain.getFinType());
-			getProvision().setCustID(finMain.getCustID());
-			getProvision().setCustCIF(finMain.getLovDescCustCIF());
-			getProvision().setCustShrtName(finMain.getLovDescCustShrtName());
-			Date appDate = DateUtility.getAppDate();
-			getProvision().setDueFromDate(appDate);
-			getProvision().setFinCcy(finMain.getFinCcy());
+		FinanceDetail fd = getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		int format = CurrencyUtil.getFormat(schdData.getFinanceMain().getFinCcy());
 
-			OverdueChargeRecovery odcharges = getOverdueChargeRecoveryService()
-					.getOverdueChargeRecovery(StringUtils.trim(finMain.getFinReference()));
-			/*
-			 * getProvision().setPrincipalDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
-			 * getProvision().setProfitDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), format));
-			 */
-			// Last Fully Paid Date Details
-			FinanceProfitDetail detail = getProvisionService().getProfitDetailById(finMain.getFinReference());
-			if (detail != null) {
-				getProvision().setLastFullyPaidDate(detail.getFullPaidDate());
-				if (getProvision().getLastFullyPaidDate() == null) {
-					getProvision().setLastFullyPaidDate(finMain.getFinStartDate());
-				}
-			} else {
-				getProvision().setLastFullyPaidDate(finMain.getFinStartDate());
-			}
-
-			getProvision().setFinanceDetail(getFinanceDetail());
-			this.tabpanelsBoxIndexCenter.setVisible(true);
-
-			if (isWorkFlowEnabled()) {
-				this.userAction = setListRecordStatus(this.userAction);
-				for (int i = 0; i < userAction.getItemCount(); i++) {
-					userAction.getItemAtIndex(i).setDisabled(false);
-				}
-				if (getProvision().isNewRecord()) {
-					this.btnCtrl.setBtnStatus_Edit();
-					btnCancel.setVisible(false);
-				} else {
-					this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
-				}
-				this.groupboxWf.setVisible(true);
-				getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "ProvisionDialog", menuItemRightName);
-				doShowDialog(getProvision());
-			}
-			this.finReference.setReadonly(true);
+		if (fm == null) {
+			return;
 		}
+
+		this.finReference.setValue(fm.getFinReference());
+		// Workflow Details
+		setWorkflowDetails(fm.getFinType());
+		getProvision().setWorkflowId(getWorkFlowId());
+		doLoadWorkFlow(getProvision());
+		getProvision().setFinReference(fm.getFinReference());
+		getProvision().setFinBranch(fm.getFinBranch());
+		getProvision().setFinType(fm.getFinType());
+		getProvision().setCustID(fm.getCustID());
+		getProvision().setCustCIF(fm.getLovDescCustCIF());
+		getProvision().setCustShrtName(fm.getLovDescCustShrtName());
+		Date appDate = DateUtility.getAppDate();
+		getProvision().setDueFromDate(appDate);
+		getProvision().setFinCcy(fm.getFinCcy());
+
+		OverdueChargeRecovery odcharges = getOverdueChargeRecoveryService().getOverdueChargeRecovery(fm.getFinID());
+		/*
+		 * getProvision().setPrincipalDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPriDue(), format));
+		 * getProvision().setProfitDue(PennantAppUtil.formateAmount(odcharges.getLovDescCurSchPftDue(), format));
+		 */
+		// Last Fully Paid Date Details
+		FinanceProfitDetail detail = getProvisionService().getProfitDetailById(fm.getFinID());
+		if (detail != null) {
+			getProvision().setLastFullyPaidDate(detail.getFullPaidDate());
+			if (getProvision().getLastFullyPaidDate() == null) {
+				getProvision().setLastFullyPaidDate(fm.getFinStartDate());
+			}
+		} else {
+			getProvision().setLastFullyPaidDate(fm.getFinStartDate());
+		}
+
+		getProvision().setFinanceDetail(fd);
+		this.tabpanelsBoxIndexCenter.setVisible(true);
+
+		if (isWorkFlowEnabled()) {
+			this.userAction = setListRecordStatus(this.userAction);
+			for (int i = 0; i < userAction.getItemCount(); i++) {
+				userAction.getItemAtIndex(i).setDisabled(false);
+			}
+			if (getProvision().isNewRecord()) {
+				this.btnCtrl.setBtnStatus_Edit();
+				btnCancel.setVisible(false);
+			} else {
+				this.btnCtrl.setWFBtnStatus_Edit(isFirstTask());
+			}
+			this.groupboxWf.setVisible(true);
+			getUserWorkspace().allocateMenuRoleAuthorities(getRole(), "ProvisionDialog", menuItemRightName);
+			doShowDialog(getProvision());
+		}
+		this.finReference.setReadonly(true);
 
 		logger.debug("Leaving");
 	}
@@ -1438,12 +1444,14 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	private void executeAccounting(boolean onLoadProcess) throws Exception {
 		logger.debug("Entering");
 
-		FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
-		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
-		Date dateValueDate = DateUtility.getAppValueDate();
+		FinanceDetail fd = getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceProfitDetail profitDetail = financeDetailService.getFinProfitDetailsById(fm.getFinID());
+		Date dateValueDate = SysParamUtil.getAppValueDate();
 
-		aeEvent = AEAmounts.procAEAmounts(finMain, getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails(),
-				profitDetail, eventCode, dateValueDate, dateValueDate);
+		aeEvent = AEAmounts.procAEAmounts(fm, schdData.getFinanceScheduleDetails(), profitDetail, eventCode,
+				dateValueDate, dateValueDate);
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();

@@ -42,7 +42,7 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 		creditReviewData.setNextRoleCode(financeMain.getNextRoleCode());
 		creditReviewData.setRecordStatus(financeMain.getRecordStatus());
 		creditReviewData.setWorkflowId(financeMain.getWorkflowId());
-		creditReviewDetailDAO.delete(financeMain.getFinReference(), TableType.MAIN_TAB);
+		creditReviewDetailDAO.delete(financeMain.getFinID(), TableType.MAIN_TAB);
 		creditReviewDetailDAO.save(creditReviewData);
 		auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_ADD));
 
@@ -60,7 +60,7 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 		creditReviewData.setNextRoleCode(financeMain.getNextRoleCode());
 		creditReviewData.setRecordStatus(financeMain.getRecordStatus());
 		creditReviewData.setWorkflowId(financeMain.getWorkflowId());
-		creditReviewDetailDAO.delete(financeMain.getFinReference(), TableType.MAIN_TAB);
+		creditReviewDetailDAO.delete(financeMain.getFinID(), TableType.MAIN_TAB);
 		creditReviewDetailDAO.save(creditReviewData);
 		auditDetails.add(getAuditDetails(creditReviewData, 1, PennantConstants.TRAN_ADD));
 
@@ -76,7 +76,7 @@ public class CreditFinancialServiceImpl extends GenericService<CreditReviewData>
 	}
 
 	private void addAudit(AuditHeader auditHeader, List<AuditDetail> auditDetails) {
-		//Add audit if any changes
+		// Add audit if any changes
 		if (auditDetails.isEmpty()) {
 			return;
 		}

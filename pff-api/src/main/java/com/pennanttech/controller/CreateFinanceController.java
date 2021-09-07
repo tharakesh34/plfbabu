@@ -3092,7 +3092,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		String finReference = fm.getFinReference();
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
 		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode("BOUNCE");
 		TaxAmountSplit taxSplit;
 		TaxAmountSplit taxSplit2;
@@ -3150,7 +3150,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
 		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
 		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
-		summary.setAdvPaymentAmount(getTotalAdvAmount(finReference));
+		summary.setAdvPaymentAmount(getTotalAdvAmount(finID));
 		schdData.setFinanceSummary(summary);
 
 		// customer details
@@ -3578,80 +3578,80 @@ public class CreateFinanceController extends SummaryDetailService {
 		return returnStatus;
 	}
 
-	public WSReturnStatus processRejectFinance(FinanceDetail financeDetail, boolean finReferenceAvailable) {
+	public WSReturnStatus processRejectFinance(FinanceDetail fd, boolean finReferenceAvailable) {
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = null;
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		// mandatory fields
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-		financeMain.setUserDetails(userDetails);
-		financeMain.setLastMntBy(userDetails.getUserId());
-		financeMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-		financeMain.setVersion(1);
-		financeMain.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
-		financeDetail.setModuleDefiner(FinServiceEvent.ORG);
+		fm.setUserDetails(userDetails);
+		fm.setLastMntBy(userDetails.getUserId());
+		fm.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		fm.setVersion(1);
+		fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		fm.setRecordStatus(PennantConstants.RCD_STATUS_REJECTED);
+		fd.setModuleDefiner(FinServiceEvent.ORG);
 
 		// customer details
-		Customer customer = customerDetailsService.getCustomerByCIF(financeMain.getCustCIF());
+		Customer customer = customerDetailsService.getCustomerByCIF(fm.getCustCIF());
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(customer);
-		financeDetail.setCustomerDetails(customerDetails);
+		fd.setCustomerDetails(customerDetails);
 		String tranType = PennantConstants.TRAN_WF;
 
 		if (!finReferenceAvailable) {
-			if (StringUtils.isBlank(financeMain.getFinReference())) {
-				financeMain.setFinReference(String.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(financeMain,
-						financeDetail.getFinScheduleData().getFinanceType()))));
+			if (StringUtils.isBlank(fm.getFinReference())) {
+				fm.setFinReference(String.valueOf(String
+						.valueOf(ReferenceGenerator.generateFinRef(fm, fd.getFinScheduleData().getFinanceType()))));
 			}
-			financeMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			financeMain.setCustID(customer.getCustID());
-			financeMain.setEqualRepay(financeMain.isEqualRepay());
-			financeMain.setRecalType(financeMain.getRecalType());
-			financeMain.setLastRepayDate(financeMain.getFinStartDate());
-			financeMain.setLastRepayPftDate(financeMain.getFinStartDate());
-			financeMain.setLastRepayRvwDate(financeMain.getFinStartDate());
-			financeMain.setLastRepayCpzDate(financeMain.getFinStartDate());
-			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
+			fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			fm.setCustID(customer.getCustID());
+			fm.setEqualRepay(fm.isEqualRepay());
+			fm.setRecalType(fm.getRecalType());
+			fm.setLastRepayDate(fm.getFinStartDate());
+			fm.setLastRepayPftDate(fm.getFinStartDate());
+			fm.setLastRepayRvwDate(fm.getFinStartDate());
+			fm.setLastRepayCpzDate(fm.getFinStartDate());
+			fd.getFinScheduleData().setFinanceMain(fm);
 
-			returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);
+			returnStatus = prepareAndExecuteAuditHeader(fd, tranType);
 		} else {
-			FinanceMain dbFinanceMain = financeDetailService
-					.getFinanceMain(financeDetail.getFinScheduleData().getFinReference(), "_Temp");
+			FinanceMain dbFinanceMain = financeDetailService.getFinanceMain(fd.getFinScheduleData().getFinID(),
+					"_Temp");
 			if (null != dbFinanceMain
 					&& !StringUtils.equals(dbFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_REJECTED)) {
-				financeMain.setFinReference(dbFinanceMain.getFinReference());
-				financeMain.setLastMntOn(dbFinanceMain.getLastMntOn());
-				financeMain.setCustID(dbFinanceMain.getCustID());
-				financeMain.setEqualRepay(dbFinanceMain.isEqualRepay());
-				financeMain.setRecalType(dbFinanceMain.getRecalType());
-				financeMain.setLastRepayDate(dbFinanceMain.getLastRepayDate());
-				financeMain.setLastRepayPftDate(dbFinanceMain.getLastRepayPftDate());
-				financeMain.setLastRepayRvwDate(dbFinanceMain.getLastRepayRvwDate());
-				financeMain.setLastRepayCpzDate(dbFinanceMain.getLastRepayCpzDate());
+				fm.setFinReference(dbFinanceMain.getFinReference());
+				fm.setLastMntOn(dbFinanceMain.getLastMntOn());
+				fm.setCustID(dbFinanceMain.getCustID());
+				fm.setEqualRepay(dbFinanceMain.isEqualRepay());
+				fm.setRecalType(dbFinanceMain.getRecalType());
+				fm.setLastRepayDate(dbFinanceMain.getLastRepayDate());
+				fm.setLastRepayPftDate(dbFinanceMain.getLastRepayPftDate());
+				fm.setLastRepayRvwDate(dbFinanceMain.getLastRepayRvwDate());
+				fm.setLastRepayCpzDate(dbFinanceMain.getLastRepayCpzDate());
 
 				// override received fields with fetch data
-				financeMain.setLovDescCustCIF(dbFinanceMain.getCustCIF());
-				financeMain.setFinType(dbFinanceMain.getFinType());
-				financeMain.setFinAmount(dbFinanceMain.getFinAmount());
-				financeMain.setFinAssetValue(dbFinanceMain.getFinAssetValue());
-				financeMain.setNumberOfTerms(dbFinanceMain.getNumberOfTerms());
+				fm.setLovDescCustCIF(dbFinanceMain.getCustCIF());
+				fm.setFinType(dbFinanceMain.getFinType());
+				fm.setFinAmount(dbFinanceMain.getFinAmount());
+				fm.setFinAssetValue(dbFinanceMain.getFinAssetValue());
+				fm.setNumberOfTerms(dbFinanceMain.getNumberOfTerms());
 
-				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-				financeDetail.setUserDetails(userDetails);
-				financeDetail.setCustomerDetails(customerDetails);
+				fd.getFinScheduleData().setFinanceMain(fm);
+				fd.setUserDetails(userDetails);
+				fd.setCustomerDetails(customerDetails);
 				FinanceType dbFinanceType = financeTypeService.getFinanceTypeById(dbFinanceMain.getFinType());
-				financeDetail.getFinScheduleData().setFinanceType(dbFinanceType);
+				fd.getFinScheduleData().setFinanceType(dbFinanceType);
 
-				CustomerDetails dbCustomer = customerDetailsService.getApprovedCustomerById(financeMain.getCustID());
-				financeDetail.setCustomerDetails(dbCustomer);
-				returnStatus = prepareAndExecuteAuditHeader(financeDetail, tranType);
+				CustomerDetails dbCustomer = customerDetailsService.getApprovedCustomerById(fm.getCustID());
+				fd.setCustomerDetails(dbCustomer);
+				returnStatus = prepareAndExecuteAuditHeader(fd, tranType);
 			} else {
 				// throw validation error
 				String[] valueParam = new String[1];
-				valueParam[0] = "finreference: " + financeDetail.getFinScheduleData().getFinReference();
+				valueParam[0] = "finreference: " + fd.getFinScheduleData().getFinReference();
 
 				returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParam);
 			}

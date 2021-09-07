@@ -506,14 +506,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public Date getMaxReceiptDateByRef(String reference) {
+	public Date getMaxReceiptDateByRef(long finID) {
 		StringBuilder sql = new StringBuilder();
 		sql.append(" Select max(ReceiptDate) From FinReceiptHeader");
-		sql.append(" Where Reference = ? and ReceiptModeStatus not in (?, ?)");
+		sql.append(" Where FinID = ? and ReceiptModeStatus not in (?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, reference, "B", "C");
+		return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, "B", "C");
 	}
 
 	@Override
@@ -635,19 +635,19 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public boolean checkInProcessReceipts(String reference, long receiptId) {
-		String sql = "Select count(ReceiptID) From FinReceiptHeader_Temp Where Reference = ? and ReceiptId <> ?";
+	public boolean checkInProcessReceipts(long finID, long receiptId) {
+		String sql = "Select count(ReceiptID) From FinReceiptHeader_Temp Where FinID = ? and ReceiptId <> ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		int count = this.jdbcOperations.queryForObject(sql, Integer.class, reference, receiptId);
+		int count = this.jdbcOperations.queryForObject(sql, Integer.class, finID, receiptId);
 
 		if (count == 0) {
-			sql = "Select count(ReceiptID) From FinReceiptHeader Where Reference= ? and ReceiptModeStatus in (?, ?)";
+			sql = "Select count(ReceiptID) From FinReceiptHeader Where FinID= ? and ReceiptModeStatus in (?, ?)";
 
 			logger.debug(Literal.SQL + sql);
 
-			count = this.jdbcOperations.queryForObject(sql, Integer.class, reference, "I", "D");
+			count = this.jdbcOperations.queryForObject(sql, Integer.class, finID, "I", "D");
 		}
 		return count > 0;
 	}

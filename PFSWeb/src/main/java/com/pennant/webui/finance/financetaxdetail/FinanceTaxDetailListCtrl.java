@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTaxDetailListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-06-2017    														*
- *                                                                  						*
- * Modified Date    :  17-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTaxDetailListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-06-2017 * *
+ * Modified Date : 17-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.finance.financetaxdetail;
 
@@ -143,8 +125,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FinanceTaxDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -184,8 +165,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinanceTaxDetailList_FinanceTaxDetailSearch(Event event) {
 		search();
@@ -194,8 +174,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -205,8 +184,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinanceTaxDetailList_NewFinanceTaxDetail(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -225,8 +203,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onFinanceTaxDetailItemDoubleClicked(Event event) {
@@ -234,8 +211,9 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinanceTaxDetail.getSelectedItem();
+		final long finID = (Long) selectedItem.getAttribute("finID");
 		final String finReference = (String) selectedItem.getAttribute("finReference");
-		FinanceTaxDetail financetaxdetail = financeTaxDetailService.getFinanceTaxDetail(finReference);
+		FinanceTaxDetail financetaxdetail = financeTaxDetailService.getFinanceTaxDetail(finID);
 
 		if (financetaxdetail == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -243,9 +221,9 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		}
 
 		// ### 17-07-2018 - Start - Ticket ID : 127950
-		//check whether record present in loan queue
-		boolean isFinReferenceExitsinLQ = financeTaxDetailService.isFinReferenceExitsinLQ(finReference,
-				TableType.TEMP_TAB, false);
+		// check whether record present in loan queue
+		boolean isFinReferenceExitsinLQ = financeTaxDetailService.isFinReferenceExitsinLQ(finID, TableType.TEMP_TAB,
+				false);
 
 		if (isFinReferenceExitsinLQ) {
 			MessageUtil.showError(Labels.getLabel("info.not_authorized"));
@@ -273,8 +251,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param financetaxdetail
-	 *            The entity that need to be passed to the dialog.
+	 * @param financetaxdetail The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FinanceTaxDetail financetaxdetail) {
 		logger.debug(Literal.ENTERING);
@@ -302,8 +279,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -312,8 +288,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

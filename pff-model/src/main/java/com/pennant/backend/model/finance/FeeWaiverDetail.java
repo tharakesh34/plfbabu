@@ -79,6 +79,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity {
 	private boolean taxApplicable;
 	private String taxComponent;
 	private Long taxHeaderId;
+	private Long finID;// Display Field
 	private String finReference;// Display Field
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private TaxHeader taxHeader = new TaxHeader();
@@ -111,6 +112,14 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity {
 		this.taxHeaderId = taxHeaderId;
 	}
 
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
+	}
+
 	public String getFinReference() {
 		return finReference;
 	}
@@ -131,6 +140,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity {
 		excludeFields.add("gstWaiver");
 		excludeFields.add("taxHeader");
 		excludeFields.add("finReference");
+		excludeFields.add("finID");
 		excludeFields.add("adviseAmount");
 		excludeFields.add("WaiverGST");
 		excludeFields.add("adviseGST");
