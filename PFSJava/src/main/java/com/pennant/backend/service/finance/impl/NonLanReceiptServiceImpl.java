@@ -296,15 +296,15 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		String tranType = PennantConstants.TRAN_WF;
 
 		FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
-		FinReceiptHeader rch = receiptHeader;
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		// Delete Save Receipt Detail List by Reference
-		finReceiptDetailDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		long receiptID = rch.getReceiptID();
+		finReceiptDetailDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
 		// Delete Manual Advise Movements
-		manualAdviseDAO.deleteMovementsByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB.getSuffix());
+		manualAdviseDAO.deleteMovementsByReceiptID(receiptID, TableType.TEMP_TAB.getSuffix());
 
 		// Bounce reason Code
 		/*
@@ -314,10 +314,10 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		 */
 
 		// Delete Receipt Header
-		finReceiptHeaderDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		finReceiptHeaderDAO.deleteByReceiptID(receiptID, TableType.TEMP_TAB);
 
 		// FinReceiptDetail Audit Details Preparation
-		List<FinReceiptDetail> receiptDetails = receiptHeader.getReceiptDetails();
+		List<FinReceiptDetail> receiptDetails = rch.getReceiptDetails();
 		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
 				receiptDetails.get(0).getExcludeFields());
 
@@ -327,9 +327,8 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Receipt Header Audit Details Preparation
-		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
-		auditHeader.setAuditDetail(
-				new AuditDetail(tranType, 1, rhFields[0], rhFields[1], receiptHeader.getBefImage(), receiptHeader));
+		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], rch.getBefImage(), rch));
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.getAuditDetail().setAuditTranType(PennantConstants.TRAN_WF);
@@ -420,9 +419,9 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		long linkedTranId = rch.getLinkedTranId();
 
 		if (PennantConstants.FINSOURCE_ID_API.equals(receiptHeader.getSourceId())) {
-			
+
 			linkedTranId = executeAccounting(receiptData);
-		
+
 		} else if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())
 				&& !StringUtils.equals(RepayConstants.RECEIPTMODE_DD, rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
@@ -473,7 +472,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			rcd.setStatus(RepayConstants.PAYSTATUS_APPROVED);
 			rcd.setReceiptID(rch.getReceiptID());
 			finReceiptDetailDAO.updateReceiptStatus(rch.getReceiptID(), rcd.getReceiptSeqID(),
-					rch.getReceiptModeStatus());// saving Receipt Detail	
+					rch.getReceiptModeStatus());// saving Receipt Detail
 		}
 
 		List<AuditDetail> tempAuditDetailList = new ArrayList<AuditDetail>();
@@ -615,8 +614,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		aeEvent.getDataMap().put("ae_receiptSource", receiptHeader.getReceiptSource());
 		aeEvent.getDataMap().put("ae_receiptSourceAcType", receiptHeader.getReceiptSourceAcType());
 
-		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.NLRCPT,
-				AccountingEvent.NLRCPT);
+		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.NLRCPT, AccountingEvent.NLRCPT);
 		aeEvent.getAcSetIDList().add(accountsetId);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 		logger.debug(Literal.LEAVING);
@@ -630,8 +628,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 	 * for any mismatch conditions Fetch the error details from getFinReceiptHeaderDAO().getErrorDetail with Error ID
 	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -729,7 +726,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 				}
 			} else {
 
-				if (tempFinReceiptHeader == null) { // if records not exists in the  Work flow table
+				if (tempFinReceiptHeader == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -775,7 +772,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		FinReceiptQueueLog finReceiptQueue = new FinReceiptQueueLog();
 		finReceiptQueue.setStartTime(LocalDateTime.now().getHour() + ":" + LocalDateTime.now().getMinute() + ":"
 				+ LocalDateTime.now().getSecond()); // Thread Processing Start
-																																						// Time
+													// Time
 
 		Map<String, String> valueMap = new HashMap<>();
 		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
@@ -918,7 +915,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 		// RECEIPT UPLOAD INQUIRY or API/Receipt Upload Post
 		if (fsi.isReceiptUpload() && !StringUtils.equals(fsi.getReqType(), "Post")) {
-			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainById(finReference, "_AView", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(finReference, "_AView", false);
 			finScheduleData.setFinanceMain(financeMain);
 		} else {
 			Cloner cloner = new Cloner();

@@ -85,7 +85,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		// Finance Details
 		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData finScheduleData = getFinSchDataByFinRef(finReference, "", 0);
+		FinScheduleData finScheduleData = getFinSchDataByFinRef(finID, "", 0);
 
 		List<FinServiceInstruction> finservInstList = new ArrayList<FinServiceInstruction>();
 		if (StringUtils.isNotBlank(rcdMaintainSts)) {
@@ -300,6 +300,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		// START : prepare FinLogEntryDetail data
@@ -315,7 +316,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		// END
 
 		// START : Fetch Existing data before Modification
-		FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finReference, "", -1);
+		FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finID, "", -1);
 		oldFinSchdData.setFinReference(finReference);
 		oldFinSchdData.setFinanceMain(fm);
 

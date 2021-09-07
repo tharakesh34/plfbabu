@@ -390,7 +390,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(finReference, fd.getModuleDefiner());
+		cancelStageAccounting(finID, fd.getModuleDefiner());
 
 		financeWriteoffDAO.delete(finID, "_Temp");
 

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ProvisionPostings.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ProvisionPostings.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.endofday.tasklet;
@@ -106,54 +97,56 @@ public class ProvisionPostings implements Tasklet {
 
 		logger.debug("START: Provision Postings for Value Date: " + dateValueDate);
 
-		//Process for Provision Posting IF only Bank Allowed for ALLOWED AUTO PROVISION
+		// Process for Provision Posting IF only Bank Allowed for ALLOWED AUTO PROVISION
 
 		if (eventProperties.isAllowProvEod()) {
 
 			// READ REPAYMENTS DUE TODAY
 			Connection connection = null;
-			ResultSet resultSet = null;
+			ResultSet rs = null;
 			PreparedStatement sqlStatement = null;
 
 			try {
 
 				// Fetch Overdue Finances for Provision Calculation
-				connection = DataSourceUtils.doGetConnection(getDataSource());
+				connection = DataSourceUtils.doGetConnection(dataSource);
 				sqlStatement = connection.prepareStatement(getCountQuery());
-				resultSet = sqlStatement.executeQuery();
+				rs = sqlStatement.executeQuery();
 				int count = 0;
-				if (resultSet.next()) {
-					count = resultSet.getInt(1);
+				if (rs.next()) {
+					count = rs.getInt(1);
 				}
 				sqlStatement.close();
-				resultSet.close();
+				rs.close();
 
 				sqlStatement = connection.prepareStatement(prepareProvMovementSelectQuery());
-				resultSet = sqlStatement.executeQuery();
+				rs = sqlStatement.executeQuery();
 
 				FinanceMain financeMain = null;
 				List<FinanceScheduleDetail> schdDetails = null;
 				FinanceProfitDetail pftDetail = null;
 
-				while (resultSet.next()) {
+				while (rs.next()) {
 
-					ProvisionMovement movement = prepareProvisionMovementData(resultSet);
+					ProvisionMovement movement = prepareProvisionMovementData(rs);
 
-					financeMain = getFinanceMainDAO().getFinanceMainForBatch(resultSet.getString("FinReference"));
-					schdDetails = getFinanceScheduleDetailDAO()
-							.getFinSchdDetailsForBatch(resultSet.getString("FinReference"));
+					long finID = rs.getLong("FinID");
+					String finReference = rs.getString("FinReference");
+					financeMain = financeMainDAO.getFinanceMainForBatch(finID);
+					schdDetails = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
 
 					pftDetail = new FinanceProfitDetail();
-					pftDetail.setFinReference(resultSet.getString("FinReference"));
-					pftDetail.setAcrTillLBD(resultSet.getBigDecimal("AcrTillLBD"));
-					pftDetail.setPftAmzSusp(resultSet.getBigDecimal("PftAmzSusp"));
-					pftDetail.setAmzTillLBD(resultSet.getBigDecimal("AmzTillLBD"));
-					pftDetail.setLpiTillLBD(resultSet.getBigDecimal("LpiTillLBD"));
-					pftDetail.setLppTillLBD(resultSet.getBigDecimal("LppTillLBD"));
-					pftDetail.setGstLpiTillLBD(resultSet.getBigDecimal("GstLpiTillLBD"));
-					pftDetail.setGstLppTillLBD(resultSet.getBigDecimal("GstLppTillLBD"));
+					pftDetail.setFinID(finID);
+					pftDetail.setFinReference(finReference);
+					pftDetail.setAcrTillLBD(rs.getBigDecimal("AcrTillLBD"));
+					pftDetail.setPftAmzSusp(rs.getBigDecimal("PftAmzSusp"));
+					pftDetail.setAmzTillLBD(rs.getBigDecimal("AmzTillLBD"));
+					pftDetail.setLpiTillLBD(rs.getBigDecimal("LpiTillLBD"));
+					pftDetail.setLppTillLBD(rs.getBigDecimal("LppTillLBD"));
+					pftDetail.setGstLpiTillLBD(rs.getBigDecimal("GstLpiTillLBD"));
+					pftDetail.setGstLppTillLBD(rs.getBigDecimal("GstLppTillLBD"));
 
-					Date dueFromDate = resultSet.getDate("DueFromDate");
+					Date dueFromDate = rs.getDate("DueFromDate");
 					AEEvent aeEvent = AEAmounts.procAEAmounts(financeMain, schdDetails, pftDetail,
 							AccountingEvent.PROVSN, dateValueDate, dueFromDate);
 					AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
@@ -163,7 +156,7 @@ public class ProvisionPostings implements Tasklet {
 					Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 					aeEvent.setDataMap(dataMap);
 
-					aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
+					aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 
 					if (aeEvent.isPostingSucess()) {
 						movement.setProvisionedAmt(movement.getProvisionedAmt().add(movement.getProvisionDue()));
@@ -171,23 +164,23 @@ public class ProvisionPostings implements Tasklet {
 						movement.setProvisionPostSts("C");
 						movement.setLinkedTranId(aeEvent.getLinkedTranId());
 
-						//Update Provision Movement Details
-						//	getProvisionDAO().updateProvAmt(movement, "");
-						getProvisionMovementDAO().update(movement, "");
+						// Update Provision Movement Details
+						// getProvisionDAO().updateProvAmt(movement, "");
+						provisionMovementDAO.update(movement, "");
 
 						postings++;
 					}
 
 					pftDetail = null;
 
-					processed = resultSet.getRow();
+					processed = rs.getRow();
 				}
 			} catch (Exception e) {
 				logger.error("Exception: ", e);
 				throw e;
 			} finally {
-				if (resultSet != null) {
-					resultSet.close();
+				if (rs != null) {
+					rs.close();
 				}
 
 				if (sqlStatement != null) {
@@ -243,17 +236,16 @@ public class ProvisionPostings implements Tasklet {
 	 * @return
 	 */
 	private String prepareProvMovementSelectQuery() {
-
-		StringBuilder selQuery = new StringBuilder(
-				" SELECT T1.FinReference,T1.ProvMovementDate,T1.ProvMovementSeq , T1.DueFromDate, ");
-		selQuery.append(" T1.ProvisionedAmt, T1.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp, ");
-		selQuery.append(" T4.AmzTillLBD, T4.LPITillLBD, T4.LPPTillLBD, T4.GstLpiTillLBD, T4.GstLppTillLBD ");
-		selQuery.append(" FROM FinProvMovements AS T1 ");
-		selQuery.append(" INNER JOIN FinanceMain AS T2 ON T1.FinReference = T2.FinReference ");
-		selQuery.append(" INNER JOIN FinPftDetails AS T4 ON T1.FinReference = T4.FinReference ");
-		selQuery.append(" INNER JOIN RMTFinanceTypes AS T3 ON T2.FinType = T3.FinType ");
-		selQuery.append(" WHERE T1.ProvisionPostSts = 'R'");
-		return selQuery.toString();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" pm.FinReference,pm.ProvMovementDate,pm.ProvMovementSeq , pm.DueFromDate");
+		sql.append(", pm.ProvisionedAmt, pm.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp");
+		sql.append(", pfd.AmzTillLBD, pfd.LPITillLBD, pfd.LPPTillLBD, pfd.GstLpiTillLBD, pfd.GstLppTillLBD");
+		sql.append(" FROM FinProvMovements pm");
+		sql.append(" Inner Join FinanceMain fm On fm.FinID = pm.FinID ");
+		sql.append(" Inner Join FinPftDetails pfd On ofd.FinID = pm.FinID ");
+		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType ");
+		sql.append(" Where pm.ProvisionPostSts = 'R'");
+		return sql.toString();
 
 	}
 
@@ -265,52 +257,28 @@ public class ProvisionPostings implements Tasklet {
 		return builder.toString();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
+	public void setLogger(Logger logger) {
+		this.logger = logger;
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	public FinanceScheduleDetailDAO getFinanceScheduleDetailDAO() {
-		return financeScheduleDetailDAO;
-	}
-
 	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
 		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
-	}
-
-	public FinanceProfitDetailDAO getFinanceProfitDetailDAO() {
-		return financeProfitDetailDAO;
 	}
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
 	}
 
-	public PostingsPreparationUtil getPostingsPreparationUtil() {
-		return postingsPreparationUtil;
-	}
-
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {
 		this.postingsPreparationUtil = postingsPreparationUtil;
 	}
 
-	public ProvisionDAO getProvisionDAO() {
-		return provisionDAO;
-	}
-
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
-	}
-
-	public ProvisionMovementDAO getProvisionMovementDAO() {
-		return provisionMovementDAO;
 	}
 
 	public void setProvisionMovementDAO(ProvisionMovementDAO provisionMovementDAO) {
@@ -321,8 +289,16 @@ public class ProvisionPostings implements Tasklet {
 		this.dataSource = dataSource;
 	}
 
-	public DataSource getDataSource() {
-		return dataSource;
+	public void setDateValueDate(Date dateValueDate) {
+		this.dateValueDate = dateValueDate;
+	}
+
+	public void setPostings(int postings) {
+		this.postings = postings;
+	}
+
+	public void setProcessed(int processed) {
+		this.processed = processed;
 	}
 
 }

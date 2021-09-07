@@ -638,7 +638,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
 
-		cancelStageAccounting(finReference, fd.getModuleDefiner());
+		cancelStageAccounting(finID, fd.getModuleDefiner());
 
 		// Fee charges deletion
 		finFeeChargesDAO.deleteChargesBatch(finID, fd.getModuleDefiner(), false, "_Temp");
