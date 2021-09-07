@@ -437,6 +437,46 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		this.jdbcOperations.update(sql, finID);
 	}
 
+	/**
+	 * 
+	 * @param projIncomeAMZ
+	 */
+	@Override
+	public void saveBatchProjIncomeAMZ(List<ProjectedAmortization> projIncomeAMZ) {
+		StringBuilder sql = new StringBuilder("Insert Into ProjectedIncomeAMZ");
+		sql.append(" (FinID, FinReference, FinType, ReferenceID, IncomeTypeID, IncomeType");
+		sql.append(", MonthEndDate, AmortizedAmount, CumulativeAmount, UnAmortizedAmount)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.trace(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.batchUpdate(sql.toString(), new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ProjectedAmortization pamz = projIncomeAMZ.get(i);
+
+				int index = 1;
+
+				ps.setLong(index++, pamz.getFinID());
+				ps.setString(index++, pamz.getFinReference());
+				ps.setString(index++, pamz.getFinType());
+				ps.setLong(index++, pamz.getReferenceID());
+				ps.setLong(index++, pamz.getIncomeTypeID());
+				ps.setString(index++, pamz.getIncomeType());
+				ps.setDate(index++, JdbcUtil.getDate(pamz.getMonthEndDate()));
+				ps.setBigDecimal(index++, pamz.getAmortizedAmount());
+				ps.setBigDecimal(index++, pamz.getCumulativeAmount());
+				ps.setBigDecimal(index++, pamz.getUnAmortizedAmount());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return projIncomeAMZ.size();
+			}
+		});
+	}
+
 	@Override
 	public Date getPrvAMZMonthLog() {
 		StringBuilder sql = new StringBuilder("Select");

@@ -108,7 +108,7 @@ public class LatePayBucketService extends ServiceHelper {
 
 		EventProperties eventProperties = fm.getEventProperties();
 
-		//prepare the re allocation required records i.e. schedule Date with scheduled amount and total paid till today
+		// prepare the re allocation required records i.e. schedule Date with scheduled amount and total paid till today
 		for (FinanceScheduleDetail schDetail : schedules) {
 			if (schDetail.getSchDate().compareTo(valueDate) > 0) {
 				break;
@@ -136,13 +136,13 @@ public class LatePayBucketService extends ServiceHelper {
 
 		if (dpdCalcIncExs) {
 			// fin excess amount
-			BigDecimal excessBalAmt = getDeductedAmt(fm.getFinReference());
+			BigDecimal excessBalAmt = getDeductedAmt(fm.getFinID());
 
 			// consider excess amount to calculate ODDays and DueBucket
 			totalPaid = totalPaid.add(excessBalAmt);
 		}
 
-		//reallocate and find the first due date.
+		// reallocate and find the first due date.
 		for (Entry<Date, BigDecimal> entry : reallocationMap.entrySet()) {
 			if (totalPaid.compareTo(entry.getValue()) >= 0) {
 				totalPaid = totalPaid.subtract(entry.getValue());
@@ -177,7 +177,7 @@ public class LatePayBucketService extends ServiceHelper {
 			newDueBucket = 0;
 		}
 
-		//No current OD Days and No change in the Bucket Status and Number of Buckets
+		// No current OD Days and No change in the Bucket Status and Number of Buckets
 		if (newCurODDays == 0 || newDueBucket == 0) {
 
 			// No change in the Bucket Status and Number of Buckets
@@ -204,7 +204,7 @@ public class LatePayBucketService extends ServiceHelper {
 			newFinStatus = getBucket(bucketID);
 		}
 
-		//No change in the Bucket Status and Number of Buckets
+		// No change in the Bucket Status and Number of Buckets
 		if (StringUtils.equals(newFinStatus, finStatus) && dueBucket == newDueBucket && curODDays == newCurODDays) {
 			return false;
 		}
@@ -229,14 +229,15 @@ public class LatePayBucketService extends ServiceHelper {
 		}
 	}
 
-	private BigDecimal getDeductedAmt(String finReference) {
+	private BigDecimal getDeductedAmt(long finID) {
 		BigDecimal balanceAmt = BigDecimal.ZERO;
-		List<FinExcessAmount> excess = finExcessAmountDAO.getExcessAmountsByRef(finReference);
+		List<FinExcessAmount> excess = finExcessAmountDAO.getExcessAmountsByRef(finID);
 		if (excess.size() > 0) {
 			for (FinExcessAmount finExcessAmount : excess) {
 				// DPD calculation considering both balance amount and reserved amount
 				// balanceAmt = balanceAmt.add(finExcessAmount.getAmount().subtract(finExcessAmount.getUtilisedAmt()));
-				// The above line is commented due to there may be a chances of bug if utilized amount is not updated properly. 
+				// The above line is commented due to there may be a chances of bug if utilized amount is not updated
+				// properly.
 				balanceAmt = balanceAmt.add(finExcessAmount.getBalanceAmt());
 			}
 		}

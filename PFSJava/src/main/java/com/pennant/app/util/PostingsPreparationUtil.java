@@ -563,12 +563,12 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @throws InvocationTargetException
 	 * @throws InterfaceException
 	 */
-	public List<ReturnDataSet> postReveralsByFinreference(String finReference) {
+	public List<ReturnDataSet> postReveralsByFinreference(long finID) {
 		logger.debug(Literal.ENTERING);
 
-		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finReference);
+		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finID);
 
-		postingsDAO.updateStatusByFinRef(finReference, AccountConstants.POSTINGS_REVERSE);
+		postingsDAO.updateStatusByFinRef(finID, AccountConstants.POSTINGS_REVERSE);
 
 		postingsDAO.saveBatch(returnDataSets);
 
@@ -684,18 +684,11 @@ public class PostingsPreparationUtil implements Serializable {
 		return returnDataSets;
 	}
 
-	/**
-	 * @param finReference
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
-	public List<ReturnDataSet> getReveralsByFinreference(String finReference) {
+	public List<ReturnDataSet> getReveralsByFinreference(long finID) {
 		logger.debug(Literal.ENTERING);
 
 		long newLinkedTranID = postingsDAO.getLinkedTransId();
-		List<ReturnDataSet> returnDataSets = postingsDAO.getPostingsByFinRef(finReference, false);
+		List<ReturnDataSet> returnDataSets = postingsDAO.getPostingsByFinRef(finID, false);
 
 		engineExecution.getReversePostings(returnDataSets, newLinkedTranID);
 
@@ -729,16 +722,14 @@ public class PostingsPreparationUtil implements Serializable {
 	 * 
 	 * @param finReference
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
+	 * 
 	 */
-	public List<ReturnDataSet> postReveralsExceptFeePay(String finReference) {
+	public List<ReturnDataSet> postReveralsExceptFeePay(long finID) {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> returnDataSets = new ArrayList<>();
 		Set<Long> linkedTranIds = new LinkedHashSet<>();
-		List<ReturnDataSet> dataSetList = getReveralsByFinreference(finReference);
+		List<ReturnDataSet> dataSetList = getReveralsByFinreference(finID);
 
 		for (ReturnDataSet returnDataSet : dataSetList) {
 			if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
