@@ -1,42 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScheduleRateReportHeaderCtrl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-05-2019   														*
- *                                                                  						*
- * Modified Date    :  13-05-2019      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScheduleRateReportHeaderCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-05-2019 * *
+ * Modified Date : 13-05-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-05-2019         Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-05-2019 Pennant 0.1 * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports;
@@ -82,6 +65,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/ScheduleRateReportHeaderDialogCtrl.zul file.
@@ -159,8 +143,7 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -184,8 +167,10 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 
 		doWriteComponentsToBean(this.scheduleRateReportHeader);
 
-		ScheduleRateReportHeader header = prepareSchdRateReportData(this.scheduleRateReportHeader,
-				this.finReference.getValidatedValue(), this.startDate.getValue(), this.endDate.getValue());
+		long finID = ComponentUtil.getFinID(this.finReference);
+
+		ScheduleRateReportHeader header = prepareSchdRateReportData(this.scheduleRateReportHeader, finID,
+				this.startDate.getValue(), this.endDate.getValue());
 
 		List<Object> list = new ArrayList<Object>();
 		list.add(header.getRateReports());
@@ -199,7 +184,7 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 			}
 
 			ReportsUtil.showPDF("FINENQ_ScheduleRateReport", header, list, userName);
-			
+
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -276,25 +261,23 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 		logger.debug(Literal.LEAVING);
 	}
 
-	private ScheduleRateReportHeader prepareSchdRateReportData(ScheduleRateReportHeader rateReportHeader,
-			String finReference, Date startDate, Date endDate) {
+	private ScheduleRateReportHeader prepareSchdRateReportData(ScheduleRateReportHeader rrh, long finID, Date startDate,
+			Date endDate) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain financeMain = this.financeDetailService.getFinanceMainForRateReport(finReference, "_AView");
+		FinanceMain fm = this.financeDetailService.getFinanceMainForRateReport(finID, "_AView");
 
 		// Header Details
-		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		rateReportHeader.setCif(financeMain.getLovDescCustCIF());
-		rateReportHeader.setCustName(financeMain.getLovDescCustShrtName());
-		rateReportHeader.setFinReference(financeMain.getFinReference());
-		rateReportHeader
-				.setDisbursedAmt(PennantApplicationUtil.amountFormate(financeMain.getFinCurrAssetValue(), formatter));
-		rateReportHeader.setInstDaysBasis(PennantStaticListUtil.getlabelDesc(financeMain.getProfitDaysBasis(),
+		int formatter = CurrencyUtil.getFormat(fm.getFinCcy());
+		rrh.setCif(fm.getLovDescCustCIF());
+		rrh.setCustName(fm.getLovDescCustShrtName());
+		rrh.setFinReference(fm.getFinReference());
+		rrh.setDisbursedAmt(PennantApplicationUtil.amountFormate(fm.getFinCurrAssetValue(), formatter));
+		rrh.setInstDaysBasis(PennantStaticListUtil.getlabelDesc(fm.getProfitDaysBasis(),
 				PennantStaticListUtil.getProfitDaysBasis()));
 
 		// Schedule Details
-		List<FinanceScheduleDetail> scheduleDetails = this.financeDetailService
-				.getFinSchdDetailsForRateReport(finReference);
+		List<FinanceScheduleDetail> scheduleDetails = this.financeDetailService.getFinSchdDetailsForRateReport(finID);
 
 		scheduleDetails = sortSchdDetails(scheduleDetails);
 
@@ -358,8 +341,8 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 
 				BigDecimal calIntRounded = BigDecimal.ZERO;
 				if (calInt.compareTo(BigDecimal.ZERO) > 0) {
-					calIntRounded = CalculationUtil.roundAmount(calInt, financeMain.getCalRoundingMode(),
-							financeMain.getRoundingTarget());
+					calIntRounded = CalculationUtil.roundAmount(calInt, fm.getCalRoundingMode(),
+							fm.getRoundingTarget());
 				}
 				rateReport.setCalcPft(PennantApplicationUtil.amountFormate(calIntRounded, formatter));
 			}
@@ -369,10 +352,10 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 					+ rateReport.getRate() + "/t" + rateReport.getCalcPft());
 		}
 
-		rateReportHeader.setRateReports(rateReportsList);
+		rrh.setRateReports(rateReportsList);
 
 		logger.debug(Literal.LEAVING);
-		return rateReportHeader;
+		return rrh;
 	}
 
 	public static List<FinanceScheduleDetail> sortSchdDetails(List<FinanceScheduleDetail> financeScheduleDetail) {

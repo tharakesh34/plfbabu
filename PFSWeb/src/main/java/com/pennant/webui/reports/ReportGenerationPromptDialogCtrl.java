@@ -2527,9 +2527,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.info(Literal.LEAVING);
 	}
 
-	private void processLinkedLoans(String finRef) {
-		List<LinkedFinances> linkedFinances = linkedFinancesService.getLinkedFinancesByFinRef(finRef, "_AView");
-		List<LinkedFinances> linkedFinances2 = linkedFinancesService.getLinkedFinancesByRef(finRef, "_AView");
+	private void processLinkedLoans(long finID) {
+		List<LinkedFinances> linkedFinances = linkedFinancesService.getLinkedFinancesByFinRef(finID, "_AView");
+		List<LinkedFinances> linkedFinances2 = linkedFinancesService.getLinkedFinancesByRef(finID, "_AView");
 		if (CollectionUtils.isNotEmpty(linkedFinances) || CollectionUtils.isNotEmpty(linkedFinances2)) {
 			String[] parameters = new String[2];
 			parameters[0] = finRef;

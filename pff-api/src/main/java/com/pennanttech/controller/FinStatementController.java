@@ -196,6 +196,8 @@ public class FinStatementController extends SummaryDetailService {
 					return stmtResponse;
 				}
 
+				String finReference = fd.getFinScheduleData().getFinanceMain().getFinReference();
+
 				fd.setFinID(finID);
 
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
@@ -220,18 +222,17 @@ public class FinStatementController extends SummaryDetailService {
 					fd.getFinScheduleData().setFinODDetails(finODDetailsList);
 					fd = getForeClosureDetails(fd, days, fromDate);
 
-					FinScheduleData finScheduleData = fd.getFinScheduleData();
-					finScheduleData
-							.setFinanceScheduleDetails(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails());
+					FinScheduleData schdData = fd.getFinScheduleData();
+					schdData.setFinanceScheduleDetails(aFinanceDetail.getFinScheduleData().getFinanceScheduleDetails());
 					// setting old values
 					fd.setCustomerDetails(aFinanceDetail.getCustomerDetails());
-					finScheduleData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
-					finScheduleData.setFinODDetails(aFinanceDetail.getFinScheduleData().getFinODDetails());
+					schdData.setFinanceMain(aFinanceDetail.getFinScheduleData().getFinanceMain());
+					schdData.setFinODDetails(aFinanceDetail.getFinScheduleData().getFinODDetails());
 				}
 
 				if (StringUtils.equals(APIConstants.STMT_FORECLOSUREV1, serviceName)) {
-					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finID, AccountingEvent.EARLYSTL,
-							FinServiceEvent.RECEIPT, "");
+					FinReceiptData receiptData = receiptService.getFinReceiptDataById(finReference,
+							AccountingEvent.EARLYSTL, FinServiceEvent.RECEIPT, "");
 					getForeClosureReport(receiptData, stmtResponse);
 				}
 				// generate response info

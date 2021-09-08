@@ -501,7 +501,7 @@ public class LimitServiceController extends ExtendedTestClass {
 		if (financeMain != null) {
 			financeType = financeTypeService.getApprovedFinanceTypeById(financeMain.getFinType());
 			financeMain.setUserDetails(userDetails);
-			finDisbursements = financeDetailService.getFinanceDisbursements(financeMain.getFinReference(), "", true);
+			finDisbursements = financeDetailService.getFinanceDisbursements(financeMain.getFinID(), "", true);
 		}
 
 		if (customer != null) {

@@ -332,8 +332,8 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 			}
 
 			// Fetch Total Finance Details Object
-			FinanceDetail financeDetail = getFinanceDetailService()
-					.getFinSchdDetailById(aLiabilityRequest.getFinReference(), "_View", false);
+			FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(aLiabilityRequest.getFinID(),
+					"_View", false);
 			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
 			financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 					financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));

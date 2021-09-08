@@ -500,7 +500,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		receiptData.setValueDate(this.receiptDate.getValue());
 		receiptData.getReceiptHeader().setReceiptDate(this.receiptDate.getValue());
-		FinanceMain financeMain = financeMainService.getFinanceMainById(this.finReference.getValue(), false);
+		FinanceMain financeMain = financeMainService.getFinanceMainByRef(this.finReference.getValue(), false);
 		receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
 
 		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(this.receiptMode.getSelectedItem().getValue())
@@ -1804,7 +1804,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinReference());
+		FinanceProfitDetail profitDetail = getFinanceDetailService().getFinProfitDetailsById(finMain.getFinID());
 		Date dateValueDate = SysParamUtil.getAppDate();
 		/*
 		 * if (this.receivedDate.getValue() != null) { dateValueDate = this.receivedDate.getValue(); }
@@ -2102,7 +2102,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 				FinanceScheduleDetail oldLastSchd = null;
 				if (lastSchd.isFrqDate()) {
-					oldLastSchd = getFinanceDetailService().getFinSchduleDetails(finMain.getFinReference(),
+					oldLastSchd = getFinanceDetailService().getFinSchduleDetails(finMain.getFinID(),
 							lastSchd.getSchDate());
 				}
 
@@ -3078,13 +3078,13 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		Date receiptValueDate = rch.getValueDate();
-		FinScheduleData finScheduleData = receiptData.getFinanceDetail().getFinScheduleData();
-		FinanceMain financeMain = financeMainService.getFinanceMainById(this.finReference.getValue(), false);
-		FinanceType financeType = finScheduleData.getFinanceType();
-		List<FinanceScheduleDetail> scheduleList = finScheduleData.getFinanceScheduleDetails();
+		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
+		FinanceMain fm = financeMainService.getFinanceMainByRef(this.finReference.getValue(), false);
+		FinanceType financeType = schdData.getFinanceType();
+		List<FinanceScheduleDetail> scheduleList = schdData.getFinanceScheduleDetails();
 
 		// in case of early pay,do not allow in subvention period
-		if (receiptPurposeCtg == 1 && financeMain.isAllowSubvention()) {
+		if (receiptPurposeCtg == 1 && fm.isAllowSubvention()) {
 			boolean isInSubVention = receiptService.isInSubVention(
 					receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain(), receiptValueDate);
 			if (isInSubVention) {
@@ -3109,7 +3109,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		}
 
 		if (receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain() != null && receiptPurposeCtg != 1
-				&& receiptValueDate.compareTo(financeMain.getFinStartDate()) == 0) {
+				&& receiptValueDate.compareTo(fm.getFinStartDate()) == 0) {
 			MessageUtil.showError(Labels.getLabel("label_ReceiptDialog_Valid_Date"));
 			return false;
 		}
@@ -3148,7 +3148,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		// when Maturity Date reaches Current application Date
 		if (receiptPurposeCtg == 1 || receiptPurposeCtg == 2 && !isMatured) {
 
-			if (financeMain.getMaturityDate().compareTo(receiptValueDate) < 0) {
+			if (fm.getMaturityDate().compareTo(receiptValueDate) < 0) {
 				MessageUtil.showError(
 						Labels.getLabel("label_ReceiptDialog_Valid_MaturityDate", new String[] { PennantApplicationUtil
 								.getLabelDesc(rch.getReceiptPurpose(), PennantStaticListUtil.getReceiptPurpose()) }));
@@ -3224,7 +3224,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			// If Schedule Already Paid, not allowed to do Early settlement on
 			// same received date
 			// when Date is with in Grace and No Profit Payment case
-			if (financeMain.isAllowGrcPeriod()) {
+			if (fm.isAllowGrcPeriod()) {
 				boolean isAlwEarlyStl = true;
 				for (int i = 0; i < scheduleList.size(); i++) {
 					FinanceScheduleDetail curSchd = scheduleList.get(i);
@@ -3419,12 +3419,12 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		financeMains.addAll(getFinanceDetailService().getFinanceMainForLinkedLoans(finReference.getValue()));
 
 		if (CollectionUtils.isNotEmpty(financeMains)) {
-			List<String> finRefList = new ArrayList<>();
+			List<Long> finRefList = new ArrayList<>();
 			for (FinanceMain finMain : financeMains) {
 				if (StringUtils.equals(receiptData.getFinReference(), finMain.getFinReference())) {
 					continue;
 				}
-				finRefList.add(finMain.getFinReference());
+				finRefList.add(finMain.getFinID());
 			}
 			finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
 		}
@@ -4073,8 +4073,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
 			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
 					&& !isWIF) {
-				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "",
-						isWIF);
+				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinID(), "", isWIF);
 			}
 			approvedFeeRules.addAll(feeRuleList);
 

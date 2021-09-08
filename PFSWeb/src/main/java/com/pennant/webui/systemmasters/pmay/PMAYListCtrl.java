@@ -208,8 +208,8 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private FinanceDetail getFinanceDetails(String finReference) {
-		FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailsForPmay(finReference);
+	private FinanceDetail getFinanceDetails(long finID) {
+		FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailsForPmay(finID);
 		return financeDetail;
 	}
 
@@ -232,7 +232,7 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 				Executions.createComponents(
 						"/WEB-INF/pages/FinanceManagement/SelectFinance/SelectFinReferenceDialog.zul", null, arg);
 			} else {
-				arg.put("financeDetail", getFinanceDetails(pmay.getFinReference()));
+				arg.put("financeDetail", getFinanceDetails(pmay.getFinID()));
 				Executions.createComponents("/WEB-INF/pages/SystemMaster/PMAY/PMAYDialog.zul", null, arg);
 			}
 		} catch (Exception e) {

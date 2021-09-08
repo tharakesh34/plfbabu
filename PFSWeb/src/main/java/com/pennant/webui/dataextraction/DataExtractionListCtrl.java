@@ -77,8 +77,7 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_DataExtractionList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -251,7 +250,6 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		if (count <= 0) {
 			return Labels.getLabel("label_DataExtraction_NoRecordsavailable.value");
 		}
-		process.clearTranasctionDeatils();
 		process.processGstTransactionData();
 		DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 		return status.getRemarks();
@@ -293,7 +291,6 @@ public class DataExtractionListCtrl extends GFCBaseListCtrl<Object> {
 		if (count <= 0) {
 			return Labels.getLabel("label_DataExtraction_NoRecordsavailable.value");
 		}
-		process.clearSummaryDeatils();
 		process.processGstSummaryData();
 		DataEngineStatus status = TaxDownlaodExtract.EXTRACT_STATUS;
 		return status.getRemarks();

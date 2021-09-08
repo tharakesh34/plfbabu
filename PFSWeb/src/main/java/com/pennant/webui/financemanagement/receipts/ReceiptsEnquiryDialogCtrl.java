@@ -1,52 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
-
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * 
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReceiptDialogCtrl.java                           					*
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-06-2011    														*
- *                                                                  						*
- * Modified Date    :  03-06-2011    														*
- *                                                                  						*
- * Description 		:																		*	
- *                                                                                          *
+ * * FileName : ReceiptDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-06-2011 * * Modified
+ * Date : 03-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                        	* 
- * 29-09-2018       somasekhar               0.2         added backdate sp also,            * 
- * 10-10-2018       somasekhar               0.3         Ticket id:124998,defaulting receipt* 
- *                                                       purpose and excessadjustto for     * 
- *                                                       closed loans                       *
- *                                                       Ticket id:124998                   * 
- * 13-06-2018       Siva					 0.2        Receipt auto printing on approval   * 
- *                                                                                          * 
- * 13-06-2018       Siva					 0.3        Receipt Print Option Added 			* 
- *                                                                                          * 
- * 17-06-2018		Srinivasa Varma			 0.4		PSD 126950                          * 
- *                                                                                          *
- * 19-06-2018		Siva			 		 0.5		Auto Receipt Number Generation      * 
- * 																							*
- * 28-06-2018		Siva			 		 0.6		Stop printing Receipt if receipt 
- * 												     mode status is either cancel or Bounce * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * 29-09-2018 somasekhar 0.2 added backdate sp also, * 10-10-2018 somasekhar 0.3 Ticket
+ * id:124998,defaulting receipt* purpose and excessadjustto for * closed loans * Ticket id:124998 * 13-06-2018 Siva 0.2
+ * Receipt auto printing on approval * * 13-06-2018 Siva 0.3 Receipt Print Option Added * * 17-06-2018 Srinivasa Varma
+ * 0.4 PSD 126950 * * 19-06-2018 Siva 0.5 Auto Receipt Number Generation * * 28-06-2018 Siva 0.6 Stop printing Receipt
+ * if receipt mode status is either cancel or Bounce * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -348,7 +326,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Button btnReceipt;
 	protected Button btnChangeReceipt;
 	protected Button btnCalcReceipts;
-	//Auto Knock Off Details
+	// Auto Knock Off Details
 	protected Textbox knockOffType;
 
 	private RuleService ruleService;
@@ -426,8 +404,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	// Component Events
@@ -768,8 +745,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(true);
@@ -1025,8 +1001,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * Method to fill the Finance Schedule Detail List
 	 * 
-	 * @param aFinScheduleData
-	 *            (FinScheduleData)
+	 * @param aFinScheduleData (FinScheduleData)
 	 * 
 	 */
 	public void doFillScheduleList(FinScheduleData aFinScheduleData) {
@@ -2077,12 +2052,12 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		financeMains.addAll(getFinanceDetailService().getFinanceMainForLinkedLoans(finReference.getValue()));
 
 		if (CollectionUtils.isNotEmpty(financeMains)) {
-			List<String> finRefList = new ArrayList<>();
+			List<Long> finRefList = new ArrayList<>();
 			for (FinanceMain finMain : financeMains) {
 				if (StringUtils.equals(receiptData.getFinReference(), finMain.getFinReference())) {
 					continue;
 				}
-				finRefList.add(finMain.getFinReference());
+				finRefList.add(finMain.getFinID());
 			}
 
 			if (CollectionUtils.isNotEmpty(finRefList)) {

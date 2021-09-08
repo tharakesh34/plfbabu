@@ -1026,8 +1026,10 @@ public class SamplingDialogCtrl extends GFCBaseCtrl<Sampling> {
 	protected void appendCoApplicantDetailTab() {
 		logger.debug(Literal.ENTERING);
 		createTab("COAPPLICANT", true);
-		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(this.sampling.getKeyReference(),
-				"_View", true);
+
+		Long finID = financeDetailService.getFinID(this.sampling.getKeyReference());
+
+		FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(finID, "_View", true);
 		final Map<String, Object> map = getDefaultArguments();
 		map.put("financeMain", finScheduleData.getFinanceMain());
 		map.put("isFinanceProcess", false);

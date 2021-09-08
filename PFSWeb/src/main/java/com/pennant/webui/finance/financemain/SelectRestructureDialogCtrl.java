@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
@@ -229,9 +230,10 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return;
 		}
 
+		long finID = ComponentUtil.getFinID(this.finReference);
+
 		// Validate Loan is MATURED or INPROGRESS in any Other Servicing option or NOT ?
-		FinanceMain financeMain = financeDetailService.getRcdMaintenanceByRef(this.finReference.getValidatedValue(),
-				"_View");
+		FinanceMain financeMain = financeDetailService.getFinanceMain(finID, TableType.VIEW);
 		String rcdMaintainSts = financeMain.getRcdMaintainSts();
 		Date maturityDate = financeMain.getMaturityDate();
 		Date appDate = SysParamUtil.getAppDate();
@@ -252,8 +254,6 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Validation for not allowing Restructure when Presentment/Receipt's are in process.
-		long finID = ComponentUtil.getFinID(this.finReference);
-
 		boolean isPending = receiptService.isReceiptsPending(finID, Long.MIN_VALUE);
 		boolean presentmentsInQueue = finReceiptHeaderDAO.checkPresentmentsInQueue(finID);
 		if (isPending || presentmentsInQueue) {
@@ -267,8 +267,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Getting FinanceDetail Data
-		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getFinReference(),
-				eventCode, null, userRole);
+		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getFinID(), eventCode,
+				null, userRole);
 		financeDetail.setModuleDefiner(moduleDefiner);
 
 		// TODO:Removing feed in Restructure event

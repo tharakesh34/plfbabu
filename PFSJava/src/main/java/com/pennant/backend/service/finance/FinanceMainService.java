@@ -36,6 +36,8 @@ import com.pennanttech.pff.core.TableType;
 public interface FinanceMainService {
 	FinanceMain getFinanceMainById(long finID, boolean isWIF);
 
+	FinanceMain getFinanceMainByRef(String finReference, boolean isWIF);
+
 	List<FinanceEnquiry> getFinanceDetailsByCustId(long custId);
 
 	int loanMandateSwapping(long finID, long newMandateId, String repayMethod, String type);

@@ -66,6 +66,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.engine.workflow.WorkflowEngine;
 import com.pennanttech.pennapps.pff.verification.VerificationType;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceDetailService {
 
@@ -298,4 +299,9 @@ public interface FinanceDetailService {
 
 	List<ReturnDataSet> prepareSubVenAccounting(AEEvent aeEvent, FinanceDetail fd);
 
+	FinanceMain getFinanceMain(long finType, TableType tableType);
+
+	FinanceMain getFinanceMain(String finReference, TableType tableType);
+
+	Long getFinID(String referenceId);
 }

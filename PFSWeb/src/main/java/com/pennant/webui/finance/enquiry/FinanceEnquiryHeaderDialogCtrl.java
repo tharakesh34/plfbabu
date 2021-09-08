@@ -408,7 +408,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (finScheduleData.getFinanceMain() != null) {
 				FinContributorHeader contributorHeader = getFinanceDetailService()
 						.getFinContributorHeaderById(this.finReference);
-				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
+				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finID);
 				map.put("financeSummary", financeSummary);
 
 				finScheduleData.getFinanceMain().setLovDescProductCodeName(enquiry.getLovDescProductCodeName());
@@ -422,9 +422,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ScheduleEnquiry.value"));
 			if (fromApproved) {
-				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView", 0);
+				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finID, "_AView", 0);
 			} else {
-				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_View", 0);
+				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finID, "_View", 0);
 			}
 			map.put("finScheduleData", finScheduleData);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ScheduleDetailsEnquiryDialog.zul";
@@ -519,7 +519,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("PFTENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ProfitListEnquiry.value"));
-			FinanceSummary financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finReference);
+			FinanceSummary financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finID);
 			map.put("financeSummary", financeSummary);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceProfitEnquiryDialog.zul";
 
@@ -533,9 +533,9 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_FinEnqHeader_Filter.setVisible(false);
 
 			if (fromApproved) {
-				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_AView", 0);
+				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finID, "_AView", 0);
 			} else {
-				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finReference, "_View", 0);
+				finScheduleData = getFinanceDetailService().getFinSchDataByFinRef(this.finID, "_View", 0);
 			}
 			map.put("finScheduleData", finScheduleData);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ChequePrintingDialog.zul";
@@ -805,8 +805,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("RSTENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RestructureEnquiry.value"));
 			FinanceDetail financeDetail = new FinanceDetail();
-			financeDetail = getFinanceDetailService().getServicingFinance(finReference, null,
-					FinServiceEvent.RESTRUCTURE, SessionUserDetails.getLogiedInUser().getUsername());
+			financeDetail = getFinanceDetailService().getServicingFinance(finID, null, FinServiceEvent.RESTRUCTURE,
+					SessionUserDetails.getLogiedInUser().getUsername());
 
 			if (financeDetail.getFinScheduleData().getRestructureDetail() == null) {
 				closeDialog();

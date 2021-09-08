@@ -406,7 +406,7 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				if (this.financeDetail != null) {
 					getFinanceDetailService().updateCustCIF(aCustomerDetails.getCustID(),
-							this.financeDetail.getFinScheduleData().getFinReference());
+							this.financeDetail.getFinScheduleData().getFinID());
 				}
 				// Close the Existing Dialog
 				closeDialog();

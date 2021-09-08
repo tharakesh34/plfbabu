@@ -1031,7 +1031,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			subHeadRule.setTOTALPFTBAL(getRepayData().getRepayMain().getProfitBalance());
 
 			// Check For Early Settlement Enquiry -- on Selecting Future Date
-			BigDecimal accrueValue = getFinanceDetailService().getAccrueAmount(financeMain.getFinReference());
+			BigDecimal accrueValue = getFinanceDetailService().getAccrueAmount(financeMain.getFinID());
 			subHeadRule.setACCRUE(accrueValue);
 
 			// Total Tenure
@@ -1360,7 +1360,7 @@ public class ManualPaymentDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				subHeadRule.setTOTALPFTBAL(getRepayData().getRepayMain().getProfitBalance());
 
 				// Check For Early Settlement Enquiry -- on Selecting Future Date
-				BigDecimal accrueValue = getFinanceDetailService().getAccrueAmount(financeMain.getFinReference());
+				BigDecimal accrueValue = getFinanceDetailService().getAccrueAmount(financeMain.getFinID());
 				subHeadRule.setACCRUE(accrueValue);
 
 				// Total Tenure

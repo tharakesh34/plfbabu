@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionMovementListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionMovementListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * *
+ * Modified Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.financemanagement.provisionmovement;
 
 import java.util.HashMap;
@@ -220,8 +202,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aProvision
-	 *            Provision
+	 * @param aProvision Provision
 	 */
 	public void doWriteBeanToComponents(Provision aProvision) {
 		logger.debug("Entering");
@@ -234,8 +215,8 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 		this.custID.setValue(aProvision.getCustID());
 		this.lovDescCustCIF.setValue(aProvision.getCustCIF());
 		this.custShrtName.setValue(aProvision.getCustShrtName());
-		//this.useNFProv.setChecked(aProvision.isUseNFProv());
-		//this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
+		// this.useNFProv.setChecked(aProvision.isUseNFProv());
+		// this.autoReleaseNFP.setChecked(aProvision.isAutoReleaseNFP());
 		this.provisionedAmt.setValue(aProvision.getProvisionedAmt());
 		/*
 		 * this.principalDue.setValue(PennantAppUtil.formateAmount(aProvision.getPrincipalDue(), format));
@@ -243,13 +224,13 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 		 * this.dueTotal.setValue(
 		 * PennantAppUtil.formateAmount(aProvision.getPrincipalDue().add(aProvision.getProfitDue()), format));
 		 */
-		//this.nonFormulaProv.setValue(
-		//		PennantAppUtil.formateAmount(aProvision.getNonFormulaProv().add(aProvision.getProfitDue()), format));
+		// this.nonFormulaProv.setValue(
+		// PennantAppUtil.formateAmount(aProvision.getNonFormulaProv().add(aProvision.getProfitDue()), format));
 		this.dueFromDate.setValue(aProvision.getDueFromDate());
 		this.lastFullyPaidDate.setValue(aProvision.getLastFullyPaidDate());
-		//this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
+		// this.calProvisionedAmt.setValue(aProvision.getProvisionAmtCal());
 
-		//doFilllistbox(aProvision.getProvisionMovementList());
+		// doFilllistbox(aProvision.getProvisionMovementList());
 
 		logger.debug("Leaving");
 	}
@@ -285,7 +266,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 			// CAST AND STORE THE SELECTED OBJECT
 			final ProvisionMovement aProvisionMovement = (ProvisionMovement) item.getAttribute("data");
 			final ProvisionMovement provisionMovement = getProvisionMovementService().getProvisionMovementById(
-					aProvisionMovement.getId(), aProvisionMovement.getProvMovementDate(), Long.MIN_VALUE);
+					aProvisionMovement.getFinID(), aProvisionMovement.getProvMovementDate(), Long.MIN_VALUE);
 
 			if (provisionMovement == null) {
 				String[] errParm = new String[1];
@@ -339,8 +320,7 @@ public class ProvisionMovementEnquiryDialogCtrl extends GFCBaseCtrl<ProvisionMov
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param ProvisionMovement
-	 *            (aProvisionMovement)
+	 * @param ProvisionMovement (aProvisionMovement)
 	 * @throws Exception
 	 */
 	private void showDetailView(ProvisionMovement aProvisionMovement) throws Exception {

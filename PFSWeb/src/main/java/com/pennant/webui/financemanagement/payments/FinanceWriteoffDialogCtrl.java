@@ -1556,7 +1556,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			profitDetail = new FinanceProfitDetail();
 		} else {
 			profitDetail = getFinanceDetailService()
-					.getFinProfitDetailsById(getFinanceDetail().getFinScheduleData().getFinReference());
+					.getFinProfitDetailsById(getFinanceDetail().getFinScheduleData().getFinID());
 		}
 
 		AEEvent aeEvent = prepareAccountingData(onLoadProcess, profitDetail);

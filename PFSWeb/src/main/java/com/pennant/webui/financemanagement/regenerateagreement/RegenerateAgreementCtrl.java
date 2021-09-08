@@ -247,7 +247,9 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		FinanceDetail financeDetail = getFinanceDetails(detail.getReferenceId());
+		Long finID = financeDetailService.getFinID(detail.getReferenceId());
+
+		FinanceDetail financeDetail = getFinanceDetails(finID);
 
 		AgreementDetail agreementData = getAgreementGeneration().getAggrementData(financeDetail,
 				this.aggDef.getAggImage(), getUserWorkspace().getUserDetails());
@@ -256,18 +258,17 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private FinanceDetail getFinanceDetails(String referenceId) {
+	private FinanceDetail getFinanceDetails(long finID) {
 		logger.debug("Enetring");
-		FinanceDetail financeDetail = null;
+		FinanceDetail fd = null;
 		try {
-			financeDetail = financeDetailService.getFinanceDetailById(referenceId, false, "", false,
-					FinServiceEvent.ORG, "");
+			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 
-			if (financeDetail != null) {
+			if (fd != null) {
+				String finReference = fd.getFinScheduleData().getFinanceMain().getFinReference();
 				List<ExtendedField> extField = extendedFieldDetailsService.getExtndedFieldDetails(
-						ExtendedFieldConstants.MODULE_LOAN,
-						financeDetail.getFinScheduleData().getFinanceMain().getFinCategory(),
-						FinServiceEvent.ORG, referenceId);
+						ExtendedFieldConstants.MODULE_LOAN, fd.getFinScheduleData().getFinanceMain().getFinCategory(),
+						FinServiceEvent.ORG, finReference);
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
 				for (ExtendedField extendedField : extField) {
 					Map<String, Object> mapValues = new HashMap<String, Object>();
@@ -276,19 +277,19 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						exdFieldRender.setMapValues(mapValues);
 					}
 				}
-				financeDetail.setExtendedFieldRender(exdFieldRender);
+				fd.setExtendedFieldRender(exdFieldRender);
 			} else {
-				financeDetail = new FinanceDetail();
+				fd = new FinanceDetail();
 			}
 
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
-			financeDetail = new FinanceDetail();
-			return financeDetail;
+			fd = new FinanceDetail();
+			return fd;
 		}
 
 		logger.debug("Leaving");
-		return financeDetail;
+		return fd;
 
 	}
 

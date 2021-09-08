@@ -679,7 +679,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 */
 	private void doWriteBeanToComponents(FinFeeRefundHeader feeRefund) {
 		if (!feeRefund.isNewRecord()) {
-			setFinanceDetail(finFeeRefundService.getFinanceDetailById(feeRefund.getFinReference()));
+			setFinanceDetail(finFeeRefundService.getFinanceDetailById(feeRefund.getFinID()));
 			this.finReference.setValue(feeRefund.getFinReference(), "");
 			this.finType.setValue(feeRefund.getFinType(), feeRefund.getFintypedesc());
 			this.finCcy.setValue(feeRefund.getFinCcy(), CurrencyUtil.getCcyDesc(feeRefund.getFinCcy()));
@@ -1042,7 +1042,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 				this.finBranch.setValue(main.getFinBranch(), main.getLovDescFinBranchName());
 				this.isFinTDSApplicable = TDSCalculator.isTDSApplicable(main);
 
-				setFinanceDetail(finFeeRefundService.getFinanceDetailById(main.getFinReference()));
+				setFinanceDetail(finFeeRefundService.getFinanceDetailById(main.getFinID()));
 				FinScheduleData scheduleData = getFinanceDetail().getFinScheduleData();
 				FinanceMain financeMain = scheduleData.getFinanceMain();
 				this.custCIF.setValue(financeMain.getLovDescCustCIF());

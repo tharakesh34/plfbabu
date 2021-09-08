@@ -566,8 +566,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		}
 
-		errorDetail = receiptService.getWaiverValidation(this.finReference.getValue(),
-				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
+		errorDetail = receiptService.getWaiverValidation(finID, this.receiptPurpose.getSelectedItem().getValue(),
+				valueDate.getValue());
 
 		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
 		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
@@ -649,7 +649,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			return;
 		}
 
-		errorDetail = receiptService.getWaiverValidation(finMain.getFinReference(),
+		errorDetail = receiptService.getWaiverValidation(finMain.getFinID(),
 				this.receiptPurpose.getSelectedItem().getValue(), valueDate.getValue());
 
 		if (errorDetail != null) {

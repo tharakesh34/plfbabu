@@ -2845,7 +2845,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			if (StringUtils.isNotBlank(finReference) && StringUtils.isNotBlank(moduleDefiner)) {
 				FinanceProfitDetail finProfitDetail = financeDetailService.getFinProfitDetailsById(finID);
 				if (finProfitDetail != null) {
-					BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(finReference);
+					BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(finID);
 					executionMap.put("totalOutStanding", finProfitDetail.getTotalPftBal());
 					executionMap.put("principalOutStanding", finProfitDetail.getTotalPriBal());
 					executionMap.put("principalSchdOutstanding",
@@ -2974,7 +2974,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					calculatedAmt = schd.getClosingBalance();
 					if (calculatedAmt.compareTo(BigDecimal.ZERO) == 0) {
 						List<FinanceScheduleDetail> apdSchdList = getFinanceDetailService()
-								.getFinScheduleList(finScheduleData.getFinanceMain().getFinReference());
+								.getFinScheduleList(finScheduleData.getFinanceMain().getFinID());
 						for (FinanceScheduleDetail curSchd : apdSchdList) {
 							if (DateUtility.compare(valueDate, curSchd.getSchDate()) == 0) {
 								calculatedAmt = curSchd.getClosingBalance();

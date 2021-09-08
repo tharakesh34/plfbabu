@@ -180,10 +180,10 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 	}
 
-	private FinanceDetail getFinanceDetails(String keyReference, VerificationType verificationtype, String type) {
+	private FinanceDetail getFinanceDetails(long finID, VerificationType verificationtype, String type) {
 		logger.debug(Literal.ENTERING);
 		FinanceDetail financeDetail = new FinanceDetail();
-		financeDetail = financeDetailService.getVerificationInitiationDetails(keyReference, verificationtype, type);
+		financeDetail = financeDetailService.getVerificationInitiationDetails(finID, verificationtype, type);
 		logger.debug(Literal.LEAVING);
 		;
 		return financeDetail;
@@ -1648,7 +1648,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		switch (verification.getVerificationType()) {
 
 		case APIConstants.FI:
-			financeDetails = getFinanceDetails(keyReference, VerificationType.FI, "_View");
+			financeDetails = getFinanceDetails(finID, VerificationType.FI, "_View");
 			if (financeDetails == null) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Verifications with FinReference  :" + keyReference;
@@ -1697,7 +1697,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 		case APIConstants.PD:
 
-			financeDetails = getFinanceDetails(keyReference, VerificationType.PD, "_View");
+			financeDetails = getFinanceDetails(finID, VerificationType.PD, "_View");
 			if (financeDetails == null) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Verifications with FinReference  :" + keyReference;
@@ -1747,7 +1747,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 		case APIConstants.TV:
 
-			financeDetails = getFinanceDetails(keyReference, VerificationType.TV, "_View");
+			financeDetails = getFinanceDetails(finID, VerificationType.TV, "_View");
 			if (financeDetails == null) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Verifications with FinReference  :" + keyReference;
@@ -1782,7 +1782,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			break;
 		case APIConstants.RCU:
 
-			financeDetails = getFinanceDetails(keyReference, VerificationType.RCU, "_View");
+			financeDetails = getFinanceDetails(finID, VerificationType.RCU, "_View");
 			if (financeDetails == null) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Verifications with FinReference  :" + keyReference;
@@ -1855,7 +1855,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			break;
 		case APIConstants.LV:
 
-			financeDetails = getFinanceDetails(keyReference, VerificationType.RCU, "_View");
+			financeDetails = getFinanceDetails(finID, VerificationType.RCU, "_View");
 			if (financeDetails == null) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Verifications with FinReference  :" + keyReference;
@@ -1963,7 +1963,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
 		// get financedetail object
-		FinanceDetail financeDetail = getFinanceDetails(keyReference, VerificationType.TV, "_View");
+		FinanceDetail financeDetail = getFinanceDetails(finID, VerificationType.TV, "_View");
 		if (financeDetail == null) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "loan data not found";
@@ -2180,7 +2180,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
 		// get financedetail object
-		FinanceDetail financeDetail = getFinanceDetails(keyReference, VerificationType.RCU, "_View");
+		FinanceDetail financeDetail = getFinanceDetails(finID, VerificationType.RCU, "_View");
 		if (financeDetail == null) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "Loan data not found";
@@ -2393,7 +2393,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return APIErrorHandlerService.getFailedStatus("90201", valueParam);
 		}
 		// get financedetail object
-		FinanceDetail financeDetail = getFinanceDetails(keyReference, VerificationType.LV, "_View");
+		FinanceDetail financeDetail = getFinanceDetails(finID, VerificationType.LV, "_View");
 		if (financeDetail == null) {
 			String valueParm[] = new String[1];
 			valueParm[0] = "Loan data not found";

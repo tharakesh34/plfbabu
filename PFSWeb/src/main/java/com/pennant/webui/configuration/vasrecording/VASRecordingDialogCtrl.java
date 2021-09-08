@@ -165,6 +165,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.InsuranceProspectService;
 import com.pennanttech.pff.external.insurance.InsuranceCalculatorService;
 import com.pennanttech.pff.model.InsPremiumCalculatorRequest;
@@ -2712,7 +2713,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			// Based on VAS Created Against, details will be captured
 			if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())) {
 				FinanceMain financeMain = getFinanceDetailService()
-						.getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
+						.getFinanceMain(getVASRecording().getPrimaryLinkRef(), TableType.MAIN_TAB);
 				amountCodes.setFinType(financeMain.getFinType());
 				aeEvent.setBranch(financeMain.getFinBranch());
 				aeEvent.setCcy(financeMain.getFinCcy());

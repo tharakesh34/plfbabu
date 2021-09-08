@@ -455,7 +455,9 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		if (StringUtils.equals(eventCode, FinanceConstants.PMAY)) {
-			FinanceDetail financeDetails = getFinanceDetailService().getFinanceDetailsForPmay(finReference.getValue());
+			long finID = ComponentUtil.getFinID(finReference);
+
+			FinanceDetail financeDetails = getFinanceDetailService().getFinanceDetailsForPmay(finID);
 			if (financeDetails.getPmay() != null) {
 				pmay = financeDetails.getPmay();
 			}

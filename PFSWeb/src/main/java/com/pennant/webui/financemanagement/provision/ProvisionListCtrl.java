@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProvisionListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-05-2012    														*
- *                                                                  						*
- * Modified Date    :  31-05-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProvisionListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-05-2012 * * Modified
+ * Date : 31-05-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-05-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-05-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.provision;
@@ -234,7 +216,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		Map<?, ?> args = Executions.getCurrent().getArg();
 
 		if (args != null) {
-			//Getting Menu Item Right Name
+			// Getting Menu Item Right Name
 			menuItemRightName = (String) args.get("rightName");
 		}
 	}
@@ -296,7 +278,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		this.pagingProvisionList.setPageSize(getListRows());
 		this.pagingProvisionList.setDetailed(true);
 
-		//Listbox Sorting
+		// Listbox Sorting
 
 		this.listheader_FinReference.setSortAscending(new FieldComparator("finReference", true));
 		this.listheader_FinReference.setSortDescending(new FieldComparator("finReference", false));
@@ -394,8 +376,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 				aProvision.setWorkflowId(getWorkFlowId());
 			}
-			final Provision provision = getProvisionService().getProvisionById(aProvision.getFinReference(),
-					TableType.AVIEW);
+			final Provision provision = getProvisionService().getProvisionById(aProvision.getFinID(), TableType.AVIEW);
 
 			if (provision == null) {
 				String[] errParm = new String[1];
@@ -409,9 +390,9 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 				MessageUtil.showError(errorDetails.getError());
 			} else {
 
-				//Fetch Total Finance Details Object
-				FinanceDetail financeDetail = getFinanceDetailService()
-						.getFinSchdDetailById(provision.getFinReference(), "_View", false);
+				// Fetch Total Finance Details Object
+				FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(provision.getFinID(),
+						"_View", false);
 				financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(false);
 				financeDetail.setCustomerDetails(getCustomerDetailsService().getCustomerDetailsById(
 						financeDetail.getFinScheduleData().getFinanceMain().getCustID(), true, "_View"));
@@ -461,8 +442,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * Opens the detail view. <br>
 	 * Overhanded some params in a map if needed. <br>
 	 * 
-	 * @param Provision
-	 *            (aProvision)
+	 * @param Provision (aProvision)
 	 * @throws Exception
 	 */
 	private void showDetailView(Provision aProvision) throws Exception {
@@ -587,7 +567,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_custCIF == Filter.OP_IN || this.oldVar_sortOperator_custCIF == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ProvisionList, "Customer",
 					this.custCIF.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -618,7 +598,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_FinType == Filter.OP_IN || this.oldVar_sortOperator_FinType == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ProvisionList, "FinanceType",
 					this.finType.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -650,7 +630,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 		if (this.oldVar_sortOperator_FinProduct == Filter.OP_IN
 				|| this.oldVar_sortOperator_FinProduct == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ProvisionList, "Product",
 					this.finProduct.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -681,7 +661,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_FinCcy == Filter.OP_IN || this.oldVar_sortOperator_FinCcy == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ProvisionList, "Currency",
 					this.finCcy.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -711,7 +691,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_FinCcy == Filter.OP_IN || this.oldVar_sortOperator_FinCcy == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ProvisionList, "FinanceMain",
 					this.finRef.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -742,7 +722,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		logger.debug("Entering  " + event.toString());
 
 		if (this.oldVar_sortOperator_Branch == Filter.OP_IN || this.oldVar_sortOperator_Branch == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ProvisionList, "Branch",
 					this.branchCode.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -968,12 +948,12 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 				this.searchObj.addWhereClause(buildedWhereCondition);
 			}
 		}
-		//Finance Reference 
+		// Finance Reference
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finReference.getSelectedItem(),
 					this.finReference.getValue(), "finReference");
 		}
-		// Customer ID 
+		// Customer ID
 		if (this.custID.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_custID.getSelectedItem(), this.custID.getValue(),
 					"custID");
@@ -991,7 +971,7 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 					this.provisionedAmt.getValue(), "provisionedAmt");
 		}
 
-		//  Use NV Provision
+		// Use NV Provision
 		if (this.sortOperator_useNFProv.getSelectedItem() != null) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_useNFProv.getSelectedItem(),
 					this.useNFProv.isChecked() ? 1 : 0, "useNFProv");

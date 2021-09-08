@@ -10961,4 +10961,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
 		this.linkedFinancesService = linkedFinancesService;
 	}
+
+	@Override
+	public FinanceMain getFinanceMain(long finID, TableType tableType) {
+		return financeMainDAO.getFinanceMain(finID, tableType);
+	}
+
+	@Override
+	public FinanceMain getFinanceMain(String finReference, TableType tableType) {
+		return financeMainDAO.getFinanceMain(finReference, tableType);
+	}
+
+	@Override
+	public Long getFinID(String finReference) {
+		return financeMainDAO.getFinID(finReference);
+	}
 }

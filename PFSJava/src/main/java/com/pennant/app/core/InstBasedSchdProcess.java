@@ -190,7 +190,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 							if (instSchdDetail.getRealizedDate().compareTo(finDisb.getDisbDate()) == 0) {
 								List<FinanceScheduleDetail> listSchdDetails = getFinanceDetailService()
-										.getFinScheduleDetails(fm.getFinReference(), "_temp", false);
+										.getFinScheduleDetails(fm.getFinID(), "_temp", false);
 								if (CollectionUtils.isNotEmpty(listSchdDetails)) {
 									fd.getFinScheduleData().setFinanceScheduleDetails(listSchdDetails);
 								}
@@ -228,15 +228,16 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 
 	private void setStepFinanceDetails(InstBasedSchdDetails instSchdDetail, FinanceDetail fd, FinanceMain fm) {
 		FinScheduleData schdData = fd.getFinScheduleData();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
-		schdData.setStepPolicyDetails(financeDetailService.getFinStepDetailListByFinRef(finReference, "_view", false));
+		schdData.setStepPolicyDetails(financeDetailService.getFinStepDetailListByFinRef(finID, "_view", false));
 
 		Date recalFromDate = null;
 
 		List<RepayInstruction> rpst = schdData.getRepayInstructions();
 
 		if (CollectionUtils.isEmpty(rpst)) {
-			schdData.setRepayInstructions(financeDetailService.getRepayInstructions(finReference, "_view", false));
+			schdData.setRepayInstructions(financeDetailService.getRepayInstructions(finID, "_view", false));
 			rpst = schdData.getRepayInstructions();
 		}
 
@@ -286,8 +287,9 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		}
 
 		FinanceMain fm = finDetail.getFinanceMain();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
-		financeDetailService.saveFinSchdDetail(schedules, finReference);
+		financeDetailService.saveFinSchdDetail(schedules, finID);
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
@@ -306,7 +308,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			}
 		}
 
-		financeDetailService.saveDisbDetails(finDetail.getDisbursementDetails(), finReference);
+		financeDetailService.saveDisbDetails(finDetail.getDisbursementDetails(), finID);
 	}
 
 	private AuditHeader doProcess(FinanceDetail financeDetail, LoggedInUser userDetails) throws Exception {

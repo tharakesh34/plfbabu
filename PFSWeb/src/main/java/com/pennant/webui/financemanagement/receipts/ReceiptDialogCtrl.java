@@ -5154,7 +5154,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				FinanceScheduleDetail oldLastSchd = null;
 				if (lastSchd.isFrqDate()) {
-					oldLastSchd = getFinanceDetailService().getFinSchduleDetails(finMain.getFinReference(),
+					oldLastSchd = getFinanceDetailService().getFinSchduleDetails(finMain.getFinID(),
 							lastSchd.getSchDate());
 				}
 
@@ -6852,12 +6852,12 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		financeMains.addAll(getFinanceDetailService().getFinanceMainForLinkedLoans(finReference.getValue()));
 
 		if (CollectionUtils.isNotEmpty(financeMains)) {
-			List<String> finRefList = new ArrayList<>();
+			List<Long> finRefList = new ArrayList<>();
 			for (FinanceMain finMain : financeMains) {
 				if (StringUtils.equals(receiptData.getFinReference(), finMain.getFinReference())) {
 					continue;
 				}
-				finRefList.add(finMain.getFinReference());
+				finRefList.add(finMain.getFinID());
 			}
 			if (CollectionUtils.isNotEmpty(finRefList)) {
 				finpftDetails.addAll(getFinanceDetailService().getFinProfitListByFinRefList(finRefList));
@@ -6977,8 +6977,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
 			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
 					&& !isWIF) {
-				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "",
-						isWIF);
+				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinID(), "", isWIF);
 			}
 			approvedFeeRules.addAll(feeRuleList);
 

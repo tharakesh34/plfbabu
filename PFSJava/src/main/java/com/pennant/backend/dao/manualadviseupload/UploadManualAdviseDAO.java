@@ -44,5 +44,7 @@ public interface UploadManualAdviseDAO {
 	void deleteByUploadId(long uploadId, String type);
 
 	boolean getAdviseUploadsByFinReference(long finID, long uploadId, String type);
+	
+	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId, String type);
 
 }

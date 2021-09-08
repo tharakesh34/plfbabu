@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectCollateralTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-03-2019    														*
- *                                                                  						*
- * Modified Date    :  11-03-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectCollateralTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-03-2019 *
+ * * Modified Date : 11-03-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *11-03-2019         Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-03-2019 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.verification.tv;
@@ -86,6 +68,7 @@ import com.pennanttech.pennapps.pff.verification.service.LegalVerificationServic
 import com.pennanttech.pennapps.pff.verification.service.VerificationService;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final Logger logger = LogManager.getLogger(SelectTVInitiationDialogCtrl.class);
@@ -205,7 +188,7 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		filter[0] = new Filter("FINISACTIVE", 1, Filter.OP_EQUAL);
 		this.finReference.setFilters(filter);
 
-		//FIXME for reference selection
+		// FIXME for reference selection
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -334,9 +317,12 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 		map.put("InitType", true);
 		map.put("userRole", getRole());
 		map.put("moduleDefiner", "");
+
+		Long finID = ComponentUtil.getFinID(finReference);
+
 		if (StringUtils.equals(VerificationType.FI.getValue(), module)) {
-			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
-					VerificationType.FI, "_View"));
+			setFinanceDetail(
+					financeDetailService.getVerificationInitiationDetails(finID, VerificationType.FI, "_View"));
 			map = getDefaultArguments(map);
 			map.put("verification", getFinanceDetail().getFiVerification());
 			map.put("financeDetail", getFinanceDetail());
@@ -345,8 +331,8 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/FIInitiation.zul", window,
 					map);
 		} else if (StringUtils.equals(VerificationType.TV.getValue(), module)) {
-			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
-					VerificationType.TV, "_View"));
+			setFinanceDetail(
+					financeDetailService.getVerificationInitiationDetails(finID, VerificationType.TV, "_View"));
 			map = getDefaultArguments(map);
 			map.put("verification", getFinanceDetail().getTvVerification());
 			map.put("financeDetail", getFinanceDetail());
@@ -355,8 +341,8 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/TVInitiation.zul", window,
 					map);
 		} else if (StringUtils.equals(VerificationType.LV.getValue(), module)) {
-			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
-					VerificationType.LV, "_View"));
+			setFinanceDetail(
+					financeDetailService.getVerificationInitiationDetails(finID, VerificationType.LV, "_View"));
 			map = getDefaultArguments(map);
 			map.put("verification", getFinanceDetail().getLvVerification());
 			map.put("financeDetail", getFinanceDetail());
@@ -365,8 +351,8 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/LVInitiation.zul", window,
 					map);
 		} else if (StringUtils.equals(VerificationType.RCU.getValue(), module)) {
-			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
-					VerificationType.RCU, "_View"));
+			setFinanceDetail(
+					financeDetailService.getVerificationInitiationDetails(finID, VerificationType.RCU, "_View"));
 			map = getDefaultArguments(map);
 			map.put("verification", getFinanceDetail().getRcuVerification());
 			map.put("financeDetail", getFinanceDetail());
@@ -374,8 +360,8 @@ public class SelectTVInitiationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/Verification/RCUInitiation.zul", window,
 					map);
 		} else if (StringUtils.equals(VerificationType.VETTING.getValue(), module)) {
-			setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finReference.getValue(),
-					VerificationType.VETTING, "_View"));
+			setFinanceDetail(
+					financeDetailService.getVerificationInitiationDetails(finID, VerificationType.VETTING, "_View"));
 			map = getDefaultArguments(map);
 			map.put("verification", getFinanceDetail().getLegalVetting());
 			map.put("financeDetail", getFinanceDetail());
