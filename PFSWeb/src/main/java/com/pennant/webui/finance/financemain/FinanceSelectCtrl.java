@@ -1252,8 +1252,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 
 			if (StringUtils.isNotEmpty(moduleDefiner) && moduleDefiner.equals(FinServiceEvent.ADDDISB)) {
-				boolean holdDisbursement = financeDetailService
-						.isholdDisbursementProcess(aFinanceMain.getFinReference());
+				boolean holdDisbursement = financeDetailService.isholdDisbursementProcess(aFinanceMain.getFinID());
 
 				if (holdDisbursement) {
 					MessageUtil.showError(ErrorUtil.getErrorDetail(new ErrorDetail("HD99019", null)));
@@ -1454,8 +1453,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
-			final FinanceDetail financeDetail = getFinanceDetailService()
-					.getServicingFinance(aFinanceMain.getFinReference(), eventCodeRef, moduleDefiner, userRole);
+			final FinanceDetail financeDetail = getFinanceDetailService().getServicingFinance(aFinanceMain.getFinID(),
+					eventCodeRef, moduleDefiner, userRole);
 
 			// Role Code State Checking
 			String nextroleCode = financeDetail.getFinScheduleData().getFinanceMain().getNextRoleCode();

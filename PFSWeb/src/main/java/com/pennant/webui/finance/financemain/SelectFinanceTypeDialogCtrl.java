@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectFinanceTypeDialogCtrl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-11-2011    														*
- *                                                                  						*
- * Modified Date    :  16-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectFinanceTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-11-2011 * *
+ * Modified Date : 16-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -92,6 +74,7 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
@@ -141,6 +124,7 @@ import com.pennanttech.pff.external.CustomerDedupCheckService;
 import com.pennanttech.pff.external.CustomerDedupService;
 import com.pennanttech.pff.external.CustomerInterfaceService;
 import com.pennanttech.pff.external.pan.service.PrimaryAccountService;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
@@ -876,7 +860,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName)
 			throws InterruptedException, FactoryConfigurationError {
-		FinanceDetail financeDetail = null;
+		FinanceDetail fd = null;
 
 		// Customer Data Fetching
 		CustomerDetails customerDetails = new CustomerDetails();
@@ -908,9 +892,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			return false;
 		}
 
-		financeDetail = this.financeDetailService.getNewFinanceDetail(false);
+		fd = this.financeDetailService.getNewFinanceDetail(false);
 		FinanceDetail befImage = new FinanceDetail();
-		financeDetail.setBefImage(befImage);
+		fd.setBefImage(befImage);
 
 		// Resetting Finance Event based on Request Resource
 		String financeEvent = "";
@@ -923,35 +907,37 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		// If User requested through What-if Reference
 		FinanceType financeType = null;
 		boolean promotionFlag = false;
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
 		if (StringUtils.isNotEmpty(this.wIfFinaceRef.getValue())) {
 
-			financeDetail = this.financeDetailService.getWIFFinanceDetailById(this.wIfFinaceRef.getValue(),
-					financeEvent);
+			long finID = ComponentUtil.getFinID(this.wIfFinaceRef);
+			fd = this.financeDetailService.getWIFFinanceDetailById(finID, financeEvent);
 
-			financeDetail.getFinScheduleData().getFinanceMain()
-					.setCurDisbursementAmt(financeDetail.getFinScheduleData().getFinanceMain().getFinAmount());
-			financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
-			financeDetail.getFinScheduleData().getFinanceMain().setRecordType("");
-			financeDetail.getFinScheduleData().getFinanceMain().setVersion(0);
-			financeDetail.getFinScheduleData().getFinanceMain().setWifReference(this.wIfFinaceRef.getValue());
+			fm.setCurDisbursementAmt(fm.getFinAmount());
+			fm.setNewRecord(true);
+			fm.setRecordType("");
+			fm.setVersion(0);
+			fm.setWifReference(this.wIfFinaceRef.getValue());
 
 			// overdue Penalty Details
-			if (financeDetail.getFinScheduleData().getFinODPenaltyRate() == null) {
-				financeDetail.getFinScheduleData().setFinODPenaltyRate(new FinODPenaltyRate());
+			FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
+			if (finODPenaltyRate == null) {
+				schdData.setFinODPenaltyRate(new FinODPenaltyRate());
 			}
 
-			financeType = financeDetail.getFinScheduleData().getFinanceType();
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setApplyODPenalty(financeType.isApplyODPenalty());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODIncGrcDays(financeType.isODIncGrcDays());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODChargeCalOn(financeType.getODChargeCalOn());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODGraceDays(financeType.getODGraceDays());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODChargeType(financeType.getODChargeType());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODRuleCode(financeType.getODRuleCode());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate()
-					.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate().setODAllowWaiver(financeType.isODAllowWaiver());
-			financeDetail.getFinScheduleData().getFinODPenaltyRate()
-					.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
+			financeType = schdData.getFinanceType();
+			finODPenaltyRate.setApplyODPenalty(financeType.isApplyODPenalty());
+			finODPenaltyRate.setODIncGrcDays(financeType.isODIncGrcDays());
+			finODPenaltyRate.setODChargeCalOn(financeType.getODChargeCalOn());
+			finODPenaltyRate.setODGraceDays(financeType.getODGraceDays());
+			finODPenaltyRate.setODChargeType(financeType.getODChargeType());
+			finODPenaltyRate.setODRuleCode(financeType.getODRuleCode());
+			finODPenaltyRate.setODChargeAmtOrPerc(financeType.getODChargeAmtOrPerc());
+			finODPenaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
+			finODPenaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 
 		} else {
 
@@ -968,30 +954,31 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (StringUtils.isNotBlank(promotionCode.getValue())) {
 				promotionFlag = true;
 				// Fetching Promotion Details
+
 				Promotion promotion = this.promotionService.getApprovedPromotionById(promotionCode.getValue(),
 						FinanceConstants.MODULEID_PROMOTION, false);
 				financeType.setFInTypeFromPromotiion(promotion);
 			}
 
-			financeDetail.getFinScheduleData().setFinanceType(financeType);
+			schdData.setFinanceType(financeType);
 
 			// Step Policy Details
 			if (financeType.isStepFinance()) {
 				List<StepPolicyDetail> stepPolicyList = this.stepPolicyService
 						.getStepPolicyDetailsById(financeType.getDftStepPolicy());
-				financeDetail.getFinScheduleData().resetStepPolicyDetails(stepPolicyList);
+				schdData.resetStepPolicyDetails(stepPolicyList);
 			}
 
 			if (StringUtils.isNotBlank(this.preApprovedFinRef.getValue())) {
-				setPreApprovalRequiredDetails(financeDetail, financeType, this.preApprovedFinRef.getValue());
+				setPreApprovalRequiredDetails(fd, financeType, ComponentUtil.getFinID(this.preApprovedFinRef));
 				this.productCategory = financeType.getProductCategory();
-				customerDetails = financeDetail.getCustomerDetails();
+				customerDetails = fd.getCustomerDetails();
 			} else {
 				FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
 				FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(),
 						financeType);
-				financeDetail.getFinScheduleData().setFinanceMain(finMain);
-				financeDetail.getFinScheduleData().setFinODPenaltyRate(finOdPenalty);
+				schdData.setFinanceMain(finMain);
+				schdData.setFinODPenaltyRate(finOdPenalty);
 			}
 
 			// If promotion Pick, Set user Entered Details from Existing Data
@@ -999,8 +986,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				FinanceMain elgFinMain = this.financeEligibility.getFinanceDetail().getFinScheduleData()
 						.getFinanceMain();
 				if (elgFinMain != null) {
-					financeDetail.getFinScheduleData().getFinanceMain().setNumberOfTerms(elgFinMain.getNumberOfTerms());
-					financeDetail.getFinScheduleData().getFinanceMain().setFinAmount(elgFinMain.getFinAmount());
+					fm.setNumberOfTerms(elgFinMain.getNumberOfTerms());
+					fm.setFinAmount(elgFinMain.getFinAmount());
 				}
 			}
 		}
@@ -1015,10 +1002,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		try {
 			// Fetch & set Default statuses f
-			if (financeDetail.getFinScheduleData().getFinanceMain() != null) {
-				financeDetail.getFinScheduleData().getFinanceMain().setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
-				financeDetail.getFinScheduleData().getFinanceMain()
-						.setFinStatus(this.financeDetailService.getCustStatusByMinDueDays());
+			if (fm != null) {
+				fm.setFinStsReason(FinanceConstants.FINSTSRSN_SYSTEM);
+				fm.setFinStatus(this.financeDetailService.getCustStatusByMinDueDays());
 			}
 		} catch (Exception e) {
 			logger.debug(e);
@@ -1030,7 +1016,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 		if (workFlowDetails == null) {
 			setWorkFlowEnabled(false);
-			financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(0);
+			fm.setWorkflowId(0);
 		} else {
 			setWorkFlowEnabled(true);
 
@@ -1046,9 +1032,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				setFirstTask(getUserWorkspace().isRoleContains(workFlowDetails.getFirstTaskOwner()));
 			}
 			setWorkFlowId(workFlowDetails.getId());
-			financeDetail.getFinScheduleData().getFinanceMain().setWorkflowId(workFlowDetails.getWorkFlowId());
+			fm.setWorkflowId(workFlowDetails.getWorkFlowId());
 
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			FinanceMain financeMain = fm;
 			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
 
 		}
@@ -1078,89 +1064,92 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 					vasRecordingList.add(vasRecording);
 				}
 			}
-			financeDetail.getFinScheduleData().setVasRecordingList(vasRecordingList);
+			schdData.setVasRecordingList(vasRecordingList);
 		}
 
-		financeDetail.setNewRecord(true);
-		financeDetail.setCustomerDetails(customerDetails);
-		financeDetail.getFinScheduleData().getFinanceMain().setCustID(customerDetails.getCustomer().getCustID());
+		fd.setNewRecord(true);
+		fd.setCustomerDetails(customerDetails);
+		fm.setCustID(customerDetails.getCustomer().getCustID());
 
 		// Fetching Finance Reference Detail
 		if (isWorkFlowEnabled()) {
-			financeDetail = this.financeDetailService.getFinanceReferenceDetails(financeDetail, getRole(),
+			fd = this.financeDetailService.getFinanceReferenceDetails(fd, getRole(),
 					this.financeWorkFlow.getScreenCode(), "", financeEvent, true);
 		}
 
-		if (financeDetail.isLegalInitiator()) {
-			financeDetail.getFinScheduleData().getFinanceMain().setLegalRequired(true);
+		if (fd.isLegalInitiator()) {
+			fm.setLegalRequired(true);
 		}
 
-		Date finStartDate = financeDetail.getFinScheduleData().getFinanceMain().getFinStartDate();
+		Date finStartDate = fm.getFinStartDate();
 		if (finStartDate != null) {
 			String finEvent = PennantApplicationUtil.getEventCode(finStartDate);
 
 			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-					financeDetail.getFinScheduleData().getFinanceType().getProductCategory())) {
+					schdData.getFinanceType().getProductCategory())) {
 				finEvent = AccountingEvent.CMTDISB;
 			}
 
-			financeDetail.getFinScheduleData().setFeeEvent(finEvent);
+			schdData.setFeeEvent(finEvent);
 
 			// Fee Details Fetching From Finance Type
 			if (promotionFlag) {
-				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.promotionCode.getValue(),
-						finEvent, true, FinanceConstants.MODULEID_PROMOTION));
+				fd.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.promotionCode.getValue(), finEvent,
+						true, FinanceConstants.MODULEID_PROMOTION));
 			} else {
-				financeDetail.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(),
-						finEvent, true, FinanceConstants.MODULEID_FINTYPE));
+				fd.setFinTypeFeesList(this.financeDetailService.getFinTypeFees(this.finType.getValue(), finEvent, true,
+						FinanceConstants.MODULEID_FINTYPE));
 			}
 
 		}
 
 		if (this.newCust.isChecked() && isNewCustomer) {
 			CustomerDedup customerDedup = doSetCustomerDedup(customerDetails);
-			String type = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
+			String type = fm.getFinType();
 			String curLoginUser = getUserWorkspace().getUserDetails().getSecurityUser().getUsrLogin();
 			List<CustomerDedup> customerDedupList = FetchCustomerDedupDetails.fetchCustomerDedupDetails(getRole(),
 					customerDedup, curLoginUser, type);
 			customerDetails.setCustomerDedupList(customerDedupList);
-			financeDetail.setCustomerDedupList(customerDedupList);
+			fd.setCustomerDedupList(customerDedupList);
 		}
 
 		// tasks #1152 Business Vertical Tagged with Loan
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceMain financeMain = fm;
 		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
 		financeMain.setBusinessVertical(user.getBusinessVertical());
 		financeMain.setBusinessVerticalCode(user.getBusinessVerticalCode());
 		financeMain.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
 
-		showDetailView(financeDetail);
+		showDetailView(fd);
 		return true;
 	}
 
 	/**
 	 * Method for Preparation of Finance Details Data for Pre-Approval Process
 	 * 
-	 * @param financeDetail
+	 * @param fd
 	 * @param financeType
 	 * @param finref
 	 */
-	private void setPreApprovalRequiredDetails(FinanceDetail financeDetail, FinanceType financeType, String finref) {
+	private void setPreApprovalRequiredDetails(FinanceDetail fd, FinanceType financeType, long finID) {
 		logger.debug("Entering");
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		FinanceDetail preApprovalFin = this.financeDetailService.getPreApprovalFinanceDetailsById(finref);
-		FinanceMain preAppFinMain = preApprovalFin.getFinScheduleData().getFinanceMain();
-		preAppFinMain.setLovDescFinTypeName(financeType.getFinTypeDesc());
-		financeDetail.getFinScheduleData().setFinanceMain(preAppFinMain);
-		financeDetail.getFinScheduleData().getFinanceMain().setFinPreApprovedRef(finref);
-		financeDetail.getFinScheduleData().getFinanceMain().setNewRecord(true);
-		financeDetail.getFinScheduleData().getFinanceMain().setRecordType("");
-		financeDetail.getFinScheduleData().getFinanceMain().setVersion(0);
-		financeDetail.setCustomerDetails(
-				this.customerDetailsService.getCustomerDetailsById(preAppFinMain.getCustID(), true, "_View"));
-		financeDetail.setDocumentDetailsList(preApprovalFin.getDocumentDetailsList());
-		if (financeDetail.getDocumentDetailsList() != null && !financeDetail.getDocumentDetailsList().isEmpty()) {
-			for (DocumentDetails details : financeDetail.getDocumentDetailsList()) {
+		FinanceDetail pafd = this.financeDetailService.getPreApprovalFinanceDetailsById(finID);
+		FinanceMain pafm = pafd.getFinScheduleData().getFinanceMain();
+
+		fm.setLovDescFinTypeName(financeType.getFinTypeDesc());
+		fm.setFinPreApprovedRef(pafm.getFinReference());
+		fm.setNewRecord(true);
+		fm.setRecordType("");
+		fm.setVersion(0);
+
+		fd.setCustomerDetails(this.customerDetailsService.getCustomerDetailsById(pafm.getCustID(), true, "_View"));
+		fd.setDocumentDetailsList(pafd.getDocumentDetailsList());
+
+		if (fd.getDocumentDetailsList() != null && !fd.getDocumentDetailsList().isEmpty()) {
+			for (DocumentDetails details : fd.getDocumentDetailsList()) {
 				details.setReferenceId("");
 				details.setFinEvent("");
 				if (!(DocumentCategories.CUSTOMER.getKey().equals(details.getCategoryCode()))) {
@@ -1170,7 +1159,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			}
 		}
 
-		FinODPenaltyRate penaltyRate = financeDetail.getFinScheduleData().getFinODPenaltyRate();
+		FinODPenaltyRate penaltyRate = schdData.getFinODPenaltyRate();
 
 		// overdue Penalty Details
 		if (penaltyRate == null) {
@@ -1185,7 +1174,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		penaltyRate.setODAllowWaiver(financeType.isODAllowWaiver());
 		penaltyRate.setODMaxWaiverPerc(financeType.getODMaxWaiverPerc());
 		penaltyRate.setODRuleCode(financeType.getODRuleCode());
-		financeDetail.getFinScheduleData().setFinODPenaltyRate(penaltyRate);
+		schdData.setFinODPenaltyRate(penaltyRate);
 
 		logger.debug("Leaving");
 	}

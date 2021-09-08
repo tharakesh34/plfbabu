@@ -72,8 +72,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReleaseLockList(Event event) {
 		// Set the page level components.
@@ -101,8 +100,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReleaseLockList_Search(Event event) {
 		search();
@@ -111,8 +109,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -123,8 +120,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onReleaseLockItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -133,6 +129,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		Listitem selectedItem = listBoxReleaseLock.getSelectedItem();
 
 		// Get the selected entity.
+		long finID = (Long) selectedItem.getAttribute("finID");
 		String id = (String) selectedItem.getAttribute("id");
 
 		if (MessageUtil.NO == MessageUtil
@@ -141,7 +138,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Unlock the record after confirmation.
-		financeDetailService.updateNextUserId(id, null);
+		financeDetailService.updateNextUserId(finID, null);
 		MessageUtil.showMessage(Labels.getLabel("message.Information.unlock_record", new String[] { id }));
 
 		// Refresh the list.
@@ -153,8 +150,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -163,8 +159,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

@@ -77,7 +77,7 @@ public interface FinanceDetailService {
 
 	FinanceDetail getOriginationFinance(long finID, String nextRoleCode, String procEdtEvent, String userrole);
 
-	FinanceDetail getServicingFinance(String financeReference, String eventCode, String procEdtEvent, String userrole);
+	FinanceDetail getServicingFinance(long finID, String eventCode, String procEdtEvent, String userrole);
 
 	FinanceDetail getServicingFinanceForQDP(long finID, String eventCode, String procEdtEvent, String userrole);
 
@@ -86,7 +86,7 @@ public interface FinanceDetailService {
 	FinanceDetail getFinanceDetailById(long finID, boolean isWIF, String eventCode, boolean reqCustDetail,
 			String procEdtEvent, String userrole);
 
-	FinanceDetail getApprovedFinanceDetailById(String financeReference, boolean isWIF);
+	FinanceDetail getApprovedFinanceDetailById(long finID, boolean isWIF);
 
 	AuditHeader delete(AuditHeader auditHeader, boolean isWIF);
 
@@ -97,18 +97,18 @@ public interface FinanceDetailService {
 	FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String userRole, String screenCode,
 			String eventCode, String procEdtEvent, boolean extFieldsReq);
 
-	boolean isFinReferenceExits(String financeReference, String tableType, boolean isWIF);
+	boolean isFinReferenceExits(String finReference, String tableType, boolean isWIF);
 
-	FinScheduleData getFinSchDataByFinRef(String financeReference, String type, long logKey);
+	FinScheduleData getFinSchDataByFinRef(long finID, String type, long logKey);
 
-	List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
+	List<ReturnDataSet> getPostingsByFinRefAndEvent(String reference, String finEvent, boolean showZeroBal,
 			String postingGroubBy, String type);
 
 	FinScheduleData getFinSchDataById(long finID, String type, boolean summaryRequired);
 
 	AuditHeader doCheckLimits(AuditHeader auditHeader);
 
-	void updateCustCIF(long custID, String finReference);
+	void updateCustCIF(long custID, long finID);
 
 	FinContributorHeader getFinContributorHeaderById(String finReference);
 
@@ -129,7 +129,7 @@ public interface FinanceDetailService {
 			String finCcy, BigDecimal curFinRpyAmount, int months, BigDecimal custDSR,
 			List<JointAccountDetail> jointAccountDetails);
 
-	FinanceSummary getFinanceProfitDetails(String finRef);
+	FinanceSummary getFinanceProfitDetails(long finID);
 
 	FinanceProfitDetail getFinProfitDetailsById(long finID);
 
@@ -139,7 +139,7 @@ public interface FinanceDetailService {
 
 	// List<ErrorDetail> getDiscrepancies(FinanceDetail financeDetail);
 
-	List<FeeRule> getApprovedFeeRules(String finReference, String finEvent, boolean isWIF);
+	List<FeeRule> getApprovedFeeRules(long finID, String finEvent, boolean isWIF);
 
 	List<CustomerIncome> prepareIncomeDetails();
 
@@ -152,11 +152,11 @@ public interface FinanceDetailService {
 
 	FinScheduleData getFinMaintainenceDetails(FinScheduleData finSchData);
 
-	BigDecimal getAccrueAmount(String finReference);
+	BigDecimal getAccrueAmount(long finID);
 
 	List<FinanceSummary> getFinExposureByCustId(long custId);
 
-	FeeRule getFeeChargesByFinRefAndFeeCode(String finReference, String feeCode, String tableType);
+	FeeRule getFeeChargesByFinRefAndFeeCode(long finID, String feeCode, String tableType);
 
 	boolean updateFeeChargesByFinRefAndFeeCode(FeeRule feeRule, String tableType);
 
@@ -168,7 +168,7 @@ public interface FinanceDetailService {
 
 	AuditHeader doPreApprove(AuditHeader aAuditHeader, boolean isWIF) throws InterfaceException;
 
-	FinanceDetail getPreApprovalFinanceDetailsById(String finReference);
+	FinanceDetail getPreApprovalFinanceDetailsById(long finID);
 
 	FinanceDetail getFinanceOrgDetails(FinanceMain financeMain, String type);
 
@@ -182,7 +182,7 @@ public interface FinanceDetailService {
 
 	void updateTATDetail(TATDetail tatDetail);
 
-	String getApprovedRepayMethod(String finReference, String type);
+	String getApprovedRepayMethod(long finID, String type);
 
 	DocumentDetails getFinDocDetailByDocId(long docId, String type, boolean readAttachment);
 
@@ -199,64 +199,64 @@ public interface FinanceDetailService {
 
 	List<String> getUsersLoginList(List<String> nextRoleCodes);
 
-	FinanceDetail getWIFFinanceDetailById(String finReference, String procEdtEvent);
+	FinanceDetail getWIFFinanceDetailById(long finID, String procEdtEvent);
 
-	List<FinanceDisbursement> getFinanceDisbursements(final String id, String type, boolean isWIF);
+	List<FinanceDisbursement> getFinanceDisbursements(long finID, String type, boolean isWIF);
 
-	FinanceMain getFinanceMainParms(String finReference);
+	FinanceMain getFinanceMainParms(long finID);
 
-	public void doSaveAddlFieldDetails(FinanceDetail financeDetail, String tableType);
+	public void doSaveAddlFieldDetails(FinanceDetail fd, String tableType);
 
-	BigDecimal getFinAssetValue(String finReference);
+	BigDecimal getFinAssetValue(long finID);
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 
-	FinScheduleData getFinSchDataForReceipt(String finReference, String type);
+	FinScheduleData getFinSchDataForReceipt(long finID, String type);
 
 	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(long finID, String type, boolean isWIF);
 
-	List<FinanceScheduleDetail> getFinScheduleList(String finReference);
+	List<FinanceScheduleDetail> getFinScheduleList(long finID);
 
 	// EOD Process Checking
 	int getProgressCountByCust(long custID);
 
-	FinanceMain getFinanceMainForBatch(String finReference);
+	FinanceMain getFinanceMainForBatch(long finId);
 
-	BigDecimal getOutStandingBalFromFees(String finReference);
+	BigDecimal getOutStandingBalFromFees(long finId);
 
-	public FinanceDetail getFinanceDetailForCovenants(FinanceMain financeMain);
+	public FinanceDetail getFinanceDetailForCovenants(FinanceMain fm);
 
-	public FinanceDetail getFinanceDetailForCollateral(FinanceMain financeMain);
+	public FinanceDetail getFinanceDetailForCollateral(FinanceMain fm);
 
-	public FinanceDetail getFinanceDetailForFinOptions(FinanceMain financeMain);
+	public FinanceDetail getFinanceDetailForFinOptions(FinanceMain fm);
 
 	AuditHeader executeWorkflowServiceTasks(AuditHeader auditHeader, String role, String usrAction,
 			WorkflowEngine engine) throws AppException, JaxenException, Exception;
 
-	FinanceMain setDefaultFinanceMain(FinanceMain financeMain, FinanceType financeType);
+	FinanceMain setDefaultFinanceMain(FinanceMain fm, FinanceType financeType);
 
 	FinODPenaltyRate setDefaultODPenalty(FinODPenaltyRate finODPenaltyRate, FinanceType financeType);
 
 	DocumentDetails getDocumentDetails(long id, String type);
 
-	FinanceScheduleDetail getFinSchduleDetails(String finReference, Date schDate);
+	FinanceScheduleDetail getFinSchduleDetails(long finID, Date schDate);
 
-	void updateNextUserId(String finReference, String nextUserId);
+	void updateNextUserId(long finID, String nextUserId);
 
-	String getNextUserId(String finReference);
+	String getNextUserId(long finID);
 
 	CustomerEligibilityCheck getODLoanCustElgDetail(FinanceDetail detail);
 
-	boolean isholdDisbursementProcess(String finReference);
+	boolean isholdDisbursementProcess(long finID);
 
 	void executeAutoFinRejectProcess();
 
 	List<FinAssetTypes> getFinAssetTypesByFinRef(String reference, String type);
 
-	List<Integer> getFinanceDisbSeqs(String finReferecne, boolean isWIF);
+	List<Integer> getFinanceDisbSeqs(long finID, boolean isWIF);
 
 	// Linked Loans
-	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<String> finRefList);
+	List<FinanceProfitDetail> getFinProfitListByFinRefList(List<Long> finIDList);
 
 	List<FinanceMain> getFinanceMainForLinkedLoans(String finReference);
 
@@ -264,38 +264,38 @@ public interface FinanceDetailService {
 
 	String getCustomerDueFinReferces(long custID);
 
-	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(String finReference);
+	List<FinanceScheduleDetail> getFinSchdDetailsForRateReport(long finID);
 
-	FinanceMain getFinanceMainForRateReport(String finReference, String type);
+	FinanceMain getFinanceMainForRateReport(long finID, String type);
 
 	String getFinanceMainByRcdMaintenance(long finID, String type);
 
-	FinanceMain getRcdMaintenanceByRef(String reference, String type);
+	FinanceMain getRcdMaintenanceByRef(long finID, String type);
 
 	List<FinTypeFees> getSchemeFeesList(long referenceId, String eventCode, boolean origination, int moduleId);
 
-	Date getFinStartDate(String finReference);
+	Date getFinStartDate(long finID);
 
-	FinanceDetail getVerificationInitiationDetails(String finReference, VerificationType verificationType,
-			String tableType);
+	FinanceDetail getVerificationInitiationDetails(long finID, VerificationType verificationType, String tableType);
 
 	Map<String, Object> getUpLevelUsers(long usrId, String branch);
 
-	FinanceDetail getFinanceDetailsForPmay(String finReference);
+	FinanceDetail getFinanceDetailsForPmay(long finID);
 
 	FinCustomerDetails getDetailsByOfferID(String offerID);
 
-	void saveDisbDetails(List<FinanceDisbursement> disbursementDetails, String finReference);
+	void saveDisbDetails(List<FinanceDisbursement> disbursementDetails, long finID);
 
-	void saveFinSchdDetail(List<FinanceScheduleDetail> financeScheduleDetails, String finReference);
+	void saveFinSchdDetail(List<FinanceScheduleDetail> schedules, long finID);
 
-	List<FinanceScheduleDetail> getFinScheduleDetails(String finReference, String string, boolean b);
+	List<FinanceScheduleDetail> getFinScheduleDetails(long finID, String string, boolean b);
 
-	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(String finReference, String string, boolean b);
+	List<FinanceStepPolicyDetail> getFinStepDetailListByFinRef(long finID, String string, boolean b);
 
-	List<RepayInstruction> getRepayInstructions(String finReference, String string, boolean b);
+	List<RepayInstruction> getRepayInstructions(long finID, String string, boolean b);
 
-	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail financeDetail);
+	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail fd);
 
-	List<ReturnDataSet> prepareSubVenAccounting(AEEvent aeEvent, FinanceDetail financeDetail);
+	List<ReturnDataSet> prepareSubVenAccounting(AEEvent aeEvent, FinanceDetail fd);
+
 }

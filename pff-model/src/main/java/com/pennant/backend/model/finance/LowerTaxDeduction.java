@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 
 public class LowerTaxDeduction extends AbstractWorkflowEntity {
 
@@ -101,5 +102,14 @@ public class LowerTaxDeduction extends AbstractWorkflowEntity {
 	public void setFinMaintainId(long finMaintainId) {
 		this.finMaintainId = finMaintainId;
 	}
+	
+	public void setUserDetails(LoggedInUser userDetails) {
+		// TODO Auto-generated method stub
 
+	}
+
+	public Object getBefImage() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

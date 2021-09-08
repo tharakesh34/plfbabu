@@ -73,7 +73,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRefAndEvent(long finID, String finEvent, boolean showZeroBal,
+	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String reference, String finEvent, boolean showZeroBal,
 			String postingGroupBy, String type) {
 
 		StringBuilder sql = new StringBuilder("Select");
@@ -97,7 +97,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			sql.append(type);
 		}
 
-		sql.append(" Where FinID = ? and FinEvent in (");
+		sql.append(" Where FinReference = ? and FinEvent in (");
 		JdbcUtil.getInCondition(Arrays.asList(finEvent.split(",")));
 		sql.append(")");
 
@@ -120,7 +120,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, reference);
 
 			for (String event : finEvent.split(",")) {
 				ps.setString(index++, event);

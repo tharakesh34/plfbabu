@@ -2,43 +2,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ManualScheduleDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ManualScheduleDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 *
+ * * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -185,7 +167,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	private FinanceDetail financeDetail = null;
 	private FinanceDetailService financeDetailService;
 
-	//private String moduleDefiner = "";
+	// private String moduleDefiner = "";
 	private Map<Date, ArrayList<FeeRule>> feeChargesMap = null;
 	private boolean isWIF = false;
 	private boolean schRebuildReq = false;
@@ -391,13 +373,13 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 			if (li.getFellowIfAny("endBal_" + liSeq) != null) {
 
-				//Finding End Balance Component for Disbursement
+				// Finding End Balance Component for Disbursement
 				Label endBal = (Label) li.getFellowIfAny("endBal_" + liSeq);
 				endBalance = PennantAppUtil.unFormateAmount(endBal.getValue(), formatter);
 				BigDecimal disbAmount = finMain.getFinAmount().subtract(finMain.getDownPayment())
 						.add(finMain.getFeeChargeAmt());
 
-				//Checking With previous existing End Balance
+				// Checking With previous existing End Balance
 				if (disbAmount.compareTo(endBalance) != 0) {
 
 					endBal.setValue(PennantAppUtil.amountFormate(disbAmount, formatter));
@@ -411,7 +393,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					 * pri.setValue(PennantAppUtil.formateAmount(disbAmount, formatter)); }
 					 */
 
-					//Summary button addition to display Each part on O/S Principal Amount(Finance Amount & Down payment)
+					// Summary button addition to display Each part on O/S Principal Amount(Finance Amount & Down
+					// payment)
 					Listcell lsc = (Listcell) endBal.getParent();
 					BigDecimal excessAmount = finMain.getDownPayment().add(finMain.getFeeChargeAmt());
 					if (li.getFellowIfAny("summary") == null && excessAmount.compareTo(BigDecimal.ZERO) > 0) {
@@ -452,10 +435,12 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		String msg = ("First Disbursement Amount : " + PennantAppUtil.amountFormate(finmain.getFinAmount(), formatter)
 				+ "\n")
 				+ ((finmain.getDownPayment() != null && finmain.getDownPayment().compareTo(BigDecimal.ZERO) > 0)
-						? "Down Payment   : " + PennantAppUtil.amountFormate(finmain.getDownPayment(), formatter) : "")
+						? "Down Payment   : " + PennantAppUtil.amountFormate(finmain.getDownPayment(), formatter)
+						: "")
 				+ "\n"
 				+ ((finmain.getFeeChargeAmt() != null && finmain.getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0)
-						? "Fee Amount	: " + PennantAppUtil.amountFormate(finmain.getFeeChargeAmt(), formatter) : "");
+						? "Fee Amount	: " + PennantAppUtil.amountFormate(finmain.getFeeChargeAmt(), formatter)
+						: "");
 
 		Clients.showNotification(msg, "info", null, null, -1);
 
@@ -625,7 +610,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 		}
 
-		//Principal balance Adjust
+		// Principal balance Adjust
 		if (curListItem.getFellowIfAny("pri_" + curListItemSeq) != null) {
 			Label pri = (Label) curListItem.getFellowIfAny("pri_" + curListItemSeq);
 			pri.setValue(PennantAppUtil.amountFormate(curPri, formatter));
@@ -662,12 +647,13 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 		int prvListItemSeq = Integer.parseInt(prvListItem.getId().substring(prvListItem.getId().indexOf("_") + 1));
 		int curListItemSeq = Integer.parseInt(lstitem.getId().substring(lstitem.getId().indexOf("_") + 1));
 
-		//Fetching all details from Current term and previous term
+		// Fetching all details from Current term and previous term
 		Datebox prvDb = (Datebox) prvListItem.getFellowIfAny("date_" + prvListItemSeq);
 		Datebox curDb = (Datebox) lstitem.getFellowIfAny("date_" + curListItemSeq);
 		BigDecimal prvRate = ((Decimalbox) prvListItem.getFellowIfAny("rate_" + prvListItemSeq)).getValue();
 
-		// Based on Rate basis Profit amount will be calculated based on Outstanding Principal or Total Outstanding Finance Amount
+		// Based on Rate basis Profit amount will be calculated based on Outstanding Principal or Total Outstanding
+		// Finance Amount
 		if (StringUtils.equals(CalculationConstants.RATE_BASIS_F, finMain.getRepayRateBasis())) {
 			prvEndBal = finMain.getFinAmount().subtract(finMain.getDownPayment()).add(finMain.getFeeChargeAmt());
 		} else if (StringUtils.equals(CalculationConstants.RATE_BASIS_R, finMain.getRepayRateBasis())) {
@@ -675,7 +661,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					((Label) prvListItem.getFellowIfAny("endBal_" + prvListItemSeq)).getValue(), formatter);
 		}
 
-		//Profit amount calculation based on Days basis
+		// Profit amount calculation based on Days basis
 		if (prvRate != null && prvRate.compareTo(BigDecimal.ZERO) > 0) {
 			calInt = CalculationUtil.calInterest(prvDb.getValue(), curDb.getValue(), prvEndBal, pftDaysBasis, prvRate);
 		}
@@ -778,7 +764,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 
-		//Finding Last List item / Maturity Term to check Ending Balance
+		// Finding Last List item / Maturity Term to check Ending Balance
 		int count = listBoxSchedule.getItemCount() - 1;
 		Listitem maturityListItem = listBoxSchedule.getItems().get(count);
 		int maturityListItemSeq = Integer
@@ -882,7 +868,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				fsd.setProfitCalc(profitcal);
 			}
 
-			//CalFee
+			// CalFee
 			if (this.listBoxSchedule.getFellowIfAny("feeSchd_" + curListItemSeq) != null && !isBuildSchd) {
 				BigDecimal feeSchd = PennantAppUtil.unFormateAmount(
 						((Label) listBoxSchedule.getFellowIfAny("feeSchd_" + curListItemSeq)).getValue(), format);
@@ -1012,8 +998,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	/**
 	 * Method to fill the Schedule Listbox with provided generated schedule.
 	 * 
-	 * @param FinScheduleData
-	 *            (aFinSchData)
+	 * @param FinScheduleData (aFinSchData)
 	 */
 	public void doFillScheduleList(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -1031,7 +1016,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			}
 		}
 
-		//Schedule Fee Column Visibility Check
+		// Schedule Fee Column Visibility Check
 		boolean isSchdFee = false;
 		List<FeeRule> feeList = aFinSchData.getFeeRules();
 		for (int i = 0; i < feeList.size(); i++) {
@@ -1094,7 +1079,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 		boolean newRecord = false;
 
-		//Schedule method Identification to make Design clear
+		// Schedule method Identification to make Design clear
 
 		boolean isRateEditable = false;
 		boolean isPftEditable = false;
@@ -1121,7 +1106,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					grcAllowed = true;
 				}
 
-				//Set Non-Editable Fields
+				// Set Non-Editable Fields
 				isRateEditable = true;
 				if (StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFT)
 						|| StringUtils.equals(scheduleMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
@@ -1179,7 +1164,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				curRate = ((Decimalbox) actionListItem.getFellowIfAny("rate_" + refChildItemSeq));
 				Datebox curDate = ((Datebox) actionListItem.getFellowIfAny("date_" + refChildItemSeq));
 
-				//To check grace is allowed in actionListItem or not
+				// To check grace is allowed in actionListItem or not
 				if (DateUtility.compare(curDate.getValue(), finMain.getGrcPeriodEndDate()) < 0) {
 					grcRenderProcess = true;
 				} else {
@@ -1206,12 +1191,12 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				isMaturityDate = true;
 			}
 
-			//Add Button
+			// Add Button
 			Listcell lc = new Listcell();
 			Hbox hbox = new Hbox();
-			//Add Button should not be visible for Maturity date
+			// Add Button should not be visible for Maturity date
 			if ((newRecord && isMaturityDate && !isAddBtnClicked) || (!newRecord && isMaturityDate)) {
-				//Nothing to do
+				// Nothing to do
 			} else {
 				Button addBtn = new Button();
 				addBtn.setImage("/images/icons/add.png");
@@ -1226,7 +1211,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				hbox.appendChild(addBtn);
 			}
 
-			//Remove Button
+			// Remove Button
 			if ((newRecord && isAddBtnClicked) || (!newRecord && !isStartDate && !isMaturityDate && !isGrcEndDate)) {
 				Button rmvBtn = new Button();
 				rmvBtn.setImage("/images/icons/delete.png");
@@ -1240,7 +1225,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			lc.appendChild(hbox);
 			item.appendChild(lc);
 
-			//Schedule Date
+			// Schedule Date
 			lc = new Listcell();
 			Datebox date = new Datebox();
 			date.setId("date_" + listItemSeq);
@@ -1634,7 +1619,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				}
 			}
 
-			//rate Validation
+			// rate Validation
 			if (curListItem.getFellowIfAny("rate_" + curListItemSeq) != null
 					&& curListItem.getFellowIfAny("rate_" + curListItemSeq) instanceof Decimalbox) {
 				Decimalbox rate = (Decimalbox) curListItem.getFellowIfAny("rate_" + curListItemSeq);
@@ -1715,18 +1700,18 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 				calPft.setValue(PennantAppUtil.amountFormate(calInt, formatter));
 			}
 
-			//Setting the Fee amount after Build,if fees are applicable
+			// Setting the Fee amount after Build,if fees are applicable
 			if (curListItem.getFellowIfAny("feeSchd_" + curListItemSeq) != null) {
 				Label feeSchd = (Label) curListItem.getFellowIfAny("feeSchd_" + curListItemSeq);
 
 				curFee = PennantAppUtil.unFormateAmount(feeSchd.getValue(), formatter);
 
-				if (getFinScheduleData().getFinanceScheduleDetails().size() < 1) {//TODO
+				if (getFinScheduleData().getFinanceScheduleDetails().size() < 1) {// TODO
 					feeSchd.setValue(PennantAppUtil.amountFormate(BigDecimal.ZERO, formatter));
 				}
 			}
 
-			//Setting the TDSAmount after build ,if TDS is Checked
+			// Setting the TDSAmount after build ,if TDS is Checked
 			if (curListItem.getFellowIfAny("tdsAmt_" + curListItemSeq) != null) {
 				Label tdsAmount = (Label) curListItem.getFellowIfAny("tdsAmt_" + curListItemSeq);
 
@@ -1750,11 +1735,11 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						pft.setValue(PennantAppUtil.formateAmount(calInt, formatter));
 					}
 				} else {
-					// Calculating Total Grace period Profit amount based on selection Grace Schedule method 
+					// Calculating Total Grace period Profit amount based on selection Grace Schedule method
 					if (grcAlwdWithoutPftPay) {
 						grcPftTillNow = grcPftTillNow.add(calInt);
 						if (grcPayEndSchddMthd) {
-							//Calculate all the interest amount and add for the Last Grace period
+							// Calculate all the interest amount and add for the Last Grace period
 							if (DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
 								Label pft = (Label) curListItem.getFellowIfAny("pft_" + curListItemSeq);
 								pft.setValue(PennantAppUtil.amountFormate(grcPftTillNow, formatter));
@@ -1803,7 +1788,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 
 				// Allow Grace Repayment at Grace End Date for Grace Pay At End Date Method
 				if (grcPayEndSchddMthd) {
-					//Calculate all the interest amount and add for the Last Grace period
+					// Calculate all the interest amount and add for the Last Grace period
 					if (DateUtility.compare(curDb.getValue(), main.getGrcPeriodEndDate()) == 0) {
 						alwGrcRepay = true;
 					}
@@ -1828,7 +1813,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 						throw new WrongValueException(pri, "Prinicpal amount cannot be greater than or equal to "
 								+ PennantAppUtil.amountFormate(prvEndBal, formatter));
 					}
-					//set the principal amount for the maturity date
+					// set the principal amount for the maturity date
 					if (islastitem) {
 						curPri = prvEndBal;
 						pri.setValue(PennantAppUtil.formateAmount(curPri, formatter));
@@ -1955,8 +1940,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
 			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
 					&& !isWIF) {
-				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "",
-						isWIF);
+				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinID(), "", isWIF);
 			}
 			approvedFeeRules.addAll(feeRuleList);
 

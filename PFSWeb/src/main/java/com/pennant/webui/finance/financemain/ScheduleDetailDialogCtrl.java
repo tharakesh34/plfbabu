@@ -1249,8 +1249,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
 			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
 					&& !isWIF) {
-				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinReference(), "",
-						isWIF);
+				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinID(), "", isWIF);
 			}
 			approvedFeeRules.addAll(feeRuleList);
 
