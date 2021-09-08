@@ -282,20 +282,20 @@ public class FeePostingController extends ExtendedTestClass {
 		logger.debug(Literal.ENTERING);
 		FinFeeDetail finFeeDetail = new FinFeeDetail();
 		ManualAdviseResponse mar = new ManualAdviseResponse();
-		FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(manualAdvise.getFinReference(), "",
-				false);
+		FinanceDetail fd = financeDetailService.getFinSchdDetailById(manualAdvise.getFinID(), "", false);
 
-		if (financeDetail == null) {
+		if (fd == null) {
 			return mar;
 		}
 
-		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
-		financeDetail.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finReference));
+		fd.setFinanceTaxDetail(financeTaxDetailService.getApprovedFinanceTaxDetail(finID));
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
 
 		finFeeDetail.setCalculatedAmount(manualAdvise.getAdviseAmount());
 
@@ -307,7 +307,7 @@ public class FeePostingController extends ExtendedTestClass {
 		finTypeFee.setTaxApplicable(taxApplicable);
 		finTypeFee.setAmount(manualAdvise.getAdviseAmount());
 
-		finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, financeDetail, taxPercentages);
+		finFeeDetailService.convertGSTFinTypeFees(finFeeDetail, finTypeFee, fd, taxPercentages);
 		finFeeDetailService.calculateFees(finFeeDetail, schdData, taxPercentages);
 
 		String taxComponent = "";

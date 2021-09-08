@@ -1986,18 +1986,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public List<Long> getFinReferencesByCustID(long custId, String finActiveStatus) {
+	public List<Long> getFinIDList(String custCIF, String closingStatus) {
 		StringBuilder sql = new StringBuilder("Select FinID");
-		sql.append(" From FinanceMain");
-		sql.append(" Where CustID = ?");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner join CUstomers c on c.CustID = fm.CustID");
+		sql.append(" Where CustCIF = ?");
 
-		Object[] objects = new Object[] { custId };
+		Object[] objects = new Object[] { custCIF };
 
-		if (StringUtils.isBlank(finActiveStatus)) {
+		if (StringUtils.isBlank(closingStatus)) {
 			sql.append(" and ClosingStatus is null");
 		} else {
 			sql.append(" and ClosingStatus = ?");
-			objects = new Object[] { custId, finActiveStatus };
+			objects = new Object[] { custCIF, closingStatus };
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -5473,45 +5474,113 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
+	private String getBasicFieldsQuery(TableType tableType, boolean isFinReference) {
+		StringBuilder sql = new StringBuilder("Select * From (");
+		sql.append(" Select FinID, FinReference, FinType, FinCategory, CustID, EntityCode, FinDivision");
+		sql.append(", FinBranch, FinAmount, FinCcy, FinPurpose, FinStartDate");
+		sql.append(", FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
+		sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+		sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
+		sql.append(" Inner Join RmtFinanceTypes ft ft.FinType = fm.FinType");
+		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
+
+		if (isFinReference) {
+			sql.append(" Where FinReference = ?");
+		} else {
+			sql.append(" Where FinID = ?");
+		}
+
+		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
+			sql.append(" Union all");
+			sql.append(" Select FinID, FinReference, FinType, FinCategory, CustID, EntityCode, FinDivision");
+			sql.append(", FinBranch, FinAmount, FinCcy, FinPurpose, FinStartDate");
+			sql.append(", FinIsActive, ClosingStatus, MaturityDate, CalMaturity");
+			sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+			sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
+			sql.append(" Inner Join RmtFinanceTypes ft ft.FinType = fm.FinType");
+			sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
+			if (isFinReference) {
+				sql.append(" Where FinReference = ?");
+			} else {
+				sql.append(" Where FinID = ?");
+			}
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		}
+
+		sql.append(" ) fm");
+
+		return sql.toString();
+	}
+
 	@Override
 	public FinanceMain getFinanceMain(String finReference) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID, FinType, CustID, RecordStatus, RoleCode, NextRoleCode, WorkflowId");
-		sql.append(", FinIsActive, FinStartDate, MaturityDate, CalMaturity From (");
-		sql.append(" Select FinID, FinType, CustID, RecordStatus, RoleCode, NextRoleCode, WorkflowId");
-		sql.append(", FinIsActive, FinStartDate, MaturityDate, CalMaturity ");
-		sql.append(" From FinanceMain Where FinReference = ?");
-		sql.append(" Union All");
-		sql.append(" Select FinID, FinType, CustID, RecordStatus, RoleCode, NextRoleCode, WorkflowId");
-		sql.append(", FinIsActive, FinStartDate, MaturityDate, CalMaturity ");
-		sql.append(" From FinanceMain_Temp Where FinReference = ?");
-		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
-		sql.append(" ) fm");
+		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, true);
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceMain fm = new FinanceMain();
-
-				fm.setFinID(rs.getLong("FinID"));
-				fm.setFinType(rs.getString("FinType"));
-				fm.setCustID(rs.getLong("CustID"));
-				fm.setRecordStatus(rs.getString("RecordStatus"));
-				fm.setRoleCode(rs.getString("RoleCode"));
-				fm.setNextRoleCode(rs.getString("NextRoleCode"));
-				fm.setCustID(rs.getLong("WorkflowId"));
-				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-				fm.setFinStartDate(rs.getDate("FinStartDate"));
-				fm.setMaturityDate(rs.getDate("MaturityDate"));
-				fm.setCalMaturity(rs.getDate("CalMaturity"));
-
-				return fm;
-
-			}, finReference, finReference);
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finReference, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
+		return null;
+	}
+
+	@Override
+	public FinanceMain getFinanceMain(String finReference, TableType tableType) {
+		String sql = getBasicFieldsQuery(tableType, true);
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = null;
+		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
+			parameters = new Object[] { finReference, finReference };
+		} else {
+			parameters = new Object[] { finReference };
+		}
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public FinanceMain getFinanceMain(long finID) {
+		String sql = getBasicFieldsQuery(TableType.BOTH_TAB, false);
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), finID, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
+	public FinanceMain getFinanceMain(long finID, TableType tableType) {
+		String sql = getBasicFieldsQuery(tableType, false);
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] parameters = null;
+		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
+			parameters = new Object[] { finID, finID };
+		} else {
+			parameters = new Object[] { finID };
+		}
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinanceMainRM(), parameters);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
 		return null;
 	}
 
@@ -5591,4 +5660,40 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
+	private class FinanceMainRM implements RowMapper<FinanceMain> {
+		private FinanceMainRM() {
+			super();
+		}
+
+		@Override
+		public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinanceMain fm = new FinanceMain();
+
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setFinCategory(rs.getString("FinCategory"));
+			fm.setCustID(rs.getLong("CustID"));
+			fm.setEntityCode(rs.getString("EntityCode"));
+			fm.setLovDescEntityCode(rs.getString("EntityCode"));
+			fm.setLovDescFinDivision(rs.getString("FinDivision"));
+			fm.setFinBranch(rs.getString("FinBranch"));
+			fm.setFinAmount(rs.getBigDecimal("FinAmount"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setFinPurpose(rs.getString("FinPurpose"));
+			fm.setFinStartDate(rs.getDate("FinStartDate"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+			fm.setClosingStatus(rs.getString("ClosingStatus"));
+			fm.setMaturityDate(rs.getDate("MaturityDate"));
+			fm.setCalMaturity(rs.getDate("CalMaturity"));
+			fm.setRecordStatus(rs.getString("RecordStatus"));
+			fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
+			fm.setRoleCode(rs.getString("RoleCode"));
+			fm.setNextRoleCode(rs.getString("NextRoleCode"));
+			fm.setCustID(rs.getLong("WorkflowId"));
+
+			return fm;
+		}
+
+	}
 }

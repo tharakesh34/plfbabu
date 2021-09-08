@@ -3794,7 +3794,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	private void prepareGST(FeeWaiverDetail actualWaiverDetail, BigDecimal waiverAmount) {
-		Map<String, BigDecimal> gstPercentages = getTaxPercentages(actualWaiverDetail.getFinReference());
+		Map<String, BigDecimal> gstPercentages = getTaxPercentages(actualWaiverDetail.getFinID());
 
 		actualWaiverDetail.setWaivedAmount(waiverAmount);
 		actualWaiverDetail.setCurrWaiverAmount(waiverAmount);
@@ -3846,10 +3846,10 @@ public class FinServiceInstController extends SummaryDetailService {
 		}
 	}
 
-	private Map<String, BigDecimal> getTaxPercentages(String finReference) {
+	private Map<String, BigDecimal> getTaxPercentages(long finID) {
 		Map<String, BigDecimal> taxPercentages = null;
 		if (taxPercentages == null) {
-			taxPercentages = GSTCalculator.getTaxPercentages(finReference);
+			taxPercentages = GSTCalculator.getTaxPercentages(finID);
 		}
 
 		return taxPercentages;

@@ -23,6 +23,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinanceFlagsController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinanceFlagsRestService;
 import com.pennanttech.pffws.FinanceFlagsSoapService;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -53,19 +54,22 @@ public class FinanceFlagsWebServiceImpl extends ExtendedTestClass
 		if (StringUtils.isBlank(finReference)) {
 			validationUtility.fieldLevelException();
 		}
+
 		FinanceFlag response = null;
 		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		// validate Reference with Origination
-		int count = financeMainDAO.getFinanceCountById(finReference, "", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
+		if (finID == null) {
 			response = new FinanceFlag();
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return response;
 		}
-		FinanceFlag financeFlag = financeFlagsService.getApprovedFinanceFlagsById(finReference);
+
+		FinanceFlag financeFlag = financeFlagsService.getApprovedFinanceFlagsById(finID);
 		if (financeFlag == null) {
 			response = new FinanceFlag();
 			String[] valueParm = new String[1];
@@ -103,8 +107,8 @@ public class FinanceFlagsWebServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		int count = financeMainDAO.getFinanceCountById(financeFlag.getFinReference(), "", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(financeFlag.getFinReference(), TableType.MAIN_TAB);
+		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = financeFlag.getFinReference();
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -148,15 +152,16 @@ public class FinanceFlagsWebServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 		// validate finReference in origination
-		int count = financeMainDAO.getFinanceCountById(financeFlag.getFinReference(), "", false);
-		if (count <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(financeFlag.getFinReference(), TableType.MAIN_TAB);
+		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = financeFlag.getFinReference();
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
 		// validate finReference in Flags
-		FinanceFlag finFlag = financeFlagsService.getApprovedFinanceFlagsById(financeFlag.getFinReference());
+		FinanceFlag finFlag = financeFlagsService.getApprovedFinanceFlagsById(finID);
+
 		if (finFlag == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = financeFlag.getFinReference();

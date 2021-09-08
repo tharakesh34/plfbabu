@@ -34,6 +34,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.vas.VASRecordingDetail;
 import com.pennanttech.ws.service.APIErrorHandlerService;
@@ -311,33 +312,32 @@ public class VASController extends ExtendedTestClass {
 			}
 			if (vasRecording != null
 					&& StringUtils.equals(vasRecording.getPostingAgainst(), VASConsatnts.VASAGAINST_FINANCE)) {
-				FinanceMain financeMain = financeMainDAO.getFinanceMainById(vasRecording.getPrimaryLinkRef(), "_View",
-						false);
-				for (FinFeeDetail finFeeDetail : vasRecording.getFinFeeDetailsList()) {
-					finFeeDetail.setFinEvent(AccountingEvent.VAS_FEE);
-					finFeeDetail.setFinReference(financeMain.getFinReference());
-					finFeeDetail.setFeeTypeCode(vasRecording.getVasReference());
-					finFeeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					finFeeDetail.setRecordStatus(financeMain.getRecordStatus());
-					finFeeDetail.setRcdVisible(false);
-					finFeeDetail.setVersion(1);
-					finFeeDetail.setNewRecord(true);
-					finFeeDetail.setLastMntBy(userDetails.getUserId());
-					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					finFeeDetail.setWorkflowId(financeMain.getWorkflowId());
-					finFeeDetail.setOriginationFee(true);
-					finFeeDetail.setFeeTypeID(0);
-					finFeeDetail.setFeeSeq(0);
-					finFeeDetail.setFeeOrder(0);
-					finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount());
-					finFeeDetail.setVasReference(vasRecording.getVasReference());
-					finFeeDetail.setCalculatedAmount(finFeeDetail.getActualAmount());
-					finFeeDetail.setFixedAmount(finFeeDetail.getActualAmount());
-					finFeeDetail.setAlwDeviation(true);
-					finFeeDetail.setMaxWaiverPerc(BigDecimal.valueOf(100));
+				FinanceMain fm = financeMainDAO.getFinanceMain(vasRecording.getPrimaryLinkRef(), TableType.VIEW);
+				for (FinFeeDetail fee : vasRecording.getFinFeeDetailsList()) {
+					fee.setFinEvent(AccountingEvent.VAS_FEE);
+					fee.setFinReference(fm.getFinReference());
+					fee.setFeeTypeCode(vasRecording.getVasReference());
+					fee.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					fee.setRecordStatus(fm.getRecordStatus());
+					fee.setRcdVisible(false);
+					fee.setVersion(1);
+					fee.setNewRecord(true);
+					fee.setLastMntBy(userDetails.getUserId());
+					fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					fee.setWorkflowId(fm.getWorkflowId());
+					fee.setOriginationFee(true);
+					fee.setFeeTypeID(0);
+					fee.setFeeSeq(0);
+					fee.setFeeOrder(0);
+					fee.setRemainingFee(fee.getActualAmount());
+					fee.setVasReference(vasRecording.getVasReference());
+					fee.setCalculatedAmount(fee.getActualAmount());
+					fee.setFixedAmount(fee.getActualAmount());
+					fee.setAlwDeviation(true);
+					fee.setMaxWaiverPerc(BigDecimal.valueOf(100));
 					// feeDetail.setAlwModifyFee(true);
-					finFeeDetail.setAlwModifyFeeSchdMthd(true);
-					finFeeDetail.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					fee.setAlwModifyFeeSchdMthd(true);
+					fee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
 				}
 
 			}

@@ -61,6 +61,8 @@ public interface JointAccountDetailDAO {
 
 	FinanceExposure getOverDueDetails(FinanceExposure exposure);
 
+	JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type);
+
 	JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type);
 
 	List<FinanceExposure> getPrimaryExposureList(List<String> listCIF);

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -30,6 +31,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class DisbursementController extends ExtendedTestClass {
 	private static final Logger logger = LogManager.getLogger(DisbursementController.class);
 
+	private FinanceMainDAO financeMainDAO;
 	private DisbursementDAO disbursementDAO;
 	private transient DisbursementRequestService disbursementRequestService;
 	private DisbursementProcess disbursementProcess;
@@ -262,10 +264,12 @@ public class DisbursementController extends ExtendedTestClass {
 
 					String finReference = request.getFinReference();
 
-					FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.MAIN_TAB);
+					Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
+					FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.MAIN_TAB);
 
 					if (fm == null) {
-						fm = disbursementProcess.getDisbursmentFinMainById(finReference, TableType.TEMP_TAB);
+						fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.TEMP_TAB);
 					}
 
 					break;
@@ -328,6 +332,10 @@ public class DisbursementController extends ExtendedTestClass {
 			request.setStatus(DisbursementConstants.STATUS_REJECTED);
 		}
 		return disbursementDAO.updateDisbRequest(request);
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 	@Autowired

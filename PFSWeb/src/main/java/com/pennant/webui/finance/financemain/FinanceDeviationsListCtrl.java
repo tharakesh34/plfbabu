@@ -286,7 +286,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		final FinanceMain aFinanceMain = (FinanceMain) selectedItem.getAttribute("data");
 
 		// Get the selected entity.
-		FinanceDetail financeDetail = deviationDetailsService.getFinanceDetailById(aFinanceMain.getFinReference());
+		FinanceDetail financeDetail = deviationDetailsService.getFinanceDetailById(aFinanceMain.getFinID());
 
 		if (financeDetail == null) {
 			String[] errParm = new String[1];

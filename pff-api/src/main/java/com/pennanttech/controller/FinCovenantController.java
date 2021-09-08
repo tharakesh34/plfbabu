@@ -17,6 +17,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
@@ -26,6 +27,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.ws.service.APIErrorHandlerService;
 
 public class FinCovenantController {
@@ -35,14 +37,17 @@ public class FinCovenantController {
 	private FinCovenantTypeService finCovenantTypeService;
 	private FinanceMainDAO financeMainDAO;
 
-	public WSReturnStatus addFinCovenant(FinanceDetail financeDetail) {
+	public WSReturnStatus addFinCovenant(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
-		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
-		List<FinCovenantType> covenantTypeList = financeDetail.getCovenantTypeList();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinCovenantType> covenantTypeList = fd.getCovenantTypeList();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
 		String finReference = fm.getFinReference();
-		boolean referenceExitsinLQ = financeMainDAO.isFinReferenceExists(finReference, "_Temp", false);
-		if (referenceExitsinLQ) {
+		Long finID = financeMainDAO.getFinID(finReference, TableType.TEMP_TAB);
+		if (finID != null) {
 			for (FinCovenantType finCovenantType : covenantTypeList) {
 				finCovenantType.setFinReference(finReference);
 				finCovenantType.setNewRecord(true);
@@ -76,7 +81,7 @@ public class FinCovenantController {
 				finCovenantType.setUserDetails(userDetails);
 				finCovenantType.setVersion(1);
 			}
-			finMaintainInstruction.setFinReference(financeDetail.getFinReference());
+			finMaintainInstruction.setFinReference(fd.getFinReference());
 			finMaintainInstruction.setNewRecord(true);
 			finMaintainInstruction.setEvent(FinServiceEvent.COVENANTS);
 			finMaintainInstruction.setVersion(1);
@@ -115,9 +120,11 @@ public class FinCovenantController {
 		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
 		List<FinCovenantType> covenantTypeList = financeDetail.getCovenantTypeList();
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+
 		String finReference = fm.getFinReference();
-		boolean referenceExitsinLQ = financeMainDAO.isFinReferenceExists(finReference, "_Temp", false);
-		if (referenceExitsinLQ) {
+		Long finID = financeMainDAO.getFinID(finReference, TableType.TEMP_TAB);
+
+		if (finID != null) {
 			for (FinCovenantType finCovenantType : covenantTypeList) {
 				finCovenantType.setFinReference(finReference);
 				finCovenantType.setNewRecord(false);

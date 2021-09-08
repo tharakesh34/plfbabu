@@ -584,6 +584,23 @@ public class JointAccountDetailDAOImpl extends SequenceDao<JointAccountDetail> i
 		return null;
 	}
 
+	public JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type) {
+		StringBuilder sql = sqlSelectQuery(type);
+		sql.append(" Where FinReference = ? and CustCIF = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		JointAccountDetailRowMapper rowMapper = new JointAccountDetailRowMapper(type);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finReference, custCIF);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
 	@Override
 	public Map<String, Integer> getCustCtgCount(long finID) {
 		StringBuilder sql = new StringBuilder("Select");

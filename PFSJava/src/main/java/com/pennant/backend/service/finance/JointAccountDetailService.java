@@ -92,5 +92,7 @@ public interface JointAccountDetailService {
 	List<AuditDetail> processingJointAccountDetail(List<AuditDetail> auditDetails, String tableType,
 			String auditTranType);
 
+	JointAccountDetail getJointAccountDetailByRef(String finReference, String custCIF, String type);
+
 	JointAccountDetail getJointAccountDetailByRef(long finID, String custCIF, String type);
 }

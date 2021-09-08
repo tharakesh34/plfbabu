@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.limit.LimitTransactionDetailsDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.applicationmaster.Currency;
@@ -18,6 +19,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerGroup;
+import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructure;
@@ -41,6 +43,7 @@ import com.pennant.ws.exception.ServiceException;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.LimitServiceController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.LimitRestService;
 import com.pennanttech.pffws.LimitSoapService;
 import com.pennanttech.util.APIConstants;
@@ -60,6 +63,7 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 	private CommitmentService commitmentService;
 	private ValidationUtility validationUtility;
 	private LimitTransactionDetailsDAO limitTransactionDetailDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * Fetch customer limit structure by structure code.
@@ -240,7 +244,8 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 
 		WSReturnStatus returnStatus = null;
 		try {
-			limitTransactionDetailDAO.deleteReservedLogs(limitTransDetail.getReferenceNumber());
+			String referenceNumber = limitTransDetail.getReferenceNumber();
+			limitTransactionDetailDAO.deleteReservedLogs(referenceNumber);
 
 			// validate reserve limit request
 			returnStatus = doLimitReserveValidations(limitTransDetail);
@@ -296,6 +301,20 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 		String finReference = limitTransDetail.getReferenceNumber();
 		String transType = limitTransDetail.getTransactionType();
 		long limitId = limitTransDetail.getHeaderId();
+
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		if (finID == null) {
+			String[] valueParam = new String[1];
+			valueParam[0] = limitTransDetail.getReferenceNumber();
+			FinanceDetail response = new FinanceDetail();
+			WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90201", valueParam);
+			response.setReturnStatus(status);
+			return status;
+		}
+
+		limitTransDetail.setFinID(finID);
+
 		List<LimitTransactionDetail> lmtTransDetails = limitTransactionDetailDAO.getPreviousReservedAmt(finReference,
 				transType, limitId);
 		BigDecimal prvReserv = LimitManagement.getPreviousReservedAmt(lmtTransDetails);
@@ -465,25 +484,26 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 		case LimitConstants.FINANCE:
 			// validate limit Reference number
 			String finReference = limitTransDetail.getReferenceNumber();
-			FinanceMain financeMain = financeMainService.getFinanceMainById(finReference, true);
-			if (financeMain == null) {
+			FinanceMain fm = financeMainService.getFinanceMain(finReference, TableType.MAIN_TAB);
+
+			if (fm == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 
-			if (!financeMain.isFinIsActive()) {
+			if (!fm.isFinIsActive()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 
-			if (financeMain.getCustID() != 0 && financeMain.getCustID() != customer.getCustID()) {
+			if (fm.getCustID() != 0 && fm.getCustID() != customer.getCustID()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = customer.getCustCIF();
 				return APIErrorHandlerService.getFailedStatus("90812", valueParm);
 			}
-			BigDecimal finAmount = PennantApplicationUtil.formateAmount(financeMain.getFinAmount(),
+			BigDecimal finAmount = PennantApplicationUtil.formateAmount(fm.getFinAmount(),
 					CurrencyUtil.getFormat(limitTransDetail.getLimitCurrency()));
 			if (finAmount.compareTo(limitTransDetail.getLimitAmount()) != 0) {
 				String[] valueParm = new String[2];

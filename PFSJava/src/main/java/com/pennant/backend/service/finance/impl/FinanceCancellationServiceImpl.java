@@ -242,11 +242,11 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
 				// Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on
 				// Reversal
-				postingsPreparationUtil.postReveralsExceptFeePay(finReference);
+				postingsPreparationUtil.postReveralsExceptFeePay(finID);
 				logger.debug("Reverse Transaction Success for Reference : " + finReference);
 			} else {
 				// Event Based Accounting on Final Stage
-				Date curBDay = DateUtility.getAppDate();
+				Date curBDay = SysParamUtil.getAppDate();
 				auditHeader = executeAccountingProcess(auditHeader, curBDay);
 
 				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
@@ -310,7 +310,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public List<ReasonHeader> getCancelReasonDetails(long reference) {
+	public List<ReasonHeader> getCancelReasonDetails(String reference) {
 		return reasonDetailDAO.getCancelReasonDetails(reference);
 	}
 
@@ -428,7 +428,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// Finance Cancellation Posting Process Execution
 		// =====================================
 		// Event Based Accounting on Final Stage
-		List<ReturnDataSet> returnDataSets = postingsPreparationUtil.postReveralsExceptFeePay(finReference);
+		List<ReturnDataSet> returnDataSets = postingsPreparationUtil.postReveralsExceptFeePay(finID);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}

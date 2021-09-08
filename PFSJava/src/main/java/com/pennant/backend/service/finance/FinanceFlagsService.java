@@ -9,9 +9,9 @@ import com.pennant.backend.model.financemanagement.FinanceFlag;
 public interface FinanceFlagsService {
 	FinanceFlag getNewFinanceFlags();
 
-	FinanceFlag getFinanceFlagsByRef(String ref, String type);
+	FinanceFlag getFinanceFlagsByRef(long finID, String type);
 
-	FinanceFlag getApprovedFinanceFlagsById(String finReference);
+	FinanceFlag getApprovedFinanceFlagsById(long finID);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 

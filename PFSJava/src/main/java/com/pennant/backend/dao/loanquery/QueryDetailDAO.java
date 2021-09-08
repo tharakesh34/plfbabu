@@ -40,13 +40,13 @@ public interface QueryDetailDAO extends BasicCrudDao<QueryDetail> {
 	 */
 	QueryDetail getQueryDetail(long id, String type);
 
-	List<QueryDetail> getQueryMgmtList(long finID, String type);
+	List<QueryDetail> getQueryMgmtList(String reference, String type);
 
-	List<QueryDetail> getQueryMgmtListForAgreements(long finID, String type);
+	List<QueryDetail> getQueryMgmtListForAgreements(String reference, String type);
 
 	List<QueryDetail> getQueryMgmtListByRef(String reference, String type);
 
-	List<QueryDetail> getUnClosedQurysForGivenRole(long finID, String assignedRole);
+	List<QueryDetail> getUnClosedQurysForGivenRole(String reference, String assignedRole);
 
 	List<QueryDetail> getQueryListByReference(String reference);
 

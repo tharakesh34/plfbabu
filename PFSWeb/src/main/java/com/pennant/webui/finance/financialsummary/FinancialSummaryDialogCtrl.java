@@ -1,43 +1,25 @@
 /**
-O * Copyright 2011 - Pennant Technologies
+ * O * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinancialSummaryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-06-2018    														*
- *                                                                  						*
- * Modified Date    :  20-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinancialSummaryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-06-2018 * *
+ * Modified Date : 20-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 20-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financialsummary;
@@ -329,8 +311,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_financialSummaryDialog(Event event) throws Exception {
@@ -378,7 +359,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (customerEligibiltyService != null) {
 				this.button_FinancialSummaryDailog_DelphiCheck.setVisible(true);
 			}
-			
+
 			/*
 			 * int divKycHeight = this.borderLayoutHeight - 80; int semiBorderlayoutHeights = divKycHeight / 2;
 			 * this.listBoxCustomerDetails.setHeight(semiBorderlayoutHeights - 108 + "px");
@@ -564,7 +545,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (financeDetail.getSynopsisDetails() != null) {
 			try {
 				if (financeDetail.getSynopsisDetails().getCustomerBackGround() != null) {
-					//We are using UTF-8 character set to provide the compatibility of the existing data
+					// We are using UTF-8 character set to provide the compatibility of the existing data
 					this.customerBackground
 							.setValue(new String(financeDetail.getSynopsisDetails().getCustomerBackGround(),
 									NotificationConstants.UTF_EIGHT_CHARSET));
@@ -592,7 +573,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							NotificationConstants.UTF_EIGHT_CHARSET));
 				}
 				if (financeDetail.getSynopsisDetails().getCmtOnCollateralDtls() != null) {
-					//new requirement
+					// new requirement
 					this.cmtOnCollateralDtls
 							.setValue(new String(financeDetail.getSynopsisDetails().getCmtOnCollateralDtls(),
 									NotificationConstants.DEFAULT_CHARSET));
@@ -676,7 +657,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doFillEligibilityDetails();
 		}
 		if (isqueriesDetailsVisible) {
-			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(financeMain.getFinReference(),
+			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(financeMain.getFinID(),
 					"_View");
 			doFillQueriesDetails(queryDetails);
 		}

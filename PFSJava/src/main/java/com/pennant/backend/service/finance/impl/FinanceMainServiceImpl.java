@@ -34,6 +34,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>FinanceMain</b>.
@@ -86,8 +87,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public List<Long> getFinReferencesByCustID(long custId, String finActiveStatus) {
-		return financeMainDAO.getFinReferencesByCustID(custId, finActiveStatus);
+	public List<Long> getFinIDList(String custCIF, String closingStatus) {
+		return financeMainDAO.getFinIDList(custCIF, closingStatus);
 	}
 
 	@Override
@@ -101,14 +102,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public FinanceMain getFinanceByFinReference(long finID, String type) {
-		return financeMainDAO.getFinanceDetailsByFinRefence(finID, type);
-	}
-
-	@Override
-	public String getFinanceTypeFinReference(long finID, String type) {
-		return financeMainDAO.getFinanceTypeFinReference(finID, type);
-
+	public FinanceMain getFinanceMain(String finReference, TableType tableType) {
+		return financeMainDAO.getFinanceMain(finReference, tableType);
 	}
 
 	@Override
@@ -134,6 +129,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	@Override
 	public Date getClosedDateByFinRef(long finID) {
 		return financeMainDAO.getClosedDateByFinRef(finID);
+	}
+
+	@Override
+	public Long getFinID(String finRefernce) {
+		return financeMainDAO.getFinID(finRefernce);
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {

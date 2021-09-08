@@ -13,6 +13,7 @@ public class FinStatementRequest {
 	private String cif;
 	@XmlElement
 	private String finActiveStatus;
+	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement
@@ -40,6 +41,14 @@ public class FinStatementRequest {
 
 	public void setFinActiveStatus(String finActiveStatus) {
 		this.finActiveStatus = finActiveStatus;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

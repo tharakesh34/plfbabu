@@ -77,8 +77,9 @@ public class RemarksWebServiceImpl extends ExtendedTestClass implements RemarksS
 					return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 				}
 
-				int count = financeMainDAO.getFinanceCountById(notes.getReference(), "_Temp", false);
-				if (count <= 0) {
+				Long finID = financeMainDAO.getActiveFinID(notes.getReference());
+
+				if (finID == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = notes.getReference();
 					return APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -138,14 +139,15 @@ public class RemarksWebServiceImpl extends ExtendedTestClass implements RemarksS
 			valueParm[0] = "finReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
-		} else {
-			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
-			if (count <= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-				return response;
-			}
+		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return response;
 		}
 
 		notes.setReference(finReference);

@@ -17,7 +17,7 @@ public interface FinanceCancellationService {
 
 	AuditHeader doApprove(AuditHeader aAuditHeader, boolean isValReq);
 
-	List<ReasonHeader> getCancelReasonDetails(long finID);
+	List<ReasonHeader> getCancelReasonDetails(String reference);
 
 	List<FinAdvancePayments> getFinAdvancePaymentsByFinRef(long finID);
 

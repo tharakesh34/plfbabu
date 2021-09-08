@@ -126,7 +126,7 @@ public interface FinanceMainDAO {
 
 	List<Long> getFinReferencesByMandateId(long mandateId);
 
-	List<Long> getFinReferencesByCustID(long custId, String finActiveStatus);
+	List<Long> getFinIDList(String custCIF, String closingStatus);
 
 	BigDecimal getFinAssetValue(long finID);
 
@@ -348,6 +348,12 @@ public interface FinanceMainDAO {
 	FinanceMain getFinMainLinkedFinancesByFinRef(long finID, String string);
 
 	FinanceMain getFinanceMain(String finReference);
+
+	FinanceMain getFinanceMain(String finReference, TableType tableType);
+
+	FinanceMain getFinanceMain(long finID);
+
+	FinanceMain getFinanceMain(long finID, TableType tableType);
 
 	Long getFinID(String finReference);
 

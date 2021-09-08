@@ -915,7 +915,7 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		Customer customer = null;
 		customer = customerService.getCustomerById(aFinanceMain.getCustID());
 		setcustomerData(getFinScheduleData().getFinanceMain(), customer);
-		finFlagsDetailList = finFlagDetailsDAO.getFinFlagsByFinRef(aFinanceMain.getFinID(),
+		finFlagsDetailList = finFlagDetailsDAO.getFinFlagsByFinRef(aFinanceMain.getFinReference(),
 				FinanceConstants.MODULE_NAME, "_view");
 
 		if (aFinanceMain != null) {
@@ -1594,7 +1594,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_Subvention.setVisible(false);
 		}
 
-		List<ReasonHeader> details = getFinanceCancellationService().getCancelReasonDetails(aFinanceMain.getFinID());
+		List<ReasonHeader> details = getFinanceCancellationService()
+				.getCancelReasonDetails(aFinanceMain.getFinReference());
 		String data = "";
 		if (details.size() > 0) {
 			for (ReasonHeader header : details) {
@@ -1715,11 +1716,11 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
 
 		if (fromApproved) {
-			financeStepPolicyDetailList = getFinanceDetailService()
-					.getFinStepPolicyDetails(aFinanceMain.getFinReference(), "_AView", false);
+			financeStepPolicyDetailList = getFinanceDetailService().getFinStepPolicyDetails(aFinanceMain.getFinID(),
+					"_AView", false);
 		} else {
-			financeStepPolicyDetailList = getFinanceDetailService()
-					.getFinStepPolicyDetails(aFinanceMain.getFinReference(), "_View", false);
+			financeStepPolicyDetailList = getFinanceDetailService().getFinStepPolicyDetails(aFinanceMain.getFinID(),
+					"_View", false);
 		}
 
 		getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList);

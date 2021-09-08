@@ -173,18 +173,18 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 	}
 
 	@Override
-	public List<QueryDetail> getQueryMgmtList(long finID, String type) {
+	public List<QueryDetail> getQueryMgmtList(String reference, String type) {
 		StringBuilder sql = new StringBuilder("Select Status, RaisedUsrRole");
 		sql.append(" From QueryDetail");
 		sql.append(type);
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, reference);
 		}, (rs, rowNum) -> {
 			QueryDetail qd = new QueryDetail();
 
@@ -219,9 +219,9 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 	}
 
 	@Override
-	public List<QueryDetail> getQueryMgmtListForAgreements(long finID, String type) {
+	public List<QueryDetail> getQueryMgmtListForAgreements(String reference, String type) {
 		StringBuilder sql = sqlSelectQuery(type);
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -230,18 +230,18 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, reference);
 		}, rowMapper);
 
 	}
 
 	@Override
-	public List<QueryDetail> getUnClosedQurysForGivenRole(long finID, String assignedRole) {
+	public List<QueryDetail> getUnClosedQurysForGivenRole(String reference, String assignedRole) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, FinID, FinReference, CategoryId, QryNotes, AssignedRole");
 		sql.append(" NotifyTo, Status, RaisedBy, RaisedOn, Version, LastmntBy, WorkFlowId, Module, Reference");
 		sql.append(" From QueryDetail");
-		sql.append(" Where FinID = ? and AssignedRole = ?");
+		sql.append(" Where FinReference = ? and AssignedRole = ?");
 		sql.append(" and (Status ! = ? and Status ! = ?) ");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -249,7 +249,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, reference);
 			ps.setString(index++, assignedRole);
 			ps.setString(index++, "Close");
 			ps.setString(index++, "Resolve");

@@ -126,7 +126,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table) {
 		TransactionStatus txStatus = null;
-		//StringBuilder remarks = null;
+		// StringBuilder remarks = null;
 
 		try {
 
@@ -261,12 +261,12 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 			long linkedTranId = 0;
 			if (finMain != null) {
-				linkedTranId = executeAccountingProcess(finMain.getFinReference(), finMain.getFinBranch(), mbdAmount);
+				linkedTranId = executeAccountingProcess(finMain.getFinID(), finMain.getFinBranch(), mbdAmount);
 			}
 			subventionMapdata.addValue("LinkedTranId", linkedTranId);
 			subventionProcessDAO.saveSubventionProcessRequest(subventionMapdata);
 
-			//DBD Payment/Receipt Creation
+			// DBD Payment/Receipt Creation
 
 			if (promotion.isDbd() && !promotion.isDbdRtnd()) {
 
@@ -277,7 +277,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 					feeType = feeTypeDAO.getFeeTypeById(promotion.getDbdFeeTypId(), "");
 					CashBackDetail cashBackDetail = cashBackDetailDAO
-							.getManualAdviseIdByFinReference(finMain.getFinReference(), "DBD");
+							.getManualAdviseIdByFinReference(finMain.getFinID(), "DBD");
 					finMain.setLastMntBy(1000);
 					finMain.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					finMain.setFinCcy(SysParamUtil.getAppCurrency());
@@ -311,10 +311,9 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 				if (DateUtility.compare(appDate, cbDate) >= 0) {
 
 					CashBackDetail cashBackDetail = cashBackDetailDAO
-							.getManualAdviseIdByFinReference(finMain.getFinReference(), "MBD");
+							.getManualAdviseIdByFinReference(finMain.getFinID(), "MBD");
 					if (cashBackDetail == null) {
-						cashBackDetail = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinReference(),
-								"DBMBD");
+						cashBackDetail = cashBackDetailDAO.getManualAdviseIdByFinReference(finMain.getFinID(), "DBMBD");
 						feeType = feeTypeDAO.getFeeTypeById(promotion.getDbdAndMbdFeeTypId(), "");
 					}
 
@@ -361,7 +360,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 				throw new AppException("HostReference is not avilable in PLF or inactive");
 			}
 		}
-		List<FinFeeDetail> feeList = finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinReference(), "");
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getDMFinFeeDetailByFinRef(finMain.getFinID(), "");
 		BigDecimal feeAmount = BigDecimal.ZERO;
 
 		for (FinFeeDetail finFeeDetail : feeList) {
@@ -432,7 +431,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	 * @param manualAdvise
 	 * @return
 	 */
-	private AEEvent prepareAccSetData(String finReference, String postBranch, BigDecimal mbdAmount) {
+	private AEEvent prepareAccSetData(long finID, String postBranch, BigDecimal mbdAmount) {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -444,7 +443,7 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		}
 
 		// Finance main
-		FinanceMain financeMain = manualAdviseDAO.getFinanceDetails(finReference);
+		FinanceMain financeMain = manualAdviseDAO.getFinanceDetails(finID);
 		amountCodes.setFinType(financeMain.getFinType());
 
 		aeEvent.setPostingUserBranch(postBranch);
@@ -461,8 +460,8 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 
 		eventMapping.put("ae_oemSbvAmount", mbdAmount);
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountingEvent.OEMSBV, FinanceConstants.MODULEID_FINTYPE);
+		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.OEMSBV,
+				FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 
 		logger.debug(Literal.LEAVING);
@@ -483,10 +482,10 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	private long executeAccountingProcess(String finReference, String postBranch, BigDecimal mbdAmount) {
+	private long executeAccountingProcess(long finID, String postBranch, BigDecimal mbdAmount) {
 		logger.debug(Literal.ENTERING);
 
-		AEEvent aeEvent = prepareAccSetData(finReference, postBranch, mbdAmount);
+		AEEvent aeEvent = prepareAccSetData(finID, postBranch, mbdAmount);
 		aeEvent = postingsPreparationUtil.postAccounting(aeEvent);
 
 		if (!aeEvent.isPostingSucess()) {

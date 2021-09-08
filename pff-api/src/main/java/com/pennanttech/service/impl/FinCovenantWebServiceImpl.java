@@ -24,6 +24,7 @@ import com.pennanttech.controller.FinCovenantController;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.FinCovenantRestService;
 import com.pennanttech.pffws.FinCovenantSoapService;
 import com.pennanttech.ws.model.finance.FinCovenantResponse;
@@ -104,7 +105,7 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
 		FinanceMain financeMain = null;
-		financeMain = financeDetailService.getFinanceMain(finReference, "_View");
+		financeMain = financeMainDAO.getFinanceMain(finReference);
 		if (financeMain == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
@@ -152,15 +153,16 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 
 		// for logging purpose
 		APIErrorHandlerService.logReference(finReference);
-		FinanceMain financeMain = null;
-		financeMain = financeDetailService.getFinanceMain(finReference, "_View");
-		if (financeMain == null) {
+		FinanceMain fm = null;
+		fm = financeMainDAO.getFinanceMain(finReference);
+
+		if (fm == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
-		if (!financeMain.isFinIsActive() || StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
+		if (!fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -173,7 +175,14 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
 
-		boolean referenceExitsinLQ = financeMainDAO.isFinReferenceExists(finReference, "_Temp", false);
+		Long finID = financeMainDAO.getFinID(finReference, TableType.TEMP_TAB);
+
+		boolean referenceExitsinLQ = false;
+
+		if (finID != null) {
+			referenceExitsinLQ = true;
+		}
+
 		for (FinCovenantType finCovenantType : covenantTypeList) {
 			String covenantType = finCovenantType.getCovenantType();
 			if (StringUtils.isBlank(covenantType)) {
@@ -216,16 +225,16 @@ public class FinCovenantWebServiceImpl implements FinCovenantRestService, FinCov
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
 		}
-		FinanceMain financeMain = null;
-		financeMain = financeDetailService.getFinanceMain(finReference, "_View");
-		if (financeMain == null) {
+		FinanceMain fm = null;
+		fm = financeMainDAO.getFinanceMain(finReference);
+		if (fm == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return response;
 		}
 
-		if (!financeMain.isFinIsActive() || StringUtils.isNotEmpty(financeMain.getRcdMaintainSts())) {
+		if (!fm.isFinIsActive() || StringUtils.isNotEmpty(fm.getRcdMaintainSts())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));

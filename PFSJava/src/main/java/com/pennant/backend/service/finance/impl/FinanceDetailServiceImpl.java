@@ -595,8 +595,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		/* Deviations */
 		if (ImplementationConstants.ALLOW_DEVIATIONS) {
-			List<FinanceDeviations> deviations = deviationDetailsService.getFinanceDeviations(finReference);
-			List<FinanceDeviations> apprDeviations = deviationDetailsService.getApprovedFinanceDeviations(finReference);
+			List<FinanceDeviations> deviations = deviationDetailsService.getFinanceDeviations(finID);
+			List<FinanceDeviations> apprDeviations = deviationDetailsService.getApprovedFinanceDeviations(finID);
 			deviationHelper.setDeviationDetails(fd, deviations, apprDeviations);
 		}
 
@@ -620,7 +620,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* Put-call */
-		fd.setFinOptions(finOptionService.getFinOptions(finReference, TableType.VIEW));
+		fd.setFinOptions(finOptionService.getFinOptions(finID, TableType.VIEW));
 
 		/* Asset Type Details */
 		fd.setFinAssetTypesList(finAssetTypeDAO.getFinAssetTypesByFinRef(finReference, "_TView"));
@@ -634,7 +634,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* Cheque Header and Cheque Details getting */
-		fd.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finReference));
+		fd.setChequeHeader(finChequeHeaderService.getChequeHeaderByRef(finID));
 
 		/* Collateral Details */
 		List<CollateralAssignment> assignmentListMain = null;
@@ -671,7 +671,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* PSL details */
-		fd.setPslDetail(pSLDetailService.getPSLDetail((finReference)));
+		fd.setPslDetail(pSLDetailService.getPSLDetail((finID)));
 
 		/* Legal details */
 		if (fm.isLegalRequired()) {
@@ -679,17 +679,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* Linked Finances */
-		fd.setLinkedFinancesList(linkedFinancesService.getLinkedFinancesByRef(finReference, "_TView"));
+		fd.setLinkedFinancesList(linkedFinancesService.getLinkedFinancesByRef(finID, "_TView"));
 
 		/* Financial Summary RisksAndMitigants Details */
 		fd.getRisksAndMitigantsList().addAll(risksAndMitigantsDAO.getRisksAndMitigants(finReference));
 
 		/* Financial Summary SanctionConditions Details */
-		fd.getSanctionDetailsList().addAll(sanctionConditionsDAO.getSanctionConditions(finReference));
+		fd.getSanctionDetailsList().addAll(sanctionConditionsDAO.getSanctionConditions(finID));
 
 		/* Financial Summary DealRecommendationMerits Details */
 		fd.getDealRecommendationMeritsDetailsList()
-				.addAll(dealRecommendationMeritsDAO.getDealRecommendationMerits(finID));
+				.addAll(dealRecommendationMeritsDAO.getDealRecommendationMerits(finReference));
 
 		/* Financial Summary DueDiligences Details */
 		List<DueDiligenceDetails> dueDiligenceDetailsList = dueDiligenceDetailsDAO.getDueDiligenceDetails(finID);
@@ -699,13 +699,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		fd.getRecommendationNoteList().addAll(recommendationNotesDetailsDAO.getRecommendationNotesDetails(finID));
 
 		/* SynopsisDetails details */
-		fd.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finReference));
+		fd.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finID));
 
 		/* Finance OCR Details */
 		fd.setFinOCRHeader(finOCRHeaderService.getFinOCRHeaderByRef(finID, "_View"));
 
 		/* PMAY */
-		fd.setPmay(pmayService.getPMAY(finReference, "_View"));
+		fd.setPmay(pmayService.getPMAY(finID, "_View"));
 
 		if (subventionService != null) {
 			subventionService.setSubventionDetails(schdData, "_View");
@@ -964,6 +964,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
+		String finReference = fm.getFinReference();
+
 		List<FinServiceInstruction> siList = finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp",
 				serviceEvent);
 
@@ -1080,49 +1082,46 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.ENTERING);
 
 		// Finance Details
-		FinanceDetail financeDetail = getFinSchdDetailById(finID, "_View", true);
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = scheduleData.getFinanceMain();
+		FinanceDetail fd = getFinSchdDetailById(finID, "_View", true);
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String finReference = fm.getFinReference();
 
 		// Finance Fee Details
-		scheduleData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, true, "_View"));
+		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, true, "_View"));
 
-		if (scheduleData.getFinanceMain() != null) {
-			long custId = scheduleData.getFinanceMain().getCustID();
-			if (custId != 0) {
-				financeDetail.setCustomer(customerDAO.getWIFCustomerByID(custId, null, "_AView"));
+		long custId = fm.getCustID();
+		if (custId != 0) {
+			fd.setCustomer(customerDAO.getWIFCustomerByID(custId, null, "_AView"));
 
-				if (financeDetail.getCustomer() == null) {
-					Customer customer = customerDAO.getCustomerByID(custId, "");
-					WIFCustomer wifcustomer = new WIFCustomer();
-					BeanUtils.copyProperties(customer, wifcustomer);
-					wifcustomer.setExistCustID(wifcustomer.getCustID());
-					wifcustomer.setCustID(0);
-					wifcustomer.setNewRecord(true);
-					financeDetail.setCustomer(wifcustomer);
-				} else {
-					financeDetail.getCustomer().setNewRecord(false);
-				}
+			if (fd.getCustomer() == null) {
+				Customer customer = customerDAO.getCustomerByID(custId, "");
+				WIFCustomer wifcustomer = new WIFCustomer();
+				BeanUtils.copyProperties(customer, wifcustomer);
+				wifcustomer.setExistCustID(wifcustomer.getCustID());
+				wifcustomer.setCustID(0);
+				wifcustomer.setNewRecord(true);
+				fd.setCustomer(wifcustomer);
+			} else {
+				fd.getCustomer().setNewRecord(false);
 			}
 		}
 
-		if (reqCustDetail && scheduleData.getFinanceMain() != null) {
+		if (reqCustDetail) {
 
-			if (StringUtils.equals(scheduleData.getFinanceType().getFinDivision(),
-					FinanceConstants.FIN_DIVISION_RETAIL)) {
-
-				long custId = scheduleData.getFinanceMain().getCustID();
+			if (StringUtils.equals(schdData.getFinanceType().getFinDivision(), FinanceConstants.FIN_DIVISION_RETAIL)) {
 				if (custId != 0) {
-					financeDetail.setCustomer(customerDAO.getWIFCustomerByID(custId, null, "_AView"));
+					fd.setCustomer(customerDAO.getWIFCustomerByID(custId, null, "_AView"));
 
-					if (financeDetail.getCustomer() == null) {
+					if (fd.getCustomer() == null) {
 						Customer customer = customerDAO.getCustomerByID(custId, "");
 						WIFCustomer wifcustomer = new WIFCustomer();
 						BeanUtils.copyProperties(customer, wifcustomer);
 						wifcustomer.setExistCustID(wifcustomer.getCustID());
 						wifcustomer.setCustID(0);
 						wifcustomer.setNewRecord(true);
-						financeDetail.setCustomer(wifcustomer);
+						fd.setCustomer(wifcustomer);
 					}
 				} else {
 					WIFCustomer wifcustomer = new WIFCustomer();
@@ -1137,40 +1136,39 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					wifcustomer.setLovDescCustTypeCodeName("Individual");
 					wifcustomer.setCustCtgCode("INDV");
 					wifcustomer.setLovDescCustCtgCodeName("Individual");
-					financeDetail.setCustomer(wifcustomer);
+					fd.setCustomer(wifcustomer);
 				}
 
-				financeDetail.getCustomer().setCustomerIncomeList(prepareIncomeDetails());
-				String finType = scheduleData.getFinanceType().getFinType();
+				fd.getCustomer().setCustomerIncomeList(prepareIncomeDetails());
+				String finType = schdData.getFinanceType().getFinType();
 
-				financeDetail.setElgRuleList(
-						eligibilityDetailService.setFinanceEligibilityDetails(finReference, financeMain.getFinCcy(),
-								financeMain.getFinAmount(), financeMain.isNewRecord(), finType, null, procEdtEvent));
+				fd.setElgRuleList(eligibilityDetailService.setFinanceEligibilityDetails(finReference, fm.getFinCcy(),
+						fm.getFinAmount(), fm.isNewRecord(), finType, null, procEdtEvent));
 
-				financeDetail = scoringDetailService.setFinanceScoringDetails(financeDetail, finType, null,
+				fd = scoringDetailService.setFinanceScoringDetails(fd, finType, null,
 						PennantConstants.PFF_CUSTCTG_INDIV, procEdtEvent);
 			}
-		} else if (StringUtils.equals(scheduleData.getFinanceType().getFinDivision(),
+		} else if (StringUtils.equals(schdData.getFinanceType().getFinDivision(),
 				FinanceConstants.FIN_DIVISION_RETAIL)) {
 
 			ProspectCustomer propCustomer = customerDAO.getProspectCustomer(finReference, "_View");
 			if (propCustomer != null) {
-				financeMain.setCustID(propCustomer.getCustId());
-				financeMain.setLovDescCustCIF(propCustomer.getCustCIF());
-				financeMain.setLovDescCustShrtName(propCustomer.getCustShrtName());
-				financeMain.setLovDescCustCtgCode(propCustomer.getCustCtgCode());
-				financeMain.setFinBranch(propCustomer.getCustDftBranch());
+				fm.setCustID(propCustomer.getCustId());
+				fm.setLovDescCustCIF(propCustomer.getCustCIF());
+				fm.setLovDescCustShrtName(propCustomer.getCustShrtName());
+				fm.setLovDescCustCtgCode(propCustomer.getCustCtgCode());
+				fm.setFinBranch(propCustomer.getCustDftBranch());
 			} else {
-				financeMain.setCustID(0);
-				financeMain.setLovDescCustCIF("");
-				financeMain.setLovDescCustShrtName("");
-				financeMain.setLovDescCustCtgCode("");
-				financeMain.setFinBranch("");
+				fm.setCustID(0);
+				fm.setLovDescCustCIF("");
+				fm.setLovDescCustShrtName("");
+				fm.setLovDescCustCtgCode("");
+				fm.setFinBranch("");
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	@Override
@@ -1256,7 +1254,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (StringUtils.equals(procEdtEvent, FinServiceEvent.ORG)) {
 					List<FinanceDeviations> finDeviations = deviationDetailsService.getFinanceDeviations(finID);
 					List<FinanceDeviations> apprFinDeviations = deviationDetailsService
-							.getApprovedFinanceDeviations(finReference);
+							.getApprovedFinanceDeviations(finID);
 					deviationHelper.setDeviationDetails(fd, finDeviations, apprFinDeviations);
 				}
 			}
@@ -5932,10 +5930,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			apiCall = true;
 		}
 
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		if (isAutoReject) {
-			fm = financeMainDAO.getFinanceMainById(finReference, "_Temp", false);
+			fm = financeMainDAO.getFinanceMainById(finID, "_Temp", false);
 
 			// TODO for API Fix me Issue in Reject Loan
 			if (apiCall) {
@@ -5967,7 +5966,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String tranType = PennantConstants.TRAN_DEL;
 		// PSD #139669 - Rejection of Loan under loan queue gives 900 error
 		fm.setFinIsActive(false);
-		FinanceMain financeMainAvl = financeMainDAO.getFinanceMainById(finReference, "_Temp", false);
+		FinanceMain financeMainAvl = financeMainDAO.getFinanceMainById(finID, "_Temp", false);
 		fm.setLastMntOn(new Timestamp(SysParamUtil.getAppDate().getTime()));
 		if (fm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW) && financeMainAvl != null) {
 			financeMainDAO.updateRejectFinanceMain(fm, TableType.TEMP_TAB, isWIF);
@@ -6369,18 +6368,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private void rejectChildLoan(String finReference) {
 
-		List<String> finRefByParentRef = financeMainDAO.getChildFinRefByParentRef(finReference);
+		List<Long> finIDList = financeMainDAO.getChildFinRefByParentRef(finReference);
 
-		if (CollectionUtils.isEmpty(finRefByParentRef)) {
-			logger.debug(" Undisbursed Child loans are not available for  the specified finreference >> {}",
-					finReference);
+		if (CollectionUtils.isEmpty(finIDList)) {
 			return;
 		}
 
 		List<FinanceMain> list = new ArrayList<>();
-		for (String reference : finRefByParentRef) {
+		for (Long finID : finIDList) {
 			FinanceMain fm = new FinanceMain();
-			fm.setFinReference(reference);
+			fm.setFinID(finID);
 			fm.setApproved(null);
 			fm.setProcessAttributes("");
 			fm.setFinIsActive(false);
@@ -10776,7 +10773,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			feeDetail.setRecordStatus(main.getRecordStatus());
 			feeDetail.setLastMntOn(main.getLastMntOn());
 			feeDetail.setLastMntBy(main.getLastMntBy());
-			String finType = financeMainDAO.getFinanceTypeFinReference(feeDetail.getFinID(), "_Temp");
+			String finType = financeMainDAO.getFinanceType(feeDetail.getFinID(), TableType.TEMP_TAB);
 			FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(finType,
 					FinServiceEvent.ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
 			if (financeWorkFlow != null) {

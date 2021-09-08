@@ -398,56 +398,59 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 */
 	public void doWriteBeanToComponents(ReinstateFinance aReinstateFinance) {
 		logger.debug("Entering");
-		doSetFinanceData(aReinstateFinance.getFinReference());
+		doSetFinanceData(aReinstateFinance.getFinID());
 		appendPostingDetailsTab();
 		this.recordStatus.setValue(aReinstateFinance.getRecordStatus());
 		logger.debug("Leaving");
 	}
 
-	private void doSetFinanceData(String finReference) {
+	private void doSetFinanceData(Long finID) {
 		logger.debug("Entering");
-		if (StringUtils.isNotBlank(finReference)) {
-			ReinstateFinance reinstateFinance = getReinstateFinanceService().getFinanceDetailsById(finReference);
-			if (reinstateFinance != null) {
-				List<ReasonDetailsLog> reasonDetailsLog = getReinstateFinanceService().getResonDetailsLog(finReference);
-				finFormatter = CurrencyUtil.getFormat(reinstateFinance.getFinCcy());
-				setCurrencyFieldProperties();
-				this.finReference.setValue(reinstateFinance.getFinReference());
-				this.custCIF.setValue(reinstateFinance.getCustCIF());
-				this.custShortName.setValue(reinstateFinance.getCustShrtName());
-				this.finType.setValue(reinstateFinance.getFinType());
-				this.finType.setDescription(reinstateFinance.getLovDescFinTypeName());
-				this.finBranch.setValue(reinstateFinance.getFinBranch());
-				this.finBranch.setDescription(reinstateFinance.getLovDescFinBranchName());
-				this.finCcy.setValue(reinstateFinance.getFinCcy());
-				this.finCcy.setDescription(CurrencyUtil.getCcyDesc(reinstateFinance.getFinCcy()));
-				this.finAmount.setValue(PennantAppUtil.formateAmount(reinstateFinance.getFinAmount(), finFormatter));
-				this.totDownpayment
-						.setValue(PennantAppUtil.formateAmount(reinstateFinance.getDownPayment(), finFormatter));
-				this.finStartDate.setValue(reinstateFinance.getFinStartDate());
-				this.maturityDate.setValue(reinstateFinance.getMaturityDate());
-				this.totProfit.setValue(PennantAppUtil.formateAmount(reinstateFinance.getTotalProfit(), finFormatter));
-				this.rejectSts.setValue(reinstateFinance.getRejectStatus());
-				this.rejectRemarks.setValue(reinstateFinance.getRejectRemarks());
-				this.rejectedBy.setValue(reinstateFinance.getRejectedBy());
-				this.rejectedOn.setValue(reinstateFinance.getRejectedOn());
 
-				this.gb_RejectDetails.setVisible(true);
-				this.gb_financeDetails.setVisible(true);
+		if (finID == null) {
+			return;
+		}
 
-				String rejectReason = "";
-				if (CollectionUtils.isNotEmpty(reasonDetailsLog)) {
-					for (ReasonDetailsLog reasonDetailLog : reasonDetailsLog) {
-						if (StringUtils.isNotEmpty(rejectReason)) {
-							rejectReason = rejectReason.concat(",");
-						}
-						rejectReason = rejectReason.concat(reasonDetailLog.getRejectReasonDesc());
-					}
-					this.rejectReason.setValue(rejectReason);
+		ReinstateFinance rf = reinstateFinanceService.getFinanceDetailsById(finID);
+
+		if (rf == null) {
+			doClear();
+		}
+
+		List<ReasonDetailsLog> reasonDetailsLog = getReinstateFinanceService().getResonDetailsLog(rf.getFinReference());
+		finFormatter = CurrencyUtil.getFormat(rf.getFinCcy());
+		setCurrencyFieldProperties();
+		this.finReference.setValue(rf.getFinReference());
+		this.custCIF.setValue(rf.getCustCIF());
+		this.custShortName.setValue(rf.getCustShrtName());
+		this.finType.setValue(rf.getFinType());
+		this.finType.setDescription(rf.getLovDescFinTypeName());
+		this.finBranch.setValue(rf.getFinBranch());
+		this.finBranch.setDescription(rf.getLovDescFinBranchName());
+		this.finCcy.setValue(rf.getFinCcy());
+		this.finCcy.setDescription(CurrencyUtil.getCcyDesc(rf.getFinCcy()));
+		this.finAmount.setValue(PennantAppUtil.formateAmount(rf.getFinAmount(), finFormatter));
+		this.totDownpayment.setValue(PennantAppUtil.formateAmount(rf.getDownPayment(), finFormatter));
+		this.finStartDate.setValue(rf.getFinStartDate());
+		this.maturityDate.setValue(rf.getMaturityDate());
+		this.totProfit.setValue(PennantAppUtil.formateAmount(rf.getTotalProfit(), finFormatter));
+		this.rejectSts.setValue(rf.getRejectStatus());
+		this.rejectRemarks.setValue(rf.getRejectRemarks());
+		this.rejectedBy.setValue(rf.getRejectedBy());
+		this.rejectedOn.setValue(rf.getRejectedOn());
+
+		this.gb_RejectDetails.setVisible(true);
+		this.gb_financeDetails.setVisible(true);
+
+		String rejectReason = "";
+		if (CollectionUtils.isNotEmpty(reasonDetailsLog)) {
+			for (ReasonDetailsLog reasonDetailLog : reasonDetailsLog) {
+				if (StringUtils.isNotEmpty(rejectReason)) {
+					rejectReason = rejectReason.concat(",");
 				}
-			} else {
-				doClear();
+				rejectReason = rejectReason.concat(reasonDetailLog.getRejectReasonDesc());
 			}
+			this.rejectReason.setValue(rejectReason);
 		}
 		logger.debug("Leaving");
 	}
@@ -1142,7 +1145,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		if (details != null) {
 			this.finReference.setValue(details.getFinReference());
 			this.finReference.setDescription("");
-			doSetFinanceData(details.getFinReference());
+			doSetFinanceData(details.getFinID());
 			getReinstateFinance().setFinPreApprovedRef(details.getFinPreApprovedRef());
 			// Workflow Details
 			setWorkflowDetails(details.getFinType());

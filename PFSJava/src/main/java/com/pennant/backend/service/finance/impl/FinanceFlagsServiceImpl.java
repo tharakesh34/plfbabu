@@ -30,7 +30,6 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> implements FinanceFlagsService {
-
 	private static final Logger logger = LogManager.getLogger(FinanceFlagsServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -42,51 +41,27 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		super();
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-	public FinFlagsHeaderDAO getFinFlagsHeaderDAO() {
-		return finFlagsHeaderDAO;
-	}
-
-	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
-		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
-	}
-
-	public FinFlagDetailsDAO getFinFlagDetailsDAO() {
-		return finFlagDetailsDAO;
-	}
-
-	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
-		this.finFlagDetailsDAO = finFlagDetailsDAO;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
 	public FinanceFlag getNewFinanceFlags() {
-		return getFinFlagsHeaderDAO().getNewFinanceFlags();
+		return finFlagsHeaderDAO.getNewFinanceFlags();
 	}
 
 	@Override
-	public FinanceFlag getFinanceFlagsByRef(String financeReference, String type) {
-		FinanceFlag financeFlag = new FinanceFlag();
-		financeFlag = getFinFlagsHeaderDAO().getFinFlagsHeaderByRef(financeReference, type);
-		if (financeFlag != null) {
-			financeFlag.setFinFlagDetailList(getFinFlagDetailsDAO().getFinFlagsByFinRef(financeReference,
-					FinServiceEvent.FINFLAGS, type));
+	public FinanceFlag getFinanceFlagsByRef(long finID, String type) {
+		FinanceFlag finFlag = new FinanceFlag();
+		finFlag = finFlagsHeaderDAO.getFinFlagsHeaderByRef(finID, type);
+
+		if (finFlag == null) {
+			return null;
 		}
-		return financeFlag;
+
+		finFlag.setFinFlagDetailList(
+				finFlagDetailsDAO.getFinFlagsByFinRef(finFlag.getFinReference(), FinServiceEvent.FINFLAGS, type));
+		return finFlag;
 	}
 
 	@Override
-	public FinanceFlag getApprovedFinanceFlagsById(String finReference) {
-		return getFinFlagsHeaderDAO().getFinFlagsHeaderByRef(finReference, "_View");
+	public FinanceFlag getApprovedFinanceFlagsById(long finID) {
+		return finFlagsHeaderDAO.getFinFlagsHeaderByRef(finID, "_View");
 	}
 
 	@Override
@@ -102,8 +77,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	 * Configuration. by using FinFlagsHeaderDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtFinanceFlags by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -127,18 +101,18 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 				financeFlag.setRecordType("");
 				financeFlag.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
-			getFinFlagsHeaderDAO().save(financeFlag, tableType);
+			finFlagsHeaderDAO.save(financeFlag, tableType);
 		} else {
-			getFinFlagsHeaderDAO().update(financeFlag, tableType);
+			finFlagsHeaderDAO.update(financeFlag, tableType);
 		}
 
-		//Retrieving List of Audit Details For FinFlagsDetail expense  related modules
+		// Retrieving List of Audit Details For FinFlagsDetail expense related modules
 		List<AuditDetail> details = processingFinFlags(financeFlag, tableType);
 		if (details != null) {
 			auditDetails.addAll(details);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -159,7 +133,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			return auditDetails;
 		}
 		boolean saveRecord = false;
-		//boolean updateRecord = false;
+		// boolean updateRecord = false;
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
@@ -245,8 +219,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	 * FinanceFlag by using finFlagsHeaderDAO delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtFinanceFlag by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -259,10 +232,10 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		}
 
 		FinanceFlag financeFlag = (FinanceFlag) auditHeader.getAuditDetail().getModelData();
-		getFinFlagsHeaderDAO().delete(financeFlag, "");
+		finFlagsHeaderDAO.delete(financeFlag, "");
 
 		auditHeader.setAuditDetails(listDeletion(financeFlag, "", auditHeader.getAuditTranType()));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -273,8 +246,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	 * FinanceFlag by using finFlagsHeaderDAO delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtFinanceFlag by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -300,18 +272,18 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 				String moduleName = FinanceConstants.MODULE_NAME;
 
 				// delete particular flag code
-				getFinFlagDetailsDAO().delete(finReference, flagCode, moduleName, "");
+				finFlagDetailsDAO.delete(finReference, flagCode, moduleName, "");
 			}
 
 			// check records
-			int rcdCount = getFinFlagDetailsDAO().getFinFlagDetailCountByRef(financeFlag.getFinReference(), "");
+			int rcdCount = finFlagDetailsDAO.getFinFlagDetailCountByRef(financeFlag.getFinReference(), "");
 			if (rcdCount <= 0) {
-				getFinFlagsHeaderDAO().delete(financeFlag, "");
+				finFlagsHeaderDAO.delete(financeFlag, "");
 			}
 		}
 
 		auditHeader.setAuditDetails(auditList);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -328,7 +300,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		for (AuditDetail auditDetail : auditList) {
 			auditDetail.setAuditTranType(auditTranType);
 		}
-		getFinFlagDetailsDAO().deleteList(financeFlag.getFinReference(), "FINANCE", tableType);
+		finFlagDetailsDAO.deleteList(financeFlag.getFinReference(), "FINANCE", tableType);
 		logger.debug("Leaving");
 		return auditList;
 	}
@@ -345,13 +317,13 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 		FinanceFlag financeFlag = (FinanceFlag) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinFlagsHeaderDAO().delete(financeFlag, "_Temp");
+		finFlagsHeaderDAO.delete(financeFlag, "_Temp");
 
 		auditHeader.setAuditDetail(
 				new AuditDetail(auditHeader.getAuditTranType(), 1, financeFlag.getBefImage(), financeFlag));
 		auditHeader.setAuditDetails(listDeletion(financeFlag, "_Temp", auditHeader.getAuditTranType()));
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -361,10 +333,8 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -401,11 +371,11 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			FinFlagsDetail finFlagsDetail = (FinFlagsDetail) auditDetail.getModelData();
 			FinFlagsDetail tempFinFlagsDetail = null;
 			if (finFlagsDetail.isWorkflow()) {
-				tempFinFlagsDetail = getFinFlagDetailsDAO().getFinFlagsByRef(finFlagsDetail.getReference(),
+				tempFinFlagsDetail = finFlagDetailsDAO.getFinFlagsByRef(finFlagsDetail.getReference(),
 						finFlagsDetail.getFlagCode(), finFlagsDetail.getModuleName(), "_Temp");
 			}
 
-			FinFlagsDetail befFinFlagsDetail = getFinFlagDetailsDAO().getFinFlagsByRef(finFlagsDetail.getReference(),
+			FinFlagsDetail befFinFlagsDetail = finFlagDetailsDAO.getFinFlagsByRef(finFlagsDetail.getReference(),
 					finFlagsDetail.getFlagCode(), finFlagsDetail.getModuleName(), "");
 			FinFlagsDetail oldFinFlagsDetail = finFlagsDetail.getBefImage();
 
@@ -419,14 +389,16 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 			if (finFlagsDetail.isNewRecord()) { // for New record or new record into work flow
 
-				if (!finFlagsDetail.isWorkflow()) {// With out Work flow only new records  
-					if (befFinFlagsDetail != null) { // Record Already Exists in the table then error  
+				if (!finFlagsDetail.isWorkflow()) {// With out Work flow only new records
+					if (befFinFlagsDetail != null) { // Record Already Exists in the table then error
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // with work flow
 
-					if (finFlagsDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-						if (befFinFlagsDetail != null || tempFinFlagsDetail != null) { // if records already exists in the main table
+					if (finFlagsDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+						if (befFinFlagsDetail != null || tempFinFlagsDetail != null) { // if records already exists in
+																						// the main table
 							auditDetail.setErrorDetail(
 									new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 						}
@@ -459,7 +431,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 					}
 				} else {
 
-					if (tempFinFlagsDetail == null) { // if records not exists in the Work flow table 
+					if (tempFinFlagsDetail == null) { // if records not exists in the Work flow table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 
@@ -550,13 +522,11 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	/**
 	 * Validation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details from the
 	 * tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5) for any
-	 * mismatch conditions Fetch the error details from getFinFlagsHeaderDAO().getErrorDetail with Error ID and language
-	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * mismatch conditions Fetch the error details from finFlagsHeaderDAO.getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method, boolean onlineRequest) {
@@ -566,9 +536,9 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 		FinanceFlag tempFinanceFlag = null;
 		if (financeFlag.isWorkflow()) {
-			tempFinanceFlag = getFinFlagsHeaderDAO().getFinFlagsHeaderByRef(financeFlag.getFinReference(), "_Temp");
+			tempFinanceFlag = finFlagsHeaderDAO.getFinFlagsHeaderByRef(financeFlag.getFinID(), "_Temp");
 		}
-		FinanceFlag befFinanceFlag = getFinFlagsHeaderDAO().getFinFlagsHeaderByRef(financeFlag.getFinReference(), "");
+		FinanceFlag befFinanceFlag = finFlagsHeaderDAO.getFinFlagsHeaderByRef(financeFlag.getFinID(), "");
 
 		FinanceFlag oldFinanceFlag = financeFlag.getBefImage();
 
@@ -579,14 +549,15 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 		if (financeFlag.isNewRecord()) { // for New record or new record into work flow
 
-			if (!financeFlag.isWorkflow()) {// With out Work flow only new records  
-				if (befFinanceFlag != null) { // Record Already Exists in the table then error  
+			if (!financeFlag.isWorkflow()) {// With out Work flow only new records
+				if (befFinanceFlag != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (financeFlag.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinanceFlag != null || tempFinanceFlag != null) { // if records already exists in the main table
+					if (befFinanceFlag != null || tempFinanceFlag != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -621,7 +592,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 				}
 			} else {
 
-				if (tempFinanceFlag == null) { // if records not exists in the Work flow table 
+				if (tempFinanceFlag == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -657,7 +628,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 		if (financeFlag.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getFinFlagsHeaderDAO().delete(financeFlag, "");
+			finFlagsHeaderDAO.delete(financeFlag, "");
 			auditDetails.addAll(listDeletion(financeFlag, "", auditHeader.getAuditTranType()));
 		} else {
 			financeFlag.setRoleCode("");
@@ -669,11 +640,11 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			if (financeFlag.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				financeFlag.setRecordType("");
-				getFinFlagsHeaderDAO().save(financeFlag, "");
+				finFlagsHeaderDAO.save(financeFlag, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				financeFlag.setRecordType("");
-				getFinFlagsHeaderDAO().update(financeFlag, "");
+				finFlagsHeaderDAO.update(financeFlag, "");
 			}
 		}
 		if (financeFlag.getFinFlagDetailList() != null && financeFlag.getFinFlagDetailList().size() > 0) {
@@ -683,11 +654,11 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 			}
 		}
 
-		getFinFlagsHeaderDAO().delete(financeFlag, "_Temp");
+		finFlagsHeaderDAO.delete(financeFlag, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(listDeletion(financeFlag, "_Temp", auditHeader.getAuditTranType()));
 		auditHeader.setAuditDetail(new AuditDetail(tranType, 1, financeFlag.getBefImage(), financeFlag));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -698,7 +669,7 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 	 * 
 	 */
 	public List<String> getScheduleEffectModuleList(boolean schdChangeReq) {
-		return getFinFlagDetailsDAO().getScheduleEffectModuleList(schdChangeReq);
+		return finFlagDetailsDAO.getScheduleEffectModuleList(schdChangeReq);
 	}
 
 	/**
@@ -731,6 +702,18 @@ public class FinanceFlagsServiceImpl extends GenericService<FinanceDetail> imple
 
 		logger.debug("Leaving");
 		return auditDetail;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFinFlagsHeaderDAO(FinFlagsHeaderDAO finFlagsHeaderDAO) {
+		this.finFlagsHeaderDAO = finFlagsHeaderDAO;
+	}
+
+	public void setFinFlagDetailsDAO(FinFlagDetailsDAO finFlagDetailsDAO) {
+		this.finFlagDetailsDAO = finFlagDetailsDAO;
 	}
 
 	public void setFlagService(FlagService flagService) {

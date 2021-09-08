@@ -31,6 +31,7 @@ import com.pennanttech.controller.PresentmentServiceController;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pffws.PresentmentRestService;
 import com.pennanttech.pffws.PresentmentSoapService;
 import com.pennanttech.ws.model.presentment.PresentmentResponse;
@@ -370,13 +371,15 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 			return response;
 		}
 
-		if (financeMainDAO.getFinanceCountById(finReference, "", false) <= 0) {
+		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+		if (finID == null) {
 			String valueParm[] = new String[2];
 			valueParm[0] = finReference;
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
 			return response;
 		}
-		List<PresentmentDetail> statusByFinRef = presentmentDetailDAO.getPresentmentStatusByFinRef(finReference);
+
+		List<PresentmentDetail> statusByFinRef = presentmentDetailDAO.getPresentmentStatusByFinRef(finID);
 
 		if (CollectionUtils.isEmpty(statusByFinRef)) {
 			String[] valueParm = new String[4];

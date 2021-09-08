@@ -305,6 +305,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
 		String finref = this.finReference.getValue().trim();
+		long finID = finMain.getFinID();
 
 		Clients.clearWrongValue(this.finReference);
 		this.finReference.setErrorMessage("");
@@ -325,7 +326,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			entityCode = finMain.getEntityCode();
 		}
 
-		FinanceMain financeMain = linkedFinancesService.getFinMainByFinRef(finref);
+		FinanceMain financeMain = linkedFinancesService.getFinMainByFinRef(finID);
 
 		if (financeMain == null) {
 			throw new WrongValueException(this.finReference, Labels.getLabel("invalid_reference"));

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LenderDataImportCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2018    														*
- *                                                                  						*
- * Modified Date    :      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LenderDataImportCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2018 * * Modified
+ * Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-12-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-12-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -155,8 +137,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_LenderDataImportList(Event event) {
 
@@ -302,8 +283,8 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		int successCount = 0;
 		int failedCount = 0;
 
-		extendedFieldHeader = extendedFieldHeaderDAO.getExtFieldHeaderListByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, FinServiceEvent.ORG, "");
+		extendedFieldHeader = extendedFieldHeaderDAO
+				.getExtFieldHeaderListByModuleName(ExtendedFieldConstants.MODULE_LOAN, FinServiceEvent.ORG, "");
 
 		if (CollectionUtils.isNullOrEmpty(extendedFieldHeader)) {
 			MessageUtil.showError("Extended Field configuration not available with module: "
@@ -343,11 +324,11 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 					// prepare the row data
 					List<String> rowValue = getAllValuesOfRowByIndex(workbook, 0, rowIndex);
 
-					//validate excel sheet empty or null
+					// validate excel sheet empty or null
 					if (CollectionUtils.isNullOrEmpty(rowValue)) {
 						MessageUtil.showError("Invalid Lender data,");
 						return;
-					} else {//to validate against space value
+					} else {// to validate against space value
 						int count = 0;
 						for (String value : rowValue) {
 							if (StringUtils.equals(value, "")) {
@@ -374,10 +355,10 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 						uploadHeaderId = saveUploadHeaderDetails(fName);
 					}
 
-					//validate Lender Data
+					// validate Lender Data
 					remarks = validateLenderData(lenderData, extendedFieldHeader, remarks);
 
-					// validation failed log the Lender data 
+					// validation failed log the Lender data
 					if (remarks.length() > 0) {
 						lenderData.setReason(remarks.toString());
 						LenderDataUpload lenderDataStatus = prepareLenderStatus(lenderData, fName, false,
@@ -394,7 +375,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 			}
 		}
 
-		//process success validated LenderData
+		// process success validated LenderData
 		if (rowCount >= (noOfRows - 1) && lenderDatas.size() > 0) {
 			int countRecord = 0;
 			String type = "_Temp";
@@ -403,7 +384,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 			remarks = new StringBuilder();
 			for (LenderDataUpload dataUpload : lenderDatas) {
 				if (dataUpload.getReason() == null) {
-					financeMain = financeMainDAO.getFinanceMainById(dataUpload.getFinReference(), "_View", false);
+					financeMain = financeMainDAO.getFinanceMainByRef(dataUpload.getFinReference(), "_View", false);
 					String tableName = getTableName(ExtendedFieldConstants.MODULE_LOAN, financeMain.getFinCategory(),
 							FinServiceEvent.ORG);
 					isExist = lenderDataService.isLenderExist(dataUpload.getFinReference(), tableName, type);
@@ -424,7 +405,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 								continue;
 							}
 
-							//logging for Success Lender Upload 
+							// logging for Success Lender Upload
 							LenderDataUpload lenderDataStatus = prepareLenderStatus(dataUpload, fName, true, "Success");
 							lenderDataStatus.setUploadHeaderId(uploadHeaderId);
 							successCount++;
@@ -483,12 +464,13 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		logger.debug("Entering");
 
 		ExtendedFieldDetail extendedFieldDetail = null;
-		FinanceMain financeMain = null;
 		boolean isValidRef = true;
 
+		FinanceMain fm = null;
+
 		if (StringUtils.isNotBlank(dataUpload.getFinReference())) {
-			int count = financeMainDAO.getFinanceCountById(dataUpload.getFinReference(), "_View", false);
-			if (count <= 0) {
+			fm = financeMainDAO.getFinanceMain(dataUpload.getFinReference());
+			if (fm == null) {
 				isValidRef = false;
 				remarks.append("invalid finReference,");
 			}
@@ -497,45 +479,44 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 			remarks.append("FinReference is Mandatory,");
 		}
 
-		if (isValidRef) {
-			financeMain = financeMainDAO.getFinanceMainById(dataUpload.getFinReference(), "_View", false);
-			boolean availeExtnFields = false;
-			if (financeMain != null) {
-				for (ExtendedFieldHeader header : extendedFieldHeader) {
-					if (StringUtils.equals(header.getSubModuleName(), financeMain.getFinCategory())) {
-						availeExtnFields = true;
-						extendedFieldDetail = extendedFieldDetailDAO.getExtendedFieldDetailById(header.getModuleId(),
-								App.getProperty("extendedfields"), "");
-						if (extendedFieldDetail == null) {
-							remarks.append("lenderId id not configured");
-						} else {
-							if (StringUtils.isNotBlank(dataUpload.getLenderId())) {
-								if (dataUpload.getLenderId().length() > extendedFieldDetail.getFieldLength()) {
-									remarks.append("lenderId length should not greater than "
-											+ extendedFieldDetail.getFieldLength());
-								}
+		if (!isValidRef) {
+			return remarks;
+		}
 
-								if (StringUtils.isNotBlank(extendedFieldDetail.getFieldConstraint())) {
-									if (PennantRegularExpressions
-											.getRegexMapper(extendedFieldDetail.getFieldConstraint()) != null) {
-										Pattern pattern = Pattern.compile(PennantRegularExpressions
-												.getRegexMapper(extendedFieldDetail.getFieldConstraint()));
-										Matcher matcher = pattern.matcher(dataUpload.getLenderId());
-										if (matcher.matches() == false) {
-											remarks.append("Invalid data for lenderId");
-										}
-									}
+		boolean availeExtnFields = false;
+		for (ExtendedFieldHeader header : extendedFieldHeader) {
+			if (StringUtils.equals(header.getSubModuleName(), fm.getFinCategory())) {
+				availeExtnFields = true;
+				extendedFieldDetail = extendedFieldDetailDAO.getExtendedFieldDetailById(header.getModuleId(),
+						App.getProperty("extendedfields"), "");
+				if (extendedFieldDetail == null) {
+					remarks.append("lenderId id not configured");
+				} else {
+					if (StringUtils.isNotBlank(dataUpload.getLenderId())) {
+						if (dataUpload.getLenderId().length() > extendedFieldDetail.getFieldLength()) {
+							remarks.append(
+									"lenderId length should not greater than " + extendedFieldDetail.getFieldLength());
+						}
+
+						if (StringUtils.isNotBlank(extendedFieldDetail.getFieldConstraint())) {
+							if (PennantRegularExpressions
+									.getRegexMapper(extendedFieldDetail.getFieldConstraint()) != null) {
+								Pattern pattern = Pattern.compile(PennantRegularExpressions
+										.getRegexMapper(extendedFieldDetail.getFieldConstraint()));
+								Matcher matcher = pattern.matcher(dataUpload.getLenderId());
+								if (matcher.matches() == false) {
+									remarks.append("Invalid data for lenderId");
 								}
 							}
 						}
-						break;
 					}
 				}
-
-				if (!availeExtnFields) {
-					remarks.append("loan reference extended configuration not found");
-				}
+				break;
 			}
+		}
+
+		if (!availeExtnFields) {
+			remarks.append("loan reference extended configuration not found");
 		}
 
 		logger.debug("Leaving");
@@ -556,7 +537,7 @@ public class LenderDataImportCtrl extends GFCBaseListCtrl<LenderDataUpload> impl
 		return tableName.toString();
 	}
 
-	//prepare Lender data status
+	// prepare Lender data status
 	private LenderDataUpload prepareLenderStatus(LenderDataUpload lenderData, String fileName, boolean status,
 			String reason) {
 		logger.debug(Literal.ENTERING);

@@ -63,13 +63,13 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		for (FinOption finOption : finOptions) {
 			FinanceDetail financeDetail = new FinanceDetail();
 			CustomerDetails customerDetails = new CustomerDetails();
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(finOption.getFinReference(), "_aview", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainById(finOption.getFinID(), "_aview", false);
 			financeMain.setUserDetails(new LoggedInUser());
 			customerDetails.setCustID(financeMain.getCustID());
 			customerDetailsService.setCustomerBasicDetails(customerDetails);
 			financeDetail.setCustomerDetails(customerDetails);
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			// For Customers marked as DND true are not allow to Trigger a Mail.
 			if (customerDetails.getCustomer().isDnd()) {
 				continue;
 			} else {
@@ -101,8 +101,10 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		BigDecimal penaltyDue = finOption.getPenaltyDue() == null ? BigDecimal.ZERO : finOption.getPenaltyDue();
 		BigDecimal penaltyWaived = finOption.getPenaltyWaived() == null ? BigDecimal.ZERO
 				: finOption.getPenaltyWaived();
-		BigDecimal totSchdPftBal = finOption.getTdSchdPftBal() == null ? BigDecimal.ZERO : finOption.getTdSchdPftBal();// Interest receivable
-		BigDecimal pftAccrued = finOption.getPftAccrued() == null ? BigDecimal.ZERO : finOption.getPftAccrued();// Accrued interest
+		BigDecimal totSchdPftBal = finOption.getTdSchdPftBal() == null ? BigDecimal.ZERO : finOption.getTdSchdPftBal();// Interest
+																														// receivable
+		BigDecimal pftAccrued = finOption.getPftAccrued() == null ? BigDecimal.ZERO : finOption.getPftAccrued();// Accrued
+																												// interest
 		BigDecimal pftAmz = finOption.getPftAmz() == null ? BigDecimal.ZERO : finOption.getPftAmz();
 		BigDecimal otherCharges = BigDecimal.ZERO;
 
@@ -115,7 +117,7 @@ public class PutCallAlerts extends BasicDao<Covenant> {
 		}
 
 		BigDecimal interestIncludingAccrued = totSchdPftBal.add(pftAmz);
-		List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(finOption.getFinReference(),
+		List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(finOption.getFinID(),
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any Charges
 		if (CollectionUtils.isNotEmpty(advises)) {
 			for (ManualAdvise manualAdvise : advises) {

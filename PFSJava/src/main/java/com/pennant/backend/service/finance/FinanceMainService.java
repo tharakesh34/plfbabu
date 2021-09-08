@@ -31,6 +31,7 @@ import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 
 public interface FinanceMainService {
 	FinanceMain getFinanceMainById(long finID, boolean isWIF);
@@ -47,7 +48,7 @@ public interface FinanceMainService {
 
 	List<Long> getFinReferencesByMandateId(long mandateId);
 
-	List<Long> getFinReferencesByCustID(long custId, String finActiveStatus);
+	List<Long> getFinIDList(String custCIF, String closingStatus);
 
 	List<Long> getFinanceMainbyCustId(long custID, String type);
 
@@ -55,7 +56,7 @@ public interface FinanceMainService {
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);
 
-	FinanceMain getFinanceByFinReference(long finID, String type);
+	FinanceMain getFinanceMain(String finReference, TableType tableType);
 
 	ErrorDetail rescheduleValidation(Date receiptDate, long finID, Date startDate);
 
@@ -66,5 +67,7 @@ public interface FinanceMainService {
 	Date getClosedDateByFinRef(long finID);
 
 	Date getFinClosedDate(long finID);
+
+	Long getFinID(String finReference);
 
 }

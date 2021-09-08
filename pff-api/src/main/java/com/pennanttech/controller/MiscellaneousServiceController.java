@@ -3,6 +3,7 @@ package com.pennanttech.controller;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,10 +19,10 @@ import org.zkoss.json.parser.JSONParser;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rulefactory.RuleDAO;
@@ -75,6 +76,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.dashboard.DashBoardRequest;
 import com.pennanttech.ws.model.dashboard.DashBoardResponse;
@@ -663,109 +665,110 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		List<JVPostingEntry> debitEntryList = new ArrayList<>();
 		List<JVPostingEntry> postingEntryList = new ArrayList<>();
 
-		FinanceMain financeMainData = financeMainService.getFinanceByFinReference(jvPosting.getReference(), "_AView");
-		if (null != financeMainData) {
-			posting.setNewRecord(true);
-			posting.setVersion(1);
-			posting.setBranch(financeMainData.getFinBranch());
-			posting.setBatch(jvPosting.getBatch());
-			posting.setBatchReference(0);
-			if (StringUtils.isNotBlank(jvPosting.getCurrency())) {
-				posting.setCurrency(jvPosting.getCurrency());
-			} else {
-				posting.setCurrency(financeMainData.getFinCcy());
-			}
-			posting.setPostingDate(DateUtility.getAppDate());
-			posting.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
-			posting.setBatchPurpose("");
-			posting.setBatchPostingStatus(financeMainData.getFinPurpose());
-			posting.setReference(financeMainData.getFinReference());
-			posting.setPostingDivision(financeMainData.getLovDescFinDivision());
+		FinanceMain fm = financeMainService.getFinanceMain(jvPosting.getReference(), TableType.MAIN_TAB);
 
-			BigDecimal totalDebits = BigDecimal.ZERO;
-			BigDecimal totalCredits = BigDecimal.ZERO;
-			// JVPostingEntry Fields Data
-			for (JVPostingEntry entry : jvPosting.getJVPostingEntrysList()) {
-				postingEntry = new JVPostingEntry();
-				postingEntry.setNewRecord(true);
-				postingEntry.setVersion(1);
-				postingEntry.setTxnCCy(entry.getTxnCCy());
-				postingEntry.setNarrLine4(entry.getNarrLine4());
-				postingEntry.setNarrLine3(entry.getNarrLine3());
-				postingEntry.setNarrLine2(entry.getNarrLine2());
-				postingEntry.setNarrLine1(entry.getNarrLine1());
-				postingEntry.setTxnReference(entry.getTxnReference());
-				postingEntry.setValueDate(DateUtility.getAppDate());
-				postingEntry.setPostingDate(DateUtility.getAppDate());
-				postingEntry.setBatchReference(entry.getBatchReference());
-				postingEntry.setAccount(entry.getAccount());
-
-				TransactionCode transactionCode = transactionCodeService
-						.getApprovedTransactionCodeById(entry.getTxnCode());
-				if (null != transactionCode) {
-					AccountMapping accountMapping = accountMappingService.getApprovedAccountMapping(entry.getAccount());
-
-					postingEntry.setRecordType(PennantConstants.RCD_ADD);
-					postingEntry.setFinReference(entry.getFinReference());
-					postingEntry.setAccountName(accountMapping.getAccountTypeDesc());
-					postingEntry.setTxnEntry(transactionCode.getTranType());
-					postingEntry.setAcType(accountMapping.getAccountType());
-					postingEntry.setAccCCy(financeMainData.getFinCcy());
-					postingEntry.setTxnCCy(financeMainData.getFinCcy());
-
-					if (null != accountMapping) {
-						switch (transactionCode.getTranType()) {
-						case "C":
-							postingEntry.setTxnAmount(entry.getTxnAmount());
-							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
-							postingEntry.setTxnCode(entry.getTxnCode());
-							postingEntry.setAccount(entry.getAccount());
-							posting.setCreditsCount(jvPosting.getCreditsCount() + 1);
-							totalCredits = totalCredits.add(entry.getTxnAmount());
-							creditEntryList.add(postingEntry);
-							break;
-
-						case "D":
-							postingEntry.setTxnAmount(entry.getTxnAmount());
-							postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
-							postingEntry.setTxnCode(entry.getTxnCode());
-							postingEntry.setDebitAccount(entry.getAccount());
-							posting.setDebitCount(jvPosting.getDebitCount() + 1);
-							totalDebits = totalDebits.add(entry.getTxnAmount());
-							debitEntryList.add(postingEntry);
-							break;
-						}
-					}
-				}
-			}
-
-			// reorganize all JVPostingEntries in order [C,D]
-			for (int i = 0, j = i; i <= creditEntryList.size() && j <= debitEntryList.size(); i++, j++) {
-				if (i < creditEntryList.size() && creditEntryList.get(i) != null) {
-					if (!postingEntryList.contains(creditEntryList.get(i))) {
-						postingEntryList.add(creditEntryList.get(i));
-					}
-				}
-
-				if (j < debitEntryList.size() && debitEntryList.get(j) != null) {
-					if (!postingEntryList.contains(debitEntryList.get(j))) {
-						postingEntryList.add(debitEntryList.get(j));
-					}
-				}
-			}
-			posting.setJVPostingEntrysList(postingEntryList);
-			posting.setTotCreditsByBatchCcy(totalCredits);
-			posting.setTotDebitsByBatchCcy(totalDebits);
-			setJVPostingMandatoryFieldsData(posting);
-
-			returnStatus = saveJVPostingData(posting);
-		} else {
-			// financemain data is not available
+		if (fm == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "reference: " + jvPosting.getReference();
 
-			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		posting.setNewRecord(true);
+		posting.setVersion(1);
+		posting.setBranch(fm.getFinBranch());
+		posting.setBatch(jvPosting.getBatch());
+		posting.setBatchReference(0);
+		if (StringUtils.isNotBlank(jvPosting.getCurrency())) {
+			posting.setCurrency(jvPosting.getCurrency());
+		} else {
+			posting.setCurrency(fm.getFinCcy());
+		}
+		posting.setPostingDate(appDate);
+		posting.setPostAgainst(FinanceConstants.POSTING_AGAINST_LOAN);
+		posting.setBatchPurpose("");
+		posting.setBatchPostingStatus(fm.getFinPurpose());
+		posting.setReference(fm.getFinReference());
+		posting.setPostingDivision(fm.getLovDescFinDivision());
+
+		BigDecimal totalDebits = BigDecimal.ZERO;
+		BigDecimal totalCredits = BigDecimal.ZERO;
+		// JVPostingEntry Fields Data
+		for (JVPostingEntry entry : jvPosting.getJVPostingEntrysList()) {
+			postingEntry = new JVPostingEntry();
+			postingEntry.setNewRecord(true);
+			postingEntry.setVersion(1);
+			postingEntry.setTxnCCy(entry.getTxnCCy());
+			postingEntry.setNarrLine4(entry.getNarrLine4());
+			postingEntry.setNarrLine3(entry.getNarrLine3());
+			postingEntry.setNarrLine2(entry.getNarrLine2());
+			postingEntry.setNarrLine1(entry.getNarrLine1());
+			postingEntry.setTxnReference(entry.getTxnReference());
+			postingEntry.setValueDate(appDate);
+			postingEntry.setPostingDate(appDate);
+			postingEntry.setBatchReference(entry.getBatchReference());
+			postingEntry.setAccount(entry.getAccount());
+
+			TransactionCode transactionCode = transactionCodeService.getApprovedTransactionCodeById(entry.getTxnCode());
+			if (null != transactionCode) {
+				AccountMapping accountMapping = accountMappingService.getApprovedAccountMapping(entry.getAccount());
+
+				postingEntry.setRecordType(PennantConstants.RCD_ADD);
+				postingEntry.setFinReference(entry.getFinReference());
+				postingEntry.setAccountName(accountMapping.getAccountTypeDesc());
+				postingEntry.setTxnEntry(transactionCode.getTranType());
+				postingEntry.setAcType(accountMapping.getAccountType());
+				postingEntry.setAccCCy(fm.getFinCcy());
+				postingEntry.setTxnCCy(fm.getFinCcy());
+
+				if (null != accountMapping) {
+					switch (transactionCode.getTranType()) {
+					case "C":
+						postingEntry.setTxnAmount(entry.getTxnAmount());
+						postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
+						postingEntry.setTxnCode(entry.getTxnCode());
+						postingEntry.setAccount(entry.getAccount());
+						posting.setCreditsCount(jvPosting.getCreditsCount() + 1);
+						totalCredits = totalCredits.add(entry.getTxnAmount());
+						creditEntryList.add(postingEntry);
+						break;
+
+					case "D":
+						postingEntry.setTxnAmount(entry.getTxnAmount());
+						postingEntry.setTxnAmount_Ac(entry.getTxnAmount());
+						postingEntry.setTxnCode(entry.getTxnCode());
+						postingEntry.setDebitAccount(entry.getAccount());
+						posting.setDebitCount(jvPosting.getDebitCount() + 1);
+						totalDebits = totalDebits.add(entry.getTxnAmount());
+						debitEntryList.add(postingEntry);
+						break;
+					}
+				}
+			}
+		}
+
+		// reorganize all JVPostingEntries in order [C,D]
+		for (int i = 0, j = i; i <= creditEntryList.size() && j <= debitEntryList.size(); i++, j++) {
+			if (i < creditEntryList.size() && creditEntryList.get(i) != null) {
+				if (!postingEntryList.contains(creditEntryList.get(i))) {
+					postingEntryList.add(creditEntryList.get(i));
+				}
+			}
+
+			if (j < debitEntryList.size() && debitEntryList.get(j) != null) {
+				if (!postingEntryList.contains(debitEntryList.get(j))) {
+					postingEntryList.add(debitEntryList.get(j));
+				}
+			}
+		}
+		posting.setJVPostingEntrysList(postingEntryList);
+		posting.setTotCreditsByBatchCcy(totalCredits);
+		posting.setTotDebitsByBatchCcy(totalDebits);
+		setJVPostingMandatoryFieldsData(posting);
+
+		returnStatus = saveJVPostingData(posting);
 
 		logger.debug(Literal.LEAVING);
 
@@ -976,7 +979,7 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		return summaryResponse;
 	}
 
-	public Map<String, Object> getMapValue(LoanTypeMiscRequest loanTypeMiscRequest) {
+	public Map<String, Object> getMapValue(LoanTypeMiscRequest ltmr) {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> declaredMap = new HashMap<String, Object>();
@@ -990,17 +993,17 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		Map<String, Object> extDetailMap = new HashMap<String, Object>();
 		int ccyFormat = 2;
 
-		FinanceDetail finDetils = financeDetailService.getFinanceDetailById(loanTypeMiscRequest.getFinReference(),
-				false, FinServiceEvent.ORG, false, "", "");
-		FinanceMain financeMain = finDetils.getFinScheduleData().getFinanceMain();
-		CustomerDetails customerDetails = finDetils.getCustomerDetails();
-		List<JointAccountDetail> jointAccountDetailList = finDetils.getJointAccountDetailList();
-		int activeLoanFinType = financeMainDAO.getActiveCount(financeMain.getFinType(), financeMain.getCustID());
-		int totalLoanFinType = financeMainDAO.getODLoanCount(financeMain.getFinType(), financeMain.getCustID());
+		Long finID = financeMainDAO.getFinID(ltmr.getFinReference());
+		FinanceDetail fd = financeDetailService.getFinanceDetailById(finID, false, FinServiceEvent.ORG, false, "", "");
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		CustomerDetails customerDetails = fd.getCustomerDetails();
+		List<JointAccountDetail> jointAccountDetailList = fd.getJointAccountDetailList();
+		int activeLoanFinType = financeMainDAO.getActiveCount(fm.getFinType(), fm.getCustID());
+		int totalLoanFinType = financeMainDAO.getODLoanCount(fm.getFinType(), fm.getCustID());
 
 		if (customerDetails == null) {
-			customerDetails = customerDetailsService.getCustomerDetailsById(financeMain.getCustID(), true, "_View");
-			finDetils.setCustomerDetails(customerDetails);
+			customerDetails = customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_View");
+			fd.setCustomerDetails(customerDetails);
 		}
 
 		// customer extended fields
@@ -1017,30 +1020,30 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 		}
 
 		// getting co-applicant details
-		if (jointAccountDetailList == null || finDetils.getJointAccountDetailList().isEmpty()) {
-			jointAccountDetailList = jointAccountDetailService
-					.getJointAccountDetailByFinRef(financeMain.getFinReference(), "_View");
-			finDetils.setJointAccountDetailList(jointAccountDetailList);
+		if (jointAccountDetailList == null || fd.getJointAccountDetailList().isEmpty()) {
+			jointAccountDetailList = jointAccountDetailService.getJointAccountDetailByFinRef(fm.getFinReference(),
+					"_View");
+			fd.setJointAccountDetailList(jointAccountDetailList);
 		}
 
-		finDetils = financeDataValidation.prepareCustElgDetail(false, finDetils);
+		fd = financeDataValidation.prepareCustElgDetail(false, fd);
 		// format extended field
 		extDetailMap = PennantApplicationUtil.getExtendedFieldsDataMap(customerDetails);
 		if (extDetailMap != null) {
 			setFormatAmount(extDetailMap, ccyFormat);
 		}
 		// setting extended details for customer and finance
-		finDetils.getCustomerEligibilityCheck().setExtendedFields(extDetailMap);
-		declaredMap = finDetils.getCustomerEligibilityCheck().getDeclaredFieldValues();
+		fd.getCustomerEligibilityCheck().setExtendedFields(extDetailMap);
+		declaredMap = fd.getCustomerEligibilityCheck().getDeclaredFieldValues();
 
-		if (CollectionUtils.isNotEmpty(finDetils.getCustomerDetails().getCustFinanceExposureList())) {
-			for (FinanceEnquiry enquiry : finDetils.getCustomerDetails().getCustFinanceExposureList()) {
+		if (CollectionUtils.isNotEmpty(fd.getCustomerDetails().getCustFinanceExposureList())) {
+			for (FinanceEnquiry enquiry : fd.getCustomerDetails().getCustFinanceExposureList()) {
 				internal_Obligation = internal_Obligation.add(enquiry.getMaxInstAmount());
 			}
 		}
 
-		if (CollectionUtils.isNotEmpty(finDetils.getCustomerDetails().getCustomerExtLiabilityList())) {
-			for (CustomerExtLiability liability : finDetils.getCustomerDetails().getCustomerExtLiabilityList()) {
+		if (CollectionUtils.isNotEmpty(fd.getCustomerDetails().getCustomerExtLiabilityList())) {
+			for (CustomerExtLiability liability : fd.getCustomerDetails().getCustomerExtLiabilityList()) {
 				external_Obligation = external_Obligation.add(liability.getInstalmentAmount());
 			}
 		}
@@ -1067,10 +1070,10 @@ public class MiscellaneousServiceController extends ExtendedTestClass {
 			}
 		}
 
-		if (financeMain != null) {
-			declaredMap.put("currentAssetValue", financeMain.getFinAmount());
-			declaredMap.put("finPurpose", financeMain.getFinPurpose());
-			declaredMap.put("eligibilityMethod", financeMain.getEligibilityMethod());
+		if (fm != null) {
+			declaredMap.put("currentAssetValue", fm.getFinAmount());
+			declaredMap.put("finPurpose", fm.getFinPurpose());
+			declaredMap.put("eligibilityMethod", fm.getEligibilityMethod());
 		}
 
 		if (jointAccountDetailList != null) {

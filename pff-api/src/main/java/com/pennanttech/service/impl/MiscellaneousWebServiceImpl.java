@@ -198,21 +198,23 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 		logger.debug(Literal.ENTERING);
 
 		CovenantResponse response = new CovenantResponse();
+
 		List<Covenant> covenantList = null;
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return response;
-		} else {
-			int count = financeMainDAO.getFinanceCountById(finReference, "_View", false);
-			if (count <= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finReference;
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-				return response;
-			}
 		}
+
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+			return response;
+		}
+
 		if (ImplementationConstants.COVENANT_MODULE_NEW) {
 			covenantList = covenantsService.getCovenants(finReference, "Loan", TableType.VIEW);
 			List<CovenantType> covenantTypeList = new ArrayList<>();
@@ -258,7 +260,7 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 			summaryReponse.setReturnStatus(returnStatus);
 			return summaryReponse;
 		} else {
-			finMian = financeMainDAO.getFinanceMainById(loanTypeMiscRequest.getFinReference(), "_View", false);
+			finMian = financeMainDAO.getFinanceMain(loanTypeMiscRequest.getFinReference(), TableType.VIEW);
 			if (finMian == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = loanTypeMiscRequest.getFinReference();
@@ -313,36 +315,35 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			response.setReturnStatus(returnStatus);
 			return response;
-
 		}
-		if (StringUtils.isEmpty(loanTypeMiscRequest.getFinReference())) {
 
+		if (StringUtils.isEmpty(loanTypeMiscRequest.getFinReference())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			response.setReturnStatus(returnStatus);
 			return response;
-		} else {
-			FinanceMain finMian = financeMainDAO.getFinanceMainById(loanTypeMiscRequest.getFinReference(), "_View",
-					false);
-			if (finMian == null) {
-				String[] valueParm = new String[1];
-				valueParm[0] = loanTypeMiscRequest.getFinReference();
-				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				response.setReturnStatus(returnStatus);
-				return response;
-			} else {
-				if (!StringUtils.equals(loanTypeMiscRequest.getStage(), finMian.getNextRoleCode())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "CurrentStage: " + loanTypeMiscRequest.getStage();
-					valueParm[1] = finMian.getNextRoleCode();
-					returnStatus = APIErrorHandlerService.getFailedStatus("90337", valueParm);
-					response.setReturnStatus(returnStatus);
-					return response;
-				}
-				response = miscellaneousController.getCheckListRule(loanTypeMiscRequest, finMian);
-			}
 		}
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(loanTypeMiscRequest.getFinReference(), TableType.VIEW);
+
+		if (fm == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = loanTypeMiscRequest.getFinReference();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			response.setReturnStatus(returnStatus);
+			return response;
+		}
+
+		if (!StringUtils.equals(loanTypeMiscRequest.getStage(), fm.getNextRoleCode())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "CurrentStage: " + loanTypeMiscRequest.getStage();
+			valueParm[1] = fm.getNextRoleCode();
+			returnStatus = APIErrorHandlerService.getFailedStatus("90337", valueParm);
+			response.setReturnStatus(returnStatus);
+			return response;
+		}
+		response = miscellaneousController.getCheckListRule(loanTypeMiscRequest, fm);
 
 		logger.debug(Literal.LEAVING);
 		return response;
@@ -355,7 +356,7 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 		EmployerDetail response = new EmployerDetail();
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
-		//validation
+		// validation
 		if (StringUtils.isBlank(employerDetail.getEmpName())) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "empName";
@@ -400,11 +401,11 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 			custType = "R";
 		}
 
-		//Get the Scoring Matrics based on Rules and Retail Customer
+		// Get the Scoring Matrics based on Rules and Retail Customer
 		List<ScoringMetrics> scoringMetricsList = scoringDetailService
 				.getScoreMatricsListByCustType(bRERequestDetail.getScoreRuleCode(), custType);
 
-		//Get the slab based on the scoreGroupId
+		// Get the slab based on the scoreGroupId
 		List<ScoringSlab> scoringSlabList = scoringDetailService
 				.getScoringSlabsByScoreGrpId(scoringMetricsList.get(0).getScoreGroupId(), "_AView");
 
@@ -412,7 +413,7 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 
 		customerEligibilityCheck.setDataMap(breResponse.getDataMap());
 
-		//Execute the Matrics
+		// Execute the Matrics
 		scoringDetailService.executeScoringMetrics(scoringMetricsList, customerEligibilityCheck);
 
 		for (ScoringMetrics scoringMetric : scoringMetricsList) {
@@ -428,7 +429,7 @@ public class MiscellaneousWebServiceImpl extends ExtendedTestClass
 		breResponse.setRiskScore(totalGrpExecScore);
 
 		try {
-			//Get the Scoring Group
+			// Get the Scoring Group
 			String ruleVal = getScrSlab(scoringMetricsList.get(0).getScoreGroupId(), totalGrpExecScore, "", true,
 					scoringSlabList);
 			breResponse.setScoringGroup(ruleVal);

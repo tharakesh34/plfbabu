@@ -658,9 +658,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				finReference = null;
 			} else {
 
-				finMain = financeMainService.getFinanceMain(finReference, new String[] { "FinIsActive, FinStartDate" },
-						"");
-				if (finMain == null) {
+				Long finID = financeMainService.getFinID(finReference);
+				if (finID == null) {
 					reason = reason + "Loan Reference doesn't exist.";
 					error = true;
 				}

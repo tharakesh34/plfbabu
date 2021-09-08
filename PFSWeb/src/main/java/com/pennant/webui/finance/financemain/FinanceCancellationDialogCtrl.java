@@ -411,7 +411,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					.setValue(Labels.getLabel("label_FinanceMainDialog_PromotionCode.value"));
 		}
 
-		List<ReasonHeader> details = getFinanceCancellationService().getCancelReasonDetails(aFinanceMain.getFinID());
+		List<ReasonHeader> details = financeCancellationService.getCancelReasonDetails(aFinanceMain.getFinReference());
 		String data = "";
 		if (details.size() > 0) {
 			for (ReasonHeader header : details) {
@@ -1505,7 +1505,7 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 			FinanceMain finMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
 			List<ReturnDataSet> accountingSetEntries = postingsPreparationUtil
-					.getReveralsByFinreference(finMain.getFinReference());
+					.getReveralsByFinreference(finMain.getFinID());
 			for (ReturnDataSet returnDataSet : accountingSetEntries) {
 				if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {
 					returnDataSets.add(returnDataSet);

@@ -374,7 +374,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_FinanceEnquiry.value"));
 			this.grid_BasicDetails.setVisible(false);
 			if (fromApproved) {
-				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_AView", true);
+				finScheduleData = financeDetailService.getFinSchDataById(this.finID, "_AView", true);
 				if (finScheduleData.getFinanceMain() == null) {
 					Clients.showNotification("Finance Reference Is Not Valid Create New Finance Reference");
 					this.window_FinEnqHeaderDialog.onClose();
@@ -383,7 +383,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false, "");
 				calculateFeeChargeDetails(feeDetails, summary);
 			} else {
-				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finReference, "_View", true);
+				finScheduleData = getFinanceDetailService().getFinSchDataById(this.finID, "_View", true);
 				if (finScheduleData != null) {
 					FinanceSummary summary = finScheduleData.getFinanceSummary();
 					List<FinFeeDetail> feeDetails = getFinFeeDetailService().getFinFeeDetailById(this.finID, false,

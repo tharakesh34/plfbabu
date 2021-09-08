@@ -27,6 +27,7 @@ public class LimitTransactionDetail implements Serializable {
 	private long headerId;
 	@XmlElement
 	private String referenceCode;
+	private long finID;
 	@XmlElement
 	private String referenceNumber;
 	private String limitGroup;
@@ -99,6 +100,14 @@ public class LimitTransactionDetail implements Serializable {
 
 	public void setReferenceCode(String referenceCode) {
 		this.referenceCode = referenceCode;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getReferenceNumber() {

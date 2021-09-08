@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VasMovementServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-12-2011    														*
- *                                                                  						*
- * Modified Date    :  12-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VasMovementServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-12-2011 * *
+ * Modified Date : 12-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.applicationmaster.impl;
@@ -101,8 +83,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	 * on the module workFlow Configuration. by using VasMovementDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtBMTVasMovement by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -129,7 +110,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 			getVasMovementDAO().update(vasMovement, tableType);
 		}
 
-		//Retrieving List of Audit Details For check list detail  related modules
+		// Retrieving List of Audit Details For check list detail related modules
 		if (vasMovement.getVasMvntList() != null && vasMovement.getVasMvntList().size() > 0) {
 			List<AuditDetail> details = vasMovement.getLovDescAuditDetailMap().get("VasMovementDetail");
 			details = processingChkListDetailList(details, tableType, vasMovement.getVasMovementId());
@@ -149,8 +130,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	 * BMTVasMovement by using VasMovementDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtBMTVasMovement by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -173,15 +153,13 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	/**
 	 * getVasMovementById fetch the details by using VasMovementDAO's getVasMovementById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return VasMovement
 	 */
 	@Override
-	public VasMovement getVasMovementById(String finreference) {
-		VasMovement vasMovement = getVasMovementDAO().getVasMovementById(finreference, "_View");
+	public VasMovement getVasMovementById(long finID) {
+		VasMovement vasMovement = getVasMovementDAO().getVasMovementById(finID, "_View");
 		vasMovement.setVasMvntList(
 				getVasMovementDetailDAO().getVasMovementDetailById(vasMovement.getVasMovementId(), "_View"));
 		return vasMovement;
@@ -191,12 +169,11 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	 * getApprovedVasMovementById fetch the details by using VasMovementDAO's getVasMovementById method . with parameter
 	 * id and type as blank. it fetches the approved records from the BMTVasMovement.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return VasMovement
 	 */
-	public VasMovement getApprovedVasMovementById(String vasReference) {
-		return getVasMovementDAO().getVasMovementById(vasReference, "_AView");
+	public VasMovement getApprovedVasMovementById(long finID) {
+		return getVasMovementDAO().getVasMovementById(finID, "_AView");
 	}
 
 	/**
@@ -210,8 +187,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtBMTVasMovement by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -253,7 +229,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getAuditHeaderDAO().addAudit(auditHeader);
 
-		//Retrieving List of Audit Details For vasMovement details modules
+		// Retrieving List of Audit Details For vasMovement details modules
 		if (vasMovement.getVasMvntList() != null && vasMovement.getVasMvntList().size() > 0) {
 			List<AuditDetail> details = vasMovement.getLovDescAuditDetailMap().get("VasMovementDetail");
 			details = processingChkListDetailList(details, "", vasMovement.getVasMovementId());
@@ -277,8 +253,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	 * workFlow table by using getVasMovementDAO().delete with parameters vasMovement,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtBMTVasMovement by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -307,8 +282,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 	 * for any mismatch conditions Fetch the error details from getVasMovementDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -339,9 +313,9 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 
 		VasMovement tempVasMovement = null;
 		if (vasMovement.isWorkflow()) {
-			tempVasMovement = getVasMovementDAO().getVasMovementById(vasMovement.getFinReference(), "_Temp");
+			tempVasMovement = getVasMovementDAO().getVasMovementById(vasMovement.getFinID(), "_Temp");
 		}
-		VasMovement befVasMovement = getVasMovementDAO().getVasMovementById(vasMovement.getFinReference(), "");
+		VasMovement befVasMovement = getVasMovementDAO().getVasMovementById(vasMovement.getFinID(), "");
 
 		VasMovement oldVasMovement = vasMovement.getBefImage();
 
@@ -352,14 +326,15 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 
 		if (vasMovement.isNewRecord()) { // for New record or new record into work flow
 
-			if (!vasMovement.isWorkflow()) {// With out Work flow only new records  
-				if (befVasMovement != null) { // Record Already Exists in the table then error  
+			if (!vasMovement.isWorkflow()) {// With out Work flow only new records
+				if (befVasMovement != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (vasMovement.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befVasMovement != null || tempVasMovement != null) { // if records already exists in the main table
+					if (befVasMovement != null || tempVasMovement != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -394,7 +369,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 				}
 			} else {
 
-				if (tempVasMovement == null) { // if records not exists in the Work flow table 
+				if (tempVasMovement == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -672,7 +647,7 @@ public class VasMovementServiceImpl extends GenericService<VasMovement> implemen
 				}
 
 				if (StringUtils.isNotEmpty(transType)) {
-					//check and change below line for Complete code
+					// check and change below line for Complete code
 					auditDetailsList.add(new AuditDetail(transType, ((AuditDetail) list.get(i)).getAuditSeq(),
 							vasMovementDetail.getBefImage(), vasMovementDetail));
 				}

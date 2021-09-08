@@ -125,7 +125,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 		BigDecimal availableLimit = BigDecimal.ZERO;
 		if (financeType.isAllowRevolving()) {
 
-			FinanceMain main = financeMainDAO.getFinanceMainById(fm.getFinReference(), "", false);
+			FinanceMain main = financeMainDAO.getFinanceMainById(fm.getFinID(), "", false);
 
 			BigDecimal currAssetVal = BigDecimal.ZERO;
 			if (main != null) {
@@ -179,7 +179,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 		if (!StringUtils.isEmpty(moduleDefiner) && (!StringUtils.equals(moduleDefiner, FinServiceEvent.ORG))) {
 			if (profitDetail == null) {
-				profitDetail = this.financeProfitDetailDAO.getFinProfitDetailsById(financeMain.getFinReference());
+				profitDetail = this.financeProfitDetailDAO.getFinProfitDetailsById(financeMain.getFinID());
 			}
 			if (profitDetail != null) {
 				totOutStanding = totOutStanding.add(profitDetail.getTotalPriBal());// Principal
@@ -203,7 +203,7 @@ public class DrawingPowerServiceImpl implements DrawingPowerService {
 
 				totOutStanding = totOutStanding.add(tdsReceivable);// TDS
 																	// Receivable
-				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinReference(),
+				List<ManualAdvise> advises = manualAdviseDAO.getManualAdviseByRef(financeMain.getFinID(),
 						FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "");// Any
 																		// Charges
 				if (CollectionUtils.isNotEmpty(advises)) {

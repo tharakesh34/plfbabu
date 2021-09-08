@@ -479,7 +479,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Entering" + event.toString());
 
 		if (assetAmtMvntList == null) {
-			assetAmtMvntList = getLoanDownSizingService().getFinAssetAmtMovements(getFinanceMain().getFinReference(),
+			assetAmtMvntList = loanDownSizingService.getFinAssetAmtMovements(getFinanceMain().getFinID(),
 					FinanceConstants.MOVEMENTTYPE_DOWNSIZING);
 		}
 

@@ -27,6 +27,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.api.controller.DisbursementController;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pffws.DisbursementRESTService;
 import com.pennanttech.pffws.DisbursementSOAPService;
@@ -109,7 +110,7 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 
 		String finReference = finAdvancePayments.getFinReference();
 		if (StringUtils.isNotBlank(finReference)) {
-			if (financeMainDAO.getFinanceCountById(finReference, "", false) <= 0) {
+			if (financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB) == null) {
 				String valueParm[] = new String[1];
 				valueParm[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -208,15 +209,15 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				return drd;
 			}
 
-			int count = 0;
+			Long finID = null;
 
 			if (DisbursementConstants.CHANNEL_PAYMENT.equals(fap.getChannel())) {
-				count = financeMainDAO.isFinReferenceExists(finReference, "", false) == true ? 1 : 0;
+				finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 			} else {
-				count = financeMainDAO.getFinanceCountById(finReference, "", false);
+				finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 			}
 
-			if (count <= 0) {
+			if (finID == null) {
 				String valueParm[] = new String[2];
 				valueParm[0] = finReference;
 				returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
@@ -322,14 +323,15 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 				return APIErrorHandlerService.getFailedStatus("90502", valueParam);
 			}
 
-			int count = 0;
+			Long finID = null;
+
 			if (DisbursementConstants.CHANNEL_PAYMENT.equals(disbRequest.getChannel())) {
-				count = financeMainDAO.isFinReferenceExists(finReference, "", false) == true ? 1 : 0;
+				finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 			} else {
-				count = financeMainDAO.getFinanceCountById(finReference, "", false);
+				finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 			}
 
-			if (count <= 0) {
+			if (finID == null) {
 				String[] valueParam = new String[1];
 				valueParam[0] = finReference;
 				return APIErrorHandlerService.getFailedStatus("90201", valueParam);
