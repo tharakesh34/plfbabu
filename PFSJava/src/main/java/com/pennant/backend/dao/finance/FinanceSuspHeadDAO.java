@@ -40,17 +40,17 @@ public interface FinanceSuspHeadDAO {
 
 	FinanceSuspHead getFinanceSuspHeadById(long finID, String type);
 
-	String save(FinanceSuspHead financeSuspHead, String type);
+	long save(FinanceSuspHead fsh, String type);
 
-	void update(FinanceSuspHead financeSuspHead, String type);
+	void update(FinanceSuspHead fsh, String type);
 
-	String saveSuspenseDetails(FinanceSuspDetails suspDetails, String type);
+	long saveSuspenseDetails(FinanceSuspDetails fsd, String type);
 
 	List<FinanceSuspDetails> getFinanceSuspDetailsListById(long finID);
 
-	List<String> getSuspFinanceList();
+	List<Long> getSuspFinanceList();
 
-	void delete(FinanceSuspHead financeSuspHead, String string);
+	void delete(FinanceSuspHead fsh, String string);
 
 	List<FinStatusDetail> getCustSuspDate(List<Long> custIdList);
 

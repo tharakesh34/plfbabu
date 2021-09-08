@@ -8,6 +8,7 @@ public class FinanceSuspDetails implements Serializable {
 
 	private static final long serialVersionUID = 5778056251513895432L;
 
+	private long finID;
 	private String finReference;
 	private String finBranch;
 	private String finType;
@@ -24,9 +25,13 @@ public class FinanceSuspDetails implements Serializable {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;

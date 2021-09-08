@@ -26,19 +26,14 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinanceSuspHeadDAO;
 import com.pennant.backend.model.finance.FinStatusDetail;
@@ -47,6 +42,7 @@ import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements FinanceSuspHeadDAO {
@@ -56,69 +52,83 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new FinanceSuspHead
-	 * 
-	 * @return FinanceSuspHead
-	 */
-
 	@Override
 	public FinanceSuspHead getFinanceSuspHead() {
 		return new FinanceSuspHead();
 	}
 
-	/**
-	 * This method get the module from method getFinanceSuspHead() and set the new record flag as true and return
-	 * FinanceSuspHead()
-	 * 
-	 * @return FinanceSuspHead
-	 */
 	@Override
 	public FinanceSuspHead getNewFinanceSuspHead() {
-		logger.debug("Entering");
-		FinanceSuspHead suspHead = getFinanceSuspHead();
-		logger.debug("Leaving");
-		return suspHead;
+		return getFinanceSuspHead();
 	}
 
 	@Override
-	public FinanceSuspHead getFinanceSuspHeadById(String finReference, String type) {
-		logger.debug("Entering");
+	public FinanceSuspHead getFinanceSuspHeadById(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, FinBranch, FinType, CustId, FinSuspSeq");
+		sql.append(", FinIsInSusp, ManualSusp, FinSuspDate, FinSuspTrfDate, FinSuspAmt, FinCurSuspAmt");
 
-		FinanceSuspHead financeSuspHead = new FinanceSuspHead();
-		financeSuspHead.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder("SELECT FinReference, FinBranch, FinType,");
-		selectSql.append(
-				" CustId, FinSuspSeq, FinIsInSusp, ManualSusp, FinSuspDate, FinSuspTrfDate, FinSuspAmt, FinCurSuspAmt, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(" FinCcy, lovDescCustCIFName,lovDescCustShrtName, lovDescFinDivision, ");
+			sql.append(", FinCcy, LovDescCustCIFName, LovDescCustShrtName, LovDescFinDivision");
 		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From FinSuspHead");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		RowMapper<FinanceSuspHead> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSuspHead.class);
+		sql.append(", Version, LastMntOn, LastMntBy,RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinSuspHead");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			financeSuspHead = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceSuspHead fsh = new FinanceSuspHead();
+
+				fsh.setFinID(rs.getLong("FinID"));
+				fsh.setFinReference(rs.getString("FinReference"));
+				fsh.setFinBranch(rs.getString("FinReference"));
+				fsh.setFinType(rs.getString("FinType"));
+				fsh.setCustId(rs.getLong("CustId"));
+				fsh.setFinSuspSeq(rs.getInt("FinSuspSeq"));
+				fsh.setFinIsInSusp(rs.getBoolean("FinIsInSusp"));
+				fsh.setManualSusp(rs.getBoolean("ManualSusp"));
+				fsh.setFinSuspDate(JdbcUtil.getDate(rs.getDate("FinSuspDate")));
+				fsh.setFinSuspTrfDate(JdbcUtil.getDate(rs.getDate("FinSuspTrfDate")));
+				fsh.setFinSuspAmt(rs.getBigDecimal("FinSuspAmt"));
+				fsh.setFinCurSuspAmt(rs.getBigDecimal("FinCurSuspAmt"));
+
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					fsh.setFinCcy(rs.getString("FinCcy"));
+					fsh.setLovDescCustCIFName(rs.getString("LovDescCustCIFName"));
+					fsh.setLovDescCustShrtName(rs.getString("LovDescCustShrtName"));
+					fsh.setLovDescFinDivision(rs.getString("LovDescFinDivision"));
+				}
+
+				fsh.setVersion(rs.getInt("Version"));
+				fsh.setLastMntBy(rs.getLong("LastMntBy"));
+				fsh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				fsh.setRecordStatus(rs.getString("RecordStatus"));
+				fsh.setRoleCode(rs.getString("RoleCode"));
+				fsh.setNextRoleCode(rs.getString("NextRoleCode"));
+				fsh.setTaskId(rs.getString("TaskId"));
+				fsh.setNextTaskId(rs.getString("NextTaskId"));
+				fsh.setRecordType(rs.getString("RecordType"));
+				fsh.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return fsh;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			financeSuspHead = null;
+			//
 		}
-		logger.debug("Leaving");
-		return financeSuspHead;
+
+		return null;
 	}
 
 	@Override
 	public Date getFinSuspDate(long finID) {
 		String sql = "Select FinSuspDate From FinSuspHead Where FinID = ? and FinIsInSusp = ?";
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return jdbcOperations.queryForObject(sql, Date.class, finID, 1);
@@ -133,107 +143,113 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 	public List<Long> getSuspFinanceList() {
 		String sql = "Select FinID From FinSuspHead Where FinIsInSusp = ?";
 
+		logger.debug(Literal.SQL + sql);
+
 		return jdbcOperations.queryForList(sql, Long.class, 1);
 	}
 
-	/**
-	 * This method insert new Records into FinanceSuspHead .
-	 *
-	 * save FinanceSuspHead
-	 * 
-	 * @param FinanceSuspHead (financeSuspHead)
-	 * @param type            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public String save(FinanceSuspHead financeSuspHead, String type) {
-		logger.debug("Entering");
+	public long save(FinanceSuspHead fsh, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinSuspHead");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, FinBranch, FinType, CustId, FinSuspSeq, FinIsInSusp");
+		sql.append(", ManualSusp, FinSuspDate, FinSuspTrfDate, FinSuspAmt, FinCurSuspAmt");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinSuspHead");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, FinBranch, FinType, CustId,");
-		insertSql.append(
-				" FinSuspSeq, FinIsInSusp, ManualSusp, FinSuspDate, FinSuspTrfDate, FinSuspAmt, FinCurSuspAmt, ");
-		insertSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId )");
-		insertSql.append(" Values(:FinReference, :FinBranch, :FinType, :CustId, ");
-		insertSql.append(
-				" :FinSuspSeq, :FinIsInSusp, :ManualSusp, :FinSuspDate, :FinSuspTrfDate, :FinSuspAmt, :FinCurSuspAmt, ");
-		insertSql.append(
-				" :Version, :LastMntOn, :LastMntBy, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId ) ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return financeSuspHead.getFinReference();
+			ps.setLong(index++, fsh.getFinID());
+			ps.setString(index++, fsh.getFinReference());
+			ps.setString(index++, fsh.getFinBranch());
+			ps.setString(index++, fsh.getFinType());
+			ps.setLong(index++, fsh.getCustId());
+			ps.setInt(index++, fsh.getFinSuspSeq());
+			ps.setBoolean(index++, fsh.isFinIsInSusp());
+			ps.setBoolean(index++, fsh.isManualSusp());
+			ps.setDate(index++, JdbcUtil.getDate(fsh.getFinSuspDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fsh.getFinSuspTrfDate()));
+			ps.setBigDecimal(index++, fsh.getFinSuspAmt());
+			ps.setBigDecimal(index++, fsh.getFinCurSuspAmt());
+			ps.setInt(index++, fsh.getVersion());
+			ps.setTimestamp(index++, fsh.getLastMntOn());
+			ps.setLong(index++, JdbcUtil.setLong(fsh.getLastMntBy()));
+			ps.setString(index++, fsh.getRecordStatus());
+			ps.setString(index++, fsh.getRoleCode());
+			ps.setString(index++, fsh.getNextRoleCode());
+			ps.setString(index++, fsh.getTaskId());
+			ps.setString(index++, fsh.getNextTaskId());
+			ps.setString(index++, fsh.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(fsh.getWorkflowId()));
+		});
+
+		return fsh.getFinID();
 	}
 
-	/**
-	 * This method updates the Record FinanceSuspHead . update FinanceSuspHead
-	 * 
-	 * @param FinanceSuspHead (financeSuspHead)
-	 * @param type            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(FinanceSuspHead financeSuspHead, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update FinSuspHead");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set FinBranch = :FinBranch, FinType = :FinType,");
-		updateSql.append(
-				" CustId = :CustId, FinSuspSeq = :FinSuspSeq, FinIsInSusp = :FinIsInSusp, ManualSusp =:ManualSusp,");
-		updateSql.append(
-				" FinSuspDate = :FinSuspDate, FinSuspTrfDate=:FinSuspTrfDate, FinSuspAmt = :FinSuspAmt, FinCurSuspAmt = :FinCurSuspAmt, ");
-		updateSql.append(
-				" Version =:Version , LastMntOn=:LastMntOn, LastMntBy=:LastMntBy,RecordStatus=:RecordStatus, RoleCode=:RoleCode, ");
-		updateSql.append(
-				" NextRoleCode=:NextRoleCode, TaskId=:TaskId, NextTaskId=:NextTaskId, RecordType=:RecordType, WorkflowId=:WorkflowId");
-		updateSql.append(" Where FinReference =:FinReference");
+	public void update(FinanceSuspHead fsh, String type) {
+		StringBuilder sql = new StringBuilder("Update FinSuspHead");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set FinBranch = ?, FinType = ?");
+		sql.append(", CustId = ?, FinSuspSeq = ?, FinIsInSusp = ?, ManualSusp = ?");
+		sql.append(", FinSuspDate = ?, FinSuspTrfDate = ?, FinSuspAmt = ?, FinCurSuspAmt = ?");
+		sql.append(", Version = ? , LastMntOn = ?, LastMntBy = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where FinID = ?");
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, fsh.getFinBranch());
+			ps.setString(index++, fsh.getFinType());
+			ps.setLong(index++, fsh.getCustId());
+			ps.setInt(index++, fsh.getFinSuspSeq());
+			ps.setBoolean(index++, fsh.isFinIsInSusp());
+			ps.setBoolean(index++, fsh.isManualSusp());
+			ps.setDate(index++, JdbcUtil.getDate(fsh.getFinSuspDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fsh.getFinSuspTrfDate()));
+			ps.setBigDecimal(index++, fsh.getFinSuspAmt());
+			ps.setBigDecimal(index++, fsh.getFinCurSuspAmt());
+			ps.setInt(index++, fsh.getVersion());
+			ps.setTimestamp(index++, fsh.getLastMntOn());
+			ps.setLong(index++, JdbcUtil.setLong(fsh.getLastMntBy()));
+			ps.setString(index++, fsh.getRecordStatus());
+			ps.setString(index++, fsh.getRoleCode());
+			ps.setString(index++, fsh.getNextRoleCode());
+			ps.setString(index++, fsh.getTaskId());
+			ps.setString(index++, fsh.getNextTaskId());
+			ps.setString(index++, fsh.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(fsh.getWorkflowId()));
+
+			ps.setLong(index++, fsh.getFinID());
+		});
 
 		if (recordCount <= 0) {
 			logger.debug("Error Update Method Count :" + recordCount);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method Deletes the Record from the BMTAcademics or BMTAcademics_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Academic Details by key AcademicLevel
-	 * 
-	 * @param Academic Details (academic)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(FinanceSuspHead financeSuspHead, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+	public void delete(FinanceSuspHead fsh, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinSuspHead");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From FinSuspHead");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where FinReference =:FinReference ");
-
-		logger.debug("deleteSql: " + deleteSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspHead);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, fsh.getFinID());
+			});
 
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
@@ -241,78 +257,96 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Save Finance Suspend Details
-	 */
 	@Override
-	public String saveSuspenseDetails(FinanceSuspDetails financeSuspDetails, String type) {
-		logger.debug("Entering");
+	public long saveSuspenseDetails(FinanceSuspDetails fsd, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into FinSuspDetail");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (FinID, FinReference, FinBranch, FinType, CustId, FinSuspSeq, FinTrfDate");
+		sql.append(", FinTrfMvt, FinTrfAmt, FinODDate, FinTrfFromDate, LinkedTranId)");
+		sql.append(" Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		StringBuilder insertSql = new StringBuilder("Insert Into FinSuspDetail");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (FinReference, FinBranch, FinType, CustId, FinSuspSeq, FinTrfDate,");
-		insertSql.append(" FinTrfMvt, FinTrfAmt, FinODDate , FinTrfFromDate, LinkedTranId )");
-		insertSql.append(" Values(:FinReference, :FinBranch, :FinType, :CustId, :FinSuspSeq, ");
-		insertSql.append(" :FinTrfDate, :FinTrfMvt, :FinTrfAmt, :FinODDate , :FinTrfFromDate, :LinkedTranId )");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("insertSql: " + insertSql.toString());
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeSuspDetails);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return financeSuspDetails.getFinReference();
+			ps.setLong(index++, fsd.getFinID());
+			ps.setString(index++, fsd.getFinReference());
+			ps.setString(index++, fsd.getFinBranch());
+			ps.setString(index++, fsd.getFinType());
+			ps.setLong(index++, fsd.getCustId());
+			ps.setInt(index++, fsd.getFinSuspSeq());
+			ps.setDate(index++, JdbcUtil.getDate(fsd.getFinTrfDate()));
+			ps.setString(index++, fsd.getFinTrfMvt());
+			ps.setBigDecimal(index++, fsd.getFinTrfAmt());
+			ps.setDate(index++, JdbcUtil.getDate(fsd.getFinODDate()));
+			ps.setDate(index++, JdbcUtil.getDate(fsd.getFinTrfFromDate()));
+			ps.setLong(index++, fsd.getLinkedTranId());
+		});
+
+		return fsd.getFinID();
 	}
 
-	/**
-	 * Method for Fetch Finance Suspend Details List
-	 */
 	@Override
-	public List<FinanceSuspDetails> getFinanceSuspDetailsListById(String finReference) {
-		logger.debug("Entering");
+	public List<FinanceSuspDetails> getFinanceSuspDetailsListById(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, FinBranch, FinType, CustId, FinSuspSeq");
+		sql.append(", FinTrfDate, FinTrfMvt, FinTrfAmt, FinODDate, FinTrfFromDate, LinkedTranId");
+		sql.append(" From FinSuspDetail");
+		sql.append(" Where FinID = ?");
 
-		FinanceSuspDetails suspDetails = new FinanceSuspDetails();
-		suspDetails.setFinReference(finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("Select FinReference, FinBranch, ");
-		selectSql.append(" FinType, CustId, FinSuspSeq, FinTrfDate, FinTrfMvt, ");
-		selectSql.append(" FinTrfAmt, FinODDate , FinTrfFromDate, LinkedTranId ");
-		selectSql.append(" FROM FinSuspDetail ");
-		selectSql.append(" WHERE FInReference =:FinReference ");
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			FinanceSuspDetails fsd = new FinanceSuspDetails();
 
-		logger.debug("selectSql: " + selectSql.toString());
+			fsd.setFinID(rs.getLong("FinID"));
+			fsd.setFinReference(rs.getString("FinReference"));
+			fsd.setFinBranch(rs.getString("FinBranch"));
+			fsd.setFinType(rs.getString("FinType"));
+			fsd.setCustId(rs.getLong("CustId"));
+			fsd.setFinSuspSeq(rs.getInt("FinSuspSeq"));
+			fsd.setFinTrfDate(JdbcUtil.getDate(rs.getDate("FinTrfDate")));
+			fsd.setFinTrfMvt(rs.getString("FinTrfMvt"));
+			fsd.setFinTrfAmt(rs.getBigDecimal("FinTrfAmt"));
+			fsd.setFinODDate(JdbcUtil.getDate(rs.getDate("FinODDate")));
+			fsd.setFinTrfFromDate(JdbcUtil.getDate(rs.getDate("FinTrfFromDate")));
+			fsd.setLinkedTranId(rs.getLong("LinkedTranId"));
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(suspDetails);
-		RowMapper<FinanceSuspDetails> typeRowMapper = BeanPropertyRowMapper.newInstance(FinanceSuspDetails.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			return fsd;
+		});
 	}
 
-	/**
-	 * Method for Fetch Finance Suspend Details List
-	 */
 	@Override
 	public List<FinStatusDetail> getCustSuspDate(List<Long> custIdList) {
-		logger.debug("Entering");
+		StringBuilder sql = new StringBuilder("Select CustId, min(FinSuspTrfDate) ValueDate");
+		sql.append(" From FinSuspHead");
+		sql.append(" Where CustId IN(");
+		sql.append(custIdList.stream().map(e -> "? ").collect(Collectors.joining(",")));
+		sql.append(") and FinIsInSusp = ? Group By CustId");
 
-		Map<String, List<Long>> beanParameters = new HashMap<String, List<Long>>();
-		beanParameters.put("CustId", custIdList);
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("Select CustId, MIN(FinSuspTrfDate) ValueDate ");
-		selectSql.append(" FROM FinSuspHead where CustId IN(:CustId) AND FinIsInSusp = 1 GROUP BY CustId ");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("selectSql: " + selectSql.toString());
+			for (Long id : custIdList) {
+				ps.setLong(index++, id);
+			}
 
-		RowMapper<FinStatusDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinStatusDetail.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+			ps.setInt(index++, 1);
+		}, (rs, rowNum) -> {
+			FinStatusDetail fsd = new FinStatusDetail();
+
+			fsd.setCustId(rs.getLong("CustId"));
+			fsd.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+
+			return fsd;
+		});
 	}
 
-	/**
-	 * This method updates the Record FinanceSuspHead Flag
-	 */
 	@Override
 	public void updateSuspFlag(long finID) {
 		String sql = "Update FinSuspHead Set FinIsInSusp = 0  Where FinID = ?";
