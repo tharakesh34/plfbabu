@@ -23,7 +23,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public class FinCollateralServiceImpl extends GenericService<FinanceDetail> implements FinCollateralService {
-
 	private static final Logger logger = LogManager.getLogger(FinCollateralServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
@@ -34,18 +33,18 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 	}
 
 	@Override
-	public FinCollaterals getFinCollateralsById(String finReference, long id) {
-		return getFinCollateralsDAO().getFinCollateralsById(finReference, id, "_View");
+	public FinCollaterals getFinCollateralsById(long finID, long id) {
+		return finCollateralsDAO.getFinCollateralsById(finID, id, "_View");
 	}
 
 	@Override
-	public List<FinCollaterals> getFinCollateralsByRef(String financeReference, String type) {
-		return getFinCollateralsDAO().getFinCollateralsByFinRef(financeReference, type);
+	public List<FinCollaterals> getFinCollateralsByRef(long finID, String type) {
+		return finCollateralsDAO.getFinCollateralsByFinRef(finID, type);
 	}
 
 	@Override
-	public FinCollaterals getApprovedFinCollateralsById(String finReference, long id) {
-		return getFinCollateralsDAO().getFinCollateralsById(finReference, id, "_AView");
+	public FinCollaterals getApprovedFinCollateralsById(long finID, long id) {
+		return finCollateralsDAO.getFinCollateralsById(finID, id, "_AView");
 	}
 
 	@Override
@@ -58,9 +57,9 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			collateralDetail.setWorkflowId(0);
 
 			if (collateralDetail.isNewRecord()) {
-				getFinCollateralsDAO().save(collateralDetail, tableType);
+				finCollateralsDAO.save(collateralDetail, tableType);
 			} else {
-				getFinCollateralsDAO().update(collateralDetail, tableType);
+				finCollateralsDAO.update(collateralDetail, tableType);
 			}
 			String[] fields = PennantJavaUtil.getFieldDetails(collateralDetail, collateralDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
@@ -81,9 +80,9 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		}
 
 		FinCollaterals finCollateral = (FinCollaterals) auditHeader.getAuditDetail().getModelData();
-		getFinCollateralsDAO().delete(finCollateral, "");
+		finCollateralsDAO.delete(finCollateral, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -97,7 +96,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		if (finCollateralList != null && !finCollateralList.isEmpty()) {
 			int auditSeq = 1;
 			for (FinCollaterals finCollateral : finCollateralList) {
-				getFinCollateralsDAO().delete(finCollateral, tableType);
+				finCollateralsDAO.delete(finCollateral, tableType);
 				fields = PennantJavaUtil.getFieldDetails(finCollateral, finCollateral.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
 						finCollateral.getBefImage(), finCollateral));
@@ -125,7 +124,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		if (financeDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 
-			getFinCollateralsDAO().delete(financeDisbursement, "");
+			finCollateralsDAO.delete(financeDisbursement, "");
 
 		} else {
 			financeDisbursement.setRoleCode("");
@@ -136,22 +135,22 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			financeDisbursement.setRecordType("");
 			if (financeDisbursement.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-				getFinCollateralsDAO().save(financeDisbursement, "");
+				finCollateralsDAO.save(financeDisbursement, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
-				getFinCollateralsDAO().update(financeDisbursement, "");
+				finCollateralsDAO.update(financeDisbursement, "");
 			}
 		}
 
-		getFinCollateralsDAO().delete(financeDisbursement, "_Temp");
+		finCollateralsDAO.delete(financeDisbursement, "_Temp");
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(financeDisbursement);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -169,9 +168,9 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		FinCollaterals finCollaterals = (FinCollaterals) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getFinCollateralsDAO().delete(finCollaterals, "_Temp");
+		finCollateralsDAO.delete(finCollaterals, "_Temp");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -194,11 +193,11 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 			finCollateral.setNextTaskId("");
 			finCollateral.setWorkflowId(0);
 			finCollateral.setRecordType("");
-			getFinCollateralsDAO().save(finCollateral, tableType);
+			finCollateralsDAO.save(finCollateral, tableType);
 
 			if (!StringUtils.equals(finSourceId, PennantConstants.FINSOURCE_ID_API) || apiHeader == null
 					|| StringUtils.isNotBlank(serviceName)) {
-				getFinCollateralsDAO().delete(finCollateral, "_Temp");
+				finCollateralsDAO.delete(finCollateral, "_Temp");
 			}
 
 			String[] fields = PennantJavaUtil.getFieldDetails(finCollateral, finCollateral.getExcludeFields());
@@ -222,11 +221,10 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getFinCollateralsDAO().getErrorDetail with Error ID and
+	 * for any mismatch conditions Fetch the error details from finCollateralsDAO.getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -311,11 +309,11 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 		FinCollaterals tempFinCollaterals = null;
 		if (finCollaterals.isWorkflow()) {
-			tempFinCollaterals = getFinCollateralsDAO().getFinCollateralsById(finCollaterals.getFinReference(),
+			tempFinCollaterals = finCollateralsDAO.getFinCollateralsById(finCollaterals.getFinID(),
 					finCollaterals.getId(), "_Temp");
 		}
-		FinCollaterals befFinCollaterals = getFinCollateralsDAO()
-				.getFinCollateralsById(finCollaterals.getFinReference(), finCollaterals.getId(), "");
+		FinCollaterals befFinCollaterals = finCollateralsDAO.getFinCollateralsById(finCollaterals.getFinID(),
+				finCollaterals.getId(), "");
 
 		FinCollaterals oldFinCollaterals = finCollaterals.getBefImage();
 
@@ -326,14 +324,15 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 
 		if (finCollaterals.isNewRecord()) { // for New record or new record into work flow
 
-			if (!finCollaterals.isWorkflow()) {// With out Work flow only new records  
-				if (befFinCollaterals != null) { // Record Already Exists in the table then error  
+			if (!finCollaterals.isWorkflow()) {// With out Work flow only new records
+				if (befFinCollaterals != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (finCollaterals.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinCollaterals != null || tempFinCollaterals != null) { // if records already exists in the main table
+					if (befFinCollaterals != null || tempFinCollaterals != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -368,7 +367,7 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 				}
 			} else {
 
-				if (tempFinCollaterals == null) { // if records not exists in the Work flow table 
+				if (tempFinCollaterals == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -390,19 +389,12 @@ public class FinCollateralServiceImpl extends GenericService<FinanceDetail> impl
 		return auditDetail;
 	}
 
-	public FinCollateralsDAO getFinCollateralsDAO() {
-		return finCollateralsDAO;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	public void setFinCollateralsDAO(FinCollateralsDAO finCollateralsDAO) {
 		this.finCollateralsDAO = finCollateralsDAO;
 	}
 
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
 }

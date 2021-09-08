@@ -760,7 +760,10 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		// update or insert based on availability.
 
 		for (FinTaxUploadDetail tud : finTaxUploadHeader.getFinTaxUploadDetailList()) {
-			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(tud.getAggrementNo(), "_View");
+
+			Long finID = financeMainDAO.getFinID(tud.getAggrementNo());
+
+			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_View");
 			if (financeTaxDetail != null) {
 				Customer customer = customerDAO.getCustomerByCIF(tud.getApplicant(), "_View");
 				financeTaxDetail.setTaxCustId(customer.getCustID());

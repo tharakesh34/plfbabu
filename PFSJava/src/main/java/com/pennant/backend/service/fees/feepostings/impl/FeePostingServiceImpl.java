@@ -72,6 +72,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.rits.cloning.Cloner;
 
 /**
@@ -225,15 +226,15 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String reference = feePostings.getReference();
-		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.VIEW);
 
-		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEPOSTING.equals(rcdMntnSts)) {
+		if (fm != null && !FinServiceEvent.FEEPOSTING.equals(fm.getRcdMaintainSts())) {
 			String[] valueParm1 = new String[1];
-			valueParm1[0] = rcdMntnSts;
+			valueParm1[0] = fm.getRcdMaintainSts();
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
 		}
 
-		if (financeWriteoffDAO.isWriteoffLoan(reference, "")) {
+		if (financeWriteoffDAO.isWriteoffLoan(fm.getFinID(), "")) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = " ";
 			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
@@ -377,12 +378,12 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 
 				// If Fee postings Created Against Finance Reference
 				if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, feePostings.getPostAgainst())) {
-					FinanceMain financeMain = financeMainDAO.getFinanceMainForBatch(feePostings.getReference());
-					amountCodes.setFinType(financeMain.getFinType());
+					FinanceMain fm = financeMainDAO.getFinanceMain(feePostings.getReference(), TableType.MAIN_TAB);
+					amountCodes.setFinType(fm.getFinType());
 					amountCodes.setPartnerBankAc(getFeePostings().getPartnerBankAc());
-					aeEvent.setBranch(financeMain.getFinBranch());
-					aeEvent.setCustID(financeMain.getCustID());
-					aeEvent.setCcy(financeMain.getFinCcy());
+					aeEvent.setBranch(fm.getFinBranch());
+					aeEvent.setCustID(fm.getCustID());
+					aeEvent.setCcy(fm.getFinCcy());
 				} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, feePostings.getPostAgainst())) {
 					Customer customer = customerDAO.getCustomerByCIF(feePostings.getReference(), "");
 					aeEvent.setBranch(customer.getCustDftBranch());
@@ -514,19 +515,19 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			}
 			break;
 		case FinanceConstants.POSTING_AGAINST_LOAN:
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(feePostings.getFinReference(), "", false);
-			if (financeMain != null) {
+			FinanceMain fm = financeMainDAO.getFinanceMainByRef(feePostings.getFinReference(), "", false);
+			if (fm != null) {
 				feePostings.setReference(feePostings.getFinReference());
 				// validate currency
 				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
-					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), financeMain.getFinCcy())) {
+					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), fm.getFinCcy())) {
 						String[] valueParm = new String[2];
 						valueParm[0] = feePostings.getCurrency();
-						valueParm[1] = "Loan: " + financeMain.getFinCcy();
+						valueParm[1] = "Loan: " + fm.getFinCcy();
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
 						return auditDetail;
 					} else {
-						feePostings.setCurrency(financeMain.getFinCcy());
+						feePostings.setCurrency(fm.getFinCcy());
 					}
 				}
 			} else {

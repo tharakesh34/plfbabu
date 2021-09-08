@@ -1357,11 +1357,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		String finReference = financeMain.getFinReference();
+		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
-		List<FinFeeDetail> finFeeDetailList = finScheduleData.getFinFeeDetailList();
+		List<FinFeeDetail> finFeeDetailList = schdData.getFinFeeDetailList();
 
 		if (CollectionUtils.isEmpty(finFeeDetailList)) {
 			return dataMap;
@@ -1452,8 +1453,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		/* Setting the balance up-front fee amount to excess amount for accounting purpose */
 		Map<Long, List<FinFeeReceipt>> upfromtReceiptMap = finFeeDetailService
-				.getUpfromtReceiptMap(finScheduleData.getFinFeeReceipts());
-		BigDecimal excessAmount = finFeeDetailService.getExcessAmount(finReference, upfromtReceiptMap,
+				.getUpfromtReceiptMap(schdData.getFinFeeReceipts());
+		BigDecimal excessAmount = finFeeDetailService.getExcessAmount(finID, upfromtReceiptMap,
 				financeDetail.getCustomerDetails().getCustID());
 		amountCodes.setToExcessAmt(excessAmount);
 

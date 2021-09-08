@@ -1,20 +1,20 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 package com.pennant.backend.service.finance;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.bmtmasters.BankBranchDAO;
@@ -57,6 +58,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>RefundUpload</b>.<br>
@@ -90,8 +92,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -105,8 +106,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	}
 
 	/**
-	 * @param refundUploadDAO
-	 *            the refundUploadDAO to set
+	 * @param refundUploadDAO the refundUploadDAO to set
 	 */
 	public void setRefundUploadDAO(RefundUploadDAO refundUploadDAO) {
 		this.refundUploadDAO = refundUploadDAO;
@@ -176,8 +176,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	 * Configuration. by using RefundUploadsDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -215,10 +214,8 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	/**
 	 * getRefundUploadsByUploadId fetch the details by using RefundUploadsDAO's getRefundUploadsByUploadId method.
 	 * 
-	 * @param finType
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finType (String)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return RefundUploads
 	 */
 	@Override
@@ -229,8 +226,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	/**
 	 * getRefundUploadsById fetch the details by using RefundUploadsDAO's getRefundUploadByRef method.
 	 * 
-	 * @param uploadId
-	 *            (long)
+	 * @param uploadId (long)
 	 * @return RefundUploads
 	 */
 	@Override
@@ -249,8 +245,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtRefundUploads by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -269,7 +264,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(refundUpload.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
-			//getRefundUploadDAO().delete(refundUpload, ""); // because delete will not be applicable here 
+			// getRefundUploadDAO().delete(refundUpload, ""); // because delete will not be applicable here
 		} else {
 			refundUpload.setRoleCode("");
 			refundUpload.setNextRoleCode("");
@@ -287,7 +282,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				getRefundUploadDAO().update(refundUpload, "");
 			}
 		}
-		//prepare Payment Instrunctionos 
+		// prepare Payment Instrunctionos
 		if (!UploadConstants.REFUND_UPLOAD_STATUS_FAIL.equals(refundUpload.getStatus())) {
 			createPaymentInstctions(refundUpload);
 		}
@@ -321,14 +316,15 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	public PaymentHeader preparePayments(RefundUpload refundUpload) {
 		logger.debug("Entering");
 
+		Date appDate = SysParamUtil.getAppDate();
 		long bankBranchId = 0;
-		//Payment Header
+		// Payment Header
 		PaymentHeader paymentHeader = new PaymentHeader();
 		paymentHeader.setFinReference(refundUpload.getFinReference());
 		paymentHeader.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
 		paymentHeader.setPaymentAmount(refundUpload.getPayableAmount());
-		paymentHeader.setCreatedOn(DateUtility.getAppDate());
-		paymentHeader.setApprovedOn(DateUtility.getAppDate());
+		paymentHeader.setCreatedOn(appDate);
+		paymentHeader.setApprovedOn(appDate);
 		paymentHeader.setStatus(RepayConstants.PAYMENT_APPROVE);
 		paymentHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		paymentHeader.setNewRecord(true);
@@ -344,13 +340,17 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			paymentHeader.setFinSource(UploadConstants.FINSOURCE_ID_API);
 		}
 
-		FinanceMain financeMain = financeMainDAO.getFinanceForIncomeAMZ(refundUpload.getFinReference());
+		FinanceMain fm = financeMainDAO.getFinanceMain(refundUpload.getFinReference(), TableType.MAIN_TAB);
 
-		if (financeMain == null) {
+		if (fm == null) {
 			throw new InterfaceException("9999", "Loan Reference should not exist.");
 		}
+
+		long finID = fm.getFinID();
+		String finType = fm.getFinType();
+
 		FinTypePartnerBank finTypePartnerBank = finTypePartnerBankDAO.getFinTypePartnerBankByPartnerBankCode(
-				refundUpload.getPartnerBank(), financeMain.getFinType(), refundUpload.getPaymentType());
+				refundUpload.getPartnerBank(), finType, refundUpload.getPaymentType());
 		if (finTypePartnerBank == null) {
 			throw new InterfaceException("9999", "Partner banks should not linked to Loan Type.");
 		}
@@ -377,13 +377,13 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Payment Details
+		// Payment Details
 		List<PaymentDetail> paymentDetailList = new ArrayList<PaymentDetail>();
 
 		if (UploadConstants.REFUNDUPLOAD_MANUAL_ADVISE_PAYABLE.equals(refundUpload.getType())) {
 			BigDecimal totalAmount = BigDecimal.ZERO;
-			List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(
-					refundUpload.getFinReference(), FinanceConstants.MANUAL_ADVISE_PAYABLE, refundUpload.getFeeType());
+			List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(finID,
+					FinanceConstants.MANUAL_ADVISE_PAYABLE, refundUpload.getFeeType());
 
 			if (CollectionUtils.isNotEmpty(advises)) {
 
@@ -477,8 +477,8 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		} else {
 			PaymentDetail paymentDetail = new PaymentDetail();
 			paymentDetail.setAmountType(refundUpload.getType());
-			FinExcessAmount finExcessAmount = getFinExcessAmountDAO()
-					.getExcessAmountsByRefAndType(refundUpload.getFinReference(), paymentDetail.getAmountType());
+			FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finID,
+					paymentDetail.getAmountType());
 			if (finExcessAmount == null) {
 				throw new InterfaceException("9999", "Excess details is not available");
 			}
@@ -496,7 +496,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			paymentDetailList.add(paymentDetail);
 		}
 
-		//Payment Instructions
+		// Payment Instructions
 		PaymentInstruction paymentInstruction = new PaymentInstruction();
 		paymentInstruction.setPostDate(refundUpload.getPaymentDate());
 		paymentInstruction.setPaymentType(refundUpload.getPaymentType());
@@ -512,7 +512,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		paymentInstruction.setAccountNo(refundUpload.getAccountNumber());
 		paymentInstruction.setPhoneNumber(refundUpload.getPhoneNumber());
 		paymentInstruction.setValueDate(refundUpload.getValueDate());
-		paymentInstruction.setPaymentCCy(financeMain.getFinCcy());
+		paymentInstruction.setPaymentCCy(fm.getFinCcy());
 		paymentInstruction.setPartnerBankCode(refundUpload.getPartnerBank());
 		paymentInstruction.setPartnerBankId(finTypePartnerBank.getPartnerBankID());
 		paymentInstruction.setStatus(DisbursementConstants.STATUS_NEW);
@@ -525,17 +525,17 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		paymentInstruction.setLastMntBy(refundUpload.getLastMntBy());
 		paymentInstruction.setLastMntOn(refundUpload.getLastMntOn());
 
-		//Extra validation fields
+		// Extra validation fields
 		paymentInstruction.setPartnerBankAcType(finTypePartnerBank.getAccountType());
 		paymentInstruction.setApiRequest(true);
 
 		// In table availabele but mapping not available
-		//paymentInstruction.setFavourNumber(refundUpload.getFavourName()); 
-		//paymentInstruction.setPhoneCountryCode(phoneCountryCode);
-		//paymentInstruction.setClearingdate(clearingdate);
-		//paymentInstruction.setTransactionRef(transactionRef);
-		//paymentInstruction.setRejectReason("");
-		//paymentInstruction.setRealizationDate(null);
+		// paymentInstruction.setFavourNumber(refundUpload.getFavourName());
+		// paymentInstruction.setPhoneCountryCode(phoneCountryCode);
+		// paymentInstruction.setClearingdate(clearingdate);
+		// paymentInstruction.setTransactionRef(transactionRef);
+		// paymentInstruction.setRejectReason("");
+		// paymentInstruction.setRealizationDate(null);
 
 		paymentHeader.setPaymentDetailList(paymentDetailList);
 		paymentHeader.setPaymentInstruction(paymentInstruction);
@@ -562,8 +562,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	 * workFlow table by using getRefundUploadDAO().delete with parameters promotionFee,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtRefundUploads by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -575,10 +574,10 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			return auditHeader;
 		}
 
-		//RefundUpload refundUpload = (RefundUpload) auditHeader.getAuditDetail().getModelData();
+		// RefundUpload refundUpload = (RefundUpload) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		//getRefundUploadDAO().delete(refundUpload, "_TEMP"); // because delete will not be applicable here 
+		// getRefundUploadDAO().delete(refundUpload, "_TEMP"); // because delete will not be applicable here
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 
@@ -591,8 +590,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -638,7 +636,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				}
 			}
 
-			//Success and failed count updation
+			// Success and failed count updation
 			uploadHeader.setSuccessCount(successCount);
 			uploadHeader.setFailedCount(failCount);
 			uploadHeader.setTotalRecords(successCount + failCount);
@@ -795,7 +793,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			if (saveRecord) {
 				getRefundUploadDAO().save(refundUpload, type);
 				if (approveRec) {
-					//prepare Payment Instructions 
+					// prepare Payment Instructions
 					if (!UploadConstants.REFUND_UPLOAD_STATUS_FAIL.equals(refundUpload.getStatus())) {
 						createPaymentInstctions(refundUpload);
 					}
@@ -805,7 +803,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				getRefundUploadDAO().update(refundUpload, type);
 			}
 			if (deleteRecord) {
-				//getRefundUploadDAO().delete(refundUpload, type); // because delete will not be applicable here 
+				// getRefundUploadDAO().delete(refundUpload, type); // because delete will not be applicable here
 			}
 			if (approveRec) {
 				refundUpload.setRecordType(rcdType);
@@ -845,93 +843,93 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 		int errorCount = 0;
 		String reason = "";
 
-		//Fin Reference
+		// Fin Reference
 		if (StringUtils.isNotBlank(refundUpload.getFinReference()) && refundUpload.getFinReference().length() > 20) {
 			errorCount++;
 			reason = "Reference length should be lessthan or equal to 20";
 			refundUpload.setFinReference(null);
 		}
-		//Payable Amount
+		// Payable Amount
 		if (refundUpload.getPayableAmount() != null && refundUpload.getPayableAmount().toString().length() > 20) {
 			errorCount++;
 			reason = "Payable Amount length should be lessthan or equal to 18";
 			refundUpload.setPayableAmount(BigDecimal.ZERO);
 		}
-		//Type
+		// Type
 		if (StringUtils.isNotBlank(refundUpload.getType()) && refundUpload.getType().length() > 1) {
 			errorCount++;
 			reason = "Type length should be 1";
 			refundUpload.setPayableAmount(BigDecimal.ZERO);
 		}
-		//Payment Type
+		// Payment Type
 		if (StringUtils.isNotBlank(refundUpload.getPaymentType()) && refundUpload.getPaymentType().length() > 8) {
 			errorCount++;
 			reason = "Payment Type length should be lessthan or equal to 8";
 			refundUpload.setPaymentType(null);
 		}
-		//Fee Type
+		// Fee Type
 		if (StringUtils.isNotBlank(refundUpload.getFeeType()) && refundUpload.getFeeType().length() > 8) {
 			errorCount++;
 			reason = "Fee Type length should be lessthan or equal to 8";
 			refundUpload.setFeeType(null);
 		}
-		//Partner Bank
+		// Partner Bank
 		if (StringUtils.isNotBlank(refundUpload.getPartnerBank()) && refundUpload.getPartnerBank().length() > 8) {
 			errorCount++;
 			reason = "Partner Bank length should be lessthan or equal to 8";
 			refundUpload.setPartnerBank(null);
 		}
-		//Remarks
+		// Remarks
 		if (StringUtils.isNotBlank(refundUpload.getRemarks()) && refundUpload.getRemarks().length() > 100) {
 			errorCount++;
 			reason = "Remarks length should be lessthan or equal to 100";
 			refundUpload.setRemarks(null);
 		}
-		//IFSC
+		// IFSC
 		if (StringUtils.isNotBlank(refundUpload.getIFSC()) && refundUpload.getIFSC().length() > 20) {
 			errorCount++;
 			reason = "IFSC length should be lessthan or equal to 20";
 			refundUpload.setIFSC(null);
 		}
-		//Account Number
+		// Account Number
 		if (StringUtils.isNotBlank(refundUpload.getAccountNumber()) && refundUpload.getAccountNumber().length() > 100) {
 			errorCount++;
 			reason = "Account Number length should be lessthan or equal to 100";
 			refundUpload.setAccountNumber(null);
 		}
-		//Account Holder Name
+		// Account Holder Name
 		if (StringUtils.isNotBlank(refundUpload.getAccountHolderName())
 				&& refundUpload.getAccountHolderName().length() > 200) {
 			errorCount++;
 			reason = "Account Holder Name length should be lessthan or equal to 200";
 			refundUpload.setAccountHolderName(null);
 		}
-		//Phone Number
+		// Phone Number
 		if (StringUtils.isNotBlank(refundUpload.getPhoneNumber()) && refundUpload.getPhoneNumber().length() > 12) {
 			errorCount++;
 			reason = "Phone Number length should be lessthan or equal to 12";
 			refundUpload.setPhoneNumber(null);
 		}
-		//Issuing Bank
+		// Issuing Bank
 		if (StringUtils.isNotBlank(refundUpload.getIssuingBank()) && refundUpload.getIssuingBank().length() > 8) {
 			errorCount++;
 			reason = "Issuing Bank length should be lessthan or equal to 8";
 			refundUpload.setIssuingBank(null);
 		}
-		//Favouring Name
+		// Favouring Name
 		if (StringUtils.isNotBlank(refundUpload.getFavourName()) && refundUpload.getFavourName().length() > 200) {
 			errorCount++;
 			reason = "Favouring Name length should be lessthan or equal to 200";
 			refundUpload.setFavourName(null);
 		}
-		//Payable Location
+		// Payable Location
 		if (StringUtils.isNotBlank(refundUpload.getPayableLocation())
 				&& refundUpload.getPayableLocation().length() > 50) {
 			errorCount++;
 			reason = "Payable Location length should be lessthan or equal to 50";
 			refundUpload.setPayableLocation(null);
 		}
-		//Printing Location
+		// Printing Location
 		if (StringUtils.isNotBlank(refundUpload.getPrintingLocation())
 				&& refundUpload.getPrintingLocation().length() > 50) {
 			errorCount++;
@@ -952,21 +950,21 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 	private void validateData(RefundUpload refundUpload) {
 		int errorCount = 0;
 		String reason = "";
-		FinanceMain financeMain = null;
+		FinanceMain fm = null;
 		BigDecimal availableAmount = BigDecimal.ZERO;
 
-		//FinReference
+		// FinReference
 		String finReference = refundUpload.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
 			errorCount++;
 			reason = "Reference is mandatory";
 		} else {
-			financeMain = financeMainDAO.getFinanceForIncomeAMZ(finReference);
-			if (financeMain == null) {
+			fm = financeMainDAO.getFinanceMain(finReference, TableType.MAIN_TAB);
+			if (fm == null) {
 				errorCount++;
 				reason = "Invalid Reference";
 			} else {
-				boolean recordMaintainance = this.paymentHeaderService.getPaymentHeadersByFinReference(finReference,
+				boolean recordMaintainance = this.paymentHeaderService.getPaymentHeadersByFinReference(fm.getFinID(),
 						"_Temp");
 				if (!recordMaintainance) {
 					recordMaintainance = this.refundUploadDAO.getRefundUploadsByFinReference(finReference,
@@ -978,7 +976,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				}
 			}
 		}
-		//Payment Type
+		// Payment Type
 		if (errorCount == 0 && !DisbursementConstants.PAYMENT_TYPE_RTGS.equals(refundUpload.getPaymentType())
 				&& !DisbursementConstants.PAYMENT_TYPE_DD.equals(refundUpload.getPaymentType())
 				&& !DisbursementConstants.PAYMENT_TYPE_NEFT.equals(refundUpload.getPaymentType())
@@ -988,35 +986,35 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			errorCount++;
 			reason = "Payment Type allowed values are :RTGS,DD,NEFT,CASH,CHEQUE,IMPS";
 		}
-		//Payable Date
+		// Payable Date
 		if (errorCount == 0 && (refundUpload.getPaymentDate() == null
 				|| (DateUtility.compare(refundUpload.getPaymentDate(), DateUtility.getAppDate())) < 0)) {
 			errorCount++;
 			reason = "Payable Date is always current date or future date";
 		}
-		//Value Date
+		// Value Date
 		if (errorCount == 0
 				&& (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(refundUpload.getPaymentType())
 						|| DisbursementConstants.PAYMENT_TYPE_DD.equals(refundUpload.getPaymentType()))
 				&& refundUpload.getValueDate() == null) {
 			errorCount++;
-			reason = "Value Date is mandatory"; //TODO add value date condition
+			reason = "Value Date is mandatory"; // TODO add value date condition
 		}
-		//Type
+		// Type
 		if (errorCount == 0 && !UploadConstants.REFUNDUPLOAD_EXCESS_AMOUNT.equals(refundUpload.getType())
 				&& !UploadConstants.REFUNDUPLOAD_ADVANCE_AMOUNT.equals(refundUpload.getType())
 				&& !UploadConstants.REFUNDUPLOAD_MANUAL_ADVISE_PAYABLE.equals(refundUpload.getType())) {
 			errorCount++;
 			reason = "Type should be E/A/M";
 		}
-		//Fee Type
+		// Fee Type
 		if (errorCount == 0) {
 			if (UploadConstants.REFUNDUPLOAD_MANUAL_ADVISE_PAYABLE.equals(refundUpload.getType())) {
 				if (StringUtils.isBlank(refundUpload.getFeeType())) {
 					errorCount++;
 					reason = "Fee Type is mandatory for Type is M.";
 				} else {
-					List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(finReference,
+					List<ManualAdvise> advises = getManualAdviseDAO().getManualAdviseByRefAndFeeCode(fm.getFinID(),
 							FinanceConstants.MANUAL_ADVISE_PAYABLE, refundUpload.getFeeType());
 					if (CollectionUtils.isNotEmpty(advises)) {
 						for (ManualAdvise advise : advises) {
@@ -1030,7 +1028,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Payable Amount
+		// Payable Amount
 		if (errorCount == 0) {
 			if (BigDecimal.ZERO.compareTo(refundUpload.getPayableAmount()) >= 0) {
 				errorCount++;
@@ -1042,8 +1040,8 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 						reason = "Payable Amount should be greater than 0 and less than or equal to available amount";
 					}
 				} else {
-					FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
-							refundUpload.getType());
+					FinExcessAmount finExcessAmount = getFinExcessAmountDAO()
+							.getExcessAmountsByRefAndType(fm.getFinID(), refundUpload.getType());
 					if (finExcessAmount == null
 							|| finExcessAmount.getBalanceAmt().compareTo(refundUpload.getPayableAmount()) < 0) {
 						errorCount++;
@@ -1053,7 +1051,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Partner Bank
+		// Partner Bank
 		if (errorCount == 0) {
 			if (StringUtils.isBlank(refundUpload.getPartnerBank())) {
 				errorCount++;
@@ -1061,7 +1059,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			} else {
 				// Condition should be add
 				FinTypePartnerBank finTypePartnerBank = finTypePartnerBankDAO.getFinTypePartnerBankByPartnerBankCode(
-						refundUpload.getPartnerBank(), financeMain.getFinType(), refundUpload.getPaymentType());
+						refundUpload.getPartnerBank(), fm.getFinType(), refundUpload.getPaymentType());
 				if (finTypePartnerBank == null) {
 					errorCount++;
 					reason = "Partner Bank name should be available in the applicable partner banks selected in the loan type";
@@ -1069,8 +1067,8 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//////////////////////////Conditional Mandatory columns/////////////////////////
-		//IFSC and MICR
+		////////////////////////// Conditional Mandatory columns/////////////////////////
+		// IFSC and MICR
 		BankBranch bankBranch = null;
 		if (errorCount == 0 && (DisbursementConstants.PAYMENT_TYPE_RTGS.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(refundUpload.getPaymentType())
@@ -1094,7 +1092,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Issuing Bank
+		// Issuing Bank
 		if (errorCount == 0 && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(refundUpload.getPaymentType()))) {
 			if (StringUtils.isBlank(refundUpload.getIssuingBank())) {
@@ -1109,7 +1107,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Account Number
+		// Account Number
 		if (errorCount == 0 && (DisbursementConstants.PAYMENT_TYPE_RTGS.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_CASH.equals(refundUpload.getPaymentType())
@@ -1120,7 +1118,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Account Holder Name
+		// Account Holder Name
 		if (errorCount == 0 && (DisbursementConstants.PAYMENT_TYPE_RTGS.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_NEFT.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_CASH.equals(refundUpload.getPaymentType())
@@ -1130,7 +1128,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				reason = "Account Holder Name is mandatory";
 			}
 		}
-		//Phone Number
+		// Phone Number
 		if (errorCount == 0 && DisbursementConstants.PAYMENT_TYPE_IMPS.equals(refundUpload.getPaymentType())) {
 			if (StringUtils.isBlank(refundUpload.getPhoneNumber())) {
 				errorCount++;
@@ -1138,7 +1136,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Favoring Name
+		// Favoring Name
 		if (errorCount == 0 && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(refundUpload.getPaymentType()))) {
 			if (StringUtils.isBlank(refundUpload.getFavourName())) {
@@ -1146,7 +1144,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				reason = "Favoring Name is mandatory";
 			}
 		}
-		//Payable Location
+		// Payable Location
 		if (errorCount == 0 && (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(refundUpload.getPaymentType())
 				|| DisbursementConstants.PAYMENT_TYPE_DD.equals(refundUpload.getPaymentType()))) {
 			if (StringUtils.isBlank(refundUpload.getPayableLocation())) {
@@ -1154,7 +1152,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 				reason = "Payable Location is mandatory";
 			}
 		}
-		//Printing Location
+		// Printing Location
 		if (errorCount == 0 && DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(refundUpload.getPaymentType())) {
 			if (StringUtils.isBlank(refundUpload.getPrintingLocation())) {
 				errorCount++;
@@ -1162,7 +1160,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 			}
 		}
 
-		//Payable Amount Balance checking
+		// Payable Amount Balance checking
 		if (errorCount == 0) {
 			String key = "";
 			BigDecimal payAmount = BigDecimal.ZERO;
@@ -1183,7 +1181,7 @@ public class RefundUploadServiceImpl extends GenericService<RefundUpload> implem
 					payableAmountsMap.put(key, refundUpload.getPayableAmount());
 				}
 			} else {
-				FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(finReference,
+				FinExcessAmount finExcessAmount = getFinExcessAmountDAO().getExcessAmountsByRefAndType(fm.getFinID(),
 						refundUpload.getType());
 
 				key = finReference + "-" + refundUpload.getType();

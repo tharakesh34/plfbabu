@@ -1,44 +1,26 @@
 /**
-
+ * 
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CovenantsServiceImpl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-08-2013    														*
- *                                                                  						*
- * Modified Date    :  14-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CovenantsServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-08-2013 * * Modified
+ * Date : 14-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -137,7 +119,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 
 		List<DocumentDetails> documents = new ArrayList<>();
 
-		for (Covenant covenant : covenants) {//if covenants tab is not available in loan queue below list is getting empty
+		for (Covenant covenant : covenants) {// if covenants tab is not available in loan queue below list is getting
+												// empty
 			if (CollectionUtils.isNotEmpty(covenant.getDocumentDetails())) {
 				for (DocumentDetails document : covenant.getDocumentDetails()) {
 					document.setLastMntBy(covenant.getLastMntBy());
@@ -146,7 +129,8 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 					document.setFinReference(covenant.getKeyReference());
 					documents.add(document);
 				}
-			} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {//we are preparing document list by using covenants doc
+			} else if (CollectionUtils.isNotEmpty(covenant.getCovenantDocuments())) {// we are preparing document list
+																						// by using covenants doc
 				for (CovenantDocument covenantDocument : covenant.getCovenantDocuments()) {
 					DocumentDetails documentDetail = covenantDocument.getDocumentDetail();
 					if (documentDetail != null) {
@@ -771,22 +755,20 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		logger.debug(Literal.ENTERING);
 
 		// Finance Details
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(finreference);
-		scheduleData.setFinanceMain(financeMainDAO.getFinanceMainById(finreference, type, false));
-		scheduleData.setFinanceType(
-				financeTypeDAO.getFinanceTypeByID(scheduleData.getFinanceMain().getFinType(), "_AView"));
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinReference(finreference);
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finreference, type, false);
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), "_AView"));
 
 		// Finance Schedule Details
-		scheduleData
-				.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finreference, type, false));
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), type, false));
 
 		// Finance Customer Details
-		if (scheduleData.getFinanceMain().getCustID() != 0
-				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-			financeDetail.setCustomerDetails(customerDetailsService
-					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
+		if (schdData.getFinanceMain().getCustID() != 0 && schdData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
+			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(schdData.getFinanceMain().getCustID(),
+					true, "_View"));
 		}
 
 		List<Covenant> covenants = covenantsDAO.getCovenants(finreference, "Loan", TableType.VIEW);
@@ -798,9 +780,9 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 			}
 		}
 
-		financeDetail.setCovenants(covenants);
+		fd.setCovenants(covenants);
 
-		return financeDetail;
+		return fd;
 	}
 
 	@Override

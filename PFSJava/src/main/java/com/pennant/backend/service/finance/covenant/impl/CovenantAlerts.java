@@ -50,14 +50,14 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 		for (Covenant covenant : covenants) {
 			FinanceDetail financeDetail = new FinanceDetail();
 			CustomerDetails customerDetails = new CustomerDetails();
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(covenant.getKeyReference(), "_aview", false);
+			FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(covenant.getKeyReference(), "_aview", false);
 			financeMain.setUserDetails(new LoggedInUser());
 			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 			financeDetail.setCovenant(covenant);
 			financeDetail.setCustomerDetails(customerDetails);
 			customerDetails.setCustID(financeMain.getCustID());
 			customerDetailsService.setCustomerBasicDetails(customerDetails);
-			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			// For Customers marked as DND true are not allow to Trigger a Mail.
 			if (customerDetails.getCustomer().isDnd()) {
 				continue;
 			} else {

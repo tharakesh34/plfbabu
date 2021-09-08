@@ -605,7 +605,7 @@ public class FeeDetailService {
 		// FIXME:removed the && StringUtils.isNotBlank(finMain.getRcdMaintainSts()) condition for calculate Fees's
 		// through API
 		if (fm != null && StringUtils.isNotBlank(fm.getFinReference())) {
-			FinanceProfitDetail fpd = financeDetailService.getFinProfitDetailsById(fm.getFinReference());
+			FinanceProfitDetail fpd = financeDetailService.getFinProfitDetailsById(fm.getFinID());
 			if (fpd != null) {
 				BigDecimal outStandingFeeBal = this.financeDetailService
 						.getOutStandingBalFromFees(fm.getFinReference());

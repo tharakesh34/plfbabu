@@ -33,11 +33,11 @@ import com.pennant.backend.model.finance.FinCollaterals;
 
 public interface FinCollateralService {
 
-	FinCollaterals getFinCollateralsById(String financeReference, long id);
+	FinCollaterals getFinCollateralsById(long finID, long id);
 
-	List<FinCollaterals> getFinCollateralsByRef(String ref, String type);
+	List<FinCollaterals> getFinCollateralsByRef(long finID, String type);
 
-	FinCollaterals getApprovedFinCollateralsById(String financeReference, long id);
+	FinCollaterals getApprovedFinCollateralsById(long finID, long id);
 
 	List<AuditDetail> saveOrUpdate(List<FinCollaterals> finCollaterals, String tableType, String auditTranType);
 

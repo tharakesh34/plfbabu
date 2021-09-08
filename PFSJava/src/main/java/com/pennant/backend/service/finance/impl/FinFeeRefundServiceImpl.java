@@ -650,7 +650,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 	public FinFeeRefundHeader getPaidFeeDetails(FinFeeRefundHeader header, String type) {
 		logger.debug(Literal.ENTERING);
 		List<FinFeeDetail> finFeeDetails = new ArrayList<>();
-		List<FinFeeDetail> list = finFeeDetailDAO.getPaidFinFeeDetails(header.getFinReference(), type);
+		List<FinFeeDetail> list = finFeeDetailDAO.getPaidFinFeeDetails(header.getFinID(), type);
 		if (!header.isNewRecord()) {
 			List<FinFeeRefundDetails> finFeeRefundDetails = finFeeRefundDao
 					.getFinFeeRefundDetailsByHeaderId(header.getHeaderId(), type);
@@ -820,7 +820,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		}
 		if (BigDecimal.ZERO.compareTo(excessAmt) < 0) {
 			FinExcessAmount excess = null;
-			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(refundHeader.getFinReference(),
+			excess = finExcessAmountDAO.getExcessAmountsByRefAndType(refundHeader.getFinID(),
 					RepayConstants.EXCESSADJUSTTO_EXCESS);
 			// Creating Excess
 			if (excess == null) {
@@ -851,12 +851,12 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 	}
 
 	@Override
-	public FinanceDetail getFinanceDetailById(String finReference) {
+	public FinanceDetail getFinanceDetailById(long finID) {
 		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = financeMainDAO.getFinBasicDetails(finID, "_View");
 		FinanceDetail financeDetail = new FinanceDetail();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(finReference);
-		FinanceMain financeMain = financeMainDAO.getFinBasicDetails(finReference, "_View");
+		scheduleData.setFinReference(financeMain.getFinReference());
 		scheduleData.setFinanceMain(financeMain);
 		logger.debug(Literal.LEAVING);
 		return financeDetail;

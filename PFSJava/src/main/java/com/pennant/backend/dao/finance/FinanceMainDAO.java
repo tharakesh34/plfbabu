@@ -222,6 +222,8 @@ public interface FinanceMainDAO {
 
 	boolean isFinActive(long finID);
 
+	String getFinanceMainByRcdMaintenance(String finReference, String type);
+
 	String getFinanceMainByRcdMaintenance(long finID, String type);
 
 	FinanceMain getRcdMaintenanceByRef(long finID, String type);
@@ -332,6 +334,8 @@ public interface FinanceMainDAO {
 	String getFinCategory(String finReference);
 
 	void updateMaintainceStatus(long finID, String rcdMaintainSts);
+
+	void updateMaintainceStatus(String finReference, String rcdMaintainSts);
 
 	List<Long> getChildFinRefByParentRef(String parentRef);
 

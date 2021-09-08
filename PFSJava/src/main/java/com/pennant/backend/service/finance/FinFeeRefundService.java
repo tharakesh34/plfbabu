@@ -30,7 +30,7 @@ public interface FinFeeRefundService {
 
 	void prepareFeeRulesMap(FinFeeRefundHeader feeRefundHeader, Map<String, Object> dataMap, String userBranch);
 
-	FinanceDetail getFinanceDetailById(String finReference);
+	FinanceDetail getFinanceDetailById(long finID);
 
 	AEEvent processAccounting(FinFeeRefundHeader feeRefundHeader);
 

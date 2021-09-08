@@ -3425,6 +3425,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
+	public String getFinanceMainByRcdMaintenance(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select RcdMaintainSts From FinanceMain");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
+	}
+
+	@Override
 	public FinanceMain getRcdMaintenanceByRef(long finID, String type) {
 		StringBuilder sql = new StringBuilder("Select RcdMaintainSts, MaturityDate, WriteoffLoan From FinanceMain");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -5289,6 +5304,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			ps.setString(index++, rcdMaintainSts);
 			ps.setLong(index++, finID);
+
+		});
+	}
+
+	@Override
+	public void updateMaintainceStatus(String finReference, String rcdMaintainSts) {
+		String sql = "Update FinanceMain Set RcdMaintainSts = ? Where FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setString(index++, rcdMaintainSts);
+			ps.setString(index++, finReference);
 
 		});
 	}
