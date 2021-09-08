@@ -132,6 +132,8 @@ public interface FinanceMainDAO {
 
 	FinanceMain getDisbursmentFinMainById(long finID, TableType tableType);
 
+	FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType);
+
 	BigDecimal getTotalMaxRepayAmount(long mandateId, String finReference);
 
 	List<FinanceMain> getFinMainsForEODByCustId(long custId, boolean isActive);

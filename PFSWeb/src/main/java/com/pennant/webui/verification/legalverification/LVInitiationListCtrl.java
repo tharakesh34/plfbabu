@@ -108,8 +108,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_LegalVerificationInitiation(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -140,7 +139,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 		registerField("createdOn", listheader_CreatedOn, SortOrder.NONE, createdOn, sortOperator_CreatedOn,
 				Operators.DATE);
 		registerField("agencyName", listheader_Agency, SortOrder.ASC, agency, sortOperator_Agency, Operators.DEFAULT);
-		//registerField("verificationCategory");
+		// registerField("verificationCategory");
 		// Render the page and display the data.
 		doRenderPage();
 		search();
@@ -176,8 +175,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_LegalVerificationList_LegalVerificationSearch(Event event) {
 		search();
@@ -186,8 +184,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -198,8 +195,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onLegalVerificationItemDoubleClicked(Event event) {
@@ -216,8 +212,8 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 			return;
 		}
 
-		setFinanceDetail(financeDetailService.getVerificationInitiationDetails(lv.getKeyReference(),
-				VerificationType.LV, "_View"));
+		Long finID = financeDetailService.getFinID(lv.getKeyReference());
+		setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finID, VerificationType.LV, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  verificationId =? ");
@@ -262,8 +258,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param fieldinvestigation
-	 *            The entity that need to be passed to the dialog.
+	 * @param fieldinvestigation The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(LegalVerification legalVerification) {
 		logger.debug(Literal.ENTERING);
@@ -345,8 +340,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -355,8 +349,7 @@ public class LVInitiationListCtrl extends GFCBaseListCtrl<LegalVerification> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

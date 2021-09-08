@@ -776,9 +776,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			if (creditReviewDetail == null) {
 				MessageUtil.showMessage(Labels.getLabel("label_Configuraion_NotAvailable.value"));
 			} else {
-				creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(
-						financeMain.getFinReference(), creditReviewDetail.getTemplateName(),
-						creditReviewDetail.getTemplateVersion());
+				creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(financeMain.getFinID(),
+						creditReviewDetail.getTemplateName(), creditReviewDetail.getTemplateVersion());
 				if (creditReviewData == null) {
 					MessageUtil.showMessage(Labels.getLabel("label_Data_NotAvailable.value"));
 					return;

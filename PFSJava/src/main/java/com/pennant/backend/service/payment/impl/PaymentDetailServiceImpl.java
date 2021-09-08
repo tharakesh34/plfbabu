@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentDetailServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * *
+ * Modified Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.payment.impl;
@@ -98,7 +80,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
-	//GST Invoice Report changes
+	// GST Invoice Report changes
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceDetailService financeDetailService;
 
@@ -170,8 +152,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * based on the module workFlow Configuration. by using PaymentDeatilsDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -210,8 +191,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * PaymentDeatils by using PaymentDeatilsDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -236,10 +216,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	/**
 	 * getPaymentDeatils fetch the details by using PaymentDeatilsDAO's getPaymentDeatilsById method.
 	 * 
-	 * @param paymentDetailId
-	 *            paymentDetailId of the PaymentDetail.
-	 * @param amountType
-	 *            amountType of the PaymentDetail.
+	 * @param paymentDetailId paymentDetailId of the PaymentDetail.
+	 * @param amountType      amountType of the PaymentDetail.
 	 * @return PaymentDeatils
 	 */
 	@Override
@@ -251,10 +229,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * getApprovedPaymentDeatilsById fetch the details by using PaymentDeatilsDAO's getPaymentDeatilsById method . with
 	 * parameter id and type as blank. it fetches the approved records from the PaymentDeatils.
 	 * 
-	 * @param paymentDetailId
-	 *            paymentDetailId of the PaymentDetail.
-	 * @param amountType
-	 *            amountType of the PaymentDetail. (String)
+	 * @param paymentDetailId paymentDetailId of the PaymentDetail.
+	 * @param amountType      amountType of the PaymentDetail. (String)
 	 * @return PaymentDeatils
 	 */
 	public PaymentDetail getApprovedPaymentDetail(long paymentDetailId, String amountType) {
@@ -272,8 +248,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPaymentDeatils by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -338,8 +313,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * workFlow table by using getPaymentDetailDAO().delete with parameters paymentDetail,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -367,8 +341,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -445,7 +418,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	@Override
 	public List<AuditDetail> processPaymentDetails(List<AuditDetail> auditDetails, TableType type, String methodName,
-			long linkedTranId, String finReference) {
+			long linkedTranId, long finID) {
 		logger.debug("Entering");
 
 		boolean saveRecord = false;
@@ -525,7 +498,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 				// Payments processing
 				if ("doApprove".equals(methodName)) {
-					ManualAdviseMovements movement = doApprove(paymentDetail, finReference);
+					ManualAdviseMovements movement = doApprove(paymentDetail);
 					if (movement != null) {
 						adviseMovements.add(movement);
 					}
@@ -566,10 +539,10 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			auditDetails.get(i).setModelData(paymentDetail);
 		}
 
-		//GST Invoice preparation for Receivable Advises
+		// GST Invoice preparation for Receivable Advises
 
 		if (CollectionUtils.isNotEmpty(adviseMovements)) {
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finReference, "", false);
+			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finID, "", false);
 
 			InvoiceDetail invoiceDetail = new InvoiceDetail();
 			invoiceDetail.setLinkedTranId(linkedTranId);
@@ -656,7 +629,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			BigDecimal amount = paymentDetail.getAmount();
 			if (paymentDetail.getTaxHeader() != null && StringUtils.equals(paymentDetail.getTaxComponent(),
 					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-				//GST Calculations
+				// GST Calculations
 				List<Taxes> taxDetails = paymentDetail.getTaxHeader().getTaxDetails();
 				BigDecimal gstAmount = BigDecimal.ZERO;
 				if (CollectionUtils.isNotEmpty(taxDetails)) {
@@ -723,7 +696,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		logger.debug("Leaving");
 	}
 
-	private ManualAdviseMovements doApprove(PaymentDetail paymentDetail, String finReference) {
+	private ManualAdviseMovements doApprove(PaymentDetail paymentDetail) {
 		logger.debug("Entering");
 
 		ManualAdviseMovements manualMovement = null;
@@ -754,7 +727,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			BigDecimal amount = paymentDetail.getAmount();
 			if (paymentDetail.getTaxHeader() != null && StringUtils.equals(paymentDetail.getTaxComponent(),
 					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-				//GST Calculations
+				// GST Calculations
 				List<Taxes> taxDetails = paymentDetail.getTaxHeader().getTaxDetails();
 				BigDecimal gstAmount = BigDecimal.ZERO;
 				if (CollectionUtils.isNotEmpty(taxDetails)) {

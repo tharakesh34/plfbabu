@@ -28,6 +28,8 @@ public interface FeeReceiptService {
 
 	List<FinFeeDetail> getPaidFinFeeDetails(long finID, long receiptID, String type);
 
+	List<FinFeeDetail> getPaidFinFeeDetails(String externalRef, long receiptID, String type);
+
 	ErrorDetail processFeePayment(FinServiceInstruction finServInst) throws Exception;
 
 	Map<String, Object> getGLSubHeadCodes(long finID);

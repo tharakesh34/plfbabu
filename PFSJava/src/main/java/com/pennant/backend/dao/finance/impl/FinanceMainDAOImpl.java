@@ -191,6 +191,37 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getDisbursmentFinMainById(long finID, TableType tableType) {
+		StringBuilder sql = getDisbursementFmQuery(tableType);
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new DIsbursementFMRowMapper(), finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+
+	}
+
+	@Override
+	public FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType) {
+		StringBuilder sql = getDisbursementFmQuery(tableType);
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new DIsbursementFMRowMapper(), finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+
+	}
+
+	private StringBuilder getDisbursementFmQuery(TableType tableType) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, fm.FinCcy, fm.FinType, fm.CustID, fm.FinStartDate, fm.FinBranch");
 		sql.append(", fm.FinReference, fm.MaturityDate, fm.FeeChargeAmt, fm.DownPayment");
@@ -205,47 +236,43 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
 		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
-		sql.append(" Where fm.FinID = ?");
+		return sql;
+	}
 
-		logger.debug(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
-				FinanceMain fm = new FinanceMain();
+	private class DIsbursementFMRowMapper implements RowMapper<FinanceMain> {
 
-				fm.setFinID(rs.getLong("FinID"));
-				fm.setFinCcy(rs.getString("FinCcy"));
-				fm.setFinType(rs.getString("FinType"));
-				fm.setCustID(rs.getLong("CustID"));
-				fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
-				fm.setFinBranch(rs.getString("FinBranch"));
-				fm.setFinReference(rs.getString("FinReference"));
-				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
-				fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-				fm.setDownPayment(rs.getBigDecimal("DownPayment"));
-				fm.setDeductFeeDisb(rs.getBigDecimal("DeductFeeDisb"));
-				fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
-				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
-				fm.setBpiTreatment(rs.getString("BpiTreatment"));
-				fm.setQuickDisb(rs.getBoolean("QuickDisb"));
-				fm.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
-				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-				fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
-				fm.setLovDescCustCIF(rs.getString("CustCIF"));
-				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
-				fm.setAlwMultiDisb(rs.getBoolean("AlwMultiPartyDisb"));
-				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
-				fm.setEntityCode(rs.getString("EntityCode"));
-				fm.setLovDescEntityCode(rs.getString("EntityCode"));
-				fm.setPromotionCode(rs.getString("PromotionCode"));
+		@Override
+		public FinanceMain mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinanceMain fm = new FinanceMain();
 
-				return fm;
+			fm.setFinID(rs.getLong("FinID"));
+			fm.setFinCcy(rs.getString("FinCcy"));
+			fm.setFinType(rs.getString("FinType"));
+			fm.setCustID(rs.getLong("CustID"));
+			fm.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			fm.setFinBranch(rs.getString("FinBranch"));
+			fm.setFinReference(rs.getString("FinReference"));
+			fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
+			fm.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+			fm.setDownPayment(rs.getBigDecimal("DownPayment"));
+			fm.setDeductFeeDisb(rs.getBigDecimal("DeductFeeDisb"));
+			fm.setBpiAmount(rs.getBigDecimal("BpiAmount"));
+			fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+			fm.setBpiTreatment(rs.getString("BpiTreatment"));
+			fm.setQuickDisb(rs.getBoolean("QuickDisb"));
+			fm.setInstBasedSchd(rs.getBoolean("InstBasedSchd"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			fm.setLovDescCustCIF(rs.getString("CustCIF"));
+			fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
+			fm.setAlwMultiDisb(rs.getBoolean("AlwMultiPartyDisb"));
+			fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+			fm.setEntityCode(rs.getString("EntityCode"));
+			fm.setLovDescEntityCode(rs.getString("EntityCode"));
+			fm.setPromotionCode(rs.getString("PromotionCode"));
 
-			}, finID);
-		} catch (EmptyResultDataAccessException e) {
-			//
+			return fm;
 		}
-
-		return null;
 
 	}
 

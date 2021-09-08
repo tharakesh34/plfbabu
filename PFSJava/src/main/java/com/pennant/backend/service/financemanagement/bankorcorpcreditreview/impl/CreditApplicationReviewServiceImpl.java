@@ -72,8 +72,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	 * Record in the table. based on the module workFlow Configuration. by using CreditReviewDetailsDAO's update method
 	 * 3) Audit the record in to AuditHeader and AdtRMTCreditReviewDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -133,7 +132,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 				creditReviewDetails));
 
 		auditHeader.setAuditDetails(auditDetails);
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -153,8 +152,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	 * RMTCreditReviewDetails by using CreditReviewDetailsDAO's delete method with type as Blank 3) Audit the record in
 	 * to AuditHeader and AdtRMTCreditReviewDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -185,10 +183,8 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	/**
 	 * getCreditReviewDetailsById fetch the details by using CreditReviewDetailsDAO's getCreditReviewDetailsById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinCreditReviewDetails
 	 */
 
@@ -207,8 +203,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	 * getApprovedCreditReviewDetailsById fetch the details by using CreditReviewDetailsDAO's getCreditReviewDetailsById
 	 * method . with parameter id and type as blank. it fetches the approved records from the RMTCreditReviewDetails.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return FinCreditReviewDetails
 	 */
 
@@ -232,8 +227,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and
 	 * AdtRMTCreditReviewDetails by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -301,7 +295,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 					creditReviewDetails.getBefImage(), creditReviewDetails));
 		}
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
@@ -309,7 +303,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, creditReviewDetails.getBefImage(),
 				creditReviewDetails));
 		auditHeader.setAuditDetails(getListAuditDetails(auditDetails));
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -322,8 +316,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	 * Audit the record in to AuditHeader and AdtRMTCreditReviewDetails by using auditHeaderDAO.addAudit(auditHeader)
 	 * for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -345,7 +338,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		auditHeader.setAuditDetails(
 				getListAuditDetails(listDeletion(creditReviewDetails, "_Temp", auditHeader.getAuditTranType())));
 
-		//getAuditHeaderDAO().addAudit(auditHeader);
+		// getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 
 		return auditHeader;
@@ -357,8 +350,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	 * for any mismatch conditions Fetch the error details from getCreditApplicationReviewDAO().getErrorDetail with
 	 * Error ID and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -375,7 +367,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 				.getModelData();
 		String usrLanguage = creditReviewDetails.getUserDetails().getLanguage();
 
-		// FeeTier Validation        
+		// FeeTier Validation
 		if (creditReviewDetails.getLovDescFinCreditRevSubCategory() != null
 				&& creditReviewDetails.getLovDescFinCreditRevSubCategory().size() > 0) {
 			List<AuditDetail> details = creditReviewDetails.getAuditDetailMap().get("FinCreditReviewSubCategory");
@@ -455,7 +447,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 				if (customerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
 					// is new
 					if (befCustomerDocument != null || tempCustomerDocument != null) {
-						//if records already exists in the main table
+						// if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -678,7 +670,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 
 			FinCreditReviewSummary creditReviewSummaryEntry = creditReviewDetails.getCreditReviewSummaryEntries()
 					.get(i);
-			//creditReviewSummaryEntry.setWorkflowId(creditReviewDetails.getWorkflowId());
+			// creditReviewSummaryEntry.setWorkflowId(creditReviewDetails.getWorkflowId());
 			creditReviewSummaryEntry.setDetailId(creditReviewDetails.getDetailId());
 
 			boolean isRcdType = true;
@@ -693,7 +685,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 					isRcdType = false;
 				} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					//isRcdType = true;
+					// isRcdType = true;
 				}
 
 				if ("saveOrUpdate".equals(method) && isRcdType) {
@@ -749,7 +741,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 
 			FinCreditReviewSummary creditReviewSummaryEntry = creditReviewDetails.getCreditReviewSummaryEntries()
 					.get(i);
-			//creditReviewSummaryEntry.setWorkflowId(creditReviewDetails.getWorkflowId());
+			// creditReviewSummaryEntry.setWorkflowId(creditReviewDetails.getWorkflowId());
 			creditReviewSummaryEntry.setDetailId(creditReviewDetails.getDetailId());
 
 			boolean isRcdType = false;
@@ -767,7 +759,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 					isRcdType = true;
 				} else if (creditReviewSummaryEntry.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					creditReviewSummaryEntry.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					//isRcdType = true;
+					// isRcdType = true;
 				}
 
 				if ("saveOrUpdate".equals(method) && isRcdType) {
@@ -823,7 +815,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 
 			CustomerDocument customerDocument = creditReviewDetails.getCustomerDocumentList().get(i);
 			customerDocument.setWorkflowId(creditReviewDetails.getWorkflowId());
-			//finCreditRevSubCategory.setDetailId(creditReviewDetails.getDetailId());
+			// finCreditRevSubCategory.setDetailId(creditReviewDetails.getDetailId());
 
 			boolean isRcdType = false;
 			if (customerDocument.getRecordType() != null) {
@@ -835,7 +827,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 					isRcdType = true;
 				} else if (customerDocument.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					customerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					//isRcdType = true;
+					// isRcdType = true;
 				}
 
 				if ("saveOrUpdate".equals(method) && isRcdType) {
@@ -890,7 +882,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			FinCreditRevSubCategory finCreditRevSubCategory = creditReviewDetails.getLovDescFinCreditRevSubCategory()
 					.get(i);
 			finCreditRevSubCategory.setWorkflowId(creditReviewDetails.getWorkflowId());
-			//finCreditRevSubCategory.setDetailId(creditReviewDetails.getDetailId());
+			// finCreditRevSubCategory.setDetailId(creditReviewDetails.getDetailId());
 
 			boolean isRcdType = false;
 			if (finCreditRevSubCategory.getRecordType() != null) {
@@ -902,7 +894,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 					isRcdType = true;
 				} else if (finCreditRevSubCategory.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
 					finCreditRevSubCategory.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					//isRcdType = true;
+					// isRcdType = true;
 				}
 
 				if ("saveOrUpdate".equals(method) && isRcdType) {
@@ -1064,7 +1056,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 		boolean deleteRecord = false;
 		boolean approveRec = false;
 
-		//FinCreditReviewDetails credReviewDetails=null;
+		// FinCreditReviewDetails credReviewDetails=null;
 		for (int i = 0; i < auditDetails.size(); i++) {
 
 			FinCreditReviewSummary summary = (FinCreditReviewSummary) auditDetails.get(i).getModelData();
@@ -1413,9 +1405,9 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			int year, String category, String type) {
 		logger.debug("Entering");
 		Map<String, List<FinCreditReviewSummary>> map = new LinkedHashMap<String, List<FinCreditReviewSummary>>();
-		//Calendar calender = Calendar.getInstance();
-		//int year =DateUtility.getYear(calender.getTime());
-		//int year =DateUtility.getYear(calender.getTime());
+		// Calendar calender = Calendar.getInstance();
+		// int year =DateUtility.getYear(calender.getTime());
+		// int year =DateUtility.getYear(calender.getTime());
 		List<FinCreditReviewSummary> finCreditReviewSummaries;
 		for (int i = 0; i <= noOfYears; i++) {
 			finCreditReviewSummaries = this.creditReviewSummaryDAO.getListCreditReviewSummaryByYearAndCustId2(id,
@@ -1440,9 +1432,9 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 			int year, String category, int auditPeriod, boolean isCurrentYear, String type) {
 		logger.debug("Entering");
 		Map<String, List<FinCreditReviewSummary>> map = new LinkedHashMap<String, List<FinCreditReviewSummary>>();
-		//Calendar calender = Calendar.getInstance();
-		//int year =DateUtility.getYear(calender.getTime());
-		//int year =DateUtility.getYear(calender.getTime());
+		// Calendar calender = Calendar.getInstance();
+		// int year =DateUtility.getYear(calender.getTime());
+		// int year =DateUtility.getYear(calender.getTime());
 		List<FinCreditReviewSummary> finCreditReviewSummaries;
 		for (int i = 0; i <= noOfYears; i++) {
 			finCreditReviewSummaries = this.creditReviewSummaryDAO.getListCreditReviewSummaryByYearAndCustId2(id,
@@ -1578,8 +1570,8 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	}
 
 	@Override
-	public CreditReviewData getCreditReviewDataByRef(String finReference, String templateName, int templateVersion) {
-		return getCreditReviewDetailDAO().getCreditReviewData(finReference, templateName, templateVersion);
+	public CreditReviewData getCreditReviewDataByRef(long finID, String templateName, int templateVersion) {
+		return getCreditReviewDetailDAO().getCreditReviewData(finID, templateName);
 	}
 
 	@Override
@@ -1662,7 +1654,7 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	}
 
 	@Override
-	public ExtBreDetails getExtBreDetailsByRef(String finReference) {
-		return getCreditReviewDetailDAO().getExtBreDetailsByRef(finReference);
+	public ExtBreDetails getExtBreDetailsByRef(long finID) {
+		return getCreditReviewDetailDAO().getExtBreDetailsByRef(finID);
 	}
 }

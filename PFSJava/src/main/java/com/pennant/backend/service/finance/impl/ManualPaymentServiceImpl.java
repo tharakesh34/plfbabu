@@ -1238,7 +1238,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				subHeadRule.setTOTALPFTBAL(repayData.getRepayMain().getProfitBalance());
 
 				// Check For Early Settlement Enquiry -- on Selecting Future Date
-				BigDecimal accrueValue = financeDetailService.getAccrueAmount(fm.getFinReference());
+				BigDecimal accrueValue = financeDetailService.getAccrueAmount(fm.getFinID());
 				subHeadRule.setACCRUE(accrueValue);
 
 				// Total Tenure

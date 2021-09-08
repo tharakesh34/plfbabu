@@ -79,7 +79,7 @@ public interface CreditApplicationReviewService {
 	List<FinCreditRevCategory> getCreditRevCategoryByCreditRevCodeAndEligibilityIds(String creditRevCode,
 			List<Long> eligibilityIds);
 
-	CreditReviewData getCreditReviewDataByRef(String finReference, String templateName, int templateVersion);
+	CreditReviewData getCreditReviewDataByRef(long finID, String templateName, int templateVersion);
 
 	CreditReviewDetails getCreditReviewDetailsByRef(CreditReviewDetails creditReviewDetail);
 
@@ -91,6 +91,6 @@ public interface CreditApplicationReviewService {
 
 	ExtCreditReviewConfig getExtCreditReviewConfigDetails(ExtCreditReviewConfig extCreditReviewConfig);
 
-	ExtBreDetails getExtBreDetailsByRef(String finReference);
+	ExtBreDetails getExtBreDetailsByRef(long finID);
 
 }

@@ -144,7 +144,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		if (pdList != null && pdList.size() > 0) {
 			List<AuditDetail> auditDetail = ph.getAuditDetailMap().get("PaymentDetails");
-			auditDetail = this.paymentDetailService.processPaymentDetails(auditDetail, tableType, "", 0, finReference);
+			auditDetail = this.paymentDetailService.processPaymentDetails(auditDetail, tableType, "", 0, finID);
 			auditDetails.addAll(auditDetail);
 		}
 
@@ -300,7 +300,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 				List<AuditDetail> paymentDetails = paymentHeader.getAuditDetailMap().get("PaymentDetails");
 				if (paymentDetails != null && !paymentDetails.isEmpty()) {
 					paymentDetails = this.paymentDetailService.processPaymentDetails(paymentDetails, TableType.MAIN_TAB,
-							"doApprove", paymentHeader.getLinkedTranId(), paymentHeader.getFinReference());
+							"doApprove", paymentHeader.getLinkedTranId(), paymentHeader.getFinID());
 					auditDetails.addAll(paymentDetails);
 				}
 			}

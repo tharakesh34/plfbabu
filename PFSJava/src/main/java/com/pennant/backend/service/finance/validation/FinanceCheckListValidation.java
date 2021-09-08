@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceCheckListValidation.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-12-2011    														*
- *                                                                  						*
- * Modified Date    :  29-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceCheckListValidation.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-12-2011 * *
+ * Modified Date : 29-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -102,11 +84,11 @@ public class FinanceCheckListValidation {
 		FinanceCheckListReference tempFinanceCheckListReference = null;
 		if (financeCheckListReference.isWorkflow()) {
 			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById(
-					financeCheckListReference.getId(), financeCheckListReference.getQuestionId(),
+					financeCheckListReference.getFinID(), financeCheckListReference.getQuestionId(),
 					financeCheckListReference.getAnswer(), "_Temp");
 		}
 		FinanceCheckListReference befFinanceCheckListReference = getFinanceCheckListReferenceDAO()
-				.getFinanceCheckListReferenceById(financeCheckListReference.getId(),
+				.getFinanceCheckListReferenceById(financeCheckListReference.getFinID(),
 						financeCheckListReference.getQuestionId(), financeCheckListReference.getAnswer(), "");
 
 		FinanceCheckListReference oldFinanceCheckListReference = financeCheckListReference.getBefImage();
@@ -122,15 +104,16 @@ public class FinanceCheckListValidation {
 
 		if (financeCheckListReference.isNewRecord()) { // for New record or new record into work flow
 
-			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
-				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
+			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records
+				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is new
-					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if 
-						//records already exists in the main table
+				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is
+																									// new
+					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if
+						// records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
@@ -159,7 +142,7 @@ public class FinanceCheckListValidation {
 					}
 				}
 			} else {
-				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table 
+				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}

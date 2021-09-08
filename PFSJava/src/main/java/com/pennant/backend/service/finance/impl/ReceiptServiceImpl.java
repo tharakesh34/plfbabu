@@ -120,6 +120,7 @@ import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessAmountReserve;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
@@ -466,7 +467,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fd.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
 					FinanceConstants.MODULE_NAME, "_View"));
 		} else {
-			fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finReference, "_View"));
+			fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
 		}
 
 		fd.setJointAccountDetailList(jointAccountDetailService.getJoinAccountDetail(finID, "_AView"));
@@ -7205,6 +7206,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	public void setFinFeeConfigService(FinFeeConfigService finFeeConfigService) {
 		this.finFeeConfigService = finFeeConfigService;
+	}
+
+	@Override
+	public List<FinExcessAmount> xcessList(long finID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Date getLastWaiverDate(long finID, Date appDate, Date receiptDate) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

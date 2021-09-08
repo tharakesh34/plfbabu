@@ -214,7 +214,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		}
 
 		// Covenants List
-		issueHeader.setCovenantTypeList(finCovenantTypeDAO.getFinCovenantTypeByFinRef(finID, "_View", false));
+		issueHeader.setCovenantTypeList(finCovenantTypeDAO.getFinCovenantTypeByFinRef(finReference, "_View", false));
 		// Document details
 		issueHeader.setDocumentDetailsList(
 				documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME, "", ""));
