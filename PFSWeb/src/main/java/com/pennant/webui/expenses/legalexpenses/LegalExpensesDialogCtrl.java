@@ -488,15 +488,13 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		logger.debug("Entering");
 
 		if (StringUtils.isNotBlank(this.finReference.getValue())) {
-
-			long finID = ComponentUtil.getFinID(this.finReference);
+			Long finID = ComponentUtil.getFinID(this.finReference);
 			FinanceMain financeMain = getFinanceMainService().getFinanceMainById(finID, false);
 			this.customerId.setValue(Long.toString(financeMain.getCustID()));
+			setTotalFeeCharges(finID);
 		} else {
 			this.customerId.setValue("");
 		}
-
-		setTotalFeeCharges(this.finReference.getValue());
 
 		logger.debug("Leaving");
 	}
@@ -532,7 +530,7 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		setExpreferenceVisibile(aLegalExpenses);
 		this.expAmount.setValue(
 				PennantApplicationUtil.formateAmount(aLegalExpenses.getAmount(), PennantConstants.defaultCCYDecPos));
-		setTotalFeeCharges(aLegalExpenses.getFinReference());
+		setTotalFeeCharges(aLegalExpenses.getFinID());
 		this.remarks.setValue(aLegalExpenses.getRemarks());
 		this.amountdue.setValue(
 				PennantApplicationUtil.formateAmount(aLegalExpenses.getAmountdue(), PennantConstants.defaultCCYDecPos));
@@ -566,10 +564,10 @@ public class LegalExpensesDialogCtrl extends GFCBaseCtrl<LegalExpenses> {
 		}
 	}
 
-	private void setTotalFeeCharges(String finReference) {
+	private void setTotalFeeCharges(long finID) {
 		logger.debug("Entering");
 		if (finReference != null) {
-			BigDecimal totalCharges = getLegalExpensesService().getTotalCharges(finReference);
+			BigDecimal totalCharges = getLegalExpensesService().getTotalCharges(finID);
 			this.totalCharges
 					.setValue(PennantApplicationUtil.formateAmount(totalCharges, PennantConstants.defaultCCYDecPos));
 		} else {

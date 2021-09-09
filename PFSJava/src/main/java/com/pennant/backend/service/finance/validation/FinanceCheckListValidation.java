@@ -84,11 +84,11 @@ public class FinanceCheckListValidation {
 		FinanceCheckListReference tempFinanceCheckListReference = null;
 		if (financeCheckListReference.isWorkflow()) {
 			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById(
-					financeCheckListReference.getFinID(), financeCheckListReference.getQuestionId(),
+					financeCheckListReference.getFinReference(), financeCheckListReference.getQuestionId(),
 					financeCheckListReference.getAnswer(), "_Temp");
 		}
 		FinanceCheckListReference befFinanceCheckListReference = getFinanceCheckListReferenceDAO()
-				.getFinanceCheckListReferenceById(financeCheckListReference.getFinID(),
+				.getFinanceCheckListReferenceById(financeCheckListReference.getFinReference(),
 						financeCheckListReference.getQuestionId(), financeCheckListReference.getAnswer(), "");
 
 		FinanceCheckListReference oldFinanceCheckListReference = financeCheckListReference.getBefImage();

@@ -93,4 +93,6 @@ public interface CreditApplicationReviewService {
 
 	ExtBreDetails getExtBreDetailsByRef(long finID);
 
+	Long getFinID(String finReference);
+
 }

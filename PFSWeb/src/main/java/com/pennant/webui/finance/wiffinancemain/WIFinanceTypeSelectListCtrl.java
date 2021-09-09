@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  WIFinanceTypeSelectListCtrl.java                                     * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  10-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  10-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : WIFinanceTypeSelectListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-10-2011 * *
+ * Modified Date : 10-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.wiffinancemain;
@@ -397,7 +379,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 		ArrayList<Filter> filterList = new ArrayList<Filter>();
 		if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_RETAIL)) {
-			//filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_EQUAL));
+			// filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_EQUAL));
 		} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_FACILITY)) {
 			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_NOT_EQUAL));
 		} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_COMMERCIAL)) {
@@ -443,7 +425,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 
 		ArrayList<Filter> filterList = new ArrayList<Filter>();
 		if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_RETAIL)) {
-			//filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_EQUAL));
+			// filterList.add(new Filter("lovDescCustCtgType", PennantConstants.CUST_CAT_INDIVIDUAL, Filter.OP_EQUAL));
 		} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_FACILITY)) {
 			filterList.add(new Filter("lovDescCustCtgType", PennantConstants.PFF_CUSTCTG_INDIV, Filter.OP_NOT_EQUAL));
 		} else if (StringUtils.equals(loanType, FinanceConstants.FIN_DIVISION_COMMERCIAL)) {
@@ -565,7 +547,7 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			wve.add(we);
 		}
 
-		//Validating EID Number
+		// Validating EID Number
 		if (this.custType_New.isChecked()) {
 			this.eidNumber.clearErrorMessage();
 			if (!StringUtils.equals(ImplementationConstants.CLIENT_NAME, ImplementationConstants.CLIENT_BFL)) {
@@ -657,8 +639,8 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			 * financeType.setFinDftIntFrq(repayFrq); financeType.setFinRvwFrq(repayFrq);
 			 * financeType.setFinCpzFrq(repayFrq);
 			 */
-			//financeType.setFinRepayPftOnFrq(false);
-			//set the default barch for wif with out customer selection
+			// financeType.setFinRepayPftOnFrq(false);
+			// set the default barch for wif with out customer selection
 			getSwiftBranchCode(getUserWorkspace().getUserDetails().getSecurityUser().getUsrBranchCode());
 			FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
 			FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(),
@@ -669,14 +651,14 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 			this.financeDetail.setNewRecord(true);
 			this.financeDetail.getFinScheduleData().getFinanceMain().setAllowGrcPeriod(false);
 
-			//Step Policy Details
+			// Step Policy Details
 			if (financeType.isStepFinance()) {
 				List<StepPolicyDetail> stepPolicyList = getStepPolicyService()
 						.getStepPolicyDetailsById(financeType.getDftStepPolicy());
 				this.financeDetail.getFinScheduleData().resetStepPolicyDetails(stepPolicyList);
 			}
 
-			//Fetch Fee Charge Details List
+			// Fetch Fee Charge Details List
 			Date curBussDate = DateUtility.getAppDate();
 			this.financeDetail.setFeeCharges(getFinanceDetailService()
 					.getFeeRuleDetails(this.financeDetail.getFinScheduleData().getFinanceType(), curBussDate, true));
@@ -723,9 +705,9 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 					wifcustomer.setCustomerIncomeList(getFinanceDetailService().prepareIncomeDetails());
 					this.financeDetail.setCustomer(wifcustomer);
 
-					financeDetail.setElgRuleList(getEligibilityDetailService().setFinanceEligibilityDetails("",
-							financeType.getFinCcy(), BigDecimal.ZERO, true, financeType.getFinType(), null,
-							FinServiceEvent.ORG));
+					financeDetail.setElgRuleList(
+							getEligibilityDetailService().setFinanceEligibilityDetails(0, financeType.getFinCcy(),
+									BigDecimal.ZERO, true, financeType.getFinType(), null, FinServiceEvent.ORG));
 
 					getScoringDetailService().setFinanceScoringDetails(financeDetail, this.finType.getValue(), null,
 							wifcustomer.getLovDescCustCtgType(), FinServiceEvent.ORG);
@@ -794,11 +776,11 @@ public class WIFinanceTypeSelectListCtrl extends GFCBaseListCtrl<FinanceType> {
 		try {
 			String cif = String.valueOf(this.custID.getValue());
 
-			//If WIFCustomer Exists
+			// If WIFCustomer Exists
 			if (this.custID.getValue() == null) {
 				return wifcustomer;
 			}
-			//If  customer exist is checked 
+			// If customer exist is checked
 			if (this.custType_Exist.isChecked()) {
 				if (StringUtils.isEmpty(cif)) {
 					throw new WrongValueException(this.custID, Labels.getLabel("FIELD_NO_EMPTY",

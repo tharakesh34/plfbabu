@@ -657,7 +657,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			doFillEligibilityDetails();
 		}
 		if (isqueriesDetailsVisible) {
-			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(financeMain.getFinID(),
+			List<QueryDetail> queryDetails = queryDetailDAO.getQueryMgmtListForAgreements(financeMain.getFinReference(),
 					"_View");
 			doFillQueriesDetails(queryDetails);
 		}

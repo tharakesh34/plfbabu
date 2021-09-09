@@ -64,7 +64,7 @@ public interface FinanceMainService {
 
 	ErrorDetail rescheduleValidation(Date receiptDate, long finID, Date startDate);
 
-	long getLoanWorkFlowIdByFinRef(long finID, String type);
+	long getLoanWorkFlowIdByFinRef(String finReference, String type);
 
 	FinanceMain getFinanceMain(long finID, String[] columns, String type);
 
@@ -73,5 +73,7 @@ public interface FinanceMainService {
 	Date getFinClosedDate(long finID);
 
 	Long getFinID(String finReference);
+
+	String getFinanceType(String value, TableType view);
 
 }

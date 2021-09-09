@@ -393,6 +393,7 @@ public class LimitRebuildService implements LimitRebuild {
 			LimitReferenceMapping mapping) {
 
 		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 		String finCategory = fm.getFinCategory();
 		String finCcy = fm.getFinCcy();
 		String limitCcy = lh.getLimitCcy();
@@ -405,7 +406,7 @@ public class LimitRebuildService implements LimitRebuild {
 
 		if (fm.isLimitValid()) {
 			// check the there is block in not then don not proceed
-			LimitTransactionDetail transaction = getTransaction(finID, inProgressHeaderID, 0);
+			LimitTransactionDetail transaction = getTransaction(finReference, inProgressHeaderID, 0);
 			if (transaction == null) {
 				// then no need block the amount
 				return;
@@ -456,7 +457,7 @@ public class LimitRebuildService implements LimitRebuild {
 			// not required in case of multiple disbursement with max disbursement check
 			if (addTempblock) {
 				// for Under process loans in addDisbursment
-				LimitTransactionDetail transaction = getTransaction(finID, inProgressHeaderID, -1);
+				LimitTransactionDetail transaction = getTransaction(finReference, inProgressHeaderID, -1);
 				if (transaction != null) {
 					// add to reserve
 					limitToUpdate.setReservedLimit(limitToUpdate.getReservedLimit().add(transaction.getLimitAmount()));
@@ -514,9 +515,9 @@ public class LimitRebuildService implements LimitRebuild {
 		return false;
 	}
 
-	private LimitTransactionDetail getTransaction(long finID, long headerid, int type) {
-		return limitTransactionDetailsDAO.getTransaction(LimitConstants.FINANCE, finID, LimitConstants.BLOCK, headerid,
-				type);
+	private LimitTransactionDetail getTransaction(String finReference, long headerid, int type) {
+		return limitTransactionDetailsDAO.getTransaction(LimitConstants.FINANCE, finReference, LimitConstants.BLOCK,
+				headerid, type);
 	}
 
 	private boolean processStructuralChanges(List<LimitDetails> limitDetailsList, LimitHeader limitHeader) {

@@ -69,8 +69,6 @@ public interface FinFeeDetailService {
 
 	List<AuditDetail> deleteFinFeeReceipts(List<FinFeeReceipt> feeReceipts, String tableType, String auditTranType);
 
-	void createExcessAmount(long finID, Map<Long, FinFeeReceipt> map, long custId);
-
 	long getFinFeeTypeIdByFeeType(String feeTypeCode, long finID);
 
 	void updateTaxPercent(UploadTaxPercent taxPercent);

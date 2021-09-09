@@ -38,6 +38,8 @@ public interface DueDiligenceDetailsDAO {
 
 	public void delete(DueDiligenceDetails dueDiligenceDetails, String string);
 
+	int getVersion(long id, long finID);
+
 	void update(DueDiligenceDetails dueDiligenceDetails, String type);
 
 	List<DueDiligenceDetails> getDueDiligenceDetails(long finID);

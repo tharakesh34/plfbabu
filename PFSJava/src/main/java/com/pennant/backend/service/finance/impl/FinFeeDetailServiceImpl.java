@@ -539,28 +539,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		return map;
 	}
 
-	public void createExcessAmounts(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
-		logger.debug(Literal.ENTERING);
-
-		FinExcessAmount finExcessAmount;
-		BigDecimal excessAmount = getExcessAmount(finID, map, custId);
-
-		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-			finExcessAmount = new FinExcessAmount();
-			finExcessAmount.setFinID(finID);
-			finExcessAmount.setFinReference(finID);
-			finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
-			finExcessAmount.setAmount(excessAmount);
-			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
-			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
-			finExcessAmount.setBalanceAmt(excessAmount);
-			finExcessAmountDAO.saveExcess(finExcessAmount);
-		}
-
-		logger.debug(Literal.LEAVING);
-
-	}
-
 	@Override
 	public BigDecimal getExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
 		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
@@ -722,41 +700,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 				manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
 			}
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void createExcessAmount(long finID, Map<Long, FinFeeReceipt> map, long custId) {
-		logger.debug(Literal.ENTERING);
-
-		FinFeeReceipt feeReceipt;
-		FinExcessAmount finExcessAmount;
-
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
-
-		BigDecimal excessAmount = BigDecimal.ZERO;
-
-		for (FinReceiptDetail rcd : rcdList) {
-			if (map != null && map.containsKey(rcd.getReceiptID())) {
-				feeReceipt = map.get(rcd.getReceiptID());
-				excessAmount = excessAmount.add(rcd.getAmount().subtract(feeReceipt.getPaidAmount()));
-			} else {
-				excessAmount = excessAmount.add(rcd.getAmount());
-			}
-		}
-
-		if (excessAmount.compareTo(BigDecimal.ZERO) > 0) {
-			finExcessAmount = new FinExcessAmount();
-			finExcessAmount.setFinID(finID);
-			finExcessAmount.setFinReference(finID);
-			finExcessAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_EXCESS);
-			finExcessAmount.setAmount(excessAmount);
-			finExcessAmount.setUtilisedAmt(BigDecimal.ZERO);
-			finExcessAmount.setReservedAmt(BigDecimal.ZERO);
-			finExcessAmount.setBalanceAmt(excessAmount);
-			finExcessAmountDAO.saveExcess(finExcessAmount);
 		}
 
 		logger.debug(Literal.LEAVING);

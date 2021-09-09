@@ -57,17 +57,17 @@ public class FinanceCheckListReferenceDAOImpl extends BasicDao<FinanceCheckListR
 	}
 
 	@Override
-	public FinanceCheckListReference getFinanceCheckListReferenceById(final long finID, long questionId, long answer,
+	public FinanceCheckListReference getFinanceCheckListReferenceById(String reference, long questionId, long answer,
 			String type) {
 		StringBuilder sql = sqlSelectQuery(type);
-		sql.append(" Where FinId = ? and  QuestionId = ? and Answer = ?");
+		sql.append(" Where FinReference = ? and  QuestionId = ? and Answer = ?");
 
 		FinanceCheckListReferenceRowMapper rowMapper = new FinanceCheckListReferenceRowMapper(type);
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, finID, questionId, answer);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, reference, questionId, answer);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

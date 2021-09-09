@@ -115,18 +115,18 @@ public class CustomerDedupDAOImpl extends BasicDao<CustomerDedup> implements Cus
 	}
 
 	@Override
-	public List<CustomerDedup> fetchOverrideCustDedupData(long finID, String queryCode, String module) {
+	public List<CustomerDedup> fetchOverrideCustDedupData(String finReference, String queryCode, String module) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, CustCIF, CustFName, CustLName, CustShrtName");
 		sql.append(", CustDOB, CustCRCPR, CustPassportNo, MobileNumber, CustNationality");
 		sql.append(", DedupRule , Override , OverrideUser, Module");
 		sql.append(" From CustomerDedupDetail");
-		sql.append(" Where FinID = ? and DedupRule like(?) and Module= ?");
+		sql.append(" Where FinReference = ? and DedupRule like(?) and Module= ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
+			ps.setString(1, finReference);
 			ps.setString(2, "%" + queryCode + "%");
 			ps.setString(3, module);
 		}, (rs, i) -> {

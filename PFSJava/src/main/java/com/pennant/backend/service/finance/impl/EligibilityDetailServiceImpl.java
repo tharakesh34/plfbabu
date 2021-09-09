@@ -94,11 +94,13 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 
 		// Fetching Existed Executed Eligibility Rule List in Previous Stages
 		boolean executed = false;
+		String finReference = null;
 		if (isNewRecord) {
 			eligibilityRuleList = new ArrayList<FinanceEligibilityDetail>();
 		} else {
 			eligibilityRuleList = getFinElgDetailList(finID);
 			for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
+				finReference = financeEligibilityDetail.getFinReference();
 				financeEligibilityDetail.setEligible(getEligibilityStatus(financeEligibilityDetail, finCcy, finAmount));
 			}
 		}
@@ -117,7 +119,7 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 					}
 				}
 				if (!executed) {
-					eligibilityRuleList.add(prepareElgDetail(frd, finID));
+					eligibilityRuleList.add(prepareElgDetail(frd, finReference, finID));
 				}
 				executed = false;
 			}
@@ -128,7 +130,8 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 	}
 
 	@Override
-	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, long finID) {
+	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, String finReference,
+			long finID) {
 		FinanceEligibilityDetail detail = new FinanceEligibilityDetail();
 		detail.setFinID(finID);
 		detail.setFinReference(finReference);

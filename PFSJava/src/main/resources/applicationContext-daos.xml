@@ -2234,6 +2234,7 @@
 		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="creditReviewDetailDAO" ref="creditReviewDetailDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="creditReviewSummaryEntryValidation"

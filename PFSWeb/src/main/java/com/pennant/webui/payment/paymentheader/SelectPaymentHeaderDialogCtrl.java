@@ -145,7 +145,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		long finID = ComponentUtil.getFinID(this.finReference);
-		boolean payInstInProgess = this.paymentHeaderService.isInstructionInProgress(finID);
+		boolean payInstInProgess = this.paymentHeaderService.isInstructionInProgress(this.finReference.getValue());
 
 		if (payInstInProgess) {
 			MessageUtil.showMessage("Payment instruction already in progress for - " + this.finReference.getValue());

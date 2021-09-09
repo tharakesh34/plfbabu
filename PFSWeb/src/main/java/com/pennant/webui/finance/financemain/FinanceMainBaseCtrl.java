@@ -4508,9 +4508,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						.getCreditReviewDetailsByRef(creditReviewDetail);
 
 				if (creditReviewDetail != null) {
-					creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(
-							this.finReference.getValue(), creditReviewDetail.getTemplateName(),
-							creditReviewDetail.getTemplateVersion());
+					Long finID = creditApplicationReviewService.getFinID(this.finReference.getValue());
+
+					creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(finID,
+							creditReviewDetail.getTemplateName(), creditReviewDetail.getTemplateVersion());
 					getFinanceDetail().setCreditReviewData(creditReviewData);
 					creditReviewDetail.setFinBranchDesc(
 							this.finBranch != null ? StringUtils.trimToEmpty(this.finBranch.getDescription()) : "");

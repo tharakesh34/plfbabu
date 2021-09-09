@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		: SOAReportGenerationServiceImpl.java							        *                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  5-09-2012															*
- *                                                                  
- * Modified Date    :  5-09-2012														    *
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SOAReportGenerationServiceImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 5-09-2012 *
+ * 
+ * Modified Date : 5-09-2012 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 5-09-2012	       Pennant	                 0.1                                        * 
- * 24-05-2018          Srikanth                  0.2           Merge the Code From Bajaj To Core                                                                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 5-09-2012 Pennant 0.1 * 24-05-2018 Srikanth 0.2 Merge the Code From Bajaj To Core * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.reports.impl;
@@ -2608,7 +2599,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			// LPP Penalty Accrued on Month-End date
 			List<FinODAmzTaxDetail> finODAmzTaxDetailList = getFinODAmzTaxDetailDAO()
-					.getFinODAmzTaxDetail(finReference);
+					.getFinODAmzTaxDetail(finMain.getFinID());
 			if (finODAmzTaxDetailList != null && !finODAmzTaxDetailList.isEmpty()) {
 				for (FinODAmzTaxDetail finODAmzTaxDetail : finODAmzTaxDetailList) {
 					soaTranReport = new SOATransactionReport();
@@ -2632,7 +2623,8 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 
 			// LPP Penalty UnAccrued Paid on Receipts
 			if (ImplementationConstants.SOA_SHOW_UNACCURED_PENALITY) {
-				List<FinTaxIncomeDetail> incomeList = finODAmzTaxDetailDAO.getFinTaxIncomeList(finReference, "LPP");
+				List<FinTaxIncomeDetail> incomeList = finODAmzTaxDetailDAO.getFinTaxIncomeList(finMain.getFinID(),
+						"LPP");
 				if (incomeList != null && !incomeList.isEmpty()) {
 					for (FinTaxIncomeDetail detail : incomeList) {
 						soaTranReport = new SOATransactionReport();

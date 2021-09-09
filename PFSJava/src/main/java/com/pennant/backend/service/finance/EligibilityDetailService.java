@@ -20,7 +20,7 @@ public interface EligibilityDetailService {
 	FinanceEligibilityDetail getElgResult(FinanceEligibilityDetail financeEligibilityDetail,
 			FinanceDetail financeDetail);
 
-	FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, long finID);
+	FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, String finReference, long finID);
 
 	boolean getEligibilityStatus(FinanceEligibilityDetail financeEligibilityDetail, String finCcy,
 			BigDecimal finAmount);

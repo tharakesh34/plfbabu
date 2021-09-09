@@ -87,6 +87,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.external.PresentmentRequest;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -930,6 +931,11 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		pde.setReceiptCancellationService(receiptCancellationService);
 		pde.setPresentmentImportProcess(presentmentImportProcess);
 		pde.setEventPropertiesService(eventPropertiesService);
+	}
+
+	@Override
+	public long getFinID(String finreference) {
+		return financeMainDAO.getFinID(finreference, TableType.MAIN_TAB);
 	}
 
 	public void setPresentmentDetailDAO(PresentmentDetailDAO presentmentDetailDAO) {

@@ -127,8 +127,8 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
-	public long getLoanWorkFlowIdByFinRef(long finID, String type) {
-		return financeMainDAO.getLoanWorkFlowIdByFinRef(finID, type);
+	public long getLoanWorkFlowIdByFinRef(String finReference, String type) {
+		return financeMainDAO.getLoanWorkFlowIdByFinRef(finReference, type);
 	}
 
 	@Override
@@ -144,6 +144,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	@Override
 	public Long getFinID(String finRefernce) {
 		return financeMainDAO.getFinID(finRefernce);
+	}
+
+	@Override
+	public String getFinanceType(String finRefernce, TableType tableType) {
+		return financeMainDAO.getFinanceType(finRefernce, tableType);
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {

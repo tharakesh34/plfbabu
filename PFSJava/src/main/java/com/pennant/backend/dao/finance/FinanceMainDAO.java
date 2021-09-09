@@ -248,7 +248,7 @@ public interface FinanceMainDAO {
 
 	int getCountByOldFinReference(String oldFinReference);
 
-	long getLoanWorkFlowIdByFinRef(long finID, String type);
+	long getLoanWorkFlowIdByFinRef(String finReference, String type);
 
 	String getLovDescEntityCode(long finID, String string);
 

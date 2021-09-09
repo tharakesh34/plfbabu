@@ -719,9 +719,10 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 
 		String finreference = this.insertFinReference.getValue();
+		long finID = presentmentDetailService.getFinID(finreference);
 
-		PresentmentDetail presentmentDetail = this.presentmentDetailService
-				.getPresentmentDetailByFinRefAndPresID(finreference, this.presentmentHeader.getId());
+		PresentmentDetail presentmentDetail = this.presentmentDetailService.getPresentmentDetailByFinRefAndPresID(finID,
+				this.presentmentHeader.getId());
 		if (presentmentDetail != null) {
 			if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
 				includeList.add(presentmentDetail.getId());
@@ -750,9 +751,12 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			throw new WrongValueException(this.insertFinReference,
 					Labels.getLabel("Presentment_IncldeExclude_Empty_FinReference"));
 		}
+
 		String finreference = this.insertFinReference.getValue();
-		PresentmentDetail presentmentDetail = this.presentmentDetailService
-				.getPresentmentDetailByFinRefAndPresID(finreference, this.presentmentHeader.getId());
+		long finID = presentmentDetailService.getFinID(finreference);
+
+		PresentmentDetail presentmentDetail = this.presentmentDetailService.getPresentmentDetailByFinRefAndPresID(finID,
+				this.presentmentHeader.getId());
 		if (presentmentDetail != null) {
 			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()) {
 				excludeList.add(presentmentDetail.getId());
@@ -849,7 +853,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 		for (PresentmentDetail pd : presentmentDetailList) {
 			PresentmentDetail presentmentDetail2 = this.presentmentDetailService
-					.getPresentmentDetailByFinRefAndPresID(pd.getFinReference(), this.presentmentHeader.getId());
+					.getPresentmentDetailByFinRefAndPresID(pd.getFinID(), this.presentmentHeader.getId());
 			if (presentmentDetail2 == null) {
 				pd.setExcludeReason(4);
 				changeList.add(pd);

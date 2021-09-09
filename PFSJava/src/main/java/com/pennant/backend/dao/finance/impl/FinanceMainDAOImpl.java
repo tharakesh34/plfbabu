@@ -3717,16 +3717,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public long getLoanWorkFlowIdByFinRef(long finID, String type) {
+	public long getLoanWorkFlowIdByFinRef(String finReference, String type) {
 		StringBuilder sql = new StringBuilder("Select WorkflowId");
 		sql.append(" From FinanceMain");
 		sql.append(type);
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

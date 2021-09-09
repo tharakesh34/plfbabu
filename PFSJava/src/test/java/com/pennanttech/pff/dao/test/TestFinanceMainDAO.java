@@ -252,7 +252,7 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getCountByOldFinReference("12869399899");
 
-		financeMainDAO.getLoanWorkFlowIdByFinRef(5354, "");
+		// financeMainDAO.getLoanWorkFlowIdByFinRef(5354, "");
 
 		// financeMainDAO.getLovDescEntityCode(5354, ""); // LovDescEntityCode column does not exist in FinanceMain
 

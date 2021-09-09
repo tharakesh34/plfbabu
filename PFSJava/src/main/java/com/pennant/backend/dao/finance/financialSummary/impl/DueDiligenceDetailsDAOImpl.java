@@ -215,6 +215,15 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 	}
 
 	@Override
+	public int getVersion(long id, long finID) {
+		String sql = "Select Version FROM Due_Diligences Where ID = ? amd FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, id, finID);
+	}
+
+	@Override
 	public String getStatus(long id) {
 		String sql = "Select status From Due_Diligence_Checklist Where id = ?";
 

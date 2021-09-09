@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified Date
+ * : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.customermasters.impl;
 
 import java.math.BigDecimal;
@@ -178,10 +160,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -442,10 +422,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -480,10 +458,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 * This method Deletes the Record from the Customers or Customers_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Customers by key CustID
 	 * 
-	 * @param Customers
-	 *            (customer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customers (customer)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -516,10 +492,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 *
 	 * save Customers
 	 * 
-	 * @param Customers
-	 *            (customer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customers (customer)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -624,10 +598,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	 * This method updates the Record Customers or Customers_Temp. if Record not updated then throws DataAccessException
 	 * with error 41004. update Customers by key CustID and Version
 	 * 
-	 * @param Customers
-	 *            (customer)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customers (customer)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1269,10 +1241,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -1323,10 +1293,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -1358,10 +1326,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -1410,30 +1376,33 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public ProspectCustomer getProspectCustomer(String finReference, String type) {
-		logger.debug("Entering");
+	public ProspectCustomer getProspectCustomer(long finID, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CustID, CustCIF, CustShrtName, CustCtgCode, CustDftBranch");
+		sql.append(" From WIFProspectCustomer");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinID = ?");
 
-		ProspectCustomer prospectCustomer = new ProspectCustomer();
-		prospectCustomer.setFinReference(finReference);
-
-		StringBuilder selectSql = new StringBuilder(
-				" SELECT CustID , CustCIF , CustShrtName, CustCtgCode, CustDftBranch  ");
-		selectSql.append(" FROM WIFProspectCustomer");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinReference =:FinReference");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(prospectCustomer);
-		RowMapper<ProspectCustomer> typeRowMapper = BeanPropertyRowMapper.newInstance(ProspectCustomer.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			prospectCustomer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNUm) -> {
+				ProspectCustomer pc = new ProspectCustomer();
+
+				pc.setCustId(rs.getLong("CustID"));
+				pc.setCustCIF(rs.getString("CustCIF"));
+				pc.setCustShrtName(rs.getString("CustShrtName"));
+				pc.setCustCtgCode(rs.getString("CustCtgCode"));
+				pc.setCustDftBranch(rs.getString("CustDftBranch"));
+
+				return pc;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			prospectCustomer = null;
+			//
 		}
-		logger.debug("Leaving");
-		return prospectCustomer;
+
+		return null;
 	}
 
 	public boolean isAvailableCustomer(final long id, String type) {
@@ -2208,10 +2177,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -2552,10 +2519,8 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	/**
 	 * Fetch the Record Customers details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override

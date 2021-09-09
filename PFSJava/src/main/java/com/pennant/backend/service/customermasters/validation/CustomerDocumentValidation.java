@@ -82,20 +82,20 @@ public class CustomerDocumentValidation {
 		errParm[1] = PennantJavaUtil.getLabel("CustDocType_label") + "-" + valueParm[1];
 
 		if (customerDocument.isNewRecord()) { // for New record or new record into
-											// work flow
+												// work flow
 
 			if (!customerDocument.isWorkflow()) {// With out Work flow only new
-														// records
+													// records
 				if (befCustomerDocument != null) { // Record Already Exists in
-														// the table then error
+													// the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
 				if (customerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																										// is new
+																									// is new
 					if (befCustomerDocument != null || tempCustomerDocument != null) {
-						//if records already exists in the main table
+						// if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -108,10 +108,10 @@ public class CustomerDocumentValidation {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!customerDocument.isWorkflow()) { // With out Work flow for
-														// update and delete
+													// update and delete
 
 				if (befCustomerDocument == null) { // if records not exists in
-														// the main table
+													// the main table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
@@ -127,7 +127,7 @@ public class CustomerDocumentValidation {
 			} else {
 
 				if (tempCustomerDocument == null) { // if records not exists in
-														// the Work flow table
+													// the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
@@ -144,7 +144,7 @@ public class CustomerDocumentValidation {
 				long custId = customerDocument.getCustID();
 				String docCategory = customerDocument.getCustDocCategory();
 				String docNumber = customerDocument.getCustDocTitle();
-				List<String> duplicateCIFs = customerDocumentDAO.getDuplicateDocByTitle(custId, docCategory, docNumber);
+				List<String> duplicateCIFs = customerDocumentDAO.getDuplicateDocByTitle(docCategory, docNumber);
 				if (!duplicateCIFs.isEmpty()) {
 					String[] errParm1 = new String[2];
 					if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE)) {
@@ -179,7 +179,7 @@ public class CustomerDocumentValidation {
 	 * @return
 	 */
 	public ErrorDetail screenValidations(CustomerDocument customerDocument) {
-		//Customer Document Details Validation
+		// Customer Document Details Validation
 
 		if (customerDocument.isDocIdNumMand() && StringUtils.isBlank(customerDocument.getCustDocTitle())) {
 			return new ErrorDetail(PennantConstants.KEY_FIELD, "30535",

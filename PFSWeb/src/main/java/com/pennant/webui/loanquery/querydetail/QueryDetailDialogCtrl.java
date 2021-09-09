@@ -105,6 +105,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 import freemarker.template.Configuration;
@@ -1065,7 +1066,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			aQueryDetail.setFinType(this.financeMain.getFinType());
 		} else if (getFinanceMainService() != null && reference != null
 				&& StringUtils.isNotBlank(reference.getValue())) {
-			aQueryDetail.setFinType(getFinanceMainService().getFinanceTypeFinReference(reference.getValue(), "_View"));
+			aQueryDetail.setFinType(getFinanceMainService().getFinanceType(reference.getValue(), TableType.VIEW));
 		}
 
 		doRemoveValidation();

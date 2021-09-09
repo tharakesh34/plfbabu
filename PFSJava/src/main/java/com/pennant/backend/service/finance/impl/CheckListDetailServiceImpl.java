@@ -436,8 +436,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 						finCheckListRef));
 			}
 
-			long finID = fd.getFinanceCheckList().get(0).getFinID();
-			financeCheckListReferenceDAO.delete(finID, tableType);
+			String finReference = fd.getFinanceCheckList().get(0).getFinReference();
+			financeCheckListReferenceDAO.delete(finReference, tableType);
 		}
 		logger.debug(Literal.LEAVING);
 		return auditList;
@@ -579,14 +579,14 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		}
 
 		FinanceCheckListReference checkList = (FinanceCheckListReference) auditDetails.get(0).getModelData();
-		long finID = checkList.getFinID();
+		String finReference = checkList.getFinReference();
 
 		List<FinanceCheckListReference> tempFinCheckListRefList = null;
 		if (checkList.isWorkflow()) {
-			tempFinCheckListRefList = financeCheckListReferenceDAO.getCheckListByFinRef(finID, null, "_Temp");
+			tempFinCheckListRefList = financeCheckListReferenceDAO.getCheckListByFinRef(finReference, null, "_Temp");
 		}
 		List<FinanceCheckListReference> befFinCheckListRefList = financeCheckListReferenceDAO
-				.getCheckListByFinRef(finID, null, "");
+				.getCheckListByFinRef(finReference, null, "");
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinanceCheckListReference finCheckListRef = (FinanceCheckListReference) auditDetails.get(i).getModelData();
@@ -709,15 +709,15 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		auditDetail.setErrorDetails(new ArrayList<ErrorDetail>());
 		FinanceCheckListReference checkList = (FinanceCheckListReference) auditDetail.getModelData();
 
-		long finID = checkList.getFinID();
+		String finReference = checkList.getFinReference();
 
 		FinanceCheckListReference tempCheckList = null;
 		if (checkList.isWorkflow()) {
-			tempCheckList = financeCheckListReferenceDAO.getFinanceCheckListReferenceById(finID,
+			tempCheckList = financeCheckListReferenceDAO.getFinanceCheckListReferenceById(finReference,
 					checkList.getQuestionId(), checkList.getAnswer(), "_Temp");
 		}
-		FinanceCheckListReference befCheckList = financeCheckListReferenceDAO.getFinanceCheckListReferenceById(finID,
-				checkList.getQuestionId(), checkList.getAnswer(), "");
+		FinanceCheckListReference befCheckList = financeCheckListReferenceDAO
+				.getFinanceCheckListReferenceById(finReference, checkList.getQuestionId(), checkList.getAnswer(), "");
 
 		FinanceCheckListReference oldFinanceCheckListReference = checkList.getBefImage();
 

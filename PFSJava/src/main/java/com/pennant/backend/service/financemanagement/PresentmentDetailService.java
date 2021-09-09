@@ -83,4 +83,6 @@ public interface PresentmentDetailService {
 	void updatePresentmentDetail(long id, String status, Long linkedTranId, String utrNumber);
 
 	void setProperties(PresentmentDetailExtract pde);
+
+	long getFinID(String finreference);
 }

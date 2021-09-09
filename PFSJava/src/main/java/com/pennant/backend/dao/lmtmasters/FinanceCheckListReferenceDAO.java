@@ -31,7 +31,7 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 
 public interface FinanceCheckListReferenceDAO {
 
-	FinanceCheckListReference getFinanceCheckListReferenceById(final long finID, long questionId, long answerId,
+	FinanceCheckListReference getFinanceCheckListReferenceById(String reference, long questionId, long answerId,
 			String type);
 
 	void update(FinanceCheckListReference financeCheckListReference, String type);

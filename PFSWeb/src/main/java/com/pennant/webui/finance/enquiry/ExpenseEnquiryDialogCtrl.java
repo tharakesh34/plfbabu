@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeEnquiryDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeEnquiryDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.enquiry;
@@ -85,6 +67,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 	private FinanceEnquiryHeaderDialogCtrl financeEnquiryHeaderDialogCtrl = null;
 	private List<FinExpenseDetails> finExpenseDetails;
 	private UploadHeaderService uploadHeaderService;
+	private Long finID;
 	private String finReference;
 	private int ccyFormatter = 0;
 
@@ -128,6 +111,10 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 			this.finReference = (String) arguments.get("finReference");
 		} else {
 			this.finReference = null;
+		}
+
+		if (arguments.containsKey("finID")) {
+			this.finID = (Long) arguments.get("finID");
 		}
 
 		if (arguments.containsKey("ccyformat")) {
@@ -216,8 +203,8 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 
 		FinExpenseDetails finExpenseDetails = (FinExpenseDetails) event.getData();
 
-		List<FinExpenseMovements> finExpenseMovements = getUploadHeaderService()
-				.getFinExpenseMovementById(this.finReference, finExpenseDetails.getFinExpenseId());
+		List<FinExpenseMovements> finExpenseMovements = getUploadHeaderService().getFinExpenseMovementById(finID,
+				finExpenseDetails.getFinExpenseId());
 		final Map<String, Object> map = new HashMap<String, Object>();
 
 		map.put("finExpenseDetails", finExpenseDetails);
@@ -233,7 +220,7 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	//setter and getters
+	// setter and getters
 	public UploadHeaderService getUploadHeaderService() {
 		return uploadHeaderService;
 	}

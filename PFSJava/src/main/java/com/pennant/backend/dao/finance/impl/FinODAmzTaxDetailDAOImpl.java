@@ -240,7 +240,8 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" TaxSeqId, FinID, FinReference, ValueDate, TaxFor, Amount, TaxType, TotalGST");
 		sql.append(", PaidAmount, WaivedAmount, InvoiceID");
-		sql.append(" From FinODAmzTaxDetail Where FinID = ?");
+		sql.append(" From FinODAmzTaxDetail");
+		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
