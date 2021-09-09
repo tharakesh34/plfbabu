@@ -140,11 +140,11 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 						disbursedAmt = finAdvancePayments.getAmtToBeReleased();
 					}
 
-					List<FinFeeDetail> finFeeDetailList = getFinFeeDetailService().getFinFeeDetailById(finReference,
-							false, "_AView");
+					List<FinFeeDetail> feeList = finFeeDetailService.getFinFeeDetailById(fm.getFinID(), false,
+							"_AView");
 
-					if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
-						for (FinFeeDetail finFee : finFeeDetailList) {
+					if (CollectionUtils.isNotEmpty(feeList)) {
+						for (FinFeeDetail finFee : feeList) {
 							if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(finFee.getFeeScheduleMethod())) {
 								if (finAdvancePayments.getDisbSeq() == 1) {
 									if (finFee.isOriginationFee()) {

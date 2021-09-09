@@ -50,5 +50,5 @@ public interface PaymentInstructionService {
 
 	void updateStatus(PaymentInstruction instruction, String tableType);
 
-	boolean isInstructionInProgress(long finID);
+	boolean isInstructionInProgress(String finReference);
 }

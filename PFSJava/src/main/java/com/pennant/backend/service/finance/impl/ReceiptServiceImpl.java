@@ -325,7 +325,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
 			}
 			if (StringUtils.isBlank(rch.getExtReference())) {
-				rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(finID, receiptID, "_View"));
+				rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getReference(), receiptID, "_View"));
 			} else {
 				rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getExtReference(), receiptID, "_View"));
 				FinReceiptHeader frh = finReceiptHeaderDAO.getFinTypeByReceiptID(rch.getReceiptID());

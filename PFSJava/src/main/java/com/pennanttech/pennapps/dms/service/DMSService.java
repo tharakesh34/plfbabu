@@ -12,7 +12,7 @@ public interface DMSService {
 
 	public byte[] getById(long id);
 
-	public Long getCustomerIdByFin(long finID);
+	public Long getCustomerIdByFin(String finReference);
 
 	public Long getCustomerIdByCollateral(String finReference);
 

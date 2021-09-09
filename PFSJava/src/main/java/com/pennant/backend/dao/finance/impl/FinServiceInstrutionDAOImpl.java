@@ -266,15 +266,15 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	}
 
 	@Override
-	public List<String> getFinEventByFinRef(long finID, String type) {
+	public List<String> getFinEventByFinRef(String finReference, String type) {
 		StringBuilder sql = new StringBuilder("Select FinEvent");
 		sql.append(" From FinServiceInstruction");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForList(sql.toString(), String.class, finID);
+		return this.jdbcOperations.queryForList(sql.toString(), String.class, finReference);
 
 	}
 

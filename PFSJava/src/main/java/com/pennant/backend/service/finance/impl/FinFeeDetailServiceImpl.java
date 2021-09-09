@@ -134,16 +134,30 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
+	public List<FinFeeDetail> getFinFeeDetailById(String offerID, boolean isWIF, String type) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getFinFeeDetailByFinRef(offerID, isWIF, type);
+
+		setFeeSchedulesAndTaxGeader(feeList, isWIF, type);
+
+		logger.debug(Literal.LEAVING);
+		return feeList;
+	}
+
+	@Override
 	public List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type) {
 		logger.debug(Literal.ENTERING);
 
 		List<FinFeeDetail> feeList = finFeeDetailDAO.getFinFeeDetailByFinRef(finID, isWIF, type);
 
-		if (CollectionUtils.isEmpty(feeList)) {
-			logger.debug(Literal.LEAVING);
-			return feeList;
-		}
+		setFeeSchedulesAndTaxGeader(feeList, isWIF, type);
 
+		logger.debug(Literal.LEAVING);
+		return feeList;
+	}
+
+	private void setFeeSchedulesAndTaxGeader(List<FinFeeDetail> feeList, boolean isWIF, String type) {
 		for (FinFeeDetail fee : feeList) {
 			String feeScheduleMethod = fee.getFeeScheduleMethod();
 			if (CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT.equals(feeScheduleMethod)
@@ -159,9 +173,6 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 				fee.setTaxHeader(taxHeaderDetailsService.getTaxHeaderById(taxHeaderId, type));
 			}
 		}
-
-		logger.debug(Literal.LEAVING);
-		return feeList;
 	}
 
 	@Override

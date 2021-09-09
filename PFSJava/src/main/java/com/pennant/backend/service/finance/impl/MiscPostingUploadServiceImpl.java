@@ -45,6 +45,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUpload>
 		implements MiscPostingUploadService {
@@ -77,8 +78,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -92,8 +92,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 	}
 
 	/**
-	 * @param miscPostingUploadDAO
-	 *            the miscPostingUploadDAO to set
+	 * @param miscPostingUploadDAO the miscPostingUploadDAO to set
 	 */
 	public void setMiscPostingUploadDAO(MiscPostingUploadDAO miscPostingUploadDAO) {
 		this.miscPostingUploadDAO = miscPostingUploadDAO;
@@ -110,8 +109,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 	/**
 	 * getMiscPostingUploadsById fetch the details by using MiscPostingUploadsDAO's getMiscPostingUploadByRef method.
 	 * 
-	 * @param uploadId
-	 *            (long)
+	 * @param uploadId (long)
 	 * @return MiscPostingUploads
 	 */
 	@Override
@@ -657,7 +655,8 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 							errorCount++;
 							reason = " Loan Reference(Reference) is mandatory, it should not be empty.";
 						} else {
-							finMain = financeMainDAO.getFinanceMainDetails(miscPostingUpload.getReference());
+							finMain = financeMainDAO.getFinanceMain(miscPostingUpload.getReference(),
+									TableType.MAIN_TAB);
 							if (finMain != null) {
 								miscPostingUpload.setBranch(finMain.getFinBranch());
 								miscPostingUpload.setPostingDivision(finMain.getLovDescFinDivision());
@@ -685,7 +684,7 @@ public class MiscPostingUploadServiceImpl extends GenericService<MiscPostingUplo
 						} else {
 							entity = entityDAO.getEntity(miscPostingUpload.getReference(), "");
 							if (entity != null) {
-								//miscPostingUpload.setBranch(customer.getCustDftBranch());
+								// miscPostingUpload.setBranch(customer.getCustDftBranch());
 							} else {
 								errorCount++;
 								reason = " Entity(Reference): " + miscPostingUpload.getReference()

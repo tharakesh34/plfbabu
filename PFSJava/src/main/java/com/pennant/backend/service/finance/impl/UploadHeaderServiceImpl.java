@@ -839,8 +839,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public List<String> getFinEventByFinRef(long finID, String type) {
-		return finServiceInstructionDAO.getFinEventByFinRef(finID, type);
+	public List<String> getFinEventByFinRef(String finReference, String type) {
+		return finServiceInstructionDAO.getFinEventByFinRef(finReference, type);
 	}
 
 	public FeeTypeDAO getFeeTypeDAO() {

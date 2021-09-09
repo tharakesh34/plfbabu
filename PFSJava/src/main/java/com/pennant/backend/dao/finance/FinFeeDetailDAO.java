@@ -41,6 +41,8 @@ public interface FinFeeDetailDAO {
 
 	void refresh(FinFeeDetail entity);
 
+	List<FinFeeDetail> getFinFeeDetailByFinRef(String reference, boolean isWIF, String type);
+
 	List<FinFeeDetail> getFinFeeDetailByFinRef(long finID, boolean isWIF, String type);
 
 	int getFeeSeq(FinFeeDetail finFeeDetail, boolean isWIF, String type);
@@ -49,7 +51,7 @@ public interface FinFeeDetailDAO {
 
 	List<FinFeeDetail> getFinFeeDetailByFinRef(long finID, boolean isWIF, String type, String finEvent);
 
-	List<FinFeeDetail> getPaidFinFeeDetails(long finID, String type);
+	List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type);
 
 	FinFeeDetail getVasFeeDetailById(String vasReference, boolean isWIF, String type);
 

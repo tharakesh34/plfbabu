@@ -238,7 +238,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		if (isFeePayment) {
-			rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(finID, receiptID, "_View"));
+			rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getReference(), receiptID, "_View"));
 
 		}
 

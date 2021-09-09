@@ -789,6 +789,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			} else {
 				validations.add(key);
 			}
+
 			List<String> finEvents = uploadHeaderService.getFinEventByFinRef(finReference, "_Temp");
 
 			if (CollectionUtils.isNotEmpty(finEvents)) {

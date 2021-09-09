@@ -242,7 +242,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 			if (FinanceConstants.ACCOUNTING_TOTALREVERSAL) {
 				// Cancel All Transactions for Finance Disbursement including Commitment Postings, Stage Accounting on
 				// Reversal
-				postingsPreparationUtil.postReveralsExceptFeePay(finID);
+				postingsPreparationUtil.postReveralsExceptFeePay(finReference);
 				logger.debug("Reverse Transaction Success for Reference : " + finReference);
 			} else {
 				// Event Based Accounting on Final Stage
@@ -428,7 +428,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		// Finance Cancellation Posting Process Execution
 		// =====================================
 		// Event Based Accounting on Final Stage
-		List<ReturnDataSet> returnDataSets = postingsPreparationUtil.postReveralsExceptFeePay(finID);
+		List<ReturnDataSet> returnDataSets = postingsPreparationUtil.postReveralsExceptFeePay(finReference);
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}

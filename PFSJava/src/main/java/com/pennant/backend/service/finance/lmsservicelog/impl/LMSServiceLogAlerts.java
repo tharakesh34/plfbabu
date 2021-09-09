@@ -36,23 +36,24 @@ public class LMSServiceLogAlerts {
 		logger.debug(Literal.ENTERING);
 
 		List<LMSServiceLog> lmsServiceLogs = finServiceInstrutionDAO.getLMSServiceLogList(PennantConstants.NO);
+
 		for (LMSServiceLog lmsServiceLog : lmsServiceLogs) {
-			FinanceDetail financeDetail = new FinanceDetail();
+			FinanceDetail fd = new FinanceDetail();
 			CustomerDetails customerDetails = new CustomerDetails();
-			FinanceMain financeMain = financeMainDAO.getFinanceMainById(lmsServiceLog.getFinReference(), "_aview",
-					false);
-			financeMain.setUserDetails(new LoggedInUser());
-			financeDetail.setFinReference(lmsServiceLog.getFinReference());
-			financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-			customerDetails.setCustID(financeMain.getCustID());
+			FinanceMain fm = financeMainDAO.getFinanceMainById(lmsServiceLog.getFinID(), "_aview", false);
+			fm.setUserDetails(new LoggedInUser());
+			fd.setFinReference(lmsServiceLog.getFinReference());
+			fd.getFinScheduleData().setFinanceMain(fm);
+			customerDetails.setCustID(fm.getCustID());
 			customerDetailsService.setCustomerBasicDetails(customerDetails);
-			financeDetail.setCustomerDetails(customerDetails);
-			//For Customers marked as DND true are not allow to Trigger a Mail. 
+			fd.setCustomerDetails(customerDetails);
+			// For Customers marked as DND true are not allow to Trigger a Mail.
+
 			if (customerDetails.getCustomer().isDnd()) {
 				finServiceInstrutionDAO.updateNotificationFlag("D", lmsServiceLog.getId());
 				continue;
 			} else {
-				sendAlert(lmsServiceLog, financeDetail);
+				sendAlert(lmsServiceLog, fd);
 			}
 		}
 
@@ -122,23 +123,8 @@ public class LMSServiceLogAlerts {
 		this.notificationService = notificationService;
 	}
 
-	public FinServiceInstrutionDAO getFinServiceInstrutionDAO() {
-		return finServiceInstrutionDAO;
-	}
-
 	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
 		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public CustomerDetailsService getCustomerDetailsService() {
-		return customerDetailsService;
-	}
-
-	public NotificationService getNotificationService() {
-		return notificationService;
-	}
 }

@@ -1935,7 +1935,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 						writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain().getRcdMaintainSts());
 			}
 
-			List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(finID, "_Temp");
+			List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(finRef, "_Temp");
 			if (CollectionUtils.isNotEmpty(finEvents)) {
 				rcdMaintainSts = finEvents.get(0);
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -3029,9 +3029,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		FinanceDetail fd = new FinanceDetail();
 		fd.getFinScheduleData().setFinanceMain(fm);
 
-		long tempFinID = fmi.getFinID();
 		String tempRef = fmi.getFinReference();
-		List<LinkedFinances> list = linkedFinancesService.getLinkedFinancesByRef(tempFinID, type);
+		List<LinkedFinances> list = linkedFinancesService.getLinkedFinancesByRef(tempRef, type);
 		fd.setLinkedFinancesList(list);
 		fd.getFinScheduleData().setFinMaintainInstruction(fmi);
 

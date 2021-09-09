@@ -58,6 +58,7 @@ import com.pennant.backend.service.QueueAssignmentService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.core.TableType;
 
 public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> implements QueueAssignmentService {
 	private static final Logger logger = LogManager.getLogger(QueueAssignmentServiceImpl.class);
@@ -70,46 +71,6 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 
 	public QueueAssignmentServiceImpl() {
 		super();
-	}
-
-	public QueueAssignmentDAO getQueueAssignmentDAO() {
-		return queueAssignmentDAO;
-	}
-
-	public void setQueueAssignmentDAO(QueueAssignmentDAO queueAssignmentDAO) {
-		this.queueAssignmentDAO = queueAssignmentDAO;
-	}
-
-	public TaskOwnersDAO getTaskOwnersDAO() {
-		return taskOwnersDAO;
-	}
-
-	public void setTaskOwnersDAO(TaskOwnersDAO taskOwnersDAO) {
-		this.taskOwnersDAO = taskOwnersDAO;
-	}
-
-	public UserActivityLogDAO getUserActivityLogDAO() {
-		return userActivityLogDAO;
-	}
-
-	public void setUserActivityLogDAO(UserActivityLogDAO userActivityLogDAO) {
-		this.userActivityLogDAO = userActivityLogDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
 	@Override
@@ -132,9 +93,9 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		}
 
 		if (queueAssignmentHeader.isNewRecord()) {
-			getQueueAssignmentDAO().saveHeader(queueAssignmentHeader, tableType);
+			queueAssignmentDAO.saveHeader(queueAssignmentHeader, tableType);
 		} else {
-			getQueueAssignmentDAO().updateHeader(queueAssignmentHeader, tableType);
+			queueAssignmentDAO.updateHeader(queueAssignmentHeader, tableType);
 		}
 
 		if (queueAssignmentHeader.getQueueAssignmentsList() != null
@@ -145,7 +106,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		}
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -231,19 +192,19 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 						// task_assignments table
 						if (queueAssignment.isSingleUser()) {
 							if (i == 0) {
-								getQueueAssignmentDAO().save(queueDetail);
+								queueAssignmentDAO.save(queueDetail);
 							}
 						} else {
-							getQueueAssignmentDAO().save(queueDetail);
+							queueAssignmentDAO.save(queueDetail);
 						}
 						if (queueAssignment.isManualAssign()) {
-							getQueueAssignmentDAO().updateUserCounts(queueDetail.getModule(),
-									queueDetail.getUserRoleCode(), queueDetail.getUserId(),
-									queueDetail.getUserRoleCode(), queueDetail.getFromUserId(), false, false);
+							queueAssignmentDAO.updateUserCounts(queueDetail.getModule(), queueDetail.getUserRoleCode(),
+									queueDetail.getUserId(), queueDetail.getUserRoleCode(), queueDetail.getFromUserId(),
+									false, false);
 						} else {
-							getQueueAssignmentDAO().updateUserCounts(queueDetail.getModule(),
-									queueDetail.getUserRoleCode(), queueDetail.getUserId(),
-									queueDetail.getUserRoleCode(), queueDetail.getFromUserId(), false, true);
+							queueAssignmentDAO.updateUserCounts(queueDetail.getModule(), queueDetail.getUserRoleCode(),
+									queueDetail.getUserId(), queueDetail.getUserRoleCode(), queueDetail.getFromUserId(),
+									false, true);
 						}
 
 						// update task_owners table
@@ -252,7 +213,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 						owner.setRoleCode(queueDetail.getUserRoleCode());
 						owner.setActualOwner(queueDetail.getFromUserId());
 						owner.setCurrentOwner(queueDetail.getUserId());
-						getTaskOwnersDAO().update(owner);
+						taskOwnersDAO.update(owner);
 
 						// Insert into activity log
 
@@ -275,27 +236,35 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 						userActivityLog.setProcessed(false);
 						logList.add(userActivityLog);
 						if (i == auditDetails.size() - 1) {
-							getUserActivityLogDAO().saveList(logList);
+							userActivityLogDAO.saveList(logList);
 						}
 
 						// Update financemain_temp
-						List<String> refList = new ArrayList<String>();
-						refList.add(queueDetail.getReference());
-						getFinanceMainDAO().updateNextUserId(refList, String.valueOf(queueDetail.getFromUserId()),
-								String.valueOf(queueDetail.getUserId()), queueAssignment.isManualAssign());
+						List<Long> refList = new ArrayList<>();
+
+						Long finID = financeMainDAO.getFinID(queueDetail.getReference(), TableType.TEMP_TAB);
+
+						if (finID != null) {
+							refList.add(finID);
+						}
+
+						if (!refList.isEmpty()) {
+							financeMainDAO.updateNextUserId(refList, String.valueOf(queueDetail.getFromUserId()),
+									String.valueOf(queueDetail.getUserId()), queueAssignment.isManualAssign());
+						}
 					}
-					getQueueAssignmentDAO().delete(queueDetail, "_Temp");
+					queueAssignmentDAO.delete(queueDetail, "_Temp");
 				} else {
-					getQueueAssignmentDAO().save(queueDetail, type);
+					queueAssignmentDAO.save(queueDetail, type);
 				}
 			}
 
 			if (updateRecord) {
-				getQueueAssignmentDAO().update(queueDetail, type);
+				queueAssignmentDAO.update(queueDetail, type);
 			}
 
 			if (deleteRecord) {
-				getQueueAssignmentDAO().delete(queueDetail, type);
+				queueAssignmentDAO.delete(queueDetail, type);
 			}
 
 			if (approveRec) {
@@ -313,8 +282,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -439,7 +407,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		QueueAssignmentHeader queueAssignmentHeader = (QueueAssignmentHeader) auditHeader.getAuditDetail()
 				.getModelData();
 
-		getQueueAssignmentDAO().deleteHeader(queueAssignmentHeader);
+		queueAssignmentDAO.deleteHeader(queueAssignmentHeader);
 
 		if (queueAssignmentHeader.getQueueAssignmentsList() != null
 				&& queueAssignmentHeader.getQueueAssignmentsList().size() > 0) {
@@ -450,7 +418,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
@@ -471,14 +439,14 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 		QueueAssignmentHeader queueAssignmentHeader = (QueueAssignmentHeader) auditHeader.getAuditDetail()
 				.getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getQueueAssignmentDAO().deleteHeader(queueAssignmentHeader);
+		queueAssignmentDAO.deleteHeader(queueAssignmentHeader);
 
 		auditDetails.addAll(
 				getListAuditDetails(listDeletion(queueAssignmentHeader, "_Temp", auditHeader.getAuditTranType())));
 
 		auditHeader.setAuditDetail(null);
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug("Leaving");
 		return auditHeader;
@@ -497,7 +465,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 				QueueAssignment aQueueAssignment = queueAssignmentHeader.getQueueAssignmentsList().get(i);
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						aQueueAssignment.getBefImage(), aQueueAssignment));
-				getQueueAssignmentDAO().delete(aQueueAssignment, "_Temp");
+				queueAssignmentDAO.delete(aQueueAssignment, "_Temp");
 			}
 		}
 		logger.debug("Leaving");
@@ -556,7 +524,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 	@Override
 	public QueueAssignmentHeader getFinances(QueueAssignmentHeader aQueueAssignmentHeader) {
 		logger.debug("Entering");
-		QueueAssignmentHeader header = getQueueAssignmentDAO().isNewRequest(aQueueAssignmentHeader.getModule(),
+		QueueAssignmentHeader header = queueAssignmentDAO.isNewRequest(aQueueAssignmentHeader.getModule(),
 				aQueueAssignmentHeader.getUserId(), aQueueAssignmentHeader.getUserRoleCode(),
 				aQueueAssignmentHeader.isManualAssign());
 		if (header == null) {
@@ -565,7 +533,7 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 			aQueueAssignmentHeader = header;
 		}
 		aQueueAssignmentHeader
-				.setQueueAssignmentsList(getQueueAssignmentDAO().getFinances(aQueueAssignmentHeader.getUserId(),
+				.setQueueAssignmentsList(queueAssignmentDAO.getFinances(aQueueAssignmentHeader.getUserId(),
 						aQueueAssignmentHeader.getUserRoleCode(), aQueueAssignmentHeader.isManualAssign()));
 		if (aQueueAssignmentHeader.isManualAssign()) {
 			aQueueAssignmentHeader.setFromUserId(0);
@@ -591,9 +559,28 @@ public class QueueAssignmentServiceImpl extends GenericService<QueueAssignment> 
 
 	@Override
 	public boolean checkIfUserAlreadyAccessed(String finReferences, String selectedUser, String roleCode) {
-		logger.debug("Entering");
-		logger.debug("Leaving");
-		return getTaskOwnersDAO().checkIfUserAlreadyAccessed(finReferences, selectedUser, roleCode);
+		return taskOwnersDAO.checkIfUserAlreadyAccessed(finReferences, selectedUser, roleCode);
 
 	}
+
+	public void setQueueAssignmentDAO(QueueAssignmentDAO queueAssignmentDAO) {
+		this.queueAssignmentDAO = queueAssignmentDAO;
+	}
+
+	public void setTaskOwnersDAO(TaskOwnersDAO taskOwnersDAO) {
+		this.taskOwnersDAO = taskOwnersDAO;
+	}
+
+	public void setUserActivityLogDAO(UserActivityLogDAO userActivityLogDAO) {
+		this.userActivityLogDAO = userActivityLogDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
 }

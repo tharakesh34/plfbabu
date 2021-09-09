@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  InterestCertficateServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : InterestCertficateServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -87,6 +69,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.service.extended.fields.ExtendedFieldService;
 
 /**
@@ -496,8 +479,8 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 	}
 
 	@Override
-	public FinanceMain getFinanceMain(String finReference, String[] columns, String type) {
-		return financeMainDAO.getFinanceMain(finReference, columns, type);
+	public FinanceMain getFinanceMain(String finReference, TableType tabelType) {
+		return financeMainDAO.getFinanceMain(finReference, tabelType);
 	}
 
 	@Override

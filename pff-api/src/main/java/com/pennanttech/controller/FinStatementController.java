@@ -135,8 +135,10 @@ public class FinStatementController extends SummaryDetailService {
 					return stmtResponse;
 				}
 
+				String finReference = fd.getFinScheduleData().getFinanceMain().getFinReference();
+
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finID, true);
+					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference, true);
 					fd.setReturnDataSetList(postingsList);
 				}
 				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {
@@ -201,7 +203,7 @@ public class FinStatementController extends SummaryDetailService {
 				fd.setFinID(finID);
 
 				if (StringUtils.equals(APIConstants.STMT_ACCOUNT, serviceName)) {
-					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finID, true);
+					List<ReturnDataSet> postingsList = postingsDAO.getPostingsByFinRef(finReference, true);
 					fd.setReturnDataSetList(postingsList);
 				}
 				if (StringUtils.equals(APIConstants.STMT_INST_CERT, serviceName)) {

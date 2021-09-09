@@ -228,18 +228,18 @@ public class VasMovementDetailDAOImpl extends BasicDao<VasMovementDetail> implem
 	}
 
 	@Override
-	public BigDecimal getVasMovementDetailByRef(long finID, Date finStartDate, Date finEndDate, String type) {
+	public BigDecimal getVasMovementDetailByRef(String finReference, Date finStartDate, Date finEndDate, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" sum(MovementAmt)");
 		sql.append(" From VasMovementDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 		sql.append(" and MovementDate >= ? and MovementDate <= ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID, finStartDate,
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference, finStartDate,
 					finEndDate);
 		} catch (EmptyResultDataAccessException e) {
 			//

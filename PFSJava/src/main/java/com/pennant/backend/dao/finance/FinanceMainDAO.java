@@ -289,7 +289,7 @@ public interface FinanceMainDAO {
 
 	List<UserPendingCases> getUserPendingCasesDetails(long userID, String roleCodes);
 
-	Long getCustomerIdByFin(long finID);
+	Long getCustomerIdByFin(String finReference);
 
 	FinanceMain getEHFinanceMain(long finID);
 

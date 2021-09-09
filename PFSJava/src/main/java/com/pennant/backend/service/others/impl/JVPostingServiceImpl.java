@@ -75,6 +75,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * Service implementation for methods that depends on <b>JVPosting</b>.<br>
@@ -527,14 +528,17 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String reference = jVPosting.getReference();
-		String rcdMntnSts = financeMainDAO.getFinanceMainByRcdMaintenance(reference, "_View");
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference);
+
+		String rcdMntnSts = fm.getRcdMaintainSts();
+
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.JVPOSTING.equals(rcdMntnSts)) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = rcdMntnSts;
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
 		}
 
-		if (financeWriteoffDAO.isWriteoffLoan(reference, "")) {
+		if (financeWriteoffDAO.isWriteoffLoan(fm.getFinID(), "")) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = "";
 			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
@@ -840,7 +844,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 			return errorsList;
 		}
 
-		FinanceMain financeMain = financeMainService.getFinanceByFinReference(posting.getReference(), "_AView");
+		FinanceMain financeMain = financeMainService.getFinanceMain(posting.getReference(), TableType.BOTH_TAB);
 		if (null == financeMain) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "branch " + posting.getBranch();

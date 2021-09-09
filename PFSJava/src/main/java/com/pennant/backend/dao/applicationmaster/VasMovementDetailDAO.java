@@ -42,6 +42,6 @@ public interface VasMovementDetailDAO {
 
 	long save(VasMovementDetail checkListDetail, String type);
 
-	BigDecimal getVasMovementDetailByRef(long finID, Date finStartDate, Date finEndDate, String type);
+	BigDecimal getVasMovementDetailByRef(String finReference, Date finStartDate, Date finEndDate, String type);
 
 }

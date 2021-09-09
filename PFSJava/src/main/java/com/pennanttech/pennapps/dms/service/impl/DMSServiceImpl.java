@@ -243,11 +243,11 @@ public class DMSServiceImpl implements DMSService {
 			if (subModule == DMSModule.COLLATERAL && reference != null) {
 				custId = collateralSetupDAO.getCustomerIdByCollateral(reference);
 			} else if (subModule == DMSModule.QUERY_MGMT && finRefernce != null) {
-				custId = financeMainDAO.getCustomerIdByFin(finID);
+				custId = financeMainDAO.getCustomerIdByFin(finRefernce);
 			} else if (subModule == DMSModule.VAS && reference != null) {
 				custId = vASRecordingDAO.getCustomerId(reference);
 			} else {
-				custId = financeMainDAO.getCustomerIdByFin(finID);
+				custId = financeMainDAO.getCustomerIdByFin(finRefernce);
 			}
 		}
 		dmsQueue.setCustId(custId);
@@ -277,8 +277,8 @@ public class DMSServiceImpl implements DMSService {
 	}
 
 	@Override
-	public Long getCustomerIdByFin(long finID) {
-		return financeMainDAO.getCustomerIdByFin(finID);
+	public Long getCustomerIdByFin(String finReference) {
+		return financeMainDAO.getCustomerIdByFin(finReference);
 	}
 
 	@Override

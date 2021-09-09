@@ -103,6 +103,21 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	@Override
+	public List<FinFeeDetail> getFinFeeDetailByFinRef(String reference, boolean isWIF, String type) {
+		StringBuilder sql = getSelectQuery(isWIF, type);
+		sql.append(" Where FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		FinFeeDetailsRowMapper rowMapper = new FinFeeDetailsRowMapper(type, isWIF);
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, reference);
+		}, rowMapper);
+	}
+
+	@Override
 	public List<FinFeeDetail> getFinFeeDetailByFinRef(final long finID, boolean isWIF, String type, String finEvent) {
 		StringBuilder sql = getSelectQuery(isWIF, type);
 		sql.append(" Where FinID = ? and FinEvent = ?");
@@ -157,7 +172,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 	}
 
 	@Override
-	public List<FinFeeDetail> getPaidFinFeeDetails(final long finID, String type) {
+	public List<FinFeeDetail> getPaidFinFeeDetails(String reference, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinID, FinReference, FeeID, FeeOrder, FinEvent, CalculatedAmount, ActualAmountOriginal");
 		sql.append(", ActualAmount, WaivedAmount, WaivedGST, NetAmountOriginal, NetAmountGST, NetAmount");
@@ -173,7 +188,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		sql.append(", WaivedGST, ReferenceId");
 		sql.append(" from FinFeeDetail");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? and ActualAmount > ?");
+		sql.append(" Where FinReference = ? and ActualAmount > ?");
 		sql.append(" and FeeScheduleMethod = ? and OriginationFee = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -181,7 +196,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, reference);
 			ps.setInt(index++, 0);
 			ps.setString(index++, "DISB");
 			ps.setInt(index++, 1);

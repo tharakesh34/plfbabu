@@ -4771,19 +4771,19 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public Long getCustomerIdByFin(long finID) {
+	public Long getCustomerIdByFin(String finReference) {
 		StringBuilder sql = new StringBuilder("Select distinct CustId");
 		sql.append(" From (");
-		sql.append(" Select CustId, FinID From FinanceMain_Temp");
+		sql.append(" Select CustId, FinReference From FinanceMain_Temp");
 		sql.append(" Union all");
-		sql.append(" Select CustId, FinID From FinanceMain");
+		sql.append(" Select CustId, FinReference From FinanceMain");
 		sql.append(") T");
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finID);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

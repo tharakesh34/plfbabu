@@ -45,6 +45,8 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 public interface FinFeeDetailService {
 	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type);
 
+	List<FinFeeDetail> getFinFeeDetailById(String finRefernce, boolean isWIF, String type);
+
 	List<FinFeeDetail> getFinFeeDetailById(long finID, boolean isWIF, String type, String eventCodeRef);
 
 	List<AuditDetail> saveOrUpdate(List<FinFeeDetail> feeList, String tableType, String auditTranType, boolean isWIF);

@@ -117,7 +117,7 @@ public interface UploadHeaderService {
 
 	FeeType getApprovedFeeTypeByFeeCode(String finTypeCode);
 
-	List<String> getFinEventByFinRef(long finID, String type);
+	List<String> getFinEventByFinRef(String finReference, String type);
 
 	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId);
 

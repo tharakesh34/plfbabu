@@ -169,13 +169,13 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 	@Override
 	public List<FinanceMain> getFinanceMain(long batchId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FM.FinID, FM.FinReference, FT.FinType, SD.EntityCode, FM.FinBranch, FM.CustID");
-		sql.append(", Cust.CustCIF LovDescCustCIF, FM.FinCcy, FM.FinIsActive");
-		sql.append(" From Financemain FM");
-		sql.append(" Inner Join Customers Cust on FM.CustId = Cust.CustId");
-		sql.append(" Inner Join RMTFinanceTypes FT on FT.FinType = FM.FinType");
+		sql.append(" fm.FinID, fm.FinReference, FT.FinType, SD.EntityCode, fm.FinBranch, fm.CustID");
+		sql.append(", Cust.CustCIF LovDescCustCIF, fm.FinCcy, fm.FinIsActive");
+		sql.append(" From Financemain fm");
+		sql.append(" Inner Join Customers Cust on fm.CustId = Cust.CustId");
+		sql.append(" Inner Join RMTFinanceTypes FT on FT.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
-		sql.append(" Where FM.FinID in ");
+		sql.append(" Where fm.FinID in ");
 		sql.append("(Select FinID From PaymentMethod_Upload_Detail Where BatchId = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());

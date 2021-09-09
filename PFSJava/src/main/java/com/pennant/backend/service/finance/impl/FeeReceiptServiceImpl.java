@@ -149,7 +149,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		if (StringUtils.isBlank(reference)) {
 			reference = receiptHeader.getReference();
 		}
-		receiptHeader.setPaidFeeList(getPaidFinFeeDetails(finID, receiptHeader.getReceiptID(), "_TView"));
+		receiptHeader.setPaidFeeList(getPaidFinFeeDetails(reference, receiptHeader.getReceiptID(), "_TView"));
 
 		logger.debug(Literal.LEAVING);
 		return receiptHeader;
@@ -159,34 +159,31 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	 * Method for Fetching List of Fee Details for Display purpose
 	 */
 	@Override
-	public List<FinFeeDetail> getPaidFinFeeDetails(long finID, long receiptID, String type) {
-		List<FinFeeDetail> finFeeDetails = finFeeDetailDAO.getPaidFinFeeDetails(finID, type);
+	public List<FinFeeDetail> getPaidFinFeeDetails(String reference, long receiptID, String type) {
+		List<FinFeeDetail> feeList = finFeeDetailDAO.getPaidFinFeeDetails(reference, type);
 
-		if (CollectionUtils.isEmpty(finFeeDetails)) {
-			return finFeeDetails;
+		if (CollectionUtils.isEmpty(feeList)) {
+			return feeList;
 		}
 
-		List<FinFeeReceipt> currFinfeereceipts = finFeeReceiptDAO.getFinFeeReceiptByReceiptId(receiptID, type);
+		List<FinFeeReceipt> feeReceipts = finFeeReceiptDAO.getFinFeeReceiptByReceiptId(receiptID, type);
 
 		// Finance Fee Schedule Details
-		for (FinFeeDetail finFeeDetail : finFeeDetails) {
+		for (FinFeeDetail fee : feeList) {
+			fee.getFinFeeReceipts().add(getFinFeeReceiptbyFeeID(feeReceipts, fee.getFeeID()));
 
-			// Finance Fee Schedule Details
-
-			finFeeDetail.getFinFeeReceipts().add(getFinFeeReceiptbyFeeID(currFinfeereceipts, finFeeDetail.getFeeID()));
-
-			Long taxHeaderId = finFeeDetail.getTaxHeaderId();
+			Long taxHeaderId = fee.getTaxHeaderId();
 			if (taxHeaderId == null || taxHeaderId <= 0) {
 				continue;
 			}
 
-			finFeeDetail.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(taxHeaderId, type));
-			if (finFeeDetail.getTaxHeader() != null) {
-				finFeeDetail.getTaxHeader().setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, type));
+			fee.setTaxHeader(taxHeaderDetailsDAO.getTaxHeaderDetailsById(taxHeaderId, type));
+			if (fee.getTaxHeader() != null) {
+				fee.getTaxHeader().setTaxDetails(taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, type));
 			}
 		}
 
-		return finFeeDetails;
+		return feeList;
 	}
 
 	private FinFeeReceipt getFinFeeReceiptbyFeeID(List<FinFeeReceipt> finFeeReceipts, long feeID) {
@@ -865,7 +862,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 				return ErrorUtil.getErrorDetail(new ErrorDetail("9999"), userDetails.getLanguage());
 			}
 			// FinFeedetails under temp table
-			paidFeeList = getPaidFinFeeDetails(finID, Long.MIN_VALUE, "_TView");
+			paidFeeList = getPaidFinFeeDetails(finReference, Long.MIN_VALUE, "_TView");
 
 			ErrorDetail errorDetail = validateUpFrontFees(fsi, paidFeeList, userDetails);
 			if (errorDetail != null) {

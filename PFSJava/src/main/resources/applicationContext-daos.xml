@@ -11646,6 +11646,7 @@
 	<bean name="loanMasterReportServiceTarget" class="com.pennant.backend.service.others.external.reports.impl.LoanMasterReportServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="loanMasterReportDAO" ref="loanMasterReportDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="eventPropertiesService" class="com.pennant.backend.eventproperties.service.impl.EventPropertiesServiceImpl" />

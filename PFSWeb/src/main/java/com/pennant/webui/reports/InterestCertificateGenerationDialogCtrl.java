@@ -49,6 +49,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<InterestCertificate> {
 	private static final long serialVersionUID = 9031340167587772517L;
@@ -273,65 +274,65 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 	private void doFillFinanceYear() {
 		Date appDate = SysParamUtil.getAppDate();
-		FinanceMain financeMain = interestCertificateService.getFinanceMain(this.finReference.getValue(),
-				new String[] { "FinStartDate", "ClosedDate" }, "");
-		if (financeMain != null) {
-			Date finStartDate = financeMain.getFinStartDate();
-			int finStartDateMonth = DateUtility.getMonth(finStartDate);
-			String finStartDateYear = String.valueOf(DateUtility.getYear(finStartDate));
+		FinanceMain fm = interestCertificateService.getFinanceMain(this.finReference.getValue(), TableType.MAIN_TAB);
 
-			int appDateMonth = DateUtility.getMonth(appDate);
-			int appDateDay = DateUtility.getDay(appDate);
-			int finStartDateDay = DateUtility.getDay(finStartDate);
-			int years = DateUtility.getYearsBetween(finStartDate, appDate);
-			String appDateYear = String.valueOf(DateUtility.getYear(appDate));
+		if (fm == null) {
+			return;
+		}
 
-			if (finStartDateMonth < 4 && years > 0) {
-				finStartDateYear = String.valueOf(Integer.valueOf(finStartDateYear) - 1);
+		Date finStartDate = fm.getFinStartDate();
+		int finStartDateMonth = DateUtility.getMonth(finStartDate);
+		String finStartDateYear = String.valueOf(DateUtility.getYear(finStartDate));
+
+		int appDateMonth = DateUtility.getMonth(appDate);
+		int appDateDay = DateUtility.getDay(appDate);
+		int finStartDateDay = DateUtility.getDay(finStartDate);
+		int years = DateUtility.getYearsBetween(finStartDate, appDate);
+		String appDateYear = String.valueOf(DateUtility.getYear(appDate));
+
+		if (finStartDateMonth < 4 && years > 0) {
+			finStartDateYear = String.valueOf(Integer.valueOf(finStartDateYear) - 1);
+			years = years + 1;
+		}
+
+		if (appDateMonth > finStartDateMonth) {
+			years = years - 1;
+		} else if ((appDateDay == finStartDateDay || appDateDay >= finStartDateDay) && years > 0) {
+			years = years - 1;
+		} else if (appDateMonth < 4) {
+			years = years - 1;
+		}
+
+		financeYearList = new ArrayList<ValueLabel>();
+		if (years < 0 && finStartDateMonth < 4) {
+			// if finstartDate and appDate both are equal then we are not allowing to count years
+			// if AppDate is greater than or equal to 4 adding years with 1
+			if (DateUtility.compare(appDate, finStartDate) > 0 && appDateMonth >= 4) {
 				years = years + 1;
 			}
-
-			if (appDateMonth > finStartDateMonth) {
-				years = years - 1;
-			} else if ((appDateDay == finStartDateDay || appDateDay >= finStartDateDay) && years > 0) {
-				years = years - 1;
-			} else if (appDateMonth < 4) {
+			for (int i = 0; i <= years; i++) {
+				String newValue = String.valueOf(Integer.valueOf(finStartDateYear) + i - 1);
+				String newLabel = String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String
+						.valueOf(Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i);
+				financeYearList.add(new ValueLabel(newValue, newLabel));
+			}
+		} else if (!(finStartDateYear.equals(appDateYear) && !(finStartDateMonth < 4))) {
+			// if FinstartDateYear & appDateYear both are equal & finstartDateMonth less than 4 we are not adding
+			// into list...
+			if (years >= 1 && DateUtility.getYearsBetween(finStartDate, appDate) >= 1 && appDateMonth < 4
+					&& appDateDay != finStartDateDay) {
+				// if years greater than or equal to 1 and appdate less than 4 and appdateday not equal to
+				// finstartday than subtract years - 1
+				// i.e@03-01-2020 to 15-01-2022 i.e@2019-20,2020-21
 				years = years - 1;
 			}
-
-			financeYearList = new ArrayList<ValueLabel>();
-			if (years < 0 && finStartDateMonth < 4) {
-				// if finstartDate and appDate both are equal then we are not allowing to count years
-				// if AppDate is greater than or equal to 4 adding years with 1
-				if (DateUtility.compare(appDate, finStartDate) > 0 && appDateMonth >= 4) {
-					years = years + 1;
-				}
-				for (int i = 0; i <= years; i++) {
-					String newValue = String.valueOf(Integer.valueOf(finStartDateYear) + i - 1);
-					String newLabel = String.valueOf(Integer.valueOf(finStartDateYear) - 1) + "-" + String
-							.valueOf(Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i);
-					financeYearList.add(new ValueLabel(newValue, newLabel));
-				}
-			} else if (!(finStartDateYear.equals(appDateYear) && !(finStartDateMonth < 4))) {
-				// if FinstartDateYear & appDateYear both are equal & finstartDateMonth less than 4 we are not adding
-				// into list...
-				if (years >= 1 && DateUtility.getYearsBetween(finStartDate, appDate) >= 1 && appDateMonth < 4
-						&& appDateDay != finStartDateDay) {
-					// if years greater than or equal to 1 and appdate less than 4 and appdateday not equal to
-					// finstartday than subtract years - 1
-					// i.e@03-01-2020 to 15-01-2022 i.e@2019-20,2020-21
-					years = years - 1;
-				}
-				for (int i = 0; i <= years; i++) {
-					financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
-							String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-"
-									+ String.valueOf(
-											Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2))
-													+ i + 1)));
-				}
+			for (int i = 0; i <= years; i++) {
+				financeYearList.add(new ValueLabel(String.valueOf(Integer.valueOf(finStartDateYear) + i),
+						String.valueOf(Integer.valueOf(finStartDateYear) + i) + "-" + String.valueOf(
+								Integer.valueOf(finStartDateYear.substring(finStartDateYear.length() - 2)) + i + 1)));
 			}
-			fillComboBox(this.financeYear, "", financeYearList, "");
 		}
+		fillComboBox(this.financeYear, "", financeYearList, "");
 	}
 
 	/**

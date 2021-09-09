@@ -549,7 +549,7 @@ public class InsuranceReconciliationDialogCtrl extends GFCBaseCtrl<InsuranceDeta
 		aeEvent.setEntityCode(vASRecording.getEntityCode());
 		// Based on VAS Created Against, details will be captured
 		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, vASRecording.getPostingAgainst())) {
-			FinanceMain financeMain = getFinanceMainDAO().getFinanceMainForBatch(vASRecording.getPrimaryLinkRef());
+			FinanceMain financeMain = getFinanceMainDAO().getFinanceMain(vASRecording.getPrimaryLinkRef());
 			amountCodes.setFinType(financeMain.getFinType());
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCcy(financeMain.getFinCcy());

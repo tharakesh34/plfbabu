@@ -1,6 +1,7 @@
 package com.pennant.pff.service.paymentmethodupload;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -127,7 +128,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	private void doValidate(PaymentMethodUploadHeader header) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinanceMain> finMainsList = paymentMethodUploadDAO.getFinanceMain(header.getId());
+		List<FinanceMain> fmList = paymentMethodUploadDAO.getFinanceMain(header.getId());
 
 		logger.info("Validationg the records...");
 		for (PaymentMethodUpload pmu : header.getPaymentmethodUpload()) {
@@ -142,7 +143,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			// Loan Status Checking
 			boolean isError = false;
-			for (FinanceMain fm : finMainsList) {
+			for (FinanceMain fm : fmList) {
 				if (pmu.getFinReference().equals(fm.getFinReference())) {
 					pmu.setFinanceMain(fm);
 					if (!fm.isFinIsActive()) {
@@ -249,19 +250,20 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	}
 
 	private BigDecimal getMaxRepayAmt(PaymentMethodUpload pmu) {
-		List<FinanceScheduleDetail> financeScheduleDetails = financeScheduleDetailDAO
-				.getFinScheduleDetails(pmu.getFinReference(), "", false);
+		long finID = pmu.getFinanceMain().getFinID();
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 		BigDecimal repayAmt = BigDecimal.ZERO;
-		if (CollectionUtils.isNotEmpty(financeScheduleDetails)) {
-			for (int i = 0; i < financeScheduleDetails.size(); i++) {
-				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
-				if (DateUtility.compare(curSchd.getSchDate(), SysParamUtil.getAppDate()) >= 0
-						&& curSchd.isRepayOnSchDate()) {
-					repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
-					continue;
-				}
+
+		for (FinanceScheduleDetail curSchd : schedules) {
+			if (DateUtility.compare(curSchd.getSchDate(), appDate) >= 0 && curSchd.isRepayOnSchDate()) {
+				repayAmt = curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()).add(curSchd.getFeeSchd());
+				continue;
 			}
 		}
+
 		return repayAmt;
 	}
 

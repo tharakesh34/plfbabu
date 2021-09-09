@@ -34,7 +34,7 @@ public interface FinServiceInstrutionDAO {
 
 	BigDecimal getNewRate(long finID, Date schdate);
 
-	List<String> getFinEventByFinRef(long finID, String type);
+	List<String> getFinEventByFinRef(String finReference, String type);
 
 	List<FinServiceInstruction> getOrgFinServiceInstructions(long finID, String type);
 

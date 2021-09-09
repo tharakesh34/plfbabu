@@ -4690,14 +4690,14 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		extCreditReviewConfig.setCreditReviewType("EXTERNAL");
 		extCreditReviewConfig = this.creditApplicationReviewService
 				.getExtCreditReviewConfigDetails(extCreditReviewConfig);
-		ExtBreDetails extBreDetails = this.creditApplicationReviewService
-				.getExtBreDetailsByRef(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+
+		long finID = financeDetail.getFinScheduleData().getFinanceMain().getFinID();
+		ExtBreDetails extBreDetails = this.creditApplicationReviewService.getExtBreDetailsByRef(finID);
 
 		if (extCreditReviewConfig != null) {
 
-			creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(
-					this.finReference.getValue(), extCreditReviewConfig.getTemplateName(),
-					extCreditReviewConfig.getTemplateVersion());
+			creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(finID,
+					extCreditReviewConfig.getTemplateName(), extCreditReviewConfig.getTemplateVersion());
 			getFinanceDetail().setCreditReviewData(creditReviewData);
 
 			if (onLoadProcess) {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentInstructionServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentInstructionServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * *
+ * Modified Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.payment.impl;
@@ -90,8 +72,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -105,8 +86,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	}
 
 	/**
-	 * @param paymentInstructionDAO
-	 *            the paymentInstructionDAO to set
+	 * @param paymentInstructionDAO the paymentInstructionDAO to set
 	 */
 	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
 		this.paymentInstructionDAO = paymentInstructionDAO;
@@ -120,8 +100,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	 * in the table. based on the module workFlow Configuration. by using PaymentInstructionsDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtPaymentInstructions by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
@@ -139,7 +118,8 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 			tableType = TableType.TEMP_TAB;
 		}
 		if (paymentInstruction.isNewRecord()) {
-			paymentInstruction.setPaymentInstructionId(Long.parseLong(getPaymentInstructionDAO().save(paymentInstruction, tableType)));
+			paymentInstruction.setPaymentInstructionId(
+					Long.parseLong(getPaymentInstructionDAO().save(paymentInstruction, tableType)));
 			auditHeader.getAuditDetail().setModelData(paymentInstruction);
 			auditHeader.setAuditReference(String.valueOf(paymentInstruction.getPaymentInstructionId()));
 		} else {
@@ -155,8 +135,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	/**
 	 * getPaymentInstructions fetch the details by using PaymentInstructionsDAO's getPaymentInstructionsById method.
 	 * 
-	 * @param paymentInstructionId
-	 *            paymentInstructionId of the PaymentInstruction.
+	 * @param paymentInstructionId paymentInstructionId of the PaymentInstruction.
 	 * @return PaymentInstructions
 	 */
 	@Override
@@ -168,8 +147,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	 * getApprovedPaymentInstructionsById fetch the details by using PaymentInstructionsDAO's getPaymentInstructionsById
 	 * method . with parameter id and type as blank. it fetches the approved records from the PaymentInstructions.
 	 * 
-	 * @param paymentInstructionId
-	 *            paymentInstructionId of the PaymentInstruction. (String)
+	 * @param paymentInstructionId paymentInstructionId of the PaymentInstruction. (String)
 	 * @return PaymentInstructions
 	 */
 	public PaymentInstruction getApprovedPaymentInstruction(long paymentInstructionId) {
@@ -219,8 +197,7 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {

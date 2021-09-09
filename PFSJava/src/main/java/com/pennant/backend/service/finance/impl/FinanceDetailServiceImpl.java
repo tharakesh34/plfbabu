@@ -679,7 +679,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* Linked Finances */
-		fd.setLinkedFinancesList(linkedFinancesService.getLinkedFinancesByRef(finID, "_TView"));
+		fd.setLinkedFinancesList(linkedFinancesService.getLinkedFinancesByRef(finReference, "_TView"));
 
 		/* Financial Summary RisksAndMitigants Details */
 		fd.getRisksAndMitigantsList().addAll(risksAndMitigantsDAO.getRisksAndMitigants(finReference));

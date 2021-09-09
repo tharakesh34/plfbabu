@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalExpensesServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-04-2016    														*
- *                                                                  						*
- * Modified Date    :  19-04-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalExpensesServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-04-2016 * *
+ * Modified Date : 19-04-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-04-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-04-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.expenses.impl;
 
 import java.math.BigDecimal;
@@ -81,8 +63,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -96,8 +77,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	}
 
 	/**
-	 * @param legalExpensesDAO
-	 *            the legalExpensesDAO to set
+	 * @param legalExpensesDAO the legalExpensesDAO to set
 	 */
 	public void setLegalExpensesDAO(LegalExpensesDAO legalExpensesDAO) {
 		this.legalExpensesDAO = legalExpensesDAO;
@@ -111,8 +91,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * based on the module workFlow Configuration. by using LegalExpensesDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtFinLegalExpenses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -128,10 +107,8 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * based on the module workFlow Configuration. by using LegalExpensesDAO's update method 3) Audit the record in to
 	 * AuditHeader and AdtFinLegalExpenses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -167,8 +144,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * FinLegalExpenses by using LegalExpensesDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtFinLegalExpenses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -192,10 +168,8 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	/**
 	 * getLegalExpensesById fetch the details by using LegalExpensesDAO's getLegalExpensesById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LegalExpenses
 	 */
 
@@ -208,8 +182,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * getApprovedLegalExpensesById fetch the details by using LegalExpensesDAO's getLegalExpensesById method . with
 	 * parameter id and type as blank. it fetches the approved records from the FinLegalExpenses.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return LegalExpenses
 	 */
 
@@ -228,8 +201,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtFinLegalExpenses
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -286,8 +258,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * workFlow table by using getLegalExpensesDAO().delete with parameters legalExpenses,"_Temp" 3) Audit the record in
 	 * to AuditHeader and AdtFinLegalExpenses by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -313,10 +284,8 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -337,10 +306,8 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	 * mismatch conditions Fetch the error details from getLegalExpensesDAO().getErrorDetail with Error ID and language
 	 * as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -365,14 +332,15 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 
 		if (legalExpenses.isNewRecord()) { // for New record or new record into work flow
 
-			if (!legalExpenses.isWorkflow()) {// With out Work flow only new records  
-				if (befLegalExpenses != null) { // Record Already Exists in the table then error  
+			if (!legalExpenses.isWorkflow()) {// With out Work flow only new records
+				if (befLegalExpenses != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (legalExpenses.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befLegalExpenses != null || tempLegalExpenses != null) { // if records already exists in the main table
+					if (befLegalExpenses != null || tempLegalExpenses != null) { // if records already exists in the
+																					// main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -409,7 +377,7 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 				}
 			} else {
 
-				if (tempLegalExpenses == null) { // if records not exists in the Work flow table 
+				if (tempLegalExpenses == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -432,8 +400,8 @@ public class LegalExpensesServiceImpl extends GenericService<LegalExpenses> impl
 	}
 
 	@Override
-	public BigDecimal getTotalCharges(String finReference) {
-		return getLegalExpensesDAO().getTotalCharges(finReference);
+	public BigDecimal getTotalCharges(long finID) {
+		return getLegalExpensesDAO().getTotalCharges(finID);
 	}
 
 }
