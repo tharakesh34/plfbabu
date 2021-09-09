@@ -4110,8 +4110,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (methodCtg == 2 || methodCtg == 3) {
 				lastReceivedDate = getMaxReceiptDate(fsi.getFinReference());
 			} else if (methodCtg == 1) {
-				lastReceivedDate = finReceiptDetailDAO.getMaxReceiptDate(finID, FinServiceEvent.EARLYRPY,
-						TableType.VIEW);
+				lastReceivedDate = finReceiptDetailDAO.getMaxReceiptDate(fsi.getFinReference(),
+						FinServiceEvent.EARLYRPY, TableType.VIEW);
 			}
 			if (lastReceivedDate != null && fsi.getValueDate().compareTo(lastReceivedDate) < 0) {
 				parm0 = DateUtility.formatToLongDate(fsi.getValueDate());

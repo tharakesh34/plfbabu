@@ -21,5 +21,5 @@ public interface LimitInterfaceDAO {
 
 	boolean saveClosedFacilityDetails(List<ClosedFacilityDetail> proClFacilityList);
 
-	FinanceMain getFinanceMainByRef(long finID, String string, boolean type);
+	FinanceMain getFinanceMainByRef(String finReference, String string, boolean type);
 }

@@ -102,7 +102,7 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 		List<ScoringSlab> scoringSlabsList = null;
 		List<ScoringMetrics> scoringMetricslist = null;
 
-		//Finance Scoring Metric/Group Rule Details List
+		// Finance Scoring Metric/Group Rule Details List
 
 		if (StringUtils.trimToNull(ctgType) == null) {
 			return financeDetail;
@@ -110,21 +110,21 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 
 		if (scoringGroupList != null && !scoringGroupList.isEmpty()) {
 			for (FinanceReferenceDetail scoringGroup : scoringGroupList) {
-				//Scoring Slab Details List
+				// Scoring Slab Details List
 				scoringSlabsList = getScoringSlabDAO().getScoringSlabsByScoreGrpId(scoringGroup.getFinRefId(),
 						"_AView");
 				financeDetail.setScoringSlabs(scoringGroup.getFinRefId(), scoringSlabsList);
 
 				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(ctgType)) {
-					//Scoring Metric Details For Retail Customers
+					// Scoring Metric Details For Retail Customers
 					scoringMetricslist = getScoringMetricsDAO()
 							.getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "R", "_AView");
 					financeDetail.setScoringMetrics(scoringGroup.getFinRefId(), scoringMetricslist);
 				} else {
-					//Corporate Scoring Group for Financial Details
+					// Corporate Scoring Group for Financial Details
 					finScoringMetricList = getScoringMetricsDAO()
 							.getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "F", "_AView");
-					//Non - Financial Scoring Metric Details
+					// Non - Financial Scoring Metric Details
 					nonFinScoringMetricList = getScoringMetricsDAO()
 							.getScoringMetricsByScoreGrpId(scoringGroup.getFinRefId(), "N", "_AView");
 				}
@@ -214,7 +214,7 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 	private void setFinScoreHeaderList(FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
-		// Finance Scoring Module Details List 
+		// Finance Scoring Module Details List
 		List<String> groupIds = null;
 		List<FinanceScoreHeader> finScoreHeaderList = financeDetail.getFinScoreHeaderList();
 		List<Long> headerIds = null;
@@ -267,10 +267,8 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 	/**
 	 * Calculate the scoring for the metrics list based on the CustomerScoringCheck
 	 * 
-	 * @param List<ScoringMetrics>
-	 *            scoringMetricsList
-	 * @param CustomerScoringCheck
-	 *            customerScoringCheck
+	 * @param List<ScoringMetrics> scoringMetricsList
+	 * @param CustomerScoringCheck customerScoringCheck
 	 * 
 	 */
 	@Override
@@ -474,10 +472,8 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 	/**
 	 * Calculate the scoring for the metrics list based on the CustomerScoringCheck
 	 * 
-	 * @param List<ScoringMetrics>
-	 *            scoringMetricsList
-	 * @param CustomerScoringCheck
-	 *            customerScoringCheck
+	 * @param List<ScoringMetrics> scoringMetricsList
+	 * @param CustomerScoringCheck customerScoringCheck
 	 * 
 	 */
 
@@ -583,8 +579,8 @@ public class ScoringDetailServiceImpl extends GenericService<FinanceDetail> impl
 	 * @param type
 	 */
 	@Override
-	public void deleteHeaderList(String finReference, String type) {
-		getFinanceScoreHeaderDAO().deleteHeaderList(finReference, type);
+	public void deleteHeaderList(long finID, String type) {
+		getFinanceScoreHeaderDAO().deleteHeaderList(finID, type);
 	}
 
 	/**

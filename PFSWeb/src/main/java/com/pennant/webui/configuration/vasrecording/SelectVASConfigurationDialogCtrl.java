@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectVASConfigurationDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-01-2017    														*
- *                                                                  						*
- * Modified Date    :  10-01-2017   														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectVASConfigurationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-01-2017
+ * * * Modified Date : 10-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *10-01-2017         Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-01-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.configuration.vasrecording;
@@ -94,6 +76,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	private static final long serialVersionUID = 1L;
@@ -344,8 +327,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		// Setting Workflow Details
 		if (getFinanceWorkFlow() == null && !isFinanceProcess) {
 			FinanceWorkFlow financeWorkFlow = getFinanceWorkFlowService().getApprovedFinanceWorkFlowById(
-					this.productType.getValue(), FinServiceEvent.ORG,
-					PennantConstants.WORFLOW_MODULE_VAS);
+					this.productType.getValue(), FinServiceEvent.ORG, PennantConstants.WORFLOW_MODULE_VAS);
 			setFinanceWorkFlow(financeWorkFlow);
 		}
 
@@ -377,7 +359,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 		}
 
 		if (vasConfiguration == null) {
-			//Fetching the vasConfiguration details
+			// Fetching the vasConfiguration details
 			vasConfiguration = getVasConfigurationService()
 					.getApprovedVASConfigurationByCode(this.productType.getValue(), true);
 		}
@@ -387,9 +369,10 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			vasCustomer = getvASRecordingService().getVasCustomerDetails(vasRecording.getPrimaryLinkRef(),
 					vasConfiguration.getRecAgainst());
 			vasRecording.setVasCustomer(vasCustomer);
-			//passing financeDetail object for pre and post script validations
+			// passing financeDetail object for pre and post script validations
 			if (this.loanRow.isVisible() && getFinanceDetail() == null) {
-				FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailsForPmay(loanType.getValue());
+				Long finID = ComponentUtil.getFinID(loanType);
+				FinanceDetail financeDetail = getFinanceDetailService().getFinanceDetailsForPmay(finID);
 				setFinanceDetail(financeDetail);
 			}
 
@@ -535,14 +518,14 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			this.custCIF.clearErrorMessage();
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
 
-			//If  customer exist is checked 
+			// If customer exist is checked
 			Customer customer = null;
 			if (StringUtils.isEmpty(cif)) {
 				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
 			} else {
 
-				//check Customer Data in LOCAL PFF system
+				// check Customer Data in LOCAL PFF system
 				customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
 			}
 
@@ -633,7 +616,7 @@ public class SelectVASConfigurationDialogCtrl extends GFCBaseCtrl<CollateralSetu
 			}
 		}
 		if (StringUtils.trimToNull(this.productType.getValue()) != null && !isFinanceProcess) {
-			//Fetching the vasConfiguration details
+			// Fetching the vasConfiguration details
 			vasConfiguration = getVasConfigurationService()
 					.getApprovedVASConfigurationByCode(this.productType.getValue(), true);
 			if (vasConfiguration == null) {

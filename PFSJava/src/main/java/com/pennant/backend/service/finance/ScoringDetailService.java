@@ -29,7 +29,7 @@ public interface ScoringDetailService {
 
 	List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail);
 
-	void deleteHeaderList(String finReference, String type);
+	void deleteHeaderList(long finID, String type);
 
 	void deleteDetailList(List<Long> headerList, String type);
 

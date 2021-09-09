@@ -283,8 +283,8 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getUserPendingCasesDetails(0, "");
 
-		financeMainDAO.getCustomerIdByFin(5354);
-		financeMainDAO.getCustomerIdByFin(110);
+		// financeMainDAO.getCustomerIdByFin(5354);
+		// financeMainDAO.getCustomerIdByFin(110);
 
 		financeMainDAO.getFinDetailsForHunter("123", "");
 

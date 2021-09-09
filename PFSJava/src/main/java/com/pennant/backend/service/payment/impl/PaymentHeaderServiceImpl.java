@@ -902,8 +902,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	}
 
 	@Override
-	public boolean isInstructionInProgress(long finID) {
-		return this.paymentInstructionService.isInstructionInProgress(finID);
+	public boolean isInstructionInProgress(String finReference) {
+		return this.paymentInstructionService.isInstructionInProgress(finReference);
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

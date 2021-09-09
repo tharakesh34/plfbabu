@@ -5543,7 +5543,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// delete from maintable
 
 					scoringDetailService.deleteDetailList(headerIds, "");
-					scoringDetailService.deleteHeaderList(finReference, "");
+					scoringDetailService.deleteHeaderList(finID, "");
 
 				}
 

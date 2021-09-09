@@ -243,7 +243,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 	}
 
 	@Override
-	public FinanceMain getFinanceMainByRef(long finID, String type, boolean isRejectFinance) {
+	public FinanceMain getFinanceMainByRef(String finReference, String type, boolean isRejectFinance) {
 		StringBuilder sql = new StringBuilder("Select  FinID, FinReference, RoleCode");
 		if (isRejectFinance) {
 			sql.append(" From RejectFinancemain");
@@ -265,7 +265,7 @@ public class LimitInterfaceDAOImpl extends SequenceDao<FinanceLimitProcess> impl
 
 				return fm;
 
-			}, finID);
+			}, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

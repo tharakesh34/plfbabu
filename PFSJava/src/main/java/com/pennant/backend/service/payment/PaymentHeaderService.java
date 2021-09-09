@@ -62,5 +62,5 @@ public interface PaymentHeaderService {
 
 	void executeAccountingProcess(AEEvent aeEvent, PaymentHeader paymentHeader);
 
-	boolean isInstructionInProgress(long finID);
+	boolean isInstructionInProgress(String finReference);
 }
