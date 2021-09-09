@@ -77,7 +77,7 @@ public interface UploadHeaderService {
 
 	List<FinExpenseMovements> getFinExpenseMovementById(long finID, long finExpenseID);
 
-	List<FinExpenseDetails> getFinExpenseDetailById(long finID);
+	List<FinExpenseDetails> getFinExpenseDetailById(String finReference);
 
 	FinTypeExpense getFinExpensesByFinType(String finType, long expenseTypeId);
 

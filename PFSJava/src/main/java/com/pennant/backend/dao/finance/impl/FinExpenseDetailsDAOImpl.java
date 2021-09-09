@@ -150,12 +150,12 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 	}
 
 	@Override
-	public List<FinExpenseDetails> getFinExpenseDetailsById(long finID) {
+	public List<FinExpenseDetails> getFinExpenseDetailsById(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ed.FinexpenseID, ed.Amount, et.ExpenseTypeCode, et.ExpenseTypeDesc, ed.LastMntOn");
 		sql.append(" From FinExpenseDetails ed");
 		sql.append(" Inner Join ExpenseTypes et on et.ExpenseTypeID = ed.ExpenseTypeID");
-		sql.append(" Where ed.FinID = ?");
+		sql.append(" Where ed.FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -169,7 +169,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 			ed.setLastMntOn(rs.getTimestamp("LastMntOn"));
 
 			return ed;
-		}, finID);
+		}, finReference);
 	}
 
 	public List<FinExpenseDetails> getAMZFinExpenseDetails(long finID, String type) {

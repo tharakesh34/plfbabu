@@ -36,7 +36,7 @@ public interface FinExpenseDetailsDAO {
 
 	void update(FinExpenseDetails finFeeAmz);
 
-	List<FinExpenseDetails> getFinExpenseDetailsById(long finID);
+	List<FinExpenseDetails> getFinExpenseDetailsById(String finReference);
 
 	List<FinExpenseDetails> getAMZFinExpenseDetails(long finID, String type);
 

@@ -171,7 +171,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	}
 
 	@Override
-	public List<Long> getSuspFinanceList() {
+	public List<String> getSuspFinanceList() {
 		return financeSuspHeadDAO.getSuspFinanceList();
 	}
 

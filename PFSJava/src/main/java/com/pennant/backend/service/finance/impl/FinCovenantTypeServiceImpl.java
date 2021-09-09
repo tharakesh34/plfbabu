@@ -409,19 +409,19 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	}
 
 	@Override
-	public FinanceDetail getFinanceDetailById(long finID, String type, String userRole, String moduleDefiner,
+	public FinanceDetail getFinanceDetailById(String finReference, String type, String userRole, String moduleDefiner,
 			String eventCodeRef) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, type, false);
 
-		String finReference = fm.getFinReference();
+		long finID = fm.getFinID();
 		long custID = fm.getCustID();
 		String finType = fm.getFinType();
 
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinID(fm.getFinID());
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
 
 		schdData.setFinanceMain(fm);

@@ -14,7 +14,7 @@ public interface SuspenseService {
 
 	FinanceSuspHead getFinanceSuspHeadById(long finID, boolean isEnquiry, String userRole, String procEdtEvent);
 
-	List<Long> getSuspFinanceList();
+	List<String> getSuspFinanceList();
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader) throws AppException;
 

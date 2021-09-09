@@ -48,7 +48,7 @@ public interface FinanceSuspHeadDAO {
 
 	List<FinanceSuspDetails> getFinanceSuspDetailsListById(long finID);
 
-	List<Long> getSuspFinanceList();
+	List<String> getSuspFinanceList();
 
 	void delete(FinanceSuspHead fsh, String string);
 

@@ -272,8 +272,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public List<FinExpenseDetails> getFinExpenseDetailById(long finID) {
-		return this.finExpenseDetailsDAO.getFinExpenseDetailsById(finID);
+	public List<FinExpenseDetails> getFinExpenseDetailById(String finReference) {
+		return this.finExpenseDetailsDAO.getFinExpenseDetailsById(finReference);
 	}
 
 	@Override

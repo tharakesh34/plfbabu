@@ -611,7 +611,7 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 				auditList.add(new AuditDetail(auditTranType, auditList.size() + 1, fields[0], fields[1],
 						covenant.getBefImage(), covenant));
 			}
-			finCovenantTypeDAO.deleteByFinRef(fmi.getFinID(), tableType);
+			finCovenantTypeDAO.deleteByFinRef(fmi.getFinReference(), tableType);
 		}
 
 		logger.debug(Literal.LEAVING);
