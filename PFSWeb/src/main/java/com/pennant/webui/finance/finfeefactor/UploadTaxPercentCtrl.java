@@ -318,9 +318,9 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 								+ ") length is exceeded, it should be lessthan or equal to 20.";
 						uploadDetail.setFinReference(finReference.substring(0, 20));
 					} else {
-						int count = this.uploadHeaderService.getFinanceCountById(finReference);
+						Long finID = this.uploadHeaderService.getActiveFinID(finReference);
 
-						if (count != 1) {
+						if (finID == null) {
 							reason = "Loan Reference: (" + finReference + ") is not valid.";
 							valid = false;
 						}
@@ -533,81 +533,82 @@ public class UploadTaxPercentCtrl extends GFCBaseCtrl<UploadHeader> {
 	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		if (this.fileImport != null) {
+		if (this.fileImport == null) {
+			return;
+		}
 
-			this.workbook = this.fileImport.writeFile();
+		this.workbook = this.fileImport.writeFile();
 
-			if (this.workbook != null) {
-				if (this.workbook instanceof HSSFWorkbook) {
+		if (this.workbook == null) {
+			return;
+		}
 
-					this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) this.workbook);
-				} else {
-					this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
-				}
-				List<String> keys = getAllValuesOfRowByIndex(this.workbook, 0, 0);
+		if (this.workbook instanceof HSSFWorkbook) {
+			this.formulaEvaluator = new HSSFFormulaEvaluator((HSSFWorkbook) this.workbook);
+		} else {
+			this.formulaEvaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
+		}
 
-				if (!keys.contains("Loan Reference")) {
+		List<String> keys = getAllValuesOfRowByIndex(this.workbook, 0, 0);
 
-					throw new Exception(
-							"The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
-				}
-				Sheet sheet = this.workbook.getSheetAt(0);
-				if (sheet.getPhysicalNumberOfRows() > 1) {
+		if (!keys.contains("Loan Reference")) {
+			throw new Exception("The uploaded file could not be recognized. Please upload a valid xls or xlsx file.");
+		}
 
-					UploadHeader uploadHeader = new UploadHeader();
-					uploadHeader.setFileName(this.txtFileName.getValue());
-					uploadHeader.setModule("FinFeeFactor");
-					uploadHeader.setTransactionDate(DateUtility.getSysDate());
-					uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-					uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		Sheet sheet = this.workbook.getSheetAt(0);
 
-					long uploadId = this.uploadHeaderService.save(uploadHeader);
+		if (sheet.getPhysicalNumberOfRows() <= 1) {
+			MessageUtil.showError("File should not contain the data.");
+		}
 
-					// Process the Upload Details
-					List<UploadTaxPercent> uploadDetails = processUploadDetails(uploadId);
+		UploadHeader uploadHeader = new UploadHeader();
+		uploadHeader.setFileName(this.txtFileName.getValue());
+		uploadHeader.setModule("FinFeeFactor");
+		uploadHeader.setTransactionDate(DateUtility.getSysDate());
+		uploadHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		uploadHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 
-					if (uploadDetails != null && !uploadDetails.isEmpty()) {
+		long uploadId = this.uploadHeaderService.save(uploadHeader);
 
-						this.uploadHeaderService.saveFeeUploadDetails(uploadDetails);
+		// Process the Upload Details
+		List<UploadTaxPercent> uploadDetails = processUploadDetails(uploadId);
 
-						for (UploadTaxPercent uploadDetail : uploadDetails) {
-
-							int count = this.uploadHeaderService.getFinanceCountById(uploadDetail.getFinReference());
-							if (uploadDetail.getFeeTypeId() != Long.MIN_VALUE && count > 0) {
-								uploadDetail.setTaxPercent(uploadDetail.getTaxPercent());
-								this.uploadHeaderService.updateTaxPercent(uploadDetail);
-							}
-						}
-					}
-					List<UploadTaxPercent> countList = this.uploadHeaderService.getSuccesFailedCountForFactor(uploadId);
-					int totCount = 0;
-					for (UploadTaxPercent expenseUpload : countList) {
-						if (StringUtils.equals(expenseUpload.getStatus(), PennantConstants.UPLOAD_STATUS_SUCCESS)) {
-							totCount += expenseUpload.getCount();
-							uploadHeader.setSuccessCount(expenseUpload.getCount());
-						} else {
-							totCount += expenseUpload.getCount();
-							uploadHeader.setFailedCount(expenseUpload.getCount());
-						}
-					}
-
-					uploadHeader.setTotalRecords(totCount);
-					this.uploadHeaderService.updateRecordCounts(uploadHeader);
-
-					Clients.showNotification("Data imported successfully.", "info", null, null, -1);
-					// Create backup file
-					this.fileImport.backUpFile();
-					// doResetData();
-					this.btnDownload.setVisible(true);
-					this.statusGrid.setVisible(true);
-					this.totalCount.setValue(String.valueOf(uploadHeader.getTotalRecords()));
-					this.successCount.setValue(String.valueOf(uploadHeader.getSuccessCount()));
-					this.failedCount.setValue(String.valueOf(uploadHeader.getFailedCount()));
-				} else {
-					MessageUtil.showError("File should not contain the data.");
+		if (uploadDetails != null && !uploadDetails.isEmpty()) {
+			this.uploadHeaderService.saveFeeUploadDetails(uploadDetails);
+			for (UploadTaxPercent uploadDetail : uploadDetails) {
+				Long finID = this.uploadHeaderService.getActiveFinID(uploadDetail.getFinReference());
+				if (uploadDetail.getFeeTypeId() != Long.MIN_VALUE && finID != null) {
+					uploadDetail.setTaxPercent(uploadDetail.getTaxPercent());
+					this.uploadHeaderService.updateTaxPercent(uploadDetail);
 				}
 			}
 		}
+
+		List<UploadTaxPercent> countList = this.uploadHeaderService.getSuccesFailedCountForFactor(uploadId);
+		int totCount = 0;
+		for (UploadTaxPercent expenseUpload : countList) {
+			if (StringUtils.equals(expenseUpload.getStatus(), PennantConstants.UPLOAD_STATUS_SUCCESS)) {
+				totCount += expenseUpload.getCount();
+				uploadHeader.setSuccessCount(expenseUpload.getCount());
+			} else {
+				totCount += expenseUpload.getCount();
+				uploadHeader.setFailedCount(expenseUpload.getCount());
+			}
+		}
+
+		uploadHeader.setTotalRecords(totCount);
+		this.uploadHeaderService.updateRecordCounts(uploadHeader);
+
+		Clients.showNotification("Data imported successfully.", "info", null, null, -1);
+		// Create backup file
+		this.fileImport.backUpFile();
+		// doResetData();
+		this.btnDownload.setVisible(true);
+		this.statusGrid.setVisible(true);
+		this.totalCount.setValue(String.valueOf(uploadHeader.getTotalRecords()));
+		this.successCount.setValue(String.valueOf(uploadHeader.getSuccessCount()));
+		this.failedCount.setValue(String.valueOf(uploadHeader.getFailedCount()));
+
 		logger.debug(Literal.LEAVING);
 	}
 

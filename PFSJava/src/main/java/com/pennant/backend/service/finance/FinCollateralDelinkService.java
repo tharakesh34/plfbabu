@@ -1,11 +1,8 @@
 package com.pennant.backend.service.finance;
 
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.finance.FinMaintainInstruction;
 
 public interface FinCollateralDelinkService {
-
-	FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 

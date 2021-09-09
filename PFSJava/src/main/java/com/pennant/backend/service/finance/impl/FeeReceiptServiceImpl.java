@@ -1588,5 +1588,4 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
 	}
-
 }

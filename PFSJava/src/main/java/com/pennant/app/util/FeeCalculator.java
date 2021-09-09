@@ -344,6 +344,7 @@ public class FeeCalculator {
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
 
 		FinanceMain fm = schdData.getFinanceMain();
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
 		for (FinFeeDetail fee : fees) {
@@ -385,7 +386,7 @@ public class FeeCalculator {
 			return;
 		}
 
-		List<Integer> approvedDisbSeq = financeDetailService.getFinanceDisbSeqs(finReference, false);
+		List<Integer> approvedDisbSeq = financeDetailService.getFinanceDisbSeqs(finID, false);
 		for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
 			if (!approvedDisbSeq.contains(disbursement.getDisbSeq())) {
 				disbursement.setDeductFeeDisb(deductFeeFromDisbTot);

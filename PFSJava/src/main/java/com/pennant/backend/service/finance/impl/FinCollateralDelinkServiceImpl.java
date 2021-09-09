@@ -114,18 +114,6 @@ public class FinCollateralDelinkServiceImpl extends GenericService<FinMaintainIn
 	}
 
 	/**
-	 * getFinMaintainInstructionByFinRef fetch the details by using FinMaintainInstructionDAO's
-	 * getFinMaintainInstructionById method . with parameter id and type as blank. it fetches the approved records from
-	 * the FinMaintainInstructions.
-	 * 
-	 * @param id (String)
-	 * @return FinMaintainInstruction
-	 */
-	public FinMaintainInstruction getFinMaintainInstructionByFinRef(String finreference, String event) {
-		return finMaintainInstructionDAO.getFinMaintainInstructionByFinRef(finreference, event, "_Temp");
-	}
-
-	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
 	 * following actions a) DELETE Delete the record from the main table by using getFinMaintainInstructionDAO().delete
@@ -264,15 +252,6 @@ public class FinCollateralDelinkServiceImpl extends GenericService<FinMaintainIn
 		return auditHeader;
 	}
 
-	/**
-	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getFinMaintainInstructionDAO().getErrorDetail with Error ID and language as parameters. if any
-	 * error/Warnings then assign the to auditDeail Object
-	 * 
-	 * @param auditDetail
-	 * @param usrLanguage
-	 * @return
-	 */
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method,
 			boolean isUniqueCheckReq) {
 		logger.debug(Literal.ENTERING);
@@ -282,9 +261,10 @@ public class FinCollateralDelinkServiceImpl extends GenericService<FinMaintainIn
 
 		// Check the unique keys.
 		String event = fmi.getEvent();
+		long finID = fmi.getFinID();
 		String finReference = fmi.getFinReference();
 		TableType tableType = fmi.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB;
-		boolean duplicateKey = finMaintainInstructionDAO.isDuplicateKey(event, finReference, tableType);
+		boolean duplicateKey = finMaintainInstructionDAO.isDuplicateKey(event, finID, tableType);
 
 		if (isUniqueCheckReq && fmi.isNewRecord() && duplicateKey) {
 			String[] parameters = new String[2];

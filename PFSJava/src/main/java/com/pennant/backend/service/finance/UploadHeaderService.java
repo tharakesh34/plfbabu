@@ -69,7 +69,7 @@ public interface UploadHeaderService {
 
 	int getFinTypeCount(String finType);
 
-	int getFinanceCountById(long finID);
+	Long getActiveFinID(String finReference);
 
 	void update(FinExpenseDetails finFeeAmz);
 

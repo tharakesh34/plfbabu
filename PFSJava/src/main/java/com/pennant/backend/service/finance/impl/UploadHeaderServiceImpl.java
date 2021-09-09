@@ -253,8 +253,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public int getFinanceCountById(long finID) {
-		return this.financeMainDAO.getFinanceCountById(finID, "", false);
+	public Long getActiveFinID(String finReference) {
+		return this.financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 	}
 
 	@Override
@@ -618,7 +618,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		uploadManualAdvises.forEach(l1 -> finReferences.add(l1.getFinReference()));
 
 		for (String finReference : finReferences) {
-			if (!financeMainDAO.isFinReferenceExitsWithEntity(finReference, "", entityCode)) {
+			Long finID = financeMainDAO.getFinID(finReference, entityCode, TableType.MAIN_TAB);
+			if (finID == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(new ErrorDetail("MU0001", "", valueParm)));

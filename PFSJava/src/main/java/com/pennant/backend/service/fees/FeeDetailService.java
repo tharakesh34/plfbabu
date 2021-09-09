@@ -195,8 +195,8 @@ public class FeeDetailService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void setFeeAmount(String moduleDefiner, FinScheduleData finScheduleData, List<FinFeeDetail> fees) {
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+	public void setFeeAmount(String moduleDefiner, FinScheduleData schdData, List<FinFeeDetail> fees) {
+		FinanceMain fm = schdData.getFinanceMain();
 
 		BigDecimal deductFromDisbursement = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
@@ -240,13 +240,12 @@ public class FeeDetailService {
 		}
 
 		if (StringUtils.equals(FinServiceEvent.ORG, moduleDefiner)) {
-			financeMain.setDeductFeeDisb(deductFromDisbursement);
-			financeMain.setFeeChargeAmt(feeAddToDisbTot);
+			fm.setDeductFeeDisb(deductFromDisbursement);
+			fm.setFeeChargeAmt(feeAddToDisbTot);
 		} else {
-			if (CollectionUtils.isNotEmpty(finScheduleData.getDisbursementDetails())) {
-				List<Integer> approvedDisbSeq = financeDetailService
-						.getFinanceDisbSeqs(finScheduleData.getFinanceMain().getFinReference(), false);
-				for (FinanceDisbursement disbursement : finScheduleData.getDisbursementDetails()) {
+			if (CollectionUtils.isNotEmpty(schdData.getDisbursementDetails())) {
+				List<Integer> approvedDisbSeq = financeDetailService.getFinanceDisbSeqs(fm.getFinID(), false);
+				for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
 					if (!approvedDisbSeq.contains(disbursement.getDisbSeq())) {
 						disbursement.setDeductFeeDisb(deductFromDisbursement);
 						break;
@@ -607,8 +606,7 @@ public class FeeDetailService {
 		if (fm != null && StringUtils.isNotBlank(fm.getFinReference())) {
 			FinanceProfitDetail fpd = financeDetailService.getFinProfitDetailsById(fm.getFinID());
 			if (fpd != null) {
-				BigDecimal outStandingFeeBal = this.financeDetailService
-						.getOutStandingBalFromFees(fm.getFinReference());
+				BigDecimal outStandingFeeBal = this.financeDetailService.getOutStandingBalFromFees(fm.getFinID());
 				executionMap.put("totalOutStanding", fpd.getTotalPftBal());
 				executionMap.put("principalOutStanding", fpd.getTotalpriSchd().subtract(fpd.getTdSchdPri()));
 				executionMap.put("principalSchdOutstanding", fpd.getTotalpriSchd().subtract(fpd.getTdSchdPri()));

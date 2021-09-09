@@ -56,12 +56,12 @@ public class FinAgreementDetailValidation {
 		FinAgreementDetail agreementDetail = (FinAgreementDetail) auditDetail.getModelData();
 		FinAgreementDetail tempFinAgreementDetail = null;
 		if (agreementDetail.isWorkflow()) {
-			tempFinAgreementDetail = getFinAgreementDetailDAO()
-					.getFinAgreementDetailById(agreementDetail.getFinReference(), agreementDetail.getAgrId(), "_Temp");
+			tempFinAgreementDetail = getFinAgreementDetailDAO().getFinAgreementDetailById(agreementDetail.getFinID(),
+					agreementDetail.getAgrId(), "_Temp");
 		}
 
 		FinAgreementDetail befFinAgreementDetail = getFinAgreementDetailDAO()
-				.getFinAgreementDetailById(agreementDetail.getFinReference(), agreementDetail.getAgrId(), "");
+				.getFinAgreementDetailById(agreementDetail.getFinID(), agreementDetail.getAgrId(), "");
 
 		FinAgreementDetail oldFinAgreementDetail = agreementDetail.getBefImage();
 
@@ -76,14 +76,16 @@ public class FinAgreementDetailValidation {
 
 		if (agreementDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!agreementDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befFinAgreementDetail != null) { // Record Already Exists in the table then error  
+			if (!agreementDetail.isWorkflow()) {// With out Work flow only new records
+				if (befFinAgreementDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (agreementDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befFinAgreementDetail != null || tempFinAgreementDetail != null) { // if records already exists in the main table
+				if (agreementDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																								// new
+					if (befFinAgreementDetail != null || tempFinAgreementDetail != null) { // if records already exists
+																							// in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
@@ -114,7 +116,7 @@ public class FinAgreementDetailValidation {
 				}
 			} else {
 
-				if (tempFinAgreementDetail == null) { // if records not exists in the Work flow table 
+				if (tempFinAgreementDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
