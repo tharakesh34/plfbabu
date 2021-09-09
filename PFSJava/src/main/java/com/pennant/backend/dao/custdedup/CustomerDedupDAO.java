@@ -10,7 +10,7 @@ public interface CustomerDedupDAO {
 
 	void updateList(List<CustomerDedup> updateList);
 
-	List<CustomerDedup> fetchOverrideCustDedupData(long finID, String queryCode, String module);
+	List<CustomerDedup> fetchOverrideCustDedupData(String custCIF, String queryCode, String module);
 
 	List<CustomerDedup> fetchCustomerDedupDetails(CustomerDedup customerDedup, String sqlQuery);
 

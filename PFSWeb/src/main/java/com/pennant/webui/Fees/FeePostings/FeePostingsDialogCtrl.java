@@ -105,6 +105,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.core.TableType;
 
 /**
  * This is the controller class for the /WEB-INF/pages/others/JVPosting/jVPostingDialog.zul file.
@@ -434,7 +435,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		// If Fees Created Against Finance Reference
 		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, getFeePostings().getPostAgainst())) {
-			FinanceMain financeMain = getFinanceDetailService().getFinanceMainForBatch(getFeePostings().getReference());
+			FinanceMain financeMain = getFinanceDetailService().getFinanceMain(getFeePostings().getReference(),
+					TableType.MAIN_TAB);
 			amountCodes.setFinType(financeMain.getFinType());
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCustID(financeMain.getCustID());

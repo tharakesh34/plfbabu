@@ -88,13 +88,13 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 	}
 
 	@Override
-	public FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId) {
+	public FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append("(FinExpenseId, FinID, FinReference, ExpenseTypeId, Amount");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" From FinExpenseDetails");
-		sql.append(" Where FinID = ? and ExpenseTypeId = ?");
+		sql.append(" Where FinReference = ? and ExpenseTypeId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -119,7 +119,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 				ed.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ed;
-			}, finID, expenseTypeId);
+			}, finReference, expenseTypeId);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

@@ -218,7 +218,8 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 
 			doShowDialogPage(paymentheader, paymentTransaction);
 		} else {
-			FinanceMain financeMain = this.financeMainService.getFinanceMainByFinRef(paymentTransaction.getFinID());
+			FinanceMain financeMain = this.financeMainService
+					.getFinanceMainByFinRef(paymentTransaction.getFinReference());
 			Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
 			financeMain.setLovDescCustCIF(customer.getCustCIF());
 			FinAdvancePayments finAdvancePayments = new FinAdvancePayments();

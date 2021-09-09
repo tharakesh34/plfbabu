@@ -54,6 +54,8 @@ public interface FinanceMainService {
 
 	List<Long> getFinanceMainbyCustId(long custID, String type);
 
+	FinanceMain getFinanceMainByFinRef(String finReference);
+
 	FinanceMain getFinanceMainByFinRef(long finID);
 
 	List<LoanPendingData> getCustomerODLoanDetails(long userID);

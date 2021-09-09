@@ -590,7 +590,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				// setting data
 				customerID = main.getCustID();
 				setTaxPercentages(calcTaxPercentages());
-				doFillFeeDetails(feeReceiptService.getPaidFinFeeDetails(main.getFinID(),
+				doFillFeeDetails(feeReceiptService.getPaidFinFeeDetails(main.getFinReference(),
 						this.receiptHeader.getReceiptID(), "_TView"));
 			} else {
 				clearFields = true;

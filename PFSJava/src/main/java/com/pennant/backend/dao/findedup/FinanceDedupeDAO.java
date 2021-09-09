@@ -37,7 +37,7 @@ public interface FinanceDedupeDAO {
 
 	void saveList(List<FinanceDedup> dedups, String type);
 
-	List<FinanceDedup> fetchOverrideDedupData(long finID, String queryCode);
+	List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode);
 
 	void deleteList(String finReference);
 

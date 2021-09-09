@@ -650,7 +650,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 	public FinFeeRefundHeader getPaidFeeDetails(FinFeeRefundHeader header, String type) {
 		logger.debug(Literal.ENTERING);
 		List<FinFeeDetail> finFeeDetails = new ArrayList<>();
-		List<FinFeeDetail> list = finFeeDetailDAO.getPaidFinFeeDetails(header.getFinID(), type);
+		List<FinFeeDetail> list = finFeeDetailDAO.getPaidFinFeeDetails(header.getFinReference(), type);
 		if (!header.isNewRecord()) {
 			List<FinFeeRefundDetails> finFeeRefundDetails = finFeeRefundDao
 					.getFinFeeRefundDetailsByHeaderId(header.getHeaderId(), type);

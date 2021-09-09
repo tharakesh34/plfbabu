@@ -142,19 +142,19 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 	}
 
 	@Override
-	public List<FinanceDedup> fetchOverrideDedupData(long finID, String queryCode) {
+	public List<FinanceDedup> fetchOverrideDedupData(String finReference, String queryCode) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" d.FinID, d.FinReference, d.DupReference, d.CustCIF, d.CustCRCPR, d.CustShrtName");
 		sql.append(", d.MobileNumber, d.StartDate, d.FinanceAmount, d.FinanceType, d.ProfitAmount");
 		sql.append(", d.Stage, d.DedupeRule, d.OverrideUser, s.RoleDesc StageDesc, d.FinLimitRef");
 		sql.append(" From FinDedupDetail d");
 		sql.append(" Left Outer Join SecRoles s on s.RoleCd = d.Stage");
-		sql.append(" Where d.FinID = ? and d.DedupeRule LIKE  ?");
+		sql.append(" Where d.FinReference = ? and d.DedupeRule LIKE  ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setLong(1, finID);
+			ps.setString(1, finReference);
 			ps.setString(2, "%," + queryCode.trim() + ",%");
 		}, (rs, i) -> {
 			FinanceDedup fd = new FinanceDedup();

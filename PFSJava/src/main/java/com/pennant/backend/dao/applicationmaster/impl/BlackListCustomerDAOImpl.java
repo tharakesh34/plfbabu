@@ -228,9 +228,10 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 	}
 
 	@Override
-	public List<FinBlacklistCustomer> fetchOverrideBlackListData(long finID, String queryCode, String sourceCIF) {
+	public List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode,
+			String sourceCIF) {
 		StringBuilder sql = getSqlQuery();
-		sql.append(" Where FinID = ? and SourceCIF = ? and WatchListRule like (?)");
+		sql.append(" Where FinReference = ? and SourceCIF = ? and WatchListRule like (?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -239,7 +240,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, finReference);
 			ps.setString(index++, sourceCIF);
 			ps.setString(index++, "%" + queryCode + "%");
 		}, rowMapper);

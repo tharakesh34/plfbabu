@@ -63,9 +63,9 @@ public interface UploadHeaderService {
 
 	long getFinExpenseIdByExpType(String expTypeCode);
 
-	FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId);
+	FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId);
 
-	FinanceMain getFinancesByFinReference(long finID);
+	FinanceMain getFinanceMain(String finReference);
 
 	int getFinTypeCount(String finType);
 

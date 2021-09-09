@@ -60,7 +60,7 @@ public interface FinReceiptDetailDAO {
 
 	BigDecimal getUtilizedPartPayAmtByDate(FinReceiptHeader receiptHeader, Date startDate, Date endDate);
 
-	Date getMaxReceiptDate(long finID, String receiptPurpose, TableType tableType);
+	Date getMaxReceiptDate(String reference, String receiptPurpose, TableType tableType);
 
 	// ### 17-12-2020, ST#1627
 	List<FinReceiptDetail> getNonLanReceiptHeader(long receiptID, String type);

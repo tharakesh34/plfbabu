@@ -40,7 +40,7 @@ public interface BlackListCustomerDAO extends BasicCrudDao<BlackListCustomers> {
 
 	void saveList(List<FinBlacklistCustomer> finBlackList, String type);
 
-	List<FinBlacklistCustomer> fetchOverrideBlackListData(long finID, String queryCode, String sourceCIF);
+	List<FinBlacklistCustomer> fetchOverrideBlackListData(String finReference, String queryCode, String sourceCIF);
 
 	List<BlackListCustomers> fetchBlackListedCustomers(BlackListCustomers blCustData, String watchRule);
 

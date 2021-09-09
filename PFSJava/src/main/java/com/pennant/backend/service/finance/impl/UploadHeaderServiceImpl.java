@@ -238,13 +238,13 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId) {
-		return this.finExpenseDetailsDAO.getFinExpenseDetailsByReference(finID, expenseTypeId);
+	public FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId) {
+		return this.finExpenseDetailsDAO.getFinExpenseDetailsByReference(finReference, expenseTypeId);
 	}
 
 	@Override
-	public FinanceMain getFinancesByFinReference(long finID) {
-		return this.financeMainDAO.getFinanceMainForRpyCancel(finID);
+	public FinanceMain getFinanceMain(String finReference) {
+		return this.financeMainDAO.getFinanceMain(finReference, TableType.MAIN_TAB);
 	}
 
 	@Override

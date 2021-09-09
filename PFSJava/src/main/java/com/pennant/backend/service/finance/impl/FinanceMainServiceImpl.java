@@ -62,6 +62,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 	}
 
 	@Override
+	public FinanceMain getFinanceMainByFinRef(String finReference) {
+		return financeMainDAO.getFinanceMainByRef(finReference, "", false);
+	}
+
+	@Override
 	public List<FinanceEnquiry> getFinanceDetailsByCustId(long custId) {
 		return financeMainDAO.getFinanceDetailsByCustId(custId);
 	}

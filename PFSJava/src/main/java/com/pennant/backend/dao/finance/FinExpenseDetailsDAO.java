@@ -32,7 +32,7 @@ public interface FinExpenseDetailsDAO {
 
 	long saveFinExpenseDetails(FinExpenseDetails finFeeAmz);
 
-	FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId);
+	FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId);
 
 	void update(FinExpenseDetails finFeeAmz);
 

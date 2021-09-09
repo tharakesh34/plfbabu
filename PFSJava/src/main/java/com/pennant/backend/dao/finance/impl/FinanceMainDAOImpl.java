@@ -5541,7 +5541,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder("Select * From (");
 		sql.append(" Select FinID, FinReference, FinType, FinCategory, CustID, EntityCode, FinDivision");
 		sql.append(", FinBranch, FinAmount, FinCcy, FinPurpose, FinStartDate");
+		sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
+		sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
 		sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft ft.FinType = fm.FinType");
@@ -5557,6 +5559,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" Union all");
 			sql.append(" Select FinID, FinReference, FinType, FinCategory, CustID, EntityCode, FinDivision");
 			sql.append(", FinBranch, FinAmount, FinCcy, FinPurpose, FinStartDate");
+			sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
 			sql.append(", FinIsActive, ClosingStatus, MaturityDate, CalMaturity");
 			sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
 			sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
@@ -5749,6 +5752,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
 			fm.setMaturityDate(rs.getDate("MaturityDate"));
 			fm.setCalMaturity(rs.getDate("CalMaturity"));
+			fm.setQuickDisb(rs.getBoolean("QuickDisb"));
+			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 			fm.setRecordStatus(rs.getString("RecordStatus"));
 			fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 			fm.setRoleCode(rs.getString("RoleCode"));

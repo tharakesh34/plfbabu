@@ -444,9 +444,9 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 				uploadFinExpenses.setFinReference(finReference.substring(0, 20));
 			} else {
-				int count = this.uploadHeaderService.getFinanceCountById(finReference);
+				Long finID = this.uploadHeaderService.getActiveFinID(finReference);
 
-				if (count != 1) {
+				if (finID == null) {
 					if (valid) {
 						reason = "Loan Reference: (" + finReference + ") is not valid.";
 						valid = false;
@@ -969,7 +969,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 							}
 						}
 					} else if (PennantConstants.EXPENSE_UPLOAD_LOAN.equals(selectedModuleType)) {
-						FinanceMain fm = this.uploadHeaderService.getFinancesByFinReference(expense.getFinReference());
+						FinanceMain fm = this.uploadHeaderService.getFinanceMain(expense.getFinReference());
 
 						processFinExpenseDetails(fm, expense, finExpenseId);
 					}
