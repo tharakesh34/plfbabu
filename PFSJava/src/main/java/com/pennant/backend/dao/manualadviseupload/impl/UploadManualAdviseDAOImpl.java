@@ -6,9 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.manualadviseupload.UploadManualAdviseDAO;
 import com.pennant.backend.model.finance.UploadManualAdvise;
@@ -210,27 +207,6 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 		logger.debug(Literal.SQL + sql.toString());
 
 		return jdbcOperations.queryForObject(sql.toString(), Integer.class, args) > 0;
-	}
-
-	public List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId, String type) {
-		StringBuilder sql = new StringBuilder("Select AdviseId, UploadId, FinReference, AdviseType,");
-		sql.append(" FeeTypeCode, ValueDate, AdviseAmount, Remarks, Status, Reason, RejectStage,");
-		if (type.contains("View")) {
-			sql.append("FeeTypeId, ");
-		}
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
-		sql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-
-		sql.append(" FROM AdviseUploads");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where UploadId = :UploadId");
-
-		logger.debug("selectListSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(uploadManualAdvise);
-		RowMapper<UploadManualAdvise> typeRowMapper = BeanPropertyRowMapper.newInstance(UploadManualAdvise.class);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
 	}
 
 }

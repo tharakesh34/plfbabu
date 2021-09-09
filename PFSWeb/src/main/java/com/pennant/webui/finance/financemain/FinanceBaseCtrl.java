@@ -6739,7 +6739,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 		// DDA Modification Re-check with Existing Approved Data
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.RPYBASICMAINTAIN)) {
-			String oldRepayMethod = getFinanceDetailService().getApprovedRepayMethod(finReference.getValue(), "");
+			String oldRepayMethod = getFinanceDetailService().getApprovedRepayMethod(financeMain.getFinID(), "");
 			if (!StringUtils.equals(oldRepayMethod, getComboboxValue(this.finRepayMethod))) {
 				detail.getCustomerEligibilityCheck().setDdaModifiedCheck(true);
 			}
@@ -6765,7 +6765,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			List<FinanceDisbursement> tempDisbList = detail.getFinScheduleData().getDisbursementDetails();
 			List<FinanceDisbursement> aprdDisbList = getFinanceDetailService()
-					.getFinanceDisbursements(financeMain.getFinReference(), "", false);
+					.getFinanceDisbursements(financeMain.getFinID(), "", false);
 			for (FinanceDisbursement curDisb : tempDisbList) {
 				boolean isRcdFound = false;
 				for (FinanceDisbursement aprdDisb : aprdDisbList) {

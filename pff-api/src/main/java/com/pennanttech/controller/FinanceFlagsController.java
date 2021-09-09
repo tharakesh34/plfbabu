@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.SessionUserDetails;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -25,6 +26,7 @@ import com.pennanttech.ws.service.APIErrorHandlerService;
 public class FinanceFlagsController extends ExtendedTestClass {
 	private static final Logger logger = LogManager.getLogger(FinanceFlagsController.class);
 	private FinanceFlagsService financeFlagsService;
+	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * Method to process and fetch LoanFlags details
@@ -37,16 +39,20 @@ public class FinanceFlagsController extends ExtendedTestClass {
 
 		FinanceFlag response = null;
 		try {
-			response = financeFlagsService.getFinanceFlagsByRef(finReference, "_View");
-			if (response != null && response.getFinFlagDetailList() != null
-					&& !response.getFinFlagDetailList().isEmpty()) {
-				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
-			} else {
+			Long finID = financeMainDAO.getFinID(finReference);
+
+			if (finID == null) {
 				response = new FinanceFlag();
 				response.setFinFlagDetailList(null);
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;
 				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90218", valueParm));
+			}
+
+			response = financeFlagsService.getFinanceFlagsByRef(finID, "_View");
+			if (response != null && response.getFinFlagDetailList() != null
+					&& !response.getFinFlagDetailList().isEmpty()) {
+				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
 			}
 		} catch (Exception e) {
 			logger.error("Exception", e);

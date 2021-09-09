@@ -1807,9 +1807,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (creditReviewDetail == null) {
 			return;
 		} else {
-			creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(
-					financeMain.getFinReference(), creditReviewDetail.getTemplateName(),
-					creditReviewDetail.getTemplateVersion());
+			creditReviewData = this.creditApplicationReviewService.getCreditReviewDataByRef(financeMain.getFinID(),
+					creditReviewDetail.getTemplateName(), creditReviewDetail.getTemplateVersion());
 
 			if (creditReviewData == null) {
 				return;
