@@ -71,7 +71,7 @@ public interface FinanceProfitDetailDAO {
 
 	BigDecimal getTotalCustomerExposre(long custId);
 
-	BigDecimal getTotalCoApplicantsExposre(long finID);
+	BigDecimal getTotalCoApplicantsExposre(String finReference);
 
 	Date getFirstRePayDateByFinRef(long finID);
 

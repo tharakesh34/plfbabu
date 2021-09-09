@@ -201,7 +201,7 @@ public class SubventionService {
 		if (StringUtils.isEmpty(tableType) && CollectionUtils.isNotEmpty(schdData.getDisbursementDetails())) {
 
 			BigDecimal totalSubVentionAmt = getSubVentionTotalAmt(schdData);
-			subventionDetailDAO.updateSubVebtionAmt(schdData.getFinReference(), totalSubVentionAmt);
+			subventionDetailDAO.updateSubVebtionAmt(schdData.getFinID(), totalSubVentionAmt);
 		}
 	}
 

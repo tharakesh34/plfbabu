@@ -792,18 +792,17 @@ public class FinanceProfitDetailDAOImpl extends BasicDao<FinanceProfitDetail> im
 	}
 
 	@Override
-	public BigDecimal getTotalCoApplicantsExposre(long finID) {
+	public BigDecimal getTotalCoApplicantsExposre(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" coalesce(sum((NSchdPri + NSchdPft)), 0)");
 		sql.append(" From FinPftDetails");
 		sql.append(" Where FinID in (Select FinID from FinanceMain Where CustID in (");
-		sql.append(" Select CustID from FinjointAccountDetails_View Where FinID = ?))");
-		logger.debug(Literal.SQL + sql.toString());
+		sql.append(" Select CustID from FinjointAccountDetails_View Where FinReference = ?))");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finID);
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

@@ -396,7 +396,7 @@ public class PresentmentDetailExtractService {
 		logger.debug(Literal.ENTERING);
 
 		BigDecimal emiInAdvanceAmt;
-		String finReference = pd.getFinReference();
+		long finID = pd.getFinID();
 
 		// Cheque Status
 		if (!PennantConstants.CHEQUESTATUS_NEW.equals(pd.getMandateStatus())) {
@@ -438,7 +438,7 @@ public class PresentmentDetailExtractService {
 		}
 
 		// EMI IN ADVANCE
-		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
+		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (excessAmount != null) {
 			emiInAdvanceAmt = excessAmount.getBalanceAmt();
@@ -471,6 +471,7 @@ public class PresentmentDetailExtractService {
 
 		BigDecimal emiInAdvanceAmt;
 
+		long finID = pd.getFinID();
 		String finReference = pd.getFinReference();
 		// Mandate Rejected
 		String mandateStatus = pd.getMandateStatus();
@@ -518,7 +519,7 @@ public class PresentmentDetailExtractService {
 		}
 
 		// EMI IN ADVANCE
-		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finReference,
+		FinExcessAmount excessAmount = finExcessAmountDAO.getExcessAmountsByRefAndType(finID,
 				RepayConstants.EXAMOUNTTYPE_EMIINADV);
 		if (excessAmount != null) {
 			emiInAdvanceAmt = excessAmount.getBalanceAmt();
@@ -626,7 +627,7 @@ public class PresentmentDetailExtractService {
 			}
 		}
 
-		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(finRef, amountType);
+		FinExcessAmount finExAmt = finExcessAmountDAO.getExcessAmountsByRefAndType(pd.getFinID(), amountType);
 
 		if (finExAmt == null) {
 			return;

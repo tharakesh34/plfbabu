@@ -36,7 +36,7 @@ import com.pennant.backend.model.finance.LinkedFinances;
 
 public interface LinkedFinancesService {
 
-	List<LinkedFinances> getLinkedFinancesByRef(long finID, String type);
+	List<LinkedFinances> getLinkedFinancesByRef(String finReference, String type);
 
 	AuditHeader saveOrUpdate(AuditHeader auditHeader);
 

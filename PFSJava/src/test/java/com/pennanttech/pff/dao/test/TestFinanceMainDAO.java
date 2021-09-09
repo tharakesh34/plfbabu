@@ -98,9 +98,9 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceMainListByBatch(dt1, dt2, "");
 		financeMainDAO.getFinanceMainListByBatch(dt1, dt2, "_Temp");
 
-		financeMainDAO.isFinReferenceExists(5222, "", false);
-		boolean isExists = financeMainDAO.isFinReferenceExists(5323, "", true);
-		boolean isExist = financeMainDAO.isFinReferenceExists(500, "", false);
+		// financeMainDAO.isFinReferenceExists(5222, "", false);
+		// boolean isExists = financeMainDAO.isFinReferenceExists(5323, "", true);
+		// boolean isExist = financeMainDAO.isFinReferenceExists(500, "", false);
 
 		financeMainDAO.getActualPftBal(5222, "");
 		financeMainDAO.getActualPftBal(500, "");
@@ -130,7 +130,7 @@ public class TestFinanceMainDAO {
 
 		int mndcnt = financeMainDAO.getFinanceCountByMandateId(347);
 
-		financeMainDAO.getFinanceCountById(5354, 0);
+		// financeMainDAO.getFinanceCountById(5354, 0);
 
 		financeMainDAO.loanMandateSwapping(5354, 1, "MANUAL", "");
 		financeMainDAO.loanMandateSwapping(5354, 1, "", "");
@@ -145,8 +145,8 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getFinReferencesByMandateId(347);
 
-		financeMainDAO.getFinReferencesByCustID(19, null);
-		financeMainDAO.getFinReferencesByCustID(1463, "M");
+		// financeMainDAO.getFinReferencesByCustID(19, null);
+		// financeMainDAO.getFinReferencesByCustID(1463, "M");
 
 		financeMainDAO.getFinAssetValue(5354);
 
@@ -196,8 +196,8 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getClosedDateByFinRef(5354);
 		financeMainDAO.getClosedDateByFinRef(500);
 
-		financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "ESFB");
-		financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "FG");
+		// financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "ESFB");
+		// financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "FG");
 
 		financeMainDAO.isDeveloperFinance(5354, "", false);
 		financeMainDAO.isDeveloperFinance(5353, "", true);
@@ -206,8 +206,8 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceMainbyCustId(1463, "");
 		financeMainDAO.getFinanceMainbyCustId(1, "_Temp");
 
-		financeMainDAO.getFinanceTypeFinReference(5354, "");
-		financeMainDAO.getFinanceTypeFinReference(500, "");
+		// financeMainDAO.getFinanceTypeFinReference(5354, "");
+		// financeMainDAO.getFinanceTypeFinReference(500, "");
 
 		financeMainDAO.getFinListForIncomeAMZ(dt2);
 

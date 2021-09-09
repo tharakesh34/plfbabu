@@ -238,13 +238,13 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId) {
-		return this.finExpenseDetailsDAO.getFinExpenseDetailsByReference(finReference, expenseTypeId);
+	public FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId) {
+		return this.finExpenseDetailsDAO.getFinExpenseDetailsByReference(finID, expenseTypeId);
 	}
 
 	@Override
-	public FinanceMain getFinancesByFinReference(String finReference) {
-		return this.financeMainDAO.getFinanceMainForRpyCancel(finReference);
+	public FinanceMain getFinancesByFinReference(long finID) {
+		return this.financeMainDAO.getFinanceMainForRpyCancel(finID);
 	}
 
 	@Override
@@ -253,8 +253,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public int getFinanceCountById(String finReference) {
-		return this.financeMainDAO.getFinanceCountById(finReference, "", false);
+	public int getFinanceCountById(long finID) {
+		return this.financeMainDAO.getFinanceCountById(finID, "", false);
 	}
 
 	@Override
@@ -272,13 +272,13 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public List<FinExpenseDetails> getFinExpenseDetailById(String reference) {
-		return this.finExpenseDetailsDAO.getFinExpenseDetailsById(reference);
+	public List<FinExpenseDetails> getFinExpenseDetailById(long finID) {
+		return this.finExpenseDetailsDAO.getFinExpenseDetailsById(finID);
 	}
 
 	@Override
-	public List<FinExpenseMovements> getFinExpenseMovementById(String reference, long finExpenseId) {
-		return this.finExpenseMovementsDAO.getFinExpenseMovementById(reference, finExpenseId);
+	public List<FinExpenseMovements> getFinExpenseMovementById(long finID, long finExpenseId) {
+		return this.finExpenseMovementsDAO.getFinExpenseMovementById(finID, finExpenseId);
 	}
 
 	@Override
@@ -838,8 +838,8 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 	}
 
 	@Override
-	public List<String> getFinEventByFinRef(String finReference, String type) {
-		return finServiceInstructionDAO.getFinEventByFinRef(finReference, type);
+	public List<String> getFinEventByFinRef(long finID, String type) {
+		return finServiceInstructionDAO.getFinEventByFinRef(finID, type);
 	}
 
 	public FeeTypeDAO getFeeTypeDAO() {

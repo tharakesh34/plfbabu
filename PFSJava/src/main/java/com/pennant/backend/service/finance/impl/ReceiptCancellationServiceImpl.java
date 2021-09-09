@@ -721,9 +721,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// Fee Payment Cancellation or Bounce cancellation stopped When Loan is
 		// not in Workflow Process
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.FEEPAYMENT)) {
-			long finID = rch.getFinID();
 			if (RepayConstants.RECEIPTTO_FINANCE.equals(rch.getRecAgainst())) {
-				boolean rcdAvailable = financeMainDAO.isFinReferenceExists(finID, "_Temp", false);
+				boolean rcdAvailable = financeMainDAO.isFinReferenceExists(rch.getReference(), "_Temp", false);
 				if (!rcdAvailable) {
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("60209", null), usrLanguage));
 				}
@@ -1552,7 +1551,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						taxHeader.setTaxDetails(new ArrayList<>());
 					}
 
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinReference());
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 
 					Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST));
 					Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST));

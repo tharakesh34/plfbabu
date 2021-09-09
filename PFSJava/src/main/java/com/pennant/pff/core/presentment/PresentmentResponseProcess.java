@@ -504,6 +504,9 @@ public class PresentmentResponseProcess implements Runnable {
 
 	private void updateFinReceiptHeader(FinReceiptHeader rh) {
 		logger.info(Literal.ENTERING);
+
+		long receiptID = rh.getReceiptID();
+		Long finID = rh.getFinID();
 		String reference = rh.getReference();
 		String excessAdjustTo = rh.getExcessAdjustTo();
 
@@ -517,14 +520,14 @@ public class PresentmentResponseProcess implements Runnable {
 		for (FinRepayHeader rph : repayHeaders) {
 			if (FinServiceEvent.SCHDRPY.equals(rh.getReceiptPurpose())) {
 				if (rph.getExcessAmount().compareTo(BigDecimal.ZERO) > 0) {
-					finExcessAmountDAO.updExcessAfterRealize(reference, excessAdjustTo, rph.getExcessAmount());
+					finExcessAmountDAO.updExcessAfterRealize(rph.getFinID(), excessAdjustTo, rph.getExcessAmount());
 				}
 			}
 		}
 
-		finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(rh.getReceiptID(), RepayConstants.PAYSTATUS_REALIZED,
+		finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(receiptID, RepayConstants.PAYSTATUS_REALIZED,
 				appDate);
-		finReceiptDetailDAO.updateReceiptStatusByReceiptId(rh.getReceiptID(), RepayConstants.PAYSTATUS_REALIZED);
+		finReceiptDetailDAO.updateReceiptStatusByReceiptId(receiptID, RepayConstants.PAYSTATUS_REALIZED);
 
 		logger.info(Literal.LEAVING);
 	}

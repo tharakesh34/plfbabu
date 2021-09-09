@@ -142,7 +142,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 			}
 		}
 
-		//Customer Document Details Fetching Depends on Customer & Doc Type List
+		// Customer Document Details Fetching Depends on Customer & Doc Type List
 
 		List<DocumentDetails> documentList = getCustomerDocumentDAO()
 				.getCustDocByCustId(financeDetail.getFinScheduleData().getFinanceMain().getCustID(), "");
@@ -229,7 +229,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 			}
 		}
 
-		//Customer Document Details Fetching Depends on Customer & Doc Type List
+		// Customer Document Details Fetching Depends on Customer & Doc Type List
 		List<DocumentDetails> documentList = getCustomerDocumentDAO()
 				.getCustDocByCustId(collateralSetup.getCustomerDetails().getCustomer().getCustID(), "");
 
@@ -312,7 +312,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 			}
 		}
 
-		//Customer Document Details Fetching Depends on Customer & Doc Type List
+		// Customer Document Details Fetching Depends on Customer & Doc Type List
 		List<DocumentDetails> documentList = getCustomerDocumentDAO()
 				.getCustDocByCustId(commitment.getCustomerDetails().getCustomer().getCustID(), "");
 
@@ -396,7 +396,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 				}
 			}
 		}
-		//Customer Document Details Fetching Depends on Customer & Doc Type List
+		// Customer Document Details Fetching Depends on Customer & Doc Type List
 		List<DocumentDetails> documentList = new ArrayList<>();
 		if (vasRecording.getVasCustomer() != null) {
 			documentList = getCustomerDocumentDAO().getCustDocByCustId(vasRecording.getVasCustomer().getCustomerId(),
@@ -489,7 +489,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
 				if (StringUtils.trimToEmpty(finChekListRef.getRecordType()).equals(PennantConstants.RCD_ADD)) {
 					auditTranType = PennantConstants.TRAN_ADD;
-					//finChekListRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					// finChekListRef.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else if (StringUtils.trimToEmpty(finChekListRef.getRecordType())
 						.equals(PennantConstants.RECORD_TYPE_NEW)) {
 					auditTranType = PennantConstants.TRAN_UPD;
@@ -674,15 +674,16 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 
 		if (financeCheckListReference.isNewRecord()) { // for New record or new record into work flow
 
-			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
-				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
+			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records
+				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is new
-					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if 
-						//records already exists in the main table
+				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is
+																									// new
+					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if
+						// records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
@@ -711,7 +712,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 					}
 				}
 			} else {
-				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table 
+				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -743,11 +744,11 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 		FinanceCheckListReference tempFinanceCheckListReference = null;
 		if (financeCheckListReference.isWorkflow()) {
 			tempFinanceCheckListReference = getFinanceCheckListReferenceDAO().getFinanceCheckListReferenceById(
-					financeCheckListReference.getId(), financeCheckListReference.getQuestionId(),
+					financeCheckListReference.getFinID(), financeCheckListReference.getQuestionId(),
 					financeCheckListReference.getAnswer(), "_Temp");
 		}
 		FinanceCheckListReference befFinanceCheckListReference = getFinanceCheckListReferenceDAO()
-				.getFinanceCheckListReferenceById(financeCheckListReference.getId(),
+				.getFinanceCheckListReferenceById(financeCheckListReference.getFinID(),
 						financeCheckListReference.getQuestionId(), financeCheckListReference.getAnswer(), "");
 
 		FinanceCheckListReference oldFinanceCheckListReference = financeCheckListReference.getBefImage();
@@ -763,15 +764,16 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 
 		if (financeCheckListReference.isNewRecord()) { // for New record or new record into work flow
 
-			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records  
-				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error  
+			if (!financeCheckListReference.isWorkflow()) {// With out Work flow only new records
+				if (befFinanceCheckListReference != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
-				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is new
-					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if 
-						//records already exists in the main table
+				if (financeCheckListReference.getRecordType().equals(PennantConstants.RCD_ADD)) { // if records type is
+																									// new
+					if (befFinanceCheckListReference != null || tempFinanceCheckListReference != null) { // if
+						// records already exists in the main table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41008", errParm, valueParm), usrLanguage));
 					}
@@ -800,7 +802,7 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 					}
 				}
 			} else {
-				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table 
+				if (tempFinanceCheckListReference == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -859,6 +861,12 @@ public class VasMovementDetailServiceImpl implements CheckListDetailService {
 	@Override
 	public CheckListDetail getCheckListDetailByDocType(String docType, String finType) {
 		return getCheckListDetailDAO().getCheckListDetailByDocType(docType, finType);
+	}
+
+	@Override
+	public List<FinanceCheckListReference> getCheckListByFinRef(long finID, String tableType) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

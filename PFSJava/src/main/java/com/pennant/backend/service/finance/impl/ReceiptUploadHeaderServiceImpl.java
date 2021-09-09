@@ -359,8 +359,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public List<ManualAdvise> getManualAdviseByRef(String reference, String referenceCode, String type) {
-		return manualAdviseDAO.getManualAdviseByRef(reference, referenceCode, type);
+	public List<ManualAdvise> getManualAdviseByRef(long finID, String referenceCode, String type) {
+		return manualAdviseDAO.getManualAdviseByRef(finID, referenceCode, type);
 	}
 
 	@Override
@@ -405,8 +405,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public int getFinanceCountById(String reference, String string, boolean b) {
-		return this.financeMainDAO.getFinanceCountById(reference, string, b);
+	public int getFinanceCountById(long finID, String string, boolean b) {
+		return this.financeMainDAO.getFinanceCountById(finID, string, b);
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
@@ -414,8 +414,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 	}
 
 	@Override
-	public boolean isFinRefExitsWithEntity(String reference, String type, String entity) {
-		return this.financeMainDAO.isFinReferenceExitsWithEntity(reference, type, entity);
+	public Long getFinID(String finReference, String entity, TableType tableType) {
+		return this.financeMainDAO.getFinID(finReference, entity, tableType);
 	}
 
 	@Override
@@ -703,7 +703,9 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				setErrorToRUD(rud, "90405", errorMsg);
 			}
 
-			if (!isFinRefExitsWithEntity(rud.getReference(), "", ruh.getEntityCode())) {
+			Long finID = getFinID(rud.getReference(), ruh.getEntityCode(), TableType.MAIN_TAB);
+
+			if (finID == null) {
 				setErrorToRUD(rud, "RU0004", rud.getReference());
 			}
 
@@ -790,7 +792,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				}
 			}
 
-			ErrorDetail errorDetail = receiptService.getWaiverValidation(rud.getReference(), rud.getReceiptPurpose(),
+			ErrorDetail errorDetail = receiptService.getWaiverValidation(finID, rud.getReceiptPurpose(),
 					rud.getValueDate());
 			if (errorDetail != null) {
 				rud.getErrorDetails().add(ErrorUtil.getErrorDetail(errorDetail));

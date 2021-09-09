@@ -192,16 +192,16 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 	}
 
 	@Override
-	public List<LinkedFinances> getLinkedFinancesByFinRef(long finID, String type) {
+	public List<LinkedFinances> getLinkedFinancesByFinRef(String finReference, String type) {
 		StringBuilder sql = getSelectSqlQuery(type);
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, finReference);
 		}, (rs, i) -> {
 			return getRowMapper(type, rs);
 		});

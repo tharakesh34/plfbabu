@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecondaryMandateListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecondaryMandateListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * *
+ * Modified Date : 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -172,8 +154,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_SecondaryMandateList(Event event) {
 
@@ -200,7 +181,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		searchCriteriaDesc.append("File Name is " + fileName.getValue());
 		searchCriteriaDesc.append("User ID is" + userId);
 		searchCriteriaDesc.append("Upload Date is" + transcationDate);
-		
+
 		String userName = getUserWorkspace().getLoggedInUser().getFullName();
 		try {
 			ReportsUtil.generateReport(userName, "MandateUploadReport", whereCond, searchCriteriaDesc);
@@ -405,14 +386,16 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 					}
 					// swap the primary mandate to secondary mandate for finance
 					Mandate curMandate = (Mandate) auditHeader.getAuditDetail().getModelData();
-					financeMainService.loanMandateSwapping(curMandate.getOrgReference(), curMandate.getMandateID(),
+					Long finID = financeMainService.getFinID(curMandate.getOrgReference());
+
+					financeMainService.loanMandateSwapping(finID, curMandate.getMandateID(),
 							curMandate.getMandateType(), "");
 					UploadSecondaryMandate mandateStatus = prepareMandateStatus(mandate, true, "Success");
 					successCount++;
 					mandateStatus.setUploadId(uploadId);
 					uploadSecondaryMandateService.save(mandateStatus);
 				} else { // primary mandate not available log the excel upload
-								// data
+							// data
 					if (rowIndex == 2) {
 						uploadId = saveUploadHeaderDetails(fName);
 					}
@@ -612,7 +595,7 @@ public class UploadSecondaryMandateListCtrl extends GFCBaseListCtrl<Mandate> imp
 		if (bankBranch == null) {
 			remarks.append("Invalid MICR,");
 		} else {
-			//set the bank banchId
+			// set the bank banchId
 			preMandate.setBankBranchID(bankBranch.getBankBranchID());
 			// validate the bank code
 			if (!StringUtils.equals(bankBranch.getBankCode(), mandate.getBankCode())) {

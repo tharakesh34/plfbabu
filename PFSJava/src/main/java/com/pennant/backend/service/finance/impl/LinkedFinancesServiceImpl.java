@@ -40,8 +40,8 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 	}
 
 	@Override
-	public List<LinkedFinances> getLinkedFinancesByRef(long finID, String type) {
-		return linkedFinancesDAO.getLinkedFinancesByFinRef(finID, type);
+	public List<LinkedFinances> getLinkedFinancesByRef(String finReference, String type) {
+		return linkedFinancesDAO.getLinkedFinancesByFinRef(finReference, type);
 	}
 
 	@Override

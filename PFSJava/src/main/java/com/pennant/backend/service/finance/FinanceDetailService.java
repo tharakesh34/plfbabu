@@ -304,4 +304,6 @@ public interface FinanceDetailService {
 	FinanceMain getFinanceMain(String finReference, TableType tableType);
 
 	Long getFinID(String referenceId);
+
+	Long getFinID(String referenceId, TableType tableType);
 }

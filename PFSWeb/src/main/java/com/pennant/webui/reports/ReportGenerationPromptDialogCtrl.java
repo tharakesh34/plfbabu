@@ -119,6 +119,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.TableType;
 
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
@@ -1776,7 +1777,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 
 			if (StringUtils.isNotBlank(finReference)) {
-				FinScheduleData scheduleData = financeDetailService.getFinSchDataByFinRef(finReference, "", 0);
+				Long finID = financeDetailService.getFinID(finReference, TableType.MAIN_TAB);
+				FinScheduleData scheduleData = financeDetailService.getFinSchDataByFinRef(finID, "", 0);
 				renderer = new FinScheduleListItemRenderer();
 				List<FinanceScheduleReportData> schdList = renderer.getPrintScheduleData(scheduleData, null, null,
 						false, true, true);
@@ -2527,12 +2529,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		logger.info(Literal.LEAVING);
 	}
 
-	private void processLinkedLoans(long finID) {
-		List<LinkedFinances> linkedFinances = linkedFinancesService.getLinkedFinancesByFinRef(finID, "_AView");
-		List<LinkedFinances> linkedFinances2 = linkedFinancesService.getLinkedFinancesByRef(finID, "_AView");
+	private void processLinkedLoans(String finReference) {
+		List<LinkedFinances> linkedFinances = linkedFinancesService.getLinkedFinancesByFinRef(finReference, "_AView");
+		List<LinkedFinances> linkedFinances2 = linkedFinancesService.getLinkedFinancesByRef(finReference, "_AView");
+
 		if (CollectionUtils.isNotEmpty(linkedFinances) || CollectionUtils.isNotEmpty(linkedFinances2)) {
 			String[] parameters = new String[2];
-			parameters[0] = finRef;
+			parameters[0] = finReference;
 			StringBuilder ref = new StringBuilder("");
 			for (LinkedFinances LinkedFinance : linkedFinances) {
 

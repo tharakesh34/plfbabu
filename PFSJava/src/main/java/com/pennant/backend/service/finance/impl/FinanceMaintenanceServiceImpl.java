@@ -211,7 +211,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				fd.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
 						FinanceConstants.MODULE_NAME, "_View"));
 			} else {
-				fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finReference, "_View"));
+				fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
 			}
 		}
 

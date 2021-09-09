@@ -64,6 +64,7 @@ import com.pennanttech.pennapps.notification.email.model.MessageAddress;
 import com.pennanttech.pennapps.notification.email.model.MessageAttachment;
 import com.pennanttech.pennapps.notification.sms.SmsEngine;
 import com.pennanttech.pennapps.pff.finance.FinScheduleReportGenerator;
+import com.pennanttech.pff.core.TableType;
 
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
@@ -312,7 +313,9 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 				}
 			}
 
-			FinScheduleData finScheduleData = getFinanceDetailService().getFinSchDataById(finReference, "_AView", true);
+			Long finID = financeDetailService.getFinID(finReference, TableType.MAIN_TAB);
+
+			FinScheduleData finScheduleData = financeDetailService.getFinSchDataById(finID, "_AView", true);
 
 			if (finScheduleData == null) {
 				return;
@@ -320,8 +323,8 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 
 			List<Object> list = new ArrayList<Object>();
 
-			List<FinanceScheduleDetail> schdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finReference,
-					"_Log", false, logKey);
+			List<FinanceScheduleDetail> schdDetails = financeScheduleDetailDAO.getFinScheduleDetails(finID, "_Log",
+					false, logKey);
 			schdDetails = ScheduleCalculator.sortSchdDetails(schdDetails);
 			finScheduleData.setFinanceScheduleDetails(schdDetails);
 
@@ -348,7 +351,7 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 			}
 
 			FinanceMain financeMain = finScheduleData.getFinanceMain();
-			Customer customer = getCustomerDAO().getCustomerByID(financeMain.getCustID());
+			Customer customer = customerDAO.getCustomerByID(financeMain.getCustID());
 			financeMain.setLovDescCustCIF(customer.getCustCIF() + " - " + customer.getCustShrtName());
 
 			FinScheduleReportGenerator reportGenerator = new FinScheduleReportGenerator();
@@ -581,24 +584,12 @@ public class ProcessSystemNotifications extends BasicDao<SystemNotifications> {
 		});
 	}
 
-	public SOAReportGenerationService getSoaReportGenerationService() {
-		return soaReportGenerationService;
-	}
-
 	public void setSoaReportGenerationService(SOAReportGenerationService soaReportGenerationService) {
 		this.soaReportGenerationService = soaReportGenerationService;
 	}
 
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
-	}
-
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
 	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {

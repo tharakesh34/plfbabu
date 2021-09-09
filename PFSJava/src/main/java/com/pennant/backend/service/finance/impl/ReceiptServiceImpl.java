@@ -5338,7 +5338,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fd.setCollateralAssignmentList(collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
 					FinanceConstants.MODULE_NAME, "_View"));
 		} else {
-			fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finReference, "_View"));
+			fd.setFinanceCollaterals(finCollateralService.getFinCollateralsByRef(finID, "_View"));
 		}
 
 		logger.debug(Literal.ENTERING);
@@ -5352,7 +5352,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinanceDetail fd = receiptData.getFinanceDetail();
 		int receiptPurposeCtg = receiptCalculator.setReceiptCategory(rch.getReceiptPurpose());
-		FinScheduleData schdData = financeDetailService.getFinSchDataForReceipt(rch.getReference(), "_AView");
+
+		Long finID = financeDetailService.getFinID(rch.getReference(), TableType.MAIN_TAB);
+
+		FinScheduleData schdData = financeDetailService.getFinSchDataForReceipt(finID, "_AView");
 		schdData.setFinODDetails(receiptData.getFinanceDetail().getFinScheduleData().getFinODDetails());
 		FinanceMain aFinanceMain = fd.getFinScheduleData().getFinanceMain();
 		schdData.setFinFeeDetailList(receiptData.getFinanceDetail().getFinScheduleData().getFinFeeDetailList());
@@ -5371,7 +5374,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		boolean isStepLoan = false;
 		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
-		long finID = schdData.getFinID();
 		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES)) {
 			if (aFinanceMain.isStepFinance()) {
 				if (StringUtils.isNotBlank(aFinanceMain.getStepPolicy())

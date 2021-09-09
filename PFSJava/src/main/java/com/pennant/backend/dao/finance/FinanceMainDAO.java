@@ -54,7 +54,7 @@ public interface FinanceMainDAO {
 
 	void delete(FinanceMain financeMain, TableType tableType, boolean wif, boolean finalize);
 
-	boolean isFinReferenceExists(long finID, String type, boolean isWIF);
+	boolean isFinReferenceExists(String reference, String type, boolean isWIF);
 
 	List<Long> getFinanceMainListByBatch(Date curBD, Date nextBD, String type);
 
@@ -180,7 +180,7 @@ public interface FinanceMainDAO {
 
 	List<FinanceMain> getUnApprovedFinances();
 
-	boolean isFinReferenceExitsWithEntity(long finID, String type, String entity);
+	Long getFinID(String finReference, String entity, TableType tableType);
 
 	// ### 10-09-2018,Ticket id:124998
 	FinanceMain getEntityNEntityDesc(long finID, String type, boolean wif);

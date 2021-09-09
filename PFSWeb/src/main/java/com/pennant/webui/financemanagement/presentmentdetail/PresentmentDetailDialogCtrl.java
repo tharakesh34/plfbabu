@@ -717,6 +717,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			throw new WrongValueException(this.insertFinReference,
 					Labels.getLabel("Presentment_IncldeExclude_Empty_FinReference"));
 		}
+
 		String finreference = this.insertFinReference.getValue();
 
 		PresentmentDetail presentmentDetail = this.presentmentDetailService

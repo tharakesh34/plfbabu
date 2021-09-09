@@ -79,8 +79,8 @@ public class TestFinanceProfitDetailDAO {
 
 		profitDetailsDAO.updateClosingSts(4090, true);
 
-		profitDetailsDAO.getTotalCoApplicantsExposre(4090);
-		profitDetailsDAO.getTotalCoApplicantsExposre(500);
+		// profitDetailsDAO.getTotalCoApplicantsExposre(4090);
+		// profitDetailsDAO.getTotalCoApplicantsExposre(500);
 
 		profitDetailsDAO.updateFinPftMaturity(2594, "M", false);
 

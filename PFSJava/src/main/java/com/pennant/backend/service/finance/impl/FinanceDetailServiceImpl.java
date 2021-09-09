@@ -839,27 +839,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extFieldMap.remove("LastMntOn");
 				aExetendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
 				extFieldMap.remove("LastMntBy");
-				aExetendedFieldRender.setRecordStatus(getFieldValue(extFieldMap));
+				aExetendedFieldRender.setRecordStatus(getFieldValue("RecordStatus", extFieldMap));
 				extFieldMap.remove("RecordStatus");
-				aExetendedFieldRender
-						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RoleCode")));
+				aExetendedFieldRender.setRoleCode(getFieldValue("RoleCode", extFieldMap));
 				extFieldMap.remove("RoleCode");
-				aExetendedFieldRender.setNextRoleCode(
-						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextRoleCode")));
+				aExetendedFieldRender.setNextRoleCode(getFieldValue("NextRoleCode", extFieldMap));
 				extFieldMap.remove("NextRoleCode");
-				aExetendedFieldRender
-						.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
-								: String.valueOf(extFieldMap.get("TaskId")));
+				aExetendedFieldRender.setTaskId(getFieldValue("TaskId", extFieldMap));
 				extFieldMap.remove("TaskId");
-				aExetendedFieldRender
-						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextTaskId")));
+				aExetendedFieldRender.setNextTaskId(getFieldValue("NextTaskId", extFieldMap));
 				extFieldMap.remove("NextTaskId");
-				aExetendedFieldRender
-						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordType")));
+				aExetendedFieldRender.setRecordType(getFieldValue("RecordType", extFieldMap));
 				extFieldMap.remove("RecordType");
 				aExetendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
 				extFieldMap.remove("WorkflowId");
@@ -5933,7 +5923,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String recordStatus = fm.getRecordStatus();
 		if (FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
-			postingsPreparationUtil.postReveralsExceptFeePay(finID);
+			postingsPreparationUtil.postReveralsExceptFeePay(finReference);
 
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 			String[] fieldsArray = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
@@ -10975,5 +10965,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	@Override
 	public Long getFinID(String finReference) {
 		return financeMainDAO.getFinID(finReference);
+	}
+
+	@Override
+	public Long getFinID(String finReference, TableType tableType) {
+		return financeMainDAO.getFinID(finReference, tableType);
 	}
 }

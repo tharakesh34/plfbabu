@@ -30,7 +30,7 @@ import com.pennant.backend.model.finance.LinkedFinances;
 
 public interface LinkedFinancesDAO {
 
-	List<LinkedFinances> getLinkedFinancesByFinRef(long finID, String type);
+	List<LinkedFinances> getLinkedFinancesByFinRef(String finReference, String type);
 
 	LinkedFinances getLinkedFinancesByLinkRef(String linkedReference, long finID, String type);
 

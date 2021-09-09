@@ -1039,7 +1039,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public boolean isFinReferenceExists(long finID, String type, boolean isWIF) {
+	public boolean isFinReferenceExists(String finReference, String type, boolean isWIF) {
 		StringBuilder sql = new StringBuilder("Select count(FinID)");
 
 		if (isWIF) {
@@ -1054,7 +1054,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finID) > 0;
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0;
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -2694,9 +2694,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public boolean isFinReferenceExitsWithEntity(long finID, String type, String entity) {
-		StringBuilder sql = new StringBuilder("Select count(e.EntityCode) From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
+	public Long getFinID(String finReference, String entity, TableType tableType) {
+		StringBuilder sql = new StringBuilder("Select FinID From FinanceMain");
+		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		sql.append(" fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -2705,7 +2705,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> rs.getLong(1), finID, entity) > 0;
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, entity);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
 	@Override

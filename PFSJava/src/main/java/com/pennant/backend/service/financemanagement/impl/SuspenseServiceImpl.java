@@ -102,8 +102,8 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		if (isEnquiry) {
 			suspHead.setSuspDetailsList(financeSuspHeadDAO.getFinanceSuspDetailsListById(finID));
-			suspHead.setSuspPostingsList(
-					postingsDAO.getPostingsByFinRefAndEvent(finID, "'PIS_NORM','NORM_PIS'", true, "", "_View"));
+			suspHead.setSuspPostingsList(postingsDAO.getPostingsByFinRefAndEvent(suspHead.getFinReference(),
+					"'PIS_NORM','NORM_PIS'", true, "", "_View"));
 		}
 
 		FinanceDetail fd = new FinanceDetail();
@@ -171,7 +171,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 	}
 
 	@Override
-	public List<String> getSuspFinanceList() {
+	public List<Long> getSuspFinanceList() {
 		return financeSuspHeadDAO.getSuspFinanceList();
 	}
 
@@ -457,7 +457,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 
 		// Cancel All Transactions done by Finance Reference
 		// =======================================
-		cancelStageAccounting(finReference, FinServiceEvent.SUSPHEAD);
+		cancelStageAccounting(finID, FinServiceEvent.SUSPHEAD);
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		financeSuspHeadDAO.delete(suspHead, "_Temp");

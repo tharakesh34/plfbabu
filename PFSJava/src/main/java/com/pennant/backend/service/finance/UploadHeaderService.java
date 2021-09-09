@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadHeaderService.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2017    														*
- *                                                                  						*
- * Modified Date    :  17-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadHeaderService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2017 * * Modified
+ * Date : 17-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -81,21 +63,21 @@ public interface UploadHeaderService {
 
 	long getFinExpenseIdByExpType(String expTypeCode);
 
-	FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId);
+	FinExpenseDetails getFinExpenseDetailsByReference(long finID, long expenseTypeId);
 
-	FinanceMain getFinancesByFinReference(String finReference);
+	FinanceMain getFinancesByFinReference(long finID);
 
 	int getFinTypeCount(String finType);
 
-	int getFinanceCountById(String finReference);
+	int getFinanceCountById(long finID);
 
 	void update(FinExpenseDetails finFeeAmz);
 
 	void updateRecordCounts(UploadHeader uploadHeader);
 
-	List<FinExpenseMovements> getFinExpenseMovementById(String reference, long finExpenseID);
+	List<FinExpenseMovements> getFinExpenseMovementById(long finID, long finExpenseID);
 
-	List<FinExpenseDetails> getFinExpenseDetailById(String reference);
+	List<FinExpenseDetails> getFinExpenseDetailById(long finID);
 
 	FinTypeExpense getFinExpensesByFinType(String finType, long expenseTypeId);
 
@@ -135,7 +117,7 @@ public interface UploadHeaderService {
 
 	FeeType getApprovedFeeTypeByFeeCode(String finTypeCode);
 
-	List<String> getFinEventByFinRef(String finReference, String type);
+	List<String> getFinEventByFinRef(long finID, String type);
 
 	List<UploadManualAdvise> getManualAdviseListByUploadId(long uploadId);
 

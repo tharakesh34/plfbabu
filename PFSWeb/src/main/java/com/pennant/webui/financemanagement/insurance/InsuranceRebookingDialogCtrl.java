@@ -145,6 +145,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
@@ -2175,8 +2176,8 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 
 		// Based on VAS Created Against, details will be captured
 		if (StringUtils.equals(VASConsatnts.VASAGAINST_FINANCE, getVASRecording().getPostingAgainst())) {
-			FinanceMain financeMain = getFinanceDetailService()
-					.getFinanceMainForBatch(getVASRecording().getPrimaryLinkRef());
+			FinanceMain financeMain = financeDetailService.getFinanceMain(getVASRecording().getPrimaryLinkRef(),
+					TableType.MAIN_TAB);
 			amountCodes.setFinType(financeMain.getFinType());
 			aeEvent.setBranch(financeMain.getFinBranch());
 			aeEvent.setCcy(financeMain.getFinCcy());
@@ -2336,7 +2337,7 @@ public class InsuranceRebookingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 			}
 			FinScheduleData finScheduleData = new FinScheduleData();
 			FinanceMain financeMain = getFinanceDetailService().getFinanceMain(getVASRecording().getPrimaryLinkRef(),
-					"_View");
+					TableType.VIEW);
 			finScheduleData.setFinanceMain(financeMain);
 			financeDetail.setFinScheduleData(finScheduleData);
 		} else {

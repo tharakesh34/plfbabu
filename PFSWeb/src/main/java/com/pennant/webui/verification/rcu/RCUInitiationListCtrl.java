@@ -104,8 +104,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_RiskContainmentUnitInitiation(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -193,8 +192,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_RiskContainmentUnitList_RiskContainmentUnitSearch(Event event) {
 		search();
@@ -203,8 +201,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -214,8 +211,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_RiskContainmentUnitList_NewRiskContainmentUnit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -244,8 +240,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onRiskContainmentUnitItemDoubleClicked(Event event) {
@@ -265,8 +260,9 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 			return;
 		}
 
-		setFinanceDetail(financeDetailService.getVerificationInitiationDetails(rcu.getKeyReference(),
-				VerificationType.RCU, "_View"));
+		Long finID = financeDetailService.getFinID(rcu.getKeyReference());
+
+		setFinanceDetail(financeDetailService.getVerificationInitiationDetails(finID, VerificationType.RCU, "_View"));
 
 		StringBuilder whereCond = new StringBuilder();
 		whereCond.append("  where  verificationId =? ");
@@ -287,8 +283,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param fieldinvestigation
-	 *            The entity that need to be passed to the dialog.
+	 * @param fieldinvestigation The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(RiskContainmentUnit rcu) {
 		logger.debug(Literal.ENTERING);
@@ -359,8 +354,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -369,8 +363,7 @@ public class RCUInitiationListCtrl extends GFCBaseListCtrl<RiskContainmentUnit> 
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

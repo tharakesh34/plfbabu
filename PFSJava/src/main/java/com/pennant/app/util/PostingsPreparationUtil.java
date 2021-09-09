@@ -556,19 +556,12 @@ public class PostingsPreparationUtil implements Serializable {
 		postingsDAO.saveBatch(returnDatasetList);
 	}
 
-	/**
-	 * @param finReference
-	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
-	 */
-	public List<ReturnDataSet> postReveralsByFinreference(long finID) {
+	public List<ReturnDataSet> postReveralsByFinreference(String reference) {
 		logger.debug(Literal.ENTERING);
 
-		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(finID);
+		List<ReturnDataSet> returnDataSets = getReveralsByFinreference(reference);
 
-		postingsDAO.updateStatusByFinRef(finID, AccountConstants.POSTINGS_REVERSE);
+		postingsDAO.updateStatusByFinRef(reference, AccountConstants.POSTINGS_REVERSE);
 
 		postingsDAO.saveBatch(returnDataSets);
 
@@ -684,11 +677,11 @@ public class PostingsPreparationUtil implements Serializable {
 		return returnDataSets;
 	}
 
-	public List<ReturnDataSet> getReveralsByFinreference(long finID) {
+	public List<ReturnDataSet> getReveralsByFinreference(String reference) {
 		logger.debug(Literal.ENTERING);
 
 		long newLinkedTranID = postingsDAO.getLinkedTransId();
-		List<ReturnDataSet> returnDataSets = postingsDAO.getPostingsByFinRef(finID, false);
+		List<ReturnDataSet> returnDataSets = postingsDAO.getPostingsByFinRef(reference, false);
 
 		engineExecution.getReversePostings(returnDataSets, newLinkedTranID);
 
@@ -717,19 +710,12 @@ public class PostingsPreparationUtil implements Serializable {
 		}
 	}
 
-	/**
-	 * Method for Reversal the Postings Except ACCEVENT_FEEPAY.
-	 * 
-	 * @param finReference
-	 * @return
-	 * 
-	 */
-	public List<ReturnDataSet> postReveralsExceptFeePay(long finID) {
+	public List<ReturnDataSet> postReveralsExceptFeePay(String reference) {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> returnDataSets = new ArrayList<>();
 		Set<Long> linkedTranIds = new LinkedHashSet<>();
-		List<ReturnDataSet> dataSetList = getReveralsByFinreference(finID);
+		List<ReturnDataSet> dataSetList = getReveralsByFinreference(reference);
 
 		for (ReturnDataSet returnDataSet : dataSetList) {
 			if (!AccountingEvent.FEEPAY.equalsIgnoreCase(returnDataSet.getFinEvent())) {

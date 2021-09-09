@@ -282,11 +282,11 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 	// FIXME CH to be changed to Batch Update
 	@Override
-	public void updateStatusByFinRef(long finID, String postStatus) {
-		String sql = "Update Postings Set PostStatus = ? where FinID = ?";
+	public void updateStatusByFinRef(String reference, String postStatus) {
+		String sql = "Update Postings Set PostStatus = ? where FinReference = ?";
 
 		logger.debug(Literal.SQL + sql);
-		this.jdbcOperations.update(sql, postStatus, finID);
+		this.jdbcOperations.update(sql, postStatus, reference);
 	}
 
 	public long getLinkedTransId() {
@@ -351,13 +351,13 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	}
 
 	@Override
-	public List<ReturnDataSet> getPostingsByFinRef(long finID, boolean reqReversals) {
+	public List<ReturnDataSet> getPostingsByFinRef(String reference, boolean reqReversals) {
 		boolean rpayPostingRev = SysParamUtil
 				.isAllowed(SMTParameterConstants.REPAY_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL);
 		boolean disPostingRev = SysParamUtil.isAllowed(SMTParameterConstants.DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL);
 
 		StringBuilder sql = getSelectQuery();
-		sql.append(" Where FinID = ? and PostStatus = ?");
+		sql.append(" Where FinReference = ? and PostStatus = ?");
 
 		if (!reqReversals) {
 			sql.append(" and OldLinkedTranID = ?");
@@ -369,7 +369,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 
 		if (disPostingRev) {
 			sql.append(" and LinkedTranId not in (Select LinkedTranId from FinAdvancePayments Where Status in (?, ?)");
-			sql.append(" and FinID = ? and  FinEvent = ?) ");
+			sql.append(" and FinReference = ? and  FinEvent = ?) ");
 		}
 
 		sql.append(" order by LinkedTranId, TranOrderId ");
@@ -379,7 +379,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		return jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, finID);
+			ps.setString(index++, reference);
 			ps.setString(index++, AccountConstants.POSTINGS_SUCCESS);
 
 			if (!reqReversals) {
@@ -393,7 +393,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			if (disPostingRev) {
 				ps.setString(index++, "REJECTED");
 				ps.setString(index++, "CANCELED");
-				ps.setLong(index++, finID);
+				ps.setString(index++, reference);
 				ps.setString(index++, "DISBINS");
 
 			}

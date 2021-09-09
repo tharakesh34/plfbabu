@@ -46,7 +46,7 @@ public interface PostingsDAO {
 
 	void updateStatusByPostRef(String postRef, String postStatus);
 
-	void updateStatusByFinRef(long finID, String postStatus);
+	void updateStatusByFinRef(String postRef, String postStatus);
 
 	long getLinkedTransId();
 
@@ -65,7 +65,7 @@ public interface PostingsDAO {
 
 	List<ReturnDataSet> getPostingsByVasref(String vasReference, String[] finEvent);
 
-	List<ReturnDataSet> getPostingsByFinRef(long finID, boolean reqReversals);
+	List<ReturnDataSet> getPostingsByFinRef(String reference, boolean reqReversals);
 
 	List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList);
 
