@@ -16,6 +16,7 @@ public class TestPosidexRequestService {
 	private DataSource dataSource;
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		try {
 			ApplicationContext context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");

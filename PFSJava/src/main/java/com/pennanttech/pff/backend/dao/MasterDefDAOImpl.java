@@ -2,6 +2,7 @@ package com.pennanttech.pff.backend.dao;
 
 import java.util.List;
 
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -18,8 +19,8 @@ public class MasterDefDAOImpl extends BasicDao<MasterDef> implements MasterDefDA
 
 		try {
 			return jdbcTemplate.query("select * from master_def", new MapSqlParameterSource(), rowMapper);
-		} catch (Exception e) {
-			throw new AppException("unable to load Master Definations");
+		} catch (DataAccessException e) {
+			throw new AppException("Unable to connect to database.");
 		}
 	}
 }

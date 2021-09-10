@@ -18,6 +18,7 @@ public class TestImps {
 	private DataSource dataSource;
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		ApplicationContext context = null;
 		try {
@@ -35,7 +36,7 @@ public class TestImps {
 					new Date(), new Date());
 			List<String> list = new ArrayList<>();
 			list.add("175");
-			//impsRequest.setDisbursments(list);
+			// impsRequest.setDisbursments(list);
 			impsRequest.process("DISB_EXPORT_IMPS");
 		} catch (Exception e) {
 			e.printStackTrace();

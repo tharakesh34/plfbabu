@@ -16,6 +16,7 @@ public class TestDisbursement {
 	private DisbursementRequest disbursementRequest;
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		ApplicationContext context = null;
 		try {

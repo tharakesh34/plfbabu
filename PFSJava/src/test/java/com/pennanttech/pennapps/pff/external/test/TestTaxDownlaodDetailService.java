@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 public class TestTaxDownlaodDetailService {
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		ApplicationContext context;
 		try {
@@ -20,7 +21,8 @@ public class TestTaxDownlaodDetailService {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			//this.taxDownlaodDetailServiceImpl.sendReqest(new Long(1000), DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"));
+			// this.taxDownlaodDetailServiceImpl.sendReqest(new Long(1000), DateUtil.parse("03-JUL-17", "dd-MMM-yy"),
+			// DateUtil.parse("03-JUL-17", "dd-MMM-yy"), DateUtil.parse("03-JUL-17", "dd-MMM-yy"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -16,6 +16,7 @@ public class TestTrialBalanceEngine {
 	private DataSource dataSource;
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		ApplicationContext context = null;
 		try {

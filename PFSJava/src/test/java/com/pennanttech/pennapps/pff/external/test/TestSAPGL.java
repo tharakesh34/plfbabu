@@ -13,6 +13,7 @@ public class TestSAPGL {
 	DataSource dataSource;
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		ApplicationContext context = null;
 		try {
@@ -26,7 +27,7 @@ public class TestSAPGL {
 	@Test(enabled = false)
 	public void process() {
 		try {
-			//new SAPGLExtract(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process("");
+			// new SAPGLExtract(dataSource, new Long(1000), DateUtil.getSysDate(), DateUtil.getSysDate()).process("");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -25,6 +25,7 @@ public class TestCustomerDedupService {
 	private CustomerDedupService customerDedupService;
 
 	@BeforeTest
+	@Test(enabled = false)
 	public void start() {
 		ApplicationContext context = null;
 		try {

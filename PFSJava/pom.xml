@@ -145,11 +145,6 @@
 			<version>9.1.7.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.infinispan</groupId>
-			<artifactId>infinispan-embedded</artifactId>
-			<version>9.1.7.Final</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-dbcp</artifactId>
 			<version>10.1.0-M1</version>

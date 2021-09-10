@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 import com.pennant.backend.model.Property;
 
 public class PennantStaticListUtilTest {
-	@Test
+	@Test(enabled = false)
 	private void testGetPropertyValue() {
 		List<Property> properties = new ArrayList<>();
 
@@ -20,7 +20,7 @@ public class PennantStaticListUtilTest {
 		Assert.assertEquals(PennantStaticListUtil.getPropertyValue(properties, 2), "Krishna");
 	}
 
-	@Test
+	@Test(enabled = false)
 	private void testGetPropertyValueOfString() {
 		List<Property> properties = new ArrayList<>();
 
