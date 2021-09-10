@@ -54,7 +54,7 @@
 		<module>../PFSWeb</module>
 		<module>../pff-api</module>
 		<!-- <module>../pff-jobs</module> -->
-		<!-- <module>../pff-test-suite</module> -->
+		<module>../pff-test-suite</module>
 	</modules>
 
 	<dependencyManagement>

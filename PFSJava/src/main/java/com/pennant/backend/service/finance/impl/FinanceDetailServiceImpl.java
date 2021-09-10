@@ -536,7 +536,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String offerId = fm.getOfferId();
 		String moduleName = FinanceConstants.MODULE_NAME;
 
-		fm.setPmay(financeMainDAO.isPmayApplicable(finID, "_TView"));
 		setDasAndDmaData(fm);
 
 		FinanceDetail fd = getFinanceOrgDetails(fm, "_TView");
