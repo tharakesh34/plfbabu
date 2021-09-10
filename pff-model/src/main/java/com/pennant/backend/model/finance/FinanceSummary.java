@@ -56,9 +56,13 @@ public class FinanceSummary implements Serializable {
 	private BigDecimal profitSchd = BigDecimal.ZERO;
 	@XmlElement(name = "paidPft")
 	private BigDecimal schdPftPaid = BigDecimal.ZERO;
+	private BigDecimal currentFinanceAmount = BigDecimal.ZERO;
 	@XmlElement(name = "paidPri")
 	private BigDecimal schdPriPaid = BigDecimal.ZERO;
 	private BigDecimal totalDownPayment = BigDecimal.ZERO;
+	private BigDecimal downPaymentToBank = BigDecimal.ZERO;
+	private BigDecimal downPaymentToSpplier = BigDecimal.ZERO;
+	private BigDecimal profitSuspended = BigDecimal.ZERO;
 	@XmlElement
 	private BigDecimal totalCpz = BigDecimal.ZERO;
 
@@ -273,6 +277,14 @@ public class FinanceSummary implements Serializable {
 		this.schdPftPaid = schdPftPaid;
 	}
 
+	public BigDecimal getCurrentFinanceAmount() {
+		return currentFinanceAmount;
+	}
+
+	public void setCurrentFinanceAmount(BigDecimal currentFinanceAmount) {
+		this.currentFinanceAmount = currentFinanceAmount;
+	}
+
 	public BigDecimal getSchdPriPaid() {
 		return schdPriPaid;
 	}
@@ -287,6 +299,30 @@ public class FinanceSummary implements Serializable {
 
 	public void setTotalDownPayment(BigDecimal totalDownPayment) {
 		this.totalDownPayment = totalDownPayment;
+	}
+
+	public BigDecimal getDownPaymentToBank() {
+		return downPaymentToBank;
+	}
+
+	public void setDownPaymentToBank(BigDecimal downPaymentToBank) {
+		this.downPaymentToBank = downPaymentToBank;
+	}
+
+	public BigDecimal getDownPaymentToSpplier() {
+		return downPaymentToSpplier;
+	}
+
+	public void setDownPaymentToSpplier(BigDecimal downPaymentToSpplier) {
+		this.downPaymentToSpplier = downPaymentToSpplier;
+	}
+
+	public BigDecimal getProfitSuspended() {
+		return profitSuspended;
+	}
+
+	public void setProfitSuspended(BigDecimal profitSuspended) {
+		this.profitSuspended = profitSuspended;
 	}
 
 	public BigDecimal getTotalCpz() {

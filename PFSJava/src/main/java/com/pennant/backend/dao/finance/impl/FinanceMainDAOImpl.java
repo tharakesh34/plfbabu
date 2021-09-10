@@ -1191,24 +1191,80 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceSummary getFinanceProfitDetails(long finID) {
+		/* Removed the View FINANCEPROFITENQUIRY_VIEW, and the same is handled here */
 
-		StringBuilder sql = new StringBuilder("select * From FinanceProfitEnquiry_View");
-		sql.append(" where FinID = :FinID");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.FinID, fm.FinReference,fm.FinBranch, fm.FinType, fm.FinCcy");
+		sql.append(", fm.NumberOfTerms, fm.MaturityDate, fm.FinStartDate, fm.LastRepayDate");
+		sql.append(", fpd.CustCIF, fpd.NoOdInst, fpd.NoPaidInst, fm.RepayProfitRate");
+		sql.append(", fpd.ODPrincipal, fpd.ODProfit, fm.DownPayment");
+		sql.append(", fm.DownPayBank, fm.DownPaySupl, fpd.TotalPriBal, fpd.PftAccrueSusp");
+		sql.append(", fpd.TotalPriPaid, fpd.TotalPftPaid, fpd.TotalPriBal, fpd.TotalPftBal");
+		sql.append(", (fpd.TotalPriPaid + fpd.TotalPriBal) TotalPriSchd");
+		sql.append(", (fpd.TotalPftPaid + fpd.TotalPftBal) TotalPftSchd");
+		sql.append(", (fpd.TotalPriPaid + fpd.TotalPriBal + fpd.TotalPftPaid + fpd.TotalPftBal) TotalOriginal");
+		sql.append(", (fpd.TotalPriPaid + fpd.TotalPriBal - fpd.TdSchdPri) OutStandPrincipal");
+		sql.append(", (fpd.TotalPftPaid + fpd.TotalPftBal - fpd.TdSchdPft) OutStandProfit");
+		sql.append(", (fpd.TotalPriPaid + fpd.TotalPftPaid) TotalPaid");
+		sql.append(", (fpd.TotalPriBal + fpd.TotalPftBal) TotalUnPaid");
+		sql.append(", (fpd.TotalPftPaid + fpd.PftAccrued) EarnedProfit");
+		sql.append(", (fpd.TotalPftBal - fpd.PftAccrued) UnEarnedProfit");
+		sql.append(", (fpd.ODPrincipal + fpd.ODProfit) TotalOverDue");
+		sql.append(", (fpd.TotalPriPaid + fpd.TotalPriBal - fpd.TdSchdPri + fpd.TotalPftPaid");
+		sql.append(" + fpd.TotalPftBal - fpd.TdSchdPft) TotalOutStanding");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Join FinPftDetails fpd on fm.FinID =  fpd.FinID");
+		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("FinID", finID);
+		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<FinanceSummary> rowMapper = BeanPropertyRowMapper.newInstance(FinanceSummary.class);
-
-		FinanceSummary summary = new FinanceSummary();
 		try {
-			summary = this.jdbcTemplate.queryForObject(sql.toString(), paramSource, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceSummary fs = new FinanceSummary();
+
+				fs.setFinID(rs.getLong("FinID"));
+				fs.setFinReference(rs.getString("FinReference"));
+				fs.setFinBranch(rs.getString("FinBranch"));
+				fs.setFinType(rs.getString("FinType"));
+				fs.setFinCcy(rs.getString("FinCcy"));
+				fs.setNumberOfTerms(rs.getLong("NumberOfTerms"));
+				fs.setMaturityDate(JdbcUtil.getDate(rs.getDate("NumberOfTerms")));
+				fs.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
+				fs.setFinLastRepayDate(JdbcUtil.getDate(rs.getDate("LastRepayDate")));
+				fs.setCustCIF(rs.getString("CustCIF"));
+				fs.setOverDueInstlments(rs.getLong("NoOdInst"));
+				fs.setPaidInstlments(rs.getLong("NoPaidInst"));
+				fs.setFinRate(rs.getBigDecimal("RepayProfitRate"));
+				fs.setOverDuePrincipal(rs.getBigDecimal("ODPrincipal"));
+				fs.setOverDueProfit(rs.getBigDecimal("ODProfit"));
+				fs.setTotalDownPayment(rs.getBigDecimal("DownPayment"));
+				fs.setDownPaymentToBank(rs.getBigDecimal("DownPayBank"));
+				fs.setDownPaymentToSpplier(rs.getBigDecimal("DownPaySupl"));
+				fs.setUnPaidPrincipal(rs.getBigDecimal("TotalPriBal"));
+				fs.setProfitSuspended(rs.getBigDecimal("PftAccrueSusp"));
+				fs.setSchdPriPaid(rs.getBigDecimal("TotalPriPaid"));
+				fs.setSchdPftPaid(rs.getBigDecimal("TotalPftPaid"));
+				fs.setCurrentFinanceAmount(rs.getBigDecimal("TotalPriBal"));
+				fs.setUnPaidProfit(rs.getBigDecimal("TotalPftBal"));
+				fs.setTotalPriSchd(rs.getBigDecimal("TotalPriSchd"));
+				fs.setTotalPftSchd(rs.getBigDecimal("TotalPftSchd"));
+				fs.setTotalOriginal(rs.getBigDecimal("TotalOriginal"));
+				fs.setOutStandPrincipal(rs.getBigDecimal("OutStandPrincipal"));
+				fs.setOutStandProfit(rs.getBigDecimal("OutStandProfit"));
+				fs.setTotalPaid(rs.getBigDecimal("TotalPaid"));
+				fs.setTotalUnPaid(rs.getBigDecimal("TotalUnPaid"));
+				fs.setEarnedProfit(rs.getBigDecimal("EarnedProfit"));
+				fs.setTotalOverDue(rs.getBigDecimal("TotalOverDue"));
+				fs.setOverDueInstlementPft(rs.getBigDecimal("TotalOverDue"));
+				fs.setTotalOutStanding(rs.getBigDecimal("TotalOutStanding"));
+
+				return fs;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		return summary;
+		return null;
 	}
 
 	public Boolean saveRejectFinanceDetails(FinanceMain fm) {
