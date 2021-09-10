@@ -1,277 +1,177 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  WorkFlowDetailsDAOImpl.java											*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : WorkFlowDetailsDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> implements WorkFlowDetailsDAO {
 	private static Logger logger = LogManager.getLogger(WorkFlowDetailsDAOImpl.class);
 
-	// Adding a new cache property :
-	private LoadingCache<String, WorkFlowDetails> workflowCache = CacheBuilder.newBuilder().maximumSize(100)
-			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<String, WorkFlowDetails>() {
+	private LoadingCache<Long, WorkFlowDetails> workflowCache = CacheBuilder.newBuilder().maximumSize(100)
+			.expireAfterAccess(30, TimeUnit.MINUTES).build(new CacheLoader<Long, WorkFlowDetails>() {
+
 				@Override
-				public WorkFlowDetails load(String parameter) throws Exception {
-					logger.debug("parameter = " + parameter);
+				public WorkFlowDetails load(Long workFlowID) throws Exception {
+					logger.debug("parameter >> {}", workFlowID);
 					// Make the expensive call
-					return loadWorkFlowDetails(Long.parseLong(parameter));
+					return loadWorkFlowDetails(workFlowID);
 				}
+
 			});
 
 	public WorkFlowDetailsDAOImpl() {
 		super();
 	}
 
-	/**
-	 * Fetch the Record Work Flow details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return workFlowDetails
-	 */
-	// Updating the existing methods :
-	public WorkFlowDetails getWorkFlowDetailsByID(long id) {
+	public WorkFlowDetails getWorkFlowDetailsByID(long workFlowID) {
 		try {
-			return workflowCache.get(String.valueOf(id));
-		} catch (ExecutionException e) {
-			logger.error("Exception: Loading data from cache ", e);
+			return workflowCache.get(workFlowID);
+		} catch (Exception e) {
+			//
 		}
-		return loadWorkFlowDetails(id);
+
+		return loadWorkFlowDetails(workFlowID);
 	}
 
-	/**
-	 * This method get the module from method getWorkFlowDetailsByType() and set the new record flag as true and return
-	 * workFlowDetails
-	 * 
-	 * 
-	 * @return workFlowDetails
-	 */
-	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api) {
-		logger.debug(Literal.ENTERING);
+	private WorkFlowDetails loadWorkFlowDetails(long workFlowID) {
+		StringBuilder sql = getSelectSqlQuery();
+		sql.append(" Where WorkFlowId = ?");
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" WorkflowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles");
-		sql.append(", FirstTaskOwner, WorkFlowActive, Version, LastMntBy, LastMntOn");
-		sql.append(" from WorkFlowDetails");
-		sql.append(" where WorkFlowType = ? and WorkFlowActive= ?");
-
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { workFlowType, 1 },
-					new RowMapper<WorkFlowDetails>() {
-						@Override
-						public WorkFlowDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-							WorkFlowDetails wfd = new WorkFlowDetails();
-
-							wfd.setWorkflowId(rs.getLong("WorkflowId"));
-							wfd.setWorkFlowType(rs.getString("WorkFlowType"));
-							wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
-							wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
-							wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
-							wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
-							wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
-							wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
-							wfd.setVersion(rs.getInt("Version"));
-							wfd.setLastMntBy(rs.getLong("LastMntBy"));
-							wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-
-							return wfd;
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql.toString(), new WorklowDetailsRM(), workFlowID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Work Flow is not found or in active in the WorkFlowDetails table for the specified WorkFlowType >> {}",
-					workFlowType);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	public WorkFlowDetails getWorkFlowDetailsByFlowType(String workFlowType, boolean api) {
+		StringBuilder sql = getSelectSqlQuery();
+		sql.append(" Where WorkFlowType = ? and WorkFlowActive= ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new WorklowDetailsRM(), workFlowType, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
 		return null;
 	}
 
 	public List<WorkFlowDetails> getActiveWorkFlowDetails() {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSelectSqlQuery();
+		sql.append(" Where WorkFlowActive = ?");
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" WorkflowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles");
-		sql.append(", FirstTaskOwner, WorkFlowActive, Version, LastMntBy, LastMntOn");
-		sql.append(" from WorkFlowDetails");
-		sql.append(" where WorkFlowActive = ?");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setInt(index++, 1);
-				}
-			}, new RowMapper<WorkFlowDetails>() {
-				@Override
-				public WorkFlowDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					WorkFlowDetails wfd = new WorkFlowDetails();
-
-					wfd.setWorkflowId(rs.getLong("WorkflowId"));
-					wfd.setWorkFlowType(rs.getString("WorkFlowType"));
-					wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
-					wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
-					wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
-					wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
-					wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
-					wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
-					wfd.setVersion(rs.getInt("Version"));
-					wfd.setLastMntBy(rs.getLong("LastMntBy"));
-					wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-
-					return wfd;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setInt(1, 1), new WorklowDetailsRM());
 	}
 
-	/**
-	 * This method insert new Records into WorkFlowDetails .
-	 * 
-	 * save WorkFlowDetails
-	 * 
-	 * @param WorkFlowDetails
-	 *            (workFlowDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return workFlowId
-	 * 
-	 */
-	public long save(WorkFlowDetails workFlowDetails) {
-		logger.debug("Entering + save()");
-		long workFlowId = getNextValue("SeqWorkFlowDetails");
-		workFlowDetails.setId(workFlowId);
-		String insertSql = "insert into WorkFlowDetails (WorkFlowId, WorkFlowType, "
-				+ " WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles,"
-				+ " FirstTaskOwner , WorkFlowActive, Version , LastMntBy, LastMntOn, JsonDesign,roleCode,nextRoleCode,taskId,nextTaskId) "
-				+ " values(:WorkFlowId, :WorkFlowType, :WorkFlowSubType, :WorkFlowDesc, "
-				+ " :WorkFlowXml,:WorkFlowRoles, :FirstTaskOwner, :WorkFlowActive,"
-				+ " :Version , :LastMntBy, :LastMntOn, :JsonDesign, :roleCode, :nextRoleCode, :taskId, :nextTaskId)";
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-		this.jdbcTemplate.update(insertSql, beanParameters);
+	public long save(WorkFlowDetails wfd) {
+		wfd.setId(getNextValue("SeqWorkFlowDetails"));
 
-		return workFlowId;
+		StringBuilder sql = new StringBuilder("Insert into WorkFlowDetails (");
+		sql.append(" WorkFlowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml");
+		sql.append(", WorkFlowRoles, FirstTaskOwner, WorkFlowActive, JsonDesign");
+		sql.append(", Version, LastMntBy, LastMntOn, RoleCode, NextRoleCode, TaskId, NextTaskId)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, wfd.getWorkFlowId());
+			ps.setString(index++, wfd.getWorkFlowType());
+			ps.setString(index++, wfd.getWorkFlowSubType());
+			ps.setString(index++, wfd.getWorkFlowDesc());
+			ps.setString(index++, wfd.getWorkFlowXml());
+			ps.setString(index++, wfd.getWorkFlowRoles());
+			ps.setString(index++, wfd.getFirstTaskOwner());
+			ps.setBoolean(index++, wfd.isWorkFlowActive());
+			ps.setString(index++, wfd.getJsonDesign());
+			ps.setInt(index++, wfd.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(wfd.getLastMntBy()));
+			ps.setTimestamp(index++, wfd.getLastMntOn());
+			ps.setString(index++, wfd.getRoleCode());
+			ps.setString(index++, wfd.getNextRoleCode());
+			ps.setString(index++, wfd.getTaskId());
+			ps.setString(index++, wfd.getNextTaskId());
+		});
+
+		return wfd.getWorkFlowId();
 	}
 
-	public void update(WorkFlowDetails workFlowDetails) {
-		logger.debug("Entering + update()");
-		int recordCount = 0;
-		String updateSql = "update WorkFlowDetails set WorkFlowActive= :WorkFlowActive  ,"
-				+ " version=:version, lastMntBy= :lastMntBy ,lastMntOn= :lastMntOn  " + "where WorkFlowId= :WorkFlowId";
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-		recordCount = this.jdbcTemplate.update(updateSql, beanParameters);
-		logger.info("Number of Records Update :" + recordCount);
-		clearWorkflowCache(workFlowDetails.getWorkFlowId()); // added this line to clear the cache after update.
-	}
+	public void update(WorkFlowDetails wfd) {
+		String sql = "Update WorkFlowDetails set WorkFlowActive= ?, Version = ?, LastMntBy= ?, LastMntOn= ? Where WorkFlowId = ?";
 
-	// Adding new private methods :
-	private WorkFlowDetails loadWorkFlowDetails(long id) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" WorkflowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles");
-		sql.append(", FirstTaskOwner, WorkFlowActive, Version, LastMntBy, LastMntOn, JsonDesign");
-		sql.append(" from WorkFlowDetails");
-		sql.append(" where WorkFlowId = ?");
+		logger.debug(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
-				WorkFlowDetails wfd = new WorkFlowDetails();
+			ps.setBoolean(index++, wfd.isWorkFlowActive());
+			ps.setInt(index++, wfd.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(wfd.getLastMntBy()));
+			ps.setTimestamp(index++, wfd.getLastMntOn());
 
-				wfd.setWorkflowId(rs.getLong("WorkflowId"));
-				wfd.setWorkFlowType(rs.getString("WorkFlowType"));
-				wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
-				wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
-				wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
-				wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
-				wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
-				wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
-				wfd.setVersion(rs.getInt("Version"));
-				wfd.setLastMntBy(rs.getLong("LastMntBy"));
-				wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				wfd.setJsonDesign(rs.getString("JsonDesign"));
+			ps.setLong(index++, wfd.getWorkFlowId());
+		});
 
-				return wfd;
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("WorkFlow Details not found in WorkFlowDetails table for the specified WorkFlowId >> {}", id);
-		}
-
-		return null;
+		clearWorkflowCache(wfd.getWorkFlowId());
 	}
 
 	public void clearWorkflowCache(long id) {
@@ -282,66 +182,74 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 		}
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public long getWorkFlowDetailsCountByID(long WorkFlowId) {
-		long rowCount = 0;
-		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
-		workFlowDetails.setId(WorkFlowId);
-		String selectListSql = "select count(WorkFlowId) from WorkFlowDetails where WorkFlowId =:WorkFlowId AND WorkFlowActive=1";
-		logger.debug("selectListSql: " + selectListSql);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
+	public long getWorkFlowDetailsCountByID(long workFlowId) {
+		String sql = "Select count(WorkFlowId) From WorkFlowDetails Where WorkFlowId = ? and WorkFlowActive = ?";
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			rowCount = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Long.class);
+			return this.jdbcOperations.queryForObject(sql, Long.class, workFlowId, 1);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			workFlowDetails = null;
-			rowCount = 0;
+			//
 		}
-		return rowCount;
+
+		return 0;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
-	public int getWorkFlowDetailsVersionByID(long WorkFlowId) {
-		int version = 0;
-		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
-		workFlowDetails.setId(WorkFlowId);
-		String selectListSql = "select version from WorkFlowDetails where WorkFlowId =:WorkFlowId AND WorkFlowActive=1";
-		logger.debug("selectListSql: " + selectListSql);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
+	public int getWorkFlowDetailsVersionByID(long workFlowId) {
+		String sql = "Select Version From WorkFlowDetails Where WorkFlowId = ? and WorkFlowActive = ?";
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			version = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Integer.class);
+			return this.jdbcOperations.queryForObject(sql, Integer.class, workFlowId, 1);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			workFlowDetails = null;
-			version = 0;
+			//
 		}
-		System.out.println("Returning version = " + version);
-		return version;
+
+		return 0;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean isworkFlowTypeExist(String workFlowType) {
-		logger.debug("Entering + isworkFlowTypeExist()");
+		String sql = "Select count(WorkFlowId) From WorkFlowDetails Where WorkFlowType = ?";
 
-		WorkFlowDetails workFlowDetails = new WorkFlowDetails();
-		workFlowDetails.setWorkFlowType(workFlowType);
+		logger.debug(Literal.SQL + sql);
 
-		String selectListSql = "select count(*) from WorkFlowDetails  where WorkFlowType =:WorkFlowType";
-		logger.debug("selectListSql: " + selectListSql);
+		return this.jdbcOperations.queryForObject(sql, Long.class, workFlowType) > 0;
+	}
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(workFlowDetails);
-		boolean result = false;
-		try {
-			int rowCount = this.jdbcTemplate.queryForObject(selectListSql, beanParameters, Integer.class);
-			if (rowCount > 0) {
-				result = true;
-			}
-		} catch (Exception e) {
-			logger.warn("Exception: ", e);
+	private StringBuilder getSelectSqlQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" WorkflowId, WorkFlowType, WorkFlowSubType, WorkFlowDesc, WorkFlowXml, WorkFlowRoles");
+		sql.append(", FirstTaskOwner, WorkFlowActive, Version, LastMntBy, LastMntOn, JsonDesign");
+		sql.append(" From WorkFlowDetails");
+		return sql;
+	}
+
+	private class WorklowDetailsRM implements RowMapper<WorkFlowDetails> {
+
+		@Override
+		public WorkFlowDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
+			WorkFlowDetails wfd = new WorkFlowDetails();
+
+			wfd.setWorkflowId(rs.getLong("WorkflowId"));
+			wfd.setWorkFlowType(rs.getString("WorkFlowType"));
+			wfd.setWorkFlowSubType(rs.getString("WorkFlowSubType"));
+			wfd.setWorkFlowDesc(rs.getString("WorkFlowDesc"));
+			wfd.setWorkFlowXml(rs.getString("WorkFlowXml"));
+			wfd.setWorkFlowRoles(rs.getString("WorkFlowRoles"));
+			wfd.setFirstTaskOwner(rs.getString("FirstTaskOwner"));
+			wfd.setWorkFlowActive(rs.getBoolean("WorkFlowActive"));
+			wfd.setVersion(rs.getInt("Version"));
+			wfd.setLastMntBy(rs.getLong("LastMntBy"));
+			wfd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			wfd.setJsonDesign(rs.getString("JsonDesign"));
+
+			return wfd;
 		}
-		return result;
+
 	}
 }

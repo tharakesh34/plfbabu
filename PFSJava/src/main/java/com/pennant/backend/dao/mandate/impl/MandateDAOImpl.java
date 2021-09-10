@@ -1,53 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MandateDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MandateDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified Date
+ * : 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.mandate.impl;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,11 +34,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.mandate.MandateDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -68,6 +43,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -82,96 +58,55 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new Mandate
-	 * 
-	 * @return Mandate
-	 */
-
 	@Override
 	public Mandate getMandate() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("Mandate");
 		Mandate mandate = new Mandate();
+
 		if (workFlowDetails != null) {
 			mandate.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return mandate;
 	}
-
-	/**
-	 * This method get the module from method getMandate() and set the new record flag as true and return Mandate()
-	 * 
-	 * @return Mandate
-	 */
 
 	@Override
 	public Mandate getNewMandate() {
-		logger.debug("Entering");
 		Mandate mandate = getMandate();
 		mandate.setNewRecord(true);
-		logger.debug("Leaving");
+
 		return mandate;
 	}
 
-	/**
-	 * Fetch the Record Mandate details by key field
-	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return Mandate
-	 */
 	@Override
 	public Mandate getMandateById(final long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where MandateID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		MandateRowMapper rowMapper = new MandateRowMapper(type);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
-	/**
-	 * Fetch the Record Mandate details by key field
-	 * 
-	 * @param id
-	 *            (int)
-	 * @param status
-	 *            (String) ""/_Temp/_View
-	 * @return Mandate
-	 */
 	@Override
 	public Mandate getMandateByStatus(final long id, String status, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where MandateID = ?  and Status = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		MandateRowMapper rowMapper = new MandateRowMapper(type);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, status }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), id, status);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -180,631 +115,519 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where OrgReference = ?  and Status = ?");
 
-		logger.trace(Literal.SQL + sql);
-
-		MandateRowMapper rowMapper = new MandateRowMapper(type);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { orgReference, status }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new MandateRowMapper(type), orgReference, status);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Mandate not found in Mandates{} table/view for the specified OrgReference >> {} and Status >> {}",
-					type, orgReference, status);
+			//
 		}
 
 		return null;
 	}
 
-	/**
-	 * This method Deletes the Record from the Mandates or Mandates_Temp. if Record not deleted then throws
-	 * DataAccessException with error 41003. delete Mandate by key MandateID
-	 * 
-	 * @param Mandate
-	 *            (mandate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
 	public void delete(Mandate mandate, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+		StringBuilder sql = new StringBuilder("Delete From Mandates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where MandateID = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From Mandates");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where MandateID =:MandateID");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, mandate.getMandateID()));
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method insert new Records into Mandates or Mandates_Temp. it fetches the available Sequence form SeqMandates
-	 * by using getNextidviewDAO().getNextId() method.
-	 * 
-	 * save Mandate
-	 * 
-	 * @param Mandate
-	 *            (mandate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public long save(Mandate mandate, String type) {
-		logger.debug("Entering");
-		if (mandate.getId() == Long.MIN_VALUE) {
-			mandate.setId(getNextValue("SeqMandates"));
-			logger.debug("get NextID:" + mandate.getId());
+	public long save(Mandate mdt, String type) {
+		if (mdt.getId() == Long.MIN_VALUE) {
+			mdt.setId(getNextValue("SeqMandates"));
 		}
 
 		StringBuilder sql = new StringBuilder("Insert Into Mandates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (MandateID, CustID, MandateRef, MandateType, BankBranchID, AccNumber, AccHolderName,");
-		sql.append(" JointAccHolderName, AccType, OpenMandate, StartDate, ExpiryDate, MaxLimit,");
-		sql.append(" Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status, ApprovalID,");
-		sql.append(
-				" InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef, Version, LastMntBy,");
-		sql.append(" LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,  RecordType,");
-		sql.append(
-				" WorkflowId,OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId, DefaultMandate");
-		sql.append(", EMandateSource, EMandateReferenceNo)");
-		sql.append(" Values(:MandateID, :CustID, :MandateRef, :MandateType, :BankBranchID, :AccNumber, ");
-		sql.append(" :AccHolderName, :JointAccHolderName, :AccType, :OpenMandate, :StartDate, :ExpiryDate,");
-		sql.append(" :MaxLimit, :Periodicity, :PhoneCountryCode, :PhoneAreaCode, :PhoneNumber, :Status,");
-		sql.append(
-				" :ApprovalID, :InputDate, :Active, :Reason, :MandateCcy, :DocumentName, :DocumentRef, :ExternalRef, :Version,:LastMntBy, :LastMntOn,");
-		sql.append(" :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType,");
-		sql.append(
-				" :WorkflowId, :OrgReference, :BarCodeNumber, :SwapIsActive, :PrimaryMandateId, :EntityCode, :PartnerBankId, :DefaultMandate");
-		sql.append(", :EMandateSource, :EMandateReferenceNo)");
+		sql.append(" (MandateID, CustID, MandateRef, MandateType, BankBranchID, AccNumber, AccHolderName");
+		sql.append(", JointAccHolderName, AccType, OpenMandate, StartDate, ExpiryDate, MaxLimit");
+		sql.append(", Periodicity, PhoneCountryCode, PhoneAreaCode, PhoneNumber, Status, ApprovalID");
+		sql.append(", InputDate, Active, Reason, MandateCcy, DocumentName, DocumentRef, ExternalRef");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId,  RecordType, WorkflowId");
+		sql.append(", OrgReference, BarCodeNumber, SwapIsActive, PrimaryMandateId, EntityCode, PartnerBankId");
+		sql.append(", DefaultMandate, EMandateSource, EMandateReferenceNo)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return mandate.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, mdt.getMandateID());
+			ps.setLong(index++, mdt.getCustID());
+			ps.setString(index++, mdt.getMandateRef());
+			ps.setString(index++, mdt.getMandateType());
+			ps.setObject(index++, JdbcUtil.getLong(mdt.getBankBranchID()));
+			ps.setString(index++, mdt.getAccNumber());
+			ps.setString(index++, mdt.getAccHolderName());
+			ps.setString(index++, mdt.getJointAccHolderName());
+			ps.setString(index++, mdt.getAccType());
+			ps.setBoolean(index++, mdt.isOpenMandate());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getExpiryDate()));
+			ps.setBigDecimal(index++, mdt.getMaxLimit());
+			ps.setString(index++, mdt.getPeriodicity());
+			ps.setString(index++, mdt.getPhoneCountryCode());
+			ps.setString(index++, mdt.getPhoneAreaCode());
+			ps.setString(index++, mdt.getPhoneNumber());
+			ps.setString(index++, mdt.getStatus());
+			ps.setString(index++, mdt.getApprovalID());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getInputDate()));
+			ps.setBoolean(index++, mdt.isActive());
+			ps.setString(index++, mdt.getReason());
+			ps.setString(index++, mdt.getMandateCcy());
+			ps.setString(index++, mdt.getDocumentName());
+			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
+			ps.setString(index++, mdt.getExternalRef());
+			ps.setInt(index++, mdt.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(mdt.getLastMntBy()));
+			ps.setTimestamp(index++, mdt.getLastMntOn());
+			ps.setString(index++, mdt.getRecordStatus());
+			ps.setString(index++, mdt.getRoleCode());
+			ps.setString(index++, mdt.getNextRoleCode());
+			ps.setString(index++, mdt.getTaskId());
+			ps.setString(index++, mdt.getNextTaskId());
+			ps.setString(index++, mdt.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(mdt.getWorkflowId()));
+			ps.setString(index++, mdt.getOrgReference());
+			ps.setString(index++, mdt.getBarCodeNumber());
+			ps.setBoolean(index++, mdt.isSwapIsActive());
+			ps.setLong(index++, mdt.getPrimaryMandateId());
+			ps.setString(index++, mdt.getEntityCode());
+			ps.setLong(index++, mdt.getPartnerBankId());
+			ps.setBoolean(index++, mdt.isDefaultMandate());
+			ps.setString(index++, mdt.geteMandateSource());
+			ps.setString(index++, mdt.geteMandateReferenceNo());
+		});
+
+		return mdt.getId();
 	}
 
-	/**
-	 * This method updates the Record Mandates or Mandates_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update Mandate by key MandateID and Version
-	 * 
-	 * @param Mandate
-	 *            (mandate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void update(Mandate mandate, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
+	public void update(Mandate mdt, String type) {
 		StringBuilder sql = new StringBuilder("Update Mandates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set CustID = :CustID, MandateRef = :MandateRef");
-		sql.append(", MandateType = :MandateType, BankBranchID = :BankBranchID, AccNumber = :AccNumber");
-		sql.append(", AccHolderName = :AccHolderName, JointAccHolderName = :JointAccHolderName");
-		sql.append(", AccType = :AccType, OpenMandate = :OpenMandate, StartDate = :StartDate");
-		sql.append(", ExpiryDate = :ExpiryDate , MaxLimit = :MaxLimit, Periodicity = :Periodicity");
-		sql.append(", PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode");
-		sql.append(", PhoneNumber = :PhoneNumber, Status = :Status, ApprovalID = :ApprovalID");
-		sql.append(", Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy");
-		sql.append(", DocumentName = :DocumentName, DocumentRef = :DocumentRef, ExternalRef = :ExternalRef");
-		sql.append(", OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId");
-		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(", InputDate = :InputDate, BarCodeNumber = :BarCodeNumber");
-		sql.append(", SwapIsActive = :SwapIsActive, PrimaryMandateId = :PrimaryMandateId");
-		sql.append(", EntityCode = :EntityCode , PartnerBankId =:PartnerBankId");
-		sql.append(", DefaultMandate = :DefaultMandate, EMandateSource = :EMandateSource");
-		sql.append(", EMandateReferenceNo = :EMandateReferenceNo");
-		sql.append(" Where MandateID =:MandateID");
+		sql.append(" Set CustID = ?, MandateRef = ?, MandateType = ?, BankBranchID = ?, AccNumber = ?");
+		sql.append(", AccHolderName = ?, JointAccHolderName = ?, AccType = ?, OpenMandate = ?");
+		sql.append(", StartDate = ?, ExpiryDate = ?, MaxLimit = ?, Periodicity = ?, OrgReference = ?");
+		sql.append(", PhoneCountryCode = ?, PhoneAreaCode = ?, PhoneNumber = ?, Status = ?, ApprovalID = ?");
+		sql.append(", Active = ?, Reason = ?, MandateCcy = ?, DocumentName = ?, DocumentRef = ?, ExternalRef = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", InputDate = ?, BarCodeNumber = ?, SwapIsActive = ?, PrimaryMandateId = ?, EntityCode = ?");
+		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
+		sql.append(" Where MandateID = ?");
 		if (!type.endsWith("_Temp")) {
-			sql.append("  AND Version= :Version-1");
+			sql.append(" and Version= ?");
 		}
 
-		logger.debug("updateSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, mdt.getCustID());
+			ps.setString(index++, mdt.getMandateRef());
+			ps.setString(index++, mdt.getMandateType());
+			ps.setObject(index++, JdbcUtil.getLong(mdt.getBankBranchID()));
+			ps.setString(index++, mdt.getAccNumber());
+			ps.setString(index++, mdt.getAccHolderName());
+			ps.setString(index++, mdt.getJointAccHolderName());
+			ps.setString(index++, mdt.getAccType());
+			ps.setBoolean(index++, mdt.isOpenMandate());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getExpiryDate()));
+			ps.setBigDecimal(index++, mdt.getMaxLimit());
+			ps.setString(index++, mdt.getPeriodicity());
+			ps.setString(index++, mdt.getOrgReference());
+			ps.setString(index++, mdt.getPhoneCountryCode());
+			ps.setString(index++, mdt.getPhoneAreaCode());
+			ps.setString(index++, mdt.getPhoneNumber());
+			ps.setString(index++, mdt.getStatus());
+			ps.setString(index++, mdt.getApprovalID());
+			ps.setBoolean(index++, mdt.isActive());
+			ps.setString(index++, mdt.getReason());
+			ps.setString(index++, mdt.getMandateCcy());
+			ps.setString(index++, mdt.getDocumentName());
+			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
+			ps.setString(index++, mdt.getExternalRef());
+			ps.setInt(index++, mdt.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(mdt.getLastMntBy()));
+			ps.setTimestamp(index++, mdt.getLastMntOn());
+			ps.setString(index++, mdt.getRecordStatus());
+			ps.setString(index++, mdt.getRoleCode());
+			ps.setString(index++, mdt.getNextRoleCode());
+			ps.setString(index++, mdt.getTaskId());
+			ps.setString(index++, mdt.getNextTaskId());
+			ps.setString(index++, mdt.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(mdt.getWorkflowId()));
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getInputDate()));
+			ps.setString(index++, mdt.getBarCodeNumber());
+			ps.setBoolean(index++, mdt.isSwapIsActive());
+			ps.setLong(index++, mdt.getPrimaryMandateId());
+			ps.setString(index++, mdt.getEntityCode());
+			ps.setLong(index++, mdt.getPartnerBankId());
+			ps.setBoolean(index++, mdt.isDefaultMandate());
+			ps.setString(index++, mdt.geteMandateSource());
+			ps.setString(index++, mdt.geteMandateReferenceNo());
+
+			ps.setLong(index++, mdt.getMandateID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, mdt.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method updates the Record Mandates or Mandates_Temp. if Record not updated then throws DataAccessException
-	 * with error 41004. update Mandate by key MandateID and Version
-	 * 
-	 * @param Mandate
-	 *            (mandate)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
-
 	@Override
-	public void updateFinMandate(Mandate mandate, String type) {
-		logger.debug("Entering");
-
+	public void updateFinMandate(Mandate mdt, String type) {
 		StringBuilder sql = new StringBuilder("Update Mandates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set CustID = :CustID, MandateRef = :MandateRef");
-		sql.append(", MandateType = :MandateType, BankBranchID = :BankBranchID, AccNumber = :AccNumber");
-		sql.append(", AccHolderName = :AccHolderName, JointAccHolderName = :JointAccHolderName");
-		sql.append(", AccType = :AccType, OpenMandate = :OpenMandate, StartDate = :StartDate");
-		sql.append(", ExpiryDate = :ExpiryDate , MaxLimit = :MaxLimit, Periodicity = :Periodicity");
-		sql.append(", PhoneCountryCode = :PhoneCountryCode, PhoneAreaCode = :PhoneAreaCode");
-		sql.append(", PhoneNumber = :PhoneNumber, ApprovalID = :ApprovalID");
-		sql.append(", Active = :Active, Reason = :Reason, MandateCcy =:MandateCcy");
-		sql.append(", DocumentName = :DocumentName, DocumentRef = :DocumentRef, ExternalRef = :ExternalRef");
-		sql.append(", OrgReference = :OrgReference, Version = :Version , LastMntBy = :LastMntBy");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus= :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId,NextTaskId = :NextTaskId");
-		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId, BarCodeNumber = :BarCodeNumber");
-		sql.append(", SwapIsActive = :SwapIsActive, EntityCode = :EntityCode");
-		sql.append(", PartnerBankId = :PartnerBankId, DefaultMandate = :DefaultMandate");
-		sql.append(", EMandateSource = :EMandateSource, EMandateReferenceNo = :EMandateReferenceNo");
-		sql.append("  Where MandateID = :MandateID");
-		sql.append("  AND Status = :Status");
+		sql.append(" Set CustID = ?, MandateRef = ?, MandateType = ?, BankBranchID = ?, AccNumber = ?");
+		sql.append(", AccHolderName = ?, JointAccHolderName = ?, AccType = ?, OpenMandate = ?");
+		sql.append(", StartDate = ?, ExpiryDate = ?, MaxLimit = ?, Periodicity = ?, OrgReference = ?");
+		sql.append(", PhoneCountryCode = ?, PhoneAreaCode = ?, PhoneNumber = ?, ApprovalID = ?");
+		sql.append(", Active = ?, Reason = ?, MandateCcy = ?, DocumentName = ?, DocumentRef = ?, ExternalRef = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ? ,NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", BarCodeNumber = ?, SwapIsActive = ?, EntityCode = ?");
+		sql.append(", PartnerBankId = ?, DefaultMandate = ?, EMandateSource = ?, EMandateReferenceNo = ?");
+		sql.append("  Where MandateID = ? and Status = ?");
 
-		logger.debug("updateSql: " + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, mdt.getCustID());
+			ps.setString(index++, mdt.getMandateRef());
+			ps.setString(index++, mdt.getMandateType());
+			ps.setObject(index++, JdbcUtil.getLong(mdt.getBankBranchID()));
+			ps.setString(index++, mdt.getAccNumber());
+			ps.setString(index++, mdt.getAccHolderName());
+			ps.setString(index++, mdt.getJointAccHolderName());
+			ps.setString(index++, mdt.getAccType());
+			ps.setBoolean(index++, mdt.isOpenMandate());
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getStartDate()));
+			ps.setDate(index++, JdbcUtil.getDate(mdt.getExpiryDate()));
+			ps.setBigDecimal(index++, mdt.getMaxLimit());
+			ps.setString(index++, mdt.getPeriodicity());
+			ps.setString(index++, mdt.getOrgReference());
+			ps.setString(index++, mdt.getPhoneCountryCode());
+			ps.setString(index++, mdt.getPhoneAreaCode());
+			ps.setString(index++, mdt.getPhoneNumber());
+			ps.setString(index++, mdt.getApprovalID());
+			ps.setBoolean(index++, mdt.isActive());
+			ps.setString(index++, mdt.getReason());
+			ps.setString(index++, mdt.getMandateCcy());
+			ps.setString(index++, mdt.getDocumentName());
+			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
+			ps.setString(index++, mdt.getExternalRef());
+			ps.setInt(index++, mdt.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(mdt.getLastMntBy()));
+			ps.setTimestamp(index++, mdt.getLastMntOn());
+			ps.setString(index++, mdt.getRecordStatus());
+			ps.setString(index++, mdt.getRoleCode());
+			ps.setString(index++, mdt.getNextRoleCode());
+			ps.setString(index++, mdt.getTaskId());
+			ps.setString(index++, mdt.getNextTaskId());
+			ps.setString(index++, mdt.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(mdt.getWorkflowId()));
+			ps.setString(index++, mdt.getBarCodeNumber());
+			ps.setBoolean(index++, mdt.isSwapIsActive());
+			ps.setString(index++, mdt.getEntityCode());
+			ps.setLong(index++, mdt.getPartnerBankId());
+			ps.setBoolean(index++, mdt.isDefaultMandate());
+			ps.setString(index++, mdt.geteMandateSource());
+			ps.setString(index++, mdt.geteMandateReferenceNo());
+
+			ps.setLong(index++, mdt.getMandateID());
+			ps.setString(index++, mdt.getStatus());
+		});
 	}
 
 	@Override
 	public void updateStatus(long mandateID, String mandateStatusAwaitcon, String mandateRef, String approvalId,
 			String type) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("MandateID", mandateID);
-		source.addValue("Status", mandateStatusAwaitcon);
-		source.addValue("MandateRef", mandateRef);
-		source.addValue("ApprovalID", approvalId);
+		StringBuilder sql = new StringBuilder("Update Mandates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set  Status = ?, MandateRef = ?, ApprovalID = ?");
+		sql.append(" Where MandateID = ?");
 
-		StringBuilder updateSql = new StringBuilder("Update Mandates");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set  Status = :Status");
-		updateSql.append(", MandateRef = :MandateRef");
-		updateSql.append(", ApprovalID = :ApprovalID");
-		updateSql.append(" Where MandateID = :MandateID");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
+			ps.setString(index++, mandateStatusAwaitcon);
+			ps.setString(index++, mandateRef);
+			ps.setString(index++, approvalId);
+			ps.setLong(index++, mandateID);
+		});
 	}
 
 	@Override
 	public void updateActive(long mandateID, String status, boolean active) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("MandateID", mandateID);
-		source.addValue("Active", active);
-		source.addValue("Status", status);
+		String sql = "Update Mandates Set Active = ?, Status= ? Where MandateID = ?";
 
-		StringBuilder updateSql = new StringBuilder("Update Mandates");
-		updateSql.append(" Set  Active = :Active, Status= :Status");
-		updateSql.append(" Where MandateID = :MandateID");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("updateSql: " + updateSql.toString());
-		this.jdbcTemplate.update(updateSql.toString(), source);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
+			ps.setBoolean(index++, active);
+			ps.setString(index++, status);
+			ps.setLong(index++, mandateID);
+		});
 	}
 
-	/**
-	 * Fetch the Customer Finance Details
-	 * 
-	 * @param curBD
-	 * @param nextBD
-	 * @return
-	 */
 	@Override
 	public List<FinanceEnquiry> getMandateFinanceDetailById(long mandateID) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinType, FinStatus, FinStartDate, FinAmount, DownPayment, FeeChargeAmt");
 		sql.append(", NumberOfTerms, LovDescFinTypeName, MaxInstAmount, FinRepaymentAmount");
 		sql.append(", FinCurrAssetValue");
-		sql.append(" from MandateEnquiry_view");
+		sql.append(" From MandateEnquiry_view");
 		sql.append(" Where MandateID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, mandateID);
-				}
-			}, new RowMapper<FinanceEnquiry>() {
-				@Override
-				public FinanceEnquiry mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinanceEnquiry mndts = new FinanceEnquiry();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, mandateID);
+		}, (rs, rowNum) -> {
+			FinanceEnquiry mndts = new FinanceEnquiry();
 
-					mndts.setFinReference(rs.getString("FinReference"));
-					mndts.setFinType(rs.getString("FinType"));
-					mndts.setFinStatus(rs.getString("FinStatus"));
-					mndts.setFinStartDate(rs.getTimestamp("FinStartDate"));
-					mndts.setFinAmount(rs.getBigDecimal("FinAmount"));
-					mndts.setDownPayment(rs.getBigDecimal("DownPayment"));
-					mndts.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
-					mndts.setNumberOfTerms(rs.getInt("NumberOfTerms"));
-					mndts.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
-					mndts.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
-					mndts.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
-					mndts.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
+			mndts.setFinReference(rs.getString("FinReference"));
+			mndts.setFinType(rs.getString("FinType"));
+			mndts.setFinStatus(rs.getString("FinStatus"));
+			mndts.setFinStartDate(rs.getTimestamp("FinStartDate"));
+			mndts.setFinAmount(rs.getBigDecimal("FinAmount"));
+			mndts.setDownPayment(rs.getBigDecimal("DownPayment"));
+			mndts.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
+			mndts.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			mndts.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
+			mndts.setMaxInstAmount(rs.getBigDecimal("MaxInstAmount"));
+			mndts.setFinRepaymentAmount(rs.getBigDecimal("FinRepaymentAmount"));
+			mndts.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 
-					return mndts;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
-
+			return mndts;
+		});
 	}
 
-	/**
-	 * Fetch the Mandate Details
-	 * 
-	 * @param CustID
-	 * 
-	 * @return
-	 */
 	@Override
 	public List<Mandate> getApprovedMandatesByCustomerId(long custID, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where CustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		MandateRowMapper rowMapper = new MandateRowMapper(type);
-
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, custID);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, custID), new MandateRowMapper(type));
 	}
 
 	@Override
 	public void updateOrgReferecne(long mandateID, String orgReference, String type) {
-		logger.debug("Entering");
-		Mandate mandate = new Mandate();
-		mandate.setMandateID(mandateID);
-		mandate.setOrgReference(orgReference);
-		StringBuilder updateSql = new StringBuilder("Update Mandates");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set OrgReference = :OrgReference");
-		updateSql.append(" Where MandateID =:MandateID and OrgReference is null");
-		logger.debug("updateSql: " + updateSql.toString());
+		StringBuilder sql = new StringBuilder("Update Mandates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set OrgReference = ?");
+		sql.append(" Where MandateID = ? and OrgReference is null");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
+			ps.setString(index++, orgReference);
+			ps.setLong(index++, mandateID);
+		});
 	}
 
 	@Override
 	public int getBranch(long bankBranchID, String type) {
-		Mandate mandate = new Mandate();
-		mandate.setBankBranchID(bankBranchID);
+		StringBuilder sql = new StringBuilder("Select Count(BankBranchID)");
+		sql.append(" From Mandates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BankBranchID = ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From Mandates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BankBranchID =:BankBranchID");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, bankBranchID);
 	}
 
 	@Override
 	public List<Mandate> getMnadateByCustID(long custID, long mandateID) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select MandateType From Mandates Where CustID = ? and OpenMandate = ? and Active = ? and MandateID != ?";
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" MandateType");
-		sql.append(" from Mandates");
-		sql.append(" Where CustID = ? and OpenMandate = ? and Active = ? and MandateID != ?");
+		logger.debug(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
+		return this.jdbcOperations.query(sql, ps -> {
+			int index = 1;
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, custID);
-					ps.setBoolean(index++, true);
-					ps.setBoolean(index++, true);
-					ps.setLong(index++, mandateID);
-				}
-			}, new RowMapper<Mandate>() {
-				@Override
-				public Mandate mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Mandate mndts = new Mandate();
+			ps.setLong(index++, custID);
+			ps.setBoolean(index++, true);
+			ps.setBoolean(index++, true);
+			ps.setLong(index++, mandateID);
+		}, (rs, rowNum) -> {
+			Mandate mndts = new Mandate();
 
-					mndts.setMandateType(rs.getString("MandateType"));
+			mndts.setMandateType(rs.getString("MandateType"));
 
-					return mndts;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return mndts;
+		});
 	}
 
 	@Override
 	public int getSecondaryMandateCount(long mandateID) {
+		String sql = "Select Count(PrimaryMandateId) From Mandates Where PrimaryMandateId = ? and Active = ?";
 
-		logger.debug("Entering");
+		logger.debug(Literal.SQL + sql);
 
-		Mandate mandate = new Mandate();
-		mandate.setPrimaryMandateId(mandateID);
-		mandate.setActive(true);
-
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates");
-		selectSql.append(" Where PrimaryMandateId =:PrimaryMandateId AND Active =:Active");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, mandateID, 1);
 
 	}
 
 	@Override
 	public void updateStatusAfterRegistration(long mandateID, String statusInprocess) {
-		logger.info(Literal.ENTERING);
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
+		String sql = "Update Mandates Set Status = ? Where MandateID = ?";
 
-		StringBuilder updateSql = new StringBuilder("UPDATE MANDATES SET STATUS = :STATUS");
-		updateSql.append(" WHERE MANDATEID = :MANDATEID");
-		paramMap.addValue("MANDATEID", mandateID);
-		paramMap.addValue("STATUS", statusInprocess);
+		logger.debug(Literal.SQL + sql);
 
-		logger.info("updateSql: " + updateSql.toString());
-		jdbcTemplate.update(updateSql.toString(), paramMap);
-		logger.info(Literal.LEAVING);
+		jdbcOperations.update(sql, ps -> {
+			int index = 1;
 
+			ps.setString(index++, statusInprocess);
+			ps.setLong(index++, mandateID);
+		});
 	}
 
 	@Override
 	public boolean checkMandateStatus(long mandateID) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
+		String sql = "Select Count(Mandate_ID) from Mandate_Registration Where Mandate_ID = ? and Machine_Flag = ? and Active_Flag = ?";
 
-		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from MANDATE_REGISTRATION ");
-		sql.append("  WHERE MANDATE_ID = :MANDATEID AND MACHINE_FLAG = :MACHINE_FLAG AND ACTIVE_FLAG = :ACTIVE_FLAG");
-		logger.debug("Sql: " + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MANDATEID", mandateID);
-		paramMap.addValue("MACHINE_FLAG", "Y");
-		paramMap.addValue("ACTIVE_FLAG", 1);
 		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
-				return true;
-			}
+			return this.jdbcOperations.queryForObject(sql, Integer.class, mandateID, "Y", 1) > 0;
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
-		return false;
 	}
 
 	@Override
-	public boolean checkMandates(String orgReference, long mandateId) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
+	public boolean checkMandates(String orgRef, long mandateId) {
+		String sql = "Select Count(MandateID) from Mandates Where OrgReference = ? and Status in (?, ?, ?) and Active = ?";
 
-		sql = new StringBuilder();
-		sql.append(" SELECT COUNT(*) FROM  MANDATES ");
-		sql.append("  where ORGREFERENCE = :ORGREFERENCE  AND STATUS IN (:STATUS) AND ACTIVE = :ACTIVE");
-		logger.debug("Sql: " + sql.toString());
-
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("ORGREFERENCE", orgReference);
-		paramMap.addValue("STATUS", Arrays.asList("AC", "INPROCESS", "NEW"));
-		paramMap.addValue("MANDATEID", mandateId);
-		paramMap.addValue("ACTIVE", 1);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
-				return true;
-			}
+			return this.jdbcOperations.queryForObject(sql, Integer.class, orgRef, "AC", "INPROCESS", "NEW", 1) > 0;
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
-		return false;
 	}
 
 	@Override
 	public int getBarCodeCount(String barCode, long mandateID, String type) {
-		Mandate mandate = new Mandate();
-		mandate.setMandateID(mandateID);
-		mandate.setBarCodeNumber(barCode);
+		StringBuilder sql = new StringBuilder("Select Count(MandateID)");
+		sql.append(" From Mandates");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BarCodeNumber = ? And MandateID != ?");
 
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*)");
-		selectSql.append(" From Mandates");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where BarCodeNumber = :BarCodeNumber And MandateID !=:MandateID");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, barCode, mandateID);
 	}
 
+	// FIXME :: need to move into FINSCHEDULEDETAILS class
 	@Override
 	public BigDecimal getMaxRepayAmount(String finReference, String type) {
+		StringBuilder sql = new StringBuilder("Select max(RepayAmount) From FinScheduleDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FinReference = ?");
+		sql.append(" and InstNumber <> ? and PartialPaidAmt = ?");
 
-		MapSqlParameterSource source = new MapSqlParameterSource();
+		logger.debug(Literal.SQL + sql.toString());
 
-		StringBuilder selectSql = new StringBuilder("SELECT MAX(REPAYAMOUNT)  FROM  FINSCHEDULEDETAILS");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" WHERE FINREFERENCE = :FINREFERENCE");
-		selectSql.append(" AND INSTNUMBER <> 0 AND PARTIALPAIDAMT = 0");
-		source.addValue("FINREFERENCE", finReference);
-
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), source, BigDecimal.class);
+		return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference, 0, 0);
 
 	}
 
 	@Override
 	public boolean entityExistMandate(String entityCode, String type) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
-
-		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from Mandates");
+		StringBuilder sql = new StringBuilder("Select Count(MandateID)");
+		sql.append(" From Mandates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("  WHERE EntityCode = :EntityCode");
-		logger.debug("Sql: " + sql.toString());
+		sql.append(" Where EntityCode = ?");
 
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("EntityCode", entityCode);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			if (this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class) > 0) {
-				return true;
-			}
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, entityCode) > 0;
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		}
-		return false;
 	}
 
 	@Override
 	public Mandate getMandateStatusById(String finReference, long mandateID) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select Status, ExpiryDate From Mandates Where MandateID = ? and OrgReference = ? and Active = ?";
 
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Status, ExpiryDate");
-		sql.append(" from Mandates");
-		sql.append(" Where MandateID = ? and OrgReference = ? and ACTIVE = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { mandateID, finReference, 1 },
-					new RowMapper<Mandate>() {
-						@Override
-						public Mandate mapRow(ResultSet rs, int rowNum) throws SQLException {
-							Mandate mndts = new Mandate();
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				Mandate mndts = new Mandate();
 
-							mndts.setStatus(rs.getString("Status"));
-							mndts.setExpiryDate(rs.getTimestamp("ExpiryDate"));
+				mndts.setStatus(rs.getString("Status"));
+				mndts.setExpiryDate(rs.getTimestamp("ExpiryDate"));
 
-							return mndts;
-						}
-					});
+				return mndts;
+			}, mandateID, finReference, 1);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
-
 	}
 
 	@Override
 	public int getMandateCount(long custID, long mandateID) {
-		logger.debug("Entering");
+		String sql = "Select COUNT(MandateID) From Mandates Where CustID = ? and DefaultMandate = ? and mandateID != ?";
 
-		Mandate mandate = getMandate();
-		mandate.setCustID(custID);
-		mandate.setDefaultMandate(true);
-		mandate.setMandateID(mandateID);
-		StringBuilder selectSql = new StringBuilder("SELECT COUNT(*) From Mandates");
-		selectSql.append(" Where CustID = :CustID and defaultMandate = :defaultMandate and mandateID != :mandateID");
+		logger.debug(Literal.SQL + sql);
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
-
-		logger.debug("Leaving");
-		return this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, Integer.class);
+		return this.jdbcOperations.queryForObject(sql, Integer.class, custID, 1, mandateID);
 	}
 
 	@Override
 	public int validateEmandateSource(String eMandateSource) {
-		logger.debug(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = null;
+		String sql = "Select Count(Code) From Mandate_Sources Where Code = ?";
 
-		sql = new StringBuilder();
-		sql.append(" Select COUNT(*) from Mandate_Sources");
-		sql.append("  WHERE Code = :Code");
-		logger.debug("Sql: " + sql.toString());
-
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("Code", eMandateSource);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+			return this.jdbcOperations.queryForObject(sql, Integer.class, eMandateSource);
 
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 			return 0;
 		}
 	}
@@ -827,6 +650,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 		sql.append(" from Mandates");
 		sql.append(StringUtils.trimToEmpty(type));
+
 		return sql;
 	}
 
@@ -912,36 +736,37 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 
 	@Override
 	public int updateMandateStatus(Mandate mandate) {
-		logger.info(Literal.ENTERING);
+		String sql = "Update Mandates Set Status = ?, MandateRef = ?, OrgReference = ?, Reason = ? Where MandateID = ?";
 
-		StringBuilder sql = new StringBuilder("UPDATE MANDATES Set Status = :Status, MandateRef = :MandateRef");
-		sql.append(", OrgReference = :OrgReference, Reason = :Reason");
-		sql.append(" Where MandateID = :MandateID");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(mandate);
 		try {
-			return this.jdbcTemplate.update(sql.toString(), beanParameters);
+			return this.jdbcOperations.update(sql, ps -> {
+				int index = 1;
+
+				ps.setString(index++, mandate.getStatus());
+				ps.setString(index++, mandate.getMandateRef());
+				ps.setString(index++, mandate.getOrgReference());
+				ps.setString(index++, mandate.getReason());
+
+				ps.setLong(index++, mandate.getMandateID());
+			});
 		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.info(Literal.LEAVING);
+
 		return 0;
 	}
 
 	@Override
 	public int getMandateByMandateRef(String mandateRef) {
-		logger.info(Literal.ENTERING);
-		MapSqlParameterSource paramMap = null;
-		StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM MANDATES");
-		sql.append(" Where  MandateRef = :MandateRef");
-		logger.trace(Literal.SQL + sql.toString());
-		paramMap = new MapSqlParameterSource();
-		paramMap.addValue("MandateRef", mandateRef);
+		String sql = "Select Count(MandateID) From Mandates Where MandateRef = ?";
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), paramMap, Integer.class);
+			return this.jdbcOperations.queryForObject(sql, Integer.class, mandateRef);
 		} catch (DataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
 			return 0;
 		}
 	}

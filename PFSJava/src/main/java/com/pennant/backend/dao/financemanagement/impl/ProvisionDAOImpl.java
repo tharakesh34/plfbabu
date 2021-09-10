@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.financemanagement.ProvisionDAO;
@@ -106,6 +105,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		} else {
 			sql = getSelectQuery(tableType);
 		}
+
 		sql.append(" Where id = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -117,7 +117,6 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		}
 
 		return null;
-
 	}
 
 	@Override
@@ -154,46 +153,42 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
-		jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+		jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-
-				ps.setLong(index++, provision.getId());
-				ps.setLong(index++, provision.getFinID());
-				ps.setString(index++, provision.getFinReference());
-				ps.setBigDecimal(index++, provision.getClosingBalance());
-				ps.setBigDecimal(index++, provision.getOutStandPrincipal());
-				ps.setBigDecimal(index++, provision.getOutStandProfit());
-				ps.setBigDecimal(index++, provision.getProfitAccruedAndDue());
-				ps.setBigDecimal(index++, provision.getProfitAccruedAndNotDue());
-				ps.setBigDecimal(index++, provision.getCollateralValue());
-				ps.setDate(index++, JdbcUtil.getDate(provision.getDueFromDate()));
-				ps.setDate(index++, JdbcUtil.getDate(provision.getLastFullyPaidDate()));
-				ps.setInt(index++, provision.getDueDays());
-				ps.setInt(index++, provision.getCurrBucket());
-				ps.setInt(index++, provision.getDpd());
-				ps.setDate(index++, JdbcUtil.getDate(provision.getProvisionDate()));
-				ps.setBigDecimal(index++, provision.getProvisionedAmt());
-				ps.setString(index++, provision.getAssetCode());
-				ps.setInt(index++, provision.getAssetStageOrder());
-				ps.setBoolean(index++, provision.isNpa());
-				ps.setBoolean(index++, provision.isManualProvision());
-				ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
-				ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
-				ps.setInt(index++, provision.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
-				ps.setTimestamp(index++, provision.getLastMntOn());
-				ps.setString(index++, provision.getRecordStatus());
-				ps.setString(index++, provision.getRoleCode());
-				ps.setString(index++, provision.getNextRoleCode());
-				ps.setString(index++, provision.getTaskId());
-				ps.setString(index++, provision.getNextTaskId());
-				ps.setString(index++, provision.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
-				ps.setObject(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
-			}
+			ps.setLong(index++, provision.getId());
+			ps.setLong(index++, provision.getFinID());
+			ps.setString(index++, provision.getFinReference());
+			ps.setBigDecimal(index++, provision.getClosingBalance());
+			ps.setBigDecimal(index++, provision.getOutStandPrincipal());
+			ps.setBigDecimal(index++, provision.getOutStandProfit());
+			ps.setBigDecimal(index++, provision.getProfitAccruedAndDue());
+			ps.setBigDecimal(index++, provision.getProfitAccruedAndNotDue());
+			ps.setBigDecimal(index++, provision.getCollateralValue());
+			ps.setDate(index++, JdbcUtil.getDate(provision.getDueFromDate()));
+			ps.setDate(index++, JdbcUtil.getDate(provision.getLastFullyPaidDate()));
+			ps.setInt(index++, provision.getDueDays());
+			ps.setInt(index++, provision.getCurrBucket());
+			ps.setInt(index++, provision.getDpd());
+			ps.setDate(index++, JdbcUtil.getDate(provision.getProvisionDate()));
+			ps.setBigDecimal(index++, provision.getProvisionedAmt());
+			ps.setString(index++, provision.getAssetCode());
+			ps.setInt(index++, provision.getAssetStageOrder());
+			ps.setBoolean(index++, provision.isNpa());
+			ps.setBoolean(index++, provision.isManualProvision());
+			ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
+			ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
+			ps.setInt(index++, provision.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
+			ps.setTimestamp(index++, provision.getLastMntOn());
+			ps.setString(index++, provision.getRecordStatus());
+			ps.setString(index++, provision.getRoleCode());
+			ps.setString(index++, provision.getNextRoleCode());
+			ps.setString(index++, provision.getTaskId());
+			ps.setString(index++, provision.getNextTaskId());
+			ps.setString(index++, provision.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
+			ps.setObject(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
 		});
 
 		return provision.getId();
@@ -426,7 +421,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 			ps.setLong(index++, id);
-		}, (ResultSet rs, int rowNum) -> {
+		}, (rs, rowNum) -> {
 			ProvisionAmount pa = new ProvisionAmount();
 
 			pa.setId(rs.getLong("Id"));

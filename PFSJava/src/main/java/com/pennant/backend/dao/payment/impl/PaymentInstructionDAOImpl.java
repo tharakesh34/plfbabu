@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentInstructionDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentInstructionDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * *
+ * Modified Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.payment.impl;
@@ -52,9 +34,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.payment.PaymentInstructionDAO;
 import com.pennant.backend.model.finance.PaymentInstruction;
@@ -62,6 +41,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -78,24 +58,252 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 	}
 
 	@Override
-	public PaymentInstruction getPaymentInstruction(long paymentInstructionId, String type) {
-		logger.debug(Literal.ENTERING);
-
+	public PaymentInstruction getPaymentInstruction(long id, String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where PaymentInstructionId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
-
-		PaymentInstructionRowMapper rowMapper = new PaymentInstructionRowMapper(type);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentInstructionId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new PaymentInstructionRM(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
+	}
+
+	@Override
+	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where PaymentId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), new PaymentInstructionRM(type), paymentId);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public String save(PaymentInstruction pi, TableType tableType) {
+		StringBuilder sql = new StringBuilder("insert into");
+		sql.append(" PaymentInstructions");
+		sql.append(tableType.getSuffix());
+		sql.append(" (PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
+		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
+		sql.append(", BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode, PhoneNumber, ClearingDate");
+		sql.append(", Status, Active, PaymentCCy, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(") values(");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?");
+		sql.append(")");
+
+		if (pi.getPaymentInstructionId() <= 0) {
+			pi.setPaymentInstructionId(getNextValue("SeqAdvpayment"));
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentInstructionId()));
+				ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentId()));
+				ps.setString(index++, pi.getPaymentType());
+				ps.setBigDecimal(index++, pi.getPaymentAmount());
+				ps.setString(index++, pi.getRemarks());
+				ps.setLong(index++, JdbcUtil.setLong(pi.getPartnerBankId()));
+				ps.setString(index++, pi.getIssuingBank());
+				ps.setString(index++, pi.getFavourName());
+				ps.setString(index++, pi.getFavourNumber());
+				ps.setString(index++, pi.getPayableLoc());
+				ps.setString(index++, pi.getPrintingLoc());
+				ps.setDate(index++, JdbcUtil.getDate(pi.getValueDate()));
+				ps.setDate(index++, JdbcUtil.getDate(pi.getPostDate()));
+				ps.setLong(index++, JdbcUtil.setLong(pi.getBankBranchId()));
+				ps.setString(index++, pi.getAcctHolderName());
+				ps.setString(index++, pi.getAccountNo());
+				ps.setString(index++, pi.getPhoneCountryCode());
+				ps.setString(index++, pi.getPhoneNumber());
+				ps.setDate(index++, JdbcUtil.getDate(pi.getClearingDate()));
+				ps.setString(index++, pi.getStatus());
+				ps.setBoolean(index++, pi.getActive());
+				ps.setString(index++, pi.getPaymentCCy());
+				ps.setInt(index++, pi.getVersion());
+				ps.setLong(index++, JdbcUtil.setLong(pi.getLastMntBy()));
+				ps.setTimestamp(index++, pi.getLastMntOn());
+				ps.setString(index++, pi.getRecordStatus());
+				ps.setString(index++, pi.getRoleCode());
+				ps.setString(index++, pi.getNextRoleCode());
+				ps.setString(index++, pi.getTaskId());
+				ps.setString(index++, pi.getNextTaskId());
+				ps.setString(index++, pi.getRecordType());
+				ps.setLong(index++, JdbcUtil.setLong(pi.getWorkflowId()));
+			});
+		} catch (DuplicateKeyException e) {
+			throw new ConcurrencyException(e);
+		}
+
+		return String.valueOf(pi.getPaymentInstructionId());
+	}
+
+	@Override
+	public void update(PaymentInstruction pi, TableType tableType) {
+		StringBuilder sql = new StringBuilder("update PaymentInstructions");
+		sql.append(tableType.getSuffix());
+		sql.append(" Set PaymentId = ?, PaymentType = ?, PaymentAmount = ?, IssuingBank = ?");
+		sql.append(", Remarks = ?, PartnerBankId = ?, FavourName = ?, FavourNumber = ?");
+		sql.append(", PayableLoc = ?, PrintingLoc = ?, ValueDate = ?, PostDate = ?, BankBranchId = ?");
+		sql.append(", AcctHolderName = ?, AccountNo = ?, PhoneCountryCode = ?, PhoneNumber = ?, ClearingDate = ?");
+		sql.append(", Active = ?, PaymentCCy = ?, Status = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where PaymentInstructionId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentId()));
+			ps.setString(index++, pi.getPaymentType());
+			ps.setBigDecimal(index++, pi.getPaymentAmount());
+			ps.setString(index++, pi.getIssuingBank());
+			ps.setString(index++, pi.getRemarks());
+			ps.setLong(index++, JdbcUtil.setLong(pi.getPartnerBankId()));
+			ps.setString(index++, pi.getFavourName());
+			ps.setString(index++, pi.getFavourNumber());
+			ps.setString(index++, pi.getPayableLoc());
+			ps.setString(index++, pi.getPrintingLoc());
+			ps.setDate(index++, JdbcUtil.getDate(pi.getValueDate()));
+			ps.setDate(index++, JdbcUtil.getDate(pi.getPostDate()));
+			ps.setLong(index++, JdbcUtil.setLong(pi.getBankBranchId()));
+			ps.setString(index++, pi.getAcctHolderName());
+			ps.setString(index++, pi.getAccountNo());
+			ps.setString(index++, pi.getPhoneCountryCode());
+			ps.setString(index++, pi.getPhoneNumber());
+			ps.setDate(index++, JdbcUtil.getDate(pi.getClearingDate()));
+			ps.setBoolean(index++, pi.getActive());
+			ps.setString(index++, pi.getPaymentCCy());
+			ps.setString(index++, pi.getStatus());
+			ps.setTimestamp(index++, pi.getLastMntOn());
+			ps.setString(index++, pi.getRecordStatus());
+			ps.setString(index++, pi.getRoleCode());
+			ps.setString(index++, pi.getNextRoleCode());
+			ps.setString(index++, pi.getTaskId());
+			ps.setString(index++, pi.getNextTaskId());
+			ps.setString(index++, pi.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(pi.getWorkflowId()));
+
+			ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentInstructionId()));
+		});
+
+		if (recordCount == 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void delete(PaymentInstruction pi, TableType tableType) {
+		StringBuilder sql = new StringBuilder("delete from PaymentInstructions");
+		sql.append(tableType.getSuffix());
+		sql.append(" Where PaymentId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			int recordCount = jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, pi.getPaymentId()));
+
+			if (recordCount == 0) {
+				throw new ConcurrencyException();
+			}
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
+	}
+
+	@Override
+	public boolean isDuplicateKey(long id, TableType tableType) {
+		String sql;
+		String whereClause = "PaymentInstructionId = ?";
+
+		Object[] obj = new Object[] { id };
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("PaymentInstructions", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("PaymentInstructions_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "PaymentInstructions_Temp", "PaymentInstructions" },
+					whereClause);
+			obj = new Object[] { id, id };
+			break;
+		}
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
+	}
+
+	@Override
+	public int updatePaymentInstrucionStatus(PaymentInstruction pi, TableType mainTab) {
+		String sql = "Update PaymentInstructions Set Status = ?, ClearingDate = ?, TransactionRef = ?, RejectReason = ? Where PaymentInstructionId = ? and Status = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setString(index++, pi.getStatus());
+			ps.setDate(index++, JdbcUtil.getDate(pi.getClearingDate()));
+			ps.setString(index++, pi.getTransactionRef());
+			ps.setString(index++, pi.getRejectReason());
+
+			ps.setLong(index++, pi.getPaymentInstructionId());
+			ps.setString(index++, DisbursementConstants.STATUS_AWAITCON);
+		});
+	}
+
+	@Override
+	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
+		StringBuilder sql = new StringBuilder("Select Count(PartnerBankId) From PaymentInstructions");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where PartnerBankId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, partnerBankId);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return 0;
+	}
+
+	@Override
+	public void updateStatus(PaymentInstruction instruction, String tableType) {
+		StringBuilder sql = new StringBuilder("Update PaymentInstructions");
+		sql.append(StringUtils.trimToEmpty(tableType));
+		sql.append(" Set Status = ? Where PaymentInstructionId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, instruction.getStatus());
+
+			ps.setLong(index++, instruction.getPaymentInstructionId());
+		});
 	}
 
 	private StringBuilder getSqlQuery(String type) {
@@ -113,239 +321,16 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			sql.append(", PartnerBankAc, PartnerBankAcType");
 		}
 
-		sql.append(" from PaymentInstructions");
+		sql.append(" From PaymentInstructions");
 		sql.append(StringUtils.trimToEmpty(type));
+
 		return sql;
 	}
 
-	@Override
-	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where PaymentId = ?");
-
-		logger.trace(Literal.SQL + sql.toString());
-
-		PaymentInstructionRowMapper rowMapper = new PaymentInstructionRowMapper(type);
-
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
-	}
-
-	@Override
-	public String save(PaymentInstruction paymentInstruction, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder(" insert into PaymentInstructions");
-		sql.append(tableType.getSuffix());
-		sql.append(
-				" (paymentInstructionId, paymentId, paymentType, paymentAmount, remarks, partnerBankId, issuingBank,");
-		sql.append(" favourName, favourNumber, payableLoc, printingLoc, valueDate, postDate, ");
-		sql.append(" bankBranchId, acctHolderName, accountNo, phoneCountryCode, phoneNumber, clearingdate, status,");
-		sql.append(" active, paymentCCy, ");
-		sql.append(
-				" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
-		sql.append(" values(");
-		sql.append(
-				" :paymentInstructionId, :paymentId, :paymentType, :paymentAmount, :remarks, :partnerBankId, :issuingBank,");
-		sql.append(" :favourName, :favourNumber, :payableLoc, :printingLoc, :valueDate, :postDate, ");
-		sql.append(
-				" :bankBranchId, :acctHolderName, :accountNo, :phoneCountryCode, :phoneNumber, :clearingDate, :status,");
-		sql.append(" :active, :paymentCCy, ");
-		sql.append(
-				" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
-		// Get the sequence number.
-		if (paymentInstruction.getPaymentInstructionId() <= 0) {
-			paymentInstruction.setPaymentInstructionId(getNextValue("SeqAdvpayment"));
-		}
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-
-		try {
-			jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DuplicateKeyException e) {
-			throw new ConcurrencyException(e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return String.valueOf(paymentInstruction.getPaymentInstructionId());
-	}
-
-	@Override
-	public void update(PaymentInstruction paymentInstruction, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("update PaymentInstructions");
-		sql.append(tableType.getSuffix());
-		sql.append(" set paymentId = :paymentId, paymentType = :paymentType, paymentAmount = :paymentAmount");
-		sql.append(", issuingBank = :issuingBank, remarks = :remarks, partnerBankId = :partnerBankId");
-		sql.append(", favourName = :favourName, favourNumber = :favourNumber");
-		sql.append(", payableLoc = :payableLoc, printingLoc = :printingLoc");
-		sql.append(", valueDate = :valueDate, postDate = :postDate, bankBranchId = :bankBranchId");
-		sql.append(", AcctHolderName = :acctHolderName, accountNo = :accountNo");
-		sql.append(", phoneCountryCode = :phoneCountryCode, phoneNumber = :phoneNumber, clearingdate = :clearingDate");
-		sql.append(", active = :active, paymentCCy = :paymentCCy, status = :status");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
-		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" where paymentInstructionId = :paymentInstructionId ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-		int recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public void delete(PaymentInstruction paymentInstruction, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("delete from PaymentInstructions");
-		sql.append(tableType.getSuffix());
-		sql.append(" where paymentId = :paymentId ");
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(paymentInstruction);
-		int recordCount = 0;
-
-		try {
-			recordCount = jdbcTemplate.update(sql.toString(), paramSource);
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		// Check for the concurrency failure.
-		if (recordCount == 0) {
-			throw new ConcurrencyException();
-		}
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	@Override
-	public boolean isDuplicateKey(long paymentInstructionId, TableType tableType) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL.
-		String sql;
-		String whereClause = "PaymentInstructionId = :PaymentInstructionId";
-
-		switch (tableType) {
-		case MAIN_TAB:
-			sql = QueryUtil.getCountQuery("PaymentInstructions", whereClause);
-			break;
-		case TEMP_TAB:
-			sql = QueryUtil.getCountQuery("PaymentInstructions_Temp", whereClause);
-			break;
-		default:
-			sql = QueryUtil.getCountQuery(new String[] { "PaymentInstructions_Temp", "PaymentInstructions" },
-					whereClause);
-			break;
-		}
-
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("PaymentInstructionId", paymentInstructionId);
-		Integer count = jdbcTemplate.queryForObject(sql, paramSource, Integer.class);
-		boolean exists = false;
-		if (count > 0) {
-			exists = true;
-		}
-		logger.debug(Literal.LEAVING);
-		return exists;
-	}
-
-	@Override
-	public int updatePaymentInstrucionStatus(PaymentInstruction paymentInstruction, TableType mainTab) {
-		MapSqlParameterSource paramMap = new MapSqlParameterSource();
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Update PAYMENTINSTRUCTIONS");
-		sql.append(" Set STATUS = :STATUS, CLEARINGDATE = :CLEARINGDATE, TRANSACTIONREF = :TRANSACTIONREF,");
-		sql.append(" REJECTREASON = :REJECTREASON");
-		sql.append(" Where PAYMENTINSTRUCTIONID = :PAYMENTINSTRUCTIONID AND STATUS = :OLDSTATUS");
-
-		paramMap.addValue("STATUS", paymentInstruction.getStatus());
-		paramMap.addValue("CLEARINGDATE", paymentInstruction.getClearingDate());
-		paramMap.addValue("TRANSACTIONREF", paymentInstruction.getTransactionRef());
-		paramMap.addValue("REJECTREASON", paymentInstruction.getRejectReason());
-		paramMap.addValue("PAYMENTINSTRUCTIONID", paymentInstruction.getPaymentInstructionId());
-		paramMap.addValue("OLDSTATUS", DisbursementConstants.STATUS_AWAITCON);
-
-		logger.debug(Literal.SQL + sql);
-		return this.jdbcTemplate.update(sql.toString(), paramMap);
-	}
-
-	/**
-	 * Method for Fetching Count for Assigned partnerBankId to Different Finances/Commitments
-	 */
-	@Override
-	public int getAssignedPartnerBankCount(long partnerBankId, String type) {
-		logger.debug("Entering");
-
-		int assignedCount = 0;
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("PartnerBankId", partnerBankId);
-
-		StringBuilder selectSql = new StringBuilder(" Select Count(1) ");
-		selectSql.append(" From PaymentInstructions");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where PartnerBankId = :PartnerBankId ");
-
-		logger.debug("selectSql: " + selectSql.toString());
-
-		try {
-			assignedCount = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
-		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			assignedCount = 0;
-		}
-		logger.debug("Leaving");
-		return assignedCount;
-	}
-
-	@Override
-	public void updateStatus(PaymentInstruction instruction, String tableType) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder("Update PAYMENTINSTRUCTIONS");
-		updateSql.append(StringUtils.trimToEmpty(tableType));
-		updateSql.append("  Set Status = :Status");
-		updateSql.append("  Where PaymentInstructionId = :PaymentInstructionId");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(instruction);
-		this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-
-		logger.debug("Leaving");
-	}
-
-	private class PaymentInstructionRowMapper implements RowMapper<PaymentInstruction> {
+	private class PaymentInstructionRM implements RowMapper<PaymentInstruction> {
 		private String type;
 
-		PaymentInstructionRowMapper(String type) {
+		PaymentInstructionRM(String type) {
 			this.type = type;
 		}
 
@@ -409,42 +394,30 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 
 	@Override
 	public long getPymntsCustId(long paymentId) {
-		StringBuilder sql = new StringBuilder("Select c.custid from customers c");
-		sql.append(" inner join financemain fm on fm.custid = c.custid");
-		sql.append(" inner join  paymentheader ph on ph.finreference = fm.finreference");
-		sql.append(" where ph.paymentid = ?");
+		StringBuilder sql = new StringBuilder("Select c.CustID From Customers c");
+		sql.append(" Inner Join FinanceMain fm on fm.CustID = c.CustID");
+		sql.append(" Inner Join PaymentHeader ph on ph.FinReference = fm.FinReference");
+		sql.append(" Where ph.PaymentID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentId }, Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, paymentId);
 		} catch (Exception e) {
-			logger.warn("Record is not found in PaymentHeader for the specified PaymentId >> {}", paymentId);
 			throw new InterfaceException(Literal.EXCEPTION, e.getMessage());
 		}
 	}
 
 	@Override
 	public boolean isInstructionInProgress(String finReference) {
-		logger.debug(Literal.ENTERING);
-		boolean exists = false;
-		// Prepare the SQL.
-		StringBuilder sql = new StringBuilder("select ");
-		sql.append(" count(*) from PAYMENTINSTRUCTIONS_TEMP pi");
-		sql.append(" left join PAYMENTHEADER_temp ph on ph.PAYMENTID = pi.PAYMENTID");
-		sql.append(" left join PAYMENTDETAILS_temp pd on pd.PAYMENTID = ph.PAYMENTID");
-		sql.append(" where ph.finReference =:finReference");
+		StringBuilder sql = new StringBuilder("select count(*)");
+		sql.append(" From PaymentInstructions_Temp pi");
+		sql.append(" Left Join PaymentHeader_Temp ph on ph.PaymentID = pi.PaymentID");
+		sql.append(" Left Join PaymentDetails_Temp pd on pd.PaymentID = ph.PaymentID");
+		sql.append(" Where ph.FinReference = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql);
-		MapSqlParameterSource paramSource = new MapSqlParameterSource();
-		paramSource.addValue("finReference", finReference);
-		Integer count = jdbcTemplate.queryForObject(sql.toString(), paramSource, Integer.class);
-		if (count > 0) {
-			exists = true;
-		}
-		logger.debug(Literal.LEAVING);
-		return exists;
+		logger.debug(Literal.SQL + sql.toString());
 
+		return jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0;
 	}
 }

@@ -1,21 +1,16 @@
 package com.pennant.backend.dao.impl;
 
-import java.util.List;
+import java.sql.Timestamp;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.TATDetailDAO;
 import com.pennant.backend.model.finance.TATDetail;
-import com.pennant.backend.model.finance.TATNotificationCode;
-import com.pennant.backend.model.finance.TATNotificationLog;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetailDAO {
 	private static Logger logger = LogManager.getLogger(TATDetailDAOImpl.class);
@@ -24,196 +19,91 @@ public class TATDetailDAOImpl extends SequenceDao<TATDetail> implements TATDetai
 		super();
 	}
 
-	/**
-	 * Get TAT Detail
-	 */
 	@Override
 	public TATDetail getTATDetail(String reference, String rolecode) {
-		logger.debug("Entering");
-		TATDetail detail = new TATDetail();
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" T1.Reference, T1.RoleCode, T1.SerialNo, T1.TATStartTime");
+		sql.append(" From TATDetails T1");
+		sql.append(" Inner Join (SELECT Reference, MAX(SerialNo) SerialNo, RoleCode");
+		sql.append(" From TATDetails Where Reference = ? and RoleCode = ?");
+		sql.append(" group by Reference, RoleCode) T2 ON T1.Reference = T2.Reference");
+		sql.append(" and T1.RoleCode = T2.RoleCode and T1.SerialNo = T2.SerialNo");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			detail.setReference(reference);
-			detail.setRoleCode(rolecode);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				TATDetail tat = new TATDetail();
 
-			StringBuilder selectSql = new StringBuilder(
-					"Select T1.Reference,  T1.RoleCode ,T1.SerialNo,T1.TATStartTime from TATDetails T1 Inner join ");
-			selectSql.append("(SELECT Reference, MAX(SerialNo) SerialNo, RoleCode ");
-			selectSql.append("From TATDetails Where Reference= :Reference AND RoleCode=:RoleCode ");
-			selectSql.append("group by Reference,RoleCode)T2 ON T1.Reference =T2.Reference ");
-			selectSql.append("and T1.RoleCode =T2.RoleCode and T1.SerialNo =T2.SerialNo");
+				tat.setReference(rs.getString("Reference"));
+				tat.setRoleCode(rs.getString("RoleCode"));
+				tat.setSerialNo(rs.getLong("SerialNo"));
+				tat.settATStartTime(rs.getTimestamp("TATStartTime"));
 
-			RowMapper<TATDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(TATDetail.class);
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(detail);
-			logger.debug("selectSql: " + selectSql.toString());
-
-			detail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+				return tat;
+			}, reference, rolecode);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			return null;
+			//
 		}
-		return detail;
+
+		return null;
 	}
 
-	/**
-	 * Get TAT Detail
-	 */
 	@Override
-	public List<TATDetail> getAllTATDetail() {
-		logger.debug("Entering");
-		TATDetail tatDetail = new TATDetail();
+	public void save(TATDetail tat) {
+		tat.setSerialNo(getNextValue("SeqTATDetails"));
 
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT module, reference , serialNo, TATStartTime, TATEndTime,TriggerTime, RoleCode, FinType From TATDetails");
-		selectSql.append(" Where TATEndTime IS NULL ");
+		StringBuilder sql = new StringBuilder("Insert Into TatDetails");
+		sql.append(" (Module, Reference, SerialNo, RoleCode, TATStartTime, TATEndTime, FinType)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(tatDetail);
-		RowMapper<TATDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(TATDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-	}
-
-	/**
-	 * Starting the turnaround time
-	 * 
-	 */
-	@Override
-	public void save(TATDetail tatDetail) {
-		logger.debug("Entering");
-		tatDetail.setSerialNo(getNextValue("SeqTATDetails"));
-
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO TATDetails ");
-		insertSql.append(" (Module, Reference, SerialNo, RoleCode, TATStartTime, TATEndTime, FinType)");
-		insertSql.append(" Values( :Module, :Reference, :SerialNo, :RoleCode, :TATStartTime, :TATEndTime, :FinType)");
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(tatDetail);
 		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			logger.debug("Exception: ", e);
-		}
-		logger.debug("Leaving");
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
+				ps.setString(index++, tat.getModule());
+				ps.setString(index++, tat.getReference());
+				ps.setLong(index++, tat.getSerialNo());
+				ps.setString(index++, tat.getRoleCode());
+				ps.setTimestamp(index++, tat.gettATStartTime());
+				ps.setTimestamp(index++, tat.gettATEndTime());
+				ps.setString(index++, tat.getFinType());
+			});
+		} catch (DuplicateKeyException e) {
+			//
+		}
 	}
 
-	/**
-	 * Updating turnaround time with end time
-	 * 
-	 */
 	public void update(TATDetail aTatDetail) {
-		logger.debug("Entering");
+		TATDetail tatDetail = getTATDetail(aTatDetail.getReference(), aTatDetail.getRoleCode());
+		Timestamp startTime = tatDetail.gettATStartTime();
+
+		tatDetail.settATEndTime(aTatDetail.gettATEndTime());
+		tatDetail.settATStartTime(startTime == null ? aTatDetail.gettATStartTime() : startTime);
+		tatDetail.setTriggerTime(aTatDetail.getTriggerTime());
+
+		StringBuilder sql = new StringBuilder(" Update TATDetails");
+		sql.append(" Set TatStartTime = ?, TATEndTime = ?, TriggerTime = ?");
+		sql.append(" Where Reference = ? and SerialNo = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			TATDetail tatDetail = getTATDetail(aTatDetail.getReference(), aTatDetail.getRoleCode());
-			tatDetail.settATEndTime(aTatDetail.gettATEndTime());
-			if (tatDetail.gettATStartTime() != null) {
-				tatDetail.settATStartTime(tatDetail.gettATStartTime());
-			} else {
-				tatDetail.settATStartTime(aTatDetail.gettATStartTime());
-			}
-			tatDetail.setTriggerTime(aTatDetail.getTriggerTime());
-			StringBuilder updateSql = new StringBuilder(" UPDATE TATDetails");
-			updateSql.append(" SET TatStartTime =:TATStartTime, TATEndTime=:TATEndTime, TriggerTime =:TriggerTime");
-			updateSql.append(" WHERE Reference=:Reference AND SerialNo=:SerialNo");
+			this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
 
-			logger.debug("updateSql: " + updateSql.toString());
+				ps.setTimestamp(index++, startTime);
+				ps.setTimestamp(index++, tatDetail.gettATEndTime());
+				ps.setTimestamp(index++, tatDetail.getTriggerTime());
 
-			SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(tatDetail);
-
-			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+				ps.setString(index++, aTatDetail.getReference());
+				ps.setLong(index++, aTatDetail.getSerialNo());
+			});
 		} catch (Exception e) {
-			logger.debug("Exception: ", e);
+			//
 		}
-		logger.debug("Leaving");
-	}
-
-	@Override
-	public TATNotificationLog getLogDetails(TATDetail tatDetail) {
-		logger.debug("Entering");
-
-		TATNotificationLog notificationLog = new TATNotificationLog();
-		notificationLog.setModule(tatDetail.getModule());
-		notificationLog.setReference(tatDetail.getReference());
-		notificationLog.setRoleCode(tatDetail.getRoleCode());
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT module, reference, count, RoleCode From TATNotificationLog");
-		selectSql.append(" Where module = :Module and Reference=:Reference AND RoleCode=:RoleCode");
-
-		RowMapper<TATNotificationLog> typeRowMapper = BeanPropertyRowMapper.newInstance(TATNotificationLog.class);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
-		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			notificationLog = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			return null;
-		}
-
-		return notificationLog;
-
-	}
-
-	@Override
-	public TATNotificationCode getNotificationdetail(String code) {
-		logger.debug("Entering");
-
-		TATNotificationCode notificationCode = new TATNotificationCode();
-		notificationCode.setTatNotificationCode(code);
-
-		StringBuilder selectSql = new StringBuilder(
-				"SELECT TATNotificationId, TATNotificationDesc, Time From TATNotificationCodes");
-		selectSql.append(" Where TATNotificationCode =:TatNotificationCode ");
-
-		RowMapper<TATNotificationCode> typeRowMapper = BeanPropertyRowMapper.newInstance(TATNotificationCode.class);
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationCode);
-		logger.debug("selectSql: " + selectSql.toString());
-		try {
-			notificationCode = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			return null;
-		}
-
-		return notificationCode;
-	}
-
-	@Override
-	public void saveLogDetail(TATNotificationLog notificationLog) {
-		logger.debug("Entering");
-
-		StringBuilder insertSql = new StringBuilder(" INSERT INTO TATNotificationLog ");
-		insertSql.append(" (Module, Reference, RoleCode, Count)");
-		insertSql.append(" Values( :Module, :Reference, :RoleCode, :Count)");
-		logger.debug("insertSql: " + insertSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
-		try {
-			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			logger.debug("Exception: ", e);
-		}
-		logger.debug("Leaving");
-
-	}
-
-	@Override
-	public void updateLogDetail(TATNotificationLog notificationLog) {
-		logger.debug("Entering");
-
-		StringBuilder updateSql = new StringBuilder(" UPDATE TATNotificationLog");
-		updateSql.append(" SET Count =:Count ");
-		updateSql.append(" WHERE Reference=:Reference AND RoleCode =:RoleCode");
-
-		logger.debug("updateSql: " + updateSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notificationLog);
-		try {
-			this.jdbcTemplate.update(updateSql.toString(), beanParameters);
-		} catch (DuplicateKeyException e) {
-			logger.debug("Exception: ", e);
-		}
-		logger.debug("Leaving");
-
 	}
 
 }
