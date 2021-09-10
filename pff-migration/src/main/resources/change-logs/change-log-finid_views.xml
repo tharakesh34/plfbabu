@@ -3585,6 +3585,142 @@
 
 	<!-- (FFDV) :: Finance Fee Detail Views handle in single place end -->
 
+	<!-- (FOPR) :: Over due penalty rate Views handle in single place start -->
+
+	<changeSet id="FOPR_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOPR_1" author="Gopal.p">
+		<createView viewName="FINODPENALTYRATES_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ
+				FROM FINODPENALTYRATES
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FOPR_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenaltyrates_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOPR_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOPR_2" author="Gopal.p">
+		<createView viewName="FINODPENALTYRATES_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ
+				FROM FINODPENALTYRATES_TEMP
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FOPR_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenaltyrates_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOPR_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finodpenaltyrates_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOPR_3" author="Gopal.p">
+		<createView viewName="FINODPENALTYRATES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ
+				FROM FINODPENALTYRATES_TEMP
+				UNION
+				SELECT FINID,
+					FINREFERENCE,
+					FINEFFECTDATE,
+					APPLYODPENALTY,
+					ODINCGRCDAYS,
+					ODCHARGETYPE,
+					ODGRACEDAYS,
+					ODCHARGECALON,
+					ODCHARGEAMTORPERC,
+					ODALLOWWAIVER,
+					ODMAXWAIVERPERC,
+					ODRULECODE,
+					ODMINCAPAMOUNT,
+					ODTDSREQ
+				FROM FINODPENALTYRATES
+				WHERE NOT (EXISTS (SELECT 1 FROM FINODPENALTYRATES_TEMP
+					WHERE FINID = FINODPENALTYRATES.FINID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FOPR_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finodpenaltyrates_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FOPR) :: Over due penalty rate Views handle in single place end -->
+
 	<changeSet id="ST#2367.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
