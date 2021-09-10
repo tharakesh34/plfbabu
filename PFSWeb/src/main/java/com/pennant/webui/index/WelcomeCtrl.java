@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  IndexCtl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : IndexCtl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.index;
@@ -71,7 +62,6 @@ import com.pennant.backend.model.dashboarddetail.DashboardPosition;
 import com.pennant.backend.service.dashboard.DashboardConfigurationService;
 import com.pennant.webui.dashboard.DashboardCreate;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Welcome.zul file.
@@ -117,8 +107,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	}
 
 	public void onCreate$window_Welcome(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
 		// Set the page level components.
 		setPageComponents(window_Welcome);
 
@@ -137,8 +125,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		}
 
 		this.refreshTimer.setDelay(delayTime);
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
@@ -152,8 +138,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 */
 
 	private int initilizeDashBords(boolean isRefresh) {
-		logger.debug("Entering ");
-
 		int column = 0;
 		int dashboardColIndex = 0;
 		if (isRefresh) {
@@ -183,7 +167,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 				dashboardCreate.createPanel(getDashBoard().getDashboardConfigMap().get(key), pc);
 			}
 		}
-		logger.debug("Leaving ");
 		return dashboardColIndex;
 	}
 
@@ -191,7 +174,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * Action of click the add Button(add button)
 	 */
 	public void onClick$addbtn(Event event) {
-		logger.debug("Entering " + event.toString());
 		int selectedColumnIdx = columnSelect.getSelectedIndex();
 		if (cbDashBordsList.getChildren() != null && cbDashBordsList.getChildren().size() > 0) {
 			if (dashBoardsPortalLayout
@@ -203,7 +185,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -212,11 +193,9 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @param event
 	 */
 	public void onClick$savebtn(Event event) {
-		logger.debug("Entering " + event.toString());
 		getDashboardConfigurationService().savePositions(
 				new ArrayList<DashboardPosition>(getCurrentDashBordPositions().values()),
 				getUserWorkspace().getLoggedInUser().getUserId());
-		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -225,7 +204,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @return Map<String,DashboardPosition>
 	 */
 	private Map<String, DashboardPosition> getCurrentDashBordPositions() {
-
 		DashboardPosition dashboardPosition;
 		Panel p_children;
 		Portalchildren ptc;
@@ -268,7 +246,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @param dashBoard
 	 */
 	public void doFillDashboardList(DashBoard dashBoard) {
-		logger.debug("Entering ");
 		this.cbDashBordsList.getItems().clear();
 		for (String key : dashBoard.getDashboardConfigMap().keySet()) {
 			Comboitem comboitem = new Comboitem();
@@ -281,7 +258,6 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		if (dashBoard.getDashboardConfigMap().size() > 0) {
 			this.cbDashBordsList.setSelectedIndex(0);
 		}
-		logger.debug("Leaving ");
 	}
 
 	/**
@@ -290,9 +266,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @param event
 	 */
 	public void onClick$singleColumnBtn(Event event) {
-		logger.debug("Entering " + event.toString());
 		setDashBoardsLayOut(1);
-		logger.debug("Leaving " + event.toString());
 	}
 
 	/**
@@ -301,10 +275,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @param event
 	 */
 	public void onClick$threeColumnBtn(Event event) {
-		logger.debug("Entering");
-
 		setDashBoardsLayOut(3);
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -313,13 +284,10 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	 * @param event
 	 */
 	public void onClick$twoColumnBtn(Event event) {
-		logger.debug("Entering");
 		setDashBoardsLayOut(2);
-		logger.debug("Leaving");
 	}
 
 	private void setDashBoardsLayOut(int layOutType) {
-
 		Portalchildren firstChild = (Portalchildren) dashBoardsPortalLayout.getChildren().get(0);
 		Portalchildren secondChild = (Portalchildren) dashBoardsPortalLayout.getChildren().get(1);
 		Portalchildren thirdChild = (Portalchildren) dashBoardsPortalLayout.getChildren().get(2);

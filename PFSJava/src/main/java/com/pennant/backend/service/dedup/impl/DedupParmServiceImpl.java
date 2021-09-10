@@ -1038,8 +1038,8 @@ public class DedupParmServiceImpl extends GenericService<DedupParm> implements D
 	}
 
 	@Override
-	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail financeRefDetail, String tableType) {
-		return dedupParmDAO.getQueryCodeList(financeRefDetail, tableType);
+	public List<FinanceReferenceDetail> getQueryCodeList(FinanceReferenceDetail frd, String tableType) {
+		return dedupParmDAO.getQueryCodeList(frd, tableType);
 	}
 
 	@Override

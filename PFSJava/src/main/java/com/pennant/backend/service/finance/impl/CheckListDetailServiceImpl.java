@@ -43,7 +43,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceCheckListReferenceDAO financeCheckListReferenceDAO;
 	private CheckListDetailDAO checkListDetailDAO;
-	private CustomerDocumentDAO customerDocumentDao;
+	private CustomerDocumentDAO customerDocumentDAO;
 
 	public CheckListDetailServiceImpl() {
 		super();
@@ -143,7 +143,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		// Customer Document Details Fetching Depends on Customer & Doc Type List
 
-		List<DocumentDetails> documentList = customerDocumentDao.getCustDocByCustId(custID, "");
+		List<DocumentDetails> documentList = customerDocumentDAO.getCustDocByCustId(custID, "");
 
 		if (fd.getDocumentDetailsList() != null && !fd.getDocumentDetailsList().isEmpty()) {
 			fd.getDocumentDetailsList().addAll(documentList);
@@ -227,7 +227,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		CustomerDetails customerDetails = collateralSetup.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
 		long custID = customer.getCustID();
-		List<DocumentDetails> documentList = customerDocumentDao.getCustDocByCustId(custID, "");
+		List<DocumentDetails> documentList = customerDocumentDAO.getCustDocByCustId(custID, "");
 
 		if (collateralSetup.getDocuments() != null && !collateralSetup.getDocuments().isEmpty()) {
 			collateralSetup.getDocuments().addAll(documentList);
@@ -307,7 +307,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		CustomerDetails customerDetails = commitment.getCustomerDetails();
 		Customer customer = customerDetails.getCustomer();
 		long custID = customer.getCustID();
-		List<DocumentDetails> documentList = customerDocumentDao.getCustDocByCustId(custID, "");
+		List<DocumentDetails> documentList = customerDocumentDAO.getCustDocByCustId(custID, "");
 
 		if (!commitment.isNewRecord() && (commitment.getDocuments() != null && !commitment.getDocuments().isEmpty())) {
 			commitment.getDocuments().addAll(documentList);
@@ -388,7 +388,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		VasCustomer vasCustomer = vasRecording.getVasCustomer();
 		if (vasCustomer != null) {
 			long customerId = vasCustomer.getCustomerId();
-			documentList = customerDocumentDao.getCustDocByCustId(customerId, "");
+			documentList = customerDocumentDAO.getCustDocByCustId(customerId, "");
 		}
 		if (vasRecording.getDocuments() != null && !vasRecording.getDocuments().isEmpty()) {
 			vasRecording.getDocuments().addAll(documentList);
@@ -809,8 +809,8 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		this.checkListDetailDAO = checkListDetailDAO;
 	}
 
-	public void setCustomerDocumentDao(CustomerDocumentDAO customerDocumentDao) {
-		this.customerDocumentDao = customerDocumentDao;
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
 	}
 
 }

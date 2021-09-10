@@ -4179,11 +4179,10 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
-		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="finCovenantTypeDAO" ref="finCovenantTypeDAO" />
-		<property name="vasRecordingDAO" ref="vasRecordingDAO" />
+		<property name="vasRecordingDAO" ref="vASRecordingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
 		<property name="partnerBankService" ref="partnerBankService" />
 		<property name="paymentsProcessService" ref="paymentsProcessService" />
@@ -4462,12 +4461,9 @@
 		<property name="finReceiptDetailDAO" ref="finReceiptDetailDAO" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="allocationDetailDAO" ref="receiptAllocationDetailDAO" />
-		<property name="finFeeReceiptDAO" ref="finFeeReceiptDAO" />
 		<property name="depositChequesDAO" ref="depositChequesDAO" />
 		<property name="depositDetailsDAO" ref="depositDetailsDAO" />
-		<property name="bounceReasonDAO" ref="bounceReasonDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
-		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
@@ -7440,8 +7436,6 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="feeTypeService" ref="feeTypeService" />
-		<property name="financeDetailService" ref="financeDetailService" />
-		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
@@ -10354,7 +10348,7 @@
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
-		<property name="lowertaxDeductionDAO" ref="lowertaxDeductionDAO" />
+		<property name="lowerTaxDeductionDAO" ref="lowerTaxDeductionDAO" />
 	</bean>
 	<!-- Income Amortization IND AS -->
 	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
@@ -11083,7 +11077,6 @@
 		<property name="paymentHeaderService" ref="paymentHeaderService" />
 		<property name="partnerBankDAO" ref="partnerBankDAO" />
 		<property name="paymentHeaderDAO" ref="paymentHeaderDAO" />
-
 		<property name="receiptService" ref="receiptService" />
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
@@ -11323,7 +11316,7 @@
 		<property name="pricingDetailDAO" ref="pricingDetailDAO" />
 		<property name="finTypeVASProductsDAO" ref="finTypeVASProductsDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
-		<property name="vasRecordingDAO" ref="vasRecordingDAO" />
+		<property name="vasRecordingDAO" ref="vASRecordingDAO" />
 	</bean>
 
 	<!--============ Vas Movement Details ============== -->

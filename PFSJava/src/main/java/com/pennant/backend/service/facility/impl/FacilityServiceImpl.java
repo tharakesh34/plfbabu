@@ -2290,4 +2290,64 @@ public class FacilityServiceImpl extends GenericService<Facility> implements Fac
 		return facilityDAO.checkFirstTaskOwnerAccess(loginUsrID);
 	}
 
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFacilityDAO(FacilityDAO facilityDAO) {
+		this.facilityDAO = facilityDAO;
+	}
+
+	public void setFacilityReferenceDetailDAO(FacilityReferenceDetailDAO facilityReferenceDetailDAO) {
+		this.facilityReferenceDetailDAO = facilityReferenceDetailDAO;
+	}
+
+	public void setCheckListDetailDAO(CheckListDetailDAO checkListDetailDAO) {
+		this.checkListDetailDAO = checkListDetailDAO;
+	}
+
+	public void setScoringSlabDAO(ScoringSlabDAO scoringSlabDAO) {
+		this.scoringSlabDAO = scoringSlabDAO;
+	}
+
+	public void setScoringMetricsDAO(ScoringMetricsDAO scoringMetricsDAO) {
+		this.scoringMetricsDAO = scoringMetricsDAO;
+	}
+
+	public void setRuleDAO(RuleDAO ruleDAO) {
+		this.ruleDAO = ruleDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public void setFinanceCheckListReferenceDAO(FinanceCheckListReferenceDAO financeCheckListReferenceDAO) {
+		this.financeCheckListReferenceDAO = financeCheckListReferenceDAO;
+	}
+
+	public void setFinanceScoreHeaderDAO(FinanceScoreHeaderDAO financeScoreHeaderDAO) {
+		this.financeScoreHeaderDAO = financeScoreHeaderDAO;
+	}
+
+	public void setCollateralDAO(CollateralDAO collateralDAO) {
+		this.collateralDAO = collateralDAO;
+	}
+
+	public void setFacilityDetailDAO(FacilityDetailDAO facilityDetailDAO) {
+		this.facilityDetailDAO = facilityDetailDAO;
+	}
+
+	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
+		this.customerRatingDAO = customerRatingDAO;
+	}
+
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
+	}
+
 }

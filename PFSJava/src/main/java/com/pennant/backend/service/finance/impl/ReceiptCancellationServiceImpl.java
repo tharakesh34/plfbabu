@@ -65,9 +65,7 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.applicationmaster.BounceReasonDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
-import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
@@ -126,10 +124,8 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.finance.FeeReceiptService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
-import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -163,12 +159,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FinReceiptDetailDAO finReceiptDetailDAO;
 	private LimitManagement limitManagement;
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
-	private FinFeeReceiptDAO finFeeReceiptDAO;
 	private DepositChequesDAO depositChequesDAO;
 	private DepositDetailsDAO depositDetailsDAO;
-	private BounceReasonDAO bounceReasonDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
-	private FinanceDetailService financeDetailService;
 	private FinanceProfitDetailDAO financeProfitDetailDAO;
 	private LatePayMarkingService latePayMarkingService;
 	private FinODAmzTaxDetailDAO finODAmzTaxDetailDAO;
@@ -176,7 +169,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private PresentmentDetailDAO presentmentDetailDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
 	private FeeReceiptService feeReceiptService;
-	private TaxHeaderDetailsService taxHeaderDetailsService;
 	private AuditHeaderDAO auditHeaderDAO;
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
 
@@ -3083,10 +3075,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		this.allocationDetailDAO = allocationDetailDAO;
 	}
 
-	public void setFinFeeReceiptDAO(FinFeeReceiptDAO finFeeReceiptDAO) {
-		this.finFeeReceiptDAO = finFeeReceiptDAO;
-	}
-
 	public void setDepositChequesDAO(DepositChequesDAO depositChequesDAO) {
 		this.depositChequesDAO = depositChequesDAO;
 	}
@@ -3095,16 +3083,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		this.depositDetailsDAO = depositDetailsDAO;
 	}
 
-	public void setBounceReasonDAO(BounceReasonDAO bounceReasonDAO) {
-		this.bounceReasonDAO = bounceReasonDAO;
-	}
-
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
 	}
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
@@ -3133,10 +3113,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
-	}
-
-	public void setTaxHeaderDetailsService(TaxHeaderDetailsService taxHeaderDetailsService) {
-		this.taxHeaderDetailsService = taxHeaderDetailsService;
 	}
 
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {

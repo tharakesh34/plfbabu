@@ -80,69 +80,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	private ManualAdviseDAO manualAdviseDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private TaxHeaderDetailsDAO taxHeaderDetailsDAO;
-	// GST Invoice Report changes
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceDetailService financeDetailService;
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public PaymentDetailDAO getPaymentDetailDAO() {
-		return paymentDetailDAO;
-	}
-
-	public void setPaymentDetailDAO(PaymentDetailDAO paymentDetailDAO) {
-		this.paymentDetailDAO = paymentDetailDAO;
-	}
-
-	public ManualAdviseDAO getManualAdviseDAO() {
-		return manualAdviseDAO;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public FinExcessAmountDAO getFinExcessAmountDAO() {
-		return finExcessAmountDAO;
-	}
-
-	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
-		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	public PaymentInstructionDAO getPaymentInstructionDAO() {
-		return paymentInstructionDAO;
-	}
-
-	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
-		this.paymentInstructionDAO = paymentInstructionDAO;
-	}
-
-	public GSTInvoiceTxnService getGstInvoiceTxnService() {
-		return gstInvoiceTxnService;
-	}
-
-	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
-		this.gstInvoiceTxnService = gstInvoiceTxnService;
-	}
-
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
 
 	/**
 	 * saveOrUpdate method method do the following steps. 1) Do the Business validation by using
@@ -172,14 +111,14 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		}
 
 		if (paymentDetail.isNewRecord()) {
-			paymentDetail.setId(Long.parseLong(getPaymentDetailDAO().save(paymentDetail, tableType)));
+			paymentDetail.setId(Long.parseLong(paymentDetailDAO.save(paymentDetail, tableType)));
 			auditHeader.getAuditDetail().setModelData(paymentDetail);
 			auditHeader.setAuditReference(String.valueOf(paymentDetail.getPaymentDetailId()));
 		} else {
-			getPaymentDetailDAO().update(paymentDetail, tableType);
+			paymentDetailDAO.update(paymentDetail, tableType);
 		}
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.info(Literal.LEAVING);
 		return auditHeader;
 
@@ -205,9 +144,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		}
 
 		PaymentDetail paymentDetail = (PaymentDetail) auditHeader.getAuditDetail().getModelData();
-		getPaymentDetailDAO().delete(paymentDetail, TableType.MAIN_TAB);
+		paymentDetailDAO.delete(paymentDetail, TableType.MAIN_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -222,7 +161,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 */
 	@Override
 	public PaymentDetail getPaymentDetail(long paymentDetailId, String amountType) {
-		return getPaymentDetailDAO().getPaymentDetail(paymentDetailId, "_View");
+		return paymentDetailDAO.getPaymentDetail(paymentDetailId, "_View");
 	}
 
 	/**
@@ -234,17 +173,17 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	 * @return PaymentDeatils
 	 */
 	public PaymentDetail getApprovedPaymentDetail(long paymentDetailId, String amountType) {
-		return getPaymentDetailDAO().getPaymentDetail(paymentDetailId, "_AView");
+		return paymentDetailDAO.getPaymentDetail(paymentDetailId, "_AView");
 	}
 
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getPaymentDetailDAO().delete with
-	 * parameters paymentDetail,"" b) NEW Add new record in to main table by using getPaymentDetailDAO().save with
-	 * parameters paymentDetail,"" c) EDIT Update record in the main table by using getPaymentDetailDAO().update with
-	 * parameters paymentDetail,"" 3) Delete the record from the workFlow table by using getPaymentDetailDAO().delete
-	 * with parameters paymentDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtPaymentDeatils by using
+	 * following actions a) DELETE Delete the record from the main table by using paymentDetailDAO.delete with
+	 * parameters paymentDetail,"" b) NEW Add new record in to main table by using paymentDetailDAO.save with parameters
+	 * paymentDetail,"" c) EDIT Update record in the main table by using paymentDetailDAO.update with parameters
+	 * paymentDetail,"" 3) Delete the record from the workFlow table by using paymentDetailDAO.delete with parameters
+	 * paymentDetail,"_Temp" 4) Audit the record in to AuditHeader and AdtPaymentDeatils by using
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPaymentDeatils by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
@@ -266,7 +205,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		PaymentDetail paymentDetail = new PaymentDetail();
 		BeanUtils.copyProperties((PaymentDetail) auditHeader.getAuditDetail().getModelData(), paymentDetail);
 
-		getPaymentDetailDAO().delete(paymentDetail, TableType.TEMP_TAB);
+		paymentDetailDAO.delete(paymentDetail, TableType.TEMP_TAB);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(paymentDetail.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -275,7 +214,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 		if (paymentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			getPaymentDetailDAO().delete(paymentDetail, TableType.MAIN_TAB);
+			paymentDetailDAO.delete(paymentDetail, TableType.MAIN_TAB);
 		} else {
 			paymentDetail.setRoleCode("");
 			paymentDetail.setNextRoleCode("");
@@ -286,21 +225,21 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			if (paymentDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
 				paymentDetail.setRecordType("");
-				getPaymentDetailDAO().save(paymentDetail, TableType.MAIN_TAB);
+				paymentDetailDAO.save(paymentDetail, TableType.MAIN_TAB);
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				paymentDetail.setRecordType("");
-				getPaymentDetailDAO().update(paymentDetail, TableType.MAIN_TAB);
+				paymentDetailDAO.update(paymentDetail, TableType.MAIN_TAB);
 			}
 		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(paymentDetail);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -310,8 +249,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getPaymentDetailDAO().delete with parameters paymentDetail,"_Temp" 3) Audit the record in
-	 * to AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using paymentDetailDAO.delete with parameters paymentDetail,"_Temp" 3) Audit the record in to
+	 * AuditHeader and AdtPaymentDeatils by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
@@ -329,9 +268,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		PaymentDetail paymentDetail = (PaymentDetail) auditHeader.getAuditDetail().getModelData();
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		getPaymentDetailDAO().delete(paymentDetail, TableType.TEMP_TAB);
+		paymentDetailDAO.delete(paymentDetail, TableType.TEMP_TAB);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.info(Literal.LEAVING);
 		return auditHeader;
@@ -358,8 +297,8 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	/**
 	 * For Validating AuditDetals object getting from Audit Header, if any mismatch conditions Fetch the error details
-	 * from getPaymentDetailDAO().getErrorDetail with Error ID and language as parameters. if any error/Warnings then
-	 * assign the to auditDeail Object
+	 * from paymentDetailDAO.getErrorDetail with Error ID and language as parameters. if any error/Warnings then assign
+	 * the to auditDeail Object
 	 * 
 	 * @param auditDetail
 	 * @param usrLanguage
@@ -493,7 +432,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					taxHeaderDetailsDAO.saveTaxes(taxList, tableType.getSuffix());
 				}
 
-				String detailId = getPaymentDetailDAO().save(paymentDetail, tableType);
+				String detailId = paymentDetailDAO.save(paymentDetail, tableType);
 				paymentDetail.setPaymentDetailId(Long.valueOf(detailId));
 
 				// Payments processing
@@ -518,11 +457,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					taxHeaderDetailsDAO.saveTaxes(taxList, tableType.getSuffix());
 				}
 
-				getPaymentDetailDAO().update(paymentDetail, tableType);
+				paymentDetailDAO.update(paymentDetail, tableType);
 				saveOrUpdate(paymentDetail);
 			}
 			if (deleteRecord) {
-				getPaymentDetailDAO().delete(paymentDetail, tableType);
+				paymentDetailDAO.delete(paymentDetail, tableType);
 				// Payments processing
 				doReject(paymentDetail);
 			}
@@ -579,7 +518,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 					taxHeaderDetailsDAO.delete(paymentDetail.getTaxHeader().getHeaderId(), tableType.getSuffix());
 				}
 			}
-			getPaymentDetailDAO().deleteList(paymentDetail, tableType);
+			paymentDetailDAO.deleteList(paymentDetail, tableType);
 
 			for (PaymentDetail detail : paymentDetailList) {
 				doReject(detail);
@@ -590,7 +529,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 
 	@Override
 	public List<PaymentDetail> getPaymentDetailList(long paymentId, String type) {
-		return getPaymentDetailDAO().getPaymentDetailList(paymentId, type);
+		return paymentDetailDAO.getPaymentDetailList(paymentId, type);
 	}
 
 	private void saveOrUpdate(PaymentDetail paymentDetail) {
@@ -599,32 +538,32 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Excess Amount Reserve
 		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
-			FinExcessAmountReserve exReserve = getFinExcessAmountDAO()
-					.getExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
+					paymentDetail.getReferenceId());
 			if (exReserve == null) {
 
 				// Update Excess Amount in Reserve
-				getFinExcessAmountDAO().updateExcessReserve(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+				finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(), paymentDetail.getAmount());
 
 				// Save Excess Reserve Log Amount
-				getFinExcessAmountDAO().saveExcessReserveLog(paymentDetail.getPaymentDetailId(),
+				finExcessAmountDAO.saveExcessReserveLog(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId(), paymentDetail.getAmount(), RepayConstants.RECEIPTTYPE_PAYABLE);
 			} else {
 				if (paymentDetail.getAmount().compareTo(exReserve.getReservedAmt()) != 0) {
 					BigDecimal diffInReserve = paymentDetail.getAmount().subtract(exReserve.getReservedAmt());
 
 					// Update Reserve Amount in FinExcessAmount
-					getFinExcessAmountDAO().updateExcessReserve(paymentDetail.getReferenceId(), diffInReserve);
+					finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(), diffInReserve);
 
 					// Update Excess Reserve Log
-					getFinExcessAmountDAO().updateExcessReserveLog(paymentDetail.getPaymentDetailId(),
+					finExcessAmountDAO.updateExcessReserveLog(paymentDetail.getPaymentDetailId(),
 							paymentDetail.getReferenceId(), diffInReserve, RepayConstants.RECEIPTTYPE_PAYABLE);
 				}
 			}
 		} else {
 			// Payable Amount make utilization
-			ManualAdviseReserve payableReserve = getManualAdviseDAO()
-					.getPayableReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(paymentDetail.getPaymentDetailId(),
+					paymentDetail.getReferenceId());
 
 			BigDecimal amount = paymentDetail.getAmount();
 			if (paymentDetail.getTaxHeader() != null && StringUtils.equals(paymentDetail.getTaxComponent(),
@@ -641,20 +580,20 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			}
 			if (payableReserve == null) {
 				// Update Payable Amount in Reserve
-				getManualAdviseDAO().updatePayableReserveAmount(paymentDetail.getReferenceId(), amount);
+				manualAdviseDAO.updatePayableReserveAmount(paymentDetail.getReferenceId(), amount);
 
 				// Save Payable Reserve Log Amount
-				getManualAdviseDAO().savePayableReserveLog(paymentDetail.getPaymentDetailId(),
+				manualAdviseDAO.savePayableReserveLog(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId(), amount);
 			} else {
 				if (amount.compareTo(payableReserve.getReservedAmt()) != 0) {
 					BigDecimal diffInReserve = amount.subtract(payableReserve.getReservedAmt());
 
 					// Update Reserve Amount in Manual Advise
-					getManualAdviseDAO().updatePayableReserveAmount(paymentDetail.getReferenceId(), diffInReserve);
+					manualAdviseDAO.updatePayableReserveAmount(paymentDetail.getReferenceId(), diffInReserve);
 
 					// Update Payable Reserve Log
-					getManualAdviseDAO().updatePayableReserveLog(paymentDetail.getPaymentDetailId(),
+					manualAdviseDAO.updatePayableReserveLog(paymentDetail.getPaymentDetailId(),
 							paymentDetail.getReferenceId(), diffInReserve);
 				}
 			}
@@ -668,28 +607,28 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Excess Amount Reserve
 		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
-			FinExcessAmountReserve exReserve = getFinExcessAmountDAO()
-					.getExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			FinExcessAmountReserve exReserve = finExcessAmountDAO.getExcessReserve(paymentDetail.getPaymentDetailId(),
+					paymentDetail.getReferenceId());
 			if (exReserve != null) {
 				// Update Reserve Amount in FinExcessAmount
-				getFinExcessAmountDAO().updateExcessReserve(paymentDetail.getReferenceId(),
+				finExcessAmountDAO.updateExcessReserve(paymentDetail.getReferenceId(),
 						exReserve.getReservedAmt().negate());
 
 				// Delete Reserved Log against Excess and Receipt ID
-				getFinExcessAmountDAO().deleteExcessReserve(paymentDetail.getPaymentDetailId(),
+				finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
 			}
 		} else { // Payable Amount Reserve
 			// Payable Amount make utilization
-			ManualAdviseReserve payableReserve = getManualAdviseDAO()
-					.getPayableReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId());
+			ManualAdviseReserve payableReserve = manualAdviseDAO.getPayableReserve(paymentDetail.getPaymentDetailId(),
+					paymentDetail.getReferenceId());
 			if (payableReserve != null) {
 				// Update Reserve Amount in ManualAdvise
-				getManualAdviseDAO().updatePayableReserve(paymentDetail.getReferenceId(),
+				manualAdviseDAO.updatePayableReserve(paymentDetail.getReferenceId(),
 						payableReserve.getReservedAmt().negate());
 
 				// Delete Reserved Log against Payable Advise ID and Receipt ID
-				getManualAdviseDAO().deletePayableReserve(paymentDetail.getPaymentDetailId(),
+				manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId());
 			}
 		}
@@ -704,11 +643,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 		// Excess Amounts
 		if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
 			// Excess Amount make utilization
-			getFinExcessAmountDAO().updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+			finExcessAmountDAO.updateUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
 
 			// Delete Reserved Log against Excess and Receipt ID
-			getFinExcessAmountDAO().deleteExcessReserve(paymentDetail.getPaymentDetailId(),
-					paymentDetail.getReferenceId(), RepayConstants.RECEIPTTYPE_PAYABLE);
+			finExcessAmountDAO.deleteExcessReserve(paymentDetail.getPaymentDetailId(), paymentDetail.getReferenceId(),
+					RepayConstants.RECEIPTTYPE_PAYABLE);
 
 			// Excess Movement Creation
 			FinExcessMovement movement = new FinExcessMovement();
@@ -717,7 +656,7 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 			movement.setMovementType(RepayConstants.RECEIPTTYPE_PAYABLE);
 			movement.setTranType(AccountConstants.TRANTYPE_CREDIT);
 			movement.setAmount(paymentDetail.getAmount());
-			getFinExcessAmountDAO().saveExcessMovement(movement);
+			finExcessAmountDAO.saveExcessMovement(movement);
 
 		} else {
 
@@ -757,11 +696,11 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				advise.setBalanceAmt(BigDecimal.ZERO);
 			}
 
-			getManualAdviseDAO().updateAdvPayment(advise, TableType.MAIN_TAB);
+			manualAdviseDAO.updateAdvPayment(advise, TableType.MAIN_TAB);
 
 			// Delete Reserved Log against Advise and Receipt Seq ID
 			if (!StringUtils.equals(UploadConstants.FINSOURCE_ID_CD_PAY_UPLOAD, paymentDetail.getFinSource())) {
-				getManualAdviseDAO().deletePayableReserve(paymentDetail.getPaymentDetailId(),
+				manualAdviseDAO.deletePayableReserve(paymentDetail.getPaymentDetailId(),
 						paymentDetail.getReferenceId());
 			}
 
@@ -786,10 +725,9 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 				taxHeader.setTaxDetails(new ArrayList<>());
 			}
 			manualMovement.setTaxHeader(taxHeader);
-			getManualAdviseDAO().saveMovement(manualMovement, TableType.MAIN_TAB.getSuffix());
+			manualAdviseDAO.saveMovement(manualMovement, TableType.MAIN_TAB.getSuffix());
 
-			ManualAdvise manualAdvise = getManualAdviseDAO().getManualAdviseById(paymentDetail.getReferenceId(),
-					"_AView");
+			ManualAdvise manualAdvise = manualAdviseDAO.getManualAdviseById(paymentDetail.getReferenceId(), "_AView");
 
 			manualMovement.setFeeTypeCode(manualAdvise.getFeeTypeCode());
 			manualMovement.setFeeTypeDesc(manualAdvise.getFeeTypeDesc());
@@ -805,15 +743,15 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	public void paymentReversal(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
 
-		List<PaymentDetail> detailsList = getPaymentDetailDAO().getPaymentDetailList(paymentInstruction.getPaymentId(),
+		List<PaymentDetail> detailsList = paymentDetailDAO.getPaymentDetailList(paymentInstruction.getPaymentId(),
 				TableType.MAIN_TAB.getSuffix());
 		if (detailsList != null && !detailsList.isEmpty()) {
 			for (PaymentDetail paymentDetail : detailsList) {
 				if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(paymentDetail.getAmountType())) {
-					getFinExcessAmountDAO().updateExcessAmount(paymentDetail.getReferenceId(), "U",
+					finExcessAmountDAO.updateExcessAmount(paymentDetail.getReferenceId(), "U",
 							paymentDetail.getAmount().negate());
 				} else {
-					getManualAdviseDAO().reverseUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
+					manualAdviseDAO.reverseUtilise(paymentDetail.getReferenceId(), paymentDetail.getAmount());
 				}
 			}
 		}
@@ -823,30 +761,54 @@ public class PaymentDetailServiceImpl extends GenericService<PaymentDetail> impl
 	@Override
 	public int updatePaymentStatus(PaymentInstruction paymentInstruction) {
 		logger.debug(Literal.ENTERING);
-		return getPaymentInstructionDAO().updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
+		return paymentInstructionDAO.updatePaymentInstrucionStatus(paymentInstruction, TableType.MAIN_TAB);
 	}
 
 	@Override
 	public PaymentInstruction getPaymentInstruction(long paymentId, String type) {
-		return getPaymentInstructionDAO().getPaymentInstruction(paymentId, type);
+		return paymentInstructionDAO.getPaymentInstruction(paymentId, type);
 	}
 
 	@Override
 	public PaymentInstruction getPaymentInstructionDetails(long paymentId, String type) {
-		return getPaymentInstructionDAO().getPaymentInstructionDetails(paymentId, type);
+		return paymentInstructionDAO.getPaymentInstructionDetails(paymentId, type);
 	}
 
 	@Override
 	public long getPymntsCustId(long paymentId) {
-		return getPaymentInstructionDAO().getPymntsCustId(paymentId);
+		return paymentInstructionDAO.getPymntsCustId(paymentId);
 	}
 
-	public TaxHeaderDetailsDAO getTaxHeaderDetailsDAO() {
-		return taxHeaderDetailsDAO;
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setPaymentDetailDAO(PaymentDetailDAO paymentDetailDAO) {
+		this.paymentDetailDAO = paymentDetailDAO;
+	}
+
+	public void setPaymentInstructionDAO(PaymentInstructionDAO paymentInstructionDAO) {
+		this.paymentInstructionDAO = paymentInstructionDAO;
+	}
+
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
+
+	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
+		this.finExcessAmountDAO = finExcessAmountDAO;
 	}
 
 	public void setTaxHeaderDetailsDAO(TaxHeaderDetailsDAO taxHeaderDetailsDAO) {
 		this.taxHeaderDetailsDAO = taxHeaderDetailsDAO;
+	}
+
+	public void setGstInvoiceTxnService(GSTInvoiceTxnService gstInvoiceTxnService) {
+		this.gstInvoiceTxnService = gstInvoiceTxnService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }

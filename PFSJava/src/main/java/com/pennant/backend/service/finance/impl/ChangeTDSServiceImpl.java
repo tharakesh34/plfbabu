@@ -49,7 +49,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 	private FinanceTypeDAO financeTypeDAO;
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
 	private AuditHeaderDAO auditHeaderDAO;
-	private LowerTaxDeductionDAO lowertaxDeductionDAO;
+	private LowerTaxDeductionDAO lowerTaxDeductionDAO;
 
 	public ChangeTDSServiceImpl() {
 		super();
@@ -147,13 +147,13 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			financeMainDAO.save(fm, tableType, false);
 			fmi.setFinMaintainId(Long.parseLong(finMaintainInstructionDAO.save(fmi, tableType)));
 			schdData.getLowerTaxDeductionDetails().get(0).setFinMaintainId(fmi.getFinMaintainId());
-			lowertaxDeductionDAO.save(schdData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
+			lowerTaxDeductionDAO.save(schdData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
 			auditHeader.getAuditDetail().setModelData(fmi);
 			auditHeader.setAuditReference(String.valueOf(fmi.getFinMaintainId()));
 		} else {
 			financeMainDAO.update(fm, tableType, false);
 			finMaintainInstructionDAO.update(fmi, tableType);
-			lowertaxDeductionDAO.update(schdData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
+			lowerTaxDeductionDAO.update(schdData.getLowerTaxDeductionDetails().get(0), tableType.getSuffix());
 
 		}
 		finServiceInstructionDAO.save(inst, tableType.getSuffix());
@@ -299,7 +299,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		for (LowerTaxDeduction deductions : schdData.getLowerTaxDeductionDetails()) {
 			if (deductions.getFinMaintainId() == fmi.getId()) {
-				lowertaxDeductionDAO.delete(deductions, TableType.TEMP_TAB.getSuffix());
+				lowerTaxDeductionDAO.delete(deductions, TableType.TEMP_TAB.getSuffix());
 			}
 		}
 
@@ -316,7 +316,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 				deductions.setLastMntBy(fmi.getLastMntBy());
 				deductions.setVersion(fmi.getVersion());
 				deductions.setWorkflowId(fmi.getWorkflowId());
-				lowertaxDeductionDAO.save(deductions, "");
+				lowerTaxDeductionDAO.save(deductions, "");
 			}
 		}
 
@@ -436,7 +436,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(schedules);
 
-		schdData.setLowerTaxDeductionDetails(lowertaxDeductionDAO.getLowerTaxDeductionDetails(finID, ""));
+		schdData.setLowerTaxDeductionDetails(lowerTaxDeductionDAO.getLowerTaxDeductionDetails(finID, ""));
 
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
@@ -461,6 +461,38 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		logger.debug(Literal.LEAVING);
 		return schdData;
+	}
+
+	public void setChangeTDSDAO(ChangeTDSDAO changeTDSDAO) {
+		this.changeTDSDAO = changeTDSDAO;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setFinMaintainInstructionDAO(FinMaintainInstructionDAO finMaintainInstructionDAO) {
+		this.finMaintainInstructionDAO = finMaintainInstructionDAO;
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setLowerTaxDeductionDAO(LowerTaxDeductionDAO lowerTaxDeductionDAO) {
+		this.lowerTaxDeductionDAO = lowerTaxDeductionDAO;
 	}
 
 }

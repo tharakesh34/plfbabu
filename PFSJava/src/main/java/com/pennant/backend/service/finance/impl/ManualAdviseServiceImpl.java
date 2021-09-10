@@ -63,8 +63,6 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.feetype.FeeTypeService;
-import com.pennant.backend.service.finance.FinFeeDetailService;
-import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.ManualAdviseService;
 import com.pennant.backend.util.FinanceConstants;
@@ -89,8 +87,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	private AuditHeaderDAO auditHeaderDAO;
 	private ManualAdviseDAO manualAdviseDAO;
 	private FeeTypeService feeTypeService;
-	private FinanceDetailService financeDetailService;
-	private FinFeeDetailService finFeeDetailService;
 	private PostingsPreparationUtil postingsPreparationUtil;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private FinanceMainDAO financeMainDAO;
@@ -836,14 +832,6 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 
 	public void setFeeTypeService(FeeTypeService feeTypeService) {
 		this.feeTypeService = feeTypeService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
-		this.finFeeDetailService = finFeeDetailService;
 	}
 
 	public void setPostingsPreparationUtil(PostingsPreparationUtil postingsPreparationUtil) {

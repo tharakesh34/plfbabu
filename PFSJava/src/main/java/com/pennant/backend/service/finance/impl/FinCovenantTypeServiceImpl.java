@@ -71,7 +71,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	private static final Logger logger = LogManager.getLogger(FinCovenantTypeServiceImpl.class);
 
 	private AuditHeaderDAO auditHeaderDAO;
-	private FinCovenantTypeDAO finCovenantTypesDAO;
+	private FinCovenantTypeDAO finCovenantTypeDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceTypeDAO financeTypeDAO;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
@@ -88,7 +88,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 	@Override
 	public List<FinCovenantType> getFinCovenantTypeById(String id, String type, boolean isEnquiry) {
 		logger.debug(Literal.ENTERING);
-		List<FinCovenantType> finCovenantTypes = finCovenantTypesDAO.getFinCovenantTypeByFinRef(id, type, isEnquiry);
+		List<FinCovenantType> finCovenantTypes = finCovenantTypeDAO.getFinCovenantTypeByFinRef(id, type, isEnquiry);
 		logger.debug(Literal.LEAVING);
 		return finCovenantTypes;
 	}
@@ -179,15 +179,15 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 					finPayment.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
 				if (saveRecord) {
-					finCovenantTypesDAO.save(finPayment, tableType);
+					finCovenantTypeDAO.save(finPayment, tableType);
 				}
 
 				if (updateRecord) {
-					finCovenantTypesDAO.update(finPayment, tableType);
+					finCovenantTypeDAO.update(finPayment, tableType);
 				}
 
 				if (deleteRecord) {
-					finCovenantTypesDAO.delete(finPayment, tableType);
+					finCovenantTypeDAO.delete(finPayment, tableType);
 				}
 
 				if (approveRec) {
@@ -225,7 +225,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		if (finCovenantTypes != null && !finCovenantTypes.isEmpty()) {
 			int auditSeq = 1;
 			for (FinCovenantType finPayment : finCovenantTypes) {
-				finCovenantTypesDAO.delete(finPayment, tableType);
+				finCovenantTypeDAO.delete(finPayment, tableType);
 				fields = PennantJavaUtil.getFieldDetails(finPayment, finPayment.getExcludeFields());
 				auditDetails.add(new AuditDetail(auditTranType, auditSeq, fields[0], fields[1],
 						finPayment.getBefImage(), finPayment));
@@ -327,9 +327,9 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 		FinCovenantType tempFinAdvancePay = null;
 
 		if (covenantType.isWorkflow()) {
-			tempFinAdvancePay = finCovenantTypesDAO.getFinCovenantTypeById(covenantType, "_Temp");
+			tempFinAdvancePay = finCovenantTypeDAO.getFinCovenantTypeById(covenantType, "_Temp");
 		}
-		FinCovenantType befFinAdvancePay = finCovenantTypesDAO.getFinCovenantTypeById(covenantType, "");
+		FinCovenantType befFinAdvancePay = finCovenantTypeDAO.getFinCovenantTypeById(covenantType, "");
 		FinCovenantType oldFinAdvancePay = covenantType.getBefImage();
 
 		String[] errParm = new String[1];
@@ -405,7 +405,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 	@Override
 	public FinCovenantType getFinCovenantTypeById(String reference, String covenType, String type) {
-		return finCovenantTypesDAO.getCovenantTypeById(reference, covenType, type);
+		return finCovenantTypeDAO.getCovenantTypeById(reference, covenType, type);
 	}
 
 	@Override
@@ -437,7 +437,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
 		}
 
-		List<FinCovenantType> covenantTypes = finCovenantTypesDAO.getFinCovenantDocTypeByFinRef(finReference, "_View",
+		List<FinCovenantType> covenantTypes = finCovenantTypeDAO.getFinCovenantDocTypeByFinRef(finReference, "_View",
 				false);
 		fd.setCovenantTypeList(covenantTypes);
 
@@ -523,7 +523,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 				}
 			}
 
-			FinCovenantType fincovenantType = finCovenantTypesDAO.getCovenantTypeById(finReference, covenantType,
+			FinCovenantType fincovenantType = finCovenantTypeDAO.getCovenantTypeById(finReference, covenantType,
 					"_View");
 			if (!isUpdate && fincovenantType != null) {
 				String[] valueParm = new String[2];
@@ -629,12 +629,52 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 	@Override
 	public List<FinCovenantType> getFinCovenantDocTypeByFinRef(String id, String type, boolean isEnquiry) {
-		return finCovenantTypesDAO.getFinCovenantDocTypeByFinRef(id, type, isEnquiry);
+		return finCovenantTypeDAO.getFinCovenantDocTypeByFinRef(id, type, isEnquiry);
 	}
 
 	@Override
 	public List<DocumentType> getPddOtcList() {
-		return finCovenantTypesDAO.getPddOtcList();
+		return finCovenantTypeDAO.getPddOtcList();
+	}
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setFinCovenantTypeDAO(FinCovenantTypeDAO finCovenantTypeDAO) {
+		this.finCovenantTypeDAO = finCovenantTypeDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {
+		this.financeTypeDAO = financeTypeDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
+	}
+
+	public void setDocumentTypeDAO(DocumentTypeDAO documentTypeDAO) {
+		this.documentTypeDAO = documentTypeDAO;
+	}
+
+	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
+		this.financeWorkFlowService = financeWorkFlowService;
+	}
+
+	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
+		this.documentDetailsDAO = documentDetailsDAO;
+	}
+
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
 	}
 
 }

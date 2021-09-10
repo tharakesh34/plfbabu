@@ -189,7 +189,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected JdbcSearchObject<FinanceMain> searchObj;
 	protected Row row_AlwWorkflow;
 	protected Grid searchGrid;
-	private transient FinanceDetailService financeDetailService;
 
 	private String requestSource;
 	private String productCode;
@@ -200,16 +199,17 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	protected int oldVar_sortOperator_finType; // autoWired
 	protected int oldVar_sortOperator_Branch = -1; // autowired
 
-	private DedupParmService dedupParmService;
-	private FinChangeCustomerService finChangeCustomerService;
-	private CollateralAssignmentDAO collateralAssignmentDAO;
-	private CollateralSetupDAO collateralSetupDAO;
-
 	private String CREATE_CIF = "CREATECIF";
 	private String CREATE_ACCOUNT = "CREATACCOUNT";
 	private List<String> usrfinRolesList = new ArrayList<String>();
 	private String betaDialog = "_Beta";
 	private List<ValueLabel> betaConfig = PennantStaticListUtil.getBetaConfiguration();
+
+	private FinanceDetailService financeDetailService;
+	private DedupParmService dedupParmService;
+	private FinChangeCustomerService finChangeCustomerService;
+	private CollateralAssignmentDAO collateralAssignmentDAO;
+	private CollateralSetupDAO collateralSetupDAO;
 
 	/**
 	 * default constructor.<br>
@@ -406,6 +406,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addSort("PrevMntOn", true);
 
 		// Field Declarations for Fetching List Data
+		this.searchObj.addField("FinID");
 		this.searchObj.addField("FinReference");
 		this.searchObj.addField("FinAssetValue");
 		this.searchObj.addField("FinType");
@@ -436,19 +437,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addField("OfferId");
 		this.searchObj.addField("ApplicationNo");
 
-		// FIXME: DELETE BELOW CODE AFTER TESTING
-		/*
-		 * String screenEvent = ""; if (FinanceConstants.FINSER_EVENT_PREAPPROVAL .equals(this.requestSource)) {
-		 * screenEvent = FinanceConstants.FINSER_EVENT_PREAPPROVAL; } else { screenEvent =
-		 * FinanceConstants.FINSER_EVENT_ORG; }
-		 * 
-		 * boolean accessToCreateNewFin = getFinanceDetailService().checkFirstTaskOwnerAccess(
-		 * getUserWorkspace().getUserRoleSet(), screenEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
-		 * 
-		 * 
-		 * if (accessToCreateNewFin) { button_FinanceMainList_NewFinanceMain.setVisible(true); } else {
-		 * button_FinanceMainList_NewFinanceMain.setVisible(false); }
-		 */
 		this.searchObj.addTabelName("FinanceMain_LView");
 		setSearchObj(this.searchObj);
 
@@ -487,65 +475,56 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method is forwarded from the list boxes item renderer. <br>
-	 * see: com.pennant.webui.finance.financemain.model. FinanceMainListModelItemRenderer.java <br>
-	 * 
-	 * @param event
-	 * @throws Exception
-	 */
 	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		// get the selected FinanceMain object
 		final Listitem item = this.listBoxFinanceMain.getSelectedItem();
 
 		if (item == null) {
-			logger.debug("Leaving " + event.toString());
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
 		// CAST AND STORE THE SELECTED OBJECT
-		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+		final FinanceMain afm = (FinanceMain) item.getAttribute("data");
 
 		String screenEvent = "";
-		if (StringUtils.equals(this.requestSource, FinServiceEvent.PREAPPROVAL)) {
+		if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
 			screenEvent = FinServiceEvent.PREAPPROVAL;
 		} else {
 			screenEvent = FinServiceEvent.ORG;
 		}
 
-		boolean custInMaintain = checkCustomerStatus(aFinanceMain.getCustCIF());
+		boolean custInMaintain = checkCustomerStatus(afm.getCustCIF());
 		if (custInMaintain) {
 			MessageUtil.showMessage("Customer is Maintainance");
 			return;
 		}
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.CHECK_COLL_MAINTENANCE)
-				&& StringUtils.equals(screenEvent, FinServiceEvent.ORG)) {
-			String finReference = aFinanceMain.getFinReference();
+				&& FinServiceEvent.ORG.equals(screenEvent)) {
+			String finReference = afm.getFinReference();
 			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
 					.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME,
 							TableType.TEMP_TAB.getSuffix());
-			if (CollectionUtils.isNotEmpty(collateralAssignmentList)) {
-				for (CollateralAssignment collateralAssignment : collateralAssignmentList) {
-					boolean isRcdMaintenance = collateralSetupDAO.isCollateralInMaintenance(
-							collateralAssignment.getCollateralRef(), TableType.TEMP_TAB.getSuffix());
-					if (isRcdMaintenance) {
-						MessageUtil.showMessage("Collateral is Maintainance");
-						return;
-					}
+			for (CollateralAssignment collateralAssignment : collateralAssignmentList) {
+				boolean isRcdMaintenance = collateralSetupDAO.isCollateralInMaintenance(
+						collateralAssignment.getCollateralRef(), TableType.TEMP_TAB.getSuffix());
+				if (isRcdMaintenance) {
+					MessageUtil.showMessage("Collateral is Maintainance");
+					return;
 				}
 			}
 		}
 
-		doLoadWorkFlow(aFinanceMain.isWorkflow(), aFinanceMain.getWorkflowId(), aFinanceMain.getNextTaskId());
-		final FinanceDetail financeDetail = getFinanceDetailService().getOriginationFinance(aFinanceMain.getFinID(),
-				aFinanceMain.getNextRoleCode(), screenEvent, getRole());
+		doLoadWorkFlow(afm.isWorkflow(), afm.getWorkflowId(), afm.getNextTaskId());
+		final FinanceDetail financeDetail = financeDetailService.getOriginationFinance(afm.getFinID(),
+				afm.getNextRoleCode(), screenEvent, getRole());
 
 		if (financeDetail == null) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = aFinanceMain.getFinReference();
+			valueParm[0] = afm.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
@@ -577,18 +556,18 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Check swap customer or not
-		boolean finReferenceProcess = getFinChangeCustomerService().isFinReferenceProcess(aFinanceMain.getFinID());
+		boolean finReferenceProcess = finChangeCustomerService.isFinReferenceProcess(afm.getFinID());
 
 		if (finReferenceProcess) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
-			valueParm[0] = aFinanceMain.getFinReference();
+			valueParm[0] = afm.getFinReference();
 			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
 			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41095", errParm, valueParm),
 					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
-			logger.debug(Literal.LEAVING + event.toString());
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -599,28 +578,27 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		if (aFinanceMain.getWorkflowId() != 0
-				&& !PennantConstants.RCD_STATUS_RESUBMITTED.equals(aFinanceMain.getRecordStatus())
-				&& !PennantConstants.RCD_STATUS_SAVED.equals(aFinanceMain.getRecordStatus())) {
+		if (afm.getWorkflowId() != 0 && !PennantConstants.RCD_STATUS_RESUBMITTED.equals(afm.getRecordStatus())
+				&& !PennantConstants.RCD_STATUS_SAVED.equals(afm.getRecordStatus())) {
 
-			if (!inReassignmentQueue(aFinanceMain.getFinReference())) {
-				String[] nextTasks = aFinanceMain.getNextTaskId().split(";");
+			if (!inReassignmentQueue(afm.getFinReference())) {
+				String[] nextTasks = afm.getNextTaskId().split(";");
 
 				if (nextTasks.length > 0) {
 					for (int i = 0; i < nextTasks.length; i++) {
 						String baseRole = StringUtils.trimToEmpty(getTaskBaseRole(nextTasks[i]));
-						if (!"".equals(baseRole) && usrfinRolesList.contains(baseRole)
-								&& aFinanceMain.getNextUserId() != null && aFinanceMain.getNextUserId()
+						if (!"".equals(baseRole) && usrfinRolesList.contains(baseRole) && afm.getNextUserId() != null
+								&& afm.getNextUserId()
 										.contains(String.valueOf(getUserWorkspace().getLoggedInUser().getUserId()))) {
 							break;
 						}
 					}
 				}
 
-				String whereCond = " where FinReference = ?";
+				String whereCond = " Where FinID = ?";
 
-				if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinReference() })) {
-					if (tATProcess(aFinanceMain, financeDetail)) {
+				if (doCheckAuthority(afm, whereCond, new Object[] { afm.getFinID() })) {
+					if (tATProcess(afm, financeDetail)) {
 						validateCustExistance(financeDetail);
 					}
 				} else {
@@ -632,7 +610,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 		} else {
-			if (tATProcess(aFinanceMain, financeDetail)) {
+			if (tATProcess(afm, financeDetail)) {
 				validateCustExistance(financeDetail);
 			}
 		}
@@ -755,47 +733,49 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Method for Checking User action maintained based On TAT defined at Process Editor If User agreed , Action will be
 	 * logged for future purpose.
 	 * 
-	 * @param aFinanceMain
-	 * @param financeDetail
+	 * @param fm
+	 * @param fd
 	 * @return
 	 */
-	private boolean tATProcess(FinanceMain aFinanceMain, FinanceDetail financeDetail) {
-		logger.debug("Entering");
+	private boolean tATProcess(FinanceMain fm, FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
 
-		FinanceReferenceDetail financeRefDetail = new FinanceReferenceDetail();
-		financeRefDetail.setMandInputInStage(aFinanceMain.getNextRoleCode() + ",");
-		financeRefDetail.setFinType(aFinanceMain.getFinType());
-		List<FinanceReferenceDetail> queryCodeList = getDedupParmService().getQueryCodeList(financeRefDetail,
-				"_TATView");
+		FinanceReferenceDetail frd = new FinanceReferenceDetail();
+		frd.setMandInputInStage(fm.getNextRoleCode() + ",");
+		frd.setFinType(fm.getFinType());
 
-		if (queryCodeList != null && !queryCodeList.isEmpty()) {
+		List<FinanceReferenceDetail> frdList = dedupParmService.getQueryCodeList(frd, "_TATView");
 
-			TATDetail tatDetail = getFinanceDetailService().getTATDetail(aFinanceMain.getFinReference(),
-					aFinanceMain.getNextRoleCode());
+		if (frdList.isEmpty()) {
+			logger.debug(Literal.LEAVING);
+			return true;
+		}
 
-			if (tatDetail == null || (tatDetail != null && tatDetail.gettATStartTime() == null)) {
-				final String msg = Labels.getLabel("label_TATProcess_UserAction");
+		TATDetail tatDetail = financeDetailService.getTATDetail(fm.getFinReference(), fm.getNextRoleCode());
 
-				if (MessageUtil.confirm(msg) == MessageUtil.YES) {
-					if (tatDetail == null) {
-						tatDetail = new TATDetail();
-						tatDetail.setModule(FinServiceEvent.ORG);
-						tatDetail.setReference(aFinanceMain.getFinReference());
-						tatDetail.setRoleCode(aFinanceMain.getNextRoleCode());
-						tatDetail.setFinType(aFinanceMain.getFinType());
-						tatDetail.settATStartTime(new Timestamp(System.currentTimeMillis()));
-						getFinanceDetailService().saveTATDetail(tatDetail);
-					} else {
-						tatDetail.settATStartTime(new Timestamp(System.currentTimeMillis()));
-						getFinanceDetailService().updateTATDetail(tatDetail);
-					}
-					return true;
+		if (tatDetail == null || (tatDetail != null && tatDetail.gettATStartTime() == null)) {
+			final String msg = Labels.getLabel("label_TATProcess_UserAction");
+
+			if (MessageUtil.confirm(msg) == MessageUtil.YES) {
+				if (tatDetail == null) {
+					tatDetail = new TATDetail();
+					tatDetail.setModule(FinServiceEvent.ORG);
+					tatDetail.setReference(fm.getFinReference());
+					tatDetail.setRoleCode(fm.getNextRoleCode());
+					tatDetail.setFinType(fm.getFinType());
+					tatDetail.settATStartTime(new Timestamp(System.currentTimeMillis()));
+					financeDetailService.saveTATDetail(tatDetail);
 				} else {
-					return false;
+					tatDetail.settATStartTime(new Timestamp(System.currentTimeMillis()));
+					financeDetailService.updateTATDetail(tatDetail);
 				}
+				return true;
+			} else {
+				return false;
 			}
 		}
-		logger.debug("leaving");
+
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -1004,10 +984,10 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$button_FinanceMainList_PrintList(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
-		new PTListReportUtils(this.requestSource + "FinanceMain", getSearchObj(),
+		logger.debug(Literal.ENTERING);
+		new PTListReportUtils(this.requestSource + "FinanceMain", searchObj,
 				this.pagingFinanceMainList.getTotalSize() + 1);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1476,11 +1456,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		return searchObject;
 	}
 
-	/**
-	 * Method for Searching Reference is exists in Re-Assignment Queue or not
-	 */
 	private boolean inReassignmentQueue(String finreference) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		JdbcSearchObject<QueueAssignment> referenceSearchObj = new JdbcSearchObject<QueueAssignment>(
 				QueueAssignment.class);
 		referenceSearchObj.addTabelName("Task_Assignments_Temp");
@@ -1489,11 +1466,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		List<QueueAssignment> taskOwnerList = getPagedListWrapper().getPagedListService()
 				.getBySearchObject(referenceSearchObj);
 		if (!taskOwnerList.isEmpty()) {
-			logger.debug("Leaving");
+			logger.debug(Literal.ENTERING);
 			return true;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.ENTERING);
 		return false;
 	}
 
@@ -1514,22 +1491,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	// ****************** getter / setter *******************//
 	// ******************************************************//
 
-	public FinanceDetailService getFinanceDetailService() {
-		return financeDetailService;
-	}
-
-	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
-		this.financeDetailService = financeDetailService;
-	}
-
-	public DedupParmService getDedupParmService() {
-		return dedupParmService;
-	}
-
-	public void setDedupParmService(DedupParmService dedupParmService) {
-		this.dedupParmService = dedupParmService;
-	}
-
 	public JdbcSearchObject<FinanceMain> getSearchObj() {
 		return this.searchObj;
 	}
@@ -1538,20 +1499,24 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj = searchObj;
 	}
 
-	public FinChangeCustomerService getFinChangeCustomerService() {
-		return finChangeCustomerService;
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public void setDedupParmService(DedupParmService dedupParmService) {
+		this.dedupParmService = dedupParmService;
 	}
 
 	public void setFinChangeCustomerService(FinChangeCustomerService finChangeCustomerService) {
 		this.finChangeCustomerService = finChangeCustomerService;
 	}
 
-	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
-		this.collateralAssignmentDAO = collateralAssignmentDAO;
-	}
-
 	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
 		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	public void setCollateralAssignmentDAO(CollateralAssignmentDAO collateralAssignmentDAO) {
+		this.collateralAssignmentDAO = collateralAssignmentDAO;
 	}
 
 }

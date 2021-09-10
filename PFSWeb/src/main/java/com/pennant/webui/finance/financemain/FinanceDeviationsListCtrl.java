@@ -64,6 +64,7 @@ import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -204,6 +205,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Register buttons and fields.
 		registerButton(button_FinanceMainList_FinanceMainSearchDialog);
 
+		registerField("FinID");
 		registerField("LovDescCustCIF", listheader_CustomerCIF, SortOrder.NONE, custCIF, sortOperator_custID,
 				Operators.STRING);
 		registerField("FinReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_finReference,
@@ -278,7 +280,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinanceMain.getSelectedItem();
@@ -288,20 +290,23 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Get the selected entity.
 		FinanceDetail financeDetail = deviationDetailsService.getFinanceDetailById(aFinanceMain.getFinID());
 
-		if (financeDetail == null) {
-			String[] errParm = new String[1];
-			String[] valueParm = new String[1];
-			valueParm[0] = aFinanceMain.getFinReference();
-			errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
-
-			ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
-					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
-					getUserWorkspace().getUserLanguage());
-			MessageUtil.showError(errorDetails.getError());
-		} else {
+		if (financeDetail != null) {
 			doShowDialogPage(financeDetail);
+			return;
 		}
-		logger.debug("Leaving");
+
+		String[] errParm = new String[1];
+		String[] valueParm = new String[1];
+		valueParm[0] = aFinanceMain.getFinReference();
+		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+		ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+				new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+				getUserWorkspace().getUserLanguage());
+		MessageUtil.showError(errorDetails.getError());
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -310,7 +315,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param aFinanceDetail The entity that need to be passed to the dialog.
 	 */
 	protected void doShowDialogPage(FinanceDetail aFinanceDetail) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
@@ -331,7 +336,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			MessageUtil.showError(e);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
