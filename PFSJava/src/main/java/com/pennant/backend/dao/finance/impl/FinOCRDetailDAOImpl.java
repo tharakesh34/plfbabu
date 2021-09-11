@@ -1,5 +1,7 @@
 package com.pennant.backend.dao.finance.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -7,16 +9,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.finance.FinOCRDetailDAO;
 import com.pennant.backend.model.finance.FinOCRDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -29,156 +28,171 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 
 	@Override
 	public List<FinOCRDetail> getFinOCRDetailsByHeaderID(long headerID, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSelectSqlQuery(type);
+		sql.append(" Where HeaderID = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select DetailID, HeaderID , CustomerContribution, FinancerContribution, Contributor,");
-		sql.append("StepSequence");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinOCRDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderID= :HeaderID");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.trace(Literal.SQL + sql.toString());
-		FinOCRDetail finOCRDetail = new FinOCRDetail();
-		finOCRDetail.setHeaderID(headerID);
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRDetail);
-		RowMapper<FinOCRDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOCRDetail.class);
-
-		try {
-			return this.jdbcTemplate.query(sql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return null;
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, headerID), new FinOCRDetailsRM());
 	}
 
 	@Override
 	public FinOCRDetail getFinOCRDetailById(long detailID, String type) {
-		logger.debug(Literal.ENTERING);
+		StringBuilder sql = getSelectSqlQuery(type);
+		sql.append(" Where DetailID = ?");
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select DetailID, HeaderID , CustomerContribution, FinancerContribution, Contributor,");
-		sql.append("StepSequence");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
-		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(" From FinOCRDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where DetailID= :DetailID");
-
-		logger.trace(Literal.SQL + sql.toString());
-		FinOCRDetail finOCRDetail = new FinOCRDetail();
-		finOCRDetail.setDetailID(detailID);
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRDetail);
-		RowMapper<FinOCRDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(FinOCRDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new FinOCRDetailsRM(), detailID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
-	public void update(FinOCRDetail FinOCRDetail, String type) {
-		logger.debug(Literal.ENTERING);
-		int recordCount = 0;
-
-		StringBuilder sql = new StringBuilder();
-		sql.append("Update FinOCRDetails");
+	public void update(FinOCRDetail ocrDtls, String type) {
+		StringBuilder sql = new StringBuilder("Update FinOCRDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set HeaderID =:HeaderID, StepSequence =:StepSequence, ");
-		sql.append("CustomerContribution =:CustomerContribution,");
-		sql.append("FinancerContribution =:FinancerContribution, Contributor =:Contributor,");
-		sql.append("Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
-		sql.append("RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode,");
-		sql.append("TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
-		sql.append(" Where DetailID = :DetailID ");
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Set HeaderID = ?, StepSequence = ?, CustomerContribution = ?");
+		sql.append(", FinancerContribution = ?, Contributor = ?");
+		sql.append(", Version = ? , LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
+		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where DetailID = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(FinOCRDetail);
-		recordCount = this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, ocrDtls.getHeaderID());
+			ps.setInt(index++, ocrDtls.getStepSequence());
+			ps.setBigDecimal(index++, ocrDtls.getCustomerContribution());
+			ps.setBigDecimal(index++, ocrDtls.getFinancerContribution());
+			ps.setString(index++, ocrDtls.getContributor());
+			ps.setInt(index++, ocrDtls.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getLastMntBy()));
+			ps.setTimestamp(index++, ocrDtls.getLastMntOn());
+			ps.setString(index++, ocrDtls.getRecordStatus());
+			ps.setString(index++, ocrDtls.getRoleCode());
+			ps.setString(index++, ocrDtls.getNextRoleCode());
+			ps.setString(index++, ocrDtls.getTaskId());
+			ps.setString(index++, ocrDtls.getNextTaskId());
+			ps.setString(index++, ocrDtls.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getWorkflowId()));
+
+			ps.setLong(index++, ocrDtls.getDetailID());
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
-
 	}
 
 	@Override
-	public void delete(FinOCRDetail FinOCRDetail, String type) {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = new StringBuilder();
-		sql.append("Delete From FinOCRDetails");
+	public void delete(FinOCRDetail ocrDtls, String type) {
+		StringBuilder sql = new StringBuilder("Delete From FinOCRDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where DetailID = :DetailID");
-		logger.trace(Literal.SQL + sql.toString());
+		sql.append(" Where DetailID = ?");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(FinOCRDetail);
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			this.jdbcTemplate.update(sql.toString(), beanParameters);
+			this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, ocrDtls.getDetailID()));
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
-	public long save(FinOCRDetail finOCRDetail, String type) {
-		logger.debug(Literal.ENTERING);
-
-		if (finOCRDetail.getDetailID() == Long.MIN_VALUE) {
-			finOCRDetail.setDetailID(getNextValue("SeqFinOCRDetails"));
-			logger.trace("get NextID:" + finOCRDetail.getDetailID());
+	public long save(FinOCRDetail ocrDtls, String type) {
+		if (ocrDtls.getDetailID() == Long.MIN_VALUE) {
+			ocrDtls.setDetailID(getNextValue("SeqFinOCRDetails"));
 		}
 
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Insert Into FinOCRDetails");
+		StringBuilder sql = new StringBuilder("Insert Into FinOCRDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append("(DetailID, HeaderID , CustomerContribution, FinancerContribution, Contributor,");
-		sql.append(" StepSequence, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append("(DetailID, HeaderID, CustomerContribution, FinancerContribution, Contributor, StepSequence");
+		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		sql.append(" Values( :DetailID, :HeaderID , :CustomerContribution, :FinancerContribution, :Contributor,");
-		sql.append(":StepSequence, ");
-		sql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
-		sql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(finOCRDetail);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug(Literal.LEAVING);
+			ps.setLong(index++, ocrDtls.getDetailID());
+			ps.setLong(index++, ocrDtls.getHeaderID());
+			ps.setBigDecimal(index++, ocrDtls.getCustomerContribution());
+			ps.setBigDecimal(index++, ocrDtls.getFinancerContribution());
+			ps.setString(index++, ocrDtls.getContributor());
+			ps.setInt(index++, ocrDtls.getStepSequence());
+			ps.setInt(index++, ocrDtls.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getLastMntBy()));
+			ps.setTimestamp(index++, ocrDtls.getLastMntOn());
+			ps.setString(index++, ocrDtls.getRecordStatus());
+			ps.setString(index++, ocrDtls.getRoleCode());
+			ps.setString(index++, ocrDtls.getNextRoleCode());
+			ps.setString(index++, ocrDtls.getTaskId());
+			ps.setString(index++, ocrDtls.getNextTaskId());
+			ps.setString(index++, ocrDtls.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getWorkflowId()));
+		});
 
-		return finOCRDetail.getDetailID();
+		return ocrDtls.getDetailID();
 	}
 
 	@Override
 	public void deleteList(long headerID, String type) {
-		logger.debug(Literal.ENTERING);
-
-		MapSqlParameterSource source = null;
-		StringBuilder sql = null;
-
-		sql = new StringBuilder("Delete From FinOCRDetails");
+		StringBuilder sql = new StringBuilder("Delete From FinOCRDetails");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where HeaderID = :HeaderID");
-		logger.debug("deleteSql: " + sql.toString());
-		source = new MapSqlParameterSource();
-		source.addValue("HeaderID", headerID);
-		this.jdbcTemplate.update(sql.toString(), source);
-		logger.debug(Literal.LEAVING);
+		sql.append(" Where HeaderID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, headerID));
+
+	}
+
+	private StringBuilder getSelectSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" DetailID, HeaderID, CustomerContribution, FinancerContribution, Contributor");
+		sql.append(", StepSequence");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FinOCRDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class FinOCRDetailsRM implements RowMapper<FinOCRDetail> {
+
+		@Override
+		public FinOCRDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			FinOCRDetail ocrDtls = new FinOCRDetail();
+
+			ocrDtls.setDetailID(rs.getLong("DetailID"));
+			ocrDtls.setHeaderID(rs.getLong("HeaderID"));
+			ocrDtls.setCustomerContribution(rs.getBigDecimal("CustomerContribution"));
+			ocrDtls.setFinancerContribution(rs.getBigDecimal("FinancerContribution"));
+			ocrDtls.setContributor(rs.getString("Contributor"));
+			ocrDtls.setStepSequence(rs.getInt("StepSequence"));
+			ocrDtls.setVersion(rs.getInt("Version"));
+			ocrDtls.setLastMntBy(rs.getLong("LastMntBy"));
+			ocrDtls.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			ocrDtls.setRecordStatus(rs.getString("RecordStatus"));
+			ocrDtls.setRoleCode(rs.getString("RoleCode"));
+			ocrDtls.setNextRoleCode(rs.getString("NextRoleCode"));
+			ocrDtls.setTaskId(rs.getString("TaskId"));
+			ocrDtls.setNextTaskId(rs.getString("NextTaskId"));
+			ocrDtls.setRecordType(rs.getString("RecordType"));
+			ocrDtls.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return ocrDtls;
+		}
 	}
 }

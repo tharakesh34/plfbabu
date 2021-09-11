@@ -3721,6 +3721,2062 @@
 
 	<!-- (FOPR) :: Over due penalty rate Views handle in single place end -->
 
+	<!-- (FGDV) :: Fin Guarantor detail Views handle in single place start -->
+
+	<changeSet id="FGDV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finguarantorsdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FGDV_1" author="Gopal.p">
+		<createView viewName="FINGUARANTORSDETAILS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.GUARANTORID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.BANKCUSTOMER,
+					T1.GUARANTORCIF,
+					T1.GUARANTORIDTYPE,
+					T1.GUARANTORIDNUMBER,
+					T1.GURANTEEPERCENTAGE,
+					T1.MOBILENO,
+					T1.EMAILID,
+					T1.GUARANTORPROOF,
+					T1.GUARANTORPROOFNAME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.GUARANTORCIFNAME,
+					T1.REMARKS,
+					T1.ADDRHNBR,
+					T1.FLATNBR,
+					T1.ADDRSTREET,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.POBOX,
+					T1.ADDRCITY,
+					T1.ADDRPROVINCE,
+					T1.ADDRCOUNTRY,
+					T1.ADDRZIP,
+					T1.GUARANTORGENDERCODE,
+					(SELECT IDENTITYDESC FROM BMTIDENTITYTYPE WHERE IDENTITYTYPE = T1.GUARANTORIDTYPE) GUARANTORIDTYPENAME,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T3.CUSTSHRTNAME,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINGUARANTORSDETAILS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				LEFT JOIN CUSTOMERS T3 ON T1.GUARANTORCIF = T3.CUSTCIF
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FGDV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finguarantorsdetails_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FGDV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finguarantorsdetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FGDV_2" author="Gopal.p">
+		<createView viewName="FINGUARANTORSDETAILS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.GUARANTORID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.BANKCUSTOMER,
+					T1.GUARANTORCIF,
+					T1.GUARANTORIDTYPE,
+					T1.GUARANTORIDNUMBER,
+					T1.GURANTEEPERCENTAGE,
+					T1.MOBILENO,
+					T1.EMAILID,
+					T1.GUARANTORPROOF,
+					T1.GUARANTORPROOFNAME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.GUARANTORCIFNAME,
+					T1.REMARKS,
+					T1.ADDRHNBR,
+					T1.FLATNBR,
+					T1.ADDRSTREET,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.POBOX,
+					T1.ADDRCITY,
+					T1.ADDRPROVINCE,
+					T1.ADDRCOUNTRY,
+					T1.ADDRZIP,
+					T1.GUARANTORGENDERCODE,
+					(SELECT IDENTITYDESC FROM BMTIDENTITYTYPE WHERE IDENTITYTYPE = T1.GUARANTORIDTYPE) GUARANTORIDTYPENAME,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T3.CUSTSHRTNAME,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINGUARANTORSDETAILS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				LEFT JOIN CUSTOMERS T3 ON T1.GUARANTORCIF = T3.CUSTCIF
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FGDV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finguarantorsdetails_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FGDV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finguarantorsdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FGDV_3" author="Gopal.p">
+		<createView viewName="FINGUARANTORSDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.GUARANTORID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.BANKCUSTOMER,
+					T1.GUARANTORCIF,
+					T1.GUARANTORIDTYPE,
+					T1.GUARANTORIDNUMBER,
+					T1.GURANTEEPERCENTAGE,
+					T1.MOBILENO,
+					T1.EMAILID,
+					T1.GUARANTORPROOF,
+					T1.GUARANTORPROOFNAME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.GUARANTORCIFNAME,
+					T1.REMARKS,
+					T1.ADDRHNBR,
+					T1.FLATNBR,
+					T1.ADDRSTREET,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.POBOX,
+					T1.ADDRCITY,
+					T1.ADDRPROVINCE,
+					T1.ADDRCOUNTRY,
+					T1.ADDRZIP,
+					T1.GUARANTORGENDERCODE,
+					(SELECT IDENTITYDESC FROM BMTIDENTITYTYPE WHERE IDENTITYTYPE = T1.GUARANTORIDTYPE) GUARANTORIDTYPENAME,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					COALESCE(T3.CUSTID, 0) CUSTID,
+					T3.CUSTSHRTNAME,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINGUARANTORSDETAILS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				LEFT JOIN CUSTOMERS T3 ON T1.GUARANTORCIF::TEXT = T3.CUSTCIF::TEXT
+				UNION ALL
+				SELECT T1.GUARANTORID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.BANKCUSTOMER,
+					T1.GUARANTORCIF,
+					T1.GUARANTORIDTYPE,
+					T1.GUARANTORIDNUMBER,
+					T1.GURANTEEPERCENTAGE,
+					T1.MOBILENO,
+					T1.EMAILID,
+					T1.GUARANTORPROOF,
+					T1.GUARANTORPROOFNAME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.GUARANTORCIFNAME,
+					T1.REMARKS,
+					T1.ADDRHNBR,
+					T1.FLATNBR,
+					T1.ADDRSTREET,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.POBOX,
+					T1.ADDRCITY,
+					T1.ADDRPROVINCE,
+					T1.ADDRCOUNTRY,
+					T1.ADDRZIP,
+					T1.GUARANTORGENDERCODE,
+					(SELECT IDENTITYDESC FROM BMTIDENTITYTYPE WHERE IDENTITYTYPE = T1.GUARANTORIDTYPE) GUARANTORIDTYPENAME,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					COALESCE(T3.CUSTID, 0::BIGINT) AS CUSTID,
+					T3.CUSTSHRTNAME,
+					T3.CUSTDOB AS LOVCUSTDOB
+				FROM FINGUARANTORSDETAILS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				LEFT JOIN CUSTOMERS T3 ON T1.GUARANTORCIF = T3.CUSTCIF
+				WHERE NOT EXISTS (SELECT 1 FROM FINGUARANTORSDETAILS_TEMP
+					WHERE FINGUARANTORSDETAILS_TEMP.GUARANTORID = T1.GUARANTORID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FGDV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finguarantorsdetails_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FGDV) :: Fin Guarantor detail Views handle in single place end -->
+
+
+	<!-- (FJADV) :: Fin Joint Account detail Views handle in single place start -->
+
+	<changeSet id="FJADV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finjointaccountdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FJADV_1" author="Gopal.p">
+		<createView viewName="FINJOINTACCOUNTDETAILS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.JOINTACCOUNTID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.CUSTCIF,
+					T1.INCLUDEREPAY,
+					T1.REPAYACCOUNTID,
+					T1.CATOFCOAPPLICANT,
+					T1.AUTHORITYSIGNATORY,
+					T1.SEQUENCE,
+					T1.INCLUDEINCOME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					T3.CUSTSHRTNAME LOVDESCCIFNAME,
+					T3.CUSTID,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINJOINTACCOUNTDETAILS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				JOIN CUSTOMERS T3 ON T1.CUSTCIF = T3.CUSTCIF
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FJADV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finjointaccountdetails_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FJADV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finjointaccountdetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FJADV_2" author="Gopal.p">
+		<createView viewName="FINJOINTACCOUNTDETAILS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.JOINTACCOUNTID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.CUSTCIF,
+					T1.INCLUDEREPAY,
+					T1.REPAYACCOUNTID,
+					T1.CATOFCOAPPLICANT,
+					T1.AUTHORITYSIGNATORY,
+					T1.SEQUENCE,
+					T1.INCLUDEINCOME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					T3.CUSTSHRTNAME LOVDESCCIFNAME,
+					T3.CUSTID,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINJOINTACCOUNTDETAILS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				JOIN CUSTOMERS T3 ON T1.CUSTCIF = T3.CUSTCIF
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FJADV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finjointaccountdetails_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FJADV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finjointaccountdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FJADV_3" author="Gopal.p">
+		<createView viewName="FINJOINTACCOUNTDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.JOINTACCOUNTID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.CUSTCIF,
+					T1.INCLUDEREPAY,
+					T1.REPAYACCOUNTID,
+					T1.CATOFCOAPPLICANT,
+					T1.AUTHORITYSIGNATORY,
+					T1.SEQUENCE,
+					T1.INCLUDEINCOME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					T3.CUSTSHRTNAME LOVDESCCIFNAME,
+					T3.CUSTID,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINJOINTACCOUNTDETAILS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				JOIN CUSTOMERS T3 ON T1.CUSTCIF = T3.CUSTCIF
+				UNION ALL
+				SELECT T1.JOINTACCOUNTID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.CUSTCIF,
+					T1.INCLUDEREPAY,
+					T1.REPAYACCOUNTID,
+					T1.CATOFCOAPPLICANT,
+					T1.AUTHORITYSIGNATORY,
+					T1.SEQUENCE,
+					T1.INCLUDEINCOME,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.USRLOGIN,
+					T2.USRFNAME,
+					T2.USRMNAME,
+					T2.USRLNAME,
+					T3.CUSTSHRTNAME LOVDESCCIFNAME,
+					T3.CUSTID,
+					T3.CUSTDOB LOVCUSTDOB
+				FROM FINJOINTACCOUNTDETAILS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
+				JOIN CUSTOMERS T3 ON T1.CUSTCIF = T3.CUSTCIF
+				WHERE NOT EXISTS (SELECT 1 FROM FINJOINTACCOUNTDETAILS_TEMP
+					WHERE FINJOINTACCOUNTDETAILS_TEMP.JOINTACCOUNTID = T1.JOINTACCOUNTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FJADV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finjointaccountdetails_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FJADV) :: Fin Joint Account detail Views handle in single place end -->
+
+	<!-- (FTDV) :: Fin Tax detail Views handle in single place start -->
+
+	<changeSet id="FTDV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FTDV_1" author="Gopal.p">
+		<createView viewName="FINTAXDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.APPLICABLEFOR,
+					T1.TAXCUSTID,
+					T1.TAXEXEMPTED,
+					T1.TAXNUMBER,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.ADDRLINE3,
+					T1.ADDRLINE4,
+					T1.COUNTRY,
+					T1.PROVINCE,
+					T1.CITY,
+					T1.PINCODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.COUNTRYDESC COUNTRYNAME,
+					T3.CPPROVINCENAME PROVINCENAME,
+					T4.PCCITYNAME CITYNAME,
+					T5.AREANAME PINCODENAME,
+					T6.CUSTCIF,
+					T6.CUSTSHRTNAME,
+					T1.SEZCERTIFICATENO,
+					T1.SEZVALUEDATE,
+					T1.ADDRESSDETAIL,
+					T1.PINCODEID
+				FROM FINTAXDETAIL T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
+				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
+				LEFT JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID AND T1.CITY = T5.CITY
+				JOIN CUSTOMERS T6 ON T1.TAXCUSTID = T6.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FTDV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxdetail_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FTDV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FTDV_2" author="Gopal.p">
+		<createView viewName="FINTAXDETAIL_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.APPLICABLEFOR,
+					T1.TAXCUSTID,
+					T1.TAXEXEMPTED,
+					T1.TAXNUMBER,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.ADDRLINE3,
+					T1.ADDRLINE4,
+					T1.COUNTRY,
+					T1.PROVINCE,
+					T1.CITY,
+					T1.PINCODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.COUNTRYDESC COUNTRYNAME,
+					T3.CPPROVINCENAME PROVINCENAME,
+					T4.PCCITYNAME CITYNAME,
+					T5.AREANAME PINCODENAME,
+					T6.CUSTCIF,
+					T6.CUSTSHRTNAME,
+					T1.SEZCERTIFICATENO,
+					T1.SEZVALUEDATE,
+					T1.ADDRESSDETAIL,
+					T1.PINCODEID
+				FROM FINTAXDETAIL_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
+				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
+				LEFT JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID AND T1.CITY = T5.CITY
+				JOIN CUSTOMERS T6 ON T1.TAXCUSTID = T6.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FTDV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxdetail_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FTDV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FTDV_3" author="Gopal.p">
+		<createView viewName="FINTAXDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.APPLICABLEFOR,
+					T1.TAXCUSTID,
+					T1.TAXEXEMPTED,
+					T1.TAXNUMBER,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.ADDRLINE3,
+					T1.ADDRLINE4,
+					T1.COUNTRY,
+					T1.PROVINCE,
+					T1.CITY,
+					T1.PINCODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.COUNTRYDESC COUNTRYNAME,
+					T3.CPPROVINCENAME PROVINCENAME,
+					T4.PCCITYNAME CITYNAME,
+					T5.AREANAME PINCODENAME,
+					T6.CUSTCIF,
+					T6.CUSTSHRTNAME,
+					T1.SEZCERTIFICATENO,
+					T1.SEZVALUEDATE,
+					T1.ADDRESSDETAIL,
+					T1.PINCODEID
+				FROM FINTAXDETAIL_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
+				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
+				LEFT JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID AND T1.CITY = T5.CITY
+				JOIN CUSTOMERS T6 ON T1.TAXCUSTID = T6.CUSTID
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.APPLICABLEFOR,
+					T1.TAXCUSTID,
+					T1.TAXEXEMPTED,
+					T1.TAXNUMBER,
+					T1.ADDRLINE1,
+					T1.ADDRLINE2,
+					T1.ADDRLINE3,
+					T1.ADDRLINE4,
+					T1.COUNTRY,
+					T1.PROVINCE,
+					T1.CITY,
+					T1.PINCODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.COUNTRYDESC COUNTRYNAME,
+					T3.CPPROVINCENAME PROVINCENAME,
+					T4.PCCITYNAME CITYNAME,
+					T5.AREANAME PINCODENAME,
+					T6.CUSTCIF,
+					T6.CUSTSHRTNAME,
+					T1.SEZCERTIFICATENO,
+					T1.SEZVALUEDATE,
+					T1.ADDRESSDETAIL,
+					T1.PINCODEID
+				FROM FINTAXDETAIL T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN BMTCOUNTRIES T2 ON T1.COUNTRY = T2.COUNTRYCODE
+				LEFT JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PROVINCE = T3.CPPROVINCE AND T1.COUNTRY = T3.CPCOUNTRY
+				LEFT JOIN RMTPROVINCEVSCITY T4 ON T1.CITY = T4.PCCITY AND T1.PROVINCE = T4.PCPROVINCE AND T1.COUNTRY = T4.PCCOUNTRY
+				LEFT JOIN PINCODES T5 ON T1.PINCODEID = T5.PINCODEID AND T1.CITY = T5.CITY
+				JOIN CUSTOMERS T6 ON T1.TAXCUSTID = T6.CUSTID
+				WHERE NOT EXISTS (SELECT 1 FROM FINTAXDETAIL_TEMP
+					WHERE FINTAXDETAIL_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FTDV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxdetail_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FTDV) :: Fin Tax detail Views handle in single place end -->
+
+	<!-- (FAPV) :: Fin Advance Payment Views handle in single place start -->
+
+	<changeSet id="FAPV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_1" author="Gopal.p">
+		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.PAYMENTID,
+					T1.PAYMENTSEQ,
+					T1.PAYMENTDETAIL,
+					T1.AMTTOBERELEASED,
+					T1.LIABILITYHOLDNAME,
+					T1.TRANSACTIONREF,
+					T1.BENEFICIARYNAME,
+					T1.BENEFICIARYACCNO,
+					T1.REENTERBENEFICIARYACCNO,
+					T1.DESCRIPTION,
+					T1.PAYMENTTYPE,
+					T1.LLREFERENCENO,
+					T1.LLDATE,
+					T1.CUSTCONTRIBUTION,
+					T1.SELLERCONTRIBUTION,
+					T1.REMARKS,
+					T1.DISBDATE,
+					T1.DISBSEQ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKCODE,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.BANKBRANCHID,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONEAREACODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.STATUS,
+					T1.ACTIVE,
+					T1.INPUTDATE,
+					T1.DISBCCY,
+					T1.POISSUED,
+					T3.BANKCODE BRANCHBANKCODE,
+					T31.BANKNAME BRANCHBANKNAME,
+					T3.BRANCHCODE,
+					T3.BRANCHDESC,
+					T3.IFSC,
+					T3.CITY,
+					T4.BANKNAME,
+					T1.PARTNERBANKID,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T1.LINKEDTRANID,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T6.BRANCHDESC PRINTINGLOCDESC,
+					T1.REJECTREASON,
+					T1.REALIZATIONDATE,
+					T1.HOLDDISBURSEMENT,
+					T1.VASREFERENCE
+				FROM FINADVANCEPAYMENTS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC AND T6.BANKCODE = T1.BANKCODE
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.PAYMENTID,
+					T1.PAYMENTSEQ,
+					T1.PAYMENTDETAIL,
+					T1.AMTTOBERELEASED,
+					T1.LIABILITYHOLDNAME,
+					T1.TRANSACTIONREF,
+					T1.BENEFICIARYNAME,
+					T1.BENEFICIARYACCNO,
+					T1.REENTERBENEFICIARYACCNO,
+					T1.DESCRIPTION,
+					T1.PAYMENTTYPE,
+					T1.LLREFERENCENO,
+					T1.LLDATE,
+					T1.CUSTCONTRIBUTION,
+					T1.SELLERCONTRIBUTION,
+					T1.REMARKS,
+					T1.DISBDATE,
+					T1.DISBSEQ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKCODE,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.BANKBRANCHID,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONEAREACODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.STATUS,
+					T1.ACTIVE,
+					T1.INPUTDATE,
+					T1.DISBCCY,
+					T1.POISSUED,
+					T3.BANKCODE BRANCHBANKCODE,
+					T31.BANKNAME BRANCHBANKNAME,
+					T3.BRANCHCODE,
+					T3.BRANCHDESC,
+					T3.IFSC,
+					T3.CITY,
+					T4.BANKNAME,
+					T1.PARTNERBANKID,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T1.LINKEDTRANID,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T6.BRANCHDESC PRINTINGLOCDESC,
+					T1.REJECTREASON,
+					T1.REALIZATIONDATE,
+					T1.HOLDDISBURSEMENT,
+					T1.VASREFERENCE
+				FROM FINADVANCEPAYMENTS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC AND T6.BANKCODE = T1.BANKCODE
+				WHERE NOT EXISTS (SELECT 1 FROM FINADVANCEPAYMENTS_TEMP
+					WHERE FINADVANCEPAYMENTS_TEMP.FINID = T1.FINID AND FINADVANCEPAYMENTS_TEMP.PAYMENTSEQ = T1.PAYMENTSEQ)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FAPV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_2" author="Gopal.p">
+		<createView viewName="FINADVANCEPAYMENTS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.PAYMENTID,
+					T1.PAYMENTSEQ,
+					T1.PAYMENTDETAIL,
+					T1.AMTTOBERELEASED,
+					T1.LIABILITYHOLDNAME,
+					T1.TRANSACTIONREF,
+					T1.BENEFICIARYNAME,
+					T1.BENEFICIARYACCNO,
+					T1.REENTERBENEFICIARYACCNO,
+					T1.DESCRIPTION,
+					T1.PAYMENTTYPE,
+					T1.LLREFERENCENO,
+					T1.LLDATE,
+					T1.CUSTCONTRIBUTION,
+					T1.SELLERCONTRIBUTION,
+					T1.REMARKS,
+					T1.DISBDATE,
+					T1.DISBSEQ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKCODE,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.BANKBRANCHID,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONEAREACODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.STATUS,
+					T1.ACTIVE,
+					T1.INPUTDATE,
+					T1.DISBCCY,
+					T1.POISSUED,
+					T3.BANKCODE BRANCHBANKCODE,
+					T31.BANKNAME BRANCHBANKNAME,
+					T3.BRANCHCODE,
+					T3.BRANCHDESC,
+					T3.IFSC,
+					T3.CITY,
+					T4.BANKNAME,
+					T1.PARTNERBANKID,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T1.LINKEDTRANID,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T6.BRANCHDESC PRINTINGLOCDESC,
+					T1.REJECTREASON,
+					T1.REALIZATIONDATE,
+					T1.HOLDDISBURSEMENT,
+					T1.VASREFERENCE
+				FROM FINADVANCEPAYMENTS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC AND T6.BANKCODE = T1.BANKCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FAPV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_custaview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_3" author="Gopal.p">
+		<createView viewName="FINADVANCEPAYMENTS_CUSTAVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T6.FINID,
+					T6.FINREFERENCE,
+					T1.PAYMENTID,
+					T1.PAYMENTSEQ,
+					T1.BENEFICIARYNAME,
+					T1.BENEFICIARYACCNO,
+					T1.PAYMENTTYPE,
+					T1.LLDATE,
+					T1.DISBSEQ,
+					T1.BANKBRANCHID,
+					T1.STATUS,
+					T1.DISBCCY,
+					T1.POISSUED,
+					T3.BANKCODE BRANCHBANKCODE,
+					T31.BANKNAME BRANCHBANKNAME,
+					T3.BRANCHCODE,
+					T3.BRANCHDESC,
+					T3.IFSC,
+					T3.CITY,
+					T3.MICR,
+					T1.PARTNERBANKID,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T1.LINKEDTRANID,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T6.CUSTID,
+					T1.HOLDDISBURSEMENT
+				FROM FINADVANCEPAYMENTS T1
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN FINANCEMAIN T6 ON T1.FINID = T6.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FAPV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_custaview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_4_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_4" author="Gopal.p">
+		<createView viewName="FINADVANCEPAYMENTS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.PAYMENTID,
+					T1.PAYMENTSEQ,
+					T1.PAYMENTDETAIL,
+					T1.AMTTOBERELEASED,
+					T1.LIABILITYHOLDNAME,
+					T1.TRANSACTIONREF,
+					T1.BENEFICIARYNAME,
+					T1.BENEFICIARYACCNO,
+					T1.REENTERBENEFICIARYACCNO,
+					T1.DESCRIPTION,
+					T1.PAYMENTTYPE,
+					T1.LLREFERENCENO,
+					T1.LLDATE,
+					T1.CUSTCONTRIBUTION,
+					T1.SELLERCONTRIBUTION,
+					T1.REMARKS,
+					T1.DISBDATE,
+					T1.DISBSEQ,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKCODE,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.BANKBRANCHID,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONEAREACODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.STATUS,
+					T1.ACTIVE,
+					T1.INPUTDATE,
+					T1.DISBCCY,
+					T1.POISSUED,
+					T3.BANKCODE BRANCHBANKCODE,
+					T31.BANKNAME BRANCHBANKNAME,
+					T3.BRANCHCODE,
+					T3.BRANCHDESC,
+					T3.IFSC,
+					T3.CITY,
+					T4.BANKNAME,
+					T1.PARTNERBANKID,
+					T5.PARTNERBANKCODE,
+					T5.PARTNERBANKNAME,
+					T1.LINKEDTRANID,
+					T5.ACTYPE PARTNERBANKACTYPE,
+					T5.ACCOUNTNO PARTNERBANKAC,
+					T6.BRANCHDESC PRINTINGLOCDESC,
+					T1.REJECTREASON,
+					T1.REALIZATIONDATE,
+					T1.HOLDDISBURSEMENT,
+					T1.VASREFERENCE
+				FROM FINADVANCEPAYMENTS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
+				LEFT JOIN PARTNERBANKS T5 ON T5.PARTNERBANKID = T1.PARTNERBANKID
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T1.PRINTINGLOC AND T6.BANKCODE = T1.BANKCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FAPV_4_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_5_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_adview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FAPV_5" author="Gopal.p">
+		<createView viewName="FINADVANCEPAYMENTS_ADVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.PAYMENTID,
+					T3.FINID,
+					T3.FINREFERENCE,
+					T1.PAYMENTSEQ,
+					T1.DISBSEQ,
+					T1.PAYMENTDETAIL,
+					T1.AMTTOBERELEASED,
+					T1.LIABILITYHOLDNAME,
+					T1.BENEFICIARYNAME,
+					T1.BENEFICIARYACCNO,
+					T1.DESCRIPTION,
+					T1.PAYMENTTYPE,
+					T1.BANKCODE,
+					T1.LLREFERENCENO,
+					T1.LLDATE,
+					T1.CUSTCONTRIBUTION,
+					T1.SELLERCONTRIBUTION,
+					T1.REMARKS,
+					T1.PAYABLELOC,
+					T1.PRINTINGLOC,
+					T1.VALUEDATE,
+					T1.BANKBRANCHID,
+					T1.PHONECOUNTRYCODE,
+					T1.PHONEAREACODE,
+					T1.PHONENUMBER,
+					T1.CLEARINGDATE,
+					T1.STATUS,
+					T1.ACTIVE,
+					T1.INPUTDATE,
+					T1.DISBCCY,
+					T1.POISSUED,
+					T1.PARTNERBANKID,
+					T1.LINKEDTRANID,
+					T1.TRANSACTIONREF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.FINTYPE,
+					T4.BANKCODE BRANCHBANKCODE,
+					T4.BRANCHCODE,
+					T4.BRANCHDESC,
+					T4.IFSC,
+					T4.CITY,
+					T4.MICR,
+					T5.BANKNAME BRANCHBANKNAME,
+					T6.BANKNAME,
+					T7.PARTNERBANKCODE,
+					T7.PARTNERBANKNAME,
+					T7.ACTYPE PARTNERBANKACTYPE,
+					T7.ACCOUNTNO PARTNERBANKAC,
+					T7.FILENAME,
+					T7.ALWFILEDOWNLOAD,
+					T1.HOLDDISBURSEMENT
+				FROM FINADVANCEPAYMENTS T1
+				JOIN FINANCEMAIN T3 ON T3.FINID = T1.FINID
+				LEFT JOIN BANKBRANCHES T4 ON T1.BANKBRANCHID = T4.BANKBRANCHID
+				LEFT JOIN BMTBANKDETAIL T5 ON T5.BANKCODE = T4.BANKCODE
+				LEFT JOIN BMTBANKDETAIL T6 ON T1.BANKCODE = T6.BANKCODE
+				LEFT JOIN PARTNERBANKS T7 ON T7.PARTNERBANKID = T1.PARTNERBANKID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FAPV_5_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finadvancepayments_adview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FAPV) :: Fin Advance Payment Views handle in single place end -->
+
+	<!-- (FOV) :: Fin Option Views handle in single place start -->
+
+	<changeSet id="FOV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fin_options_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOV_1" author="Gopal.p">
+		<createView viewName="FIN_OPTIONS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.OPTIONTYPE,
+					T1.CURRENTOPTIONDATE,
+					T1.FREQUENCY,
+					T1.NOTICEPERIODDAYS,
+					T1.ALERTDAYS,
+					T1.OPTIONEXERCISE,
+					T1.NEXTOPTIONDATE,
+					T1.ALERTTYPE,
+					T1.ALERTTOROLES,
+					T1.USERTEMPLATE,
+					T1.CUSTOMERTEMPLATE,
+					UT.TEMPLATECODE USERTEMPLATECODE,
+					CUST.TEMPLATECODE CUSTOMERTEMPLATECODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REMARKS
+				FROM FIN_OPTIONS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN TEMPLATES UT ON UT.TEMPLATEID = T1.USERTEMPLATE
+				LEFT JOIN TEMPLATES CUST ON CUST.TEMPLATEID = T1.CUSTOMERTEMPLATE
+				UNION ALL
+				SELECT T1.ID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.OPTIONTYPE,
+					T1.CURRENTOPTIONDATE,
+					T1.FREQUENCY,
+					T1.NOTICEPERIODDAYS,
+					T1.ALERTDAYS,
+					T1.OPTIONEXERCISE,
+					T1.NEXTOPTIONDATE,
+					T1.ALERTTYPE,
+					T1.ALERTTOROLES,
+					T1.USERTEMPLATE,
+					T1.CUSTOMERTEMPLATE,
+					UT.TEMPLATECODE USERTEMPLATECODE,
+					CUST.TEMPLATECODE CUSTOMERTEMPLATECODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REMARKS
+				FROM FIN_OPTIONS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN TEMPLATES UT ON UT.TEMPLATEID = T1.USERTEMPLATE
+				LEFT JOIN TEMPLATES CUST ON CUST.TEMPLATEID = T1.CUSTOMERTEMPLATE
+				WHERE NOT EXISTS ( SELECT 1 FROM FIN_OPTIONS_TEMP WHERE FIN_OPTIONS_TEMP.ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FOV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fin_options_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fin_options_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FOV_2" author="Gopal.p">
+		<createView viewName="FIN_OPTIONS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.OPTIONTYPE,
+					T1.CURRENTOPTIONDATE,
+					T1.FREQUENCY,
+					T1.NOTICEPERIODDAYS,
+					T1.ALERTDAYS,
+					T1.OPTIONEXERCISE,
+					T1.NEXTOPTIONDATE,
+					T1.ALERTTYPE,
+					T1.ALERTTOROLES,
+					T1.USERTEMPLATE,
+					T1.CUSTOMERTEMPLATE,
+					UT.TEMPLATECODE USERTEMPLATECODE,
+					CUST.TEMPLATECODE CUSTOMERTEMPLATECODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REMARKS
+				FROM FIN_OPTIONS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN TEMPLATES UT ON UT.TEMPLATEID = T1.USERTEMPLATE
+				LEFT JOIN TEMPLATES CUST ON CUST.TEMPLATEID = T1.CUSTOMERTEMPLATE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FOV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fin_options_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FOV) :: Fin Option Views handle in single place end -->
+
+	<!-- (FCV) :: Fin Collateral Views handle in single place start -->
+
+	<changeSet id="FCV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fincollaterals_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FCV_1" author="Gopal.p">
+		<createView viewName="FINCOLLATERALS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.COLLATERALSEQ,
+					T1.COLLATERALTYPE,
+					T1.CUSTID,
+					T1.REFERENCE,
+					T1.CCY,
+					T1.VALUE,
+					T1.COVERAGE,
+					T1.TENORTYPE,
+					T1.TENOR,
+					T1.RATE,
+					T1.MATURITYDATE,
+					T1.BANKNAME,
+					T1.FIRSTCHEQUENO,
+					T1.STARTDATE,
+					T1.LASTCHEQUENO,
+					T1.STATUS,
+					T1.REMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCOLLATERALS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FCV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fincollaterals_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FCV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fincollaterals_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FCV_2" author="Gopal.p">
+		<createView viewName="FINCOLLATERALS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.COLLATERALSEQ,
+					T1.COLLATERALTYPE,
+					T1.CUSTID,
+					T1.REFERENCE,
+					T1.CCY,
+					T1.VALUE,
+					T1.COVERAGE,
+					T1.TENORTYPE,
+					T1.TENOR,
+					T1.RATE,
+					T1.MATURITYDATE,
+					T1.BANKNAME,
+					T1.FIRSTCHEQUENO,
+					T1.STARTDATE,
+					T1.LASTCHEQUENO,
+					T1.STATUS,
+					T1.REMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCOLLATERALS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FCV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fincollaterals_tview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FCV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fincollaterals_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FCV_3" author="Gopal.p">
+		<createView viewName="FINCOLLATERALS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.COLLATERALSEQ,
+					T1.COLLATERALTYPE,
+					T1.CUSTID,
+					T1.REFERENCE,
+					T1.CCY,
+					T1.VALUE,
+					T1.COVERAGE,
+					T1.TENORTYPE,
+					T1.TENOR,
+					T1.RATE,
+					T1.MATURITYDATE,
+					T1.BANKNAME,
+					T1.FIRSTCHEQUENO,
+					T1.STARTDATE,
+					T1.LASTCHEQUENO,
+					T1.STATUS,
+					T1.REMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCOLLATERALS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.COLLATERALSEQ,
+					T1.COLLATERALTYPE,
+					T1.CUSTID,
+					T1.REFERENCE,
+					T1.CCY,
+					T1.VALUE,
+					T1.COVERAGE,
+					T1.TENORTYPE,
+					T1.TENOR,
+					T1.RATE,
+					T1.MATURITYDATE,
+					T1.BANKNAME,
+					T1.FIRSTCHEQUENO,
+					T1.STARTDATE,
+					T1.LASTCHEQUENO,
+					T1.STATUS,
+					T1.REMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCOLLATERALS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM FINCOLLATERALS_TEMP
+					WHERE FINCOLLATERALS_TEMP.FINID = T1.FINID AND FINCOLLATERALS_TEMP.COLLATERALSEQ = T1.COLLATERALSEQ)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FCV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fincollaterals_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (FCV) :: Fin Collateral Views handle in single place end -->
+
+	<!-- (PSLDV) :: PSL Detail Views handle in single place start -->
+
+	<changeSet id="PSLDV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'psldetail_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSLDV_1" author="Gopal.p">
+		<createView viewName="PSLDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID, 
+					FM.FINREFERENCE,
+					T1.CATEGORYCODE,
+					T1.WEAKERSECTION,
+					T1.LANDHOLDING,
+					T1.LANDAREA,
+					T1.SECTOR,
+					T1.AMOUNT,
+					T1.SUBCATEGORY,
+					T1.PURPOSE,
+					T1.ENDUSE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.DESCRIPTION WEAKERSECTIONNAME,
+					T3.DESCRIPTION PURPOSENAME,
+					T4.DESCRIPTION ENDUSENAME,
+					T1.ELIGIBLEAMOUNT,
+					T1.LOANPURPOSE,
+					T5.LOANPURPOSEDESC LOANPURPOSENAME
+				FROM PSLDETAIL T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN PSLWEAKERSECTION T2 ON T2.CODE = T1.WEAKERSECTION
+				LEFT JOIN PSLPURPOSE T3 ON T3.CODE = T1.PURPOSE
+				LEFT JOIN PSLENDUSE T4 ON T4.CODE = T1.ENDUSE
+				LEFT JOIN LOANPURPOSES T5 ON T5.LOANPURPOSECODE = T1.LOANPURPOSE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSLDV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'psldetail_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSLDV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'psldetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSLDV_2" author="Gopal.p">
+		<createView viewName="PSLDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.CATEGORYCODE,
+					T1.WEAKERSECTION,
+					T1.LANDHOLDING,
+					T1.LANDAREA,
+					T1.SECTOR,
+					T1.AMOUNT,
+					T1.SUBCATEGORY,
+					T1.PURPOSE,
+					T1.ENDUSE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.DESCRIPTION WEAKERSECTIONNAME,
+					T3.DESCRIPTION PURPOSENAME,
+					T4.DESCRIPTION ENDUSENAME,
+					T1.ELIGIBLEAMOUNT,
+					T1.LOANPURPOSE,
+					T5.LOANPURPOSEDESC LOANPURPOSENAME
+				FROM PSLDETAIL_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN PSLWEAKERSECTION T2 ON T2.CODE = T1.WEAKERSECTION
+				LEFT JOIN PSLPURPOSE T3 ON T3.CODE = T1.PURPOSE
+				LEFT JOIN PSLENDUSE T4 ON T4.CODE = T1.ENDUSE
+				LEFT JOIN LOANPURPOSES T5 ON T5.LOANPURPOSECODE = T1.LOANPURPOSE
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.CATEGORYCODE,
+					T1.WEAKERSECTION,
+					T1.LANDHOLDING,
+					T1.LANDAREA,
+					T1.SECTOR,
+					T1.AMOUNT,
+					T1.SUBCATEGORY,
+					T1.PURPOSE,
+					T1.ENDUSE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.DESCRIPTION WEAKERSECTIONNAME,
+					T3.DESCRIPTION PURPOSENAME,
+					T4.DESCRIPTION ENDUSENAME,
+					T1.ELIGIBLEAMOUNT,
+					T1.LOANPURPOSE,
+					T5.LOANPURPOSEDESC LOANPURPOSENAME
+				FROM PSLDETAIL T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN PSLWEAKERSECTION T2 ON T2.CODE = T1.WEAKERSECTION
+				LEFT JOIN PSLPURPOSE T3 ON T3.CODE = T1.PURPOSE
+				LEFT JOIN PSLENDUSE T4 ON T4.CODE = T1.ENDUSE
+				LEFT JOIN LOANPURPOSES T5 ON T5.LOANPURPOSECODE = T1.LOANPURPOSE
+				WHERE NOT EXISTS (SELECT 1 FROM PSLDETAIL_TEMP WHERE PSLDETAIL_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSLDV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'psldetail_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (PSLDV) :: PSL Detail Views handle in single place end -->
+
+	<!-- (OCRV) :: OCR Capture/Header/Detail Views handle in single place start -->
+
+	<changeSet id="OCRV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrcapture_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_1" author="Gopal.p">
+		<createView viewName="FINOCRCAPTURE_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.DISBSEQ,
+					T1.DEMANDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.REMARKS,
+					T1.RECEIPTDATE,
+					T1.FILENAME,
+					T1.DOCUMENTREF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				   FROM FINOCRCAPTURE T1
+				   INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="OCRV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrcapture_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrcapture_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_2" author="Gopal.p">
+		<createView viewName="FINOCRCAPTURE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.DISBSEQ,
+					T1.DEMANDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.REMARKS,
+					T1.RECEIPTDATE,
+					T1.FILENAME,
+					T1.DOCUMENTREF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINOCRCAPTURE_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT T1.ID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.DISBSEQ,
+					T1.DEMANDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.REMARKS,
+					T1.RECEIPTDATE,
+					T1.FILENAME,
+					T1.DOCUMENTREF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINOCRCAPTURE T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM FINOCRCAPTURE_TEMP WHERE FINOCRCAPTURE_TEMP.ID = T1.ID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="OCRV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrcapture_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_3" author="Gopal.p">
+		<createView viewName="FINOCRHEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.OCRID,
+					T1.OCRDESCRIPTION,
+					T1.CUSTOMERPORTION,
+					T1.OCRTYPE,
+					T1.TOTALDEMAND,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINOCRHEADER T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="OCRV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrheader_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_4_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrheader_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_4" author="Gopal.p">
+		<createView viewName="FINOCRHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.OCRID,
+					T1.OCRDESCRIPTION,
+					T1.CUSTOMERPORTION,
+					T1.OCRTYPE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.TOTALDEMAND
+				FROM FINOCRHEADER_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.OCRID,
+					T1.OCRDESCRIPTION,
+					T1.CUSTOMERPORTION,
+					T1.OCRTYPE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.TOTALDEMAND
+				FROM FINOCRHEADER T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM FINOCRHEADER_TEMP
+					WHERE FINOCRHEADER_TEMP.HEADERID = T1.HEADERID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="OCRV_4_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrheader_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_5_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_5" author="Gopal.p">
+		<createView viewName="FINOCRDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.DETAILID,
+					T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.STEPSEQUENCE,
+					T1.CUSTOMERCONTRIBUTION,
+					T1.FINANCERCONTRIBUTION,
+					T1.CONTRIBUTOR,
+					T2.OCRID,
+					T2.OCRDESCRIPTION,
+					T2.CUSTOMERPORTION,
+					T2.OCRTYPE,
+					T2.TOTALDEMAND,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINOCRDETAILS_TEMP T1
+				JOIN FINOCRHEADER_TEMP T2 ON T1.HEADERID = T2.HEADERID
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T2.FINID
+				UNION ALL
+				SELECT T1.DETAILID,
+					T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.STEPSEQUENCE,
+					T1.CUSTOMERCONTRIBUTION,
+					T1.FINANCERCONTRIBUTION,
+					T1.CONTRIBUTOR,
+					T2.OCRID,
+					T2.OCRDESCRIPTION,
+					T2.CUSTOMERPORTION,
+					T2.OCRTYPE,
+					T2.TOTALDEMAND,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINOCRDETAILS T1
+				JOIN FINOCRHEADER T2 ON T1.HEADERID = T2.HEADERID
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T2.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM FINOCRDETAILS_TEMP
+					WHERE FINOCRDETAILS_TEMP.HEADERID = T1.HEADERID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="OCRV_5_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrdetails_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_6_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finocrdetails_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="OCRV_6" author="Gopal.p">
+		<createView viewName="FINOCRDETAILS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.DETAILID,
+					T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.STEPSEQUENCE,
+					T1.CUSTOMERCONTRIBUTION,
+					T1.FINANCERCONTRIBUTION,
+					T1.CONTRIBUTOR,
+					T2.OCRID,
+					T2.OCRDESCRIPTION,
+					T2.CUSTOMERPORTION,
+					T2.OCRTYPE,
+					T2.TOTALDEMAND,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINOCRDETAILS T1
+				JOIN FINOCRHEADER T2 ON T1.HEADERID = T2.HEADERID
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T2.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="OCRV_6_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finocrdetails_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (OCRV) :: OCR Capture/Header/Detail Views handle in single place end -->
+
 	<changeSet id="ST#2367.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -3824,4 +5880,66 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#2367.3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finirrdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.3" author="Gopal.p">
+		<createView viewName="FINIRRDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.IRRID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T2.IRRCODE,
+					T2.IRRCODEDESC,
+					T1.IRR,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINIRRDETAILS_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				JOIN IRRCODES T2 ON T1.IRRID = T2.IRRID
+				UNION ALL
+				SELECT T1.IRRID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T2.IRRCODE,
+					T2.IRRCODEDESC,
+					T1.IRR,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINIRRDETAILS T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				JOIN IRRCODES T2 ON T1.IRRID = T2.IRRID
+				WHERE NOT (EXISTS (SELECT 1 FROM FINIRRDETAILS_TEMP WHERE FINIRRDETAILS_TEMP.IRRID = T1.IRRID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finirrdetails_view');	
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>
