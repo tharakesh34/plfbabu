@@ -5777,6 +5777,406 @@
 
 	<!-- (OCRV) :: OCR Capture/Header/Detail Views handle in single place end -->
 
+	<!-- (FFRV) :: Fin Fee Receipt Views handle in single place start -->
+
+	<changeSet id="FFRV_1_pre" author="Gopal.P" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FFRV_1" author="Gopal.P">
+		<createView viewName="FINFEERECEIPTS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.AMOUNT RECEIPTAMOUNT,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FEETYPECODE,
+					T4.FEETYPEDESC,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T5.RECEIPTMODE RECEIPTTYPE,
+					T1.PAIDTDS
+				FROM FINFEERECEIPTS_TEMP T1
+				INNER JOIN FINRECEIPTDETAIL_TEMP T2 ON T1.RECEIPTID = T2.RECEIPTID
+				INNER JOIN (SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL_TEMP
+					UNION ALL
+					SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL 
+					WHERE NOT EXISTS(SELECT 1 FROM FINFEERECEIPTS_TEMP WHERE FEEID = FINFEEDETAIL.FEEID)
+					) T3 ON T3.FEEID = T1.FEEID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T3.FINID
+				LEFT JOIN FEETYPES T4 ON T3.FEETYPEID = T4.FEETYPEID
+				INNER JOIN FINRECEIPTHEADER_TEMP T5 ON T1.RECEIPTID = T5.RECEIPTID
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FFRV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FFRV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FFRV_2" author="Gopal.p">
+		<createView viewName="FINFEERECEIPTS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.VERSION ,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.AMOUNT RECEIPTAMOUNT,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FEETYPECODE,
+					T4.FEETYPEDESC,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T5.RECEIPTMODE RECEIPTTYPE,
+					T1.PAIDTDS
+				FROM FINFEERECEIPTS T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.RECEIPTID = T2.RECEIPTID
+				INNER JOIN (SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL_TEMP
+					UNION ALL
+					SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL 
+					WHERE NOT EXISTS(SELECT 1 FROM FINFEERECEIPTS_TEMP WHERE FEEID = FINFEEDETAIL.FEEID)
+					) T3 ON T3.FEEID = T1.FEEID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T3.FINID
+				LEFT JOIN FEETYPES T4 ON T3.FEETYPEID = T4.FEETYPEID
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID	
+			 ]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FFRV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FFRV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finfeereceipts_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="FFRV_3" author="Gopal.p">
+		<createView viewName="FINFEERECEIPTS_VIEW" replaceIfExists="true">
+		   <![CDATA[
+				SELECT T1.ID,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.VERSION ,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.AMOUNT RECEIPTAMOUNT,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE ,
+					T4.FEETYPECODE,
+					T4.FEETYPEDESC,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T5.RECEIPTMODE RECEIPTTYPE,
+					T1.PAIDTDS
+				FROM FINFEERECEIPTS_TEMP T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.RECEIPTID = T2.RECEIPTID
+				INNER JOIN (SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL_TEMP
+					UNION ALL
+					SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL 
+					WHERE NOT EXISTS(SELECT 1 FROM FINFEERECEIPTS_TEMP WHERE FEEID = FINFEEDETAIL.FEEID)
+					) T3 ON T3.FEEID = T1.FEEID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T3.FINID
+				LEFT JOIN FEETYPES T4 ON T3.FEETYPEID = T4.FEETYPEID
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID
+				UNION ALL
+				SELECT T1.ID,
+					T1.FEEID,
+					T1.RECEIPTID,
+					T1.PAIDAMOUNT,
+					T1.VERSION ,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.AMOUNT RECEIPTAMOUNT,
+					T2.TRANSACTIONREF,
+					T2.FAVOURNUMBER,
+					T3.FEETYPEID,
+					T3.VASREFERENCE,
+					T4.FEETYPECODE,
+					T4.FEETYPEDESC,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T5.RECEIPTMODE RECEIPTTYPE,
+					T1.PAIDTDS
+				FROM FINFEERECEIPTS T1
+				INNER JOIN FINRECEIPTDETAIL T2 ON T1.RECEIPTID = T2.RECEIPTID
+				INNER JOIN (SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL_TEMP
+					UNION ALL
+					SELECT FEEID, VASREFERENCE, FEETYPEID, FINID FROM FINFEEDETAIL 
+					WHERE NOT EXISTS(SELECT 1 FROM FINFEERECEIPTS_TEMP WHERE FEEID = FINFEEDETAIL.FEEID)
+					) T3 ON T3.FEEID = T1.FEEID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T3.FINID
+				LEFT JOIN FEETYPES T4 ON T3.FEETYPEID = T4.FEETYPEID
+				INNER JOIN FINRECEIPTHEADER T5 ON T1.RECEIPTID = T5.RECEIPTID
+				WHERE (NOT EXISTS(SELECT 1 FROM FINFEERECEIPTS_TEMP WHERE (ID = T1.ID)))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="FFRV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finfeereceipts_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (CDV) :: Fin Fee Receipt Views handle in single place end -->
+
+	<!-- (CDV) :: Cheque Header/mantainance Views handle in single place start -->
+
+	<changeSet id="CDV_1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'chequeheader_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="CDV_1" author="Gopal.p">
+		<createView viewName="CHEQUEHEADER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.NOOFCHEQUES,
+					T1.TOTALAMOUNT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM CHEQUEHEADER T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="CDV_1_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'chequeheader_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="CDV_2_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'chequeheader_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="CDV_2" author="Gopal.p">
+		<createView viewName="CHEQUEHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.NOOFCHEQUES,
+					T1.TOTALAMOUNT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM CHEQUEHEADER_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT T1.HEADERID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.NOOFCHEQUES,
+					T1.TOTALAMOUNT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM CHEQUEHEADER T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS ( SELECT 1 FROM CHEQUEHEADER_TEMP
+					WHERE CHEQUEHEADER_TEMP.HEADERID = T1.HEADERID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="CDV_2_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'chequeheader_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="CDV_3_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'chequedetailmaintain_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="CDV_3" author="Gopal.p">
+		<createView viewName="CHEQUEDETAILMAINTAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.NOOFCHEQUES,
+					T1.TOTALAMOUNT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM CHEQUEHEADER_TEMP T1
+				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+				UNION ALL
+				SELECT T1.HEADERID,
+					T2.FINID,
+					T2.FINREFERENCE,
+					T1.NOOFCHEQUES,
+					T1.TOTALAMOUNT,
+					T1.ACTIVE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM CHEQUEHEADER T1
+				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+				WHERE NOT EXISTS ( SELECT 1 FROM CHEQUEHEADER_TEMP
+					WHERE CHEQUEHEADER_TEMP.HEADERID = T1.HEADERID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="CDV_3_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'chequedetailmaintain_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<!-- (CDV) :: Cheque Header/mantainance Views handle in single place end -->
+
 	<changeSet id="ST#2367.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -5942,4 +6342,228 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#2367.4_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financeeligibilitydetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.4" author="Gopal.p">
+		<createView viewName="FINANCEELIGIBILITYDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T1.ELGRULECODE,
+					T1.RULERESULTTYPE,
+					T1.RULERESULT,
+					T1.CANOVERRIDE,
+					T1.OVERRIDEPERC,
+					T1.USEROVERRIDE,
+					T2.RULECODE LOVDESCELGRULECODE,
+					T2.RULECODEDESC LOVDESCELGRULECODEDESC
+				FROM FINANCEELIGIBILITYDETAIL T1
+				JOIN RULES T2 ON T1.ELGRULECODE = T2.RULEID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.4_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeeligibilitydetail_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.5_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financescoreheader_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.5" author="Gopal.p">
+		<createView viewName="FINANCESCOREHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.HEADERID,
+					T1.GROUPID,
+					T1.FINID,
+					T1.FINREFERENCE,
+					T1.MINSCORE,
+					T1.OVERRIDE,
+					T1.OVERRIDESCORE,
+					T1.CREDITWORTH,
+					T2.SCOREGROUPCODE AS GROUPCODE,
+					T2.SCOREGROUPNAME AS GROUPCODEDESC,
+					T1.CUSTID
+				FROM FINANCESCOREHEADER T1
+				JOIN RMTSCORINGGROUP T2 ON T1.GROUPID = T2.SCOREGROUPID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.5_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financescoreheader_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.6_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financechecklistref_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.6" author="Gopal.p">
+		<createView viewName="FINANCECHECKLISTREF_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID, 
+					FM.FINREFERENCE,
+					T1.QUESTIONID,
+					T1.ANSWER,
+					T1.REMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.CHECKLISTDESC AS LOVDESCQUESDESC,
+					T3.ANSDESC AS LOVDESCANSWERDESC,
+					T1.INSTRUCTIONUID
+				FROM FINANCECHECKLISTREF T1
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				JOIN BMTCHECKLIST T2 ON T1.QUESTIONID = T2.CHECKLISTID
+				JOIN RMTCHECKLISTDETAILS T3 ON T1.QUESTIONID = T3.CHECKLISTID AND T1.ANSWER = T3.ANSSEQNO
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.6_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financechecklistref_aview');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.7_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financechecklistref_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.7" author="Gopal.p">
+		<createView viewName="FINANCECHECKLISTREF_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.QUESTIONID,
+					T1.ANSWER,
+					T1.REMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.CHECKLISTDESC AS LOVDESCQUESDESC,
+					T3.ANSDESC AS LOVDESCANSWERDESC,
+					T1.INSTRUCTIONUID
+				FROM FINANCECHECKLISTREF_TEMP T1
+				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				JOIN BMTCHECKLIST T2 ON T1.QUESTIONID = T2.CHECKLISTID
+				JOIN RMTCHECKLISTDETAILS T3 ON T1.QUESTIONID = T3.CHECKLISTID AND T1.ANSWER = T3.ANSSEQNO
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.7_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financechecklistref_view');	
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.8_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'reinstatefinance_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.8" author="Gopal.p">
+		<createView viewName="REINSTATEFINANCE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T2.FINID,
+					T2.FINREFERENCE,
+					T2.FINTYPE,
+					T3.FINTYPEDESC,
+					T3.FINCATEGORY,
+					T4.CUSTCIF,
+					T2.FINBRANCH,
+					T5.BRANCHDESC,
+					T2.FINSTARTDATE,
+					T2.NUMBEROFTERMS,
+					T2.GRACETERMS,
+					T2.MATURITYDATE,
+					T2.FINCCY,
+					T2.FINAMOUNT,
+					T2.FINREPAYMENTAMOUNT,
+					T2.SCHEDULEMETHOD,
+					T2.FEECHARGEAMT,
+					T2.DOWNPAYBANK,
+					T2.DOWNPAYSUPL,
+					T2.PROFITDAYSBASIS,
+					T2.EFFECTIVERATEOFRETURN,
+					T2.TOTALPROFIT,
+					T3.FINDIVISION AS LOVDESCFINDIVISION,
+					T2.FINPREAPPROVEDREF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM REINSTATEFINANCE_TEMP T1
+				JOIN REJECTFINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE
+				JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+				JOIN CUSTOMERS T4 ON T2.CUSTID = T4.CUSTID
+				JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.8_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'reinstatefinance_view');	
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>
