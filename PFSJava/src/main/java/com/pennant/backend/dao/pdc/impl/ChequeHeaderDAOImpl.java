@@ -172,7 +172,7 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 	public void update(ChequeHeader ch, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update ChequeHeader");
 		sql.append(tableType.getSuffix());
-		sql.append(" set FinID = ?, FinReference = ?, NoOfCheques = ?, TotalAmount");
+		sql.append(" Set FinID = ?, FinReference = ?, NoOfCheques = ?, TotalAmount = ?");
 		sql.append(", Active = ?, LastMntOn = ?, LastMntBy = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where HeaderID = ?");
@@ -187,7 +187,6 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 			ps.setInt(index++, ch.getNoOfCheques());
 			ps.setBigDecimal(index++, ch.getTotalAmount());
 			ps.setBoolean(index++, ch.isActive());
-			ps.setInt(index++, ch.getVersion());
 			ps.setTimestamp(index++, ch.getLastMntOn());
 			ps.setLong(index++, JdbcUtil.setLong(ch.getLastMntBy()));
 			ps.setString(index++, ch.getRecordStatus());

@@ -636,7 +636,9 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			if (StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, fintype)));
 			}
+
 			aFinanceMain.setFinReference(this.finReference.getValue());
+			detail.getFinScheduleData().setFinID(aFinanceMain.getFinID());
 			detail.getFinScheduleData().setFinReference(this.finReference.getValue());
 
 		} catch (WrongValueException we) {

@@ -421,6 +421,7 @@ public class FinCovenantTypeServiceImpl extends GenericService<FinCovenantType> 
 
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
+
 		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
 

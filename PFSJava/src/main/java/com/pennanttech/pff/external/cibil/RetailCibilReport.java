@@ -1681,6 +1681,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			return schdData;
 		}
 
+		schdData.setFinID(fm.getFinID());
 		schdData.setFinReference(fm.getFinReference());
 		schdData.setFinanceMain(fm);
 

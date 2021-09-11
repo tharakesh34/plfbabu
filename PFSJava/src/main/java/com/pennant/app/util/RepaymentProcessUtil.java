@@ -327,6 +327,7 @@ public class RepaymentProcessUtil {
 				// Save Schedule Details For Future Modifications
 				FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finID, "");
 				oldFinSchdData.setFinanceMain(fm);
+				oldFinSchdData.setFinID(finID);
 				oldFinSchdData.setFinReference(finReference);
 				listSave(oldFinSchdData, "_Log", logKey);
 			}

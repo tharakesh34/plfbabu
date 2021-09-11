@@ -361,20 +361,23 @@ public class FinOptionServiceImpl extends GenericService<FinOption> implements F
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+
 		FinanceDetail fd = new FinanceDetail();
-		FinScheduleData scheduleData = fd.getFinScheduleData();
-		scheduleData.setFinReference(fm.getFinReference());
-		scheduleData.setFinanceMain(fm);
-		scheduleData.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), "_AView"));
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(finID);
+		schdData.setFinReference(fm.getFinReference());
+
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), "_AView"));
 
 		// Finance Schedule Details
-		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
 
 		// Finance Customer Details
-		if (scheduleData.getFinanceMain().getCustID() != 0
-				&& scheduleData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
-			fd.setCustomerDetails(customerDetailsService
-					.getCustomerDetailsById(scheduleData.getFinanceMain().getCustID(), true, "_View"));
+		if (schdData.getFinanceMain().getCustID() != 0 && schdData.getFinanceMain().getCustID() != Long.MIN_VALUE) {
+			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(schdData.getFinanceMain().getCustID(),
+					true, "_View"));
 		}
 
 		List<FinOption> finOption = finOptionDAO.getFinOptions(finID, TableType.VIEW);

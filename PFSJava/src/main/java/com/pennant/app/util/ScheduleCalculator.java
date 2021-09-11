@@ -404,6 +404,7 @@ public class ScheduleCalculator {
 		finMain.setRecalIdx(-1);
 
 		finMain.setFinReference(finMain.getFinReference() + "_DP");
+		dpScheduleData.setFinID(finMain.getFinID());
 		dpScheduleData.setFinReference(finMain.getFinReference());
 
 		finMain.setFinAmount(finMain.getDownPayBank());
@@ -2470,15 +2471,13 @@ public class ScheduleCalculator {
 					}
 				}
 
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBSP)
-						&& StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-								CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBSP) && StringUtils
+						.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
 					deductDisbFee = deductDisbFee.add(finFeeDetail.getRemainingFee());
 				}
 
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBSP)
-						&& StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-								CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.ADDDBSP) && StringUtils
+						.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 					newFeeAmt = newFeeAmt.add(finFeeDetail.getRemainingFee());
 				}
 			}
@@ -4460,8 +4459,7 @@ public class ScheduleCalculator {
 	private Date findAllowedChangeDate(FinScheduleData finScheduleData, String rvwRateApplFor, Date dateAllowedChange) {
 		logger.debug("Entering");
 
-		if (StringUtils.equals(finScheduleData.getFinanceMain().getProcMethod(),
-				FinServiceEvent.RECEIPT)) {
+		if (StringUtils.equals(finScheduleData.getFinanceMain().getProcMethod(), FinServiceEvent.RECEIPT)) {
 			logger.debug("Leaving");
 			return finScheduleData.getFinanceMain().getMaturityDate();
 		}
@@ -5262,8 +5260,7 @@ public class ScheduleCalculator {
 
 		// SIVA : For Presentment Detail Schedule should be recalculate on
 		// Schedule Maintenance
-		if (curSchd.getPresentmentId() > 0
-				&& !StringUtils.equals(FinServiceEvent.RECEIPT, finMain.getProcMethod())) {
+		if (curSchd.getPresentmentId() > 0 && !StringUtils.equals(FinServiceEvent.RECEIPT, finMain.getProcMethod())) {
 
 			// This case should not be applicable only for Partial Settlement
 			// For Partial Settlement in case of Presentment exists after value
@@ -5494,8 +5491,7 @@ public class ScheduleCalculator {
 
 				if (StringUtils.isNotBlank(finMain.getReceiptPurpose())
 						&& (StringUtils.equals(finMain.getReceiptPurpose(), FinServiceEvent.EARLYRPY)
-								|| StringUtils.equals(finMain.getReceiptPurpose(),
-										FinServiceEvent.EARLYSETTLE))) {
+								|| StringUtils.equals(finMain.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE))) {
 
 					if (curSchd.getSchDate().compareTo(finMain.getAppDate()) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));

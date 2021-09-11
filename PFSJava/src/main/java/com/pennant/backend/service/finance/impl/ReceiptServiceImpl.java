@@ -355,7 +355,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.setFinanceDetail(fd);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinReference(finReference);
 
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "_AView", false);
 
@@ -363,6 +362,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			logger.debug(Literal.LEAVING);
 			return receiptData;
 		}
+
+		schdData.setFinID(fm.getFinID());
+		schdData.setFinReference(finReference);
 
 		schdData.setFinanceMain(fm);
 
@@ -5134,8 +5136,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinanceDetail fd = new FinanceDetail();
 		rd.setFinanceDetail(fd);
+
 		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinReference(rch.getReference());
 
 		if (fm == null) {
 			logger.debug(Literal.LEAVING);
@@ -5145,6 +5147,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String finReference = fm.getFinReference();
 		long finID = fm.getFinID();
 		long custID = fm.getCustID();
+
+		schdData.setFinID(finID);
+		schdData.setFinReference(finReference);
 
 		List<FinReceiptDetail> rcdList = null;
 		if (SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)

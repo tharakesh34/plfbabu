@@ -123,61 +123,65 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		long custID = fm.getCustID();
 
 		writeoffHeader.setFinReference(finReference);
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(finReference);
-		writeoffHeader.setFinanceDetail(financeDetail);
-		scheduleData.setFinanceMain(fm);
+
+		FinanceDetail fd = new FinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(finID);
+		schdData.setFinReference(finReference);
+
+		writeoffHeader.setFinanceDetail(fd);
+		schdData.setFinanceMain(fm);
 
 		// Finance Schedule Details
-		scheduleData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
-		scheduleData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false));
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false));
 
-		scheduleData.setFeeRules(finFeeChargesDAO.getFeeChargesByFinRef(finID, FinServiceEvent.WRITEOFF, false, ""));
+		schdData.setFeeRules(finFeeChargesDAO.getFeeChargesByFinRef(finID, FinServiceEvent.WRITEOFF, false, ""));
 
 		if (StringUtils.isNotBlank(promotionCode)) {
-			financeDetail.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(promotionCode, FinServiceEvent.WRITEOFF,
-					"_AView", false, FinanceConstants.MODULEID_PROMOTION));
+			fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(promotionCode, FinServiceEvent.WRITEOFF, "_AView",
+					false, FinanceConstants.MODULEID_PROMOTION));
 		} else {
-			financeDetail.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(finType, FinServiceEvent.WRITEOFF,
-					"_AView", false, FinanceConstants.MODULEID_FINTYPE));
+			fd.setFinTypeFeesList(finTypeFeesDAO.getFinTypeFeesList(finType, FinServiceEvent.WRITEOFF, "_AView", false,
+					FinanceConstants.MODULEID_FINTYPE));
 		}
 
-		scheduleData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, ""));
-		scheduleData.setPenaltyDetails(recoveryDAO.getFinancePenaltysByFinRef(finID, ""));
-		scheduleData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
+		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, ""));
+		schdData.setPenaltyDetails(recoveryDAO.getFinancePenaltysByFinRef(finID, ""));
+		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
 
 		// Finance Customer Details
 
 		if (custID != 0 && custID != Long.MIN_VALUE) {
-			financeDetail.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
+			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_View"));
 		}
 
 		// Finance Fee Details
-		scheduleData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
+		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
 
 		// Finance Check List Details
 		// =======================================
-		checkListDetailService.setFinanceCheckListDetails(financeDetail, finType, procEdtEvent, userRole);
+		checkListDetailService.setFinanceCheckListDetails(fd, finType, procEdtEvent, userRole);
 
 		// Finance Fee Charge Details
 		// =======================================
 		List<Long> accSetIdList = new ArrayList<Long>();
 		accSetIdList.addAll(financeReferenceDetailDAO.getRefIdListByFinType(finType, procEdtEvent, null, "_ACView"));
 		if (!accSetIdList.isEmpty()) {
-			financeDetail.setFeeCharges(
+			fd.setFeeCharges(
 					transactionEntryDAO.getListFeeChargeRules(accSetIdList, AccountingEvent.WRITEOFF, "_AView", 0));
 		}
 
 		// Finance Stage Accounting Posting Details
 		// =======================================
-		financeDetail.setStageTransactionEntries(transactionEntryDAO.getListTransactionEntryByRefType(finType,
+		fd.setStageTransactionEntries(transactionEntryDAO.getListTransactionEntryByRefType(finType,
 				StringUtils.isEmpty(procEdtEvent) ? FinServiceEvent.ORG : procEdtEvent,
 				FinanceConstants.PROCEDT_STAGEACC, userRole, "_AEView", true));
 
 		// Docuument Details
-		financeDetail.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(finReference,
-				FinanceConstants.MODULE_NAME, procEdtEvent, "_View"));
+		fd.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME,
+				procEdtEvent, "_View"));
 
 		if (StringUtils.isNotBlank(fm.getRecordType())) {
 

@@ -87,10 +87,15 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 	@Override
 	public FinanceDetail getFinanceDetailById(long finID) {
 		logger.debug(Literal.ENTERING);
+
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
+
 		FinanceDetail fd = new FinanceDetail();
-		FinScheduleData scheduleData = fd.getFinScheduleData();
-		scheduleData.setFinReference(fm.getFinReference());
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(fm.getFinID());
+		schdData.setFinReference(fm.getFinReference());
+
 		String finType = fm.getFinType();
 		long custID = fm.getCustID();
 		String finPreApprovedRef = fm.getFinPreApprovedRef();
@@ -102,8 +107,8 @@ public class FinanceDeviationsServiceImpl implements FinanceDeviationsService {
 		CustomerDetails customerDetails = customerDetailsService.getCustomerDetailsById(custID, true, "_View");
 
 		fd.setCustomerDetails(customerDetails);
-		scheduleData.setFinanceMain(fm);
-		scheduleData.setFinanceType(financeType);
+		schdData.setFinanceMain(fm);
+		schdData.setFinanceType(financeType);
 
 		List<FinanceDeviations> financeDeviations = getFinanceDeviations(finID);
 		List<FinanceDeviations> approvedFinDeviations = getApprovedFinanceDeviations(finID);

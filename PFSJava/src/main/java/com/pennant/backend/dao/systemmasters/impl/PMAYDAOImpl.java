@@ -185,8 +185,8 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 		sql.append(", HouseholdAnnIncome = ?, BalanceTransfer = ?, PrimaryApplicant = ?");
 		sql.append(", PrprtyOwnedByWomen = ?, TransactionFinType = ?, Product = ?, WaterSupply = ?");
 		sql.append(", Drinage = ?, Electricity = ?, PmayCategory = ?");
-		sql.append(", Version = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
-		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where FinID = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
@@ -222,6 +222,12 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			ps.setLong(index++, JdbcUtil.setLong(pmay.getWorkflowId()));
 
 			ps.setLong(index++, pmay.getFinID());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index++, pmay.getPrevMntOn());
+			} else {
+				ps.setInt(index++, pmay.getVersion() - 1);
+			}
 
 		});
 

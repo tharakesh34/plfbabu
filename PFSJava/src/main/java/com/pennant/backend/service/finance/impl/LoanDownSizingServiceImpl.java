@@ -120,25 +120,28 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	public FinScheduleData getFinSchDataByFinRef(long finID, String type, long logKey) {
 		logger.debug(Literal.ENTERING);
 
-		FinScheduleData finSchData = new FinScheduleData();
+		FinScheduleData schdData = new FinScheduleData();
 
 		if (logKey == 0) {
 			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
-			finSchData.setFinReference(fm.getFinReference());
-			finSchData.setFinanceMain(fm);
+
+			schdData.setFinID(fm.getFinID());
+			schdData.setFinReference(fm.getFinReference());
+
+			schdData.setFinanceMain(fm);
 
 			String finType = fm.getFinType();
-			finSchData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
+			schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
 		}
 
 		// Schedule, Disbursement Details and Repay Instructions
-		finSchData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
-		finSchData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, type, false));
-		finSchData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
+		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));
+		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, type, false));
+		schdData.setRepayInstructions(repayInstructionDAO.getRepayInstructions(finID, type, false));
 
 		logger.debug(Literal.LEAVING);
 
-		return finSchData;
+		return schdData;
 	}
 
 	public FinScheduleData changeGraceEndAfterFullDisb(FinScheduleData schdData) {
@@ -317,7 +320,10 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 
 		// START : Fetch Existing data before Modification
 		FinScheduleData oldFinSchdData = getFinSchDataByFinRef(finID, "", -1);
+
+		oldFinSchdData.setFinID(finID);
 		oldFinSchdData.setFinReference(finReference);
+
 		oldFinSchdData.setFinanceMain(fm);
 
 		// Save Schedule Details For Future Modifications

@@ -853,13 +853,21 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 	@Override
 	public FinanceDetail getFinanceDetailById(long finID) {
 		logger.debug(Literal.ENTERING);
-		FinanceMain financeMain = financeMainDAO.getFinBasicDetails(finID, "_View");
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData scheduleData = financeDetail.getFinScheduleData();
-		scheduleData.setFinReference(financeMain.getFinReference());
-		scheduleData.setFinanceMain(financeMain);
+
+		FinanceMain fm = financeMainDAO.getFinBasicDetails(finID, "_View");
+
+		FinanceDetail fd = new FinanceDetail();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(fm.getFinID());
+		schdData.setFinReference(fm.getFinReference());
+
+		schdData.setFinanceMain(fm);
+
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+
+		return fd;
 	}
 
 	private void processGSTInvoicePreparation(FinFeeRefundHeader feeRefundHeader) {

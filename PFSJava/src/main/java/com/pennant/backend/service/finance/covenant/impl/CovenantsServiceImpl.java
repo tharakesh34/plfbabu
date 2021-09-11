@@ -757,10 +757,13 @@ public class CovenantsServiceImpl extends GenericService<Covenant> implements Co
 		// Finance Details
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinReference(finreference);
+
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finreference, type, false);
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), "_AView"));
+
+		schdData.setFinID(fm.getFinID());
+		schdData.setFinReference(finreference);
 
 		// Finance Schedule Details
 		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), type, false));

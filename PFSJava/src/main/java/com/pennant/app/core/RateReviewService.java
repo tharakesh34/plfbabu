@@ -289,6 +289,7 @@ public class RateReviewService extends ServiceHelper {
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(finEodEvent.getFinanceScheduleDetails());

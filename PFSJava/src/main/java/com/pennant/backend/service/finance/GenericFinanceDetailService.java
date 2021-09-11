@@ -2304,16 +2304,16 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	/**
 	 * Method to save what if inquiry lists
 	 */
-	public void listSave(FinScheduleData fd, String tableType, boolean isWIF, long logKey, long instructionUID) {
+	public void listSave(FinScheduleData schdData, String tableType, boolean isWIF, long logKey, long instructionUID) {
 		logger.debug("Entering ");
 		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		// Finance Schedule Details
-		List<FinanceScheduleDetail> schedules = fd.getFinanceScheduleDetails();
-		FinanceMain fm = fd.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		FinanceMain fm = schdData.getFinanceMain();
 		for (FinanceScheduleDetail schedule : schedules) {
 			schedule.setLastMntBy(fm.getLastMntBy());
-			schedule.setFinReference(fd.getFinReference());
+			schedule.setFinReference(schdData.getFinReference());
 			int seqNo = 0;
 
 			if (mapDateSeq.containsKey(schedule.getSchDate())) {
@@ -2333,14 +2333,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			financeMainDAO.updateSchdVersion(fm, false);
 		}
 		if (subventionService != null) {
-			subventionService.savSubvnetion(fd, tableType);
+			subventionService.savSubvnetion(schdData, tableType);
 		}
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
 		Date curBDay = SysParamUtil.getAppDate();
-		for (FinanceDisbursement disbursement : fd.getDisbursementDetails()) {
-			disbursement.setFinReference(fd.getFinReference());
+		for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
+			disbursement.setFinReference(schdData.getFinReference());
 			disbursement.setDisbReqDate(curBDay);
 			disbursement.setDisbIsActive(true);
 			disbursement.setLogKey(logKey);
@@ -2351,18 +2351,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				disbursement.setInstructionUID(instructionUID);
 			}
 		}
-		financeDisbursementDAO.saveList(fd.getDisbursementDetails(), tableType, isWIF);
+		financeDisbursementDAO.saveList(schdData.getDisbursementDetails(), tableType, isWIF);
 
 		// Finance Repay Instruction Details
-		for (int i = 0; i < fd.getRepayInstructions().size(); i++) {
-			fd.getRepayInstructions().get(i).setFinReference(fd.getFinReference());
-			fd.getRepayInstructions().get(i).setLogKey(logKey);
+		for (int i = 0; i < schdData.getRepayInstructions().size(); i++) {
+			schdData.getRepayInstructions().get(i).setFinReference(schdData.getFinReference());
+			schdData.getRepayInstructions().get(i).setLogKey(logKey);
 		}
-		repayInstructionDAO.saveList(fd.getRepayInstructions(), tableType, isWIF);
+		repayInstructionDAO.saveList(schdData.getRepayInstructions(), tableType, isWIF);
 
 		// Finance Overdue Penalty Rates
 		if (!isWIF && logKey == 0) {
-			FinODPenaltyRate penaltyRate = fd.getFinODPenaltyRate();
+			FinODPenaltyRate penaltyRate = schdData.getFinODPenaltyRate();
 			if (penaltyRate == null) {
 				penaltyRate = new FinODPenaltyRate();
 				penaltyRate.setApplyODPenalty(false);
@@ -2375,13 +2375,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 				penaltyRate.setODRuleCode("");
 			}
-			penaltyRate.setFinReference(fd.getFinReference());
+			penaltyRate.setFinID(schdData.getFinID());
+			penaltyRate.setFinReference(schdData.getFinReference());
 			penaltyRate.setFinEffectDate(DateUtility.getSysDate());
 			finODPenaltyRateDAO.save(penaltyRate, tableType);
 		}
 
 		FinLogEntryDetail logDtls = finLogEntryDetailDAO.getFinLogEntryDetail(fm.getFinID());
-		List<FinServiceInstruction> finServiceInstructions = fd.getFinServiceInstructions();
+		List<FinServiceInstruction> finServiceInstructions = schdData.getFinServiceInstructions();
 		if (CollectionUtils.isNotEmpty(finServiceInstructions)) {
 			if (logDtls != null) {
 				finServiceInstructions.forEach(fsi -> fsi.setLogKey(logDtls.getLogKey()));
@@ -2831,6 +2832,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinanceType ft = financeTypeDAO.getFinanceTypeByID(finType, "_AView");
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceType(ft);
+
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
 
 		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, type, false));

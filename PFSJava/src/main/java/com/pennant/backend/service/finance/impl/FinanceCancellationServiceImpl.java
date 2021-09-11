@@ -142,7 +142,10 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
 

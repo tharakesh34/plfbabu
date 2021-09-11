@@ -615,6 +615,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeMain.setMaturityDate(enquiry.getMaturityDate());
 
 				FinanceDetail financeDetail = new FinanceDetail();
+
+				financeDetail.getFinScheduleData().setFinID(financeMain.getFinID());
 				financeDetail.getFinScheduleData().setFinReference(this.finReference);
 				financeDetail.getFinScheduleData().setFinanceMain(financeMain);
 

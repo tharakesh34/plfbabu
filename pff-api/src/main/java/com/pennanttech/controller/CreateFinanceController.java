@@ -283,6 +283,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			fm.setFinReference(finReference);
+			schdData.setFinID(finID);
 			schdData.setFinReference(finReference);
 
 			if (fm.getUserDetails() == null) {
@@ -3855,9 +3856,9 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
 
-			String finReference = String
-					.valueOf(String.valueOf(ReferenceGenerator.generateFinRef(fm, schdData.getFinanceType())));
+			String finReference = ReferenceGenerator.generateFinRef(fm, schdData.getFinanceType());
 			fm.setFinReference(finReference);
+
 			fm.setOldFinReference(afd.getFinScheduleData().getOldFinReference());
 			fm.setExtReference(afd.getFinScheduleData().getExternalReference());
 			fm.setFinIsActive(true);
@@ -3872,6 +3873,8 @@ public class CreateFinanceController extends SummaryDetailService {
 			afd.setModuleDefiner(FinServiceEvent.ORG);
 			fd.setModuleDefiner(FinServiceEvent.ORG);
 			fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
+			schdData.setFinID(fm.getFinID());
 			schdData.setFinReference(finReference);
 
 			for (FinanceScheduleDetail schdDetail : schdData.getFinanceScheduleDetails()) {

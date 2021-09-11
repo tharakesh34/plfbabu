@@ -323,6 +323,7 @@ public class FinStatementController extends SummaryDetailService {
 				}
 			}
 
+			scheduleData.setFinID(finID);
 			scheduleData.setFinReference(finReference);
 			scheduleData.setFinODDetails(finOdDetaiList);
 			scheduleData.setForeClosureFees(foreClosureFees);

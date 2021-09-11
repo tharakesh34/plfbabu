@@ -151,7 +151,9 @@ public class FinanceDetailController extends SummaryDetailService {
 			fd.setExtSource(false);
 			fd.setModuleDefiner(FinServiceEvent.ORG);
 
+			schdData.setFinID(fm.getFinID());
 			schdData.setFinReference(fm.getFinReference());
+
 			doProcessPlanEMIHDays(schdData);
 
 			if (schdData.getErrorDetails() != null) {
@@ -476,7 +478,7 @@ public class FinanceDetailController extends SummaryDetailService {
 		FinScheduleData schdData = new FinScheduleData();
 
 		if (fm != null) {
-			schdData.setFinReference(fm.getFinReference());
+			schdData.setFinID(fm.getFinID());
 			schdData.setFinReference(fm.getFinReference());
 			schdData.setFinFeeDetailList(fd.getFinScheduleData().getFinFeeDetailList());
 			schdData.setStepPolicyDetails(fd.getFinScheduleData().getStepPolicyDetails());

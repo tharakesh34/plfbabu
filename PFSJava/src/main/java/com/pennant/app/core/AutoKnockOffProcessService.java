@@ -336,6 +336,8 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 			return receiptData;
 		}
 
+		schdData.setFinID(fm.getFinID());
+
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();
 		receiptData.setReceiptHeader(receiptHeader);
 		receiptHeader.setReference(fm.getFinReference());

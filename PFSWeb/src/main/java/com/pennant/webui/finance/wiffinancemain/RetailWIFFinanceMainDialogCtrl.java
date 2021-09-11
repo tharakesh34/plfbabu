@@ -1665,6 +1665,7 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				this.finReference.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, fintype)));
 			}
 			aFinanceMain.setFinReference(this.finReference.getValue());
+			aFinanceDetail.getFinScheduleData().setFinID(aFinanceMain.getFinID());
 			aFinanceDetail.getFinScheduleData().setFinReference(this.finReference.getValue());
 
 		} catch (WrongValueException we) {

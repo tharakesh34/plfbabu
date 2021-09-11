@@ -96,8 +96,12 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		String finReference = fm.getFinReference();
 
 		FinanceDetail fd = new FinanceDetail();
+
 		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 
 		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByFinRef(finID, true, ""));

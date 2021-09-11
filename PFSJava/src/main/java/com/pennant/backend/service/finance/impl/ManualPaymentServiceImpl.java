@@ -159,7 +159,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		repayData.setFinReference(finReference);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "_View", false));
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "_View", false));
@@ -384,7 +387,10 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				FinScheduleData oldFinSchdData = null;
 				if (rph.isSchdRegenerated()) {
 					oldFinSchdData = getFinSchDataByFinRef(finID, "");
+
 					oldFinSchdData.setFinanceMain(fm);
+
+					oldFinSchdData.setFinID(finID);
 					oldFinSchdData.setFinReference(finReference);
 				}
 
@@ -603,6 +609,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		if (rph.isSchdRegenerated()) {
 			oldFinSchdData = getFinSchDataByFinRef(finID, "");
 			oldFinSchdData.setFinanceMain(fm);
+
+			oldFinSchdData.setFinID(finID);
 			oldFinSchdData.setFinReference(finReference);
 		}
 

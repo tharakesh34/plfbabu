@@ -1380,7 +1380,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.finReference
 						.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
 			}
-			aFinanceMain.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
+			aFinanceMain.setFinID(aFinanceMain.getFinID());
 			aFinanceSchData.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 
 		} catch (WrongValueException we) {

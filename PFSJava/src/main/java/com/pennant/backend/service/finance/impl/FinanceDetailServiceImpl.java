@@ -363,7 +363,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private ReasonDetailDAO reasonDetailDAO;
 	private FinTypeExpenseDAO finTypeExpenseDAO;
 	private FinExpenseDetailsDAO finExpenseDetailsDAO;
-	private FinIRRDetailsDAO finIRRDetailsDAO;
 	private PSLDetailService pSLDetailService;
 	private CollateralSetupService collateralSetupService;
 	private HoldDisbursementDAO holdDisbursementDAO;
@@ -1440,12 +1439,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
-		schdData.setFinReference(fm.getFinReference());
+
 		schdData.setFinanceMain(fm);
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 		String finType = fm.getFinType();
+
+		schdData.setFinID(finID);
+		schdData.setFinReference(finReference);
 
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(finType, "_ORGView");
 		schdData.setFinanceType(financeType);
@@ -1559,7 +1561,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String finReference = fm.getFinReference();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 
 		setDasAndDmaData(fm);
@@ -2144,6 +2148,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				FinScheduleData oldFinSchdData = null;
 				if (financeMain.isScheduleRegenerated()) {
 					oldFinSchdData = getFinSchDataByFinRef(finID, "", -1);
+					oldFinSchdData.setFinID(scheduleData.getFinID());
 					oldFinSchdData.setFinReference(scheduleData.getFinReference());
 				}
 
@@ -4058,6 +4063,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					FinScheduleData oldFinSchdData = null;
 					if (fm.isScheduleRegenerated()) {
 						oldFinSchdData = getFinSchDataByFinRef(finID, "", -1);
+						oldFinSchdData.setFinID(schdData.getFinID());
 						oldFinSchdData.setFinReference(schdData.getFinReference());
 					}
 
@@ -5450,6 +5456,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					FinScheduleData oldFinSchdData = null;
 					if (schdData.getFinanceMain().isScheduleRegenerated()) {
 						oldFinSchdData = getFinSchDataByFinRef(finID, "", -1);
+						oldFinSchdData.setFinID(schdData.getFinID());
 						oldFinSchdData.setFinReference(schdData.getFinReference());
 					}
 
@@ -5895,7 +5902,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			FinScheduleData schd = new FinScheduleData();
 			schd.setFinanceMain(fm);
+
 			schd.setFinReference(finReference);
+			schd.setFinID(finID);
+
 			fd.setFinScheduleData(schd);
 			fd.setModuleDefiner(FinServiceEvent.ORG);
 			fd = getAutoRejDetails(fd, "_Temp", false);
@@ -7952,6 +7962,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		schdData.setFinID(fm.getFinID());
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 
 		// Overdraft Schedule Details
@@ -8055,8 +8066,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinScheduleData schdData = new FinScheduleData();
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, type, false);
+
 		schdData.setFinID(finID);
 		schdData.setFinReference(fm.getFinReference());
+
 		schdData.setFinanceMain(fm);
 
 		// Schedule details
@@ -9038,7 +9051,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		String finReference = fm.getFinReference();
 
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 
 		// Step Policy Details List
@@ -9345,7 +9360,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		long custID = fm.getCustID();
 		String finReference = fm.getFinReference();
 
+		schdData.setFinID(finID);
 		schdData.setFinReference(fm.getFinReference());
+
 		schdData.setFinanceMain(fm);
 
 		if (ImplementationConstants.COVENANT_MODULE_NEW) {
@@ -9366,8 +9383,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	public FinanceDetail getFinanceDetailForCollateral(FinanceMain fm) {
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schData = fd.getFinScheduleData();
+
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
+		schData.setFinID(finID);
 		schData.setFinReference(finReference);
 		schData.setFinanceMain(fm);
 
@@ -9387,7 +9407,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 
 		fd.setFinOptions(finOptionService.getFinOptions(finID, TableType.VIEW));
@@ -10268,7 +10290,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		long custID = fm.getCustID();
 		String finType = fm.getFinType();
 
+		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
+
 		schdData.setFinanceMain(fm);
 
 		// Finance Type Details
@@ -10513,7 +10537,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
+
+		schdData.setFinID(fm.getFinID());
 		schdData.setFinReference(fm.getFinReference());
+
 		schdData.setFinanceMain(fm);
 
 		fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(fm.getCustID(), true, "_AView"));
