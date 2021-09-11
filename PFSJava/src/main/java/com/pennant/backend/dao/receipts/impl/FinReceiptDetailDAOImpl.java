@@ -277,6 +277,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			ps.setLong(index++, finID);
 			ps.setString(index++, RepayConstants.RECEIPTTO_CUSTOMER);
 			ps.setString(index++, String.valueOf(custId));
+			ps.setLong(index++, finID);
 
 		}, (rs, rowNum) -> {
 			FinReceiptDetail rcd = new FinReceiptDetail();
