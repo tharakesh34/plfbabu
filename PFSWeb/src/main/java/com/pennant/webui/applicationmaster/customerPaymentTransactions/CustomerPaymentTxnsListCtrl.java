@@ -146,6 +146,7 @@ public class CustomerPaymentTxnsListCtrl extends GFCBaseListCtrl<PaymentTransact
 		// Register buttons and fields.
 		registerButton(button_CustomerPaymentTxnsList_CustomerPaymentTxnsSearch);
 
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_Finreference,
 				Operators.STRING);
 

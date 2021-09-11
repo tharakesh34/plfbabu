@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CoreProvisionListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CoreProvisionListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.provisions;
@@ -138,7 +120,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("extPagedListService");
 		List<Provision> provisionList = pagedListService.getBySearchObject(searchObject);
-		//List<Provision> processedProvisions = getProvisionService().getProcessedProvisions();
+		// List<Provision> processedProvisions = getProvisionService().getProcessedProvisions();
 
 		/*
 		 * if (processedProvisions.isEmpty()) { // render provisionList if processed provisions are empty
@@ -158,8 +140,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_CoreProvisionList(Event event) throws Exception {
 		// Set the page level components.
@@ -170,6 +151,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 		// Register buttons and fields.
 		registerButton(button_CoreProvisionList_ProvosionsSearchDialog);
 
+		registerField("FinID");
 		registerField("finReference", listheader_Prov_Finreference, SortOrder.ASC, finreference,
 				sortOperator_Finreference, Operators.STRING);
 		registerField("provisionCalDate", listheader_ProvisionCalDate);
@@ -190,8 +172,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_CoreProvisionList_ProvosionsSearchDialog(Event event) {
 		search();
@@ -200,8 +181,7 @@ public class CoreProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();

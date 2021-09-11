@@ -190,6 +190,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 				"button_ReinstateFinanceList_NewReinstateFinance", true);
 		registerButton(button_ReinstateFinanceList_ReinstateFinanceSearchDialog);
 
+		registerField("FinID");
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF,
 				Operators.MULTISELECT);
 		registerField("FinReference", listheader_FinRef, SortOrder.NONE, finReference, sortOperator_finReference,
@@ -272,8 +273,8 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 		Listitem selectedItem = this.listBoxReinstateFinance.getSelectedItem();
 
 		// Get the selected entity.
-		String id = (String) selectedItem.getAttribute("id");
 		long finID = (Long) selectedItem.getAttribute("finID");
+		String id = (String) selectedItem.getAttribute("id");
 		ReinstateFinance aReinstateFinance = reinstateFinanceService.getReinstateFinanceById(finID);
 
 		if (aReinstateFinance == null) {

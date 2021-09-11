@@ -68,8 +68,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_DmsDocumentDetailList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -82,6 +81,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 		// Register buttons and fields.
 		doSetFieldProperties();
 
+		registerField("FinID");
 		registerField("finReference", listheader_DmsDocFinReference, SortOrder.NONE, finReference,
 				sortOperator_FinReference, Operators.STRING);
 		registerField("docRefId", listheader_DmsDocRef, SortOrder.NONE);
@@ -105,7 +105,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 		 * "FinReference" });
 		 */
 
-		//paymentType
+		// paymentType
 		fillComboBox(this.dmsDocumentStatus, "", PennantStaticListUtil.getDmsDocumentStatusTypes(), "");
 
 		logger.debug(Literal.LEAVING);
@@ -114,8 +114,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_DmsDocumentDetailList_DmsDocumentDetailSearch(Event event) {
 		this.dmsDocumentStatus.getValue();
@@ -126,8 +125,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -138,8 +136,7 @@ public class DmsDocumentDetailListCtrl extends GFCBaseListCtrl<DMSDocumentDetail
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onDmsDocumentDetailItemDoubleClicked(Event event) {

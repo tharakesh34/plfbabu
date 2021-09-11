@@ -98,6 +98,7 @@ public class PSLDetailListCtrl extends GFCBaseListCtrl<PSLDetail> {
 		registerButton(button_PSLDetailList_PSLDetailSearch);
 		registerButton(button_PSLDetailList_NewPSLDetail, "button_PSLDetailList_NewPSLDetail", true);
 
+		registerField("FinID");
 		registerField("finReference");
 		registerField("categoryCode");
 		registerField("categoryCodeName");

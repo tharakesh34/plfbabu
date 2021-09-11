@@ -124,6 +124,7 @@ public class HoldDisbursementListCtrl extends GFCBaseListCtrl<HoldDisbursement> 
 		registerButton(button_HoldDisbursementList_NewHoldDisbursement,
 				"button_HoldDisbursementList_NewHoldDisbursement", true);
 
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("hold", listheader_Hold, SortOrder.NONE, hold, sortOperator_Hold, Operators.BOOLEAN);

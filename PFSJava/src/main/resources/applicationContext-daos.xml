@@ -2068,6 +2068,8 @@
 		<property name="provinceDAO" ref="provinceDAO" />
 		<property name="cityDAO" ref="cityDAO" />
 		<property name="incomeTypeDAO" ref="incomeTypeDAO" />
+		<property name="incomeDetailDAO" ref="incomeDetailDAO" />
+		<property name="externalLiabilityDAO" ref="externalLiabilityDAO" />
 		<property name="customerDocumentService" ref="customerDocumentService" />
 		<property name="lovFieldDetailService" ref="lovFieldDetailService" />
 		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
@@ -2086,9 +2088,10 @@
 		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
 		<property name="custTypePANMappingService" ref="custTypePANMappingService" />
 		<property name="perfiosTransactionDAO" ref="perfiosTransactionDAO" />
-		<property name="documentManagerDAO" ref="documentManagerDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="dMSQueueDAO" ref="dMSQueueDAO" />
 		<property name="salutationDAO" ref="salutationDAO" />
+		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->

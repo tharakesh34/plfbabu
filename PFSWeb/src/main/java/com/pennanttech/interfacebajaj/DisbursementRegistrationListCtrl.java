@@ -245,6 +245,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		registerField("partnerbank_code", partnerBank, SortOrder.NONE, sortOperator_PartnerBank, Operators.STRING);
 		registerField("paymentType", listheader_Disbursement_DisbTypes, SortOrder.NONE, disbTypes,
 				sortOperator_DisbType, Operators.STRING);
+		registerField("FinID");
 		registerField("finReference", listheader_Disbursement_FinRef, SortOrder.NONE, finRef, sortOperator_FinRef,
 				Operators.STRING);
 		registerField("finType", listheader_Disbursement_FinType, SortOrder.NONE, finType, sortOperator_FinType,

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceSelectCtrl.java                                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceSelectCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.insurance;
@@ -127,6 +109,7 @@ public class InsuranceEnquiryListCtrl extends GFCBaseListCtrl<InsuranceDetails> 
 
 		registerButton(btnSearch);
 
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("reference", listheader_InsuranceReference, SortOrder.NONE, insuranceReference,
@@ -155,8 +138,7 @@ public class InsuranceEnquiryListCtrl extends GFCBaseListCtrl<InsuranceDetails> 
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSearch(Event event) {
 		search();
@@ -165,8 +147,7 @@ public class InsuranceEnquiryListCtrl extends GFCBaseListCtrl<InsuranceDetails> 
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();

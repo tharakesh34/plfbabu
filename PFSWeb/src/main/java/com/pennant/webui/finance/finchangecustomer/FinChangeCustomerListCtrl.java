@@ -119,6 +119,7 @@ public class FinChangeCustomerListCtrl extends GFCBaseListCtrl<FinChangeCustomer
 		registerButton(button_FinChangeCustomerList_NewFinChangeCustomer,
 				"button_FinChangeCustomerList_NewFinChangeCustomer", true);
 		registerField("id");
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("CustCif", listheader_OldCustId, SortOrder.NONE, oldCustId, sortOperator_OldCustId,

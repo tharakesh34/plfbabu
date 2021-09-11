@@ -355,13 +355,14 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 	@Override
 	public List<FinanceExposure> getSecondaryExposureList(GuarantorDetail gd) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append("  T1.FinType, T1.FinID, T1.FinReference, T1.FinStartDate, T1.MaturityDate");
+		sql.append(" T1.FinType, T1.FinID, T1.FinReference, T1.FinStartDate, T1.MaturityDate");
 		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt");
 		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure");
 		sql.append(", T1.FinCcy, T1.CustCIF, T2.CcyEditField CcyEditField");
 		sql.append(", coalesce((Select sum(FinCurODAmt) From FinODDetails Where FinID = T1.FinID), 0) OverdueAmt");
-		sql.append(" coalesce((Select max(FinCurODDays) From FinODDetails Where FinID = T1.FinID), 0) PastdueDays");
-		sql.append(" From FinPftDetails T1 Inner Join RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy ");
+		sql.append(", coalesce((Select max(FinCurODDays) From FinODDetails Where FinID = T1.FinID), 0) PastdueDays");
+		sql.append(" From FinPftDetails T1");
+		sql.append(" Inner Join RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy");
 		sql.append(" Inner Join FinJointAccountDetails_View T3 on T1.FinID = T3.FinID");
 		sql.append(" Inner Join FinanceMain T4 on T1.FinID = T4.FinID");
 		sql.append(" Where T3.CustCIF = ? and T1.FinIsActive = ?");
@@ -402,7 +403,7 @@ public class GuarantorDetailDAOImpl extends SequenceDao<GuarantorDetail> impleme
 		sql.append(" T1.FinType, T1.FinID, T1.FinReference, T1.FinStartDate, T1.MaturityDate");
 		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment) FinanceAmt");
 		sql.append(", (T1.FinAmount + T4.FeeChargeAmt - T1.DownPayment - T4.FinRepaymentAmount) CurrentExpoSure");
-		sql.append(", T1.FinCcy, T1.CustCIF, T2.CcyEditField CcyEditField,");
+		sql.append(", T1.FinCcy, T1.CustCIF, T2.CcyEditField CcyEditField");
 		sql.append(", coalesce((Select sum(FinCurODAmt) From FinODDetails Where FinID = T1.FinID), 0) OverdueAmt");
 		sql.append(", coalesce((Select max(FinCurODDays) From FinODDetails Where FinID = T1.FinID), 0) PastdueDays");
 		sql.append(" From FinPftDetails T1 Inner Join RMTCurrencies T2 ON T2.CcyCode = T1.FinCcy");

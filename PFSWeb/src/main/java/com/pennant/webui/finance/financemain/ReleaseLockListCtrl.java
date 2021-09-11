@@ -83,6 +83,7 @@ public class ReleaseLockListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Register buttons and fields.
 		registerButton(button_ReleaseLockList_Search);
 
+		registerField("FinID");
 		registerField("FinReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("NextUsrName", listheader_LoginId, SortOrder.NONE);

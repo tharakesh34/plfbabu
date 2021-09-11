@@ -134,6 +134,7 @@ public class PaymentHeaderListCtrl extends GFCBaseListCtrl<PaymentHeader> {
 		}
 		registerField("paymentId");
 		registerField("createdOn");
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("paymentInstrType", listheader_PaymentType, SortOrder.NONE, paymentType, sortOperator_PaymentType,

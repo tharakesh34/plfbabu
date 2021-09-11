@@ -126,6 +126,7 @@ public class VasMovementListCtrl extends GFCBaseListCtrl<VasMovement> {
 		registerButton(button_VasMovementList_VasMovementSearchDialog);
 
 		registerField("vasMovementId");
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_FinReference,
 				Operators.MULTISELECT);
 		registerField("custCif", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF,

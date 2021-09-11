@@ -109,6 +109,7 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 		registerButton(button_PmayList_PmaySearchDialog);
 		registerButton(button_PmayList_NewPmay, "button_PmayList_NewPmay", true);
 
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("custCif", listheader_CIF, SortOrder.ASC, cif, sortOperator_cif, Operators.SIMPLESTRING);

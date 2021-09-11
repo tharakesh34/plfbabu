@@ -230,6 +230,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		registerButton(button_LiabilityRequestList_LiabilityRequestSearch);
 
 		registerField("Id");
+		registerField("FinID");
 		registerField("FinReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_FinReference,
 				Operators.MULTISELECT);
 		registerField("InitiatedBy", initiatedBy, SortOrder.NONE, sortOperator_InitiatedBy, Operators.STRING);

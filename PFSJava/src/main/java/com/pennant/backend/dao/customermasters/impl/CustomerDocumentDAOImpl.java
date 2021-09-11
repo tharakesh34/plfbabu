@@ -459,7 +459,6 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			dd.setNextTaskId(rs.getString("NextTaskId"));
 			dd.setRecordType(rs.getString("RecordType"));
 			dd.setWorkflowId(rs.getLong("WorkflowId"));
-			dd.setRemarks(rs.getString("Remarks"));
 
 			return dd;
 		});

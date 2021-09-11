@@ -217,14 +217,14 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	@Override
 	public List<FinReceiptDetail> getFinReceiptDetailByRef(String reference, long custId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" rch.FinID, rch.ReceiptID, rch.Reference, rch.TransactionRef, rcd.FavourNumber");
+		sql.append(" rch.ReceiptID, rch.Reference, rch.TransactionRef, rcd.FavourNumber");
 		sql.append(", rch.ReceiptMode, rch.ReceiptAmount");
 		sql.append(" From FinReceiptHeader rch");
 		sql.append(" Inner Join FinreceiptDetail rcd on rcd.ReceiptID = rch.ReceiptID");
 		sql.append(" where ReceiptPurpose = ? and rcd.Status <> ?");
 		sql.append(" and ((RecAgainst = ? and rch.Reference = ?) or (RecAgainst = ? and rch.Reference = ?");
 		sql.append(" and rch.ReceiptID not in");
-		sql.append(" (Select distinct ReceiptId from FinFeeReceipts_View where FinID <> ?)))");
+		sql.append(" (Select distinct ReceiptId from FinFeeReceipts_View where FinReference <> ?)))");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -237,11 +237,12 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			ps.setString(index++, reference);
 			ps.setString(index++, RepayConstants.RECEIPTTO_CUSTOMER);
 			ps.setString(index++, String.valueOf(custId));
+			ps.setString(index++, reference);
 
 		}, (rs, rowNum) -> {
 			FinReceiptDetail rcd = new FinReceiptDetail();
 
-			rcd.setFinID(rs.getLong("FinID"));
+			// rcd.setFinID(rs.getLong("FinID"));
 			rcd.setReceiptID(rs.getLong("ReceiptID"));
 			rcd.setReference(rs.getString("Reference"));
 			rcd.setTransactionRef(rs.getString("TransactionRef"));

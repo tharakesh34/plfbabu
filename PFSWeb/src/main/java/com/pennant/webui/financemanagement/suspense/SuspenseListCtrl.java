@@ -177,6 +177,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 		registerButton(button_SuspenseList_NewSuspense, "button_SuspenseList_NewSuspense", true);
 		registerButton(button_SuspenseList_SuspenseSearchDialog);
 
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("custID", listheader_CustID, SortOrder.NONE, custID, sortOperator_custID, Operators.STRING);

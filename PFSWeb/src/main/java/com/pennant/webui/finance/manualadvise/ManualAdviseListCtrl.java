@@ -137,6 +137,7 @@ public class ManualAdviseListCtrl extends GFCBaseListCtrl<ManualAdvise> {
 		registerField("adviseID");
 		registerField("adviseType", listheader_AdviseType, SortOrder.NONE, adviseType, sortOperator_AdviseType,
 				Operators.SIMPLE_NUMARIC);
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("feeTypeDesc", listheader_FeeTypeID, SortOrder.NONE, feeTypeID, sortOperator_FeeTypeID,

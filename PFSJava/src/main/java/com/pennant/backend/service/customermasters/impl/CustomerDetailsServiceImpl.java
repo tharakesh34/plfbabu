@@ -1,43 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDetailsServiceImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDetailsServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 22-05-2018       Sai Krishna              0.2          1. PSD - Ticket 126612 LMS > PDE >* 
- *                                                           newly added shareholder are not* 
- *                                                           displayed in PDE.              * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * 22-05-2018 Sai Krishna 0.2 1. PSD - Ticket 126612 LMS > PDE >* newly added shareholder are
+ * not* displayed in PDE. * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.customermasters.impl;
@@ -254,9 +237,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CorporateCustomerDetailDAO corporateCustomerDetailDAO;
 	private DirectorDetailDAO directorDetailDAO;
 	private CustomerBalanceSheetDAO customerBalanceSheetDAO;
-	private CustomerInterfaceService customerInterfaceService;
 	private CustomerStatusCodeDAO customerStatusCodeDAO;
-
 	private CustomerTypeDAO customerTypeDAO;
 	private BranchDAO branchDAO;
 	private CountryDAO countryDAO;
@@ -270,7 +251,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private RelationshipOfficerDAO relationshipOfficerDAO;
 	private RatingCodeDAO ratingCodeDAO;
 	private BankDetailDAO bankDetailDAO;
-
 	private CustomerBankInfoDAO customerBankInfoDAO;
 	private CustomerChequeInfoDAO customerChequeInfoDAO;
 	private CustomerExtLiabilityDAO customerExtLiabilityDAO;
@@ -280,17 +260,31 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private ProvinceDAO provinceDAO;
 	private CityDAO cityDAO;
 	private IncomeTypeDAO incomeTypeDAO;
-	@Autowired
 	protected IncomeDetailDAO incomeDetailDAO;
-	@Autowired
 	protected ExternalLiabilityDAO externalLiabilityDAO;
 	private CustomerGstDetailDAO customerGstDetailDAO;
-
-	private CustomerDocumentService customerDocumentService;
 	private CustomerCardSalesInfoDAO customerCardSalesInfoDAO;
-	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
+	private PhoneTypeDAO phoneTypeDAO;
+	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
+	private PinCodeDAO pinCodeDAO;
+	private FinanceMainDAO financeMainDAO;
+	private CollateralSetupDAO collateralSetupDAO;
+	private VASRecordingDAO vASRecordingDAO;
+	private GenderDAO genderDAO;
+	private SalutationDAO salutationDAO;
+	private PrimaryAccountDAO primaryAccountDAO;
+	private BeneficiaryDAO beneficiaryDAO;
+	private PerfiosTransactionDAO perfiosTransactionDAO;
+	protected DocumentDetailsDAO documentDetailsDAO;
+	private DMSQueueDAO dMSQueueDAO;
 
-	// Declaring Classes For validation for Lists
+	private LimitRebuild limitRebuild;
+
+	private CustomerInterfaceService customerInterfaceService;
+	private CustomerDocumentService customerDocumentService;
+	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
+	private CustTypePANMappingService custTypePANMappingService;
+
 	private CustomerRatingValidation customerRatingValidation;
 	private CustomerPhoneNumberValidation customerPhoneNumberValidation;
 	private CustomerPRelationValidation customerPRelationValidation;
@@ -306,340 +300,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private CustomerChequeInfoValidation customerChequeInfoValidation;
 	private CustomerExtLiabilityValidation externalLiabilityValidation;
 	private LovFieldDetailService lovFieldDetailService;
-	private LimitRebuild limitRebuild;
-	private PhoneTypeDAO phoneTypeDAO;
 	private CustomerCardSalesValidation customerCardSalesValidation;
-
-	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
-	private PinCodeDAO pinCodeDAO;
 	private CustomerService customerService;
 
-	private FinanceMainDAO financeMainDAO;
-	private CollateralSetupDAO collateralSetupDAO;
-	private VASRecordingDAO vASRecordingDAO;
-	private List<FinanceMain> financeMainList;
-
-	private GenderDAO genderDAO;
-	private SalutationDAO salutationDAO;
 	@Autowired(required = false)
 	private Crm crm;
 
 	@Autowired(required = false)
+	private PerfiousService perfiosService;
+
+	@Autowired(required = false)
 	@Qualifier("customerPostValidationHook")
 	private PostValidationHook postValidationHook;
-	private PrimaryAccountDAO primaryAccountDAO;
-	private BeneficiaryDAO beneficiaryDAO;
-	private PerfiosTransactionDAO perfiosTransactionDAO;
-	private PerfiousService perfiosService;
-	protected DocumentDetailsDAO documentDetailsDAO;
-	private DMSQueueDAO dMSQueueDAO;
 
-	//PAN 4th Letter Mapping
-	private CustTypePANMappingService custTypePANMappingService;
+	private List<FinanceMain> financeMainList;
 
 	public CustomerDetailsServiceImpl() {
 		super();
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public CustomerPRelationDAO getCustomerPRelationDAO() {
-		return customerPRelationDAO;
-	}
-
-	public void setCustomerPRelationDAO(CustomerPRelationDAO customerPRelationDAO) {
-		this.customerPRelationDAO = customerPRelationDAO;
-	}
-
-	public CustomerAddresDAO getCustomerAddresDAO() {
-		return customerAddresDAO;
-	}
-
-	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
-		this.customerAddresDAO = customerAddresDAO;
-	}
-
-	public CustomerIncomeDAO getCustomerIncomeDAO() {
-		return customerIncomeDAO;
-	}
-
-	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
-		this.customerIncomeDAO = customerIncomeDAO;
-	}
-
-	public AuditHeaderDAO getAuditHeaderDAO() {
-		return auditHeaderDAO;
-	}
-
-	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
-		this.auditHeaderDAO = auditHeaderDAO;
-	}
-
-	public CustomerDAO getCustomerDAO() {
-		return customerDAO;
-	}
-
-	public void setCustomerDAO(CustomerDAO customerDAO) {
-		this.customerDAO = customerDAO;
-	}
-
-	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO custEmplDetailDAO) {
-		this.customerEmploymentDetailDAO = custEmplDetailDAO;
-	}
-
-	public CustomerEmploymentDetailDAO getCustomerEmploymentDetailDAO() {
-		return customerEmploymentDetailDAO;
-	}
-
-	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
-		this.customerRatingDAO = customerRatingDAO;
-	}
-
-	public CustomerRatingDAO getCustomerRatingDAO() {
-		return customerRatingDAO;
-	}
-
-	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
-		this.customerEMailDAO = customerEMailDAO;
-	}
-
-	public CustomerEMailDAO getCustomerEMailDAO() {
-		return customerEMailDAO;
-	}
-
-	public void setCustomerPhoneNumberDAO(CustomerPhoneNumberDAO customerPhoneNumberDAO) {
-		this.customerPhoneNumberDAO = customerPhoneNumberDAO;
-	}
-
-	public CustomerPhoneNumberDAO getCustomerPhoneNumberDAO() {
-		return customerPhoneNumberDAO;
-	}
-
-	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
-		this.customerDocumentDAO = customerDocumentDAO;
-	}
-
-	public CustomerDocumentDAO getCustomerDocumentDAO() {
-		return customerDocumentDAO;
-	}
-
-	public DocumentManagerDAO getDocumentManagerDAO() {
-		return documentManagerDAO;
-	}
-
-	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
-		this.documentManagerDAO = documentManagerDAO;
-	}
-
-	public CorporateCustomerDetailDAO getCorporateCustomerDetailDAO() {
-		return corporateCustomerDetailDAO;
-	}
-
-	public void setCorporateCustomerDetailDAO(CorporateCustomerDetailDAO corporateCustomerDetailDAO) {
-		this.corporateCustomerDetailDAO = corporateCustomerDetailDAO;
-	}
-
-	public DirectorDetailDAO getDirectorDetailDAO() {
-		return directorDetailDAO;
-	}
-
-	public void setDirectorDetailDAO(DirectorDetailDAO directorDetailDAO) {
-		this.directorDetailDAO = directorDetailDAO;
-	}
-
-	public CustomerBalanceSheetDAO getCustomerBalanceSheetDAO() {
-		return customerBalanceSheetDAO;
-	}
-
-	public void setCustomerBalanceSheetDAO(CustomerBalanceSheetDAO customerBalanceSheetDAO) {
-		this.customerBalanceSheetDAO = customerBalanceSheetDAO;
-	}
-
-	public void setCustomerTypeDAO(CustomerTypeDAO customerTypeDAO) {
-		this.customerTypeDAO = customerTypeDAO;
-	}
-
-	public CustomerTypeDAO getCustomerTypeDAO() {
-		return customerTypeDAO;
-	}
-
-	public BranchDAO getBranchDAO() {
-		return branchDAO;
-	}
-
-	public void setBranchDAO(BranchDAO branchDAO) {
-		this.branchDAO = branchDAO;
-	}
-
-	public CountryDAO getCountryDAO() {
-		return countryDAO;
-	}
-
-	public void setCountryDAO(CountryDAO countryDAO) {
-		this.countryDAO = countryDAO;
-	}
-
-	public CustomerBankInfoDAO getCustomerBankInfoDAO() {
-		return customerBankInfoDAO;
-	}
-
-	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
-		this.customerBankInfoDAO = customerBankInfoDAO;
-	}
-
-	public CustomerChequeInfoDAO getCustomerChequeInfoDAO() {
-		return customerChequeInfoDAO;
-	}
-
-	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
-		this.customerChequeInfoDAO = customerChequeInfoDAO;
-	}
-
-	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
-		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
-	}
-
-	public CustEmployeeDetailDAO getCustEmployeeDetailDAO() {
-		return custEmployeeDetailDAO;
-	}
-
-	public void setCustEmployeeDetailDAO(CustEmployeeDetailDAO custEmployeeDetailDAO) {
-		this.custEmployeeDetailDAO = custEmployeeDetailDAO;
-	}
-
-	public CustomerInterfaceService getCustomerInterfaceService() {
-		return customerInterfaceService;
-	}
-
-	public CustomerGstDetailDAO getCustomerGstDetailDAO() {
-		return customerGstDetailDAO;
-	}
-
-	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
-		this.customerGstDetailDAO = customerGstDetailDAO;
-	}
-
-	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
-		this.customerInterfaceService = customerInterfaceService;
-	}
-
-	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
-		this.customerDocumentService = customerDocumentService;
-	}
-
-	public CustomerRatingValidation getRatingValidation() {
-
-		if (customerRatingValidation == null) {
-			this.customerRatingValidation = new CustomerRatingValidation(customerRatingDAO);
-		}
-		return this.customerRatingValidation;
-	}
-
-	public CustomerPhoneNumberValidation getPhoneNumberValidation() {
-
-		if (customerPhoneNumberValidation == null) {
-			this.customerPhoneNumberValidation = new CustomerPhoneNumberValidation(customerPhoneNumberDAO);
-		}
-		return this.customerPhoneNumberValidation;
-	}
-
-	public CustomerPRelationValidation getPRelationValidation() {
-
-		if (customerPRelationValidation == null) {
-			this.customerPRelationValidation = new CustomerPRelationValidation(customerPRelationDAO);
-		}
-		return this.customerPRelationValidation;
-	}
-
-	public CustomerEmploymentDetailValidation getEmploymentDetailValidation() {
-
-		if (customerEmploymentDetailValidation == null) {
-			this.customerEmploymentDetailValidation = new CustomerEmploymentDetailValidation(
-					customerEmploymentDetailDAO);
-		}
-		return this.customerEmploymentDetailValidation;
-	}
-
-	public CustomerIncomeValidation getCustomerIncomeValidation() {
-
-		if (customerIncomeValidation == null) {
-			this.customerIncomeValidation = new CustomerIncomeValidation(customerIncomeDAO);
-		}
-		return this.customerIncomeValidation;
-	}
-
-	public CustomerEMailValidation getCustomerEMailValidation() {
-
-		if (customerEMailValidation == null) {
-			this.customerEMailValidation = new CustomerEMailValidation(customerEMailDAO);
-		}
-		return this.customerEMailValidation;
-	}
-
-	public CustomerAddressValidation getAddressValidation() {
-
-		if (customerAddressValidation == null) {
-			this.customerAddressValidation = new CustomerAddressValidation(customerAddresDAO);
-		}
-		return this.customerAddressValidation;
-	}
-
-	public CustomerDocumentValidation getDocumentValidation() {
-
-		if (customerDocumentValidation == null) {
-			this.customerDocumentValidation = new CustomerDocumentValidation(customerDocumentDAO);
-		}
-		return this.customerDocumentValidation;
-	}
-
-	public CorporateCustomerValidation getCorporateCustomerValidation() {
-
-		if (corporateCustomerValidation == null) {
-			this.corporateCustomerValidation = new CorporateCustomerValidation(corporateCustomerDetailDAO);
-		}
-		return this.corporateCustomerValidation;
-	}
-
-	public CustomerDirectorValidation getDirectorValidation() {
-
-		if (customerDirectorValidation == null) {
-			this.customerDirectorValidation = new CustomerDirectorValidation(directorDetailDAO);
-		}
-		return this.customerDirectorValidation;
-	}
-
-	public CustomerBalanceSheetValidation getBalanceSheetValidation() {
-
-		if (customerBalanceSheetValidation == null) {
-			this.customerBalanceSheetValidation = new CustomerBalanceSheetValidation(customerBalanceSheetDAO);
-		}
-		return this.customerBalanceSheetValidation;
-	}
-
-	public CustomerBankInfoValidation getCustomerBankInfoValidation() {
-
-		if (customerBankInfoValidation == null) {
-			this.customerBankInfoValidation = new CustomerBankInfoValidation(customerBankInfoDAO);
-		}
-		return this.customerBankInfoValidation;
-	}
-
-	public CustomerChequeInfoValidation getCustomerChequeInfoValidation() {
-
-		if (customerChequeInfoValidation == null) {
-			this.customerChequeInfoValidation = new CustomerChequeInfoValidation(customerChequeInfoDAO);
-		}
-		return this.customerChequeInfoValidation;
-	}
-
-	public CustomerExtLiabilityValidation getExternalLiabilityValidation() {
-		if (externalLiabilityValidation == null) {
-			this.externalLiabilityValidation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
-		}
-		return this.externalLiabilityValidation;
 	}
 
 	/**
@@ -655,7 +333,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		CorporateCustomerDetail corporateCustomerDetail = new CorporateCustomerDetail();
 		corporateCustomerDetail.setNewRecord(true);
 
-		customerDetails.setCustomer(getCustomerDAO().getNewCustomer(createNew, customerDetails.getCustomer()));
+		customerDetails.setCustomer(customerDAO.getNewCustomer(createNew, customerDetails.getCustomer()));
 
 		if (CollectionUtils.isEmpty(customerDetails.getRatingsList())) {
 			customerDetails.setRatingsList(new ArrayList<CustomerRating>());
@@ -722,7 +400,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public CustomerDetails getCustomerDetailsbyIdandPhoneType(long id, String phoneType) {
 		CustomerDetails customerDetails = new CustomerDetails();
 
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, ""));
+		customerDetails.setCustomer(customerDAO.getCustomerByID(id, ""));
 		customerDetails.setCustomerPhoneNumList(
 				customerPhoneNumberDAO.getCustomerPhoneNumberByCustomerPhoneType(id, "", phoneType));
 		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, "_View"));
@@ -807,10 +485,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 
-		customerDetails.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
+		customerDetails.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
 
-		customerDetails.setFinanceMainList(getFinanceMainDAO().getFinanceByCustId(id, ""));
-		customerDetails.setCollateraldetailList(getCollateralSetupDAO().getApprovedCollateralByCustId(id, type));
+		customerDetails.setFinanceMainList(financeMainDAO.getFinanceByCustId(id, ""));
+		customerDetails.setCollateraldetailList(collateralSetupDAO.getApprovedCollateralByCustId(id, type));
 
 		List<String> finReferences = new ArrayList<>();
 		for (FinanceMain financemain : customerDetails.getFinanceMainList()) {
@@ -829,11 +507,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		List<CustomerGSTDetails> gstDetails = new ArrayList<>();
-		
+
 		if (CollectionUtils.isNotEmpty(headerIdList)) {
 			gstDetails = customerGstDetailDAO.getCustomerGSTDetailsByCustomer(headerIdList, type);
 		}
-		
+
 		for (CustomerGST customerGST : customerGstList) {
 			for (CustomerGSTDetails cgst : gstDetails) {
 				if (customerGST.getId() == cgst.getHeaderId()) {
@@ -841,7 +519,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 		}
-		
+
 		if (CollectionUtils.isNotEmpty(headerIdList)) {
 			customerDetails.getCustomerFinances().addAll(financeMainDAO.getAllFinanceDetailsByCustId(id));
 		}
@@ -959,7 +637,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						customerCardSalesInfoDAO.getCardSalesInfoSubDetailById(customerCardSalesInfo.getId(), type));
 			}
 		}
-		cd.setCustFinanceExposureList(getCustomerDAO().getCustomerFinanceDetailById(id));
+		cd.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
 
 		logger.debug(Literal.LEAVING);
 		return cd;
@@ -977,7 +655,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug(Literal.ENTERING);
 
 		CustomerDetails customerDetails = new CustomerDetails();
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustomer(customerDAO.getCustomerByID(id, type));
 		customerDetails.setCustID(id);
 
 		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
@@ -991,10 +669,8 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	/**
 	 * getCustomerById fetch the details by using CustomerDAO's getCustomerById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Customer
 	 */
 	@Override
@@ -1009,22 +685,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public Customer getCustomerByCIF(String id) {
-		return getCustomerDAO().getCustomerByCIF(id, "");
+		return customerDAO.getCustomerByCIF(id, "");
 	}
 
 	@Override
 	public WIFCustomer getWIFCustomerByCIF(long id) {
-		return getCustomerDAO().getWIFCustomerByCIF(id, "");
+		return customerDAO.getWIFCustomerByCIF(id, "");
 	}
 
 	@Override
 	public Customer getCheckCustomerByCIF(String cif) {
-		return getCustomerDAO().getCustomerByCIF(cif, "_View");
+		return customerDAO.getCustomerByCIF(cif, "_View");
 	}
 
 	@Override
 	public Customer checkCustomerByCIF(String cif, String type) {
-		return getCustomerDAO().checkCustomerByCIF(cif, type);
+		return customerDAO.checkCustomerByCIF(cif, type);
 	}
 
 	/**
@@ -1034,7 +710,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public CustomerDetails getCustomerAndCustomerDocsById(long id, String type) {
 
 		CustomerDetails customerDetails = new CustomerDetails();
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustomer(customerDAO.getCustomerByID(id, type));
 		customerDetails.setCustID(id);
 
 		customerDetails.setCustomerDocumentsList(customerDocumentDAO.getCustomerDocumentByCustomer(id, type));
@@ -1046,8 +722,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * getApprovedCustomerById fetch the details by using CustomerDAO's getCustomerById method . with parameter id and
 	 * type as blank. it fetches the approved records from the Customers.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Customer
 	 */
 	@Override
@@ -1063,8 +738,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * using CustomerDAO's update method 3) Audit the record in to AuditHeader and AdtCustomers by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws InterfaceException
 	 */
@@ -1095,12 +769,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customer.setRecordType("");
 				customer.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
-			getCustomerDAO().save(customer, tableType);
+			customerDAO.save(customer, tableType);
 			auditHeader.getAuditDetail().setModelData(customer);
 			auditHeader.setAuditReference(String.valueOf(customer.getCustID()));
 
 		} else {
-			getCustomerDAO().update(customer, tableType);
+			customerDAO.update(customer, tableType);
 		}
 
 		// save CoreCustomer object
@@ -1117,7 +791,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustID(customer.getCustID());
 
 		if (customerDetails.getCustEmployeeDetail() != null) {
-			CustEmployeeDetail custEmployeeDetail = getCustEmployeeDetailDAO()
+			CustEmployeeDetail custEmployeeDetail = custEmployeeDetailDAO
 					.getCustEmployeeDetailById(customer.getCustID(), tableType);
 			CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
 			custEmpDetail.setWorkflowId(0);
@@ -1128,10 +802,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			String auditTranType;
 			if (custEmployeeDetail == null) {
 				auditTranType = PennantConstants.TRAN_ADD;
-				getCustEmployeeDetailDAO().save(custEmpDetail, tableType);
+				custEmployeeDetailDAO.save(custEmpDetail, tableType);
 			} else {
 				auditTranType = PennantConstants.TRAN_UPD;
-				getCustEmployeeDetailDAO().update(custEmpDetail, tableType);
+				custEmployeeDetailDAO.update(custEmpDetail, tableType);
 			}
 			String[] fields = PennantJavaUtil.getFieldDetails(custEmpDetail, custEmpDetail.getExcludeFields());
 			auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
@@ -1246,7 +920,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				customer.getBefImage(), customer));
 		auditHeader.setAuditDetails(auditDetails);
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		// TODO:remove comments for below lines of code when MDM interface is
 		// ready for update customer service
@@ -1285,14 +959,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			customerDAO.update(customer, tableType);
 		}
 		if (financeDetail.getCustomerDetails().getCustomer().isDedupFound()) {
-			getCustomerDAO().updateProspectCustomer(customer);
+			customerDAO.updateProspectCustomer(customer);
 		}
 		String[] fields = PennantJavaUtil.getFieldDetails(customer, customer.getExcludeFields());
 		auditDetails.add(new AuditDetail(auditTranType, auditDetails.size() + 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
 
 		if (customerDetails.getCustEmployeeDetail() != null) {
-			CustEmployeeDetail custEmployeeDetail = getCustEmployeeDetailDAO()
+			CustEmployeeDetail custEmployeeDetail = custEmployeeDetailDAO
 					.getCustEmployeeDetailById(customer.getCustID(), tableType);
 			CustEmployeeDetail custEmpDetail = customerDetails.getCustEmployeeDetail();
 			custEmpDetail.setWorkflowId(0);
@@ -1317,11 +991,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 			if (isSaveRecord) {
 				auditTranType = PennantConstants.TRAN_ADD;
-				getCustEmployeeDetailDAO().save(custEmpDetail, tableType);
+				custEmployeeDetailDAO.save(custEmpDetail, tableType);
 			} else {
 				auditTranType = PennantConstants.TRAN_UPD;
 				custEmpDetail.setVersion(custEmpDetail.getVersion() + 1);
-				getCustEmployeeDetailDAO().update(custEmpDetail, tableType);
+				custEmployeeDetailDAO.update(custEmpDetail, tableType);
 			}
 
 			fields = PennantJavaUtil.getFieldDetails(custEmpDetail, custEmpDetail.getExcludeFields());
@@ -1700,7 +1374,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						customerDocumentDAO.save(externalDocument, "");
 					}
 				}
-				//Beneficiary Details save when customer created through loan queue
+				// Beneficiary Details save when customer created through loan queue
 				if (StringUtils.equals(custBankInfo.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)) {
 					if (custBankInfo.isAddToBenficiary()) {
 						addToCustomerBeneficiary(custBankInfo, custBankInfo.getCustID());
@@ -2136,7 +1810,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// Customer Card Sales Information Validation
 		if (customerDetails.getCustCardSales() != null && customerDetails.getCustCardSales().size() > 0) {
 			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("CustCardSales");
-			//details = getCustomerBankInfoValidation().bankInfoListValidation(details, method, usrLanguage);
+			// details = getCustomerBankInfoValidation().bankInfoListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
 
@@ -2305,7 +1979,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		// validate customer basic(personal info) details
 		auditDetail = validatePersonalInfo(auditDetail, customerDetails.getCustomer());
 
-		//Validate Customer Salutation Code
+		// Validate Customer Salutation Code
 		auditDetail = validateSalutationCode(customer, auditDetail);
 
 		if (auditDetail.getErrorDetails() != null && !auditDetail.getErrorDetails().isEmpty()) {
@@ -2782,7 +2456,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			}
 
-			//Customer Residential Status validation
+			// Customer Residential Status validation
 			Customer customer = customerDetails.getCustomer();
 			if (customer != null) {
 				String custResidentialSts = customer.getCustResidentialSts();
@@ -2845,7 +2519,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				int count = 0;
 				auditDetail.setErrorDetail(validateMasterCode("BankDetail", custBankInfo.getBankName()));
 
-				LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById("ACC_TYPE",
+				LovFieldDetail lovFieldDetail = lovFieldDetailService.getApprovedLovFieldDetailById("ACC_TYPE",
 						custBankInfo.getAccountType());
 				if (lovFieldDetail == null) {
 
@@ -2903,7 +2577,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				// customerGST.getGstNumber()));
 
 				/*
-				 * LovFieldDetail lovFieldDetail = getLovFieldDetailService().getApprovedLovFieldDetailById( "ACC_TYPE",
+				 * LovFieldDetail lovFieldDetail = lovFieldDetailService.getApprovedLovFieldDetailById( "ACC_TYPE",
 				 * customerGST.getFrequencytype());
 				 */
 				/*
@@ -3607,7 +3281,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		// validate custTypeCode against the category code
-		int custTypeCount = getCustomerTypeDAO().validateTypeAndCategory(customer.getCustTypeCode(),
+		int custTypeCount = customerTypeDAO.validateTypeAndCategory(customer.getCustTypeCode(),
 				customer.getCustCtgCode());
 		if (custTypeCount <= 0) {
 			String[] valueParm = new String[2];
@@ -3763,7 +3437,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		ErrorDetail errorDetail = new ErrorDetail();
 
 		// validate Master code with PLF system masters
-		int count = getCustomerDAO().getLookupCount(tableName, columnName, value);
+		int count = customerDAO.getLookupCount(tableName, columnName, value);
 		if (count <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = columnName;
@@ -3781,8 +3455,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 * Customers by using CustomerDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtCustomers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -3805,12 +3478,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		auditDetails.addAll(getListAuditDetails(listDeletion(customerDetails, "", auditHeader.getAuditTranType())));
 
-		getCustomerDAO().delete(customer, "");
+		customerDAO.delete(customer, "");
 
 		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), customer.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -3818,16 +3491,14 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	/**
 	 * doApprove method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) based on the Record type do
-	 * following actions a) DELETE Delete the record from the main table by using getCustomerDAO().delete with
-	 * parameters customer,"" b) NEW Add new record in to main table by using getCustomerDAO().save with parameters
-	 * customer,"" c) EDIT Update record in the main table by using getCustomerDAO().update with parameters customer,""
-	 * 3) Delete the record from the workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 4)
-	 * Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
-	 * 5) Audit the record in to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) based on the
-	 * transaction Type.
+	 * following actions a) DELETE Delete the record from the main table by using customerDAO.delete with parameters
+	 * customer,"" b) NEW Add new record in to main table by using customerDAO.save with parameters customer,"" c) EDIT
+	 * Update record in the main table by using customerDAO.update with parameters customer,"" 3) Delete the record from
+	 * the workFlow table by using customerDAO.delete with parameters customer,"_Temp" 4) Audit the record in to
+	 * AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in
+	 * to AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 * @throws CustomerNotFoundException
 	 */
@@ -3861,12 +3532,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		// Fetched from the approved list for rebuild. Since rebuild should
 		// after the transaction but it is happening in the transaction
-		Customer appCustomer = getCustomerDAO().getCustomerByID(customer.getCustID());
+		Customer appCustomer = customerDAO.getCustomerByID(customer.getCustID());
 
 		if (PennantConstants.RECORD_TYPE_DEL.equals(customer.getRecordType())) {
 			tranType = PennantConstants.TRAN_DEL;
 			auditDetails.addAll(listDeletion(customerDetails, "", tranType));
-			getCustomerDAO().delete(customer, "");
+			customerDAO.delete(customer, "");
 		} else {
 
 			customer.setRoleCode("");
@@ -3880,17 +3551,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				// Customer Creation Core Banking
 				// getCustomerInterfaceService().generateNewCIF("A", customer,
 				// "");
-				getCustomerDAO().save(customer, "");
+				customerDAO.save(customer, "");
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
 				customer.setRecordType("");
 				// Version increased to fix the issue when version got increased
 				// while creating the loan with the customer
-				Customer mainCustomer = getCustomerDAO().getCustomerByCIF(customer.getCustCIF(), "");
+				Customer mainCustomer = customerDAO.getCustomerByCIF(customer.getCustCIF(), "");
 				if (mainCustomer != null) {
 					customer.setVersion(mainCustomer.getVersion() + 1);
 				}
-				getCustomerDAO().update(customer, "");
+				customerDAO.update(customer, "");
 			}
 
 			customerDetails.setCustID(customer.getCustID());
@@ -3901,12 +3572,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				custEmpDetail.setCustID(customer.getCustID());
 				custEmpDetail.setRecordType(customer.getRecordType());
 				custEmpDetail.setRecordStatus(customer.getRecordStatus());
-				CustEmployeeDetail custEmployeeDetail = getCustEmployeeDetailDAO()
+				CustEmployeeDetail custEmployeeDetail = custEmployeeDetailDAO
 						.getCustEmployeeDetailById(customer.getCustID(), "");
 				if (custEmployeeDetail == null) {
-					getCustEmployeeDetailDAO().save(custEmpDetail, "");
+					custEmployeeDetailDAO.save(custEmpDetail, "");
 				} else {
-					getCustEmployeeDetailDAO().update(custEmpDetail, "");
+					custEmployeeDetailDAO.update(custEmpDetail, "");
 				}
 			}
 
@@ -4030,7 +3701,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (!StringUtils.equals(customerDetails.getSourceId(), PennantConstants.FINSOURCE_ID_API)
 				&& !customer.isNewRecord()) {
 			auditDetailList.addAll(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType()));
-			getCustomerDAO().delete(customer, "_Temp");
+			customerDAO.delete(customer, "_Temp");
 			auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		}
 
@@ -4038,13 +3709,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
 		auditHeader.setAuditDetails(auditDetailList);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		auditHeader.setAuditTranType(tranType);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		processLimitRebuild(customer, appCustomer);
 
@@ -4149,11 +3820,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	/**
 	 * doReject method do the following steps. 1) Do the Business validation by using businessValidation(auditHeader)
 	 * method if there is any error or warning message then return the auditHeader. 2) Delete the record from the
-	 * workFlow table by using getCustomerDAO().delete with parameters customer,"_Temp" 3) Audit the record in to
-	 * AuditHeader and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
+	 * workFlow table by using customerDAO.delete with parameters customer,"_Temp" 3) Audit the record in to AuditHeader
+	 * and AdtCustomers by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -4176,13 +3846,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		auditDetails
 				.addAll(getListAuditDetails(listDeletion(customerDetails, "_Temp", auditHeader.getAuditTranType())));
 
-		getCustomerDAO().delete(customer, "_Temp");
+		customerDAO.delete(customer, "_Temp");
 		String[] fields = PennantJavaUtil.getFieldDetails(new Customer(), customer.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				customer.getBefImage(), customer));
 
 		auditHeader.setAuditDetails(auditDetails);
-		getAuditHeaderDAO().addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
@@ -4190,11 +3860,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	/**
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from getCustomerDAO().getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
+	 * for any mismatch conditions Fetch the error details from customerDAO.getErrorDetail with Error ID and language as
+	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -4373,9 +4042,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		Customer tempCustomer = null;
 		if (customer.isWorkflow()) {
-			tempCustomer = getCustomerDAO().getCustomerByID(customer.getId(), "_Temp");
+			tempCustomer = customerDAO.getCustomerByID(customer.getId(), "_Temp");
 		}
-		Customer befCustomer = getCustomerDAO().getCustomerByID(customer.getId(), "");
+		Customer befCustomer = customerDAO.getCustomerByID(customer.getId(), "");
 
 		Customer oldCustomer = customer.getBefImage();
 
@@ -4397,12 +4066,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				}
 			} else { // with work flow
 				if (customer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																								// records
+																							// records
 																							// type
 																							// is
 																							// new
 					if (befCustomer != null || tempCustomer != null) { // if
-																			// records
+																		// records
 																		// already
 																		// exists
 																		// in
@@ -4470,7 +4139,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (!StringUtils.equals(method, PennantConstants.method_doReject)
 				&& PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(customer.getRecordType())) {
-			boolean financeExistForCustomer = getCustomerDAO().financeExistForCustomer(customer.getId(), "_View");
+			boolean financeExistForCustomer = customerDAO.financeExistForCustomer(customer.getId(), "_View");
 			if (financeExistForCustomer) {
 				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", errParm, null));
 			}
@@ -4485,16 +4154,17 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			errorParameters[0] = PennantJavaUtil.getLabel("label_CustCoreBank") + ":" + customer.getCustCoreBank();
 			auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41014", errorParameters, null));
 		}
-		//Checking duplicate CRCPR  with cust category
-		if (StringUtils.isNotBlank(customer.getCustCRCPR())//PSD#151343 while overriding customer getting pan validation from coapp screen
+		// Checking duplicate CRCPR with cust category
+		if (StringUtils.isNotBlank(customer.getCustCRCPR())// PSD#151343 while overriding customer getting pan
+															// validation from coapp screen
 				&& SysParamUtil.isAllowed(SMTParameterConstants.CUST_PAN_VALIDATION) && !customer.isSkipDedup()) {
 			isDuplicateCRCPR(auditDetail, customer, false);
 		} else if (StringUtils.isNotBlank(customer.getCustCRCPR()) && !customer.isSkipDedup()) {
-			//Checking duplicate CRCPR with cust category
+			// Checking duplicate CRCPR with cust category
 			isDuplicateCRCPR(auditDetail, customer, true);
 		}
 
-		//PAN 4th Letter Mapping check
+		// PAN 4th Letter Mapping check
 		if (StringUtils.isNotBlank(customer.getCustCRCPR()) && StringUtils.isNotBlank(customer.getCustTypeCode())) {
 			String[] errorParameters = new String[2];
 			CustTypePANMapping custTypePANMapping = new CustTypePANMapping();
@@ -5339,11 +5009,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				DocumentManager documentManager = new DocumentManager();
 				documentManager.setDocImage(externalDocument.getDocImage());
 				externalDocument.setDocRefId(documentManagerDAO.save(documentManager));
-				if (!externalDocument.isBankReport()) { //To identify the ExternalDocument is statement or report
+				if (!externalDocument.isBankReport()) { // To identify the ExternalDocument is statement or report
 					customerDocumentDAO.save(externalDocument, "");
 				}
 			}
-			//Added below code for storing perfios reports into PerfiosHeader and PerfiosDetails tables
+			// Added below code for storing perfios reports into PerfiosHeader and PerfiosDetails tables
 			perfiosService.savePerfiosDocuments(custBankInfo);
 		}
 	}
@@ -5915,7 +5585,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerRating.getBefImage(),
 						customerRating));
 			}
-			getCustomerRatingDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerRatingDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 		if (custDetails.getEmploymentDetailsList() != null && custDetails.getEmploymentDetailsList().size() > 0) {
 
@@ -5927,7 +5597,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						employmentDetail.getBefImage(), employmentDetail));
 			}
-			getCustomerEmploymentDetailDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerEmploymentDetailDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getAddressList() != null && custDetails.getAddressList().size() > 0) {
@@ -5940,7 +5610,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerAddres.getBefImage(),
 						customerAddres));
 			}
-			getCustomerAddresDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerAddresDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getCustomerEMailList() != null && custDetails.getCustomerEMailList().size() > 0) {
@@ -5953,7 +5623,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], customerEMail.getBefImage(),
 						customerEMail));
 			}
-			getCustomerEMailDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerEMailDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getCustomerPhoneNumList() != null && custDetails.getCustomerPhoneNumList().size() > 0) {
@@ -5966,7 +5636,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						customerPhoneNumber.getBefImage(), customerPhoneNumber));
 			}
-			getCustomerPhoneNumberDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerPhoneNumberDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getCustomerDocumentsList() != null && custDetails.getCustomerDocumentsList().size() > 0) {
@@ -5979,7 +5649,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						customerDocument.getBefImage(), customerDocument));
 			}
-			getCustomerDocumentDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerDocumentDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getCustomerIncomeList() != null && custDetails.getCustomerIncomeList().size() > 0) {
@@ -6008,7 +5678,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], cirectorDetail.getBefImage(),
 						cirectorDetail));
 			}
-			getDirectorDetailDAO().delete(custDetails.getCustID(), tableType);
+			directorDetailDAO.delete(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getCustEmployeeDetail() != null) {
@@ -6018,7 +5688,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 			auditList.add(new AuditDetail(auditTranType, 1, fields[0], fields[1],
 					custDetails.getCustEmployeeDetail().getBefImage(), custDetails.getCustEmployeeDetail()));
-			getCustEmployeeDetailDAO().delete(custDetails.getCustEmployeeDetail(), tableType);
+			custEmployeeDetailDAO.delete(custDetails.getCustEmployeeDetail(), tableType);
 		}
 
 		if (custDetails.getCustomerBankInfoList() != null && custDetails.getCustomerBankInfoList().size() > 0) {
@@ -6033,7 +5703,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 			// BankInfoDetails
 			deleteList(custDetails, tableType);
-			getCustomerBankInfoDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerBankInfoDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 		if (custDetails.getCustomerGstList() != null && custDetails.getCustomerGstList().size() > 0) {
 			CustomerGST custGST = new CustomerGST();
@@ -6045,7 +5715,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 			// delete Customer gst details
 			deletegstList(custDetails, tableType);
-			getCustomerGstDetailDAO().deleteCustomerGSTByCustomer(custDetails.getCustID(), tableType);
+			customerGstDetailDAO.deleteCustomerGSTByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		if (custDetails.getCustomerChequeInfoList() != null && custDetails.getCustomerChequeInfoList().size() > 0) {
@@ -6058,7 +5728,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				auditList.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
 						customerChequeInfo.getBefImage(), customerChequeInfo));
 			}
-			getCustomerChequeInfoDAO().deleteByCustomer(custDetails.getCustID(), tableType);
+			customerChequeInfoDAO.deleteByCustomer(custDetails.getCustID(), tableType);
 		}
 
 		List<CustomerExtLiability> liabilities = custDetails.getCustomerExtLiabilityList();
@@ -6111,7 +5781,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
 					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
-					getCustomerGstDetailDAO().delete(customerGSTDetails, tableType);
+					customerGstDetailDAO.delete(customerGSTDetails, tableType);
 				}
 			}
 		}
@@ -6128,7 +5798,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					 * bankInfoDetail.getExcludeFields()); auditList.add(new AuditDetail(auditTranType, i + 1,
 					 * fields[0], fields[1], bankInfoDetail.getBefImage(), bankInfoDetail));
 					 */
-					getCustomerBankInfoDAO().delete(bankInfoDetail, tableType);
+					customerBankInfoDAO.delete(bankInfoDetail, tableType);
 				}
 			}
 		}
@@ -7348,7 +7018,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public Customer fetchCoreCustomerDetails(Customer customer) throws InterfaceException {
-		return getCustomerInterfaceService().fetchCustomerDetails(customer);
+		return customerInterfaceService.fetchCustomerDetails(customer);
 	}
 
 	/**
@@ -7359,7 +7029,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public void updateProspectCustomer(Customer customer) {
-		getCustomerDAO().updateProspectCustomer(customer);
+		customerDAO.updateProspectCustomer(customer);
 	}
 
 	/**
@@ -7369,41 +7039,41 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public Customer fetchCustomerDetails(Customer customer) {
 
 		if (StringUtils.isNotBlank(customer.getCustTypeCode())) {
-			CustomerType customerType = getCustomerTypeDAO().getCustomerTypeById(customer.getCustTypeCode(), "_Aview");
+			CustomerType customerType = customerTypeDAO.getCustomerTypeById(customer.getCustTypeCode(), "_Aview");
 			if (customerType != null) {
 				customer.setLovDescCustTypeCodeName(customerType.getCustTypeDesc());
 				customer.setLovDescCustCtgType(customerType.getCustTypeCtg());
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustDftBranch())) {
-			Branch branch = getBranchDAO().getBranchById(customer.getCustDftBranch(), "_Aview");
+			Branch branch = branchDAO.getBranchById(customer.getCustDftBranch(), "_Aview");
 			if (branch != null) {
 				customer.setLovDescCustDftBranchName(branch.getBranchDesc());
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustParentCountry())) {
-			Country country = getCountryDAO().getCountryById(customer.getCustParentCountry(), "_Aview");
+			Country country = countryDAO.getCountryById(customer.getCustParentCountry(), "_Aview");
 			if (country != null) {
 				customer.setLovDescCustParentCountryName(country.getCountryDesc());
 				customer.setLovDescCustCOBName(country.getCountryDesc());
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustRiskCountry())) {
-			Country country = getCountryDAO().getCountryById(customer.getCustRiskCountry(), "_Aview");
+			Country country = countryDAO.getCountryById(customer.getCustRiskCountry(), "_Aview");
 			if (country != null) {
 				customer.setLovDescCustRiskCountryName(country.getCountryDesc());
 				customer.setLovDescCustResdCountryName(country.getCountryDesc());
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustNationality())) {
-			NationalityCode nationality = getNationalityCodeDAO().getNationalityCodeById(customer.getCustNationality(),
+			NationalityCode nationality = nationalityCodeDAO.getNationalityCodeById(customer.getCustNationality(),
 					"_Aview");
 			if (nationality != null) {
 				customer.setLovDescCustNationalityName(nationality.getNationalityDesc());
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getCustEmpSts())) {
-			EmpStsCode empStsCode = getEmpStsCodeDAO().getEmpStsCodeById(customer.getCustEmpSts(), "_Aview");
+			EmpStsCode empStsCode = empStsCodeDAO.getEmpStsCodeById(customer.getCustEmpSts(), "_Aview");
 			if (empStsCode != null) {
 				customer.setLovDescCustEmpStsName(empStsCode.getEmpStsDesc());
 			}
@@ -7411,13 +7081,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		// Sector
 		if (StringUtils.isNotBlank(customer.getCustSector())) {
-			Sector sector = getSectorDAO().getSectorById(customer.getCustSector(), "_Aview");
+			Sector sector = sectorDAO.getSectorById(customer.getCustSector(), "_Aview");
 			if (sector != null) {
 				customer.setLovDescCustSectorName(sector.getSectorDesc());
 			}
 			// Sub sector
 			if (StringUtils.isNotBlank(customer.getCustSubSector())) {
-				SubSector subSector = getSubSectorDAO().getSubSectorById(customer.getCustSector(),
+				SubSector subSector = subSectorDAO.getSubSectorById(customer.getCustSector(),
 						customer.getCustSubSector(), "_Aview");
 				if (subSector != null) {
 					customer.setLovDescCustSubSectorName(subSector.getSubSectorDesc());
@@ -7426,7 +7096,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 
 		if (StringUtils.isNotBlank(customer.getLovDescCustGroupCode())) {
-			CustomerGroup custGroup = getCustomerGroupDAO().getCustomerGroupByID(customer.getCustGroupID(), "_AView");
+			CustomerGroup custGroup = customerGroupDAO.getCustomerGroupByID(customer.getCustGroupID(), "_AView");
 			if (custGroup != null) {
 				customer.setCustGroupID(custGroup.getCustGrpID());
 				customer.setLovDesccustGroupIDName(custGroup.getCustGrpDesc());
@@ -7434,7 +7104,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getLovDescCustRO1Name())) {
-			RelationshipOfficer officer = getRelationshipOfficerDAO()
+			RelationshipOfficer officer = relationshipOfficerDAO
 					.getRelationshipOfficerById(String.valueOf(customer.getCustRO1()), "_Aview");
 			if (officer != null) {
 				customer.setCustRO1(Long.parseLong(officer.getROfficerCode()));
@@ -7442,7 +7112,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			}
 		}
 		if (StringUtils.isNotBlank(customer.getLovDescCustRO2Name())) {
-			RelationshipOfficer officer = getRelationshipOfficerDAO().getRelationshipOfficerById(customer.getCustRO2(),
+			RelationshipOfficer officer = relationshipOfficerDAO.getRelationshipOfficerById(customer.getCustRO2(),
 					"_Aview");
 			if (officer != null) {
 				customer.setCustRO2(officer.getROfficerCode());
@@ -7455,7 +7125,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public CustomerCategory getCustomerCategoryById(String custCtgCode) {
-		return getCustomerCategoryDAO().getCustomerCategoryById(custCtgCode, "_Aview");
+		return customerCategoryDAO.getCustomerCategoryById(custCtgCode, "_Aview");
 	}
 
 	/**
@@ -7463,7 +7133,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public AvailPastDue getCustPastDueDetailByCustId(AvailPastDue pastDue, String limitCcy) {
-		return getCustomerDAO().getCustPastDueDetailByCustId(pastDue, limitCcy);
+		return customerDAO.getCustPastDueDetailByCustId(pastDue, limitCcy);
 	}
 
 	/**
@@ -7471,102 +7141,22 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	@Override
 	public Customer getCustomerForPostings(long custId) {
-		return getCustomerDAO().getCustomerForPostings(custId);
+		return customerDAO.getCustomerForPostings(custId);
 	}
 
 	@Override
 	public String getNewProspectCustomerCIF() {
-		return getCustomerDAO().getNewProspectCustomerCIF();
+		return customerDAO.getNewProspectCustomerCIF();
 	}
 
 	@Override
 	public CustomerStatusCode getCustStatusByMinDueDays() {
-		return getCustomerStatusCodeDAO().getCustStatusByMinDueDays("");
+		return customerStatusCodeDAO.getCustStatusByMinDueDays("");
 	}
 
 	@Override
 	public DirectorDetail getNewDirectorDetail() {
-		return getDirectorDetailDAO().getNewDirectorDetail();
-	}
-
-	public void setEmpStsCodeDAO(EmpStsCodeDAO empStsCodeDAO) {
-		this.empStsCodeDAO = empStsCodeDAO;
-	}
-
-	public EmpStsCodeDAO getEmpStsCodeDAO() {
-		return empStsCodeDAO;
-	}
-
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
-	}
-
-	public CurrencyDAO getCurrencyDAO() {
-		return currencyDAO;
-	}
-
-	public void setSectorDAO(SectorDAO sectorDAO) {
-		this.sectorDAO = sectorDAO;
-	}
-
-	public SectorDAO getSectorDAO() {
-		return sectorDAO;
-	}
-
-	public void setSubSectorDAO(SubSectorDAO subSectorDAO) {
-		this.subSectorDAO = subSectorDAO;
-	}
-
-	public SubSectorDAO getSubSectorDAO() {
-		return subSectorDAO;
-	}
-
-	public void setCustomerCategoryDAO(CustomerCategoryDAO customerCategoryDAO) {
-		this.customerCategoryDAO = customerCategoryDAO;
-	}
-
-	public CustomerCategoryDAO getCustomerCategoryDAO() {
-		return customerCategoryDAO;
-	}
-
-	public CustomerGroupDAO getCustomerGroupDAO() {
-		return customerGroupDAO;
-	}
-
-	public void setCustomerGroupDAO(CustomerGroupDAO customerGroupDAO) {
-		this.customerGroupDAO = customerGroupDAO;
-	}
-
-	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
-		this.customerStatusCodeDAO = customerStatusCodeDAO;
-	}
-
-	public CustomerStatusCodeDAO getCustomerStatusCodeDAO() {
-		return customerStatusCodeDAO;
-	}
-
-	public void setRelationshipOfficerDAO(RelationshipOfficerDAO relationshipOfficerDAO) {
-		this.relationshipOfficerDAO = relationshipOfficerDAO;
-	}
-
-	public RelationshipOfficerDAO getRelationshipOfficerDAO() {
-		return relationshipOfficerDAO;
-	}
-
-	public void setNationalityCodeDAO(NationalityCodeDAO nationalityCodeDAO) {
-		this.nationalityCodeDAO = nationalityCodeDAO;
-	}
-
-	public NationalityCodeDAO getNationalityCodeDAO() {
-		return nationalityCodeDAO;
-	}
-
-	public RatingCodeDAO getRatingCodeDAO() {
-		return ratingCodeDAO;
-	}
-
-	public void setRatingCodeDAO(RatingCodeDAO ratingCodeDAO) {
-		this.ratingCodeDAO = ratingCodeDAO;
+		return directorDetailDAO.getNewDirectorDetail();
 	}
 
 	@Override
@@ -7577,16 +7167,16 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				try {
 					if (StringUtils.isNotBlank(customerRating.getCustRatingType())
 							&& StringUtils.isNotBlank(customerRating.getCustRatingCode())) {
-						RatingCode countryRating = getRatingCodeDAO().getRatingCodeById(
-								customerRating.getCustRatingType(), customerRating.getCustRatingCode(), "");
+						RatingCode countryRating = ratingCodeDAO.getRatingCodeById(customerRating.getCustRatingType(),
+								customerRating.getCustRatingCode(), "");
 						if (countryRating != null) {
 							customerRating.setLovDesccustRatingCodeDesc(countryRating.getRatingCodeDesc());
 						}
 					}
 					if (StringUtils.isNotBlank(customerRating.getCustRatingType())
 							&& StringUtils.isNotBlank(customerRating.getCustRating())) {
-						RatingCode obligotrating = getRatingCodeDAO().getRatingCodeById(
-								customerRating.getCustRatingType(), customerRating.getCustRating(), "");
+						RatingCode obligotrating = ratingCodeDAO.getRatingCodeById(customerRating.getCustRatingType(),
+								customerRating.getCustRating(), "");
 						if (obligotrating != null) {
 							customerRating.setLovDescCustRatingName(obligotrating.getRatingCodeDesc());
 						}
@@ -7650,12 +7240,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public List<CustomerRating> getCustomerRatingByCustId(long id, String type) {
-		return getCustomerRatingDAO().getCustomerRatingByCustId(id, type);
+		return customerRatingDAO.getCustomerRatingByCustId(id, type);
 	}
 
 	@Override
 	public String getEIDNumberById(String eidNumber, String type) {
-		return getCustomerDAO().getCustomerByCRCPR(eidNumber, type);
+		return customerDAO.getCustomerByCRCPR(eidNumber, type);
 	}
 
 	public CustomerDedupDAO getCustomerDedupDAO() {
@@ -7692,12 +7282,12 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public long getEIDNumberByCustId(String eidNumber, String type) {
-		return getCustomerDAO().getCustCRCPRByCustId(eidNumber, type);
+		return customerDAO.getCustCRCPRByCustId(eidNumber, type);
 	}
 
 	@Override
 	public WIFCustomer getWIFByEIDNumber(String eidNumber, String type) {
-		return getCustomerDAO().getWIFByCustCRCPR(eidNumber, type);
+		return customerDAO.getWIFByCustCRCPR(eidNumber, type);
 	}
 
 	@Override
@@ -7713,7 +7303,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	@Override
 	public void updateProspectCustCIF(String oldCustCIF, String newCustCIF) {
 		logger.debug(Literal.ENTERING);
-		getCustomerDAO().updateProspectCustCIF(oldCustCIF, newCustCIF);
+		customerDAO.updateProspectCustCIF(oldCustCIF, newCustCIF);
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -7721,21 +7311,21 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	public String getCustCoreBankIdByCIF(String custCIF) {
 		logger.debug(Literal.ENTERING);
 		logger.debug(Literal.LEAVING);
-		return getCustomerDAO().getCustCoreBankIdByCIF(custCIF);
+		return customerDAO.getCustCoreBankIdByCIF(custCIF);
 	}
 
 	@Override
 	public String getNewCoreCustomerCIF() {
 		logger.debug(Literal.ENTERING);
 		logger.debug(Literal.LEAVING);
-		return getCustomerDAO().getNewCoreCustomerCIF();
+		return customerDAO.getNewCoreCustomerCIF();
 	}
 
 	@Override
 	public void updateCorebankCustCIF(String coreCustCIF) {
 		logger.debug(Literal.ENTERING);
 
-		getCustomerDAO().updateCorebankCustCIF(coreCustCIF);
+		customerDAO.updateCorebankCustCIF(coreCustCIF);
 
 		logger.debug(Literal.LEAVING);
 
@@ -8069,7 +7659,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		logger.debug(Literal.ENTERING);
 
 		CustomerDetails customerDetails = new CustomerDetails();
-		customerDetails.setCustomer(getCustomerDAO().getCustomerByID(id, type));
+		customerDetails.setCustomer(customerDAO.getCustomerByID(id, type));
 		customerDetails.setCustID(id);
 
 		customerDetails.setAddressList(customerAddresDAO.getCustomerAddresByCustomer(id, type));
@@ -8096,7 +7686,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(custBankInfo.getPerfiosTransId())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "customerBankInfo : perfiosTransactionId ";
-				//valueParm[1] = "Zero";
+				// valueParm[1] = "Zero";
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
@@ -8105,7 +7695,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			if (StringUtils.isBlank(custBankInfo.getTransactionId())) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "customerBankInfo : TransactionId ";
-				//valueParm[1] = "Zero";
+				// valueParm[1] = "Zero";
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
@@ -8186,7 +7776,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 
-					//if docName has no extension.
+					// if docName has no extension.
 					if (!docName.contains(".")) {
 						String[] valueParm = new String[1];
 						valueParm[0] = "ExternalDocuments : document Name: " + docName;
@@ -8203,7 +7793,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 						}
 					}
 					String docExtension = docName.substring(docName.lastIndexOf(".") + 1);
-					//if doc type and doc Extension are invalid
+					// if doc type and doc Extension are invalid
 					if (!isImage) {
 						if (StringUtils.equalsIgnoreCase(detail.getDocType(), PennantConstants.DOC_TYPE_EXCEL)) {
 							String docExtention = detail.getDocName().toLowerCase();
@@ -8233,7 +7823,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public int getCustomerCountByCIF(String custCIF, String type) {
-		return getCustomerDAO().getCustomerCountByCIF(custCIF, type);
+		return customerDAO.getCustomerCountByCIF(custCIF, type);
 	}
 
 	@Override
@@ -8247,7 +7837,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	@Override
 	public boolean getCustomerByCoreBankId(String custCoreBank) {
-		return getCustomerDAO().getCustomerByCoreBankId(custCoreBank);
+		return customerDAO.getCustomerByCoreBankId(custCoreBank);
 	}
 
 	@Override
@@ -8277,129 +7867,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		}
 	}
 
-	public LovFieldDetailService getLovFieldDetailService() {
-		return lovFieldDetailService;
-	}
-
-	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
-		this.lovFieldDetailService = lovFieldDetailService;
-	}
-
-	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
-		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
-	}
-
-	public LimitRebuild getLimitRebuild() {
-		return limitRebuild;
-	}
-
-	public void setLimitRebuild(LimitRebuild limitRebuild) {
-		this.limitRebuild = limitRebuild;
-	}
-
-	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
-		this.phoneTypeDAO = phoneTypeDAO;
-	}
-
-	public CustomerService getCustomerService() {
-		return customerService;
-	}
-
-	public void setCustomerService(CustomerService customerService) {
-		this.customerService = customerService;
-	}
-
 	@Override
 	public Customer getCustomerShrtName(long id) {
-		return getCustomerDAO().getCustomerByID(id);
-	}
-
-	public ExtendedFieldDetailsService getExtendedFieldDetailsService() {
-		return extendedFieldDetailsService;
-	}
-
-	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
-		this.extendedFieldDetailsService = extendedFieldDetailsService;
-	}
-
-	public PinCodeDAO getPinCodeDAO() {
-		return pinCodeDAO;
-	}
-
-	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
-		this.pinCodeDAO = pinCodeDAO;
-	}
-
-	public FinanceMainDAO getFinanceMainDAO() {
-		return financeMainDAO;
-	}
-
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	public CollateralSetupDAO getCollateralSetupDAO() {
-		return collateralSetupDAO;
-	}
-
-	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
-		this.collateralSetupDAO = collateralSetupDAO;
-	}
-
-	public List<FinanceMain> getFinanceMainList() {
-		return financeMainList;
-	}
-
-	public void setFinanceMainList(List<FinanceMain> financeMainList) {
-		this.financeMainList = financeMainList;
-	}
-
-	public VASRecordingDAO getvASRecordingDAO() {
-		return vASRecordingDAO;
-	}
-
-	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
-		this.vASRecordingDAO = vASRecordingDAO;
-	}
-
-	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
-		this.bankDetailDAO = bankDetailDAO;
+		return customerDAO.getCustomerByID(id);
 	}
 
 	@Override
 	public Customer checkCustomerByID(long custID, String type) {
-		return getCustomerDAO().checkCustomerByID(custID, type);
-	}
-
-	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
-		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
-	}
-
-	public CustomerCardSalesValidation getCustomerCardSalesValidation() {
-		if (customerCardSalesValidation == null) {
-			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
-		}
-		return this.customerCardSalesValidation;
-	}
-
-	public void setCustomerCardSalesValidation(CustomerCardSalesValidation customerCardSalesValidation) {
-		if (customerCardSalesValidation == null) {
-			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
-		}
-		this.customerCardSalesValidation = customerCardSalesValidation;
-	}
-
-	public ApprovalStatusEnquiryService getApprovalStatusEnquiryService() {
-		return approvalStatusEnquiryService;
-	}
-
-	public void setApprovalStatusEnquiryService(ApprovalStatusEnquiryService approvalStatusEnquiryService) {
-		this.approvalStatusEnquiryService = approvalStatusEnquiryService;
+		return customerDAO.checkCustomerByID(custID, type);
 	}
 
 	@Override
 	public String getEIDNumberById(String eidNumber, String custCtgCode, String type) {
-		return getCustomerDAO().getCustomerByCRCPR(eidNumber, custCtgCode, type);
+		return customerDAO.getCustomerByCRCPR(eidNumber, custCtgCode, type);
 	}
 
 	@Override
@@ -8432,32 +7912,196 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		return auditDetail;
 	}
 
-	public GenderDAO getGenderDAO() {
-		return genderDAO;
+	@Override
+	public int getCrifScorevalue(String tablename, String reference) {
+		return customerDAO.getCrifScoreValue(tablename, reference);
+	}
+
+	@Override
+	public boolean isCrifDeroge(String tablename, String reference) {
+		return customerDAO.isCrifDeroge(tablename, reference);
+	}
+
+	// ******************************************************//
+	// ****************** getter / setter *******************//
+	// ******************************************************//
+
+	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
+		this.auditHeaderDAO = auditHeaderDAO;
+	}
+
+	public void setCustomerDAO(CustomerDAO customerDAO) {
+		this.customerDAO = customerDAO;
+	}
+
+	public void setCustomerRatingDAO(CustomerRatingDAO customerRatingDAO) {
+		this.customerRatingDAO = customerRatingDAO;
+	}
+
+	public void setCustomerEmploymentDetailDAO(CustomerEmploymentDetailDAO customerEmploymentDetailDAO) {
+		this.customerEmploymentDetailDAO = customerEmploymentDetailDAO;
+	}
+
+	public void setCustomerPRelationDAO(CustomerPRelationDAO customerPRelationDAO) {
+		this.customerPRelationDAO = customerPRelationDAO;
+	}
+
+	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
+		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public void setCustomerEMailDAO(CustomerEMailDAO customerEMailDAO) {
+		this.customerEMailDAO = customerEMailDAO;
+	}
+
+	public void setCustomerPhoneNumberDAO(CustomerPhoneNumberDAO customerPhoneNumberDAO) {
+		this.customerPhoneNumberDAO = customerPhoneNumberDAO;
+	}
+
+	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
+		this.customerIncomeDAO = customerIncomeDAO;
+	}
+
+	public void setCustomerDocumentDAO(CustomerDocumentDAO customerDocumentDAO) {
+		this.customerDocumentDAO = customerDocumentDAO;
+	}
+
+	public void setDocumentManagerDAO(DocumentManagerDAO documentManagerDAO) {
+		this.documentManagerDAO = documentManagerDAO;
+	}
+
+	public void setCorporateCustomerDetailDAO(CorporateCustomerDetailDAO corporateCustomerDetailDAO) {
+		this.corporateCustomerDetailDAO = corporateCustomerDetailDAO;
+	}
+
+	public void setDirectorDetailDAO(DirectorDetailDAO directorDetailDAO) {
+		this.directorDetailDAO = directorDetailDAO;
+	}
+
+	public void setCustomerBalanceSheetDAO(CustomerBalanceSheetDAO customerBalanceSheetDAO) {
+		this.customerBalanceSheetDAO = customerBalanceSheetDAO;
+	}
+
+	public void setCustomerStatusCodeDAO(CustomerStatusCodeDAO customerStatusCodeDAO) {
+		this.customerStatusCodeDAO = customerStatusCodeDAO;
+	}
+
+	public void setCustomerTypeDAO(CustomerTypeDAO customerTypeDAO) {
+		this.customerTypeDAO = customerTypeDAO;
+	}
+
+	public void setBranchDAO(BranchDAO branchDAO) {
+		this.branchDAO = branchDAO;
+	}
+
+	public void setCountryDAO(CountryDAO countryDAO) {
+		this.countryDAO = countryDAO;
+	}
+
+	public void setNationalityCodeDAO(NationalityCodeDAO nationalityCodeDAO) {
+		this.nationalityCodeDAO = nationalityCodeDAO;
+	}
+
+	public void setEmpStsCodeDAO(EmpStsCodeDAO empStsCodeDAO) {
+		this.empStsCodeDAO = empStsCodeDAO;
+	}
+
+	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
+		this.currencyDAO = currencyDAO;
+	}
+
+	public void setSectorDAO(SectorDAO sectorDAO) {
+		this.sectorDAO = sectorDAO;
+	}
+
+	public void setSubSectorDAO(SubSectorDAO subSectorDAO) {
+		this.subSectorDAO = subSectorDAO;
+	}
+
+	public void setCustomerCategoryDAO(CustomerCategoryDAO customerCategoryDAO) {
+		this.customerCategoryDAO = customerCategoryDAO;
+	}
+
+	public void setCustomerGroupDAO(CustomerGroupDAO customerGroupDAO) {
+		this.customerGroupDAO = customerGroupDAO;
+	}
+
+	public void setRelationshipOfficerDAO(RelationshipOfficerDAO relationshipOfficerDAO) {
+		this.relationshipOfficerDAO = relationshipOfficerDAO;
+	}
+
+	public void setRatingCodeDAO(RatingCodeDAO ratingCodeDAO) {
+		this.ratingCodeDAO = ratingCodeDAO;
+	}
+
+	public void setBankDetailDAO(BankDetailDAO bankDetailDAO) {
+		this.bankDetailDAO = bankDetailDAO;
+	}
+
+	public void setCustomerBankInfoDAO(CustomerBankInfoDAO customerBankInfoDAO) {
+		this.customerBankInfoDAO = customerBankInfoDAO;
+	}
+
+	public void setCustomerChequeInfoDAO(CustomerChequeInfoDAO customerChequeInfoDAO) {
+		this.customerChequeInfoDAO = customerChequeInfoDAO;
+	}
+
+	public void setCustomerExtLiabilityDAO(CustomerExtLiabilityDAO customerExtLiabilityDAO) {
+		this.customerExtLiabilityDAO = customerExtLiabilityDAO;
+	}
+
+	public void setCustEmployeeDetailDAO(CustEmployeeDetailDAO custEmployeeDetailDAO) {
+		this.custEmployeeDetailDAO = custEmployeeDetailDAO;
+	}
+
+	public void setIncomeDetailDAO(IncomeDetailDAO incomeDetailDAO) {
+		this.incomeDetailDAO = incomeDetailDAO;
+	}
+
+	public void setExternalLiabilityDAO(ExternalLiabilityDAO externalLiabilityDAO) {
+		this.externalLiabilityDAO = externalLiabilityDAO;
+	}
+
+	public void setCustomerGstDetailDAO(CustomerGstDetailDAO customerGstDetailDAO) {
+		this.customerGstDetailDAO = customerGstDetailDAO;
+	}
+
+	public void setCustomerCardSalesInfoDAO(CustomerCardSalesInfoDAO customerCardSalesInfoDAO) {
+		this.customerCardSalesInfoDAO = customerCardSalesInfoDAO;
+	}
+
+	public void setPhoneTypeDAO(PhoneTypeDAO phoneTypeDAO) {
+		this.phoneTypeDAO = phoneTypeDAO;
+	}
+
+	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
+		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
+	}
+
+	public void setPinCodeDAO(PinCodeDAO pinCodeDAO) {
+		this.pinCodeDAO = pinCodeDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setCollateralSetupDAO(CollateralSetupDAO collateralSetupDAO) {
+		this.collateralSetupDAO = collateralSetupDAO;
+	}
+
+	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
+		this.vASRecordingDAO = vASRecordingDAO;
 	}
 
 	public void setGenderDAO(GenderDAO genderDAO) {
 		this.genderDAO = genderDAO;
 	}
 
-	public SalutationDAO getSalutationDAO() {
-		return salutationDAO;
-	}
-
 	public void setSalutationDAO(SalutationDAO salutationDAO) {
 		this.salutationDAO = salutationDAO;
 	}
 
-	@Override
-	public int getCrifScorevalue(String tablename, String reference) {
-		return customerDAO.getCrifScoreValue(tablename, reference);
-	}
-
-	public PrimaryAccountDAO getPrimaryAccountDAO() {
-		return primaryAccountDAO;
-	}
-
-	@Autowired
 	public void setPrimaryAccountDAO(PrimaryAccountDAO primaryAccountDAO) {
 		this.primaryAccountDAO = primaryAccountDAO;
 	}
@@ -8466,35 +8110,223 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		this.beneficiaryDAO = beneficiaryDAO;
 	}
 
-	@Override
-	public boolean isCrifDeroge(String tablename, String reference) {
-		return customerDAO.isCrifDeroge(tablename, reference);
-	}
-
 	public void setPerfiosTransactionDAO(PerfiosTransactionDAO perfiosTransactionDAO) {
 		this.perfiosTransactionDAO = perfiosTransactionDAO;
 	}
 
-	@Autowired(required = false)
-	public void setPerfiosService(PerfiousService perfiosService) {
-		this.perfiosService = perfiosService;
-	}
-
-	@Autowired
 	public void setDocumentDetailsDAO(DocumentDetailsDAO documentDetailsDAO) {
 		this.documentDetailsDAO = documentDetailsDAO;
 	}
 
-	public CustTypePANMappingService getCustTypePANMappingService() {
-		return custTypePANMappingService;
+	public void setdMSQueueDAO(DMSQueueDAO dMSQueueDAO) {
+		this.dMSQueueDAO = dMSQueueDAO;
+	}
+
+	public void setLimitRebuild(LimitRebuild limitRebuild) {
+		this.limitRebuild = limitRebuild;
+	}
+
+	public void setCustomerInterfaceService(CustomerInterfaceService customerInterfaceService) {
+		this.customerInterfaceService = customerInterfaceService;
+	}
+
+	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
+		this.customerDocumentService = customerDocumentService;
+	}
+
+	public void setApprovalStatusEnquiryService(ApprovalStatusEnquiryService approvalStatusEnquiryService) {
+		this.approvalStatusEnquiryService = approvalStatusEnquiryService;
 	}
 
 	public void setCustTypePANMappingService(CustTypePANMappingService custTypePANMappingService) {
 		this.custTypePANMappingService = custTypePANMappingService;
 	}
 
-	public void setdMSQueueDAO(DMSQueueDAO dMSQueueDAO) {
-		this.dMSQueueDAO = dMSQueueDAO;
+	public void setCustomerRatingValidation(CustomerRatingValidation customerRatingValidation) {
+		this.customerRatingValidation = customerRatingValidation;
+	}
+
+	public void setCustomerPhoneNumberValidation(CustomerPhoneNumberValidation customerPhoneNumberValidation) {
+		this.customerPhoneNumberValidation = customerPhoneNumberValidation;
+	}
+
+	public void setCustomerPRelationValidation(CustomerPRelationValidation customerPRelationValidation) {
+		this.customerPRelationValidation = customerPRelationValidation;
+	}
+
+	public void setCustomerEmploymentDetailValidation(
+			CustomerEmploymentDetailValidation customerEmploymentDetailValidation) {
+		this.customerEmploymentDetailValidation = customerEmploymentDetailValidation;
+	}
+
+	public void setCustomerAddressValidation(CustomerAddressValidation customerAddressValidation) {
+		this.customerAddressValidation = customerAddressValidation;
+	}
+
+	public void setCustomerDocumentValidation(CustomerDocumentValidation customerDocumentValidation) {
+		this.customerDocumentValidation = customerDocumentValidation;
+	}
+
+	public void setCustomerDirectorValidation(CustomerDirectorValidation customerDirectorValidation) {
+		this.customerDirectorValidation = customerDirectorValidation;
+	}
+
+	public void setCustomerBalanceSheetValidation(CustomerBalanceSheetValidation customerBalanceSheetValidation) {
+		this.customerBalanceSheetValidation = customerBalanceSheetValidation;
+	}
+
+	public void setLovFieldDetailService(LovFieldDetailService lovFieldDetailService) {
+		this.lovFieldDetailService = lovFieldDetailService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setCustomerService(CustomerService customerService) {
+		this.customerService = customerService;
+	}
+
+	public CustomerRatingValidation getRatingValidation() {
+		if (customerRatingValidation == null) {
+			this.customerRatingValidation = new CustomerRatingValidation(customerRatingDAO);
+		}
+		return this.customerRatingValidation;
+	}
+
+	public CustomerPhoneNumberValidation getPhoneNumberValidation() {
+
+		if (customerPhoneNumberValidation == null) {
+			this.customerPhoneNumberValidation = new CustomerPhoneNumberValidation(customerPhoneNumberDAO);
+		}
+		return this.customerPhoneNumberValidation;
+	}
+
+	public CustomerPRelationValidation getPRelationValidation() {
+
+		if (customerPRelationValidation == null) {
+			this.customerPRelationValidation = new CustomerPRelationValidation(customerPRelationDAO);
+		}
+		return this.customerPRelationValidation;
+	}
+
+	public CustomerEmploymentDetailValidation getEmploymentDetailValidation() {
+
+		if (customerEmploymentDetailValidation == null) {
+			this.customerEmploymentDetailValidation = new CustomerEmploymentDetailValidation(
+					customerEmploymentDetailDAO);
+		}
+		return this.customerEmploymentDetailValidation;
+	}
+
+	public CustomerIncomeValidation getCustomerIncomeValidation() {
+
+		if (customerIncomeValidation == null) {
+			this.customerIncomeValidation = new CustomerIncomeValidation(customerIncomeDAO);
+		}
+		return this.customerIncomeValidation;
+	}
+
+	public CustomerEMailValidation getCustomerEMailValidation() {
+
+		if (customerEMailValidation == null) {
+			this.customerEMailValidation = new CustomerEMailValidation(customerEMailDAO);
+		}
+		return this.customerEMailValidation;
+	}
+
+	public CustomerAddressValidation getAddressValidation() {
+
+		if (customerAddressValidation == null) {
+			this.customerAddressValidation = new CustomerAddressValidation(customerAddresDAO);
+		}
+		return this.customerAddressValidation;
+	}
+
+	public CustomerDocumentValidation getDocumentValidation() {
+
+		if (customerDocumentValidation == null) {
+			this.customerDocumentValidation = new CustomerDocumentValidation(customerDocumentDAO);
+		}
+		return this.customerDocumentValidation;
+	}
+
+	public CorporateCustomerValidation getCorporateCustomerValidation() {
+
+		if (corporateCustomerValidation == null) {
+			this.corporateCustomerValidation = new CorporateCustomerValidation(corporateCustomerDetailDAO);
+		}
+		return this.corporateCustomerValidation;
+	}
+
+	public CustomerDirectorValidation getDirectorValidation() {
+
+		if (customerDirectorValidation == null) {
+			this.customerDirectorValidation = new CustomerDirectorValidation(directorDetailDAO);
+		}
+		return this.customerDirectorValidation;
+	}
+
+	public CustomerBalanceSheetValidation getBalanceSheetValidation() {
+		if (customerBalanceSheetValidation == null) {
+			this.customerBalanceSheetValidation = new CustomerBalanceSheetValidation(customerBalanceSheetDAO);
+		}
+		return this.customerBalanceSheetValidation;
+	}
+
+	public CustomerBankInfoValidation getCustomerBankInfoValidation() {
+		if (customerBankInfoValidation == null) {
+			this.customerBankInfoValidation = new CustomerBankInfoValidation(customerBankInfoDAO);
+		}
+		return this.customerBankInfoValidation;
+	}
+
+	public CustomerChequeInfoValidation getCustomerChequeInfoValidation() {
+		if (customerChequeInfoValidation == null) {
+			this.customerChequeInfoValidation = new CustomerChequeInfoValidation(customerChequeInfoDAO);
+		}
+		return this.customerChequeInfoValidation;
+	}
+
+	public CustomerExtLiabilityValidation getExternalLiabilityValidation() {
+		if (externalLiabilityValidation == null) {
+			this.externalLiabilityValidation = new CustomerExtLiabilityValidation(customerExtLiabilityDAO);
+		}
+		return this.externalLiabilityValidation;
+	}
+
+	public CustomerCardSalesValidation getCustomerCardSalesValidation() {
+		if (customerCardSalesValidation == null) {
+			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
+		}
+		return this.customerCardSalesValidation;
+	}
+
+	public void setCustomerCardSalesValidation(CustomerCardSalesValidation customerCardSalesValidation) {
+		if (customerCardSalesValidation == null) {
+			this.customerCardSalesValidation = new CustomerCardSalesValidation(customerCardSalesInfoDAO);
+		}
+		this.customerCardSalesValidation = customerCardSalesValidation;
+	}
+
+	public void setCrm(Crm crm) {
+		this.crm = crm;
+	}
+
+	public void setPerfiosService(PerfiousService perfiosService) {
+		this.perfiosService = perfiosService;
+	}
+
+	public void setPostValidationHook(PostValidationHook postValidationHook) {
+		this.postValidationHook = postValidationHook;
+	}
+
+	public List<FinanceMain> getFinanceMainList() {
+		return financeMainList;
+	}
+
+	public void setFinanceMainList(List<FinanceMain> financeMainList) {
+		this.financeMainList = financeMainList;
 	}
 
 }

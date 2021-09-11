@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PoolExecutionDetailListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-08-2013    														*
- *                                                                  						*
- * Modified Date    :  01-08-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PoolExecutionDetailListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-08-2013 * *
+ * Modified Date : 01-08-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 01-08-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 01-08-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.finance.enquiry;
 
 import java.util.HashMap;
@@ -214,6 +196,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 		// Register buttons and fields.
 		registerButton(button_FinApprovalStsInquiryList_Search);
 
+		registerField("FinID");
 		registerField("FinReference", listheader_FinApprovalStsInquiryList_FinReference, SortOrder.ASC, finReference,
 				sortOperator_finReference, Operators.STRING);
 		registerField("CustCIF", listheader_FinApprovalStsInquiryList_CustCIF, SortOrder.NONE, custCIF,
@@ -251,8 +234,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinApprovalStsInquiryList_Search(Event event) {
 		search();
@@ -262,8 +244,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -274,8 +255,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onFinApprovalStsInquiryItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -309,33 +289,32 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;
 		}
-		//concate the UserFName and the lastmntby user
+		// concate the UserFName and the lastmntby user
 		aCustomerFinanceDetail.setLastMntByUser(PennantApplicationUtil.getFullName(aCustomerFinanceDetail.getUsrFName(),
 				aCustomerFinanceDetail.getLastMntByUser(), ""));
 
 		doShowDialogPage(aCustomerFinanceDetail, reasonDetailsList);
 		// Since it is a inquiry role check may not be required.
-		//		// Check whether the user has authority to change/view the record.
-		//		String whereCond = " AND FinReference='" + aCustomerFinanceDetail.getFinReference() + "' AND version="
-		//				+ aCustomerFinanceDetail.getVersion() + " ";
+		// // Check whether the user has authority to change/view the record.
+		// String whereCond = " AND FinReference='" + aCustomerFinanceDetail.getFinReference() + "' AND version="
+		// + aCustomerFinanceDetail.getVersion() + " ";
 		//
-		//		if (doCheckAuthority(aCustomerFinanceDetail, whereCond)) {
-		//			// Set the latest work-flow id for the new maintenance request.
-		//			if (isWorkFlowEnabled() && aCustomerFinanceDetail.getWorkflowId() == 0) {
-		//				aCustomerFinanceDetail.setWorkflowId(getWorkFlowId());
-		//			}
-		//			
-		//		} else {
-		//			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
-		//		}
+		// if (doCheckAuthority(aCustomerFinanceDetail, whereCond)) {
+		// // Set the latest work-flow id for the new maintenance request.
+		// if (isWorkFlowEnabled() && aCustomerFinanceDetail.getWorkflowId() == 0) {
+		// aCustomerFinanceDetail.setWorkflowId(getWorkFlowId());
+		// }
+		//
+		// } else {
+		// MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+		// }
 
 	}
 
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
@@ -432,8 +411,7 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aCustomerFinanceDetail
-	 *            The entity that need to be passed to the dialog.
+	 * @param aCustomerFinanceDetail The entity that need to be passed to the dialog.
 	 * @param reasonDetailsList
 	 */
 	private void doShowDialogPage(CustomerFinanceDetail aCustomerFinanceDetail,

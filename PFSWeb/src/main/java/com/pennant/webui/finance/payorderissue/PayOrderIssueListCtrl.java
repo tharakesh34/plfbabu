@@ -136,6 +136,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 		registerButton(button_PayOrderIssueList_PayOrderIssueSearchDialog);
 
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF, Operators.STRING);
+		registerField("FinID");
 		registerField("FinReference", listheader_FinRef, SortOrder.ASC, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("CustShrtName", listheader_CustShrtName, SortOrder.NONE, custName, sortOperator_custName,

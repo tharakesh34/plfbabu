@@ -186,6 +186,7 @@ public class FinanceFlagsListCtrl extends GFCBaseListCtrl<FinanceFlag> {
 
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custCIF, sortOperator_custCIF,
 				Operators.MULTISELECT);
+		registerField("FinID");
 		registerField("FinReference", listheader_FinRef, SortOrder.NONE, finReference, sortOperator_finReference,
 				Operators.MULTISELECT);
 		registerField("FinType", listheader_FinType, SortOrder.NONE, finType, sortOperator_finType,

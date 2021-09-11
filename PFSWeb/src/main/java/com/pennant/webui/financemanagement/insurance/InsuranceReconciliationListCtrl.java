@@ -75,8 +75,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_InsuranceDetailsList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -89,6 +88,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 		registerButton(button_InsuranceDetailsList_InsuranceDetailsSearch);
 
 		registerField("id");
+		registerField("FinID");
 		registerField("finReference");
 		registerField("postingAgainst");
 		registerField("reference", listheader_Reference, SortOrder.NONE, refernce, sortOperator_Reference,
@@ -104,8 +104,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_InsuranceDetailsList_InsuranceDetailsSearch(Event event) {
 		search();
@@ -114,8 +113,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param entityCodeName
-	 *            An event sent to the event handler of the component.
+	 * @param entityCodeName An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -125,8 +123,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_InsuranceDetailsList_NewInsuranceDetails(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -143,8 +140,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 
 	public void onInsuranceDetailsItemDoubleClicked(Event event) {
@@ -194,8 +190,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -204,8 +199,7 @@ public class InsuranceReconciliationListCtrl extends GFCBaseListCtrl<InsuranceDe
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

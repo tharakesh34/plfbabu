@@ -116,6 +116,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		}
 
 		registerField("CustCIF", listheader_CIFNo, SortOrder.NONE, cifNo, sortOperator_CIFNo, Operators.STRING);
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("finType", listheader_FinType, SortOrder.NONE, finType, sortOperator_FinType, Operators.STRING);

@@ -208,6 +208,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		registerField("FinID");
 		registerField("LovDescCustCIF", listheader_CustomerCIF, SortOrder.NONE, custCIF, sortOperator_custID,
 				Operators.STRING);
+		registerField("FinID");
 		registerField("FinReference", listheader_FinReference, SortOrder.ASC, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("lovDescCustShrtName", listheader_CustomerName, SortOrder.NONE, fincustName,

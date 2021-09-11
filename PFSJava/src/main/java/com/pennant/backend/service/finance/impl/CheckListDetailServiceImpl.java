@@ -106,14 +106,17 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
 		checkListIdMap.put("checkListIdMap", checkListIdSet);
 
-		List<CheckListDetail> checkListDetailAllList = checkListDetailDAO.getCheckListDetailByChkList(checkListIdMap,
-				"_AView");
+		List<CheckListDetail> list = new ArrayList<>();
+
+		if (!checkListIdSet.isEmpty()) {
+			list.addAll(checkListDetailDAO.getCheckListDetailByChkList(checkListIdMap, "_AView"));
+		}
 
 		long prevCheckListId = 0L;
 
 		List<CheckListDetail> cldList = null;
 
-		for (CheckListDetail cld : checkListDetailAllList) {
+		for (CheckListDetail cld : list) {
 			if (prevCheckListId == 0) {
 				cldList = new ArrayList<CheckListDetail>();
 				prevCheckListId = cld.getCheckListId();

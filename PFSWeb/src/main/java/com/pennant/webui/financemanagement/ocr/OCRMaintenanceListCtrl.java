@@ -97,6 +97,7 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 		// Register buttons and fields.
 		registerButton(button_OCRMaintenanceList_OCRMaintenanceSearchDialog);
 
+		registerField("FinID");
 		registerField("finReference", listheader_OCRMaintenanceLoanReference, SortOrder.ASC, finReference,
 				sortOperator_loanReference, Operators.STRING);
 		registerField("totalDemand", listheader_OCRMaintenanceTotalDemand, SortOrder.ASC, totalDemand,

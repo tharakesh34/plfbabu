@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinSuspHoldListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinSuspHoldListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.finsusphold;
@@ -133,8 +115,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FinSuspHoldList(Event event) {
 		// Set the page level components.
@@ -152,6 +133,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 		registerField("CustCIF", listheader_CustCIF, SortOrder.NONE, custID, sortOperator_custID, Operators.STRING);
 		registerField("CustShrtName", listheader_CustShrtName, SortOrder.NONE, custShrtName, sortOperator_custShrtName,
 				Operators.STRING);
+		registerField("FinID");
 		registerField("FinReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_finReference,
 				Operators.STRING);
 		registerField("Active", listheader_Active, SortOrder.NONE, active, sortOperator_active, Operators.BOOLEAN);
@@ -166,8 +148,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinSuspHoldList_FinSuspHoldSearchDialog(Event event) {
 		search();
@@ -176,8 +157,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -187,8 +167,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinSuspHoldList_NewFinSuspHold(Event event) {
 		logger.debug("Entering");
@@ -249,8 +228,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aFinSuspHold
-	 *            The entity that need to be passed to the dialog.
+	 * @param aFinSuspHold The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FinSuspHold aFinSuspHold) {
 		logger.debug("Entering");
@@ -273,8 +251,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -283,8 +260,7 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

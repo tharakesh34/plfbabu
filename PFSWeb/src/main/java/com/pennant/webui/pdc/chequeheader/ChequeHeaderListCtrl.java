@@ -126,6 +126,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		registerButton(button_ChequeHeaderList_NewChequeHeader, "button_ChequeHeaderList_NewChequeHeader", true);
 
 		registerField("headerID");
+		registerField("FinID");
 		registerField("finReference", listheader_FinReference, SortOrder.NONE, finReference, sortOperator_FinReference,
 				Operators.STRING);
 		registerField("noOfCheques", listheader_NoOfCheques, SortOrder.NONE, noOfCheques, sortOperator_NoOfCheques,
