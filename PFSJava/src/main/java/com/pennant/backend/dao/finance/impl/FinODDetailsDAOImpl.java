@@ -505,7 +505,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		if (pastSchDates != null) {
 			sql.append(" and FinOdSchdDate in (");
-			sql.append(JdbcUtil.getInCondition(pastSchDates));
+			sql.append(JdbcUtil.getInConditionForDate(pastSchDates));
 			sql.append(")");
 		} else {
 			sql.append(" and FinCurODAmt > ?");
@@ -708,7 +708,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" From FinODDetails Where FinID = ?");
 		if (presentmentDates != null && !presentmentDates.isEmpty()) {
 			sql.append(" and FinODSchdDate not in(");
-			sql.append(JdbcUtil.getInCondition(presentmentDates));
+			sql.append(JdbcUtil.getInConditionForDate(presentmentDates));
 			sql.append(")");
 		}
 

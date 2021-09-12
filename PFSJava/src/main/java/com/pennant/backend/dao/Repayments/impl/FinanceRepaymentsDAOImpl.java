@@ -700,7 +700,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(", sum(PenaltyPaid) PenaltyPaid");
 		sql.append(" From FinRepayDetails");
 		sql.append(" Where FinID = ? and ReceiptId In (");
-		sql.append(JdbcUtil.getInCondition(receiptList));
+		sql.append(JdbcUtil.getInConditionForLong(receiptList));
 		sql.append(")");
 		sql.append(" group by Finschddate");
 
@@ -740,7 +740,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		if (receiptList != null && receiptList.size() > 0) {
 			sql.append(" and ReceiptId IN (");
 
-			sql.append(JdbcUtil.getInCondition(receiptList));
+			sql.append(JdbcUtil.getInConditionForLong(receiptList));
 
 			sql.append(" )");
 		}

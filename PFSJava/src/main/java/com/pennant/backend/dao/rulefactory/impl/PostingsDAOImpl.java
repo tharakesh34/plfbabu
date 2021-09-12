@@ -168,7 +168,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	public List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList) {
 		StringBuilder sql = getSelectQuery();
 		sql.append(" Where LinkedTranId in (");
-		sql.append(JdbcUtil.getInCondition(tranIdList));
+		sql.append(JdbcUtil.getInConditionForLong(tranIdList));
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
