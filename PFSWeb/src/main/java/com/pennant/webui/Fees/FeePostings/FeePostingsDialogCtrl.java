@@ -435,11 +435,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 		// If Fees Created Against Finance Reference
 		if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_LOAN, getFeePostings().getPostAgainst())) {
-			FinanceMain financeMain = getFinanceDetailService().getFinanceMain(getFeePostings().getReference(),
+			FinanceMain fm = getFinanceDetailService().getFinanceMain(getFeePostings().getReference(),
 					TableType.MAIN_TAB);
-			amountCodes.setFinType(financeMain.getFinType());
-			aeEvent.setBranch(financeMain.getFinBranch());
-			aeEvent.setCustID(financeMain.getCustID());
+			amountCodes.setFinType(fm.getFinType());
+			aeEvent.setBranch(fm.getFinBranch());
+			aeEvent.setCustID(fm.getCustID());
 		} else if (StringUtils.equals(FinanceConstants.POSTING_AGAINST_CUST, getFeePostings().getPostAgainst())) {
 			Customer customer = getCustomerDetailsService().getCustomerByCIF(getFeePostings().getReference());
 			aeEvent.setBranch(customer.getCustDftBranch());

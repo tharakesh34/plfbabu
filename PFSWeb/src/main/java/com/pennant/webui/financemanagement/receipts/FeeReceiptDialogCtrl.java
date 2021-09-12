@@ -1653,22 +1653,25 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.FEEPAY);
-		aeEvent.setFinReference(getReceiptHeader().getReference());
-		aeEvent.setCustCIF(getReceiptHeader().getCustCIF());
-		aeEvent.setBranch(getReceiptHeader().getPostBranch());
-		aeEvent.setCcy(getReceiptHeader().getFinCcy());
-		aeEvent.setCustID(getReceiptHeader().getCustID());
+
+		FinReceiptHeader rch = getReceiptHeader();
+		aeEvent.setFinID(rch.getFinID());
+		aeEvent.setFinReference(rch.getReference());
+		aeEvent.setCustCIF(rch.getCustCIF());
+		aeEvent.setBranch(rch.getPostBranch());
+		aeEvent.setCcy(rch.getFinCcy());
+		aeEvent.setCustID(rch.getCustID());
 
 		if (aeEvent.getCcy() == null) {
-			aeEvent.setCcy(getReceiptHeader().getCustBaseCcy());
+			aeEvent.setCcy(rch.getCustBaseCcy());
 		}
 
 		Map<String, Object> map = null;
 		long accountingSetID = 0;
 		if (this.groupbox_Finance.isVisible()) {
-			map = getFeeReceiptService().getGLSubHeadCodes(getReceiptHeader().getFinID());
-			accountingSetID = AccountingConfigCache.getAccountSetID(getReceiptHeader().getFinType(),
-					AccountingEvent.FEEPAY, FinanceConstants.MODULEID_FINTYPE);
+			map = getFeeReceiptService().getGLSubHeadCodes(rch.getFinID());
+			accountingSetID = AccountingConfigCache.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
+					FinanceConstants.MODULEID_FINTYPE);
 		} else {
 			accountingSetID = getFeeReceiptService().getAccountingSetId(AccountingEvent.FEEPAY, AccountingEvent.FEEPAY);
 		}
@@ -1678,12 +1681,12 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			amountCodes = new AEAmountCodes();
 		}
 
-		FinReceiptDetail receiptDetail = getReceiptHeader().getReceiptDetails().get(0);
+		FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(0);
 		amountCodes.setPartnerBankAc(receiptDetail.getPartnerBankAc());
 		amountCodes.setPaymentType(receiptDetail.getPaymentType());
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
-		amountCodes.setFinType(getReceiptHeader().getFinType());
+		amountCodes.setFinType(rch.getFinType());
 		if (map != null) {
 			amountCodes.setBusinessvertical((String) map.get("BUSINESSVERTICAL"));
 			amountCodes.setFinbranch((String) map.get("FINBRANCH"));
@@ -1700,8 +1703,8 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				amountCodes.setAlwflexi(value == 0 ? false : true);
 			}
 		} else {
-			amountCodes.setEntitycode(getReceiptHeader().getEntityCode());
-			amountCodes.setFinbranch(getReceiptHeader().getPostBranch());
+			amountCodes.setEntitycode(rch.getEntityCode());
+			amountCodes.setFinbranch(rch.getPostBranch());
 		}
 
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
@@ -1725,7 +1728,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			aeEvent.setDataMap(dataMap);
 
 			// GST parameters
-			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(getReceiptHeader().getFinID());
+			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(rch.getFinID());
 			if (gstExecutionMap != null) {
 				for (String mapkey : gstExecutionMap.keySet()) {
 					if (StringUtils.isNotBlank(mapkey)) {

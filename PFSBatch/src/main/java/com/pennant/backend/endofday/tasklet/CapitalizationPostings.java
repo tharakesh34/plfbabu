@@ -122,6 +122,7 @@ public class CapitalizationPostings implements Tasklet {
 
 				// **** Accounting Set Execution for Amortization ******//
 
+				aeEvent.setFinID(resultSet.getLong("FinID"));
 				aeEvent.setFinReference(resultSet.getString("FinReference"));
 				aeEvent.setAccountingEvent(AccountingEvent.COMPOUND);
 				aeEvent.setBranch(resultSet.getString("FinBranch"));
@@ -180,7 +181,7 @@ public class CapitalizationPostings implements Tasklet {
 	 */
 	private String prepareSelectQuery() {
 
-		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinReference, T1.FinBranch, T1.FinType, ");
+		StringBuilder selQuery = new StringBuilder(" SELECT T1.FinID, T1.FinReference, T1.FinBranch, T1.FinType, ");
 		selQuery.append(" T1.FinCcy , T1.CustID , T2.CpzAmount, T1.TotalCpz ,");
 		selQuery.append(" (SELECT SUM(CpzAmount)  TotCurCpzAmt FROM  FinScheduleDetails ");
 		selQuery.append(" WHERE DefSchdDate < '");

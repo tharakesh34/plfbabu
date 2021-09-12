@@ -884,6 +884,7 @@ public class ProjectedAmortizationService {
 			aeEvent.setBranch(amz.getFinBranch());
 			aeEvent.setCcy(amz.getFinCcy());
 			aeEvent.setCustID(amz.getCustID());
+			aeEvent.setFinID(amz.getFinID());
 			aeEvent.setFinReference(amz.getFinReference());
 			aeEvent.setEntityCode(amz.getEntityCode());
 			aeEvent.setFinType(amz.getFinType());

@@ -129,6 +129,7 @@ public class DisbInsPostingEvent extends PostingEvent {
 			aeEvent.setValueDate(fap.getLlDate());
 			aeEvent.setCcy(fap.getDisbCCy());
 			aeEvent.setBranch(fm.getFinBranch());
+			aeEvent.setFinID(finID);
 			aeEvent.setFinReference(finReference);
 			aeEvent.setFinType(fm.getFinType());
 			aeEvent.setCustID(fm.getCustID());

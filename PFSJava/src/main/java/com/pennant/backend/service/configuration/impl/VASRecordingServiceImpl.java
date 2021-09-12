@@ -661,7 +661,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				vASRecording.setReceivableAdviseId(recording.getReceivableAdviseId());
 				updateInsuranceDetails(vASRecording.getVasReference(), vASRecording.getVasStatus());
 			} else {
-				executeAccountingProcess(auditHeader, DateUtility.getAppDate());
+				executeAccountingProcess(auditHeader, SysParamUtil.getAppDate());
 			}
 		}
 
@@ -1801,7 +1801,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		aeEvent.setAccountingEvent(AccountingEvent.CANINS);
 		aeEvent.setFinReference(vASRecording.getVasReference());
 		aeEvent.setEntityCode(vASRecording.getEntityCode());
-		aeEvent.setValueDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setCcy(SysParamUtil.getAppCurrency());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -1906,8 +1906,8 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		manualAdvise.setRemarks("Insurance cancel or surrender receivble amount.");
 		manualAdvise.setBounceID(0);
 		manualAdvise.setReceiptID(0);
-		manualAdvise.setValueDate(DateUtility.getAppDate());
-		manualAdvise.setPostDate(DateUtility.getAppDate());
+		manualAdvise.setValueDate(SysParamUtil.getAppDate());
+		manualAdvise.setPostDate(SysParamUtil.getAppDate());
 		manualAdvise.setReservedAmt(BigDecimal.ZERO);
 		manualAdvise.setBalanceAmt(vASRecording.getCancelAmt());
 
@@ -2115,15 +2115,15 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				return auditDetail;
 			}
 			if (vasRecording.getValueDate() == null) {
-				vasRecording.setValueDate(DateUtility.getAppDate());
+				vasRecording.setValueDate(SysParamUtil.getAppDate());
 			} else {
 				if (vasRecording.getValueDate().before(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE))
-						|| vasRecording.getValueDate().after(DateUtility.getAppDate())) {
+						|| vasRecording.getValueDate().after(SysParamUtil.getAppDate())) {
 					String[] valueParm = new String[3];
 					valueParm[0] = "Value Date";
 					valueParm[1] = DateUtility
 							.formatToLongDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DFT_START_DATE));
-					valueParm[2] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+					valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 					return auditDetail;
 				}
@@ -2136,11 +2136,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
-					if (vasRecording.getAccrualTillDate().before(DateUtility.getAppDate()) || vasRecording
+					if (vasRecording.getAccrualTillDate().before(SysParamUtil.getAppDate()) || vasRecording
 							.getAccrualTillDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "AccrualTillDate";
-						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return auditDetail;
@@ -2156,7 +2156,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				vasRecording.setAccrualTillDate(DateUtility.getAppDate());
+				vasRecording.setAccrualTillDate(SysParamUtil.getAppDate());
 			}
 			if (vASConfiguration.isRecurringType()) {
 				if (vasRecording.getRecurringDate() == null) {
@@ -2166,12 +2166,12 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				} else {
-					if (vasRecording.getRecurringDate().before(DateUtility.getAppDate())
+					if (vasRecording.getRecurringDate().before(SysParamUtil.getAppDate())
 							|| vasRecording.getRecurringDate().after(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"))) {
 						String[] valueParm = new String[3];
 						valueParm[0] = "RecurringDate";
 						valueParm[2] = DateUtility.formatToLongDate(SysParamUtil.getValueAsDate("APP_DFT_END_DATE"));
-						valueParm[1] = DateUtility.formatToLongDate(DateUtility.getAppDate());
+						valueParm[1] = DateUtility.formatToLongDate(SysParamUtil.getAppDate());
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm)));
 						return auditDetail;
 					}
@@ -2185,7 +2185,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 					auditDetail.setErrorDetail(errorDetail);
 					return auditDetail;
 				}
-				vasRecording.setRecurringDate(DateUtility.getAppDate());
+				vasRecording.setRecurringDate(SysParamUtil.getAppDate());
 				vasRecording.setRenewalFee(BigDecimal.ZERO);
 			}
 			if (StringUtils.isNotBlank(vasRecording.getDsaId())) {

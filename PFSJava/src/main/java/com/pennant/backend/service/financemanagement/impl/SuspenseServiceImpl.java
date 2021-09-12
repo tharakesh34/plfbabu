@@ -643,4 +643,12 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		return auditDetail;
 	}
 
+	public void setFinanceSuspHeadDAO(FinanceSuspHeadDAO financeSuspHeadDAO) {
+		this.financeSuspHeadDAO = financeSuspHeadDAO;
+	}
+
+	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {
+		this.financeReferenceDetailDAO = financeReferenceDetailDAO;
+	}
+
 }

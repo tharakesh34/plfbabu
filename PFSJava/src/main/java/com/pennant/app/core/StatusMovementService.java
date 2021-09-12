@@ -55,10 +55,10 @@ public class StatusMovementService extends ServiceHelper {
 	private static Logger logger = LogManager.getLogger(StatusMovementService.class);
 
 	static final String NORM_PD = "select * from FinPftDetails where CurODDays=1 and PrvODDate = ? and  CustId = ?";
-	static final String PD_NORM = " select * from (select FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate  from FInODDetails group by FinReference)t "
-			+ "	inner join FinPftDetails fpd on fpd.FinReference=t.FinReference  where FinODTillDate=? and fpd.CurODDays=0 and fpd.CustId = ?";
-	static final String PD_PIS = "select * from (select FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t"
-			+ "	inner join FinPftDetails fpd on fpd.FinReference=t.FinReference and fpd.CustId = ?";
+	static final String PD_NORM = " select * from (select FinId, FinReference, SUM(FinCurODAmt) FinCurODAmt,MAX(FinODTillDate) FinODTillDate  from FInODDetails group by FinId, FinReference)t "
+			+ "	inner join FinPftDetails fpd on fpd.FinID=t.FinID  where FinODTillDate=? and fpd.CurODDays=0 and fpd.CustId = ?";
+	static final String PD_PIS = "select * from (select FinID, FinReference from FinSuspHead where FinIsInSusp=1 and FinSuspTrfDate= ?) t"
+			+ "	inner join FinPftDetails fpd on fpd.FinID=t.FinID and fpd.CustId = ?";
 
 	/**
 	 * @param custid
@@ -161,6 +161,7 @@ public class StatusMovementService extends ServiceHelper {
 	private AEEvent getAEAmountCodes(ResultSet resultSet, String event, Date valueDate) throws SQLException {
 		AEEvent aeEvent = new AEEvent();
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+		aeEvent.setFinID(resultSet.getLong("FinID"));
 		aeEvent.setFinReference(resultSet.getString("FinReference"));
 		aeEvent.setFinType(resultSet.getString("FinType").trim());
 		aeEvent.setPromotion(resultSet.getString("Promotion").trim());

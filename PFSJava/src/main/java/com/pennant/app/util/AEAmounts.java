@@ -78,6 +78,7 @@ public class AEAmounts implements Serializable {
 		AEAmountCodes amountCodes = new AEAmountCodes();
 		EventProperties eventProperties = fm.getEventProperties();
 
+		aeEvent.setFinID(pfd.getFinID());
 		aeEvent.setFinReference(pfd.getFinReference());
 		aeEvent.setAccountingEvent(finEvent);
 
@@ -103,7 +104,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setPftAB(pfd.getTotalPftBal());
 		amountCodes.setCpzTot(pfd.getTotalPftCpz());
 
-		//principal
+		// principal
 		amountCodes.setPri(pfd.getTotalpriSchd());
 		amountCodes.setPriAP(pfd.getTotalPriPaid());
 		amountCodes.setPriAB(pfd.getTotalPriBal());
@@ -119,7 +120,7 @@ public class AEAmounts implements Serializable {
 		amountCodes.setPriSP(pfd.getTdSchdPriPaid());
 		amountCodes.setPriSB(pfd.getTdSchdPriBal());
 
-		//Accural
+		// Accural
 		amountCodes.setAccrue(pfd.getPftAccrued());
 		amountCodes.setdAccrue(amountCodes.getAccrue().subtract(pfd.getAcrTillLBD()));
 		amountCodes.setAccrueS(pfd.getPftAccrueSusp());
@@ -134,7 +135,7 @@ public class AEAmounts implements Serializable {
 		if (pfd.getLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
 			amountCodes.setdLPIAmz(pfd.getLpiAmount().subtract(pfd.getLpiTillLBD()));
 
-			// Calculate GST Amount on LPI Amount 
+			// Calculate GST Amount on LPI Amount
 			if (pfd.getGstLpiAmount().compareTo(BigDecimal.ZERO) > 0) {
 				amountCodes.setdGSTLPIAmz(pfd.getGstLpiAmount().subtract(pfd.getGstLpiTillLBD()));
 			}
@@ -144,14 +145,14 @@ public class AEAmounts implements Serializable {
 		if (pfd.getLppAmount().compareTo(BigDecimal.ZERO) > 0) {
 			amountCodes.setdLPPAmz(pfd.getLppAmount().subtract(pfd.getLppTillLBD()));
 
-			// Calculate GST Amount on LPP Amount 
+			// Calculate GST Amount on LPP Amount
 			if (pfd.getGstLppAmount().compareTo(BigDecimal.ZERO) > 0) {
 				amountCodes.setdGSTLPPAmz(pfd.getGstLppAmount().subtract(pfd.getGstLppTillLBD()));
 			}
 		}
 
-		//-----------------------------------------------------------------------
-		//FIXME: PV 23MAR18
+		// -----------------------------------------------------------------------
+		// FIXME: PV 23MAR18
 		BigDecimal accruedIncome = BigDecimal.ZERO;
 		BigDecimal unRealizedIncome = BigDecimal.ZERO;
 
@@ -169,9 +170,9 @@ public class AEAmounts implements Serializable {
 
 		amountCodes.setuAmz(unRealizedIncome);
 
-		//-----------------------------------------------------------------------
+		// -----------------------------------------------------------------------
 
-		//OD Details
+		// OD Details
 		amountCodes.setODDays(pfd.getCurODDays());
 		amountCodes.setODInst(pfd.getNOODInst());
 		amountCodes.setPenaltyDue(pfd.getPenaltyDue());
@@ -184,10 +185,10 @@ public class AEAmounts implements Serializable {
 			amountCodes.setWriteOff(true);
 		}
 
-		//others
+		// others
 		amountCodes.setPaidInst(pfd.getNOPaidInst());
-		//amountCodes.setDisburse(pftDetail.getDisburse());
-		//amountCodes.setDownpay(pftDetail.getDownpay());
+		// amountCodes.setDisburse(pftDetail.getDisburse());
+		// amountCodes.setDownpay(pftDetail.getDownpay());
 		amountCodes.setDownpay(pfd.getDownPayment());
 		amountCodes.setAdvanceEMI(pfd.getAdvanceEMI());
 		amountCodes.setDaysFromFullyPaid(getNoDays(pfd.getFullPaidDate(), valueDate));

@@ -113,6 +113,7 @@ public class SuspensePostingUtil implements Serializable {
 		suspAmount = getFinanceScheduleDetailDAO().getSuspenseAmount(finID, valueDate);
 		suspFromDate = DateUtility.addDays(repayQueue.getRpyDate(), curOdDays);
 
+		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
 		amountCodes.setSuspNow(suspAmount);
 		aeEvent.setAccountingEvent(AccountingEvent.NORM_PIS);
@@ -242,6 +243,7 @@ public class SuspensePostingUtil implements Serializable {
 		}
 
 		// Creating DataSet using Finance Details
+		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
 		amountCodes.setSuspRls(suspAmtToMove);
 		aeEvent.setAccountingEvent(AccountingEvent.PIS_NORM);
@@ -252,7 +254,7 @@ public class SuspensePostingUtil implements Serializable {
 		aeEvent.setDataMap(dataMap);
 
 		// Postings Preparation
-		Date dateAppDate = DateUtility.getAppDate();
+		Date dateAppDate = SysParamUtil.getAppDate();
 		aeEvent.setAppDate(dateAppDate);
 		aeEvent.setAppValueDate(dateAppDate);
 		aeEvent.setValueDate(valueDate);

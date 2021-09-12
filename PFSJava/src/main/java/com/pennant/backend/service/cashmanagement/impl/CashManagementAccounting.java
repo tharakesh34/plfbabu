@@ -1,12 +1,12 @@
 package com.pennant.backend.service.cashmanagement.impl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
@@ -37,7 +37,7 @@ public class CashManagementAccounting {
 	public AEEvent generateAccounting(String eventCode, String userBranch, String postingBranch,
 			BigDecimal transactionAmount, long partnerBankId, long requestId, String finReference, long receiptId) {
 
-		//Reference
+		// Reference
 		StringBuffer buffer = new StringBuffer("CM_");
 		buffer.append(eventCode);
 		buffer.append(postingBranch);
@@ -45,21 +45,25 @@ public class CashManagementAccounting {
 
 		AEEvent aeEvent = new AEEvent();
 		if (receiptId > 0) { // Avance Requirement
-			//aeEvent.setPostingId(receiptId);
+			// aeEvent.setPostingId(receiptId);
 			aeEvent.setPostRefId(receiptId);
 		}
 		aeEvent.setAeAmountCodes(new AEAmountCodes());
 		aeEvent.setBranch(postingBranch);
 		aeEvent.setCcy(SysParamUtil.getAppCurrency());
+
 		if (StringUtils.isEmpty(finReference)) {
 			aeEvent.setFinReference(StringUtils.left(buffer.toString(), 20));
 		} else {
 			aeEvent.setFinReference(finReference);
 		}
+
+		Date appDate = SysParamUtil.getAppDate();
+
 		aeEvent.setPostingUserBranch(postingBranch);
 		aeEvent.setAccountingEvent(eventCode);
-		aeEvent.setValueDate(DateUtility.getAppDate());
-		aeEvent.setPostDate(DateUtility.getAppDate());
+		aeEvent.setValueDate(appDate);
+		aeEvent.setPostDate(appDate);
 		aeEvent.setPostingType(AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_BRANCH);
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

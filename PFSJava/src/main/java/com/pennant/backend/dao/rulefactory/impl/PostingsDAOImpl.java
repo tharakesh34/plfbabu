@@ -98,7 +98,8 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		}
 
 		sql.append(" Where FinReference = ? and FinEvent in (");
-		JdbcUtil.getInCondition(Arrays.asList(finEvent.split(",")));
+		List<String> asList = Arrays.asList(finEvent.split(","));
+		sql.append(JdbcUtil.getInCondition(asList));
 		sql.append(")");
 
 		if (!showZeroBal) {
@@ -126,7 +127,9 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 				ps.setString(index++, event);
 			}
 
-			ps.setBigDecimal(index++, BigDecimal.ZERO);
+			if (!showZeroBal) {
+				ps.setBigDecimal(index++, BigDecimal.ZERO);
+			}
 
 		}, (rs, rowNum) -> {
 			ReturnDataSet rds = new ReturnDataSet();
@@ -168,7 +171,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	public List<ReturnDataSet> getPostingsByTransIdList(List<Long> tranIdList) {
 		StringBuilder sql = getSelectQuery();
 		sql.append(" Where LinkedTranId in (");
-		sql.append(JdbcUtil.getInConditionForLong(tranIdList));
+		sql.append(JdbcUtil.getInCondition(tranIdList));
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());

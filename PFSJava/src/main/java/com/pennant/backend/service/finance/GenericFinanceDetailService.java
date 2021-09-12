@@ -2550,8 +2550,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @throws IllegalAccessException
 	 * @throws AccountNotFoundException
 	 */
-	protected AEEvent executeBounceDueAccounting(FinanceMain finMain, Date valueDate, ManualAdvise advise,
-			String postBranch, String accFor) {
+	protected AEEvent executeBounceDueAccounting(FinanceMain fm, Date valueDate, ManualAdvise advise, String postBranch,
+			String accFor) {
 		logger.debug("Entering");
 
 		List<Long> acSetIdList = new ArrayList<>();
@@ -2582,15 +2582,17 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAeAmountCodes(new AEAmountCodes());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
-		aeEvent.setFinReference(finMain.getFinReference());
-		aeEvent.setCustID(finMain.getCustID());
-		aeEvent.setFinType(finMain.getFinType());
-		aeEvent.setBranch(finMain.getFinBranch());
-		aeEvent.setCcy(finMain.getFinCcy());
+
+		aeEvent.setFinID(fm.getFinID());
+		aeEvent.setFinReference(fm.getFinReference());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setFinType(fm.getFinType());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setValueDate(valueDate);
 		aeEvent.setPostDate(SysParamUtil.getAppDate());
-		aeEvent.setEntityCode(finMain.getLovDescEntityCode());
+		aeEvent.setEntityCode(fm.getLovDescEntityCode());
 		aeEvent.setEOD(false);
 
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
@@ -2601,7 +2603,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		aeEvent.setAccountingEvent(AccountingEvent.MANFEE);
 		aeEvent.getAcSetIDList().addAll(acSetIdList);
 		amountCodes = aeEvent.getAeAmountCodes();
-		amountCodes.setFinType(finMain.getFinType());
+		amountCodes.setFinType(fm.getFinType());
 
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		dataMap = amountCodes.getDeclaredFieldValues(dataMap);
@@ -2611,7 +2613,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finMain.getFinID());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);
@@ -2670,7 +2672,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		}
 
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finMain.getFinID());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
 				if (StringUtils.isNotBlank(key)) {
@@ -2699,7 +2701,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// GST Invoice Creation
-		createGSTInvoiceForBounce(finMain, advise, aeEvent, feeType, taxHeader);
+		createGSTInvoiceForBounce(fm, advise, aeEvent, feeType, taxHeader);
 
 		logger.debug("Leaving");
 		return aeEvent;

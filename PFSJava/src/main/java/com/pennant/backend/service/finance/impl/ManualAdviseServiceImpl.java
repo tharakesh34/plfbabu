@@ -432,7 +432,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		return aeEvent.getReturnDataSet();
 	}
 
-	private AEEvent prepareAccSetData(ManualAdvise advise, String postBranch, FinanceMain financeMain) {
+	private AEEvent prepareAccSetData(ManualAdvise advise, String postBranch, FinanceMain fm) {
 		logger.debug(Literal.ENTERING);
 
 		boolean taxApplicable = advise.isTaxApplicable();
@@ -447,24 +447,25 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			amountCodes = new AEAmountCodes();
 		}
 
-		amountCodes.setFinType(financeMain.getFinType());
+		amountCodes.setFinType(fm.getFinType());
 
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setValueDate(advise.getValueDate());
 		aeEvent.setPostDate(SysParamUtil.getAppDate());
-		aeEvent.setEntityCode(financeMain.getEntityCode());
+		aeEvent.setEntityCode(fm.getEntityCode());
 
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCustID(financeMain.getCustID());
-		aeEvent.setCcy(financeMain.getFinCcy());
-		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setFinID(fm.getFinID());
+		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
 
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);
@@ -545,7 +546,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		}
 
 		// GST parameters
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 		if (gstExecutionMap != null) {
 			for (String key : gstExecutionMap.keySet()) {
 				if (StringUtils.isNotBlank(key)) {

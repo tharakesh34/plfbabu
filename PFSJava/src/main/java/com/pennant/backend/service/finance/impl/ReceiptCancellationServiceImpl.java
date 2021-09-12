@@ -542,7 +542,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return auditHeader;
 	}
 
-	private boolean processSuccessPostings(FinReceiptHeader receiptHeader, String postBranch, FinanceMain financeMain) {
+	private boolean processSuccessPostings(FinReceiptHeader receiptHeader, String postBranch, FinanceMain fm) {
 		logger.debug(Literal.ENTERING);
 
 		AEEvent aeEvent = new AEEvent();
@@ -560,22 +560,23 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			partnerBankActype = recDtl.getPartnerBankAcType();
 		}
 		long postingId = postingsDAO.getPostingId();
-		aeEvent.setCustID(financeMain.getCustID());
-		aeEvent.setFinReference(financeMain.getFinReference());
-		aeEvent.setFinType(financeMain.getFinType());
-		aeEvent.setPromotion(financeMain.getPromotionCode());
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCcy(financeMain.getFinCcy());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setFinID(fm.getFinID());
+		aeEvent.setFinReference(fm.getFinReference());
+		aeEvent.setFinType(fm.getFinType());
+		aeEvent.setPromotion(fm.getPromotionCode());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setPostingUserBranch(receiptHeader.getCashierBranch());
 		aeEvent.setLinkedTranId(0);
 		aeEvent.setAccountingEvent(AccountingEvent.REPAY);
 		aeEvent.setValueDate(receiptHeader.getValueDate());
 		aeEvent.setPostRefId(receiptHeader.getReceiptID());
 		aeEvent.setPostingId(postingId);
-		aeEvent.setEntityCode(financeMain.getEntityCode());
+		aeEvent.setEntityCode(fm.getEntityCode());
 
 		amountCodes.setUserBranch(receiptHeader.getCashierBranch());
-		amountCodes.setFinType(financeMain.getFinType());
+		amountCodes.setFinType(fm.getFinType());
 		amountCodes.setPartnerBankAc(partnerbank);
 		amountCodes.setPartnerBankAcType(partnerBankActype);
 		amountCodes.setToExcessAmt(BigDecimal.ZERO);
@@ -597,9 +598,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		aeEvent.getAcSetIDList().clear();
 
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(), eventCode,
-				FinanceConstants.MODULEID_FINTYPE));
-		amountCodes.setFinType(financeMain.getFinType());
+		aeEvent.getAcSetIDList().add(
+				AccountingConfigCache.getAccountSetID(fm.getFinType(), eventCode, FinanceConstants.MODULEID_FINTYPE));
+		amountCodes.setFinType(fm.getFinType());
 
 		HashMap<String, Object> extDataMap = (HashMap<String, Object>) amountCodes.getDeclaredFieldValues();
 		extDataMap.put("PB_ReceiptAmount", receiptHeader.getReceiptAmount());

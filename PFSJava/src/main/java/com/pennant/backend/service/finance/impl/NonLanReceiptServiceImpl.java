@@ -555,11 +555,11 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 	public long executeAccounting(FinReceiptData receiptData) {
 		logger.info(Literal.ENTERING);
-		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
-		String receiptMode = receiptHeader.getReceiptMode();
-		String receiptChannel = receiptHeader.getReceiptChannel();
-		BigDecimal receiptAmount = receiptHeader.getReceiptAmount();
+		String receiptMode = rch.getReceiptMode();
+		String receiptChannel = rch.getReceiptChannel();
+		BigDecimal receiptAmount = rch.getReceiptAmount();
 
 		/*
 		 * if (RepayConstants.RECEIPTMODE_CASH.equals(receiptMode) && !RECEIPT_SOURCE_MOBILE.equals(receiptChannel)) {
@@ -568,26 +568,27 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		 */
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setEntityCode(receiptHeader.getEntityCode());
-		aeEvent.setBranch(receiptHeader.getCashierBranch());
-		aeEvent.setPostingUserBranch(receiptHeader.getCashierBranch());
+		aeEvent.setEntityCode(rch.getEntityCode());
+		aeEvent.setBranch(rch.getCashierBranch());
+		aeEvent.setPostingUserBranch(rch.getCashierBranch());
 		aeEvent.setAccountingEvent(AccountingEvent.NLRCPT);
-		aeEvent.setFinReference(receiptHeader.getReference());
+		aeEvent.setFinID(rch.getFinID());
+		aeEvent.setFinReference(rch.getReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
-		aeEvent.setPostRefId(receiptHeader.getReceiptID());
+		aeEvent.setPostRefId(rch.getReceiptID());
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
 			amountCodes = new AEAmountCodes();
 		}
 
-		receiptHeader.getPartnerBankCode();
-		aeEvent.setBranch(receiptHeader.getPostBranch());
+		rch.getPartnerBankCode();
+		aeEvent.setBranch(rch.getPostBranch());
 		aeEvent.setCcy(SysParamUtil.getAppCurrency());
-		amountCodes.setEntitycode(receiptHeader.getEntityCode());
-		amountCodes.setUserBranch(receiptHeader.getCashierBranch());
+		amountCodes.setEntitycode(rch.getEntityCode());
+		amountCodes.setUserBranch(rch.getCashierBranch());
 		amountCodes.setReceiptChannel(receiptChannel);
-		amountCodes.setPaymentType(receiptHeader.getReceiptDetails().get(0).getPaymentType());
+		amountCodes.setPaymentType(rch.getReceiptDetails().get(0).getPaymentType());
 		Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
 
 		receiptData.getReceiptHeader().getReceiptDetails().get(0).getDeclaredFieldValues(aeEvent.getDataMap());
@@ -607,12 +608,12 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 
 		dataMap = amountCodes.getDeclaredFieldValues();
 
-		receiptHeader.getReceiptDetails().get(0).getDeclaredFieldValues(aeEvent.getDataMap());
+		rch.getReceiptDetails().get(0).getDeclaredFieldValues(aeEvent.getDataMap());
 		aeEvent.setDataMap(dataMap);
 
 		aeEvent.getDataMap().put("rd_amount", amount);
-		aeEvent.getDataMap().put("ae_receiptSource", receiptHeader.getReceiptSource());
-		aeEvent.getDataMap().put("ae_receiptSourceAcType", receiptHeader.getReceiptSourceAcType());
+		aeEvent.getDataMap().put("ae_receiptSource", rch.getReceiptSource());
+		aeEvent.getDataMap().put("ae_receiptSourceAcType", rch.getReceiptSourceAcType());
 
 		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.NLRCPT, AccountingEvent.NLRCPT);
 		aeEvent.getAcSetIDList().add(accountsetId);

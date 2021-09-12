@@ -410,7 +410,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		StringBuilder sql = new StringBuilder("Update FinReceiptDetail");
 		sql.append(" Set Status = ?");
 		sql.append(" Where ReceiptID in (");
-		sql.append(JdbcUtil.getInConditionForLong(receiptIdList));
+		sql.append(JdbcUtil.getInCondition(receiptIdList));
 		sql.append(" )");
 
 		logger.debug(Literal.SQL + sql.toString());

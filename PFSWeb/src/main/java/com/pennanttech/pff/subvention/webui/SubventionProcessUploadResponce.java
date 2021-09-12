@@ -443,24 +443,27 @@ public class SubventionProcessUploadResponce extends BasicDao<SettlementProcess>
 		}
 
 		// Finance main
-		FinanceMain financeMain = manualAdviseDAO.getFinanceDetails(finID);
-		amountCodes.setFinType(financeMain.getFinType());
+		FinanceMain fm = manualAdviseDAO.getFinanceDetails(finID);
+		amountCodes.setFinType(fm.getFinType());
 
 		aeEvent.setPostingUserBranch(postBranch);
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setPostDate(SysParamUtil.getAppDate());
-		aeEvent.setEntityCode(financeMain.getEntityCode());
+		aeEvent.setEntityCode(fm.getEntityCode());
 
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCustID(financeMain.getCustID());
-		aeEvent.setCcy(financeMain.getFinCcy());
-		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setCcy(fm.getFinCcy());
+
+		aeEvent.setFinID(fm.getFinID());
+		aeEvent.setFinReference(fm.getFinReference());
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
 
 		eventMapping.put("ae_oemSbvAmount", mbdAmount);
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.OEMSBV,
+		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.OEMSBV,
 				FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 

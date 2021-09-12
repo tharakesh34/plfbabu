@@ -391,6 +391,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		// Accounting Process Execution
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.FEEPAY);
+		aeEvent.setFinID(rch.getFinID());
 		aeEvent.setFinReference(rch.getReference());
 		if (StringUtils.isNotBlank(rch.getExtReference())) {
 			aeEvent.setFinReference(rch.getExtReference());

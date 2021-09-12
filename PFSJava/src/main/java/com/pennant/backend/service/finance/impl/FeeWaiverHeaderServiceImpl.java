@@ -1581,19 +1581,20 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		return aeEvent;
 	}
 
-	private AEEvent prepareAEEvent(FinanceMain financeMain, FeeWaiverHeader feeWaiverHeader) {
+	private AEEvent prepareAEEvent(FinanceMain fm, FeeWaiverHeader feeWaiverHeader) {
 		AEEvent aeEvent;
 		aeEvent = new AEEvent();
 		aeEvent.setPostingUserBranch(feeWaiverHeader.getUserDetails().getBranchCode());
-		aeEvent.setEntityCode(financeMain.getEntityCode());
+		aeEvent.setEntityCode(fm.getEntityCode());
 		aeEvent.setAccountingEvent(AccountingEvent.WAIVER);
-		aeEvent.setFinReference(financeMain.getFinReference());
+		aeEvent.setFinID(fm.getFinID());
+		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCcy(financeMain.getFinCcy());
-		aeEvent.setCustID(financeMain.getCustID());
-		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(financeMain.getFinType(),
-				AccountingEvent.WAIVER, FinanceConstants.MODULEID_FINTYPE));
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.WAIVER,
+				FinanceConstants.MODULEID_FINTYPE));
 
 		return aeEvent;
 	}

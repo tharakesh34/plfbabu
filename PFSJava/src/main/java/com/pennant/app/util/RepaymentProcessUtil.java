@@ -486,6 +486,7 @@ public class RepaymentProcessUtil {
 		}
 
 		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setFinID(finID);
 		aeEvent.setFinReference(finReference);
 		aeEvent.setFinType(finType);
 		aeEvent.setPromotion(fm.getPromotionCode());
@@ -1060,6 +1061,7 @@ public class RepaymentProcessUtil {
 		}
 
 		aeEvent.setCustID(financeMain.getCustID());
+		aeEvent.setFinID(financeMain.getFinID());
 		aeEvent.setFinReference(financeMain.getFinReference());
 		aeEvent.setFinType(financeMain.getFinType());
 		aeEvent.setPromotion(financeMain.getPromotionCode());

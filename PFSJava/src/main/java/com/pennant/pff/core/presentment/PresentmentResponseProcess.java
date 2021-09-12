@@ -424,6 +424,7 @@ public class PresentmentResponseProcess implements Runnable {
 		String finType = fm.getFinType();
 
 		AEEvent aeEvent = new AEEvent();
+		aeEvent.setFinID(finID);
 		aeEvent.setFinReference(finReference);
 		aeEvent.setCustID(fm.getCustID());
 

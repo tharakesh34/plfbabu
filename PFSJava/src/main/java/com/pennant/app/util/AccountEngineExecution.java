@@ -309,6 +309,7 @@ public class AccountEngineExecution implements Serializable {
 
 			// Set Object Data of ReturnDataSet(s)
 			returnDataSet.setLinkedTranId(aeEvent.getLinkedTranId());
+			returnDataSet.setFinID(aeEvent.getFinID());
 			returnDataSet.setFinReference(aeEvent.getFinReference());
 			returnDataSet.setFinEvent(aeEvent.getAccountingEvent());
 			returnDataSet.setLovDescEventCodeName(txnEntry.getLovDescEventCodeDesc());

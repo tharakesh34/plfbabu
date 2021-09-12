@@ -481,21 +481,26 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 			amountCodes = new AEAmountCodes();
 		}
 
-		FinanceMain financeMain = subvention.getFinanceMain();
+		FinanceMain fm = subvention.getFinanceMain();
 		// Finance main
-		amountCodes.setFinType(financeMain.getFinType());
+		amountCodes.setFinType(fm.getFinType());
 
-		aeEvent.setPostingUserBranch(financeMain.getFinBranch());
+		aeEvent.setPostingUserBranch(fm.getFinBranch());
 		Date appDate = SysParamUtil.getAppDate();
 		aeEvent.setValueDate(appDate);
 		aeEvent.setPostDate(appDate);
-		aeEvent.setEntityCode(financeMain.getEntityCode());
+		aeEvent.setEntityCode(fm.getEntityCode());
 
-		aeEvent.setBranch(financeMain.getFinBranch());
-		aeEvent.setCustID(financeMain.getCustID());
-		aeEvent.setCcy(financeMain.getFinCcy());
-		String finReference = financeMain.getFinReference();
+		aeEvent.setBranch(fm.getFinBranch());
+		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setCcy(fm.getFinCcy());
+
+		Long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
+		aeEvent.setFinID(finID);
 		aeEvent.setFinReference(finReference);
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 		Map<String, Object> eventMapping = aeEvent.getDataMap();
 
@@ -509,7 +514,7 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 		eventMapping.put("ae_oemProcAmount", procAmt);
 
 		aeEvent.setDataMap(eventMapping);
-		long accountsetId = AccountingConfigCache.getAccountSetID(financeMain.getFinType(), AccountingEvent.OEMSBV,
+		long accountsetId = AccountingConfigCache.getAccountSetID(fm.getFinType(), AccountingEvent.OEMSBV,
 				FinanceConstants.MODULEID_FINTYPE);
 		aeEvent.getAcSetIDList().add(accountsetId);
 

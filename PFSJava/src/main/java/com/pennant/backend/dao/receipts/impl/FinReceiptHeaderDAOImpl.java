@@ -458,7 +458,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	public List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ReceiptID IN (");
-		sql.append(JdbcUtil.getInConditionForLong(receipts));
+		sql.append(JdbcUtil.getInCondition(receipts));
 		sql.append(")  and Reference is null ");
 
 		logger.debug(Literal.SQL + sql.toString());

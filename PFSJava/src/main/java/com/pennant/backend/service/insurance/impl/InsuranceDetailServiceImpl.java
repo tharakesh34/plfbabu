@@ -279,18 +279,17 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 	 * process
 	 */
 	@Override
-	public long executeInsPartnerAccountingProcess(InsuranceDetails details, VASRecording vASRecording)
-			throws Exception {
+	public long executeInsPartnerAccountingProcess(InsuranceDetails insd, VASRecording vASRecording) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		// VasconfigurationDetails
 		vASRecording.setVasConfiguration(getVASConfigurationByCode(vASRecording.getProductCode()));
 
 		AEEvent aeEvent = new AEEvent();
-		aeEvent.setPostingUserBranch(details.getUserDetails().getBranchCode());
-		aeEvent.setEntityCode(details.getEntityCode());
+		aeEvent.setPostingUserBranch(insd.getUserDetails().getBranchCode());
+		aeEvent.setEntityCode(insd.getEntityCode());
 		aeEvent.setAccountingEvent(AccountingEvent.INSADJ);
-		aeEvent.setFinReference(details.getReference());
+		aeEvent.setFinReference(insd.getReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -322,7 +321,7 @@ public class InsuranceDetailServiceImpl extends GenericService<InsuranceDetails>
 		amountCodes.setDealerCode(vehicleDealer.getDealerShortCode());
 
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
-		details.getDeclaredFieldValues(aeEvent.getDataMap());
+		insd.getDeclaredFieldValues(aeEvent.getDataMap());
 
 		long accountsetId = accountingSetDAO.getAccountingSetId(AccountingEvent.INSADJ, AccountingEvent.INSADJ);
 		aeEvent.getAcSetIDList().add(accountsetId);

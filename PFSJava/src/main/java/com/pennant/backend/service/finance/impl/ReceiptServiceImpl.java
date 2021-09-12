@@ -1085,6 +1085,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		aeEvent.setEntityCode(fm.getEntityCode());
 		aeEvent.setPostingUserBranch(rd.getReceiptHeader().getCashierBranch());
 		aeEvent.setAccountingEvent(AccountingEvent.RECIP);
+		aeEvent.setFinID(rd.getFinID());
 		aeEvent.setFinReference(rd.getFinReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 

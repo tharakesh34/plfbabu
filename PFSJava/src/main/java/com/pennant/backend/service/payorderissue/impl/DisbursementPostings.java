@@ -51,13 +51,12 @@ public class DisbursementPostings {
 		return datasetList;
 	}
 
-	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(List<FinAdvancePayments> advPaymentsList,
-			FinanceMain finMain, String usrBranch)
-			throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	private Map<Long, List<ReturnDataSet>> prepareDisbPosting(List<FinAdvancePayments> advPaymentsList, FinanceMain fm,
+			String usrBranch) throws IllegalAccessException, InvocationTargetException, InterfaceException {
 		logger.debug(Literal.ENTERING);
 
-		long finID = finMain.getFinID();
-		String finRef = finMain.getFinReference();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		Map<Long, List<ReturnDataSet>> disbMap = new HashMap<>();
 
@@ -81,9 +80,10 @@ public class DisbursementPostings {
 
 			aeEvent.setValueDate(finAdvancePayments.getLlDate());
 			aeEvent.setCcy(finAdvancePayments.getDisbCCy());
-			aeEvent.setBranch(finMain.getFinBranch());
-			aeEvent.setFinReference(finRef);
-			aeEvent.setFinType(finMain.getFinType());
+			aeEvent.setBranch(fm.getFinBranch());
+			aeEvent.setFinID(finID);
+			aeEvent.setFinReference(finReference);
+			aeEvent.setFinType(fm.getFinType());
 			if (StringUtils.equals(finAdvancePayments.getPaymentDetail(), DisbursementConstants.PAYMENT_DETAIL_VAS)) {
 				amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
 				aeEvent.setAccountingEvent(AccountingEvent.INSPAY);
@@ -95,11 +95,11 @@ public class DisbursementPostings {
 				aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 				amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
 			}
-			amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
+			amountCodes.setIntTdsAdjusted(fm.getIntTdsAdjusted());
 			amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 			amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
 			amountCodes.setFinType(aeEvent.getFinType());
-			aeEvent.setCustID(finMain.getCustID());
+			aeEvent.setCustID(fm.getCustID());
 			aeEvent.setValueDate(finAdvancePayments.getLlDate());
 			aeEvent.setPostingUserBranch(usrBranch);
 
@@ -117,15 +117,15 @@ public class DisbursementPostings {
 
 				dataMap.putAll(amountCodes.getDeclaredFieldValues());
 				aeEvent.setDataMap(dataMap);
-				if (StringUtils.isNotBlank(finMain.getPromotionCode())) {
-					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
+				if (StringUtils.isNotBlank(fm.getPromotionCode())) {
+					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
 							aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
 				} else {
 					aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),
 							aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_FINTYPE));
 				}
 				aeEvent.setLinkedTranId(0);
-				aeEvent.setEntityCode(finMain.getLovDescEntityCode());
+				aeEvent.setEntityCode(fm.getLovDescEntityCode());
 				engineExecution.getAccEngineExecResults(aeEvent);
 
 				datasetList = aeEvent.getReturnDataSet();
@@ -138,12 +138,12 @@ public class DisbursementPostings {
 		return disbMap;
 	}
 
-	public Map<Integer, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain finMain,
+	public Map<Integer, Long> prepareDisbPostingApproval(List<FinAdvancePayments> advPaymentsList, FinanceMain fm,
 			String usrBranch) throws InterfaceException {
 		logger.debug("Entering");
 
-		long finID = finMain.getFinID();
-		String finRef = finMain.getFinReference();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		Map<Integer, Long> disbMap = new HashMap<>();
 
@@ -192,9 +192,10 @@ public class DisbursementPostings {
 
 					aeEvent.setValueDate(finAdvancePayments.getLlDate());
 					aeEvent.setCcy(finAdvancePayments.getDisbCCy());
-					aeEvent.setBranch(finMain.getFinBranch());
-					aeEvent.setFinReference(finRef);
-					aeEvent.setFinType(finMain.getFinType());
+					aeEvent.setBranch(fm.getFinBranch());
+					aeEvent.setFinID(finID);
+					aeEvent.setFinReference(finReference);
+					aeEvent.setFinType(fm.getFinType());
 					if (StringUtils.equals(finAdvancePayments.getPaymentDetail(),
 							DisbursementConstants.PAYMENT_DETAIL_VAS)) {
 						amountCodes.setVasInstAmt(finAdvancePayments.getAmtToBeReleased());
@@ -208,20 +209,20 @@ public class DisbursementPostings {
 						amountCodes.setDisbInstAmt(finAdvancePayments.getAmtToBeReleased());
 						aeEvent.setAccountingEvent(AccountingEvent.DISBINS);
 					}
-					amountCodes.setIntTdsAdjusted(finMain.getIntTdsAdjusted());
+					amountCodes.setIntTdsAdjusted(fm.getIntTdsAdjusted());
 					amountCodes.setPartnerBankAc(finAdvancePayments.getPartnerBankAc());
 					amountCodes.setPartnerBankAcType(finAdvancePayments.getPartnerBankAcType());
 					amountCodes.setPaymentType(finAdvancePayments.getPaymentType());
 					amountCodes.setFinType(aeEvent.getFinType());
-					aeEvent.setCustID(finMain.getCustID());
+					aeEvent.setCustID(fm.getCustID());
 					aeEvent.setPostingUserBranch(usrBranch);
-					aeEvent.setEntityCode(finMain.getLovDescEntityCode());
+					aeEvent.setEntityCode(fm.getLovDescEntityCode());
 					// Prepare posting for new added
 					boolean posted = true;
 					dataMap.putAll(amountCodes.getDeclaredFieldValues());
 					aeEvent.setDataMap(dataMap);
-					if (StringUtils.isNotBlank(finMain.getPromotionCode()) && finMain.getPromotionSeqId() == 0) {
-						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(finMain.getPromotionCode(),
+					if (StringUtils.isNotBlank(fm.getPromotionCode()) && fm.getPromotionSeqId() == 0) {
+						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(fm.getPromotionCode(),
 								aeEvent.getAccountingEvent(), FinanceConstants.MODULEID_PROMOTION));
 					} else {
 						aeEvent.getAcSetIDList().add(AccountingConfigCache.getAccountSetID(aeEvent.getFinType(),

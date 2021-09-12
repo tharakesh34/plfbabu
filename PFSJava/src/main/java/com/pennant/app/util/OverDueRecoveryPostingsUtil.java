@@ -153,6 +153,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			aeEvent = new AEEvent();
 			aeEvent.setAeAmountCodes(new AEAmountCodes());
 			amountCodes = aeEvent.getAeAmountCodes();
+
+			aeEvent.setFinID(finID);
 			aeEvent.setFinReference(finReference);
 			aeEvent.setCustID(fm.getCustID());
 			aeEvent.setFinType(fm.getFinType());
@@ -1067,6 +1069,8 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				// Repayment is processing
 				AEEvent aeEvent = new AEEvent();
 				AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
+
+				aeEvent.setFinID(fm.getFinID());
 				aeEvent.setFinReference(fm.getFinReference());
 				amountCodes.setPenalty(penaltyPaidNow);
 				amountCodes.setWaiver(waiverAmt);

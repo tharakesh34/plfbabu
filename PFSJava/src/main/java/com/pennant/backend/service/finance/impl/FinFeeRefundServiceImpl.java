@@ -720,15 +720,16 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 	}
 
 	@Override
-	public AEEvent processAccounting(FinFeeRefundHeader feeRefundHeader) {
+	public AEEvent processAccounting(FinFeeRefundHeader frh) {
 		logger.debug(Literal.ENTERING);
 		AEEvent aeEvent = new AEEvent();
 		aeEvent.setAccountingEvent(AccountingEvent.FEEREFUND);
-		aeEvent.setFinReference(feeRefundHeader.getFinReference());
-		aeEvent.setCustCIF(feeRefundHeader.getLovDescCustCIF());
-		aeEvent.setBranch(feeRefundHeader.getFinBranch());
-		aeEvent.setCcy(feeRefundHeader.getFinCcy());
-		aeEvent.setCustID(feeRefundHeader.getCustId());
+		aeEvent.setFinID(frh.getFinID());
+		aeEvent.setFinReference(frh.getFinReference());
+		aeEvent.setCustCIF(frh.getLovDescCustCIF());
+		aeEvent.setBranch(frh.getFinBranch());
+		aeEvent.setCcy(frh.getFinCcy());
+		aeEvent.setCustID(frh.getCustId());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		if (amountCodes == null) {
@@ -737,7 +738,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 		}
 		BigDecimal toExcessAmt = BigDecimal.ZERO;
 		amountCodes.setToExcessAmt(toExcessAmt);
-		amountCodes.setFinType(feeRefundHeader.getFinType());
+		amountCodes.setFinType(frh.getFinType());
 		logger.debug(Literal.ENTERING);
 		return aeEvent;
 	}

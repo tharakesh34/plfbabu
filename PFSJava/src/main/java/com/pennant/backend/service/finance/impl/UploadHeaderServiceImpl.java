@@ -181,6 +181,7 @@ public class UploadHeaderServiceImpl extends GenericService<UploadHeader> implem
 		aeEvent.setBranch(fm.getFinBranch());
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setCustID(fm.getCustID());
+		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setEntityCode(fm.getEntityCode());
 		aeEvent.setFinType(fm.getFinType());

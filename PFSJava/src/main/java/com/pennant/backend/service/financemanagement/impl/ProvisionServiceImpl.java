@@ -436,6 +436,7 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 				FinanceConstants.MODULEID_FINTYPE);
 
 		aeEvent.setPostingUserBranch(auditHeader.getAuditBranchCode());
+		aeEvent.setFinID(provision.getFinID());
 		aeEvent.setFinReference(provision.getFinReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

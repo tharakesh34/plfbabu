@@ -22,7 +22,7 @@ public class ReturnDataSet implements Serializable {
 	@XmlElement
 	private String postref;
 	private String postingId;
-	private long finID;
+	private Long finID;
 	private String finReference;
 	@XmlElement(name = "accEvent")
 	private String finEvent;
@@ -180,11 +180,11 @@ public class ReturnDataSet implements Serializable {
 		this.finReference = finReference;
 	}
 
-	public long getFinID() {
+	public Long getFinID() {
 		return finID;
 	}
 
-	public void setFinID(long finID) {
+	public void setFinID(Long finID) {
 		this.finID = finID;
 	}
 

@@ -640,6 +640,8 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 
 			// Postings preparation
 			AEEvent aeEvent = new AEEvent();
+
+			aeEvent.setFinID(finID);
 			aeEvent.setFinReference(finReference);
 			aeEvent.setAccountingEvent(AccountingEvent.ASSIGNMENT);
 			aeEvent.setPostDate(SysParamUtil.getAppDate());

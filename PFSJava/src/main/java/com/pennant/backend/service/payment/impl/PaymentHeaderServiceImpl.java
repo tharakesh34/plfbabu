@@ -634,6 +634,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(fm.getFinID());
 
 		aeEvent.setCcy(fm.getFinCcy());
+		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
