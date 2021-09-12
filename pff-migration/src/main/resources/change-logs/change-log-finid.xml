@@ -5056,7 +5056,32 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-
-
+	
+	<changeSet id="196" author="murthy.y">
+		<addColumn tableName="FINRECEIPTHEADER">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="196.1" author="murthy.y">
+		<addColumn tableName="FINRECEIPTHEADER_TEMP">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="196.2" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE FINRECEIPTHEADER SET FINID = (SELECT M.FINID FROM FINID_MAPPING M WHERE FINRECEIPTHEADER.REFERENCE = M.FINREFERENCE);
+				UPDATE FINRECEIPTHEADER_TEMP SET FINID = (SELECT M.FINID FROM FINID_MAPPING M WHERE FINRECEIPTHEADER_TEMP.REFERENCE = M.FINREFERENCE);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="196.3" author="murthy.y">
+		<createIndex tableName="FINRECEIPTHEADER" indexName="idx_finreceiptheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+		<createIndex tableName="FINRECEIPTHEADER_TEMP" indexName="idx_finreceiptheader_t_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
 
 </databaseChangeLog>

@@ -213,7 +213,6 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxFinanceTaxDetail.getSelectedItem();
 		final long finID = (Long) selectedItem.getAttribute("finID");
-		final String finReference = (String) selectedItem.getAttribute("finReference");
 		FinanceTaxDetail financetaxdetail = financeTaxDetailService.getFinanceTaxDetail(finID);
 
 		if (financetaxdetail == null) {

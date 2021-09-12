@@ -132,7 +132,6 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 		Listitem selectedItem = this.listBoxOCRMaintenance.getSelectedItem();
 
 		// Get the selected entity.
-		String finReference = (String) selectedItem.getAttribute("id");
 		long finID = (Long) selectedItem.getAttribute("finID");
 		FinOCRHeader finOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(finID, "_View");
 

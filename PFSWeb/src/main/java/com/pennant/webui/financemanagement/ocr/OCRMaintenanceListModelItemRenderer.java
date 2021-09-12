@@ -21,8 +21,7 @@ public class OCRMaintenanceListModelItemRenderer implements ListitemRenderer<Fin
 		Listcell lc;
 		lc = new Listcell(finOCRHeader.getFinReference());
 		lc.setParent(item);
-		lc = new Listcell(
-				PennantApplicationUtil.amountFormate(finOCRHeader.getTotalDemand(), 0));
+		lc = new Listcell(PennantApplicationUtil.amountFormate(finOCRHeader.getTotalDemand(), 0));
 		lc.setParent(item);
 		lc = new Listcell(finOCRHeader.getOcrType());
 		lc.setParent(item);
@@ -31,7 +30,7 @@ public class OCRMaintenanceListModelItemRenderer implements ListitemRenderer<Fin
 		lc = new Listcell(PennantJavaUtil.getLabel(finOCRHeader.getRecordType()));
 		lc.setParent(item);
 
-		item.setAttribute("id", finOCRHeader.getFinReference());
+		item.setAttribute("finID", finOCRHeader.getFinID());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onOCRMaintenanceItemDoubleClicked");
 

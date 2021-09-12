@@ -95,7 +95,6 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/tax/FinanceTaxDetail/financeTaxDetailDialog.zul file. <br>
@@ -631,10 +630,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				customer = this.financeDetail.getCustomerDetails().getCustomer();
 				addressList = this.financeDetail.getCustomerDetails().getAddressList();
 			} else {
-				String finRef = this.finReference.getValue();
-				Long finID = ComponentUtil.getFinID(this.finReference);
+				Long finID = this.financeTaxDetail.getFinID();
 
-				if (StringUtils.isNotBlank(finRef)) {
+				if (finID != null) {
 					FinanceMain finMain = this.financeTaxDetailService.getFinanceDetailsForService(finID, "_View",
 							false);
 					customer = this.financeTaxDetailService.getCustomerByID(finMain.getCustID());
@@ -1143,6 +1141,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		long finID = aFinanceTaxDetail.getFinID();
 		String finRef = aFinanceTaxDetail.getFinReference();
+
 		this.finReference.setValue(finRef);
 
 		fillComboBox(this.applicableFor, aFinanceTaxDetail.getApplicableFor(), listApplicableFor, getExcludeFields());
@@ -2065,9 +2064,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			if (fromLoan) {
 				customer = this.financeDetail.getCustomerDetails().getCustomer();
 			} else {
-				String finRef = this.finReference.getValue();
-				if (StringUtils.isNotBlank(finRef)) {
-					long finID = ComponentUtil.getFinID(this.finReference);
+				Long finID = this.financeTaxDetail.getFinID();
+				if (finID != null) {
 					FinanceMain fm = this.financeTaxDetailService.getFinanceDetailsForService(finID, "_View", false);
 					customer = this.financeTaxDetailService.getCustomerByID(fm.getCustID());
 				}

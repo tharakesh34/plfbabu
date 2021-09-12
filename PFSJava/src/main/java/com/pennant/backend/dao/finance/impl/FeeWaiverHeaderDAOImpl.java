@@ -210,7 +210,7 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 	private StringBuilder getSelectQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" WaiverId, FinID, FinReference, Event, Remarks, PostingDate, ValueDate");
-		sql.append(" Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FeeWaiverHeader");
 		sql.append(StringUtils.trimToEmpty(type));

@@ -137,7 +137,7 @@ public class JVPostingDAOImpl extends SequenceDao<JVPosting> implements JVPostin
 				}
 
 				return jvp;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

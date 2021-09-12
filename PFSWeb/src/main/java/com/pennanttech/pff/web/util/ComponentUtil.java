@@ -14,11 +14,11 @@ public class ComponentUtil {
 		Object object = component.getObject();
 
 		if (object instanceof FinanceMain) {
-			return ((FinanceMain) component.getObject()).getFinID();
+			return ((FinanceMain) object).getFinID();
 		}
 
 		if (object instanceof FinChangeCustomer) {
-			return ((FinChangeCustomer) component.getObject()).getFinID();
+			return ((FinChangeCustomer) object).getFinID();
 		}
 
 		return 0;
