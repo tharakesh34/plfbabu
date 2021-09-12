@@ -1,12 +1,12 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,13 +82,10 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 	private void processCheckListDetails(FinanceDetail fd, List<FinanceReferenceDetail> referenceList) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, Set<Long>> checkListIdMap = new HashMap<String, Set<Long>>();
-
 		FinScheduleData schdData = fd.getFinScheduleData();
 
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 		long custID = fm.getCustID();
 
 		String showCheckListIds = "";
@@ -103,13 +100,11 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 			showCheckListIdSb.append(financeReferenceDetail.getFinRefId() + ",");
 			checkListIdSet.add(financeReferenceDetail.getFinRefId());
 		}
-		// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
-		checkListIdMap.put("checkListIdMap", checkListIdSet);
 
 		List<CheckListDetail> list = new ArrayList<>();
 
 		if (!checkListIdSet.isEmpty()) {
-			list.addAll(checkListDetailDAO.getCheckListDetailByChkList(checkListIdMap, "_AView"));
+			list.addAll(checkListDetailDAO.getCheckListDetailByChkList(checkListIdSet, "_AView"));
 		}
 
 		long prevCheckListId = 0L;
@@ -176,9 +171,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		List<FinanceCheckListReference> collateralCheckLists = null;
 		List<CheckListDetail> checkListDetailList = null;
-		Map<String, Set<Long>> checkListIdMap = new HashMap<String, Set<Long>>();
-
-		Set<Long> checkListIdSet = new HashSet<Long>();
+		Set<Long> checkListIdSet = new HashSet<>();
 
 		String showCheckListIds = "";
 		String collateralRef = collateralSetup.getCollateralRef();
@@ -188,14 +181,13 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		if (referenceList == null) {
 			referenceList = new ArrayList<>();
 		}
+
 		for (FinanceReferenceDetail financeReferenceDetail : referenceList) {
 			showCheckListIdSb.append(financeReferenceDetail.getFinRefId() + ",");
 			checkListIdSet.add(financeReferenceDetail.getFinRefId());
 		}
-		// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
-		checkListIdMap.put("checkListIdMap", checkListIdSet);
 
-		List<CheckListDetail> checkListDetailAllList = checkListDetailDAO.getCheckListDetailByChkList(checkListIdMap,
+		List<CheckListDetail> checkListDetailAllList = checkListDetailDAO.getCheckListDetailByChkList(checkListIdSet,
 				"_AView");
 
 		long prevCheckListId = 0L;
@@ -258,23 +250,20 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		List<FinanceCheckListReference> commitmentCheckLists = null;
 		List<CheckListDetail> checkListDetailList = null;
-		Map<String, Set<Long>> checkListIdMap = new HashMap<String, Set<Long>>();
 		StringBuilder showCheckListIdSb = new StringBuilder();
-		Set<Long> checkListIdSet = new HashSet<Long>();
+		Set<Long> checkListIdSet = new HashSet<>();
 
 		String showCheckListIds = "";
 		String cmtReference = commitment.getCmtReference();
 
-		if (financeReferenceList != null && !financeReferenceList.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(financeReferenceList)) {
 			for (FinanceReferenceDetail financeReferenceDetail : financeReferenceList) {
 				showCheckListIdSb.append(financeReferenceDetail.getFinRefId() + ",");
 				checkListIdSet.add(financeReferenceDetail.getFinRefId());
 			}
-			// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
-			checkListIdMap.put("checkListIdMap", checkListIdSet);
 
 			List<CheckListDetail> checkListDetailAllList = checkListDetailDAO
-					.getCheckListDetailByChkList(checkListIdMap, "_AView");
+					.getCheckListDetailByChkList(checkListIdSet, "_AView");
 
 			long prevCheckListId = 0L;
 			for (CheckListDetail checkListDetail : checkListDetailAllList) {
@@ -340,23 +329,20 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		List<FinanceCheckListReference> vasCheckLists = null;
 		List<CheckListDetail> checkListDetailList = null;
-		Map<String, Set<Long>> checkListIdMap = new HashMap<String, Set<Long>>();
 		StringBuilder showCheckListIdSb = new StringBuilder();
-		Set<Long> checkListIdSet = new HashSet<Long>();
+		Set<Long> checkListIdSet = new HashSet<>();
 
 		String showCheckListIds = "";
 		String vasReference = vasRecording.getVasReference();
 
-		if (financeReferenceList != null && !financeReferenceList.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(financeReferenceList)) {
 			for (FinanceReferenceDetail financeReferenceDetail : financeReferenceList) {
 				showCheckListIdSb.append(financeReferenceDetail.getFinRefId() + ",");
 				checkListIdSet.add(financeReferenceDetail.getFinRefId());
 			}
-			// This Map key "checkListIdMap" is used as a parameter in the namedParameterJdbcTemplate query.
-			checkListIdMap.put("checkListIdMap", checkListIdSet);
 
 			List<CheckListDetail> checkListDetailAllList = checkListDetailDAO
-					.getCheckListDetailByChkList(checkListIdMap, "_AView");
+					.getCheckListDetailByChkList(checkListIdSet, "_AView");
 
 			long prevCheckListId = 0L;
 			for (CheckListDetail checkListDetail : checkListDetailAllList) {

@@ -24,30 +24,29 @@
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.applicationmaster.CheckListDetailDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>CheckListDetail model</b> class.<br>
@@ -60,286 +59,261 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 		super();
 	}
 
-	/**
-	 * This method set the Work Flow id based on the module name and return the new CheckListDetail
-	 * 
-	 * @return CheckListDetail
-	 */
 	@Override
 	public CheckListDetail getCheckListDetail() {
-		logger.debug("Entering");
 		WorkFlowDetails workFlowDetails = WorkFlowUtil.getWorkFlowDetails("CheckListDetail");
 		CheckListDetail checkListDetail = new CheckListDetail();
+
 		if (workFlowDetails != null) {
 			checkListDetail.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
-		logger.debug("Leaving");
+
 		return checkListDetail;
 	}
 
-	/**
-	 * This method get the module from method getCheckListDetail() and set the new record flag as true and return
-	 * CheckListDetail()
-	 * 
-	 * @return CheckListDetail
-	 */
 	@Override
 	public CheckListDetail getNewCheckListDetail() {
-		logger.debug("Entering");
 		CheckListDetail checkListDetail = getCheckListDetail();
 		checkListDetail.setNewRecord(true);
-		logger.debug("Leaving");
+
 		return checkListDetail;
 	}
 
-	/**
-	 * Fetch the Record Check List Details details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return CheckListDetail
-	 */
 	@Override
 	public CheckListDetail getCheckListDetailById(final long id, String type) {
-		logger.debug("Entering");
-		CheckListDetail checkListDetail = new CheckListDetail();
-		checkListDetail.setId(id);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CheckListId = ?");
 
-		StringBuilder selectSql = new StringBuilder(
-				"Select CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId");
-		selectSql.append(" From RMTCheckListDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			checkListDetail = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new CheckListDetailRM(type), id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			checkListDetail = null;
+			//
 		}
-		logger.debug("Leaving");
-		return checkListDetail;
+
+		return null;
 	}
 
-	/**
-	 * Fetch the Record Check List Details details by key field
-	 * 
-	 * @param id   (String)
-	 * @param type (String) ""/_Temp/_View
-	 * @return CheckListDetail
-	 */
 	@Override
 	public CheckListDetail getCheckListDetailByDocType(String docType, String finType) {
-		logger.debug("Entering");
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("DocType", docType);
-		source.addValue("FinType", finType);
-		source.addValue("FinRefType", FinanceConstants.PROCEDT_CHECKLIST);
+		StringBuilder sql = getSqlQuery("");
+		sql.append(" Where DocType = ? and CheckListId in (");
+		sql.append("Select FinRefId From LMTFinRefDetail Where FinRefType = ? and FinType = ?)");
 
-		StringBuilder selectSql = new StringBuilder(
-				" select * from RMTCheckListDetails where DocType=:DocType and CheckListId ");
-		selectSql.append(
-				" in (select FinRefId from LMTFinRefDetail where FinRefType=:FinRefType and  FinType=:FinType )");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.queryForObject(selectSql.toString(), source, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), new CheckListDetailRM(""), docType,
+					FinanceConstants.PROCEDT_CHECKLIST, finType);
 		} catch (EmptyResultDataAccessException e) {
-			logger.debug("Exception", e);
+			//
 		}
-		logger.debug("Leaving");
+
 		return null;
 	}
 
 	public List<CheckListDetail> getCheckListDetailByChkList(final long checkListId, String type) {
-		CheckListDetail checkListDetail = new CheckListDetail();
-		checkListDetail.setCheckListId(checkListId);
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where CheckListId = ?");
 
-		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
-		selectSql.append(", AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId");
+		logger.debug(Literal.SQL + sql.toString());
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
-		}
-		selectSql.append(" From RMTCheckListDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CheckListId =:CheckListId");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
-
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, checkListId), new CheckListDetailRM(type));
 	}
 
-	public List<CheckListDetail> getCheckListDetailByChkList(final Map<String, Set<Long>> checkListIdMap, String type) {
-		logger.debug("Entering");
-		List<CheckListDetail> chkListDetailList;
+	public List<CheckListDetail> getCheckListDetailByChkList(final Set<Long> checkListId, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where CheckListId IN (");
+		sql.append(checkListId.stream().map(e -> "? ").collect(Collectors.joining(",")));
+		sql.append(") Order By CheckListId, AnsSeqNo");
 
-		StringBuilder selectSql = new StringBuilder("Select CheckListId, AnsSeqNo, AnsDesc");
-		selectSql.append(", AnsCond,RemarksAllow, DocRequired,DocType, RemarksMand");
-		selectSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId,");
-		selectSql.append(" RecordType, WorkflowId");
+		logger.debug(Literal.SQL + sql.toString());
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			selectSql.append(", CategoryCode, LovDescDocCategory lovDescDocType ");
-		}
-		selectSql.append(" From RMTCheckListDetails");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where CheckListId IN (:checkListIdMap) Order By CheckListId, AnsSeqNo");
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		logger.debug("selectSql: " + selectSql.toString());
-		MapSqlParameterSource beanParameters = new MapSqlParameterSource(checkListIdMap);
-		RowMapper<CheckListDetail> typeRowMapper = BeanPropertyRowMapper.newInstance(CheckListDetail.class);
+			for (Long id : checkListId) {
+				ps.setLong(index++, id);
+			}
+		}, new CheckListDetailRM(type));
 
-		try {
-			chkListDetailList = this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			chkListDetailList = null;
-		}
-		logger.debug("Leaving");
-		return chkListDetailList;
 	}
 
-	/**
-	 * This method Deletes the Record from the RMTCheckListDetails or RMTCheckListDetails_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Check List Details by key CheckListId
-	 * 
-	 * @param Check List Details (checkListDetail)
-	 * @param type  (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	public void delete(CheckListDetail checkListDetail, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
+		StringBuilder sql = new StringBuilder("Delete From RMTCheckListDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CheckListId = ? and AnsSeqNo = ?");
 
-		StringBuilder deleteSql = new StringBuilder("Delete From RMTCheckListDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
-		logger.debug("deleteSql: " + deleteSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
 		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+
+				ps.setLong(index++, checkListDetail.getCheckListId());
+				ps.setLong(index++, checkListDetail.getAnsSeqNo());
+			});
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method Deletes the Record from the RMTCheckListDetail or RMTCheckListDetail_Temp.
-	 * 
-	 * delete Educational Expenses by key loanRefNumber
-	 * 
-	 */
 	public void delete(long checkListId, String type) {
-		logger.debug("Entering");
-		CheckListDetail checkListDetail = new CheckListDetail();
-		checkListDetail.setCheckListId(checkListId);
+		StringBuilder sql = new StringBuilder();
+		sql.append("Delete From RMTCheckListDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where CheckListId = ?");
 
-		StringBuilder deleteSql = new StringBuilder();
-		deleteSql.append("Delete From RMTCheckListDetails");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where CheckListId =:CheckListId");
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		String[] errParm = new String[1];
-		String[] valueParm = new String[1];
-		valueParm[0] = String.valueOf(checkListDetail.getId());
-		errParm[0] = PennantJavaUtil.getLabel("label_AnsSeqNo") + ":" + valueParm[0];
-		logger.debug("DeleteSql: " + deleteSql.toString());
-		this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-		logger.debug("Leaving");
+		this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, checkListId));
 	}
 
-	/**
-	 * This method insert new Records into RMTCheckListDetails or RMTCheckListDetails_Temp.
-	 *
-	 * save Check List Details
-	 * 
-	 * @param Check List Details (checkListDetail)
-	 * @param type  (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public long save(CheckListDetail checkListDetail, String type) {
-		logger.debug("Entering");
-		StringBuilder insertSql = new StringBuilder("Insert Into RMTCheckListDetails");
-		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(" (CheckListId, AnsSeqNo, AnsDesc, AnsCond,RemarksAllow, DocRequired, DocType, RemarksMand");
-		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		insertSql.append(", RecordType, WorkflowId)");
-		insertSql.append(
-				" Values( :CheckListId, :AnsSeqNo, :AnsDesc, :AnsCond, :RemarksAllow, :DocRequired,:DocType, :RemarksMand");
-		insertSql.append(
-				", :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId ");
-		insertSql.append(", :RecordType, :WorkflowId)");
+	public long save(CheckListDetail cld, String type) {
+		StringBuilder sql = new StringBuilder("Insert Into RMTCheckListDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" (CheckListId, AnsSeqNo, AnsDesc, AnsCond, RemarksAllow, DocRequired, DocType, RemarksMand");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId)");
+		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-		logger.debug("insertSql: " + insertSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-		logger.debug("Leaving");
-		return checkListDetail.getId();
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, cld.getCheckListId());
+			ps.setLong(index++, cld.getAnsSeqNo());
+			ps.setString(index++, cld.getAnsDesc());
+			ps.setString(index++, cld.getAnsCond());
+			ps.setBoolean(index++, cld.isRemarksAllow());
+			ps.setBoolean(index++, cld.isDocRequired());
+			ps.setString(index++, cld.getDocType());
+			ps.setBoolean(index++, cld.isRemarksMand());
+			ps.setInt(index++, cld.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(cld.getLastMntBy()));
+			ps.setTimestamp(index++, cld.getLastMntOn());
+			ps.setString(index++, cld.getRecordStatus());
+			ps.setString(index++, cld.getRoleCode());
+			ps.setString(index++, cld.getNextRoleCode());
+			ps.setString(index++, cld.getTaskId());
+			ps.setString(index++, cld.getNextTaskId());
+			ps.setString(index++, cld.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(cld.getWorkflowId()));
+		});
+
+		return cld.getId();
 	}
 
-	/**
-	 * This method updates the Record RMTCheckListDetails or RMTCheckListDetails_Temp. if Record not updated then throws
-	 * DataAccessException with error 41004. update Check List Details by key CheckListId and Version
-	 * 
-	 * @param Check List Details (checkListDetail)
-	 * @param type  (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void update(CheckListDetail checkListDetail, String type) {
-		int recordCount = 0;
-		logger.debug("Entering");
-		StringBuilder updateSql = new StringBuilder("Update RMTCheckListDetails");
-		updateSql.append(StringUtils.trimToEmpty(type));
-		updateSql.append(" Set AnsDesc = :AnsDesc, AnsCond = :AnsCond");
-		updateSql.append(
-				", RemarksAllow = :RemarksAllow, DocRequired = :DocRequired,DocType=:DocType, RemarksMand = :RemarksMand");
-		updateSql.append(
-				", Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, RecordStatus= :RecordStatus");
-		updateSql.append(
-				", RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
-		updateSql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
-		updateSql.append(" Where CheckListId =:CheckListId and AnsSeqNo = :AnsSeqNo");
+	public void update(CheckListDetail cld, String type) {
+		StringBuilder sql = new StringBuilder("Update RMTCheckListDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set AnsDesc = ?, AnsCond = ?");
+		sql.append(", RemarksAllow = ?, DocRequired = ?, DocType = ?, RemarksMand = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus= ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
+		sql.append(" Where CheckListId = ? and AnsSeqNo = ?");
 
 		if (!type.endsWith("_Temp")) {
-			updateSql.append("  AND Version= :Version-1");
+			sql.append(" and Version = ?");
 		}
 
-		logger.debug("updateSql: " + updateSql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(checkListDetail);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, cld.getAnsDesc());
+			ps.setString(index++, cld.getAnsCond());
+			ps.setBoolean(index++, cld.isRemarksAllow());
+			ps.setBoolean(index++, cld.isDocRequired());
+			ps.setString(index++, cld.getDocType());
+			ps.setBoolean(index++, cld.isRemarksMand());
+			ps.setInt(index++, cld.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(cld.getLastMntBy()));
+			ps.setTimestamp(index++, cld.getLastMntOn());
+			ps.setString(index++, cld.getRecordStatus());
+			ps.setString(index++, cld.getRoleCode());
+			ps.setString(index++, cld.getNextRoleCode());
+			ps.setString(index++, cld.getTaskId());
+			ps.setString(index++, cld.getNextTaskId());
+			ps.setString(index++, cld.getRecordType());
+			ps.setLong(index++, JdbcUtil.setLong(cld.getWorkflowId()));
+
+			ps.setLong(index++, cld.getCheckListId());
+			ps.setLong(index++, cld.getAnsSeqNo());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, cld.getVersion() - 1);
+			}
+		});
 
 		if (recordCount <= 0) {
 			throw new ConcurrencyException();
 		}
-		logger.debug("Leaving");
 	}
+
+	private StringBuilder getSqlQuery(String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CheckListId, AnsSeqNo, AnsDesc, RemarksAllow, RemarksMand, DocRequired, DocType, AnsCond");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
+
+		if (StringUtils.trimToEmpty(type).contains("View")) {
+			sql.append(", CategoryCode, LovDescDocCategory");
+		}
+
+		sql.append(" From RMTCheckListDetails");
+		sql.append(StringUtils.trimToEmpty(type));
+
+		return sql;
+	}
+
+	private class CheckListDetailRM implements RowMapper<CheckListDetail> {
+		String type;
+
+		public CheckListDetailRM(String type) {
+			this.type = type;
+		}
+
+		@Override
+		public CheckListDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CheckListDetail cld = new CheckListDetail();
+
+			cld.setCheckListId(rs.getLong("CheckListId"));
+			cld.setAnsSeqNo(rs.getLong("AnsSeqNo"));
+			cld.setAnsDesc(rs.getString("AnsDesc"));
+			cld.setRemarksAllow(rs.getBoolean("RemarksAllow"));
+			cld.setRemarksMand(rs.getBoolean("RemarksMand"));
+			cld.setDocRequired(rs.getBoolean("DocRequired"));
+			cld.setDocType(rs.getString("DocType"));
+			cld.setAnsCond(rs.getString("AnsCond"));
+			cld.setVersion(rs.getInt("Version"));
+			cld.setLastMntBy(rs.getLong("LastMntBy"));
+			cld.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			cld.setRecordStatus(rs.getString("RecordStatus"));
+			cld.setRoleCode(rs.getString("RoleCode"));
+			cld.setNextRoleCode(rs.getString("NextRoleCode"));
+			cld.setTaskId(rs.getString("TaskId"));
+			cld.setNextTaskId(rs.getString("NextTaskId"));
+			cld.setRecordType(rs.getString("RecordType"));
+			cld.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				cld.setCategoryCode(rs.getString("CategoryCode"));
+				cld.setLovDescDocType(rs.getString("LovDescDocCategory"));
+			}
+
+			return cld;
+		}
+	}
+
 }

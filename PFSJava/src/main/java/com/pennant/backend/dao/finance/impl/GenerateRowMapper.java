@@ -4,28 +4,22 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.finance.liability.LiabilityRequest;
+import com.pennant.backend.model.applicationmaster.CheckListDetail;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new LiabilityRequest();
+	private static Object object = new CheckListDetail();
 	private static String tableName = "LiabilityRequest";
 	private static String whereClause = "";
-	private static String varibaleName = "lr";
+	private static String varibaleName = "cld";
 	private static boolean list = false;
 
 	private static String getSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Id, FinID, FinReference, InitiatedBy, FinEvent, InsPaidStatus, InsClaimAmount, InsClaimReason");
-
-		// if (StringUtils.trimToEmpty(type).contains("View")) {
-		sql.append(", FinType, CustCIF, FinBranch, FinStartDate, NumberOfTerms");
-		sql.append(", MaturityDate, FinCcy, FinAmount, CustShrtName, BranchDesc");
-		// }
-
-		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" CheckListId, AnsSeqNo, AnsDesc, AnsCond, RemarksAllow, DocRequired, DocType, RemarksMand");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
+		sql.append(", RecordType, WorkflowId");
 
 		return sql.toString();
 	}
