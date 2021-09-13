@@ -112,8 +112,8 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index, rn.getId());
-				ps.setLong(index, rn.getFinID());
+				ps.setLong(index++, rn.getId());
+				ps.setLong(index++, rn.getFinID());
 			});
 
 			if (recordCount <= 0) {
@@ -135,7 +135,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 		sql.append(" (Id, FinID, FinReference, ParticularId, Remarks");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -199,6 +199,7 @@ public class RecommendationNotesDetailsDAOImpl extends SequenceDao<Recommendatio
 			ps.setString(index++, rn.getRecordType());
 			ps.setLong(index++, rn.getWorkflowId());
 			ps.setLong(index++, rn.getId());
+			ps.setLong(index++, rn.getFinID());
 
 			if (!type.endsWith("_Temp")) {
 				ps.setInt(index++, rn.getVersion() - 1);

@@ -216,7 +216,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 
 	@Override
 	public int getVersion(long id, long finID) {
-		String sql = "Select Version FROM Due_Diligences Where ID = ? amd FinID = ?";
+		String sql = "Select Version FROM Due_Diligences Where ID = ? and FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 

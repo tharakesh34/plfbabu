@@ -116,6 +116,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 		StringBuilder sql = new StringBuilder("Update FinIRRDetails");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set IRRID = ?, FinID = ?, FinReference = ?, IRR = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?");
 		sql.append(", RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
 		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where IRRID = ? And FinID = ?");
@@ -124,6 +125,8 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			setPreparedStatement(irr, ps);
+			ps.setLong(15, JdbcUtil.setLong(irr.getiRRID()));
+			ps.setLong(16, JdbcUtil.setLong(irr.getFinID()));
 		});
 
 		if (recordCount == 0) {

@@ -54,22 +54,23 @@ public class TestFinanceMainDAO {
 		// financeMainDAO.getFinanceMain(false); //Module Registration not available
 		// financeMainDAO.getFinanceMain(true); //Module Registration not available
 
-		// financeMainDAO.getFinanceMain(490, "", "_View"); //FinID not existed in FinanceMain_View
+		financeMainDAO.getFinanceMain(490, "", "_View");
 
-		// financeMainDAO.getFinanceDetailsByCustId(1759); //FinID not existed in FinanceEnquiry_View
+		financeMainDAO.getFinanceDetailsByCustId(1463);
 
-		// financeMainDAO.getFinanceProfitDetails(5222); //FinID not existed in FinanceProfitEnquiry_View
+		financeMainDAO.getFinanceProfitDetails(5233);
+		financeMainDAO.getFinanceProfitDetails(500);
 
-		// financeMainDAO.getFinExposureByCustId(1759); //FinID not existed in CustFinanceExposure_View
+		financeMainDAO.getFinExposureByCustId(1759);
 
 		// financeMainDAO.getFinanceForAssignments(5354); //AlwFlexi column not existed in FinanceMain
 
 		// financeMainDAO.updateAssignmentId(5354, 1); //AssignmentId column not existed in FinanceMain
 
-		// financeMainDAO.getGLSubHeadCodes(5354); //FinID not existed in GL_SubHeadCodes_View
+		financeMainDAO.getGLSubHeadCodes(3797);
 
-		List<String> firstTask = financeMainDAO.getFinanceWorlflowFirstTaskOwners("AddDisbursement", "");
-		List<String> firstTaskList = financeMainDAO.getFinanceWorlflowFirstTaskOwners("", "");
+		financeMainDAO.getFinanceWorlflowFirstTaskOwners("AddDisbursement", "");
+		financeMainDAO.getFinanceWorlflowFirstTaskOwners("", "");
 
 		financeMainDAO.getFinanceMain(490, "", "");
 		financeMainDAO.getFinanceMain(491, "", "");
@@ -83,6 +84,9 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getDisbursmentFinMainById(5222, TableType.MAIN_TAB);
 		financeMainDAO.getDisbursmentFinMainById(5222, TableType.TEMP_TAB);
+
+		financeMainDAO.getDisbursmentFinMainById("1000AGR0001535", TableType.MAIN_TAB);
+		financeMainDAO.getDisbursmentFinMainById("1000AGR0001", TableType.MAIN_TAB);
 
 		financeMainDAO.getFinanceMainForPftCalc(3962);
 		financeMainDAO.getFinanceMainForPftCalc(300);
@@ -98,9 +102,10 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceMainListByBatch(dt1, dt2, "");
 		financeMainDAO.getFinanceMainListByBatch(dt1, dt2, "_Temp");
 
+		// Fetching data through FinId but sending finReference in arguments
 		// financeMainDAO.isFinReferenceExists(5222, "", false);
-		// boolean isExists = financeMainDAO.isFinReferenceExists(5323, "", true);
-		// boolean isExist = financeMainDAO.isFinReferenceExists(500, "", false);
+		// financeMainDAO.isFinReferenceExists(5323, "", true);
+		// financeMainDAO.isFinReferenceExists(500, "", false);
 
 		financeMainDAO.getActualPftBal(5222, "");
 		financeMainDAO.getActualPftBal(500, "");
@@ -121,16 +126,16 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getFinanceMainbyCustId(1463);
 
-		int count = financeMainDAO.getFinanceCountById(5354, "", false);
-		int count1 = financeMainDAO.getFinanceCountById(500, "", false);
+		financeMainDAO.getFinanceCountById(5354, "", false);
+		financeMainDAO.getFinanceCountById(500, "", false);
 		financeMainDAO.getFinanceCountById(5323, "", true);
 
-		int cnt = financeMainDAO.getFinCountByCustId(19);
-		int cnt1 = financeMainDAO.getFinCountByCustId(100);
+		financeMainDAO.getFinCountByCustId(19);
+		financeMainDAO.getFinCountByCustId(100);
 
-		int mndcnt = financeMainDAO.getFinanceCountByMandateId(347);
+		financeMainDAO.getFinanceCountByMandateId(347);
 
-		// financeMainDAO.getFinanceCountById(5354, 0);
+		// financeMainDAO.getFinanceCountById(5354, 0); //method removed in dao impl
 
 		financeMainDAO.loanMandateSwapping(5354, 1, "MANUAL", "");
 		financeMainDAO.loanMandateSwapping(5354, 1, "", "");
@@ -145,8 +150,8 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getFinReferencesByMandateId(347);
 
-		// financeMainDAO.getFinReferencesByCustID(19, null);
-		// financeMainDAO.getFinReferencesByCustID(1463, "M");
+		// financeMainDAO.getFinReferencesByCustID(19, null); //method removed in dao impl
+		// financeMainDAO.getFinReferencesByCustID(1463, "M"); //method removed in dao impl
 
 		financeMainDAO.getFinAssetValue(5354);
 
@@ -196,8 +201,8 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getClosedDateByFinRef(5354);
 		financeMainDAO.getClosedDateByFinRef(500);
 
-		// financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "ESFB");
-		// financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "FG");
+		// financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "ESFB"); //method removed in dao impl
+		// financeMainDAO.isFinReferenceExitsWithEntity(5222, "", "FG"); // method removed in dao impl
 
 		financeMainDAO.isDeveloperFinance(5354, "", false);
 		financeMainDAO.isDeveloperFinance(5353, "", true);
@@ -206,8 +211,8 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceMainbyCustId(1463, "");
 		financeMainDAO.getFinanceMainbyCustId(1, "_Temp");
 
-		// financeMainDAO.getFinanceTypeFinReference(5354, "");
-		// financeMainDAO.getFinanceTypeFinReference(500, "");
+		// financeMainDAO.getFinanceTypeFinReference(5354, ""); // method removed in dao impl
+		// financeMainDAO.getFinanceTypeFinReference(500, ""); // method removed in dao impl
 
 		financeMainDAO.getFinListForIncomeAMZ(dt2);
 
@@ -224,14 +229,19 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getGSTDataMap(5354, TableType.MAIN_TAB);
 		financeMainDAO.getGSTDataMap(5345, TableType.TEMP_TAB);
+		financeMainDAO.getGSTDataMap(5354, TableType.VIEW);
 
 		financeMainDAO.getCustGSTDataMap(1463, TableType.MAIN_TAB);
 		financeMainDAO.getCustGSTDataMap(1, TableType.TEMP_TAB);
+		financeMainDAO.getCustGSTDataMap(1463, TableType.VIEW);
 
 		financeMainDAO.isFinActive(5354);
 
 		financeMainDAO.getFinanceMainByRcdMaintenance(5354, "");
 		financeMainDAO.getFinanceMainByRcdMaintenance(500, "");
+
+		financeMainDAO.getFinanceMainByRcdMaintenance("1500BUS0003280", "");
+		financeMainDAO.getFinanceMainByRcdMaintenance("1500BUS0003", "");
 
 		financeMainDAO.getRcdMaintenanceByRef(5354, "");
 		financeMainDAO.getRcdMaintenanceByRef(500, "");
@@ -252,7 +262,8 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.getCountByOldFinReference("12869399899");
 
-		// financeMainDAO.getLoanWorkFlowIdByFinRef(5354, "");
+		financeMainDAO.getLoanWorkFlowIdByFinRef("1500BUS0003280", "");
+		financeMainDAO.getLoanWorkFlowIdByFinRef("1500BUS0003", "");
 
 		// financeMainDAO.getLovDescEntityCode(5354, ""); // LovDescEntityCode column does not exist in FinanceMain
 
@@ -267,24 +278,26 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceDetailsForInsurance(500, "");
 
 		financeMainDAO.getFinMainListBySQLQueryRule("Where FinID = 5354", "");
+		// financeMainDAO.getFinMainListBySQLQueryRule("Where FinID = 5354", "_View"); //CostOfFunds column does not
+		// exist
 
 		financeMainDAO.getFinanceMainDetails(5354);
 		financeMainDAO.getFinanceMainDetails(500);
 
-		// financeMainDAO.isFinExistsByPromotionSeqID(0); //FinID column does not exist in FinanceMain_View
-		// financeMainDAO.isRepayFrqExists("MCLR"); //FinID column does not exist in FinanceMain_View
-		// financeMainDAO.isGrcRepayFrqExists("M0004"); //FinID column does not exist in FinanceMain_View
+		financeMainDAO.isFinExistsByPromotionSeqID(0);
+		financeMainDAO.isRepayFrqExists("MCLR");
+		financeMainDAO.isGrcRepayFrqExists("M0004");
 
 		financeMainDAO.getFinStartDate(5354);
 
-		// financeMainDAO.getAllFinanceDetailsByCustId(1463); // FinID column does not exist in FinanceEnquiry_View
+		financeMainDAO.getAllFinanceDetailsByCustId(1463);
 
 		financeMainDAO.updateCustChange(1, 1, 5354, "");
 
 		financeMainDAO.getUserPendingCasesDetails(0, "");
 
-		// financeMainDAO.getCustomerIdByFin(5354);
-		// financeMainDAO.getCustomerIdByFin(110);
+		// financeMainDAO.getCustomerIdByFin(5354); //method removed in dao impl
+		// financeMainDAO.getCustomerIdByFin(110); // method removed in dao impl
 
 		financeMainDAO.getFinDetailsForHunter("123", "");
 
@@ -300,9 +313,10 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getEHFinanceMain(5354);
 		financeMainDAO.getEHFinanceMain(500);
 
-		FinanceMain fma = financeMainDAO.getFinBasicDetails(5354, "");
-		FinanceMain fmn = financeMainDAO.getFinBasicDetails(5345, "_Temp");
+		financeMainDAO.getFinBasicDetails(5354, "");
+		financeMainDAO.getFinBasicDetails(5345, "_Temp");
 		financeMainDAO.getFinBasicDetails(500, "");
+		financeMainDAO.getFinBasicDetails(5354, "_View");
 
 		financeMainDAO.getClosedDate(5354);
 
@@ -316,7 +330,10 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.updateMaintainceStatus(5354, "");
 
-		financeMainDAO.getFinCategory("");
+		financeMainDAO.updateMaintainceStatus("1500BUS0003280", "");
+
+		financeMainDAO.getFinCategory("1500BUS0003280");
+		financeMainDAO.getFinCategory("1500BUS0003");
 
 		financeMainDAO.getChildFinRefByParentRef("");
 
@@ -336,6 +353,40 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.isAppNoExists("", TableType.MAIN_TAB);
 		financeMainDAO.isAppNoExists("", TableType.TEMP_TAB);
+
+		// Fetching data through FinId but sending finReference in arguments
+		// financeMainDAO.getFMForVAS("1500BUS0003280");
+		// financeMainDAO.getFinIDByFinReference("1500BUS0003280", "", false);
+		// financeMainDAO.getFinIDForMandate("1500BUS0003280", 0);
+		// financeMainDAO.getFinanceDetailsForService1("1500BUS0003280","", false);
+		// financeMainDAO.getFinID("1500BUS0003280", "", TableType.MAIN_TAB);
+
+		financeMainDAO.getFinanceMainParms(5354);
+		financeMainDAO.getFinanceMainParms(6000);
+
+		financeMainDAO.getFinIDList("2998", "");
+		financeMainDAO.getFinIDList("2998", "E");
+
+		financeMainDAO.getFinanceType(5354, TableType.MAIN_TAB);
+		financeMainDAO.getFinanceType(6000, TableType.MAIN_TAB);
+
+		financeMainDAO.getFinanceType("1500BUS0003280", TableType.MAIN_TAB);
+		financeMainDAO.getFinanceType("1500BUS00032", TableType.MAIN_TAB);
+
+		financeMainDAO.getCustomerIdByFin("1500BUS0003280");
+		financeMainDAO.getCustomerIdByFin("1500BUS0003");
+
+		// financeMainDAO.getFinID("1500BUS0003280");
+		// financeMainDAO.getActiveFinID("1500BUS0003280");
+
+		financeMainDAO.getFinID("1500BUS0003280", TableType.MAIN_TAB);
+		financeMainDAO.getFinID("1500BUS000", TableType.MAIN_TAB);
+
+		financeMainDAO.getActiveFinID("1500BUS0003280", TableType.MAIN_TAB);
+		financeMainDAO.getActiveFinID("1500BUS000", TableType.MAIN_TAB);
+
+		financeMainDAO.getActiveWIFFinID("1500AGR0006859", TableType.MAIN_TAB);
+		financeMainDAO.getActiveWIFFinID("1500BUS000", TableType.MAIN_TAB);
 
 	}
 
@@ -1003,6 +1054,34 @@ public class TestFinanceMainDAO {
 	public void testIsAppNoExists() {
 		// Parameters not supplied when main and temp tables are given
 		financeMainDAO.isAppNoExists("", TableType.BOTH_TAB);
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testGetFinanceMain() {
+		financeMainDAO.getFinanceMain("1500BUS0003280");
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testGetFinanceMain1() {
+		financeMainDAO.getFinanceMain("1500BUS0003280", TableType.MAIN_TAB);
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testGetFinanceMain2() {
+		financeMainDAO.getFinanceMain(5354);
+	}
+
+	@Test
+	@Transactional
+	@Rollback(true)
+	public void testGetFinanceMain3() {
+		financeMainDAO.getFinanceMain(5354, TableType.MAIN_TAB);
 	}
 
 }

@@ -33,7 +33,7 @@ public class InstBasedSchdDetailDAOImpl extends SequenceDao<InstBasedSchdDetails
 		StringBuilder sql = new StringBuilder("Insert Into InstBasedSchdDetails");
 		sql.append(" (BatchId, FinID, FinReference, DisbId, RealizedDate, Status, ErrorDesc");
 		sql.append(", UserId, Downloaded_On, DisbAmount, LinkedTranId)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 

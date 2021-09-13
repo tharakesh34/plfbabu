@@ -379,7 +379,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(" (FinID, FinReference, AccruedOn, PftAccrued, CumulativeAccrued, POSAccrued, CumulativePOS");
 		sql.append(", NoOfDays, CumulativeDays, AMZPercentage, PartialPaidAmt, PartialAMZPerc, MonthEnd");
 		sql.append(", AvgPOS");
-		sql.append(") Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(") Values( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -541,7 +541,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			sql.append("Select");
 			sql.append(" TOP 1 Id, MonthEndDate, Status, StartTime, EndTime, LastMntBy");
 			sql.append(" From AmortizationLog");
-			sql.append("Where (EndTime IS NULL OR Status = ?)");
+			sql.append(" Where (EndTime IS NULL OR Status = ?)");
 			sql.append(" ORDER BY Id DESC");
 		}
 
@@ -765,7 +765,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		sql.append(", ?, ?, ?, 0 CalcFactor, ed.Amount, ed.Amount actualamount, pd.AMZMethod, ?");
 		sql.append(", 0 AmortizedAmount, ed.Amount UnAmortizedAmount, 0 CurMonthAmz, 0 PrvMonthAmz, ?");
 		sql.append(" From FinExpenseDetails ed");
-		sql.append(" Inner join ExpenseTypes et on et.ExpenseTypeId = ed.ExpenseTypeId and t2.AmortReq = 1");
+		sql.append(" Inner join ExpenseTypes et on et.ExpenseTypeId = ed.ExpenseTypeId and et.AmortReq = 1");
 		sql.append(" Inner Join FinanceMain fm on fm.FinID = ed.FinID");
 		sql.append(" Inner Join FinPftDetails pd on pd.FinID = fm.FinID");
 		sql.append(" Where ed.Amount > 0 and ed.FinExpenseId");
@@ -803,12 +803,12 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			sql.append("Update t1 Set t1.ActualAmount = t2.ActualAmount, t1.UnAmortizedAmount = t2.ActualAmount");
 			sql.append(" From IncomeAmortization t1");
 			sql.append(" Inner Join (Select t1.ReferenceId, IncomeType");
-			sql.append(", (Coalesce((Round(((Amount/100) * 100)/(100 + CalcFactor), 0)* 100), 0) - T2.WaivedAmount)");
+			sql.append(", (Coalesce((Round(((Amount/100) * 100)/(100 + CalcFactor), 0)* 100), 0) - t2.WaivedAmount)");
 			sql.append(" ActualAmount");
 			sql.append(" From IncomeAmortization t1");
 			sql.append(" Inner Join FinFeeDetail t2 on t1.ReferenceId = t2.FeeID");
 			sql.append(" Where IncomeType = ? and CalculatedOn = ?) t2");
-			sql.append(" Where T1.ReferenceId = t2.ReferenceId and t2.IncomeType = t2.IncomeType");
+			sql.append(" ON t1.ReferenceId = t2.ReferenceId and t2.IncomeType = t2.IncomeType");
 		} else if (App.DATABASE == Database.ORACLE) {
 			sql.append("Merge Into IncomeAmortization t1");
 			sql.append(" using (Select T1.ReferenceId, IncomeType");
@@ -929,6 +929,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 			int index = 1;
 
 			ps.setDate(index++, JdbcUtil.getDate(amzMonth));
+			ps.setInt(index++, 0);
 			ps.setInt(index++, EodConstants.PROGRESS_WAIT);
 			ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 			ps.setBoolean(index++, isEOMProcess);

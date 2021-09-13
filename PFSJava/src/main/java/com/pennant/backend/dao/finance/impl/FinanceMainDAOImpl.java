@@ -208,7 +208,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	@Override
 	public FinanceMain getDisbursmentFinMainById(String finReference, TableType tableType) {
 		StringBuilder sql = getDisbursementFmQuery(tableType);
-		sql.append(" Where fm.FinID = ?");
+		sql.append(" Where fm.FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 		try {
@@ -1214,7 +1214,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" + fpd.TotalPftBal - fpd.TdSchdPft) TotalOutStanding");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Join FinPftDetails fpd on fm.FinID =  fpd.FinID");
-		sql.append(" Where FinID = ?");
+		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1228,7 +1228,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fs.setFinType(rs.getString("FinType"));
 				fs.setFinCcy(rs.getString("FinCcy"));
 				fs.setNumberOfTerms(rs.getLong("NumberOfTerms"));
-				fs.setMaturityDate(JdbcUtil.getDate(rs.getDate("NumberOfTerms")));
+				fs.setMaturityDate(JdbcUtil.getDate(rs.getDate("MaturityDate")));
 				fs.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
 				fs.setFinLastRepayDate(JdbcUtil.getDate(rs.getDate("LastRepayDate")));
 				fs.setCustCIF(rs.getString("CustCIF"));
@@ -5602,7 +5602,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
 		sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
-		sql.append(" Inner Join RmtFinanceTypes ft ft.FinType = fm.FinType");
+		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
 
 		if (isFinReference) {

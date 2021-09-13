@@ -41,7 +41,7 @@ public class FinAutoApprovalDetailDAOImpl extends SequenceDao<FinAutoApprovalDet
 		StringBuilder sql = new StringBuilder("Insert Into FinAutoApprovalDetails");
 		sql.append(" (BatchId, FinID, FinReference, DisbId,  RealizedDate");
 		sql.append(",  Status,  ErrorDesc,  UserId, Downloaded_on)");
-		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 

@@ -258,7 +258,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
 		sql.append(", OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate");
 		sql.append(" From Cibil_Customer_Loans_View cs");
-		sql.append(" Where cs.FinID = ? and  and CustID = ? and cs.Segment_Type = ?");
+		sql.append(" Where cs.FinID = ? and CustID = ? and cs.Segment_Type = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -707,7 +707,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			chqueDtl.setAmount(rs.getBigDecimal("Reason"));
 
 			return chqueDtl;
-		}, " CHEQUE", "B", "41", "403");
+		}, "CHEQUE", "B", "41", "403");
 	}
 
 	@Override

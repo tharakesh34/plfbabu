@@ -40,7 +40,39 @@
 	<bean id="finODPenaltyRateDAO" class="com.pennant.backend.dao.finance.impl.FinODPenaltyRateDAOImpl" parent="sequenceDao" />
 	<bean id="financeScheduleDetailDAO" class="com.pennant.backend.dao.finance.impl.FinanceScheduleDetailDAOImpl"
 		parent="basicDao" />
-   <bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao" />
+    <bean id="profitDetailsDAO" class="com.pennant.backend.dao.finance.impl.FinanceProfitDetailDAOImpl" parent="basicDao" />
+    <bean id="finAutoApprovalDetailDAO" class="com.pennanttech.pff.logging.dao.impl.FinAutoApprovalDetailDAOImpl"
+		parent="sequenceDao" />
+    <bean id="instBasedSchdDetailDAO" class="com.pennanttech.pff.logging.dao.impl.InstBasedSchdDetailDAOImpl" parent="sequenceDao" />
+	<bean id="projectedAmortizationDAO" class="com.pennant.backend.dao.amortization.impl.ProjectedAmortizationDAOImpl"
+		parent="sequenceDao" />
+	<bean id="autoKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnockOffDAOImpl" parent="basicDao" />
+	<bean id="loanTypeKnockOffDAO" class="com.pennant.backend.dao.applicationmaster.impl.LoanTypeKnockOffDAOImpl"
+		parent="basicDao" />
+    <bean id="autoKnkOfFeeMappingDAO" class="com.pennant.backend.dao.applicationmaster.impl.AutoKnkOfFeeMappingDAOImpl"
+		parent="basicDao" />
+	<bean id="blacklistCustomerDAO" class="com.pennant.backend.dao.applicationmaster.impl.BlackListCustomerDAOImpl"
+		parent="basicDao" />
+    <bean id="finIRRDetailsDAO" class="com.pennant.backend.dao.applicationmaster.impl.FinIRRDetailsDAOImpl" parent="basicDao" />
+    <bean id="vasMovementDAO" class="com.pennant.backend.dao.applicationmaster.impl.VasMovementDAOImpl" parent="sequenceDao" />
+    <bean id="vasMovementDetailDAO" class="com.pennant.backend.dao.applicationmaster.impl.VasMovementDetailDAOImpl"
+		parent="basicDao" />
+	<bean id="cibildao" class="com.pennant.backend.dao.cibil.CIBILDAOImpl" parent="basicDao" />
+	<bean id="collateralSetupDAO" class="com.pennant.backend.dao.collateral.impl.CollateralSetupDAOImpl" parent="basicDao" />
+	<bean id="collateralMarkDAO" class="com.pennant.backend.dao.collateralmark.impl.CollateralMarkDAOImpl"
+		parent="sequenceDao" />
+	<bean id="commitmentMovementDAO" class="com.pennant.backend.dao.commitment.impl.CommitmentMovementDAOImpl" parent="basicDao" />
+	<bean id="customerDedupDAO" class="com.pennant.backend.dao.custdedup.impl.CustomerDedupDAOImpl" parent="basicDao" />
+	<bean id="customerDocumentDAO" class="com.pennant.backend.dao.customermasters.impl.CustomerDocumentDAOImpl"
+		parent="sequenceDao" />
+	<bean id="legalExpensesDAO" class="com.pennant.backend.dao.expenses.impl.LegalExpensesDAOImpl"
+		parent="sequenceDao" />
+	<bean id="dueDiligenceDetailsDAO"
+		class="com.pennant.backend.dao.finance.financialSummary.impl.DueDiligenceDetailsDAOImpl" parent="sequenceDao" />
+	<bean id="recommendationNotesDetailsDAO"
+		class="com.pennant.backend.dao.finance.financialSummary.impl.RecommendationNotesDetailsDAOImpl" parent="sequenceDao" />
+	<bean id="sanctionConditionsDAO"
+		class="com.pennant.backend.dao.finance.financialSummary.impl.SanctionConditionsDAOImpl" parent="sequenceDao" />
 	
 	
 </beans>

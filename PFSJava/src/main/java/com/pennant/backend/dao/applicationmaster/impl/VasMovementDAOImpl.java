@@ -131,7 +131,7 @@ public class VasMovementDAOImpl extends SequenceDao<VasMovement> implements VasM
 		StringBuilder sql = new StringBuilder("Insert Into VasMovement");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (VasMovementId, FinID, FinReference");
-		sql.append(" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
