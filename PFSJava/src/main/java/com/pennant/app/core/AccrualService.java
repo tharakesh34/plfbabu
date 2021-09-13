@@ -62,7 +62,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class AccrualService extends ServiceHelper {
-	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(AccrualService.class);
 
 	private FinanceSuspHeadDAO financeSuspHeadDAO;
@@ -199,6 +198,7 @@ public class AccrualService extends ServiceHelper {
 	private void resetCalculatedTotals(FinanceMain fm, FinanceProfitDetail pfd) {
 
 		if (PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
+			pfd.setFinID(fm.getFinID());
 			pfd.setFinReference(fm.getFinReference());
 			pfd.setFinStartDate(fm.getFinStartDate());
 			pfd.setCustId(fm.getCustID());

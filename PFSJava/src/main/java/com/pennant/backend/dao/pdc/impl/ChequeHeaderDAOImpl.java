@@ -132,11 +132,11 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 
 		StringBuilder sql = new StringBuilder("Insert Into ChequeHeader");
 		sql.append(tableType.getSuffix());
-		sql.append("( HeaderID, FinID, FinReference, NoOfCheques, TotalAmount");
+		sql.append("(HeaderID, FinID, FinReference, NoOfCheques, TotalAmount");
 		sql.append(", Active, Version, LastMntOn, LastMntBy,RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 

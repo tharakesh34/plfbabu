@@ -733,17 +733,18 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 					BigDecimal prvPenaltyBal = BigDecimal.ZERO.subtract(prvRecovery.getPenaltyBal());
 
 					// Overdue Details Updation for Totals
-					FinODDetails detail = new FinODDetails();
-					detail.setFinReference(finReference);
-					detail.setFinODSchdDate(schdDate);
-					detail.setFinODFor(odFor);
-					detail.setTotPenaltyAmt(prvPenalty);
-					detail.setTotPenaltyPaid(BigDecimal.ZERO);
-					detail.setTotPenaltyBal(prvPenaltyBal);
-					detail.setTotWaived(BigDecimal.ZERO);
+					FinODDetails fod = new FinODDetails();
+					fod.setFinID(finID);
+					fod.setFinReference(finReference);
+					fod.setFinODSchdDate(schdDate);
+					fod.setFinODFor(odFor);
+					fod.setTotPenaltyAmt(prvPenalty);
+					fod.setTotPenaltyPaid(BigDecimal.ZERO);
+					fod.setTotPenaltyBal(prvPenaltyBal);
+					fod.setTotWaived(BigDecimal.ZERO);
 
 					if (!isEnqPurpose) {
-						finODDetailsDAO.updateTotals(detail);
+						finODDetailsDAO.updateTotals(fod);
 					}
 				}
 			}
@@ -944,6 +945,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 			fod = new FinODDetails();
 		}
 
+		fod.setFinID(queue.getFinID());
 		fod.setFinReference(queue.getFinReference());
 		fod.setFinODSchdDate(queue.getRpyDate());
 		fod.setFinODFor(queue.getFinRpyFor());
@@ -1045,7 +1047,9 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		String errorCode = null;
 		BigDecimal paidAmount = BigDecimal.ZERO;
 
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+
 		// Calculate Pending Penalty Balance
 		BigDecimal pendingPenalty = penalty.subtract(prvPenaltyPaid);
 
@@ -1084,7 +1088,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				 * (!"DAY".equals(phase)) { isEODProcess = true; }
 				 */
 
-				Date dateAppDate = DateUtility.getAppDate();
+				Date dateAppDate = SysParamUtil.getAppDate();
 				aeEvent.setPostDate(dateAppDate);
 				aeEvent.setValueDate(valueDate);
 				try {
@@ -1106,15 +1110,16 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 							waiverAmt, isPaidClear);
 
 					// Overdue Details Updation for Totals
-					FinODDetails detail = new FinODDetails();
-					detail.setFinReference(finReference);
-					detail.setFinODSchdDate(schdDate);
-					detail.setFinODFor(finODFor);
-					detail.setTotPenaltyAmt(BigDecimal.ZERO);
-					detail.setTotPenaltyPaid(penaltyPaidNow);
-					detail.setTotPenaltyBal(penaltyPaidNow.negate());
-					detail.setTotWaived(waiverAmt);
-					finODDetailsDAO.updateTotals(detail);
+					FinODDetails fod = new FinODDetails();
+					fod.setFinID(finID);
+					fod.setFinReference(finReference);
+					fod.setFinODSchdDate(schdDate);
+					fod.setFinODFor(finODFor);
+					fod.setTotPenaltyAmt(BigDecimal.ZERO);
+					fod.setTotPenaltyPaid(penaltyPaidNow);
+					fod.setTotPenaltyBal(penaltyPaidNow.negate());
+					fod.setTotWaived(waiverAmt);
+					finODDetailsDAO.updateTotals(fod);
 
 				}
 			}

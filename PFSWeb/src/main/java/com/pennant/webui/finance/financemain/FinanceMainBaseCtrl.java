@@ -7770,8 +7770,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceDetail.setRecommendationNoteList(null);
 		}
 		if (financialSummaryDialogCtrl != null) {
-			financialSummaryDialogCtrl
-					.doFillSynopsisDetails(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
+			financialSummaryDialogCtrl.doFillSynopsisDetails(aFinanceDetail.getFinScheduleData().getFinanceMain());
 			aFinanceDetail.setSynopsisDetails(financialSummaryDialogCtrl.getSynopsisDetails());
 		} else {
 			aFinanceDetail.setSynopsisDetails(null);

@@ -131,7 +131,7 @@ public class FinStageAccountingLogDAOImpl extends BasicDao<FinStageAccountingLog
 
 			ps.setInt(index++, 1);
 			ps.setLong(index++, finID);
-			ps.setString(index, finEvent);
+			ps.setString(index++, finEvent);
 			ps.setBoolean(index, processed);
 		});
 	}

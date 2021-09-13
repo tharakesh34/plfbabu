@@ -222,6 +222,7 @@ public class RepaymentPostingsUtil {
 
 				if (latePayPftWaivedNow.compareTo(BigDecimal.ZERO) > 0) {
 					FinODDetails od = new FinODDetails();
+					od.setFinID(repayQueue.getFinID());
 					od.setFinReference(repayQueue.getFinReference());
 					od.setFinODSchdDate(repayQueue.getRpyDate());
 					od.setPaidNow(BigDecimal.ZERO);
@@ -282,7 +283,7 @@ public class RepaymentPostingsUtil {
 	}
 
 	private List<Object> doOverduePostings(AEEvent aeEvent, List<FinRepayQueue> finRepayQueueList, Date postDate,
-			Date dateValueDate, FinanceMain financeMain, FinRepayQueueHeader repayQueueHeader) throws AppException {
+			Date dateValueDate, FinanceMain fm, FinRepayQueueHeader repayQueueHeader) throws AppException {
 		logger.info(Literal.ENTERING);
 
 		// repayQueueHeader.setLppAmzReqonME(feeType.isAmortzReq());
@@ -299,8 +300,8 @@ public class RepaymentPostingsUtil {
 
 		if (movement != null && (movement.getPaidAmount().compareTo(BigDecimal.ZERO) > 0
 				|| movement.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0)) {
-			List<Object> returnList = recoveryPostingsUtil.recoveryPayment(financeMain, dateValueDate, postDate,
-					movement, dateValueDate, aeEvent, repayQueueHeader);
+			List<Object> returnList = recoveryPostingsUtil.recoveryPayment(fm, dateValueDate, postDate, movement,
+					dateValueDate, aeEvent, repayQueueHeader);
 
 			aeEvent = (AEEvent) returnList.get(0);
 			if (!aeEvent.isPostingSucess()) {
@@ -322,22 +323,23 @@ public class RepaymentPostingsUtil {
 					continue;
 				}
 
-				FinODDetails detail = new FinODDetails();
-				detail.setFinReference(financeMain.getFinReference());
-				detail.setFinODSchdDate(repayQueue.getRpyDate());
-				detail.setFinODFor(repayQueue.getFinRpyFor());
-				detail.setTotPenaltyAmt(BigDecimal.ZERO);
-				detail.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
+				FinODDetails fod = new FinODDetails();
+				fod.setFinID(fm.getFinID());
+				fod.setFinReference(fm.getFinReference());
+				fod.setFinODSchdDate(repayQueue.getRpyDate());
+				fod.setFinODFor(repayQueue.getFinRpyFor());
+				fod.setTotPenaltyAmt(BigDecimal.ZERO);
+				fod.setTotPenaltyPaid(repayQueue.getPenaltyPayNow());
 
 				if (repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount()).compareTo(BigDecimal.ZERO) < 0) {
-					detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
+					fod.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())).negate());
 				} else {
-					detail.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())));
+					fod.setTotPenaltyBal((repayQueue.getPenaltyPayNow().add(repayQueue.getWaivedAmount())));
 				}
-				detail.setTotWaived(repayQueue.getWaivedAmount());
+				fod.setTotWaived(repayQueue.getWaivedAmount());
 
 				if (!aeEvent.isSimulateAccounting()) {
-					finODDetailsDAO.updateTotals(detail);
+					finODDetailsDAO.updateTotals(fod);
 				}
 			}
 		}
@@ -637,6 +639,7 @@ public class RepaymentPostingsUtil {
 
 		if (latePayPftPayNow.compareTo(BigDecimal.ZERO) > 0 || latePayPftWaivedNow.compareTo(BigDecimal.ZERO) > 0) {
 			FinODDetails od = new FinODDetails();
+			od.setFinID(repayQueue.getFinID());
 			od.setFinReference(repayQueue.getFinReference());
 			od.setFinODSchdDate(repayQueue.getRpyDate());
 			od.setPaidNow(latePayPftPayNow);
@@ -654,6 +657,7 @@ public class RepaymentPostingsUtil {
 
 		if (penaltyPayNow.compareTo(BigDecimal.ZERO) > 0 || waivedAmount.compareTo(BigDecimal.ZERO) > 0) {
 			FinODDetails od = new FinODDetails();
+			od.setFinID(repayQueue.getFinID());
 			od.setFinReference(repayQueue.getFinReference());
 			od.setFinODSchdDate(repayQueue.getRpyDate());
 			od.setFinODFor(repayQueue.getFinRpyFor());

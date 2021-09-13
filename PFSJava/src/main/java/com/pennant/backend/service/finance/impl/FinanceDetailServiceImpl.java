@@ -196,6 +196,7 @@ import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
+import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.Provision;
@@ -1932,17 +1933,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail fd = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
-		FinScheduleData scheduleData = fd.getFinScheduleData();
-		FinanceMain financeMain = scheduleData.getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		long finID = financeMain.getFinID();
-		String finReference = financeMain.getFinReference();
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 		Date curBDay = SysParamUtil.getAppDate();
 
 		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fd);
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : serviceInstructions) {
-			serviceUID = finServInst.getInstructionUID();
+		for (FinServiceInstruction fsi : serviceInstructions) {
+			serviceUID = fsi.getInstructionUID();
 		}
 
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate", isWIF, false);
@@ -1966,7 +1967,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		TableType tableType = TableType.MAIN_TAB;
-		if (financeMain.isWorkflow()) {
+		if (fm.isWorkflow()) {
 			tableType = TableType.TEMP_TAB;
 		}
 
@@ -1983,8 +1984,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Accounting Execution Process on Maintenance
 			// =======================================
-			if (tableType == TableType.MAIN_TAB
-					&& financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+			if (tableType == TableType.MAIN_TAB && fm.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 
 				auditHeader = executeAccountingProcess(auditHeader, curBDay);
 				if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
@@ -2014,11 +2014,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					}
 					getCustomerIncomeDAO().saveBatch(customer.getCustomerIncomeList(), "", true);
 				}
-				financeMain.setCustID(custId);
+				fm.setCustID(custId);
 			}
 		} else {
 			// set Customer Details Audit
-			if (!StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+			if (!StringUtils.equals(fm.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
 					|| auditHeader.getApiHeader() == null) {
 				if (fd.getCustomerDetails() != null && StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)) {
 					auditDetails.addAll(customerDetailsService.saveOrUpdate(fd, ""));
@@ -2030,46 +2030,46 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// =======================================
 		// Update Task_log and Task_Owners tables
 		if (!isWIF) {
-			updateTaskLog(financeMain, true);
+			updateTaskLog(fm, true);
 		}
 
 		// Mandate Should be processed first for changes since the mandate id
 		// will be updated in the finance main.
 		finMandateService.saveOrUpdate(fd, auditHeader, table);
 
-		if (financeMain.isNewRecord()) {
+		if (fm.isNewRecord()) {
 			// Lock Functionality not required while Creating loan From API
-			if (StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+			if (StringUtils.equals(fm.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
 					&& auditHeader.getApiHeader() != null) {
-				financeMain.setNextUserId(null);
+				fm.setNextUserId(null);
 			}
-			financeMainDAO.save(financeMain, tableType, isWIF);
+			financeMainDAO.save(fm, tableType, isWIF);
 
 			// Overdraft Details
-			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-					&& !scheduleData.getOverdraftScheduleDetails().isEmpty()) {
+			if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())
+					&& !schdData.getOverdraftScheduleDetails().isEmpty()) {
 
-				for (int i = 0; i < scheduleData.getOverdraftScheduleDetails().size(); i++) {
-					scheduleData.getOverdraftScheduleDetails().get(i).setFinReference(finReference);
+				for (int i = 0; i < schdData.getOverdraftScheduleDetails().size(); i++) {
+					schdData.getOverdraftScheduleDetails().get(i).setFinReference(finReference);
 				}
-				overdraftScheduleDetailDAO.saveList(scheduleData.getOverdraftScheduleDetails(), table);
+				overdraftScheduleDetailDAO.saveList(schdData.getOverdraftScheduleDetails(), table);
 			}
 		} else {
-			financeMainDAO.update(financeMain, tableType, isWIF);
+			financeMainDAO.update(fm, tableType, isWIF);
 
 			// Overdraft Details
-			if (financeMain.isLovDescIsSchdGenerated()
-					&& StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())
-					&& !scheduleData.getOverdraftScheduleDetails().isEmpty()) {
+			if (fm.isLovDescIsSchdGenerated()
+					&& StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())
+					&& !schdData.getOverdraftScheduleDetails().isEmpty()) {
 
 				// Existing Data deletion
 				overdraftScheduleDetailDAO.deleteByFinReference(finID, "_Temp", isWIF);
 
 				// Save New list of records
-				for (int i = 0; i < scheduleData.getOverdraftScheduleDetails().size(); i++) {
-					scheduleData.getOverdraftScheduleDetails().get(i).setFinReference(finReference);
+				for (int i = 0; i < schdData.getOverdraftScheduleDetails().size(); i++) {
+					schdData.getOverdraftScheduleDetails().get(i).setFinReference(finReference);
 				}
-				overdraftScheduleDetailDAO.saveList(scheduleData.getOverdraftScheduleDetails(), table);
+				overdraftScheduleDetailDAO.saveList(schdData.getOverdraftScheduleDetails(), table);
 			}
 		}
 
@@ -2087,16 +2087,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// if we take new customer case
 				if (taxDetail.getTaxCustId() <= 0
 						&& PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(taxDetail.getApplicableFor())) {
-					taxDetail.setTaxCustId(financeMain.getCustID());
+					taxDetail.setTaxCustId(fm.getCustID());
 				}
 
 				taxDetail.setFinReference(finReference);
-				taxDetail.setTaskId(financeMain.getTaskId());
-				taxDetail.setNextTaskId(financeMain.getNextTaskId());
-				taxDetail.setRoleCode(financeMain.getRoleCode());
-				taxDetail.setNextRoleCode(financeMain.getNextRoleCode());
-				taxDetail.setRecordStatus(financeMain.getRecordStatus());
-				taxDetail.setWorkflowId(financeMain.getWorkflowId());
+				taxDetail.setTaskId(fm.getTaskId());
+				taxDetail.setNextTaskId(fm.getNextTaskId());
+				taxDetail.setRoleCode(fm.getRoleCode());
+				taxDetail.setNextRoleCode(fm.getNextRoleCode());
+				taxDetail.setRecordStatus(fm.getRecordStatus());
+				taxDetail.setWorkflowId(fm.getWorkflowId());
 				financeTaxDetailDAO.save(taxDetail, tableType);
 			}
 		}
@@ -2142,44 +2142,44 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!fd.isNewRecord()) {
 
 			if (!isWIF && tableType == TableType.MAIN_TAB
-					&& financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
+					&& fm.getRecordType().equals(PennantConstants.RECORD_TYPE_UPD)) {
 				// Fetch Existing data before Modification
 
 				FinScheduleData oldFinSchdData = null;
-				if (financeMain.isScheduleRegenerated()) {
+				if (fm.isScheduleRegenerated()) {
 					oldFinSchdData = getFinSchDataByFinRef(finID, "", -1);
-					oldFinSchdData.setFinID(scheduleData.getFinID());
-					oldFinSchdData.setFinReference(scheduleData.getFinReference());
+					oldFinSchdData.setFinID(schdData.getFinID());
+					oldFinSchdData.setFinReference(schdData.getFinReference());
 				}
 
 				// Create log entry for Action for Schedule Modification
 				FinLogEntryDetail entryDetail = new FinLogEntryDetail();
-				entryDetail.setFinReference(scheduleData.getFinReference());
+				entryDetail.setFinReference(schdData.getFinReference());
 				entryDetail.setEventAction(fd.getAccountingEventCode());
-				entryDetail.setSchdlRecal(financeMain.isScheduleRegenerated());
+				entryDetail.setSchdlRecal(fm.isScheduleRegenerated());
 				entryDetail.setPostDate(curBDay);
 				entryDetail.setReversalCompleted(false);
 				long logKey = finLogEntryDetailDAO.save(entryDetail);
 
 				// Save Schedule Details For Future Modifications
-				if (financeMain.isScheduleRegenerated()) {
+				if (fm.isScheduleRegenerated()) {
 					listSave(oldFinSchdData, "_Log", false, logKey, serviceUID);
 				}
 			}
 
-			listDeletion(scheduleData, fd.getModuleDefiner(), table, isWIF);
+			listDeletion(schdData, fd.getModuleDefiner(), table, isWIF);
 			finServiceInstructionDAO.deleteList(finID, fd.getModuleDefiner(), "_Temp");
-			listSave(scheduleData, table, isWIF, 0, serviceUID);
-			saveFeeChargeList(scheduleData, fd.getModuleDefiner(), isWIF, table);
+			listSave(schdData, table, isWIF, 0, serviceUID);
+			saveFeeChargeList(schdData, fd.getModuleDefiner(), isWIF, table);
 
 			// Finance IRR Values
 			// =======================================
 			deleteFinIRR(finID, tableType);
-			saveFinIRR(scheduleData.getiRRDetails(), finReference, tableType);
+			saveFinIRR(schdData.getiRRDetails(), finReference, tableType);
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
-			FinanceMain befFinMain = financeMain.getBefImage();
+			FinanceMain befFinMain = fm.getBefImage();
 			if (befFinMain != null && befFinMain.isPlanEMIHAlw()) {
 				if (StringUtils.equals(befFinMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, table);
@@ -2189,24 +2189,24 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 		} else {
-			listSave(scheduleData, table, isWIF, 0, serviceUID);
-			saveFeeChargeList(scheduleData, fd.getModuleDefiner(), isWIF, table);
+			listSave(schdData, table, isWIF, 0, serviceUID);
+			saveFeeChargeList(schdData, fd.getModuleDefiner(), isWIF, table);
 
 			// Finance IRR Values
 			// =======================================
 			deleteFinIRR(finID, tableType);
-			saveFinIRR(scheduleData.getiRRDetails(), finReference, tableType);
+			saveFinIRR(schdData.getiRRDetails(), finReference, tableType);
 		}
 
 		// Plan EMI Holiday Details
 		// =======================================
-		if (financeMain.isPlanEMIHAlw()) {
-			if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				if (scheduleData.getPlanEMIHmonths() != null && !scheduleData.getPlanEMIHmonths().isEmpty()) {
+		if (fm.isPlanEMIHAlw()) {
+			if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				if (schdData.getPlanEMIHmonths() != null && !schdData.getPlanEMIHmonths().isEmpty()) {
 
 					List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-					for (int i = 0; i < scheduleData.getPlanEMIHmonths().size(); i++) {
-						int planEMIHMonth = scheduleData.getPlanEMIHmonths().get(i);
+					for (int i = 0; i < schdData.getPlanEMIHmonths().size(); i++) {
+						int planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
 						FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
 						emiHoliday.setFinReference(finReference);
 						emiHoliday.setPlanEMIHMonth(planEMIHMonth);
@@ -2215,12 +2215,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 					finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, table);
 				}
-			} else if (StringUtils.equals(financeMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-				if (scheduleData.getPlanEMIHDates() != null && !scheduleData.getPlanEMIHDates().isEmpty()) {
+			} else if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+				if (schdData.getPlanEMIHDates() != null && !schdData.getPlanEMIHDates().isEmpty()) {
 
 					List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-					for (int i = 0; i < scheduleData.getPlanEMIHDates().size(); i++) {
-						Date planEMIHDate = scheduleData.getPlanEMIHDates().get(i);
+					for (int i = 0; i < schdData.getPlanEMIHDates().size(); i++) {
+						Date planEMIHDate = schdData.getPlanEMIHDates().get(i);
 						FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
 						emiHoliday.setFinReference(finReference);
 						emiHoliday.setPlanEMIHDate(planEMIHDate);
@@ -2234,11 +2234,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Save Finance Step Policy Details
 		// =======================================
-		if (isWIF || PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
+		if (isWIF || PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())
 				&& FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
-			if (financeMain.isStepFinance()) {
+			if (fm.isStepFinance()) {
 				financeStepDetailDAO.deleteList(finID, isWIF, tableType.getSuffix());
-				saveStepDetailList(scheduleData, isWIF, tableType.getSuffix());
+				saveStepDetailList(schdData, isWIF, tableType.getSuffix());
 				List<AuditDetail> fspd = fd.getAuditDetailMap().get("FinanceStepPolicyDetail");
 				auditDetails.addAll(fspd);
 			} else {
@@ -2264,7 +2264,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			List<DocumentDetails> documentDetails = fd.getDocumentDetailsList();
 			if (CollectionUtils.isNotEmpty(documentDetails)) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
-				details = processingDocumentDetailsList(details, table, financeMain, fd.getModuleDefiner(), serviceUID);
+				details = processingDocumentDetailsList(details, table, fm, fd.getModuleDefiner(), serviceUID);
 				auditDetails.addAll(details);
 			}
 
@@ -2334,13 +2334,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (fd.getCovenantTypeList() != null && !fd.getCovenantTypeList().isEmpty()) {
 				for (FinCovenantType finCovenantType : fd.getCovenantTypeList()) {
 					finCovenantType.setFinReference(finReference);
-					finCovenantType.setTaskId(financeMain.getTaskId());
-					finCovenantType.setNextTaskId(financeMain.getNextTaskId());
-					finCovenantType.setRoleCode(financeMain.getRoleCode());
-					finCovenantType.setNextRoleCode(financeMain.getNextRoleCode());
-					finCovenantType.setRecordStatus(financeMain.getRecordStatus());
-					finCovenantType.setWorkflowId(financeMain.getWorkflowId());
-					finCovenantType.setLastMntOn(financeMain.getLastMntOn());
+					finCovenantType.setTaskId(fm.getTaskId());
+					finCovenantType.setNextTaskId(fm.getNextTaskId());
+					finCovenantType.setRoleCode(fm.getRoleCode());
+					finCovenantType.setNextRoleCode(fm.getNextRoleCode());
+					finCovenantType.setRecordStatus(fm.getRecordStatus());
+					finCovenantType.setWorkflowId(fm.getWorkflowId());
+					finCovenantType.setLastMntOn(fm.getLastMntOn());
 				}
 
 				List<AuditDetail> covenantAuditDetails = null;
@@ -2355,13 +2355,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				int docSize = 0;
 				for (Covenant covenant : fd.getCovenants()) {
 					covenant.setKeyReference(finReference);
-					covenant.setTaskId(financeMain.getTaskId());
-					covenant.setNextTaskId(financeMain.getNextTaskId());
-					covenant.setRoleCode(financeMain.getRoleCode());
-					covenant.setNextRoleCode(financeMain.getNextRoleCode());
-					covenant.setRecordStatus(financeMain.getRecordStatus());
-					covenant.setWorkflowId(financeMain.getWorkflowId());
-					covenant.setLastMntOn(financeMain.getLastMntOn());
+					covenant.setTaskId(fm.getTaskId());
+					covenant.setNextTaskId(fm.getNextTaskId());
+					covenant.setRoleCode(fm.getRoleCode());
+					covenant.setNextRoleCode(fm.getNextRoleCode());
+					covenant.setRecordStatus(fm.getRecordStatus());
+					covenant.setWorkflowId(fm.getWorkflowId());
+					covenant.setLastMntOn(fm.getLastMntOn());
 				}
 				if (CollectionUtils.isNotEmpty(fd.getDocumentDetailsList())) {
 					docSize = fd.getDocumentDetailsList().size();
@@ -2373,7 +2373,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// =======================================
 			if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
-				details = processingCollateralAssignmentList(details, table, financeMain);
+				details = processingCollateralAssignmentList(details, table, fm);
 				auditDetails.addAll(details);
 			}
 			// Save Collateral setup Details
@@ -2400,19 +2400,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// FinAssetTypes Audit
 			if (fd.getFinAssetTypesList() != null && !fd.getFinAssetTypesList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("FinAssetTypes");
-				details = processingFinAssetTypesList(details, table, financeMain);
+				details = processingFinAssetTypesList(details, table, fm);
 				auditDetails.addAll(details);
 			}
 
 			// Vas Recording Details
-			if (scheduleData.getVasRecordingList() != null && !scheduleData.getVasRecordingList().isEmpty()) {
+			if (schdData.getVasRecordingList() != null && !schdData.getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("VasRecordings");
 				details = processingVasRecordngList(fd, details, table);
 				auditDetails.addAll(details);
 			}
 
 			// Vas Recording Extended Field Details
-			if (scheduleData.getVasRecordingList() != null && !scheduleData.getVasRecordingList().isEmpty()) {
+			if (schdData.getVasRecordingList() != null && !schdData.getVasRecordingList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("VasExtendedDetails");
 
 				details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
@@ -2466,17 +2466,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// psl Details
 			// =======================================
 			if (fd.getPslDetail() != null) {
-				fd.getPslDetail().setRecordStatus(financeMain.getRecordStatus());
-				fd.getPslDetail().setRoleCode(financeMain.getRoleCode());
-				fd.getPslDetail().setNextRoleCode(financeMain.getNextRoleCode());
-				fd.getPslDetail().setTaskId((financeMain.getTaskId()));
-				fd.getPslDetail().setNextTaskId((financeMain.getNextTaskId()));
-				fd.getPslDetail().setWorkflowId((financeMain.getWorkflowId()));
+				fd.getPslDetail().setRecordStatus(fm.getRecordStatus());
+				fd.getPslDetail().setRoleCode(fm.getRoleCode());
+				fd.getPslDetail().setNextRoleCode(fm.getNextRoleCode());
+				fd.getPslDetail().setTaskId((fm.getTaskId()));
+				fd.getPslDetail().setNextTaskId((fm.getNextTaskId()));
+				fd.getPslDetail().setWorkflowId((fm.getWorkflowId()));
 				auditDetails.add(pSLDetailService.saveOrUpdate(fd.getPslDetail(), tableType, auditTranType));
 			}
 
 			// Verifications
-			saveOrUpdateVerifications(auditDetails, fd, financeMain, auditTranType);
+			saveOrUpdateVerifications(auditDetails, fd, fm, auditTranType);
 
 			// calling post hoot
 			if (postExteranalServiceHook != null) {
@@ -2487,19 +2487,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			 * save sampling details
 			 */
 
-			if (financeMain.isSamplingRequired() && !fd.isActionSave()
-					&& !samplingService.isExist(scheduleData.getFinReference(), "_view")) {
+			if (fm.isSamplingRequired() && !fd.isActionSave()
+					&& !samplingService.isExist(schdData.getFinReference(), "_view")) {
 				Sampling sampling = new Sampling();
-				sampling.setKeyReference(financeMain.getFinReference());
-				sampling.setLastMntBy(financeMain.getLastMntBy());
-				sampling.setCreatedBy(financeMain.getLastMntBy());
+				sampling.setKeyReference(fm.getFinReference());
+				sampling.setLastMntBy(fm.getLastMntBy());
+				sampling.setCreatedBy(fm.getLastMntBy());
 				samplingService.save(sampling);
 			}
 
 			/**
 			 * save Legal details
 			 */
-			if (financeMain.isLegalRequired() && (!fd.isActionSave() || auditHeader.getApiHeader() != null)
+			if (fm.isLegalRequired() && (!fd.isActionSave() || auditHeader.getApiHeader() != null)
 					&& !fd.getCollateralAssignmentList().isEmpty()) {
 				legalDetailService.saveLegalDetails(fd, auditHeader.getApiHeader());
 			}
@@ -2508,7 +2508,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Finance Fee Details
 		// =======================================
-		List<FinFeeDetail> finFeeDetails = scheduleData.getFinFeeDetailList();
+		List<FinFeeDetail> finFeeDetails = schdData.getFinFeeDetailList();
 		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 			for (FinFeeDetail fee : finFeeDetails) {
 				fee.setInstructionUID(serviceUID);
@@ -2543,13 +2543,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (CollectionUtils.isNotEmpty(finOptions)) {
 			for (FinOption finOption : fd.getFinOptions()) {
 				finOption.setFinReference(finReference);
-				finOption.setTaskId(financeMain.getTaskId());
-				finOption.setNextTaskId(financeMain.getNextTaskId());
-				finOption.setRoleCode(financeMain.getRoleCode());
-				finOption.setNextRoleCode(financeMain.getNextRoleCode());
-				finOption.setRecordStatus(financeMain.getRecordStatus());
-				finOption.setWorkflowId(financeMain.getWorkflowId());
-				finOption.setLastMntOn(financeMain.getLastMntOn());
+				finOption.setTaskId(fm.getTaskId());
+				finOption.setNextTaskId(fm.getNextTaskId());
+				finOption.setRoleCode(fm.getRoleCode());
+				finOption.setNextRoleCode(fm.getNextRoleCode());
+				finOption.setRecordStatus(fm.getRecordStatus());
+				finOption.setWorkflowId(fm.getWorkflowId());
+				finOption.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(finOptionService.doProcess(finOptions, tableType, auditTranType, false));
 		}
@@ -2571,8 +2571,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		// E-mail notification for Create Loan API.
 		try {
 			if (ImplementationConstants.SEND_NOTIFICATION_ON_CREATE_LOAN_API
-					&& PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(financeMain.getFinSourceID())
-					&& financeMain.isNewRecord()) {
+					&& PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(fm.getFinSourceID()) && fm.isNewRecord()) {
 				sendMailNotification(fd);
 			}
 		} catch (Exception e) {
@@ -2600,9 +2599,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		if (!isWIF) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), financeMain.getExcludeFields());
-			auditHeader.setAuditDetail(
-					new AuditDetail(auditTranType, 1, fields[0], fields[1], financeMain.getBefImage(), financeMain));
+			String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
+			auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], fm.getBefImage(), fm));
 
 			auditHeader.setAuditDetails(auditDetails);
 			auditHeaderDAO.addAudit(auditHeader);
@@ -2622,13 +2620,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fd.getRisksAndMitigantsList() != null && risksAndMitigantsService != null) {
 			for (RisksAndMitigants risksAndMitigants : fd.getRisksAndMitigantsList()) {
 				risksAndMitigants.setFinReference(finReference);
-				risksAndMitigants.setTaskId(financeMain.getTaskId());
-				risksAndMitigants.setNextTaskId(financeMain.getNextTaskId());
-				risksAndMitigants.setRoleCode(financeMain.getRoleCode());
-				risksAndMitigants.setNextRoleCode(financeMain.getNextRoleCode());
-				risksAndMitigants.setRecordStatus(financeMain.getRecordStatus());
-				risksAndMitigants.setWorkflowId(financeMain.getWorkflowId());
-				risksAndMitigants.setLastMntOn(financeMain.getLastMntOn());
+				risksAndMitigants.setTaskId(fm.getTaskId());
+				risksAndMitigants.setNextTaskId(fm.getNextTaskId());
+				risksAndMitigants.setRoleCode(fm.getRoleCode());
+				risksAndMitigants.setNextRoleCode(fm.getNextRoleCode());
+				risksAndMitigants.setRecordStatus(fm.getRecordStatus());
+				risksAndMitigants.setWorkflowId(fm.getWorkflowId());
+				risksAndMitigants.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(
 					risksAndMitigantsService.doProcess(fd.getRisksAndMitigantsList(), tableType, auditTranType, false));
@@ -2638,13 +2636,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fd.getSanctionDetailsList() != null && sanctionConditionsService != null) {
 			for (SanctionConditions sanctionConditions : fd.getSanctionDetailsList()) {
 				sanctionConditions.setFinReference(finReference);
-				sanctionConditions.setTaskId(financeMain.getTaskId());
-				sanctionConditions.setNextTaskId(financeMain.getNextTaskId());
-				sanctionConditions.setRoleCode(financeMain.getRoleCode());
-				sanctionConditions.setNextRoleCode(financeMain.getNextRoleCode());
-				sanctionConditions.setRecordStatus(financeMain.getRecordStatus());
-				sanctionConditions.setWorkflowId(financeMain.getWorkflowId());
-				sanctionConditions.setLastMntOn(financeMain.getLastMntOn());
+				sanctionConditions.setTaskId(fm.getTaskId());
+				sanctionConditions.setNextTaskId(fm.getNextTaskId());
+				sanctionConditions.setRoleCode(fm.getRoleCode());
+				sanctionConditions.setNextRoleCode(fm.getNextRoleCode());
+				sanctionConditions.setRecordStatus(fm.getRecordStatus());
+				sanctionConditions.setWorkflowId(fm.getWorkflowId());
+				sanctionConditions.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(
 					sanctionConditionsService.doProcess(fd.getSanctionDetailsList(), tableType, auditTranType, false));
@@ -2654,13 +2652,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fd.getDealRecommendationMeritsDetailsList() != null && dealRecommendationMeritsService != null) {
 			for (DealRecommendationMerits dealRecommendationMerits : fd.getDealRecommendationMeritsDetailsList()) {
 				dealRecommendationMerits.setFinReference(finReference);
-				dealRecommendationMerits.setTaskId(financeMain.getTaskId());
-				dealRecommendationMerits.setNextTaskId(financeMain.getNextTaskId());
-				dealRecommendationMerits.setRoleCode(financeMain.getRoleCode());
-				dealRecommendationMerits.setNextRoleCode(financeMain.getNextRoleCode());
-				dealRecommendationMerits.setRecordStatus(financeMain.getRecordStatus());
-				dealRecommendationMerits.setWorkflowId(financeMain.getWorkflowId());
-				dealRecommendationMerits.setLastMntOn(financeMain.getLastMntOn());
+				dealRecommendationMerits.setTaskId(fm.getTaskId());
+				dealRecommendationMerits.setNextTaskId(fm.getNextTaskId());
+				dealRecommendationMerits.setRoleCode(fm.getRoleCode());
+				dealRecommendationMerits.setNextRoleCode(fm.getNextRoleCode());
+				dealRecommendationMerits.setRecordStatus(fm.getRecordStatus());
+				dealRecommendationMerits.setWorkflowId(fm.getWorkflowId());
+				dealRecommendationMerits.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(dealRecommendationMeritsService.doProcess(fd.getDealRecommendationMeritsDetailsList(),
 					tableType, auditTranType, false));
@@ -2670,13 +2668,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fd.getDueDiligenceDetailsList() != null && dueDiligenceDetailsService != null) {
 			for (DueDiligenceDetails dueDiligenceDetails : fd.getDueDiligenceDetailsList()) {
 				dueDiligenceDetails.setFinReference(finReference);
-				dueDiligenceDetails.setTaskId(financeMain.getTaskId());
-				dueDiligenceDetails.setNextTaskId(financeMain.getNextTaskId());
-				dueDiligenceDetails.setRoleCode(financeMain.getRoleCode());
-				dueDiligenceDetails.setNextRoleCode(financeMain.getNextRoleCode());
-				dueDiligenceDetails.setRecordStatus(financeMain.getRecordStatus());
-				dueDiligenceDetails.setWorkflowId(financeMain.getWorkflowId());
-				dueDiligenceDetails.setLastMntOn(financeMain.getLastMntOn());
+				dueDiligenceDetails.setTaskId(fm.getTaskId());
+				dueDiligenceDetails.setNextTaskId(fm.getNextTaskId());
+				dueDiligenceDetails.setRoleCode(fm.getRoleCode());
+				dueDiligenceDetails.setNextRoleCode(fm.getNextRoleCode());
+				dueDiligenceDetails.setRecordStatus(fm.getRecordStatus());
+				dueDiligenceDetails.setWorkflowId(fm.getWorkflowId());
+				dueDiligenceDetails.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(dueDiligenceDetailsService.doProcess(fd.getDueDiligenceDetailsList(), tableType,
 					auditTranType, false));
@@ -2686,13 +2684,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (fd.getRecommendationNoteList() != null && recommendationNotesDetailsService != null) {
 			for (RecommendationNotes recommendationNotesDetails : fd.getRecommendationNoteList()) {
 				recommendationNotesDetails.setFinReference(finReference);
-				recommendationNotesDetails.setTaskId(financeMain.getTaskId());
-				recommendationNotesDetails.setNextTaskId(financeMain.getNextTaskId());
-				recommendationNotesDetails.setRoleCode(financeMain.getRoleCode());
-				recommendationNotesDetails.setNextRoleCode(financeMain.getNextRoleCode());
-				recommendationNotesDetails.setRecordStatus(financeMain.getRecordStatus());
-				recommendationNotesDetails.setWorkflowId(financeMain.getWorkflowId());
-				recommendationNotesDetails.setLastMntOn(financeMain.getLastMntOn());
+				recommendationNotesDetails.setTaskId(fm.getTaskId());
+				recommendationNotesDetails.setNextTaskId(fm.getNextTaskId());
+				recommendationNotesDetails.setRoleCode(fm.getRoleCode());
+				recommendationNotesDetails.setNextRoleCode(fm.getNextRoleCode());
+				recommendationNotesDetails.setRecordStatus(fm.getRecordStatus());
+				recommendationNotesDetails.setWorkflowId(fm.getWorkflowId());
+				recommendationNotesDetails.setLastMntOn(fm.getLastMntOn());
 			}
 			auditDetails.addAll(recommendationNotesDetailsService.doProcess(fd.getRecommendationNoteList(), tableType,
 					auditTranType, false));
@@ -2700,15 +2698,17 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// Synoposis Details
 		// =======================================
-		if (fd.getSynopsisDetails() != null && synopsisDetailsService != null) {
-			fd.getSynopsisDetails().setRecordStatus(financeMain.getRecordStatus());
-			fd.getSynopsisDetails().setRoleCode(financeMain.getRoleCode());
-			fd.getSynopsisDetails().setNextRoleCode(financeMain.getNextRoleCode());
-			fd.getSynopsisDetails().setTaskId((financeMain.getTaskId()));
-			fd.getSynopsisDetails().setNextTaskId((financeMain.getNextTaskId()));
-			fd.getSynopsisDetails().setWorkflowId((financeMain.getWorkflowId()));
-			fd.getSynopsisDetails().setFinReference((financeMain.getFinReference()));
-			auditDetails.add(synopsisDetailsService.saveOrUpdate(fd.getSynopsisDetails(), tableType, auditTranType));
+		SynopsisDetails synopsisDetails = fd.getSynopsisDetails();
+		if (synopsisDetails != null && synopsisDetailsService != null) {
+			synopsisDetails.setRecordStatus(fm.getRecordStatus());
+			synopsisDetails.setRoleCode(fm.getRoleCode());
+			synopsisDetails.setNextRoleCode(fm.getNextRoleCode());
+			synopsisDetails.setTaskId((fm.getTaskId()));
+			synopsisDetails.setNextTaskId((fm.getNextTaskId()));
+			synopsisDetails.setWorkflowId((fm.getWorkflowId()));
+			synopsisDetails.setFinID((fm.getFinID()));
+			synopsisDetails.setFinReference((fm.getFinReference()));
+			auditDetails.add(synopsisDetailsService.saveOrUpdate(synopsisDetails, tableType, auditTranType));
 		}
 		// Fin OCR Details
 		// =========================
@@ -2722,7 +2722,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		auditHeader.setAuditDetails(auditDetails);
 
-		List<Long> splittedLoans = financeMainDAO.getParentRefifAny(financeMain.getFinReference(), "_view", false);
+		List<Long> splittedLoans = financeMainDAO.getParentRefifAny(fm.getFinReference(), "_view", false);
 		if (CollectionUtils.isEmpty(splittedLoans)) {
 			processPricingLoans(fd, table, auditTranType);
 		}
@@ -9434,14 +9434,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Expense Amount calculation
 			BigDecimal txnAmount = getFinExpenseAmount(finTypeExpense, fm);
 
-			FinExpenseDetails finExpenseDetails = new FinExpenseDetails();
-			finExpenseDetails.setFinReference(fm.getFinReference());
-			finExpenseDetails.setExpenseTypeId(finTypeExpense.getExpenseTypeID());
-			finExpenseDetails.setLastMntOn(fm.getLastMntOn());
-			finExpenseDetails.setLastMntBy(fm.getLastMntBy());
-			finExpenseDetails.setAmount(txnAmount);
+			FinExpenseDetails fid = new FinExpenseDetails();
 
-			finExpenseDetailsDAO.saveFinExpenseDetails(finExpenseDetails);
+			fid.setFinID(fm.getFinID());
+			fid.setFinReference(fm.getFinReference());
+			fid.setExpenseTypeId(finTypeExpense.getExpenseTypeID());
+			fid.setLastMntOn(fm.getLastMntOn());
+			fid.setLastMntBy(fm.getLastMntBy());
+			fid.setAmount(txnAmount);
+
+			finExpenseDetailsDAO.saveFinExpenseDetails(fid);
 		}
 		return finTypeExpenseList;
 	}

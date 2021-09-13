@@ -65,10 +65,10 @@ public class AEAmounts implements Serializable {
 	// Processing Schedule Details to fill AmountCode Details DATA
 	// -------------------------------------------------------------------------------------------------
 
-	public static AEEvent procAEAmounts(FinanceMain financeMain, List<FinanceScheduleDetail> schdDetails,
+	public static AEEvent procAEAmounts(FinanceMain fm, List<FinanceScheduleDetail> schdDetails,
 			FinanceProfitDetail pftDetail, String eventCode, Date valueDate, Date schdDate) {
-		pftDetail = accrualService.calProfitDetails(financeMain, schdDetails, pftDetail, valueDate);
-		return procCalAEAmounts(financeMain, pftDetail, schdDetails, eventCode, valueDate, schdDate);
+		pftDetail = accrualService.calProfitDetails(fm, schdDetails, pftDetail, valueDate);
+		return procCalAEAmounts(fm, pftDetail, schdDetails, eventCode, valueDate, schdDate);
 	}
 
 	public static AEEvent procCalAEAmounts(FinanceMain fm, FinanceProfitDetail pfd,
@@ -78,8 +78,8 @@ public class AEAmounts implements Serializable {
 		AEAmountCodes amountCodes = new AEAmountCodes();
 		EventProperties eventProperties = fm.getEventProperties();
 
-		aeEvent.setFinID(pfd.getFinID());
-		aeEvent.setFinReference(pfd.getFinReference());
+		aeEvent.setFinID(fm.getFinID());
+		aeEvent.setFinReference(fm.getFinReference());
 		aeEvent.setAccountingEvent(finEvent);
 
 		if (eventProperties.isParameterLoaded()) {

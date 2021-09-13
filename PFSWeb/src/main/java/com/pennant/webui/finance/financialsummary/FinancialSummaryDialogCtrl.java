@@ -838,7 +838,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void doFillSynopsisDetails(String finReference) {
+	public void doFillSynopsisDetails(FinanceMain fm) {
 		logger.debug("Entering");
 
 		if (financeDetail.getSynopsisDetails() != null) {
@@ -866,7 +866,8 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		synopsisDetails.setFinReference(finReference);
+		synopsisDetails.setFinID(fm.getFinID());
+		synopsisDetails.setFinReference(fm.getFinReference());
 
 		setSynopsisDetails(synopsisDetails);
 

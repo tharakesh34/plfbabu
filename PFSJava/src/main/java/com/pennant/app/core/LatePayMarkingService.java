@@ -266,7 +266,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		String finReference = fm.getFinReference();
 		Date finStartDate = fm.getFinStartDate();
 
-		logger.info("Checking penalties for the FinReference >> {}", finReference);
+		logger.info("Checking penalties for the FinID >> {}", finID);
 
 		List<FinODDetails> finODdetails = finODDetailsDAO.getFinODDByFinRef(finID, finStartDate);
 		finEODEvent.setFinODDetails(finODdetails);
@@ -583,13 +583,16 @@ public class LatePayMarkingService extends ServiceHelper {
 	}
 
 	private FinODDetails createODDetails(FinanceScheduleDetail schd, FinanceMain fm, FinODPenaltyRate pr) {
-
 		FinODDetails finOD = new FinODDetails();
+
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+
 		EventProperties eventProperties = fm.getEventProperties();
 
 		Date valueDate = eventProperties.getAppDate();
 
+		finOD.setFinID(finID);
 		finOD.setFinReference(finReference);
 		finOD.setFinODSchdDate(schd.getSchDate());
 		finOD.setFinODFor(FinanceConstants.SCH_TYPE_SCHEDULE);

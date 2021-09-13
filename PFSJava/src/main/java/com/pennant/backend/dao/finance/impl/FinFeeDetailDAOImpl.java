@@ -264,8 +264,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? and OriginationFee = ?");
-		sql.append(" And FinEvent = ? and FeeTypeID = ? and FeeID = ?");
+		sql.append(" Where FinID = ? and OriginationFee = ? and FinEvent = ? and FeeTypeID = ? and FeeID = ?");
 
 		if (StringUtils.isNotBlank(fd.getVasReference())) {
 			sql.append(" and VasReference = ?");
@@ -280,6 +279,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 				ps.setLong(index++, fd.getFinID());
 				ps.setBoolean(index++, fd.isOriginationFee());
 				ps.setString(index++, fd.getFinEvent());
+				ps.setLong(index++, fd.getFeeTypeID());
 				ps.setLong(index++, fd.getFeeID());
 
 				if (StringUtils.isNotBlank(fd.getVasReference())) {

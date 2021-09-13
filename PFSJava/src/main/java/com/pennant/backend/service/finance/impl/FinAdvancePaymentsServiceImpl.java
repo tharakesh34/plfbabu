@@ -663,6 +663,7 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		if (poiHeader == null) {
 			save = true;
 			poiHeader = new PayOrderIssueHeader();
+			poiHeader.setFinID(finID);
 			poiHeader.setFinReference(finReference);
 			poiHeader.setVersion(1);
 			poiHeader.setLastMntBy(fm.getLastMntBy());

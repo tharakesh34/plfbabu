@@ -1032,30 +1032,31 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		}
 
 		long finExpenseDetailId = 0;
-		FinExpenseDetails finExpenseDetails = this.uploadHeaderService
-				.getFinExpenseDetailsByReference(fm.getFinReference(), finExpenseId);
+		FinExpenseDetails fed = this.uploadHeaderService.getFinExpenseDetailsByReference(fm.getFinReference(),
+				finExpenseId);
 
-		if (finExpenseDetails == null) {
-			finExpenseDetails = new FinExpenseDetails();
-			finExpenseDetails.setFinReference(fm.getFinReference());
-			finExpenseDetails.setExpenseTypeId(finExpenseId);
-			finExpenseDetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			finExpenseDetails.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			finExpenseDetails.setAmount(txnAmount);
+		if (fed == null) {
+			fed = new FinExpenseDetails();
+			fed.setFinID(fm.getFinID());
+			fed.setFinReference(fm.getFinReference());
+			fed.setExpenseTypeId(finExpenseId);
+			fed.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			fed.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			fed.setAmount(txnAmount);
 
-			finExpenseDetailId = this.uploadHeaderService.saveFinExpenseDetails(finExpenseDetails);
+			finExpenseDetailId = this.uploadHeaderService.saveFinExpenseDetails(fed);
 
-			finExpenseDetails.setFinExpenseId(finExpenseDetailId);
+			fed.setFinExpenseId(finExpenseDetailId);
 		} else {
-			finExpenseDetailId = finExpenseDetails.getFinExpenseId();
+			finExpenseDetailId = fed.getFinExpenseId();
 
 			if (PennantConstants.EXPENSE_UPLOAD_ADD.equals(uploadDetail.getType())) {
-				finExpenseDetails.setAmount(txnAmount.add(finExpenseDetails.getAmount()));
+				fed.setAmount(txnAmount.add(fed.getAmount()));
 			} else if (PennantConstants.EXPENSE_UPLOAD_OVERRIDE.equals(uploadDetail.getType())) {
-				finExpenseDetails.setAmount(txnAmount);
+				fed.setAmount(txnAmount);
 			}
 
-			this.uploadHeaderService.update(finExpenseDetails);
+			this.uploadHeaderService.update(fed);
 		}
 
 		FinExpenseMovements finExpenseMovements = new FinExpenseMovements();

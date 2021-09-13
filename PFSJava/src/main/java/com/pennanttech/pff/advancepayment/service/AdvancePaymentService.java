@@ -258,6 +258,8 @@ public class AdvancePaymentService extends ServiceHelper {
 			/* Receipt creation */
 			prepareReceipt(rch, fm, adjustedAmount, amountType, valueDate, excessID, curSchd, linkedTranId);
 			FinanceProfitDetail profitDetail = finEODEvent.getFinProfitDetail();
+
+			profitDetail.setFinID(finID);
 			profitDetail.setFinReference(finReference);
 			profitDetail.setTotalPriPaid(profitDetail.getTotalPriPaid().add(curSchd.getSchdPriPaid()));
 			profitDetail.setTotalPftPaid(profitDetail.getTotalPftPaid().add(curSchd.getSchdPftPaid()));

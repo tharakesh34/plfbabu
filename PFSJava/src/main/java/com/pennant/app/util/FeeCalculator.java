@@ -951,13 +951,13 @@ public class FeeCalculator {
 
 	}
 
-	public List<FinFeeConfig> convertToFinanceFees(FinanceDetail financeDetail) {
+	public List<FinFeeConfig> convertToFinanceFees(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		List<FinFeeConfig> feeConfigList = new ArrayList<>();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		String finType = financeMain.getFinType();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String finType = fm.getFinType();
 
 		List<FinTypeFees> feeTypes = finTypeFeesDAO.getFinTypeFeesList(finType, false, "_AView");
 
@@ -967,7 +967,8 @@ public class FeeCalculator {
 
 		for (FinTypeFees feeType : feeTypes) {
 			FinFeeConfig feeConfig = new FinFeeConfig();
-			feeConfig.setFinReference(financeMain.getFinReference());
+			feeConfig.setFinID(fm.getFinID());
+			feeConfig.setFinReference(fm.getFinReference());
 			feeConfig.setOriginationFee(feeType.isOriginationFee());
 			feeConfig.setFinEvent(feeType.getFinEvent());
 			feeConfig.setFeeTypeID(feeType.getFeeTypeID());
