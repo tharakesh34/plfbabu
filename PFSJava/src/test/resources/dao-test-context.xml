@@ -73,6 +73,12 @@
 		class="com.pennant.backend.dao.finance.financialSummary.impl.RecommendationNotesDetailsDAOImpl" parent="sequenceDao" />
 	<bean id="sanctionConditionsDAO"
 		class="com.pennant.backend.dao.finance.financialSummary.impl.SanctionConditionsDAOImpl" parent="sequenceDao" />
+		<bean id="finOCRCaptureDAO" class="com.pennant.backend.dao.finance.impl.FinOCRCaptureDAOImpl" parent="sequenceDao" />
+     <bean id="finOCRHeaderDAO" class="com.pennant.backend.dao.finance.impl.FinOCRHeaderDAOImpl" parent="sequenceDao" />
+ 	  <bean id="finPlanEmiHolidayDAO" class=" com.pennant.backend.dao.finance.impl.FinPlanEmiHolidayDAOImpl" parent="basicDao" />
+ 	  <bean id="finStageAccountingLogDAO" class=" com.pennant.backend.dao.finance.impl.FinStageAccountingLogDAOImpl" parent="basicDao" />
+ 	  <bean id="finStatusDetailDAO" class=" com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl" parent="basicDao" />
+ 	  
 	
 	
 </beans>
