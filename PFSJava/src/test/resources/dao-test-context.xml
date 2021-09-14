@@ -78,7 +78,12 @@
  	  <bean id="finPlanEmiHolidayDAO" class=" com.pennant.backend.dao.finance.impl.FinPlanEmiHolidayDAOImpl" parent="basicDao" />
  	  <bean id="finStageAccountingLogDAO" class=" com.pennant.backend.dao.finance.impl.FinStageAccountingLogDAOImpl" parent="basicDao" />
  	  <bean id="finStatusDetailDAO" class=" com.pennant.backend.dao.finance.impl.FinStatusDetailDAOImpl" parent="basicDao" />
- 	  
+ 	   <bean id="pmayDAO" class="com.pennant.backend.dao.systemmasters.impl.PMAYDAOImpl" parent="sequenceDao" />
+	<bean id="finOptionDAO" class="com.pennant.backend.dao.finance.putcall.impl.FinOptionDAOImpl" parent="sequenceDao" />
+	<bean id="subventionUploadDAO" class="com.pennant.pff.dao.subvention.SubventionUploadDAOImpl" parent="sequenceDao" />
+	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao" />
+	<bean id="finFeeChargesDAO" class="com.pennant.backend.dao.rulefactory.impl.FinFeeChargesDAOImpl" parent="basicDao" />
+	
 	
 	
 </beans>

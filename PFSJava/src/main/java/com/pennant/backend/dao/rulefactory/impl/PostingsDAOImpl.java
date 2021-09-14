@@ -310,7 +310,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		sql.append(", p.AppDate, p.AppValueDate, p.AccountType");
 		sql.append(" From Postings p");
 		sql.append(" Inner Join FinanceMain_Temp fm on fm.FinID = p.FinID");
-		sql.append(" Where fm.FinBranch = ");
+		sql.append(" Where fm.FinBranch = ?");
 		sql.append(" Union All ");
 		sql.append("Select p.LinkedTranId, p.Postref, p.PostingId, p.FinID, p.FinReference, p.FinEvent");
 		sql.append(", p.PostDate, p.ValueDate, p.TranCode, p.TranDesc, p.RevTranCode, p.DrOrCr, p.Account");

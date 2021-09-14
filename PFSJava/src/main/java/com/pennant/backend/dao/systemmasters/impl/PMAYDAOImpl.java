@@ -97,6 +97,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 	public boolean isDuplicateKey(long finID, TableType tableType) {
 		String sql;
 		String whereClause = "FinID = ?";
+		Object[] obj = new Object[] { finID };
 
 		switch (tableType) {
 		case MAIN_TAB:
@@ -107,12 +108,13 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			break;
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "PMAY_Temp", "PMAY" }, whereClause);
+			obj = new Object[] { finID, finID };
 			break;
 		}
 
 		logger.debug(Literal.SQL + sql);
 
-		Integer count = jdbcOperations.queryForObject(sql, Integer.class, finID);
+		Integer count = jdbcOperations.queryForObject(sql, Integer.class, obj);
 
 		boolean exists = false;
 		if (count > 0) {
@@ -444,7 +446,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 	@Override
 	public String getCustCif(long finID) {
 		StringBuilder sql = new StringBuilder("Select CustCif");
-		sql.append(" From PmayEligibilityLog pel Inner Ioin (");
+		sql.append(" From PmayEligibilityLog pel Inner Join (");
 		sql.append(" Select FinID, CustId From Financemain_Temp Union all Select FinID, CustId From Financemain");
 		sql.append(" Where not exists (Select 1 From Financemain_Temp Where FinID = Financemain.FinID");
 		sql.append(")) fm on fm.finID= pel.finID");
@@ -464,7 +466,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 
 	@Override
 	public void update(String reference, String applicantId) {
-		String sql = "Update Customer_Retail_Ed Set ApplicantId = :ApplicantId Where Reference = ?";
+		String sql = "Update Customer_Retail_Ed Set ApplicantId = ? Where Reference = ?";
 
 		logger.debug(Literal.SQL + sql);
 
