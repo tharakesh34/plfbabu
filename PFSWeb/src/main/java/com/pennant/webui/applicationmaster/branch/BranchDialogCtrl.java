@@ -1329,6 +1329,7 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 			}
 		}
 
+		String fTranType = tranType;
 		if (aBranch.getBefImage() != null && aBranch.getBefImage().isBranchIsActive() && !aBranch.isBranchIsActive()) {
 			String loggedInUsers = getLoggedInUsers();
 			if (StringUtils.isNotEmpty(loggedInUsers)) {
@@ -1337,14 +1338,15 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 				return;
 			}
 
-			String fTranType = tranType;
 			MessageUtil.confirm(Labels.getLabel("branch_update_postings_info"), evnt -> {
 				if (Messagebox.ON_YES.equals(evnt.getName())) {
 					doSave(aBranch, fTranType);
 				}
 			});
+			return;
 		}
 
+		doSave(aBranch, fTranType);
 		logger.debug("Leaving");
 	}
 
