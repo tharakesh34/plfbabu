@@ -88,10 +88,11 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+		logger.info(Literal.ENTERING);
+
 		FinanceMain fm = finEODEvent.getFinanceMain();
+
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
-		logger.info("Calculating Accruals for FinReference >>{} started...", finReference);
 
 		fm.setRoundingTarget(finEODEvent.getFinType().getRoundingTarget());
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -99,7 +100,6 @@ public class AccrualService extends ServiceHelper {
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 		fm.setEventProperties(eventProperties);
 
-		// Finance Profit Details
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		if (pfd.getFinReference() == null) {
 			pfd = financeProfitDetailDAO.getFinProfitDetailsById(finID);
@@ -143,7 +143,8 @@ public class AccrualService extends ServiceHelper {
 			}
 			postAccruals(finEODEvent, custEODEvent);
 		}
-		logger.info("Calculating Accruals for FinReference >>{} completed.", finReference);
+
+		logger.info(Literal.LEAVING);
 		return finEODEvent;
 	}
 
@@ -196,7 +197,6 @@ public class AccrualService extends ServiceHelper {
 	}
 
 	private void resetCalculatedTotals(FinanceMain fm, FinanceProfitDetail pfd) {
-
 		if (PennantConstants.RECORD_TYPE_NEW.equals(fm.getRecordType())) {
 			pfd.setFinID(fm.getFinID());
 			pfd.setFinReference(fm.getFinReference());
@@ -312,7 +312,6 @@ public class AccrualService extends ServiceHelper {
 
 	private void calAccruals(FinanceMain fm, List<FinanceScheduleDetail> schedules, FinanceProfitDetail pfd,
 			Date valueDate, Date dateSusp) {
-		logger.info(Literal.ENTERING);
 		String finState = CalculationConstants.FIN_STATE_NORMAL;
 		FinanceScheduleDetail prvSchd = null;
 		FinanceScheduleDetail curSchd = null;
@@ -469,8 +468,6 @@ public class AccrualService extends ServiceHelper {
 			}
 			pfd.setMaxRpyAmount(maxRepayAmount);
 		}
-
-		logger.info(Literal.LEAVING);
 	}
 
 	private static void calCumulativeTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd, FinanceMain fm) {

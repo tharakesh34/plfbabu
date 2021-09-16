@@ -546,18 +546,14 @@ public class LoadFinanceData extends ServiceHelper {
 	 * @param custEODEvent
 	 */
 	public void saveProjAccruals(CustEODEvent custEODEvent) {
-
 		for (FinEODEvent finEODEvent : custEODEvent.getFinEODEvents()) {
 			String finReference = finEODEvent.getFinanceMain().getFinReference();
 
 			List<ProjectedAccrual> projAccrualList = finEODEvent.getProjectedAccrualList();
 			if (CollectionUtils.isEmpty(projAccrualList)) {
-				logger.info("ProjectedAccruals not available for the FinReference >> {}", finReference);
 				continue;
 			}
-			logger.info("Saving into ProjectedAccruals table for the FinReference >> {}...", finReference);
 			int count = projectedAmortizationDAO.saveBatchProjAccruals(projAccrualList);
-			logger.info("{} saved in ProjectedAccruals table for the FinReference >> {}", count, finReference);
 		}
 	}
 

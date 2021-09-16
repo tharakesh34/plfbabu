@@ -37,7 +37,6 @@ import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class InstallmentDueService extends ServiceHelper {
-	private static final long serialVersionUID = 1442146139821584760L;
 	private Logger logger = LogManager.getLogger(InstallmentDueService.class);
 
 	private AccountEngineExecution engineExecution;
@@ -217,11 +216,13 @@ public class InstallmentDueService extends ServiceHelper {
 	private void saveDueTaxDetail(FinanceScheduleDetail schd, Long invoiceID) {
 		String gstShdCalOn = ImplementationConstants.GST_SCHD_CAL_ON;
 
-		ScheduleDueTaxDetail taxDetails = new ScheduleDueTaxDetail();
-		taxDetails.setFinReference(schd.getFinReference());
-		taxDetails.setSchDate(schd.getSchDate());
-		taxDetails.setTaxType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
-		taxDetails.setTaxCalcOn(gstShdCalOn);
+		ScheduleDueTaxDetail sdtd = new ScheduleDueTaxDetail();
+
+		sdtd.setFinID(schd.getFinID());
+		sdtd.setFinReference(schd.getFinReference());
+		sdtd.setSchDate(schd.getSchDate());
+		sdtd.setTaxType(PennantConstants.GST_INVOICE_TRANSACTION_TYPE_EXEMPTED);
+		sdtd.setTaxCalcOn(gstShdCalOn);
 
 		BigDecimal invoiceAmt = BigDecimal.ZERO;
 
@@ -239,10 +240,10 @@ public class InstallmentDueService extends ServiceHelper {
 			break;
 		}
 
-		taxDetails.setAmount(invoiceAmt);
-		taxDetails.setInvoiceID(invoiceID);
+		sdtd.setAmount(invoiceAmt);
+		sdtd.setInvoiceID(invoiceID);
 
-		financeScheduleDetailDAO.saveSchDueTaxDetail(taxDetails);
+		financeScheduleDetailDAO.saveSchDueTaxDetail(sdtd);
 	}
 
 	private void setProvisionData(AEAmountCodes amountCodes) {

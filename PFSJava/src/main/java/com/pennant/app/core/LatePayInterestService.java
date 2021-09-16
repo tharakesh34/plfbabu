@@ -49,9 +49,9 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class LatePayInterestService extends ServiceHelper {
-	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(LatePayInterestService.class);
 
 	/**
@@ -65,7 +65,7 @@ public class LatePayInterestService extends ServiceHelper {
 			List<FinanceScheduleDetail> schedules, List<FinanceRepayments> repayments) {
 		long finID = fod.getFinID();
 		String finReference = fod.getFinReference();
-		logger.info("Computing LPI for FinReference >> {}", finReference);
+		logger.info(Literal.ENTERING);
 
 		Date odDate = fod.getFinODSchdDate();
 		BigDecimal lpiMargin = fm.getPastduePftMargin();
@@ -176,7 +176,7 @@ public class LatePayInterestService extends ServiceHelper {
 			schdODCRecoveries.remove(schdODCRecoveries.size() - 1);
 		}
 
-		logger.info("Computing LPI for FinReference >> {} completed", finReference);
+		logger.info(Literal.LEAVING);
 		return schdODCRecoveries;
 	}
 
