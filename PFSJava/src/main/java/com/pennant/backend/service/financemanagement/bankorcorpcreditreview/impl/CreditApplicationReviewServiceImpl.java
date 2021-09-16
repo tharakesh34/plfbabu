@@ -414,15 +414,14 @@ public class CreditApplicationReviewServiceImpl extends GenericService<FinCredit
 	}
 
 	private AuditDetail validateDocs(AuditDetail auditDetail, String method, String usrLanguage) {
-
 		CustomerDocument customerDocument = (CustomerDocument) auditDetail.getModelData();
 		CustomerDocument tempCustomerDocument = null;
 		if (customerDocument.isWorkflow()) {
-			tempCustomerDocument = customerDocumentDAO.getCustomerDocumentById(customerDocument.getId(),
+			tempCustomerDocument = customerDocumentDAO.getCustomerDocumentById(customerDocument.getCustID(),
 					customerDocument.getCustDocCategory(), "");
 		}
 
-		CustomerDocument befCustomerDocument = customerDocumentDAO.getCustomerDocumentById(customerDocument.getId(),
+		CustomerDocument befCustomerDocument = customerDocumentDAO.getCustomerDocumentById(customerDocument.getCustID(),
 				customerDocument.getCustDocCategory(), "");
 		CustomerDocument oldCustomerDocument = customerDocument.getBefImage();
 

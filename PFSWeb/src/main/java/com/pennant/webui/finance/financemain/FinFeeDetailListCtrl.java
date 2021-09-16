@@ -1052,9 +1052,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		List<FinFeeDetail> finFeeDetailList = fetchFeeDetails(schdData, true);
 
-		if (!schdData.getFinanceMain().isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
-			List<FinFeeDetail> finFeeDetails = this.finFeeDetailService
-					.getFinFeeDetailById(schdData.getFinanceMain().getFinID(), isWif, "_Temp");
+		FinanceMain fm = schdData.getFinanceMain();
+		if (!fm.isNewRecord() && StringUtils.isBlank(this.moduleDefiner)) {
+			List<FinFeeDetail> finFeeDetails = this.finFeeDetailService.getFinFeeDetailById(fm.getFinID(), isWif,
+					"_Temp");
 
 			if (CollectionUtils.isNotEmpty(finFeeDetails)) {
 				for (FinFeeDetail feeDetail : finFeeDetails) {
@@ -1093,22 +1094,22 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		Cloner cloner = new Cloner();
 		finFeeDetailList = cloner.deepClone(finFeeDetailList);
 		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
-			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-				finFeeDetail.setFinReference(schdData.getFinanceMain().getFinReference());
-				finFeeDetail.setRecordStatus(schdData.getFinanceMain().getRecordStatus());
-				finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-				finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				finFeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
+			for (FinFeeDetail fee : finFeeDetailList) {
+				fee.setFinReference(fm.getFinReference());
+				fee.setFinID(fm.getFinID());
+				fee.setRecordStatus(fm.getRecordStatus());
+				fee.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+				fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				fee.setUserDetails(getUserWorkspace().getLoggedInUser());
 
-				if (!readOnly && !PennantConstants.RECORD_TYPE_CAN.equals(finFeeDetail.getRecordType())
-						&& finFeeDetail.isAlwModifyFee() && !feeChanges && finFeeDetail.isRcdVisible()) {
-					if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
-							finFeeDetail.getTaxComponent())) {
-						if (finFeeDetail.getNetAmount().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+				if (!readOnly && !PennantConstants.RECORD_TYPE_CAN.equals(fee.getRecordType()) && fee.isAlwModifyFee()
+						&& !feeChanges && fee.isRcdVisible()) {
+					if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE, fee.getTaxComponent())) {
+						if (fee.getNetAmount().compareTo(fee.getCalculatedAmount()) != 0) {
 							feeChanges = true;
 						}
 					} else {
-						if (finFeeDetail.getActualAmountOriginal().compareTo(finFeeDetail.getCalculatedAmount()) != 0) {
+						if (fee.getActualAmountOriginal().compareTo(fee.getCalculatedAmount()) != 0) {
 							feeChanges = true;
 						}
 					}
@@ -1191,7 +1192,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		if (finFeeReceipts != null && !finFeeReceipts.isEmpty()) {
 			for (FinFeeReceipt finFeeReceipt : finFeeReceipts) {
-				finFeeReceipt.setRecordStatus(schdData.getFinanceMain().getRecordStatus());
+				finFeeReceipt.setRecordStatus(fm.getRecordStatus());
 				finFeeReceipt.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				finFeeReceipt.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				finFeeReceipt.setUserDetails(getUserWorkspace().getLoggedInUser());

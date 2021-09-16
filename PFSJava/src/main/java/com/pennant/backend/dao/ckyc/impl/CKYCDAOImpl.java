@@ -576,7 +576,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 	public List<CustomerDocument> getcustDocsByCustId(long custId, String ckycNo) {
 		logger.debug("Entering");
 		CustomerDocument customerDoc = new CustomerDocument();
-		customerDoc.setId(custId);
+		customerDoc.setCustID(custId);
 		if (ckycNo == null) {
 			StringBuilder selectSql = new StringBuilder();
 			selectSql.append(

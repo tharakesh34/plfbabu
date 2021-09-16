@@ -1298,19 +1298,24 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 	}
 
-	private void prepareFinFeeDetail(FinFeeDetail finFeeDetail, Decimalbox calBox) {
+	private void prepareFinFeeDetail(FinFeeDetail fee, Decimalbox calBox) {
 		logger.debug(Literal.ENTERING);
 
-		if (finFeeDetail == null || calBox == null || calBox.getAttribute("newRecord") == null) {
+		if (fee == null || calBox == null || calBox.getAttribute("newRecord") == null) {
 			return;
 		}
 
 		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
 		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
 
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceDetail fd = getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
 		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		String fromBranchCode = financeMain.getFinBranch();
+		String fromBranchCode = fm.getFinBranch();
+		Long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		String custDftBranch = null;
 		String highPriorityState = null;
@@ -1337,12 +1342,13 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		 * this.finFeeDetailService.calculateGstPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
 		 */
 
-		finFeeDetail.setNewRecord((Boolean) calBox.getAttribute("newRecord"));
-		finFeeDetail.setFinReference(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+		fee.setNewRecord((Boolean) calBox.getAttribute("newRecord"));
+		fee.setFinID(finID);
+		fee.setFinReference(finReference);
 
 		BigDecimal actualAmount = PennantApplicationUtil.unFormateAmount(BigDecimal.valueOf(calBox.doubleValue()), 2);
 
-		BigDecimal netAmount = actualAmount.subtract(finFeeDetail.getWaivedAmount());
+		BigDecimal netAmount = actualAmount.subtract(fee.getWaivedAmount());
 
 		BigDecimal actualAmountOriginal = BigDecimal.ZERO;
 		/*
@@ -1351,30 +1357,30 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		 * taxRoundingTarget);
 		 */
 
-		finFeeDetail.setActualAmountOriginal(actualAmountOriginal);
-		finFeeDetail.setActualAmount(actualAmount);
+		fee.setActualAmountOriginal(actualAmountOriginal);
+		fee.setActualAmount(actualAmount);
 
-		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-			finFeeDetail.setNetAmountOriginal(actualAmountOriginal.subtract(finFeeDetail.getWaivedAmount()));
-		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(finFeeDetail.getTaxComponent())) {
-			finFeeDetail.setNetAmount(netAmount);
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
+			fee.setNetAmountOriginal(actualAmountOriginal.subtract(fee.getWaivedAmount()));
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
+			fee.setNetAmount(netAmount);
 		} else {
-			finFeeDetail.setActualAmountOriginal(actualAmount);
-			finFeeDetail.setActualAmountGST(BigDecimal.ZERO);
-			finFeeDetail.setActualAmount(actualAmount);
-			finFeeDetail.setNetAmountOriginal(actualAmountOriginal);
-			finFeeDetail.setNetAmountGST(BigDecimal.ZERO);
-			finFeeDetail.setNetAmount(actualAmountOriginal);
+			fee.setActualAmountOriginal(actualAmount);
+			fee.setActualAmountGST(BigDecimal.ZERO);
+			fee.setActualAmount(actualAmount);
+			fee.setNetAmountOriginal(actualAmountOriginal);
+			fee.setNetAmountGST(BigDecimal.ZERO);
+			fee.setNetAmount(actualAmountOriginal);
 		}
 
-		if (finFeeDetail.getCalculatedAmount().compareTo(actualAmount) != 0) {
-			finFeeDetail.setFeeModified(true);
+		if (fee.getCalculatedAmount().compareTo(actualAmount) != 0) {
+			fee.setFeeModified(true);
 		}
 
-		finFeeDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-		finFeeDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		if (finFeeDetail.getLastMntOn() == null) {
-			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+		fee.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		fee.setUserDetails(getUserWorkspace().getLoggedInUser());
+		if (fee.getLastMntOn() == null) {
+			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -974,10 +974,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				this.productCategory = financeType.getProductCategory();
 				customerDetails = fd.getCustomerDetails();
 			} else {
-				FinanceMain finMain = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
+				fm = financeDetailService.setDefaultFinanceMain(new FinanceMain(), financeType);
 				FinODPenaltyRate finOdPenalty = financeDetailService.setDefaultODPenalty(new FinODPenaltyRate(),
 						financeType);
-				schdData.setFinanceMain(finMain);
+				schdData.setFinanceMain(fm);
 				schdData.setFinODPenaltyRate(finOdPenalty);
 			}
 
@@ -1034,8 +1034,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			setWorkFlowId(workFlowDetails.getId());
 			fm.setWorkflowId(workFlowDetails.getWorkFlowId());
 
-			FinanceMain financeMain = fm;
-			doLoadWorkFlow(financeMain.isWorkflow(), financeMain.getWorkflowId(), financeMain.getNextTaskId());
+			doLoadWorkFlow(fm.isWorkflow(), fm.getWorkflowId(), fm.getNextTaskId());
 
 		}
 
@@ -1114,11 +1113,10 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		}
 
 		// tasks #1152 Business Vertical Tagged with Loan
-		FinanceMain financeMain = fm;
 		SecurityUser user = getUserWorkspace().getUserDetails().getSecurityUser();
-		financeMain.setBusinessVertical(user.getBusinessVertical());
-		financeMain.setBusinessVerticalCode(user.getBusinessVerticalCode());
-		financeMain.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
+		fm.setBusinessVertical(user.getBusinessVertical());
+		fm.setBusinessVerticalCode(user.getBusinessVerticalCode());
+		fm.setBusinessVerticalDesc(user.getBusinessVerticalDesc());
 
 		showDetailView(fd);
 		return true;

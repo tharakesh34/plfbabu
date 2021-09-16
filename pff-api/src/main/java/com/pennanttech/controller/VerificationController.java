@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VerificationController.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  01-02-2021    														*
- *                                                                  						*
- * Modified Date    :  08-02-2021    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VerificationController.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 01-02-2021 * *
+ * Modified Date : 08-02-2021 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-02-2021       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-02-2021 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennanttech.controller;
 
 import java.sql.Timestamp;
@@ -776,7 +758,7 @@ public class VerificationController {
 				}
 			}
 		}
-		//get joint account documents
+		// get joint account documents
 		List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 		if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
 			for (JointAccountDetail jointAccountDetail : jointAccountDetailList) {
@@ -785,7 +767,7 @@ public class VerificationController {
 		}
 
 		List<Verification> rcuVerfications = financeDetail.getRcuVerification().getVerifications();
-		//set customer Documents
+		// set customer Documents
 		if (CollectionUtils.isNotEmpty(rcuVerfications)) {
 			for (Verification rcuVrf : rcuVerfications) {
 				rcuVrf.setKeyReference(verification.getKeyReference());
@@ -797,7 +779,7 @@ public class VerificationController {
 				}
 			}
 		}
-		//set coApplicant Documents
+		// set coApplicant Documents
 		if (CollectionUtils.isNotEmpty(coAppDocumentsList)) {
 			for (Verification rcuVrf : rcuVerfications) {
 				rcuVrf.setKeyReference(verification.getKeyReference());
@@ -809,9 +791,9 @@ public class VerificationController {
 				}
 			}
 		}
-		//get all loan documents
+		// get all loan documents
 		List<DocumentDetails> financeDocumentsList = financeDetail.getDocumentDetailsList();
-		//set Fincnace Documents
+		// set Fincnace Documents
 		if (CollectionUtils.isNotEmpty(financeDocumentsList)) {
 			for (Verification rcuVrf : rcuVerfications) {
 				rcuVrf.setKeyReference(verification.getKeyReference());
@@ -823,7 +805,7 @@ public class VerificationController {
 				}
 			}
 		}
-		//set collateral Documents
+		// set collateral Documents
 		if (CollectionUtils.isNotEmpty(collateralDocumentList)) {
 			for (Verification rcuVrf : rcuVerfications) {
 				rcuVrf.setKeyReference(verification.getKeyReference());
@@ -1213,7 +1195,7 @@ public class VerificationController {
 
 		lvDocument.setDocCategory(cuDocument.getCustDocCategory());
 		lvDocument.setDocumentType(DocumentType.CUSTOMER.getKey());
-		lvDocument.setDocumentId(cuDocument.getId());
+		lvDocument.setDocumentId(cuDocument.getCustID());
 		lvDocument.setDocRefID(cuDocument.getDocRefId());
 
 		logger.debug(Literal.LEAVING);

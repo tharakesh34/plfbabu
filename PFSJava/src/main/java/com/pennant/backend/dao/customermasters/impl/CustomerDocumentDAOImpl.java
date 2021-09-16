@@ -178,7 +178,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setLong(index++, JdbcUtil.setLong(cd.getWorkflowId()));
 		});
 
-		return cd.getId();
+		return cd.getCustID();
 	}
 
 	@Override

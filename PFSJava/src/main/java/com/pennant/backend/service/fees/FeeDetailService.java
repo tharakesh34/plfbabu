@@ -99,9 +99,10 @@ public class FeeDetailService {
 
 		// set FinType fees details
 		FinanceMain fm = schdData.getFinanceMain();
+		Long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
-		List<FinFeeDetail> feeList = convertToFinanceFees(fd, finReference);
+		List<FinFeeDetail> feeList = convertToFinanceFees(fd, finID, finReference);
 		feeList = prepareActualFinFees(feeList, schdData.getFinFeeDetailList());
 
 		// Organize Fee detail changes
@@ -113,6 +114,7 @@ public class FeeDetailService {
 
 		for (FinFeeDetail fee : feeList) {
 			fee.setRecordType(PennantConstants.RCD_ADD);
+			fee.setFinID(finID);
 			fee.setFinReference(finReference);
 			fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -330,96 +332,96 @@ public class FeeDetailService {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void doProcessFeesForInquiry(FinanceDetail financeDetail, String finEvent,
-			FinServiceInstruction finServiceInst, boolean enquiry) throws AppException {
+	public void doProcessFeesForInquiry(FinanceDetail fd, String finEvent, FinServiceInstruction fsi, boolean enquiry)
+			throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		boolean isOrigination = false;
-		if (finServiceInst == null) {
+		if (fsi == null) {
 			isOrigination = true;
 		}
 
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		Long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		// PSD# to fix the concurrent issue
 		List<FinFeeDetail> finFeeDetailList = new ArrayList<>();
 
-		if (StringUtils.isBlank(financeMain.getPromotionCode()) || financeMain.getPromotionSeqId() == 0) {
-			financeDetail.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent,
-					isOrigination, FinanceConstants.MODULEID_FINTYPE));
+		if (StringUtils.isBlank(fm.getPromotionCode()) || fm.getPromotionSeqId() == 0) {
+			fd.setFinTypeFeesList(financeDetailService.getFinTypeFees(fm.getFinType(), finEvent, isOrigination,
+					FinanceConstants.MODULEID_FINTYPE));
 		} else {
-			Promotion promotion = financeDetail.getFinScheduleData().getPromotion();
-			financeDetail.setFinTypeFeesList(financeDetailService.getSchemeFeesList(promotion.getReferenceID(),
-					finEvent, isOrigination, FinanceConstants.MODULEID_PROMOTION));
+			Promotion promotion = schdData.getPromotion();
+			fd.setFinTypeFeesList(financeDetailService.getSchemeFeesList(promotion.getReferenceID(), finEvent,
+					isOrigination, FinanceConstants.MODULEID_PROMOTION));
 		}
 
-		financeDetail.getFinScheduleData().setFeeEvent(finEvent);
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		schdData.setFeeEvent(finEvent);
 
 		// set FinType fees details
-		String finReference = finScheduleData.getFinanceMain().getFinReference();
-		finFeeDetailList = convertToFinanceFees(financeDetail, finReference);
-		finFeeDetailList = prepareActualFinFees(finFeeDetailList, finScheduleData.getFinFeeDetailList());
+
+		finFeeDetailList = convertToFinanceFees(fd, finID, finReference);
+		finFeeDetailList = prepareActualFinFees(finFeeDetailList, schdData.getFinFeeDetailList());
 
 		// Organize Fee detail changes
 		// doSetFeeChanges(financeDetail, isOriginationFee);
 
 		List<String> feeRuleCodes = new ArrayList<String>();
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-			finFeeDetail.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-			finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			finFeeDetail.setLastMntBy(financeDetail.getFinScheduleData().getFinanceMain().getLastMntBy());
-			finFeeDetail.setFinEvent(finScheduleData.getFeeEvent());
-			if (StringUtils.isNotEmpty(finFeeDetail.getRuleCode())) {
-				feeRuleCodes.add(finFeeDetail.getRuleCode());
+		for (FinFeeDetail fee : finFeeDetailList) {
+			fee.setRecordType(PennantConstants.RCD_ADD);
+			fee.setFinID(finID);
+			fee.setFinReference(finReference);
+			fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			fee.setLastMntBy(fm.getLastMntBy());
+			fee.setFinEvent(schdData.getFeeEvent());
+			if (StringUtils.isNotEmpty(fee.getRuleCode())) {
+				feeRuleCodes.add(fee.getRuleCode());
 			}
 		}
 
-		Map<String, BigDecimal> gstPercentages = getGSTPercentages(financeDetail);
+		Map<String, BigDecimal> gstPercentages = getGSTPercentages(fd);
 
 		// Execute fee rules if exists
 		if (feeRuleCodes.size() > 0) {
-			doExecuteFeeRules(financeDetail, finServiceInst, finScheduleData, feeRuleCodes, enquiry, gstPercentages,
-					finFeeDetailList);
+			doExecuteFeeRules(fd, fsi, schdData, feeRuleCodes, enquiry, gstPercentages, finFeeDetailList);
 		}
 
 		// calculate fee percentage if exists
-		calculateFeePercentageAmount(finScheduleData, financeDetail, enquiry, gstPercentages, finFeeDetailList);
+		calculateFeePercentageAmount(schdData, fd, enquiry, gstPercentages, finFeeDetailList);
 
 		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 		// Calculating GST
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
-				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData,
-						getDealerTaxPercentages(financeDetail));
+		for (FinFeeDetail fee : finFeeDetailList) {
+			if (subventionFeeCode.equals(fee.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(fee, schdData, getDealerTaxPercentages(fd));
 			} else {
-				this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages(financeDetail));
+				this.finFeeDetailService.calculateFees(fee, fm, getGSTPercentages(fd));
 			}
 		}
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+		for (FinFeeDetail fee : finFeeDetailList) {
 			if (!isOrigination) {
-				finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+				fee.setPaidAmount(fee.getActualAmount());
 			}
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-					.subtract(finFeeDetail.getWaivedAmount()));
-			if (CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS.equals(finFeeDetail.getFeeScheduleMethod())
-					&& finFeeDetail.getTerms() <= 0) {
-				finFeeDetail.setTerms(1);
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+			if (CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS.equals(fee.getFeeScheduleMethod())
+					&& fee.getTerms() <= 0) {
+				fee.setTerms(1);
 			}
 		}
 
-		setFeeAmount(financeDetail.getModuleDefiner(), finScheduleData, finFeeDetailList);
+		setFeeAmount(fd.getModuleDefiner(), schdData, finFeeDetailList);
 
-		for (FinFeeDetail prvFeeDetail : finScheduleData.getFinFeeDetailList()) {
+		for (FinFeeDetail fee : schdData.getFinFeeDetailList()) {
 			for (FinFeeDetail currFeeDetail : finFeeDetailList) {
-				if (StringUtils.equals(prvFeeDetail.getFinEvent(), currFeeDetail.getFinEvent())
-						&& StringUtils.equals(prvFeeDetail.getFeeTypeCode(), currFeeDetail.getFeeTypeCode())) {
+				if (StringUtils.equals(fee.getFinEvent(), currFeeDetail.getFinEvent())
+						&& StringUtils.equals(fee.getFeeTypeCode(), currFeeDetail.getFeeTypeCode())) {
 					try {
-						BeanUtils.copyProperties(prvFeeDetail, currFeeDetail);
+						BeanUtils.copyProperties(fee, currFeeDetail);
 					} catch (Exception e) {
 						throw new AppException("", e);
 					}
@@ -427,15 +429,14 @@ public class FeeDetailService {
 			}
 		}
 
-		finScheduleData.getFinFeeDetailList().addAll(finFeeDetailList);
+		schdData.getFinFeeDetailList().addAll(finFeeDetailList);
 
 		// Calculating GST
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			if (StringUtils.equals(subventionFeeCode, finFeeDetail.getFeeTypeCode())) {
-				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData,
-						getDealerTaxPercentages(financeDetail));
+		for (FinFeeDetail fee : finFeeDetailList) {
+			if (StringUtils.equals(subventionFeeCode, fee.getFeeTypeCode())) {
+				this.finFeeDetailService.calculateFees(fee, schdData, getDealerTaxPercentages(fd));
 			} else {
-				this.finFeeDetailService.calculateFees(finFeeDetail, financeMain, getGSTPercentages(financeDetail));
+				this.finFeeDetailService.calculateFees(fee, fm, getGSTPercentages(fd));
 			}
 		}
 
@@ -448,9 +449,13 @@ public class FeeDetailService {
 		logger.debug(Literal.ENTERING);
 
 		// PSD# to fix the concurrent issue
-		FinanceMain financeMain = fd.getFinScheduleData().getFinanceMain();
-		if (!fd.getFinScheduleData().getFinanceType().isPromotionType()) {
-			fd.setFinTypeFeesList(financeDetailService.getFinTypeFees(financeMain.getFinType(), finEvent, false,
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		Long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
+		if (!schdData.getFinanceType().isPromotionType()) {
+			fd.setFinTypeFeesList(financeDetailService.getFinTypeFees(fm.getFinType(), finEvent, false,
 					FinanceConstants.MODULEID_FINTYPE));
 		} else {
 			String promotionType = fd.getFinScheduleData().getFinanceType().getPromotionCode();
@@ -458,13 +463,9 @@ public class FeeDetailService {
 					FinanceConstants.MODULEID_PROMOTION));
 		}
 		fd.getFinScheduleData().setFeeEvent(finEvent);
-		FinScheduleData schdData = fd.getFinScheduleData();
 
 		// set FinType fees details
-		FinanceMain fm = schdData.getFinanceMain();
-		String finReference = fm.getFinReference();
-
-		List<FinFeeDetail> feeList = convertToFinanceFees(fd.getFinTypeFeesList(), finReference);
+		List<FinFeeDetail> feeList = convertToFinanceFees(fd.getFinTypeFeesList(), finID, finReference);
 		feeList = prepareActualFinFees(feeList, schdData.getFinFeeDetailList());
 
 		// Organize Fee detail changes
@@ -473,7 +474,8 @@ public class FeeDetailService {
 		List<String> feeRuleCodes = new ArrayList<String>();
 		for (FinFeeDetail fee : feeList) {
 			fee.setRecordType(PennantConstants.RCD_ADD);
-			fee.setFinReference(fm.getFinReference());
+			fee.setFinID(finID);
+			fee.setFinReference(finReference);
 			fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			fee.setLastMntBy(fm.getLastMntBy());
@@ -492,45 +494,39 @@ public class FeeDetailService {
 		calculateFeePercentageAmount(schdData, fd, enquiry, new HashMap<>(), feeList);
 
 		// set Actual calculated values into feeDetails for Inquiry purpose
-		for (FinFeeDetail finFeeDetail : feeList) {
-			finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-					.subtract(finFeeDetail.getWaivedAmount()));
-			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-				finFeeDetail.setTerms(1);
+		for (FinFeeDetail fee : feeList) {
+			fee.setPaidAmount(fee.getActualAmount());
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
+			if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+				fee.setTerms(1);
 			}
 		}
 
 		BigDecimal deductFeeFromDisbTot = BigDecimal.ZERO;
 		BigDecimal feeAddToDisbTot = BigDecimal.ZERO;
-		for (FinFeeDetail finFeeDetail : feeList) {
-			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
-				deductFeeFromDisbTot = deductFeeFromDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
-				feeAddToDisbTot = feeAddToDisbTot.add(finFeeDetail.getRemainingFee());
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
-				if (finFeeDetail.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
-					finFeeDetail.setPaidAmount(finFeeDetail.getActualAmount());
+		for (FinFeeDetail fee : feeList) {
+			if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_DISBURSE)) {
+				deductFeeFromDisbTot = deductFeeFromDisbTot.add(fee.getRemainingFee());
+			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
+				feeAddToDisbTot = feeAddToDisbTot.add(fee.getRemainingFee());
+			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_PAID_BY_CUSTOMER)) {
+				if (fee.getPaidAmount().compareTo(BigDecimal.ZERO) == 0) {
+					fee.setPaidAmount(fee.getActualAmount());
 				}
-			} else if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-					CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
-				if (finFeeDetail.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
-					finFeeDetail.setWaivedAmount(finFeeDetail.getActualAmount());
+			} else if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				if (fee.getWaivedAmount().compareTo(BigDecimal.ZERO) == 0) {
+					fee.setWaivedAmount(fee.getActualAmount());
 				}
 			}
-			finFeeDetail.setRemainingFee(finFeeDetail.getActualAmount().subtract(finFeeDetail.getPaidAmount())
-					.subtract(finFeeDetail.getWaivedAmount()));
+			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount()).subtract(fee.getWaivedAmount()));
 		}
 
-		for (FinFeeDetail prvFeeDetail : schdData.getFinFeeDetailList()) {
+		for (FinFeeDetail fee : schdData.getFinFeeDetailList()) {
 			for (FinFeeDetail currFeeDetail : feeList) {
-				if (StringUtils.equals(prvFeeDetail.getFinEvent(), currFeeDetail.getFinEvent())
-						&& StringUtils.equals(prvFeeDetail.getFeeTypeCode(), currFeeDetail.getFeeTypeCode())) {
+				if (StringUtils.equals(fee.getFinEvent(), currFeeDetail.getFinEvent())
+						&& StringUtils.equals(fee.getFeeTypeCode(), currFeeDetail.getFeeTypeCode())) {
 					try {
-						BeanUtils.copyProperties(prvFeeDetail, currFeeDetail);
+						BeanUtils.copyProperties(fee, currFeeDetail);
 					} catch (Exception e) {
 						throw new AppException("", e);
 					}
@@ -800,11 +796,17 @@ public class FeeDetailService {
 	 */
 	private List<FinFeeDetail> doSetFeeChanges(FinanceDetail fd, boolean isOriginationFee, List<FinFeeDetail> feeList) {
 		logger.debug(Literal.ENTERING);
+
 		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		for (FinFeeDetail fee : feeList) {
 			fee.setRecordType(PennantConstants.RCD_ADD);
-			fee.setFinReference(schdData.getFinanceMain().getFinReference());
+			fee.setFinID(finID);
+			fee.setFinReference(finReference);
 			fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		}
@@ -856,8 +858,7 @@ public class FeeDetailService {
 		return dataMap;
 	}
 
-	private List<FinFeeDetail> convertToFinanceFees(FinanceDetail fd, String reference) {
-
+	private List<FinFeeDetail> convertToFinanceFees(FinanceDetail fd, Long finID, String reference) {
 		List<FinTypeFees> finTypeFeesList = fd.getFinTypeFeesList();
 		List<FinFeeDetail> finFeeDetails = new ArrayList<FinFeeDetail>();
 
@@ -925,6 +926,7 @@ public class FeeDetailService {
 			}
 
 			fee.setRecordType(PennantConstants.RCD_ADD);
+			fee.setFinID(finID);
 			fee.setFinReference(reference);
 			fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1039,7 +1041,7 @@ public class FeeDetailService {
 		return fee;
 	}
 
-	private List<FinFeeDetail> convertToFinanceFees(List<FinTypeFees> feeTypeList, String reference) {
+	private List<FinFeeDetail> convertToFinanceFees(List<FinTypeFees> feeTypeList, Long finID, String reference) {
 		List<FinFeeDetail> feeList = new ArrayList<FinFeeDetail>();
 
 		if (feeTypeList == null) {
@@ -1080,6 +1082,7 @@ public class FeeDetailService {
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getWaivedAmount()).subtract(fee.getPaidAmount()));
 
 			fee.setRecordType(PennantConstants.RCD_ADD);
+			fee.setFinID(finID);
 			fee.setFinReference(reference);
 			fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1092,6 +1095,9 @@ public class FeeDetailService {
 			throws AppException {
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+
+		Long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 		boolean isOriginationFee = false;
 
 		if (StringUtils.isBlank(finEvent)) {
@@ -1108,19 +1114,20 @@ public class FeeDetailService {
 					finEvent, isOriginationFee, FinanceConstants.MODULEID_PROMOTION));
 		}
 		if (isOriginationFee) {
-			for (FinFeeDetail finFeeDetail : schdData.getFinFeeDetailList()) {
-				if (StringUtils.equals(finFeeDetail.getFinEvent(), AccountingEvent.VAS_FEE)) {
-					finFeeDetail.setNewRecord(true);
-					finFeeDetail.setRecordType(PennantConstants.RCD_ADD);
-					finFeeDetail.setFinReference(schdData.getFinanceMain().getFinReference());
-					finFeeDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					finFeeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-					finFeeDetail.setLastMntBy(schdData.getFinanceMain().getLastMntBy());
-					finFeeDetail.setOriginationFee(true);
-					finFeeDetail.setFeeTypeID(0);
-					finFeeDetail.setFeeSeq(0);
+			for (FinFeeDetail fee : schdData.getFinFeeDetailList()) {
+				if (StringUtils.equals(fee.getFinEvent(), AccountingEvent.VAS_FEE)) {
+					fee.setNewRecord(true);
+					fee.setRecordType(PennantConstants.RCD_ADD);
+					fee.setFinID(finID);
+					fee.setFinReference(finReference);
+					fee.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					fee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+					fee.setLastMntBy(fm.getLastMntBy());
+					fee.setOriginationFee(true);
+					fee.setFeeTypeID(0);
+					fee.setFeeSeq(0);
 				} else {
-					finFeeDetail.setFinEvent(finEvent);
+					fee.setFinEvent(finEvent);
 				}
 			}
 		}

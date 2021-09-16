@@ -58,65 +58,57 @@ public class CustomerDocumentValidation {
 	}
 
 	private AuditDetail validate(AuditDetail auditDetail, String method, String usrLanguage) {
+		CustomerDocument document = (CustomerDocument) auditDetail.getModelData();
+		CustomerDocument tempDocument = null;
 
-		CustomerDocument customerDocument = (CustomerDocument) auditDetail.getModelData();
-		CustomerDocument tempCustomerDocument = null;
-		if (customerDocument.isWorkflow()) {
-			tempCustomerDocument = getCustomerDocumentDAO().getCustomerDocumentById(customerDocument.getId(),
-					customerDocument.getCustDocCategory(), "_Temp");
+		Long id = document.getCustID();
+		String custDocCategory = document.getCustDocCategory();
+
+		if (document.isWorkflow()) {
+			tempDocument = customerDocumentDAO.getCustomerDocumentById(id, custDocCategory, "_Temp");
 		}
 
-		CustomerDocument befCustomerDocument = getCustomerDocumentDAO()
-				.getCustomerDocumentById(customerDocument.getId(), customerDocument.getCustDocCategory(), "");
+		CustomerDocument befDocument = customerDocumentDAO.getCustomerDocumentById(id, custDocCategory, "");
 
-		CustomerDocument oldCustomerDocument = customerDocument.getBefImage();
+		CustomerDocument oldDcoument = document.getBefImage();
 
 		String[] valueParm = new String[2];
 		String[] errParm = new String[2];
 
-		valueParm[0] = StringUtils.trimToEmpty(customerDocument.getLovDescCustCIF());
-		valueParm[1] = customerDocument.getCustDocCategory();
+		valueParm[0] = StringUtils.trimToEmpty(document.getLovDescCustCIF());
+		valueParm[1] = custDocCategory;
 
 		errParm[0] = PennantJavaUtil.getLabel("DocumentDetails") + " , " + PennantJavaUtil.getLabel("label_CustCIF")
 				+ ":" + valueParm[0] + " and ";
 		errParm[1] = PennantJavaUtil.getLabel("CustDocType_label") + "-" + valueParm[1];
 
-		if (customerDocument.isNewRecord()) { // for New record or new record into
-												// work flow
+		if (document.isNewRecord()) {
 
-			if (!customerDocument.isWorkflow()) {// With out Work flow only new
-													// records
-				if (befCustomerDocument != null) { // Record Already Exists in
-													// the table then error
+			if (!document.isWorkflow()) {
+				if (befDocument != null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (customerDocument.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type
-																									// is new
-					if (befCustomerDocument != null || tempCustomerDocument != null) {
+				if (document.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					if (befDocument != null || tempDocument != null) {
 						// if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
-					if (befCustomerDocument == null || tempCustomerDocument != null) {
+					if (befDocument == null || tempDocument != null) {
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 					}
 				}
 			}
 		} else {
-			// for work flow process records or (Record to update or Delete with
-			// out work flow)
-			if (!customerDocument.isWorkflow()) { // With out Work flow for
-													// update and delete
-
-				if (befCustomerDocument == null) { // if records not exists in
-													// the main table
+			if (!document.isWorkflow()) {
+				if (befDocument == null) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				}
 
-				if (befCustomerDocument != null && oldCustomerDocument != null
-						&& !oldCustomerDocument.getLastMntOn().equals(befCustomerDocument.getLastMntOn())) {
+				if (befDocument != null && oldDcoument != null
+						&& !oldDcoument.getLastMntOn().equals(befDocument.getLastMntOn())) {
 					if (StringUtils.trimToEmpty(auditDetail.getAuditTranType())
 							.equalsIgnoreCase(PennantConstants.TRAN_DEL)) {
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41003", errParm, null));
@@ -126,13 +118,13 @@ public class CustomerDocumentValidation {
 				}
 			} else {
 
-				if (tempCustomerDocument == null) { // if records not exists in
-													// the Work flow table
+				if (tempDocument == null) { // if records not exists in
+											// the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
-				if (tempCustomerDocument != null && oldCustomerDocument != null
-						&& !oldCustomerDocument.getLastMntOn().equals(tempCustomerDocument.getLastMntOn())) {
+				if (tempDocument != null && oldDcoument != null
+						&& !oldDcoument.getLastMntOn().equals(tempDocument.getLastMntOn())) {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
@@ -140,14 +132,14 @@ public class CustomerDocumentValidation {
 
 		// Check whether the document id exists for another customer.
 		if (!ImplementationConstants.PAN_DUPLICATE_NOT_ALLOWED) {
-			if (StringUtils.isNotEmpty(customerDocument.getCustDocTitle())) {
-				long custId = customerDocument.getCustID();
-				String docCategory = customerDocument.getCustDocCategory();
-				String docNumber = customerDocument.getCustDocTitle();
+			if (StringUtils.isNotEmpty(document.getCustDocTitle())) {
+				long custId = document.getCustID();
+				String docCategory = custDocCategory;
+				String docNumber = document.getCustDocTitle();
 				List<String> duplicateCIFs = customerDocumentDAO.getDuplicateDocByTitle(docCategory, docNumber);
 				if (!duplicateCIFs.isEmpty()) {
 					String[] errParm1 = new String[2];
-					if (customerDocument.getCustDocCategory().equals(PennantConstants.CPRCODE)) {
+					if (custDocCategory.equals(PennantConstants.CPRCODE)) {
 						docNumber = PennantApplicationUtil.formatEIDNumber(docNumber);
 					}
 					errParm1[0] = PennantJavaUtil.getLabel("CustDocTitle_label") + ":" + docNumber;
@@ -159,14 +151,14 @@ public class CustomerDocumentValidation {
 			}
 		}
 
-		if (!StringUtils.equals(customerDocument.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
-			auditDetail.setErrorDetail(screenValidations(customerDocument));
+		if (!StringUtils.equals(document.getSourceId(), PennantConstants.FINSOURCE_ID_API)) {
+			auditDetail.setErrorDetail(screenValidations(document));
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
 
-		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !customerDocument.isWorkflow()) {
-			customerDocument.setBefImage(befCustomerDocument);
+		if ("doApprove".equals(StringUtils.trimToEmpty(method)) || !document.isWorkflow()) {
+			document.setBefImage(befDocument);
 		}
 		return auditDetail;
 	}

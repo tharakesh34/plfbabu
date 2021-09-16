@@ -6468,20 +6468,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		doPostHookValidation(auditHeader, isWIF);
 
 		String auditTranType = auditHeader.getAuditTranType();
-		FinanceDetail financeDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 		String usrLanguage = PennantConstants.default_Language;
-		if (financeMain.getUserDetails() == null) {
-			financeMain.setUserDetails(new LoggedInUser());
-			usrLanguage = financeMain.getUserDetails().getLanguage();
+		if (fm.getUserDetails() == null) {
+			fm.setUserDetails(new LoggedInUser());
+			usrLanguage = fm.getUserDetails().getLanguage();
 		}
 
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 
 		// Linking De-linking Validations
-		String finReference = financeMain.getFinReference();
-		if (financeMain.isQuickDisb() && method.equals(PennantConstants.method_doReject)) {
+		String finReference = fm.getFinReference();
+		if (fm.isQuickDisb() && method.equals(PennantConstants.method_doReject)) {
 			List<LinkedFinances> lnkdFinance = linkedFinancesService.getLinkedFinancesByFinRef(finReference, "_AView");
 			for (LinkedFinances LinkedFinance : lnkdFinance) {
 				String[] parameters = new String[2];
@@ -6502,7 +6503,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<ErrorDetail> errorDetails = new ArrayList<>();
 		if (!isWIF) {
 			auditHeader = getAuditDetails(auditHeader, method);
-			if (!isAutoReject && (auditHeader.getApiHeader() == null || !financeDetail.isStp())) {
+			if (!isAutoReject && (auditHeader.getApiHeader() == null || !fd.isStp())) {
 				errorDetails = covValidations(auditHeader);
 			}
 		}
@@ -6514,11 +6515,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		// Finance vas recording
-		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
+		List<VASRecording> vasRecordingList = schdData.getVasRecordingList();
 		if (vasRecordingList != null && !vasRecordingList.isEmpty()) {
-			financeDetail.getAuditDetailMap().put("VasRecordings",
-					setVasAuditData(financeDetail, auditTranType, method));
-			auditDetails.addAll(financeDetail.getAuditDetailMap().get("VasRecordings"));
+			fd.getAuditDetailMap().put("VasRecordings", setVasAuditData(fd, auditTranType, method));
+			auditDetails.addAll(fd.getAuditDetailMap().get("VasRecordings"));
 
 			List<AuditDetail> details = new ArrayList<AuditDetail>();
 			for (int i = 0; i < vasRecordingList.size(); i++) {
@@ -6527,7 +6527,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				extendedFieldRender.setTypeCode(recording.getProductCode());
 				extendedFieldRender.setTypeCodeDesc(recording.getProductDesc());
 				extendedFieldRender.setReference(recording.getVasReference());
-				extendedFieldRender.setWorkflowId(financeDetail.getFinScheduleData().getFinanceMain().getWorkflowId());
+				extendedFieldRender.setWorkflowId(schdData.getFinanceMain().getWorkflowId());
 				if (extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender, auditTranType, method,
 						i + 1, null) != null) {
 					details.add(extendedFieldDetailsService.setExtendedFieldAuditData(extendedFieldRender,
@@ -6535,28 +6535,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 			}
-			financeDetail.getAuditDetailMap().put("VasExtendedDetails", details);
-			auditDetails.addAll(financeDetail.getAuditDetailMap().get("VasExtendedDetails"));
+			fd.getAuditDetailMap().put("VasExtendedDetails", details);
+			auditDetails.addAll(fd.getAuditDetailMap().get("VasExtendedDetails"));
 
 		}
 
-		if (!isWIF && !financeDetail.isExtSource()) {
+		if (!isWIF && !fd.isExtSource()) {
 
-			String rcdType = financeMain.getRecordType();
-			if (!financeDetail.isLovDescIsQDE() && rcdType.equals(PennantConstants.RECORD_TYPE_NEW)) {
+			String rcdType = fm.getRecordType();
+			if (!fd.isLovDescIsQDE() && rcdType.equals(PennantConstants.RECORD_TYPE_NEW)) {
 
 				// Customer Details Validation
 				// =======================================
-				if (financeDetail.getCustomerDetails() != null && !isAutoReject) {
-					financeDetail.getCustomerDetails().setUserDetails(financeDetail.getUserDetails());
-					auditDetails.addAll(customerDetailsService.validate(financeDetail.getCustomerDetails(),
-							financeMain.getWorkflowId(), method, usrLanguage));
+				if (fd.getCustomerDetails() != null && !isAutoReject) {
+					fd.getCustomerDetails().setUserDetails(fd.getUserDetails());
+					auditDetails.addAll(customerDetailsService.validate(fd.getCustomerDetails(), fm.getWorkflowId(),
+							method, usrLanguage));
 				}
 			}
 
 			// Cheque Header Details (TODO : Temporary Validation addition)
 			// =======================================
-			if (financeDetail.getChequeHeader() != null) {
+			if (fd.getChequeHeader() != null) {
 				auditDetail = finChequeHeaderService.validation(auditDetail, usrLanguage);
 				auditHeader.setAuditDetail(auditDetail);
 				auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -6564,38 +6564,38 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Finance Check List Details
 			// =======================================
-			List<FinanceCheckListReference> financeCheckList = financeDetail.getFinanceCheckList();
+			List<FinanceCheckListReference> financeCheckList = fd.getFinanceCheckList();
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
-				auditDetails.addAll(checkListDetailService
-						.validate(financeDetail.getAuditDetailMap().get("checkListDetails"), method, usrLanguage));
+				auditDetails.addAll(checkListDetailService.validate(fd.getAuditDetailMap().get("checkListDetails"),
+						method, usrLanguage));
 			}
 
 			// Guaranteer Details Validation
 			// =======================================
-			List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
+			List<GuarantorDetail> gurantorsDetailList = fd.getGurantorsDetailList();
 			if (gurantorsDetailList != null && !gurantorsDetailList.isEmpty()) {
 				// 10-Jul-2018 BUG FIX related to TktNo:127415
-				List<AuditDetail> details = guarantorDetailService.validate(gurantorsDetailList,
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage);
-				financeDetail.getAuditDetailMap().put("Guarantors", details);
+				List<AuditDetail> details = guarantorDetailService.validate(gurantorsDetailList, fm.getWorkflowId(),
+						method, auditTranType, usrLanguage);
+				fd.getAuditDetailMap().put("Guarantors", details);
 				auditDetails.addAll(details);
 			}
 
 			// Joint Account Details Validation
 			// =======================================
-			List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
+			List<JointAccountDetail> jointAccountDetailList = fd.getJointAccountDetailList();
 			if (jointAccountDetailList != null && !jointAccountDetailList.isEmpty()) {
 				// 10-Jul-2018 BUG FIX related to TktNo:127415
 				List<AuditDetail> details = jointAccountDetailService.validate(jointAccountDetailList,
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage);
-				financeDetail.getAuditDetailMap().put("JointAccountDetails", details);
+						fm.getWorkflowId(), method, auditTranType, usrLanguage);
+				fd.getAuditDetailMap().put("JointAccountDetails", details);
 				auditDetails.addAll(details);
 			}
 
-			FinanceTaxDetail taxDetail = financeDetail.getFinanceTaxDetail();
+			FinanceTaxDetail taxDetail = fd.getFinanceTaxDetail();
 
 			if (taxDetail != null && !auditDetails.isEmpty()) {
-				if (!financeDetail.isActionSave()) {
+				if (!fd.isActionSave()) {
 					long custId = taxDetail.getTaxCustId();
 					String taxNumber = taxDetail.getTaxNumber();
 					boolean idExist = false;
@@ -6654,65 +6654,64 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// set Finance Collateral Details Audit
 			// =======================================
-			if (financeDetail.getFinanceCollaterals() != null && !financeDetail.getFinanceCollaterals().isEmpty()) {
-				auditDetails.addAll(finCollateralService.validate(financeDetail.getFinanceCollaterals(),
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
+			if (fd.getFinanceCollaterals() != null && !fd.getFinanceCollaterals().isEmpty()) {
+				auditDetails.addAll(finCollateralService.validate(fd.getFinanceCollaterals(), fm.getWorkflowId(),
+						method, auditTranType, usrLanguage));
 			}
 
 			// Advance Payment details
 			// =======================================
-			if (financeDetail.getAdvancePaymentsList() != null) {
+			if (fd.getAdvancePaymentsList() != null) {
 				boolean isApi = false;
 
 				if (auditHeader.getApiHeader() != null) {
 					isApi = true;
 				}
 
-				auditDetails.addAll(finAdvancePaymentsService.validate(financeDetail.getAdvancePaymentsList(),
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage, financeDetail, isApi));
+				auditDetails.addAll(finAdvancePaymentsService.validate(fd.getAdvancePaymentsList(), fm.getWorkflowId(),
+						method, auditTranType, usrLanguage, fd, isApi));
 			}
 
 			// Covenant Type details
 			// =======================================
-			if (financeDetail.getCovenantTypeList() != null) {
-				auditDetails.addAll(finCovenantTypeService.validate(financeDetail.getCovenantTypeList(),
-						financeMain.getWorkflowId(), method, auditTranType, usrLanguage));
-				validateDisbursements(financeDetail, auditDetails);
+			if (fd.getCovenantTypeList() != null) {
+				auditDetails.addAll(finCovenantTypeService.validate(fd.getCovenantTypeList(), fm.getWorkflowId(),
+						method, auditTranType, usrLanguage));
+				validateDisbursements(fd, auditDetails);
 
 			}
 
-			List<Covenant> covenats = financeDetail.getCovenants();
+			List<Covenant> covenats = fd.getCovenants();
 			if (ImplementationConstants.COVENANT_MODULE_NEW && CollectionUtils.isNotEmpty(covenats)) {
-				auditDetails.addAll(covenantsService.validate(covenats, financeMain.getWorkflowId(), method,
-						auditTranType, usrLanguage));
+				auditDetails.addAll(
+						covenantsService.validate(covenats, fm.getWorkflowId(), method, auditTranType, usrLanguage));
 				// commenting the below line since we are calling covenantsService.validateOTC(financeDetail) method for
 				// new covenant module
 				// validateDisbursements(financeDetail, auditDetails);
 
 			}
 
-			if (StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.ORG)
+			if (StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)
 					&& !method.equals(PennantConstants.method_doReject)
-					&& !financeMain.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED)
-					&& !financeMain.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) {
+					&& !fm.getRecordStatus().contains(PennantConstants.RCD_STATUS_SAVED)
+					&& !fm.getRecordStatus().equals(PennantConstants.RCD_STATUS_DECLINED)) {
 
 				if (ImplementationConstants.COVENANT_MODULE_NEW) {
 					// Adding the audit details to display error's
-					auditDetails.addAll(covenantsService.validateOTC(financeDetail));
+					auditDetails.addAll(covenantsService.validateOTC(fd));
 				} else {
-					validateOtcPayment(auditDetails, financeDetail);
+					validateOtcPayment(auditDetails, fd);
 				}
 
 			}
 			// Collateral Assignments details
 			// =======================================
-			if (financeDetail.getCollateralAssignmentList() != null
-					&& !financeDetail.getCollateralAssignmentList().isEmpty()) {
+			if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 
 				// Collateral Assignments Validation
-				List<CollateralAssignment> assignments = financeDetail.getCollateralAssignmentList();
+				List<CollateralAssignment> assignments = fd.getCollateralAssignmentList();
 				if (assignments != null && !assignments.isEmpty()) {
-					List<AuditDetail> details = financeDetail.getAuditDetailMap().get("CollateralAssignments");
+					List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
 					details = getCollateralAssignmentValidation().vaildateDetails(details, method, usrLanguage);
 					auditDetails.addAll(details);
 				}
@@ -6720,24 +6719,23 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Collateral Setup details Business validations
 			// ========================
-			if (CollectionUtils.isNotEmpty(financeDetail.getCollaterals())) {
-				auditDetails.addAll(collateralSetupService.validateDetails(financeDetail, auditTranType, method));
+			if (CollectionUtils.isNotEmpty(fd.getCollaterals())) {
+				auditDetails.addAll(collateralSetupService.validateDetails(fd, auditTranType, method));
 			}
 
 			// FinAssetType Detail
-			if (financeDetail.getFinAssetTypesList() != null && !financeDetail.getFinAssetTypesList().isEmpty()) {
+			if (fd.getFinAssetTypesList() != null && !fd.getFinAssetTypesList().isEmpty()) {
 
 				// FinAssetType Validation
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinAssetTypes");
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinAssetTypes");
 				if (details != null) {
 					details = getFinAssetTypesValidation().vaildateDetails(details, method, usrLanguage);
 					auditDetails.addAll(details);
 				}
 			}
 			// Extended field details Validation
-			if (financeDetail.getExtendedFieldRenderList() != null
-					&& !financeDetail.getExtendedFieldRenderList().isEmpty()) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			if (fd.getExtendedFieldRenderList() != null && !fd.getExtendedFieldRenderList().isEmpty()) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
 
 				if (details != null) {
 					for (AuditDetail assetDetail : details) {
@@ -6757,23 +6755,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// PSL details
 			// =======================================
-			if (financeDetail.getPslDetail() != null) {
-				financeDetail.getPslDetail().setWorkflowId(financeMain.getWorkflowId());
-				auditDetails.add(
-						pSLDetailService.validate(financeDetail.getPslDetail(), method, auditTranType, usrLanguage));
+			if (fd.getPslDetail() != null) {
+				fd.getPslDetail().setWorkflowId(fm.getWorkflowId());
+				auditDetails.add(pSLDetailService.validate(fd.getPslDetail(), method, auditTranType, usrLanguage));
 			}
 
 			// Vas Recording Details
-			if (financeDetail.getFinScheduleData().getVasRecordingList() != null
-					&& !financeDetail.getFinScheduleData().getVasRecordingList().isEmpty()) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("VasRecordings");
+			if (schdData.getVasRecordingList() != null && !schdData.getVasRecordingList().isEmpty()) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("VasRecordings");
 				if (details != null) {
 					details = getVasRecordingValidation().vaildateDetails(details, method, usrLanguage);
 					auditDetails.addAll(details);
 				}
 
 				// Extended field details Validation
-				List<AuditDetail> vasExtDetails = financeDetail.getAuditDetailMap().get("VasExtendedDetails");
+				List<AuditDetail> vasExtDetails = fd.getAuditDetailMap().get("VasExtendedDetails");
 				if (vasExtDetails != null && !vasExtDetails.isEmpty()) {
 					for (AuditDetail assetDetail : vasExtDetails) {
 						if (assetDetail.getModelData() != null) {
@@ -6793,41 +6789,40 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			// Finance Flag details Validation
-			List<FinFlagsDetail> finFlagsDetailList = financeDetail.getFinFlagsDetails();
+			List<FinFlagsDetail> finFlagsDetailList = fd.getFinFlagsDetails();
 			if (finFlagsDetailList != null && !finFlagsDetailList.isEmpty()) {
-				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("FinFlagsDetail");
+				List<AuditDetail> details = fd.getAuditDetailMap().get("FinFlagsDetail");
 				details = getFlagDetailValidation().vaildateDetails(details, method, usrLanguage);
 				auditDetails.addAll(details);
 			}
 
 			// Legal details from loan business validation
 			// ========================
-			if (CollectionUtils.isNotEmpty(financeDetail.getLegalDetailsList())) {
-				auditDetails.addAll(legalDetailService.validateDetailsFromLoan(financeDetail, auditTranType, method));
+			if (CollectionUtils.isNotEmpty(fd.getLegalDetailsList())) {
+				auditDetails.addAll(legalDetailService.validateDetailsFromLoan(fd, auditTranType, method));
 			}
 		}
 
 		// Restructure Details
-		if (financeDetail.getFinScheduleData().getRestructureDetail() != null) {
-			auditDetails.add(restructureService.validationRestructureDetail(financeDetail, method, usrLanguage));
+		if (schdData.getRestructureDetail() != null) {
+			auditDetails.add(restructureService.validationRestructureDetail(fd, method, usrLanguage));
 		}
 
 		// Finance Fee details
-		if (!financeDetail.isExtSource()) {
-			List<FinFeeDetail> finFeeDeatailsList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (!fd.isExtSource()) {
+			List<FinFeeDetail> finFeeDeatailsList = schdData.getFinFeeDetailList();
 
 			if (finFeeDeatailsList != null) {
-				List<AuditDetail> auditDetailsList = finFeeDetailService.validate(
-						financeDetail.getFinScheduleData().getFinFeeDetailList(), financeMain.getWorkflowId(), method,
-						auditTranType, usrLanguage, isWIF);
+				List<AuditDetail> auditDetailsList = finFeeDetailService.validate(schdData.getFinFeeDetailList(),
+						fm.getWorkflowId(), method, auditTranType, usrLanguage, isWIF);
 
 				auditDetails.addAll(auditDetailsList);
 
-				if (StringUtils.isNotBlank(financeMain.getWifReference())
-						&& !StringUtils.equals(financeMain.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
-						&& (StringUtils.isBlank(financeDetail.getModuleDefiner())
-								|| FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner()))) {
-					List<FinTypeFees> finTypeFeesList = financeDetail.getFinTypeFeesList();
+				if (StringUtils.isNotBlank(fm.getWifReference())
+						&& !StringUtils.equals(fm.getFinSourceID(), PennantConstants.FINSOURCE_ID_API)
+						&& (StringUtils.isBlank(fd.getModuleDefiner())
+								|| FinServiceEvent.ORG.equals(fd.getModuleDefiner()))) {
+					List<FinTypeFees> finTypeFeesList = fd.getFinTypeFeesList();
 					boolean warningMessage = false;
 
 					if (finTypeFeesList != null) {
@@ -6873,19 +6868,19 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		}
 
-		if (StringUtils.equals(FinServiceEvent.ORG, financeDetail.getModuleDefiner())) {
+		if (StringUtils.equals(FinServiceEvent.ORG, fd.getModuleDefiner())) {
 			// Finance Fee Receipts
-			if (financeDetail.getFinScheduleData().getFinFeeReceipts() == null) {
-				financeDetail.getFinScheduleData().setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
+			if (schdData.getFinFeeReceipts() == null) {
+				schdData.setFinFeeReceipts(new ArrayList<FinFeeReceipt>());
 			}
-			auditDetails.addAll(finFeeDetailService.validateFinFeeReceipts(financeDetail, financeMain.getWorkflowId(),
-					method, auditTranType, usrLanguage, auditDetails));
+			auditDetails.addAll(finFeeDetailService.validateFinFeeReceipts(fd, fm.getWorkflowId(), method,
+					auditTranType, usrLanguage, auditDetails));
 		}
 
 		// Extended field details Validation
-		if (financeDetail.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("LoanExtendedFieldDetails");
-			ExtendedFieldHeader extendedFieldHeader = financeDetail.getExtendedFieldHeader();
+		if (fd.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fd.getAuditDetailMap().get("LoanExtendedFieldDetails");
+			ExtendedFieldHeader extendedFieldHeader = fd.getExtendedFieldHeader();
 			if (extendedFieldHeader != null) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(extendedFieldHeader.getModuleName());
@@ -6902,8 +6897,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 		// validate QueryModule
 		if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("QUERY_ASSIGN_TO_LOAN_AND_LEGAL_ROLES"))) {
-			if ("saveOrUpdate".equals(method) && isForwardCase(financeMain)) {
-				String currentRole = financeMain.getRoleCode();
+			if ("saveOrUpdate".equals(method) && isForwardCase(fm)) {
+				String currentRole = fm.getRoleCode();
 				List<QueryDetail> qrysList = queryDetailService.getUnClosedQurysForGivenRole(finReference, currentRole);
 				if (CollectionUtils.isNotEmpty(qrysList)) {
 					String[] errParm = new String[1];
@@ -6921,9 +6916,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		// OCR Details Validation
 
-		if (financeMain.isFinOcrRequired()) {
-			if (financeDetail.getFinOCRHeader() != null) {
-				FinOCRHeader finOCRHeader = financeDetail.getFinOCRHeader();
+		if (fm.isFinOcrRequired()) {
+			if (fd.getFinOCRHeader() != null) {
+				FinOCRHeader finOCRHeader = fd.getFinOCRHeader();
 				AuditDetail finOCRHeaderAudit = new AuditDetail(auditTranType, 1, finOCRHeader.getBefImage(),
 						finOCRHeader);
 				auditDetails.add(finOCRHeaderService.validate(finOCRHeaderAudit, auditTranType, method));

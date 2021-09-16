@@ -113,11 +113,6 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		super();
 	}
 
-	public CustomerDocument(long id) {
-		super();
-		this.setId(id);
-	}
-
 	public CustomerDocument(String docCategory, String doctype, String docName, byte[] docImage) {
 		super();
 		this.custDocCategory = docCategory;
@@ -146,18 +141,6 @@ public class CustomerDocument extends AbstractWorkflowEntity {
 		excludeFields.add("finReference");
 		excludeFields.add("docTypeId");
 		return excludeFields;
-	}
-
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
-	public Long getId() {
-		return custID;
-	}
-
-	public void setId(Long id) {
-		this.custID = id;
 	}
 
 	public long getCustID() {

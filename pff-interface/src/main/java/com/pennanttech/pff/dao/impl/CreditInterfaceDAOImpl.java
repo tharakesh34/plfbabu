@@ -292,7 +292,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 	public List<CustomerDocument> getCustomerDocumentByCustomer(long custId, String type) {
 		logger.debug("Entering");
 		CustomerDocument customerDocument = new CustomerDocument();
-		customerDocument.setId(custId);
+		customerDocument.setCustID(custId);
 
 		StringBuilder selectSql = new StringBuilder();
 		selectSql.append("SELECT CustID, CustDocType, CustDocTitle, CustDocSysName");
@@ -386,7 +386,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		txStatus = transactionManager.getTransaction(txDef);
 
 		if (serviceTaskDetail.getId() == Long.MIN_VALUE) {
-			//serviceTaskDetail.setId(getNextValue("SeqBMTAcademics"));
+			// serviceTaskDetail.setId(getNextValue("SeqBMTAcademics"));
 		}
 
 		StringBuilder insertSql = new StringBuilder();
@@ -401,7 +401,7 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(serviceTaskDetail);
 		try {
 			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
-			//commit
+			// commit
 			transactionManager.commit(txStatus);
 		} catch (DuplicateElementException dee) {
 			logger.error("Exception", dee);
@@ -443,10 +443,8 @@ public class CreditInterfaceDAOImpl extends BasicDao<ExtendedFieldDetail> implem
 	/**
 	 * Fetch the Record City details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return City
 	 */
 	public City getCityDetails(final String pCCountry, String pCProvince, String pCCity, String type) {

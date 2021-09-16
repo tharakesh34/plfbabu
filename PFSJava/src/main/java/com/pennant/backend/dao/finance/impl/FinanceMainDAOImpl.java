@@ -2429,6 +2429,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public boolean isAppNoExists(String applicationNo, TableType tableType) {
+		Object[] parameters = new Object[] { applicationNo, 1 };
+
 		String sql = new String();
 		String whereClause = " ApplicationNo = ? and FinIsActive = ?";
 		switch (tableType) {
@@ -2439,13 +2441,14 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql = QueryUtil.getCountQuery("FinanceMain_Temp", whereClause);
 			break;
 		default:
+			parameters = new Object[] { applicationNo, 1, applicationNo, 1 };
 			sql = QueryUtil.getCountQuery(new String[] { "FinanceMain_Temp", "FinanceMain" }, whereClause);
 			break;
 		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return jdbcOperations.queryForObject(sql, Integer.class, applicationNo, 1) > 0;
+		return jdbcOperations.queryForObject(sql, Integer.class, parameters) > 0;
 
 	}
 

@@ -123,7 +123,7 @@ public class ReferenceGenerator implements Serializable {
 		long finID = fm.getFinID();
 
 		if (finID <= 0) {
-			finID = sequenceGenetor.getNextValue("SeqFinanceMain");
+			finID = sequenceGenetor.getNextValue("Seq_FinanceMain");
 			fm.setFinID(finID);
 		}
 

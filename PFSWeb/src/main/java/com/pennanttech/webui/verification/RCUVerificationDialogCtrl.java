@@ -234,18 +234,18 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 			setCustomerDocuments(customerDocumentList);
 		}
-		//Co Applicant Details
+		// Co Applicant Details
 		if (CollectionUtils.isNotEmpty(jointAccountDetails)) {
 			for (JointAccountDetail jointAccountDetail : jointAccountDetails) {
 				List<CustomerDocument> customerDocumentsList = jointAccountDetail.getCustomerDetails()
 						.getCustomerDocumentsList();
 				if (CollectionUtils.isNotEmpty(customerDocumentsList)) {
-					//set customer name to document to segregate the list
+					// set customer name to document to segregate the list
 					for (CustomerDocument customerDocument : customerDocumentsList) {
 						customerDocument.setLovDescCustShrtName(
 								jointAccountDetail.getCustomerDetails().getCustomer().getCustShrtName());
 					}
-					//Preparing the list
+					// Preparing the list
 					setCoApplicantDocuments(customerDocumentsList,
 							jointAccountDetail.getCustomerDetails().getCustomer().getCustCIF(),
 							jointAccountDetail.getCustomerDetails().getCustomer().getCustID());
@@ -288,7 +288,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			map = getOldVerifications(DocumentType.CUSTOMER, custId, TableType.BOTH_TAB);
 		}
 
-		//set delete Verifications
+		// set delete Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
@@ -313,7 +313,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//get Recording Verifications
+		// get Recording Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			RCUDocument rcuDocument;
 			if (customerDocuments.get(entrySet.getKey()) == null) {
@@ -328,7 +328,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		}
 
-		//get Re-initiated Verifications through dummy key
+		// get Re-initiated Verifications through dummy key
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith(String.valueOf(DocumentType.CUSTOMER).concat("dummy$#"))) {
 				RCUDocument document = entrySet.getValue().getRcuDocument();
@@ -366,7 +366,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			map = getOldVerifications(DocumentType.COAPPLICANT, custId, TableType.BOTH_TAB);
 		}
 
-		//set delete Verifications
+		// set delete Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
@@ -400,7 +400,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//get Recording Verifications
+		// get Recording Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			RCUDocument rcuDocument;
 			if (coApplicantDocuments.get(entrySet.getKey()) == null) {
@@ -415,7 +415,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		}
 
-		//get Re-initiated Verifications through dummy key
+		// get Re-initiated Verifications through dummy key
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith(String.valueOf(DocumentType.COAPPLICANT).concat("dummy$#"))) {
 				RCUDocument document = entrySet.getValue().getRcuDocument();
@@ -469,7 +469,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			map = getOldVerifications(documentType, custId, TableType.BOTH_TAB);
 		}
 
-		//set delete Verifications
+		// set delete Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			Verification item;
 			if (deleteSet.contains(entrySet.getKey())) {
@@ -485,7 +485,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//Set the old verification fields back.
+		// Set the old verification fields back.
 		for (Entry<String, Verification> entrySet : docMap.entrySet()) {
 			Verification previous = map.get(entrySet.getKey());
 			Verification current = entrySet.getValue();
@@ -494,7 +494,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//get Recording Verifications
+		// get Recording Verifications
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			RCUDocument rcuDocument;
 			if (docMap.get(entrySet.getKey()) == null) {
@@ -508,7 +508,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//get Re-initiated Verifications through dummy key
+		// get Re-initiated Verifications through dummy key
 		for (Entry<String, Verification> entrySet : map.entrySet()) {
 			if (entrySet.getKey().startsWith(String.valueOf(documentType).concat("dummy$#"))) {
 				RCUDocument document = entrySet.getValue().getRcuDocument();
@@ -523,7 +523,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 					entrySet.getValue().setDocName(docName);
 
-					//set Last Verification Details
+					// set Last Verification Details
 					if (initType) {
 						verificationService.setLastStatus(entrySet.getValue());
 					}
@@ -620,7 +620,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setCustomerName(document.getLovDescCustShrtName());
 		item.setReference(document.getLovDescCustCIF());
 
-		//set RCU Required
+		// set RCU Required
 		if (rcuRequiredDocs.contains(document.getCustDocCategory())) {
 			item.setRequestType(RequestType.INITIATE.getKey());
 		} else {
@@ -631,7 +631,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			item.setRequestType(RequestType.REQUEST.getKey());
 		}
 		rcuDocument.setDocCategory(document.getCustDocCategory());
-		rcuDocument.setDocumentId(document.getId());
+		rcuDocument.setDocumentId(document.getCustID());
 		rcuDocument.setDocumentSubId(document.getCustDocCategory());
 		rcuDocument.setDocumentType(documentType.getKey());
 		rcuDocument.setReferenceId(String.valueOf(document.getCustID()));
@@ -991,7 +991,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		verifications.addAll(customerDocuments.values());
 		if (MapUtils.isNotEmpty(coAppDocuments)) {
-			//setting co-applicants
+			// setting co-applicants
 			for (Entry<String, Map<String, Verification>> verification : coAppDocuments.entrySet()) {
 				verifications.addAll(verification.getValue().values());
 
@@ -1006,10 +1006,10 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		if (listBoxRCUVerification.getItems() != null) {
 			listBoxRCUVerification.getItems().clear();
 		}
-		//set Initiated flag to initiated Records
+		// set Initiated flag to initiated Records
 		setInitiated(verification.getVerifications());
 
-		//Render Verifications
+		// Render Verifications
 		int i = 0;
 		DocumentType documentType;
 		for (Verification vrf : verifications) {
@@ -1039,7 +1039,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			Listitem item = new Listitem();
 			Listcell listCell;
 			if (!initType && !fromVerification) {
-				//Select
+				// Select
 				listCell = new Listcell();
 				listCell.setId("select".concat(String.valueOf(i)));
 				Radio select = new Radio();
@@ -1049,7 +1049,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setParent(item);
 			}
 
-			//Document Name
+			// Document Name
 			listCell = new Listcell();
 			listCell.setId("ReferenceFor".concat(String.valueOf(i)));
 			String docName = vrf.getDocName();
@@ -1072,7 +1072,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(new Label(docName));
 			listCell.setParent(item);
 
-			//RCU
+			// RCU
 			listCell = new Listcell();
 			listCell.setId("RequestType".concat(String.valueOf(i)));
 			Combobox requestType = new Combobox();
@@ -1104,7 +1104,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
-			//Agency
+			// Agency
 			listCell = new Listcell();
 			listCell.setId("Agency".concat(String.valueOf(i)));
 			ExtendedCombobox agency = new ExtendedCombobox();
@@ -1118,7 +1118,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(agency);
 			listCell.setParent(item);
 
-			//Reason
+			// Reason
 			listCell = new Listcell();
 			listCell.setId("Reason".concat(String.valueOf(i)));
 			ExtendedCombobox reason = new ExtendedCombobox();
@@ -1130,7 +1130,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(reason);
 			listCell.setParent(item);
 
-			//Remarks
+			// Remarks
 			listCell = new Listcell();
 			listCell.setId("Remarks".concat(String.valueOf(i)));
 			Textbox remarks = new Textbox(vrf.getRemarks());
@@ -1138,7 +1138,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(remarks);
 			listCell.setParent(item);
 
-			//Account Number
+			// Account Number
 			listCell = new Listcell();
 			listCell.setId("AccNumber".concat(String.valueOf(i)));
 			Textbox accNumber = new Textbox(vrf.getAccNumber());
@@ -1151,7 +1151,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.appendChild(accNumber);
 			listCell.setParent(item);
 
-			//Bank Name
+			// Bank Name
 			listCell = new Listcell();
 			listCell.setId("BankName".concat(String.valueOf(i)));
 			Textbox bankName = new Textbox(vrf.getBankName());
@@ -1170,7 +1170,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.setParent(item);
 			}
 
-			//Status
+			// Status
 			listCell = new Listcell();
 			Label status = new Label();
 
@@ -1194,7 +1194,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			listCell.setParent(item);
 
 			if (!initType) {
-				//Decision
+				// Decision
 				listCell = new Listcell();
 				listCell.setId("Decision".concat(String.valueOf(i)));
 				Combobox decision = new Combobox();
@@ -1208,7 +1208,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				decision.setParent(listCell);
 				listCell.setParent(item);
 
-				//Re-Initiation Agency
+				// Re-Initiation Agency
 				listCell = new Listcell();
 				listCell.setId("ReInitAgency".concat(String.valueOf(i)));
 				ExtendedCombobox reInitAgency = new ExtendedCombobox();
@@ -1217,7 +1217,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				listCell.appendChild(reInitAgency);
 				listCell.setParent(item);
 
-				//Re-Initiation Remarks
+				// Re-Initiation Remarks
 				listCell = new Listcell();
 				listCell.setId("ReInitRemarks".concat(String.valueOf(i)));
 				Textbox reInitRemarks = new Textbox();
@@ -1737,7 +1737,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.userAction = userAction;
 		this.recSave = recSave;
 		if (this.verification.isSave()) {
-			//return true;
+			// return true;
 		}
 
 		doClearMessage();
@@ -1815,7 +1815,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		List<Verification> verifications = new ArrayList<>();
 		List<Verification> newverifications = new ArrayList<>();
 
-		//Implementation constant related to, RCU initiation group by agency or not.
+		// Implementation constant related to, RCU initiation group by agency or not.
 		boolean grpByAgency = ImplementationConstants.VER_RCU_INITATE_BY_AGENCY;
 		Verification aVerification = null;
 
@@ -1926,7 +1926,7 @@ public class RCUVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @param aVerification
 	 * @param document
 	 */
-	//FIXME
+	// FIXME
 	private void setRcuDocumentList(Verification aVerification, RCUDocument document) {
 		logger.debug(Literal.ENTERING);
 		List<String> rcuDocCatogory = aVerification.getRcuDocuments().stream().map(rcuDoc -> rcuDoc.getDocCategory())

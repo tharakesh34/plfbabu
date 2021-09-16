@@ -614,7 +614,7 @@ public class LegalVettingInitiationCtrl extends GFCBaseCtrl<Verification> {
 		customerDocuments.clear();
 		for (CustomerDocument document : documents) {
 			LVDocument lvDocument = new LVDocument();
-			lvDocument.setDocumentId(document.getId());
+			lvDocument.setDocumentId(document.getCustID());
 			lvDocument.setDocumentSubId(document.getCustDocCategory());
 			lvDocument.setDocumentType(DocumentType.CUSTOMER.getKey());
 			lvDocument.setDescription(document.getLovDescCustDocCategory());

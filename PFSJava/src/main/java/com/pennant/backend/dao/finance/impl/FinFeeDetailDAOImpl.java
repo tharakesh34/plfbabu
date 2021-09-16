@@ -546,7 +546,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? and FinEvent = ?");
+		sql.append(" Where FinReference = ? and FinEvent = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
