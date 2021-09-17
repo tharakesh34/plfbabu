@@ -569,11 +569,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		if (!reqChildDetails) {
 			return cd;
 		}
+
 		if (ImplementationConstants.ALLOW_MULTIPLE_EMPLOYMENTS) {
 			cd.setEmploymentDetailsList(customerEmploymentDetailDAO.getCustomerEmploymentDetailsByID(id, type));
 		} else {
 			cd.setCustEmployeeDetail(custEmployeeDetailDAO.getCustEmployeeDetailById(id, type));
 		}
+
 		if (ImplementationConstants.ALLOW_CUSTOMER_INCOMES) {
 			cd.setCustomerIncomeList(incomeDetailDAO.getIncomesByCustomer(id, type));
 		}

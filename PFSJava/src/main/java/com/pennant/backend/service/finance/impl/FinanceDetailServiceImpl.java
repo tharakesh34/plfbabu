@@ -1692,21 +1692,21 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public FinanceDetail getFinanceReferenceDetails(FinanceDetail financeDetail, String nextRoleCode, String screenCode,
+	public FinanceDetail getFinanceReferenceDetails(FinanceDetail fd, String nextRoleCode, String screenCode,
 			String eventCode, String procEdtEvent, boolean extFieldsReq) {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> accSetIdList = new ArrayList<Long>();
 		boolean isCustExist = true;
-		FinanceType financeType = financeDetail.getFinScheduleData().getFinanceType();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceType financeType = fd.getFinScheduleData().getFinanceType();
+		FinanceMain financeMain = fd.getFinScheduleData().getFinanceMain();
 
 		String ctgType = "";
 		if (financeMain.getCustID() <= 0) {
 			isCustExist = false;
 		}
-		if (financeDetail.getCustomerDetails() != null && financeDetail.getCustomerDetails().getCustomer() != null) {
-			ctgType = financeDetail.getCustomerDetails().getCustomer().getCustCtgCode();
+		if (fd.getCustomerDetails() != null && fd.getCustomerDetails().getCustomer() != null) {
+			ctgType = fd.getCustomerDetails().getCustomer().getCustCtgCode();
 		}
 
 		List<FinanceReferenceDetail> aggrementList = new ArrayList<>(1);
@@ -1726,87 +1726,83 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		finRefDetails = financeReferenceDetailDAO.getFinanceProcessEditorDetails(finType, event, "_FINVIEW");
-		if (CollectionUtils.isNotEmpty(finRefDetails)) {
-			for (FinanceReferenceDetail finrefDetail : finRefDetails) {
+		for (FinanceReferenceDetail finrefDetail : finRefDetails) {
+			String reference = finrefDetail.getLovDescRefDesc();
+			int finRefType = finrefDetail.getFinRefType();
+			String showInStage = StringUtils.trimToEmpty(finrefDetail.getShowInStage());
+			String mandInputInStage = StringUtils.trimToEmpty(finrefDetail.getMandInputInStage());
+			String allowInputInStage = StringUtils.trimToEmpty(finrefDetail.getAllowInputInStage());
+			String ruleReturnType = StringUtils.trimToEmpty(finrefDetail.getLovDescRuleReturnType());
+			// fix in mandate tab show only OPRAPPROVER stage
+			if ((!finrefDetail.isIsActive())
+					|| ((FinanceConstants.PROCEDT_FINANCETABS != finRefType) && (StringUtils.isEmpty(reference)))) {
+				continue;
+			}
 
-				String reference = finrefDetail.getLovDescRefDesc();
-				int finRefType = finrefDetail.getFinRefType();
-				String showInStage = StringUtils.trimToEmpty(finrefDetail.getShowInStage());
-				String mandInputInStage = StringUtils.trimToEmpty(finrefDetail.getMandInputInStage());
-				String allowInputInStage = StringUtils.trimToEmpty(finrefDetail.getAllowInputInStage());
-				String ruleReturnType = StringUtils.trimToEmpty(finrefDetail.getLovDescRuleReturnType());
-				// fix in mandate tab show only OPRAPPROVER stage
-				if ((!finrefDetail.isIsActive())
-						|| ((FinanceConstants.PROCEDT_FINANCETABS != finRefType) && (StringUtils.isEmpty(reference)))) {
+			switch (finRefType) {
+			case FinanceConstants.PROCEDT_CHECKLIST:
+				if (showInStage.contains(tempNextRoleCode)) {
+					checkListdetails.add(finrefDetail);
+				}
+				break;
+			case FinanceConstants.PROCEDT_AGREEMENT:
+				if (mandInputInStage.contains((tempNextRoleCode))) {
+					aggrementList.add(finrefDetail);
+				}
+				break;
+			case FinanceConstants.PROCEDT_ELIGIBILITY:
+				if (StringUtils.isNotEmpty(ruleReturnType) && allowInputInStage.contains(tempNextRoleCode)) {
+					eligibilityList.add(finrefDetail);
+				}
+				break;
+			case FinanceConstants.PROCEDT_RTLSCORE:
+				if (mandInputInStage.contains(tempNextRoleCode)) {
+					retScoringGroupList.add(finrefDetail);
+				}
+				break;
+			case FinanceConstants.PROCEDT_CORPSCORE:
+				if (mandInputInStage.contains(tempNextRoleCode)) {
+					corpScoringGroupList.add(finrefDetail);
 					continue;
 				}
-
-				switch (finRefType) {
-				case FinanceConstants.PROCEDT_CHECKLIST:
-					if (showInStage.contains(tempNextRoleCode)) {
-						checkListdetails.add(finrefDetail);
-					}
-					break;
-				case FinanceConstants.PROCEDT_AGREEMENT:
-					if (mandInputInStage.contains((tempNextRoleCode))) {
-						aggrementList.add(finrefDetail);
-					}
-					break;
-				case FinanceConstants.PROCEDT_ELIGIBILITY:
-					if (StringUtils.isNotEmpty(ruleReturnType) && allowInputInStage.contains(tempNextRoleCode)) {
-						eligibilityList.add(finrefDetail);
-					}
-					break;
-				case FinanceConstants.PROCEDT_RTLSCORE:
-					if (mandInputInStage.contains(tempNextRoleCode)) {
-						retScoringGroupList.add(finrefDetail);
-					}
-					break;
-				case FinanceConstants.PROCEDT_CORPSCORE:
-					if (mandInputInStage.contains(tempNextRoleCode)) {
-						corpScoringGroupList.add(finrefDetail);
-						continue;
-					}
-					break;
-				case FinanceConstants.PROCEDT_STAGEACC:
-					accSetIdList.add(finrefDetail.getFinRefId());
-					break;
-				case FinanceConstants.PROCEDT_LIMIT:
-					if (mandInputInStage.contains(tempNextRoleCode)) {
-						setMiscellaneousTabs(financeDetail, reference);
-					}
-					break;
-				case FinanceConstants.PROCEDT_FINANCETABS:
-					showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"),
-							mandInputInStage);
-					break;
-				default:
-					break;
+				break;
+			case FinanceConstants.PROCEDT_STAGEACC:
+				accSetIdList.add(finrefDetail.getFinRefId());
+				break;
+			case FinanceConstants.PROCEDT_LIMIT:
+				if (mandInputInStage.contains(tempNextRoleCode)) {
+					setMiscellaneousTabs(fd, reference);
 				}
+				break;
+			case FinanceConstants.PROCEDT_FINANCETABS:
+				showTabMap.put(StringUtils.leftPad(String.valueOf(finrefDetail.getFinRefId()), 3, "0"),
+						mandInputInStage);
+				break;
+			default:
+				break;
 			}
 		}
 
 		// Finance Agreement Details
-		financeDetail.setAggrementList(aggrementList);
-		financeDetail.setShowTabDetailMap(showTabMap);
+		fd.setAggrementList(aggrementList);
+		fd.setShowTabDetailMap(showTabMap);
 
 		if (isCustExist) {
 			if (financeMain.isNewRecord() || PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())) {
 
 				// Eligibility Details
-				financeDetail
-						.setElgRuleList(eligibilityDetailService.fetchEligibilityDetails(financeMain, eligibilityList));
+				fd.setElgRuleList(eligibilityDetailService.fetchEligibilityDetails(financeMain, eligibilityList));
 
 				// Scoring Details
 				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(ctgType)) {
-					scoringDetailService.fetchFinScoringDetails(financeDetail, retScoringGroupList, ctgType);
+					scoringDetailService.fetchFinScoringDetails(fd, retScoringGroupList, ctgType);
 				} else {
-					scoringDetailService.fetchFinScoringDetails(financeDetail, corpScoringGroupList, ctgType);
+					scoringDetailService.fetchFinScoringDetails(fd, corpScoringGroupList, ctgType);
 				}
 			}
 
 			// Checklist Details
-			checkListDetailService.fetchFinCheckListDetails(financeDetail, checkListdetails);
+			checkListDetailService.fetchFinCheckListDetails(fd, checkListdetails);
 
 			// Finance Stage Accounting Posting Details
 			// =======================================
@@ -1814,7 +1810,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			for (int i = 0; i < accSetIdList.size(); i++) {
 				stageEntries.addAll(AccountingConfigCache.getTransactionEntry(accSetIdList.get(i)));
 			}
-			financeDetail.setStageTransactionEntries(stageEntries);
+			fd.setStageTransactionEntries(stageEntries);
 		}
 
 		// Accounting Set Details
@@ -1836,13 +1832,13 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						AccountingEvent.CMTDISB);// TODO :
 
 				if (accountingSetId != 0) {
-					financeDetail.setCmtFinanceEntries(AccountingConfigCache.getTransactionEntry(accountingSetId));
+					fd.setCmtFinanceEntries(AccountingConfigCache.getTransactionEntry(accountingSetId));
 				}
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	private void setMiscellaneousTabs(FinanceDetail financeDetail, String reference) {

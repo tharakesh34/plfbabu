@@ -1,42 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceCheckListReferenceDialogCtrl.java                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-12-2011    														*
- *                                                                  						*
- * Modified Date    :  08-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceCheckListReferenceDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 08-12-2011 * * Modified Date : 08-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 28-05-2018       Sai Krishna              0.2          bugs #387 Don't mandate the       * 
- *                                                        checklist when allows input at a  * 
- *                                                        particular stage.                 * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-12-2011 Pennant 0.1 * * 28-05-2018 Sai Krishna 0.2 bugs #387 Don't mandate the * checklist when allows input at a
+ * * particular stage. * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.lmtmasters.financechecklistreference;
@@ -82,8 +65,10 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.backend.model.applicationmaster.CheckListDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -636,6 +621,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 		returnList.add(selectedAnsCountMap);
 
 		// For unselected check list details
+		FinScheduleData schdData = getFinanceDetail().getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 		if (prevAnswersMap != null) {
 			for (String questionId : prevAnswersMap.keySet()) {
 				FinanceCheckListReference finChkListRef = new FinanceCheckListReference();
@@ -647,8 +634,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				String remarks = commentsTxtBoxMap.get(key) == null ? "" : commentsTxtBoxMap.get(key).getValue();
 				finChkListRef.setRemarks(remarks);
 				if (getFinanceDetail() != null) {
-					finChkListRef.setFinReference(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+					finChkListRef.setFinReference(fm.getFinReference());
+					finChkListRef.setFinID(fm.getFinID());
 				}
 				if (notAllowedToShowMap.containsKey(prevAnswersMap.get(questionId).getQuestionId())) {
 					continue;
@@ -692,8 +679,7 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				finChkListRef.setQuestionId(presentAnswersMap.get(questionId).getCheckListId());
 				finChkListRef.setAnswer(presentAnswersMap.get(questionId).getAnsSeqNo());
 				if (getFinanceDetail() != null) {
-					finChkListRef.setFinReference(
-							getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+					finChkListRef.setFinReference(fm.getFinReference());
 				}
 				finChkListRef.setLovDescMaxAnsCount(finRefDetail.getLovDescCheckMaxCount());
 				finChkListRef.setLovDescMinAnsCount(finRefDetail.getLovDescCheckMinCount());
@@ -717,12 +703,9 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 	/**
 	 * Method to validate checklist
 	 * 
-	 * @param auditDetail
-	 *            (AuditDetail)
-	 * @param usrLanguage
-	 *            (String)
-	 * @param method
-	 *            (String)
+	 * @param auditDetail (AuditDetail)
+	 * @param usrLanguage (String)
+	 * @param method      (String)
 	 * @return auditDetail
 	 * @throws InterruptedException
 	 */
