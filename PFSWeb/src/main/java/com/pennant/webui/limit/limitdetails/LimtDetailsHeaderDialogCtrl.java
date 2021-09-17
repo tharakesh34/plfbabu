@@ -22,6 +22,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
@@ -99,6 +100,8 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		this.group.getTextbox().setReadonly(false);
 		this.group.setModuleName("CustomerGroup");
 		this.group.setValueColumn("CustGrpID");
+		this.group.setDescColumn("CustGrpDesc");
+		this.group.setValueType(DataType.LONG);
 		this.group.setValidateColumns(new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" });
 
 		List<Long> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false, false);
