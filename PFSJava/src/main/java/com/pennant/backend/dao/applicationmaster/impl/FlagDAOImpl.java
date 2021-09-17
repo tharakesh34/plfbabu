@@ -108,7 +108,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		default:
 			sql = QueryUtil.getCountQuery(new String[] { "Flags_Temp", "Flags" }, whereClause);
 
-			obj = new Object[] { flagCode };
+			obj = new Object[] { flagCode, flagCode };
 
 			break;
 		}
@@ -124,7 +124,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 		sql.append(tableType.getSuffix());
 		sql.append(" (FlagCode, FlagDesc, Active");
 		sql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.trace(Literal.SQL + sql.toString());

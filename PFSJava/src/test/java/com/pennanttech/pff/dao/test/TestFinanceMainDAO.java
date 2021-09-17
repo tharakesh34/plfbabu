@@ -102,10 +102,9 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceMainListByBatch(dt1, dt2, "");
 		financeMainDAO.getFinanceMainListByBatch(dt1, dt2, "_Temp");
 
-		// Fetching data through FinId but sending finReference in arguments
-		// financeMainDAO.isFinReferenceExists(5222, "", false);
-		// financeMainDAO.isFinReferenceExists(5323, "", true);
-		// financeMainDAO.isFinReferenceExists(500, "", false);
+		financeMainDAO.isFinReferenceExists("1000AGR0001535", "", false);
+		financeMainDAO.isFinReferenceExists("0000AGR0005707s", "", true);
+		financeMainDAO.isFinReferenceExists("1000AGR00015", "", false);
 
 		financeMainDAO.getActualPftBal(5222, "");
 		financeMainDAO.getActualPftBal(500, "");
@@ -354,12 +353,22 @@ public class TestFinanceMainDAO {
 		financeMainDAO.isAppNoExists("", TableType.MAIN_TAB);
 		financeMainDAO.isAppNoExists("", TableType.TEMP_TAB);
 
-		// Fetching data through FinId but sending finReference in arguments
-		// financeMainDAO.getFMForVAS("1500BUS0003280");
-		// financeMainDAO.getFinIDByFinReference("1500BUS0003280", "", false);
-		// financeMainDAO.getFinIDForMandate("1500BUS0003280", 0);
-		// financeMainDAO.getFinanceDetailsForService1("1500BUS0003280","", false);
-		// financeMainDAO.getFinID("1500BUS0003280", "", TableType.MAIN_TAB);
+		financeMainDAO.getFMForVAS("1500BUS0003280");
+		financeMainDAO.getFMForVAS("1500BUS00032");
+
+		financeMainDAO.getFinIDByFinReference("1500BUS0003280", "", false);
+		financeMainDAO.getFinIDByFinReference("1500BUS00032", "", false);
+		financeMainDAO.getFinIDByFinReference("0000AGR0005707", "", true);
+
+		financeMainDAO.getFinIDForMandate("1000AGR0003002", 874);
+		financeMainDAO.getFinIDForMandate("1500BUS00032", 0);
+
+		financeMainDAO.getFinanceDetailsForService1("1500BUS0003280", "", false);
+		financeMainDAO.getFinanceDetailsForService1("1500BUS00032", "", false);
+		financeMainDAO.getFinanceDetailsForService1("0000AGR0005707", "", true);
+
+		financeMainDAO.getFinID("1500LAP0000361", "APPLI", TableType.MAIN_TAB);
+		financeMainDAO.getFinID("1500LAP000", "APPLI", TableType.MAIN_TAB);
 
 		financeMainDAO.getFinanceMainParms(5354);
 		financeMainDAO.getFinanceMainParms(6000);

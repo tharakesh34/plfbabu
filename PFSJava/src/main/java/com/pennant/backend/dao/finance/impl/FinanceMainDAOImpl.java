@@ -393,7 +393,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, FinID, FinReference, FinType, FinBranch, FinCcy");
 		sql.append(" From Financemain");
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql);
 
@@ -1049,7 +1049,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinId = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1707,7 +1707,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ? and FinIsActive = ?");
+		sql.append(" Where FinReference = ? and FinIsActive = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -1752,7 +1752,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public Long getFinIDForMandate(String finReference, long mandateID) {
-		String sql = "Select FinID From FinanceMain Where FinID = ? And MandateID = ? And FinIsActive = ?";
+		String sql = "Select FinID From FinanceMain Where FinReference = ? And MandateID = ? And FinIsActive = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -1807,7 +1807,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" From FinanceMain");
 		}
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -2760,7 +2760,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(" Inner Join RMTFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e On e.EntityCode = dd.EntityCode");
-		sql.append(" Where fm.FinID = ? and e.EntityCode = ?");
+		sql.append(" Where fm.FinReference = ? and e.EntityCode = ?");
 
 		logger.debug(Literal.SQL + sql);
 
