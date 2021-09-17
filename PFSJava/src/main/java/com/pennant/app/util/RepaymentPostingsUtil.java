@@ -1419,6 +1419,7 @@ public class RepaymentPostingsUtil {
 			FinRepayQueue finRepayQueue) {
 		logger.debug("Entering");
 
+		schedule.setFinID(finRepayQueue.getFinID());
 		schedule.setFinReference(finRepayQueue.getFinReference());
 		schedule.setSchDate(finRepayQueue.getRpyDate());
 

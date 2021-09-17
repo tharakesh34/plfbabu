@@ -943,6 +943,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 			// Repay Instructions
 			if (i != 0 && i != listBoxSchedule.getItems().size() - 1) {
 
+				repayInstruction.setFinID(financeMain.getFinID());
 				repayInstruction.setFinReference(financeMain.getFinReference());
 				repayInstruction.setRepayDate(fsd.getSchDate());
 

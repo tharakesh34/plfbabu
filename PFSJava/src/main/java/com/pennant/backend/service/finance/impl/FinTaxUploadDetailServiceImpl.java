@@ -763,6 +763,8 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 			Long finID = financeMainDAO.getFinID(tud.getAggrementNo());
 
+			tud.setFinID(finID);
+
 			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_View");
 			if (financeTaxDetail != null) {
 				Customer customer = customerDAO.getCustomerByCIF(tud.getApplicant(), "_View");
@@ -788,24 +790,24 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 
 	}
 
-	private void preparefinTaxDetail(FinTaxUploadDetail finTaxUploadDetail, FinanceTaxDetail financeTaxDetail) {
-
-		financeTaxDetail.setFinReference(finTaxUploadDetail.getAggrementNo());
-		financeTaxDetail.setApplicableFor(finTaxUploadDetail.getApplicableFor());
-		financeTaxDetail.setCustCIF(finTaxUploadDetail.getApplicant());
-		financeTaxDetail.setTaxNumber(finTaxUploadDetail.getTaxCode());
-		financeTaxDetail.setAddrLine1(finTaxUploadDetail.getAddrLine1());
-		financeTaxDetail.setAddrLine2(finTaxUploadDetail.getAddrLine2());
-		financeTaxDetail.setAddrLine3(finTaxUploadDetail.getAddrLine3());
-		financeTaxDetail.setAddrLine4(finTaxUploadDetail.getAddrLine4());
-		financeTaxDetail.setCountry(finTaxUploadDetail.getCountry());
-		financeTaxDetail.setProvince(finTaxUploadDetail.getProvince());
-		financeTaxDetail.setCity(finTaxUploadDetail.getCity());
-		financeTaxDetail.setPinCode(finTaxUploadDetail.getPinCode());
-		financeTaxDetail.setTaxExempted(finTaxUploadDetail.isTaxExempted());
-		financeTaxDetail.setLastMntBy(finTaxUploadDetail.getLastMntBy());
-		financeTaxDetail.setLastMntOn(finTaxUploadDetail.getLastMntOn());
-		financeTaxDetail.setVersion(financeTaxDetail.isNewRecord() ? 1 : financeTaxDetail.getVersion() + 1);
+	private void preparefinTaxDetail(FinTaxUploadDetail tud, FinanceTaxDetail ftd) {
+		ftd.setFinID(tud.getFinID());
+		ftd.setFinReference(tud.getAggrementNo());
+		ftd.setApplicableFor(tud.getApplicableFor());
+		ftd.setCustCIF(tud.getApplicant());
+		ftd.setTaxNumber(tud.getTaxCode());
+		ftd.setAddrLine1(tud.getAddrLine1());
+		ftd.setAddrLine2(tud.getAddrLine2());
+		ftd.setAddrLine3(tud.getAddrLine3());
+		ftd.setAddrLine4(tud.getAddrLine4());
+		ftd.setCountry(tud.getCountry());
+		ftd.setProvince(tud.getProvince());
+		ftd.setCity(tud.getCity());
+		ftd.setPinCode(tud.getPinCode());
+		ftd.setTaxExempted(tud.isTaxExempted());
+		ftd.setLastMntBy(tud.getLastMntBy());
+		ftd.setLastMntOn(tud.getLastMntOn());
+		ftd.setVersion(ftd.isNewRecord() ? 1 : ftd.getVersion() + 1);
 	}
 
 	@Override

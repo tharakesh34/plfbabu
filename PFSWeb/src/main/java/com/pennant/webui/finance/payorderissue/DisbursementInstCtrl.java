@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related PayOrderIssueHeaders. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related PayOrderIssueHeaders. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * RepayOrderIssueHeaderion or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. RepayOrderIssueHeaderion or retransmission of
+ * the materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PayOrderIssueDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-08-2011    														*
- *                                                                  						*
- * Modified Date    :  12-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PayOrderIssueDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-08-2011 * *
+ * Modified Date : 12-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.payorderissue;
@@ -258,7 +240,7 @@ public class DisbursementInstCtrl {
 
 			Date groupDate = groupFinDisbursement.getDisbDate();
 
-			//condition to not allow under servicing record to be displayed in disbursement queue.
+			// condition to not allow under servicing record to be displayed in disbursement queue.
 			if (groupDate == null) {
 				continue;
 			}
@@ -336,8 +318,10 @@ public class DisbursementInstCtrl {
 				lc.setParent(item);
 
 				if (StringUtils.equals(detail.getStatus(), DisbursementConstants.STATUS_REJECTED)) {
-					lc = new Listcell(detail.getStatus().concat(StringUtils.isNotEmpty(detail.getRejectReason())
-							? "-" + StringUtils.trimToEmpty(detail.getRejectReason()) : ""));
+					lc = new Listcell(detail.getStatus()
+							.concat(StringUtils.isNotEmpty(detail.getRejectReason())
+									? "-" + StringUtils.trimToEmpty(detail.getRejectReason())
+									: ""));
 				} else {
 					lc = new Listcell(detail.getStatus());
 				}
@@ -355,12 +339,12 @@ public class DisbursementInstCtrl {
 			}
 
 			if (subtotalRequired) {
-				//sub total Display Totals On Footer
+				// sub total Display Totals On Footer
 				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal, true);
 			}
 		}
 
-		//group total
+		// group total
 		if (listbox != null && listbox.getItems().size() > 0) {
 			// Display Totals On Footer
 			addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal, false);
@@ -368,7 +352,7 @@ public class DisbursementInstCtrl {
 		logger.debug("Leaving");
 	}
 
-	//TESTING PURPOSE
+	// TESTING PURPOSE
 	public void doFillFinAdvancePaymentsDetailss(List<FinAdvancePayments> finAdvancePayDetails,
 			boolean isMaskingAccNo) {
 		logger.debug("Entering");
@@ -471,12 +455,12 @@ public class DisbursementInstCtrl {
 				}
 
 				if (subtotalRequired) {
-					//sub total Display Totals On Footer
+					// sub total Display Totals On Footer
 					addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_SubTotal.label"), subTotal, true);
 				}
 			}
 
-			//group total
+			// group total
 			if (listbox != null && listbox.getItems().size() > 0) {
 				// Display Totals On Footer
 				addListItem(listbox, Labels.getLabel("listheader_AdvancePayments_GrandTotal.label"), grandTotal, false);
@@ -490,6 +474,7 @@ public class DisbursementInstCtrl {
 		logger.debug("Entering");
 
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
+		aFinAdvancePayments.setFinID(financeMain.getFinID());
 		aFinAdvancePayments.setFinReference(financeMain.getFinReference());
 		aFinAdvancePayments.setPaymentSeq(getNextPaymentSequence(list));
 		aFinAdvancePayments.setNewRecord(true);
@@ -599,7 +584,7 @@ public class DisbursementInstCtrl {
 	}
 
 	private void addListItem(Listbox listbox, String lable, BigDecimal total, boolean footer) {
-		//sub total Display Totals On Footer
+		// sub total Display Totals On Footer
 		Listgroupfoot item = new Listgroupfoot();
 		Listitem listitem = new Listitem();
 
@@ -749,7 +734,7 @@ public class DisbursementInstCtrl {
 
 				date = financeDisbursement.getDisbDate();
 
-				//check is first disbursement
+				// check is first disbursement
 				if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 						&& financeDisbursement.getDisbSeq() == 1) {
 
@@ -778,7 +763,7 @@ public class DisbursementInstCtrl {
 	public static BigDecimal getTotalByDisbursment(FinanceDisbursement financeDisbursement, FinanceMain main) {
 		BigDecimal totdisbAmt = BigDecimal.ZERO;
 
-		//check is first disbursement
+		// check is first disbursement
 		if (financeDisbursement.getDisbDate().getTime() == main.getFinStartDate().getTime()
 				&& financeDisbursement.getDisbSeq() == 1) {
 
@@ -821,7 +806,7 @@ public class DisbursementInstCtrl {
 		return false;
 	}
 
-	//VAS FrondEnd Functionality
+	// VAS FrondEnd Functionality
 	public List<ErrorDetail> validateVasInstructions(List<FinAdvancePayments> advPaymentsList, boolean validate) {
 		return finAdvancePaymentsService.validateVasInstructions(vasRecordingList, advPaymentsList, validate);
 	}

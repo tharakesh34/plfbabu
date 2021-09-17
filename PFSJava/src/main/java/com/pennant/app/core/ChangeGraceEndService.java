@@ -451,13 +451,14 @@ public class ChangeGraceEndService extends ServiceHelper {
 		return schdData;
 	}
 
-	private List<FinServiceInstruction> getFinServiceInstruction(FinScheduleData finScheduleData) {
+	private List<FinServiceInstruction> getFinServiceInstruction(FinScheduleData schdData) {
+		Date sysDate = DateUtil.getSysDate();
 
-		FinServiceInstruction finServInst = new FinServiceInstruction();
-		List<FinServiceInstruction> finServInstList = new ArrayList<FinServiceInstruction>();
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		List<FinServiceInstruction> fsiList = new ArrayList<FinServiceInstruction>();
 
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		EventProperties eventProperties = financeMain.getEventProperties();
+		FinanceMain fm = schdData.getFinanceMain();
+		EventProperties eventProperties = fm.getEventProperties();
 
 		Date appDate = null;
 		if (eventProperties.isParameterLoaded()) {
@@ -466,26 +467,27 @@ public class ChangeGraceEndService extends ServiceHelper {
 			appDate = SysParamUtil.getAppDate();
 		}
 
-		finServInst.setFinReference(financeMain.getFinReference());
-		finServInst.setFinEvent(FinServiceEvent.CHGGRCEND);
-		finServInst.setGrcPeriodEndDate(financeMain.getGrcPeriodEndDate());
-		finServInst.setGrcTerms(financeMain.getGraceTerms());
-		finServInst.setGrcPftFrq(financeMain.getGrcPftFrq());
-		finServInst.setGrcCpzFrq(financeMain.getGrcCpzFrq());
-		finServInst.setGrcRvwFrq(financeMain.getGrcPftRvwFrq());
-		finServInst.setNextGrcRepayDate(financeMain.getNextGrcPftDate());
-		Date sysDate = DateUtil.getSysDate();
-		finServInst.setSystemDate(sysDate);
-		finServInst.setAppDate(appDate);
-		finServInst.setMakerAppDate(appDate);
-		finServInst.setMakerSysDate(sysDate);
-		finServInst.setMaker(999); // EOD
+		fsi.setFinID(fm.getFinID());
+		fsi.setFinReference(fm.getFinReference());
+		fsi.setFinEvent(FinServiceEvent.CHGGRCEND);
+		fsi.setGrcPeriodEndDate(fm.getGrcPeriodEndDate());
+		fsi.setGrcTerms(fm.getGraceTerms());
+		fsi.setGrcPftFrq(fm.getGrcPftFrq());
+		fsi.setGrcCpzFrq(fm.getGrcCpzFrq());
+		fsi.setGrcRvwFrq(fm.getGrcPftRvwFrq());
+		fsi.setNextGrcRepayDate(fm.getNextGrcPftDate());
+
+		fsi.setSystemDate(sysDate);
+		fsi.setAppDate(appDate);
+		fsi.setMakerAppDate(appDate);
+		fsi.setMakerSysDate(sysDate);
+		fsi.setMaker(999); // EOD
 
 		// PftChg is the POST AMOUNT in Posting entries
-		finServInst.setPftChg(finScheduleData.getPftChg());
+		fsi.setPftChg(schdData.getPftChg());
 
-		finServInstList.add(finServInst);
-		return finServInstList;
+		fsiList.add(fsi);
+		return fsiList;
 	}
 
 	public void setAccrualService(AccrualService accrualService) {

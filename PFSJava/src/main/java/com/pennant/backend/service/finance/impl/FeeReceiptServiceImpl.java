@@ -253,6 +253,7 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		Date appDate = SysParamUtil.getAppDate();
 		FinServiceInstruction finServInst = new FinServiceInstruction();
+		finServInst.setFinID(rch.getFinID());
 		finServInst.setFinReference(rch.getReference());
 		finServInst.setFinEvent(AccountingEvent.FEEPAY);
 		finServInst.setAppDate(appDate);

@@ -65,6 +65,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.GuarantorDetail;
@@ -95,6 +96,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
  * This is the controller class for the /WEB-INF/pages/tax/FinanceTaxDetail/financeTaxDetailDialog.zul file. <br>
@@ -1246,6 +1248,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		// Finance Reference
 		try {
+			aFinanceTaxDetail.setFinID(ComponentUtil.getFinID(this.finReference));
 			aFinanceTaxDetail.setFinReference(this.finReference.getValue());
 			this.financeTaxDetail.setFinReference(this.finReference.getValue());
 		} catch (WrongValueException we) {
@@ -1781,12 +1784,12 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	/**
 	 * used only for Loan Origination
 	 * 
-	 * @param financeDetail
+	 * @param fd
 	 * @param tab
 	 * @param recSave
 	 * @throws InterruptedException
 	 */
-	public void doSave_Tax(FinanceDetail financeDetail, Tab tab, boolean recSave) throws InterruptedException {
+	public void doSave_Tax(FinanceDetail fd, Tab tab, boolean recSave) throws InterruptedException {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -1796,7 +1799,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		}
 
 		ArrayList<WrongValueException> wve = doWriteComponentsToBean(this.financeTaxDetail);
-		this.financeTaxDetail.setFinReference(financeDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		this.financeTaxDetail.setFinID(fm.getFinID());
+		this.financeTaxDetail.setFinReference(fm.getFinReference());
 
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
@@ -1813,7 +1819,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		this.financeTaxDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.financeTaxDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.financeTaxDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		financeDetail.setFinanceTaxDetail(this.financeTaxDetail);
+		fd.setFinanceTaxDetail(this.financeTaxDetail);
 
 		logger.debug("Leaving");
 	}

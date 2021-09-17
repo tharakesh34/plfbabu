@@ -365,28 +365,29 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doShowDialogPage(FinTaxUploadDetail finTaxUploadDetail) {
+	private void doShowDialogPage(FinTaxUploadDetail tud) {
 		logger.debug(Literal.ENTERING);
 
-		FinanceTaxDetail financeTaxDetail = new FinanceTaxDetail();
-		financeTaxDetail.setFinReference(finTaxUploadDetail.getAggrementNo());
-		financeTaxDetail.setApplicableFor(finTaxUploadDetail.getApplicableFor());
-		financeTaxDetail.setCustCIF(finTaxUploadDetail.getApplicant());
-		financeTaxDetail.setTaxNumber(finTaxUploadDetail.getTaxCode());
-		financeTaxDetail.setAddrLine1(finTaxUploadDetail.getAddrLine1());
-		financeTaxDetail.setAddrLine2(finTaxUploadDetail.getAddrLine2());
-		financeTaxDetail.setAddrLine3(finTaxUploadDetail.getAddrLine3());
-		financeTaxDetail.setAddrLine4(finTaxUploadDetail.getAddrLine4());
-		financeTaxDetail.setCountry(finTaxUploadDetail.getCountry());
-		financeTaxDetail.setProvince(finTaxUploadDetail.getProvince());
-		financeTaxDetail.setCity(finTaxUploadDetail.getCity());
-		financeTaxDetail.setPinCode(finTaxUploadDetail.getPinCode());
-		financeTaxDetail.setTaxExempted(finTaxUploadDetail.isTaxExempted());
+		FinanceTaxDetail td = new FinanceTaxDetail();
+		td.setFinID(tud.getFinID());
+		td.setFinReference(tud.getAggrementNo());
+		td.setApplicableFor(tud.getApplicableFor());
+		td.setCustCIF(tud.getApplicant());
+		td.setTaxNumber(tud.getTaxCode());
+		td.setAddrLine1(tud.getAddrLine1());
+		td.setAddrLine2(tud.getAddrLine2());
+		td.setAddrLine3(tud.getAddrLine3());
+		td.setAddrLine4(tud.getAddrLine4());
+		td.setCountry(tud.getCountry());
+		td.setProvince(tud.getProvince());
+		td.setCity(tud.getCity());
+		td.setPinCode(tud.getPinCode());
+		td.setTaxExempted(tud.isTaxExempted());
 
 		Map<String, Object> arg = new HashMap<String, Object>();
-		arg.put("FinTaxUploadDetail", finTaxUploadDetail);
+		arg.put("FinTaxUploadDetail", tud);
 		arg.put("FinTaxUploadDetailDialogCtrl", this);
-		arg.put("financeTaxDetail", financeTaxDetail);
+		arg.put("financeTaxDetail", td);
 		arg.put("enquirymode", true);
 
 		try {

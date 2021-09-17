@@ -2090,6 +2090,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					taxDetail.setTaxCustId(fm.getCustID());
 				}
 
+				taxDetail.setFinID(finID);
 				taxDetail.setFinReference(finReference);
 				taxDetail.setTaskId(fm.getTaskId());
 				taxDetail.setNextTaskId(fm.getNextTaskId());
@@ -2175,15 +2176,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance IRR Values
 			// =======================================
 			deleteFinIRR(finID, tableType);
-			saveFinIRR(schdData.getiRRDetails(), finReference, tableType);
+			saveFinIRR(schdData.getiRRDetails(), finID, finReference, tableType);
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
 			FinanceMain befFinMain = fm.getBefImage();
 			if (befFinMain != null && befFinMain.isPlanEMIHAlw()) {
-				if (StringUtils.equals(befFinMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(befFinMain.getPlanEMIHMethod())) {
 					finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, table);
-				} else if (StringUtils.equals(befFinMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(befFinMain.getPlanEMIHMethod())) {
 					finPlanEmiHolidayDAO.deletePlanEMIHDates(finID, table);
 				}
 			}
@@ -2195,40 +2196,35 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			// Finance IRR Values
 			// =======================================
 			deleteFinIRR(finID, tableType);
-			saveFinIRR(schdData.getiRRDetails(), finReference, tableType);
+			saveFinIRR(schdData.getiRRDetails(), finID, finReference, tableType);
 		}
 
 		// Plan EMI Holiday Details
 		// =======================================
-		if (fm.isPlanEMIHAlw()) {
-			if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				if (schdData.getPlanEMIHmonths() != null && !schdData.getPlanEMIHmonths().isEmpty()) {
+		boolean planEMIHAlw = fm.isPlanEMIHAlw();
+		String planEMIHMethod = fm.getPlanEMIHMethod();
+		if (planEMIHAlw) {
+			List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
+			int planEMIHMonth = 0;
+			Date planEMIHDate = null;
 
-					List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-					for (int i = 0; i < schdData.getPlanEMIHmonths().size(); i++) {
-						int planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
-						FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
-						emiHoliday.setFinReference(finReference);
-						emiHoliday.setPlanEMIHMonth(planEMIHMonth);
-						holidayList.add(emiHoliday);
-					}
-
-					finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, table);
+			for (int i = 0; i < schdData.getPlanEMIHmonths().size(); i++) {
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+					planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+					planEMIHDate = schdData.getPlanEMIHDates().get(i);
 				}
-			} else if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-				if (schdData.getPlanEMIHDates() != null && !schdData.getPlanEMIHDates().isEmpty()) {
 
-					List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-					for (int i = 0; i < schdData.getPlanEMIHDates().size(); i++) {
-						Date planEMIHDate = schdData.getPlanEMIHDates().get(i);
-						FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
-						emiHoliday.setFinReference(finReference);
-						emiHoliday.setPlanEMIHDate(planEMIHDate);
-						holidayList.add(emiHoliday);
-					}
+				FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
+				emiHoliday.setFinID(finID);
+				emiHoliday.setFinReference(finReference);
+				emiHoliday.setPlanEMIHMonth(planEMIHMonth);
+				emiHoliday.setPlanEMIHDate(planEMIHDate);
+				holidayList.add(emiHoliday);
+			}
 
-					finPlanEmiHolidayDAO.savePlanEMIHDates(holidayList, table);
-				}
+			if (!holidayList.isEmpty()) {
+				finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, table);
 			}
 		}
 
@@ -3821,6 +3817,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<FinFeeDetail> finFeeDetails = schdData.getFinFeeDetailList();
 		String auditTranType = auditHeader.getAuditTranType();
 
+		String planEMIHMethod = fm.getPlanEMIHMethod();
 		if (recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
 			creditReviewDetailDAO.delete(finID, TableType.MAIN_TAB);
@@ -3949,7 +3946,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Finance IRR Details
 				// =======================================
 				deleteFinIRR(finID, TableType.MAIN_TAB);
-				saveFinIRR(schdData.getiRRDetails(), finReference, TableType.MAIN_TAB);
+				saveFinIRR(schdData.getiRRDetails(), finID, finReference, TableType.MAIN_TAB);
 
 				// BPI Repayment details saving
 				if (repayment != null) {
@@ -4430,51 +4427,39 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
-			if (StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
-				if (fm != null && fm.isPlanEMIHAlw()) {
-					if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-						finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, "");
-					} else if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-						finPlanEmiHolidayDAO.deletePlanEMIHDates(finID, "");
-					}
+			if (FinServiceEvent.PLANNEDEMI.equals(moduleDefiner) && fm.isPlanEMIHAlw()) {
+				if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_FRQ)) {
+					finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, "");
+				} else if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
+					finPlanEmiHolidayDAO.deletePlanEMIHDates(finID, "");
 				}
 			}
 		}
 
-		// Plan EMI Holiday Details
-		// =======================================
-		if (StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)
-				|| StringUtils.equals(moduleDefiner, FinServiceEvent.PLANNEDEMI)) {
-			if (fm.isPlanEMIHAlw()) {
-				if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-					if (schdData.getPlanEMIHmonths() != null && !schdData.getPlanEMIHmonths().isEmpty()) {
+		if (fm.isPlanEMIHAlw()
+				&& (FinServiceEvent.ORG.equals(moduleDefiner) || FinServiceEvent.PLANNEDEMI.equals(moduleDefiner))) {
 
-						List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-						for (int i = 0; i < schdData.getPlanEMIHmonths().size(); i++) {
-							int planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
-							FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
-							emiHoliday.setFinReference(finReference);
-							emiHoliday.setPlanEMIHMonth(planEMIHMonth);
-							holidayList.add(emiHoliday);
-						}
+			List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
+			int planEMIHMonth = 0;
+			Date planEMIHDate = null;
 
-						finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, "");
-					}
-				} else if (StringUtils.equals(fm.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-					if (schdData.getPlanEMIHDates() != null && !schdData.getPlanEMIHDates().isEmpty()) {
-
-						List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
-						for (int i = 0; i < schdData.getPlanEMIHDates().size(); i++) {
-							Date planEMIHDate = schdData.getPlanEMIHDates().get(i);
-							FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
-							emiHoliday.setFinReference(finReference);
-							emiHoliday.setPlanEMIHDate(planEMIHDate);
-							holidayList.add(emiHoliday);
-						}
-
-						finPlanEmiHolidayDAO.savePlanEMIHDates(holidayList, "");
-					}
+			for (int i = 0; i < schdData.getPlanEMIHmonths().size(); i++) {
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+					planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+					planEMIHDate = schdData.getPlanEMIHDates().get(i);
 				}
+
+				FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
+				emiHoliday.setFinID(finID);
+				emiHoliday.setFinReference(finReference);
+				emiHoliday.setPlanEMIHMonth(planEMIHMonth);
+				emiHoliday.setPlanEMIHDate(planEMIHDate);
+				holidayList.add(emiHoliday);
+			}
+
+			if (!holidayList.isEmpty()) {
+				finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, "");
 			}
 		}
 
@@ -5810,17 +5795,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	}
 
-	private List<FinServiceInstruction> getServiceInstructions(FinanceDetail financeDetail) {
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
-		List<FinServiceInstruction> serviceInstructions = finScheduleData.getFinServiceInstructions();
+	private List<FinServiceInstruction> getServiceInstructions(FinanceDetail fd) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinServiceInstruction> serviceInstructions = schdData.getFinServiceInstructions();
 
 		if (CollectionUtils.isEmpty(serviceInstructions)) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinReference(financeMain.getFinReference());
-			finServInst.setFinEvent(financeDetail.getModuleDefiner());
+			finServInst.setFinID(fm.getFinID());
+			finServInst.setFinReference(fm.getFinReference());
+			finServInst.setFinEvent(fd.getModuleDefiner());
 
-			finScheduleData.setFinServiceInstruction(finServInst);
+			schdData.setFinServiceInstruction(finServInst);
 		}
 
 		for (FinServiceInstruction serviceInstruction : serviceInstructions) {
@@ -5828,8 +5814,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				serviceInstruction.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
 			}
 
-			if (StringUtils.isEmpty(financeDetail.getModuleDefiner())
-					|| StringUtils.equals(financeDetail.getModuleDefiner(), FinServiceEvent.ORG)) {
+			if (StringUtils.isEmpty(fd.getModuleDefiner())
+					|| StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)) {
 
 				if (!StringUtils.equals(serviceInstruction.getFinEvent(), FinServiceEvent.ORG)
 						&& !StringUtils.contains(serviceInstruction.getFinEvent(), "_O")) {
@@ -5838,7 +5824,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		return finScheduleData.getFinServiceInstructions();
+		return schdData.getFinServiceInstructions();
 	}
 
 	/**

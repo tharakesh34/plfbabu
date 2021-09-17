@@ -17,6 +17,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -179,7 +180,10 @@ public class InstallmentDueService extends ServiceHelper {
 		BigDecimal pftAmount = BigDecimal.ZERO;
 		BigDecimal priAmount = BigDecimal.ZERO;
 
-		EventProperties eventProperties = fd.getFinScheduleData().getFinanceMain().getEventProperties();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		EventProperties eventProperties = fm.getEventProperties();
 
 		switch (ImplementationConstants.GST_SCHD_CAL_ON) {
 		case FinanceConstants.GST_SCHD_CAL_ON_PFT:
@@ -207,7 +211,8 @@ public class InstallmentDueService extends ServiceHelper {
 		Long invoiceID = gstInvoiceTxnService.schdDueTaxInovicePrepration(invoiceDetail);
 
 		if (schd.getFinReference() == null) {
-			schd.setFinReference(fd.getFinReference());
+			schd.setFinID(fm.getFinID());
+			schd.setFinReference(fm.getFinReference());
 		}
 
 		saveDueTaxDetail(schd, invoiceID);

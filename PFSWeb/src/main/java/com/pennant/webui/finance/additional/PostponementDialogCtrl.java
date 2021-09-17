@@ -448,10 +448,12 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		Date toDate = null;
 		Date recalFromDate = null;
 		Date recalToDate = null;
+		FinScheduleData schdData = getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 		try {
 			if (isValidComboValue(this.cbFromDate, Labels.getLabel("label_PostponementDialog_FromDate.value"))) {
 				fromDate = (Date) this.cbFromDate.getSelectedItem().getValue();
-				getFinScheduleData().getFinanceMain().setEventFromDate(fromDate);
+				fm.setEventFromDate(fromDate);
 				finServiceInstruction.setFromDate(fromDate);
 			}
 		} catch (WrongValueException we) {
@@ -460,7 +462,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		try {
 			if (isValidComboValue(this.cbToDate, Labels.getLabel("label_PostponementDialog_ToDate.value"))) {
 				toDate = (Date) this.cbToDate.getSelectedItem().getValue();
-				getFinScheduleData().getFinanceMain().setEventToDate(toDate);
+				fm.setEventToDate(toDate);
 				finServiceInstruction.setToDate(toDate);
 			}
 		} catch (WrongValueException we) {
@@ -470,8 +472,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			try {
 				if (isValidComboValue(this.cbReCalType, Labels.getLabel("label_PostponementDialog_RecalType.value"))
 						&& this.cbReCalType.getSelectedIndex() != 0) {
-					getFinScheduleData().getFinanceMain()
-							.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
+					fm.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
 					finServiceInstruction.setRecalType(getComboboxValue(this.cbReCalType));
 				}
 			} catch (WrongValueException we) {
@@ -525,7 +526,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					throw new WrongValueException(this.adjTerms, Labels.getLabel("MUST_BE_ENTERED",
 							new String[] { Labels.getLabel("label_PostponementDialog_Terms.value") }));
 				}
-				getFinScheduleData().getFinanceMain().setAdjTerms(this.adjTerms.intValue());
+				fm.setAdjTerms(this.adjTerms.intValue());
 				finServiceInstruction.setTerms(this.adjTerms.intValue());
 
 			} catch (WrongValueException we) {
@@ -551,9 +552,9 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Adjust Terms Calculation
 		int adjTerms = 0;
-		int sdSize = getFinScheduleData().getFinanceScheduleDetails().size();
+		int sdSize = schdData.getFinanceScheduleDetails().size();
 		for (int i = 0; i < sdSize; i++) {
-			FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
+			FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
 			if (curSchd.isRepayOnSchDate()
 					|| curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
 				if (DateUtility.compare(curSchd.getSchDate(), fromDate) >= 0
@@ -564,9 +565,9 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
-			sdSize = getFinScheduleData().getFinanceScheduleDetails().size();
+			sdSize = schdData.getFinanceScheduleDetails().size();
 			for (int i = 0; i < sdSize; i++) {
-				FinanceScheduleDetail curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
+				FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
 				if (DateUtility.compare(curSchd.getSchDate(), fromDate) >= 0
 						&& DateUtility.compare(curSchd.getSchDate(), toDate) <= 0) {
 					if (!checkPlannedDeferment(fromDate)) {
@@ -576,87 +577,84 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			// Check max limit
-			if (getFinScheduleData().getFinanceMain().getAvailedDefRpyChange() + adjTerms > getFinScheduleData()
-					.getFinanceMain().getDefferments()) {
+			if (fm.getAvailedDefRpyChange() + adjTerms > fm.getDefferments()) {
 				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxPostponement.value",
-						new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getDefferments()) }));
+						new String[] { String.valueOf(fm.getDefferments()) }));
 				return;
 			}
 		} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
 			// Check max limit
-			if (getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi() + adjTerms > getFinScheduleData()
-					.getFinanceMain().getMaxUnplannedEmi()) {
+			if (fm.getAvailedUnPlanEmi() + adjTerms > fm.getMaxUnplannedEmi()) {
 				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxUnPlanEMIH.value",
-						new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getMaxUnplannedEmi()) }));
+						new String[] { String.valueOf(fm.getMaxUnplannedEmi()) }));
 				return;
 			}
 		} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			// Check max limit
-			if (getFinScheduleData().getFinanceMain().getAvailedReAgeH() + adjTerms > getFinScheduleData()
-					.getFinanceMain().getMaxReAgeHolidays()) {
+			if (fm.getAvailedReAgeH() + adjTerms > fm.getMaxReAgeHolidays()) {
 				MessageUtil.showError(Labels.getLabel("label_PostponementDialog_MaxReAgeH.value",
-						new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getMaxReAgeHolidays()) }));
+						new String[] { String.valueOf(fm.getMaxReAgeHolidays()) }));
 				return;
 			}
 		}
 
 		finServiceInstruction.setRecalFromDate(recalFromDate);
-		getFinScheduleData().getFinanceMain().setRecalFromDate(recalFromDate);
+		fm.setRecalFromDate(recalFromDate);
 		finServiceInstruction.setRecalToDate(recalToDate);
-		getFinScheduleData().getFinanceMain().setRecalToDate(recalToDate);
+		fm.setRecalToDate(recalToDate);
 		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)
 				|| StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
 			finServiceInstruction.setRecalType(CalculationConstants.RPYCHG_ADDTERM);
 		}
 
-		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
+		finServiceInstruction.setFinID(fm.getFinID());
+		finServiceInstruction.setFinReference(fm.getFinReference());
 		finServiceInstruction.setFinEvent(getScheduleDetailDialogCtrl().getFinanceDetail().getModuleDefiner());
-		getFinScheduleData().setFeeEvent(moduleDefiner);
+		schdData.setFeeEvent(moduleDefiner);
 
 		// Service details calling for Schedule calculation
-		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
+		fm.setDevFinCalReq(false);
 		if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
-			setFinScheduleData(this.postponementService.doPostponement(getFinScheduleData(), finServiceInstruction,
-					getFinScheduleData().getFinanceMain().getScheduleMethod()));
+			setFinScheduleData(
+					this.postponementService.doPostponement(schdData, finServiceInstruction, fm.getScheduleMethod()));
 		} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
-			setFinScheduleData(this.postponementService.doUnPlannedEMIH(getFinScheduleData()));
+			setFinScheduleData(this.postponementService.doUnPlannedEMIH(schdData));
 		} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
-			setFinScheduleData(this.postponementService.doReAging(getFinScheduleData(), finServiceInstruction,
-					getFinScheduleData().getFinanceMain().getScheduleMethod()));
+			setFinScheduleData(
+					this.postponementService.doReAging(schdData, finServiceInstruction, fm.getScheduleMethod()));
 		}
 
-		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
-		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		finServiceInstruction.setPftChg(schdData.getPftChg());
+		fm.resetRecalculationFields();
+		schdData.setFinServiceInstruction(finServiceInstruction);
 
 		// Show Error Details in Schedule Maintenance
-		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
-			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
-			getFinScheduleData().getErrorDetails().clear();
+		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
+			MessageUtil.showError(schdData.getErrorDetails().get(0));
+			schdData.getErrorDetails().clear();
 
 		} else {
 
-			getFinScheduleData().setSchduleGenerated(true);
+			schdData.setSchduleGenerated(true);
 			if (StringUtils.isNotBlank(moduleDefiner)) {
 				if (StringUtils.equals(FinServiceEvent.POSTPONEMENT, moduleDefiner)) {
-					int availedDefRpyChange = getFinScheduleData().getFinanceMain().getAvailedDefRpyChange();
-					getFinScheduleData().getFinanceMain().setAvailedDefRpyChange(availedDefRpyChange + adjTerms);
+					int availedDefRpyChange = fm.getAvailedDefRpyChange();
+					fm.setAvailedDefRpyChange(availedDefRpyChange + adjTerms);
 				} else if (StringUtils.equals(FinServiceEvent.UNPLANEMIH, moduleDefiner)) {
-					int availedUnPlanChange = getFinScheduleData().getFinanceMain().getAvailedUnPlanEmi();
-					getFinScheduleData().getFinanceMain().setAvailedUnPlanEmi(availedUnPlanChange + adjTerms);
+					int availedUnPlanChange = fm.getAvailedUnPlanEmi();
+					fm.setAvailedUnPlanEmi(availedUnPlanChange + adjTerms);
 				} else if (StringUtils.equals(FinServiceEvent.REAGING, moduleDefiner)) {
-					int availedReAgeHChange = getFinScheduleData().getFinanceMain().getAvailedReAgeH();
-					getFinScheduleData().getFinanceMain().setAvailedReAgeH(availedReAgeHChange + adjTerms);
+					int availedReAgeHChange = fm.getAvailedReAgeH();
+					fm.setAvailedReAgeH(availedReAgeHChange + adjTerms);
 
 					// Reset ReAge Buckets after Process
-					int newReAgeBuckets = getFinScheduleData().getFinanceMain().getReAgeBucket()
-							+ getFinScheduleData().getFinanceMain().getDueBucket();
-					getFinScheduleData().getFinanceMain().setReAgeBucket(newReAgeBuckets);
+					int newReAgeBuckets = fm.getReAgeBucket() + fm.getDueBucket();
+					fm.setReAgeBucket(newReAgeBuckets);
 				}
 			}
 
 			if (getScheduleDetailDialogCtrl() != null) {
-				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+				getScheduleDetailDialogCtrl().doFillScheduleList(schdData);
 			}
 		}
 		logger.debug("Leaving");

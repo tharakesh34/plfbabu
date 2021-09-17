@@ -1,43 +1,25 @@
 /**
-  * Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  WIApplyChangeDialogCtrl.java                          	            * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : WIApplyChangeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-10-2011 * *
+ * Modified Date : 05-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -232,8 +214,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -265,8 +246,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -310,17 +290,17 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				//Not Allowed for Repayment
+				// Not Allowed for Repayment
 				/*
 				 * if (!curSchd.isRepayOnSchDate() ) { continue; }
 				 */
 
-				//Profit Paid (Partial/Full)
+				// Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
 
-				//Principal Paid (Partial/Full)
+				// Principal Paid (Partial/Full)
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
@@ -363,12 +343,12 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				 * //Not Allowed for Repayment if (!curSchd.isRepayOnSchDate() ) { continue; }
 				 */
 
-				//Profit Paid (Partial/Full)
+				// Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
 
-				//Principal Paid (Partial/Full)
+				// Principal Paid (Partial/Full)
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
@@ -437,6 +417,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 
+		finServiceInstruction.setFinID(finMain.getFinID());
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinServiceEvent.CHGPFT);
 
@@ -454,7 +435,7 @@ public class ChangeProfitDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				changeProfitService.getChangeProfitDetails(finScheduleData, finServiceInstruction.getAmount()));
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 
-		//Show Error Details in Schedule Maintainance
+		// Show Error Details in Schedule Maintainance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();

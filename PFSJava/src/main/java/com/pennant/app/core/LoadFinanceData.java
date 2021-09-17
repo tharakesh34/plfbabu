@@ -293,7 +293,7 @@ public class LoadFinanceData extends ServiceHelper {
 			FinanceMain fm = finEODEvent.getFinanceMain();
 
 			long finID = fm.getFinID();
-			String finRef = fm.getFinReference();
+			String finReference = fm.getFinReference();
 			boolean updFinMain = finEODEvent.isUpdFinMain();
 			boolean rateReview = finEODEvent.isupdFinSchdForRateRvw();
 			boolean monthEnd = finEODEvent.isUpdMonthEndPostings();
@@ -301,7 +301,7 @@ public class LoadFinanceData extends ServiceHelper {
 			boolean changeGraceEnd = finEODEvent.isUpdFinSchdForChangeGrcEnd();
 			boolean updRepayInstruct = finEODEvent.isUpdRepayInstruct();
 
-			logger.info("FinReference >> {}", finRef);
+			logger.info("FinReference >> {}", finReference);
 			logger.info("UpdFinMain >> {}", updFinMain);
 			logger.info("SchdForRateRvw >> {}", rateReview);
 			logger.info("MonthEndPostings >> {}", monthEnd);
@@ -402,7 +402,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 				List<RepayInstruction> lisRepayIns = finEODEvent.getRepayInstructions();
 				for (RepayInstruction repayInstruction : lisRepayIns) {
-					repayInstruction.setFinReference(finRef);
+					repayInstruction.setFinID(finID);
+					repayInstruction.setFinReference(finReference);
 				}
 
 				logger.info("Saving Repay Instructions into FinRepayInstruction table...");
@@ -681,6 +682,10 @@ public class LoadFinanceData extends ServiceHelper {
 		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
 		if (CollectionUtils.isNotEmpty(schedules)) {
 			if (logKey != 0) {
 				schedules = finEODEvent.getOrgFinSchdDetails();
@@ -688,7 +693,8 @@ public class LoadFinanceData extends ServiceHelper {
 
 			for (FinanceScheduleDetail schd : schedules) {
 				schd.setLastMntBy(fm.getLastMntBy());
-				schd.setFinReference(fm.getFinReference());
+				schd.setFinID(finID);
+				schd.setFinReference(finReference);
 				int seqNo = 0;
 
 				if (mapDateSeq.containsKey(schd.getSchDate())) {
@@ -719,7 +725,8 @@ public class LoadFinanceData extends ServiceHelper {
 			}
 
 			for (RepayInstruction rpayIns : repayInstructions) {
-				rpayIns.setFinReference(fm.getFinReference());
+				rpayIns.setFinID(finID);
+				rpayIns.setFinReference(finReference);
 				rpayIns.setLogKey(logKey);
 			}
 

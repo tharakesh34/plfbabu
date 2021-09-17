@@ -1694,13 +1694,14 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData addSchdRcd(FinScheduleData finScheduleData, Date newSchdDate, int prvIndex,
+	private FinScheduleData addSchdRcd(FinScheduleData schdData, Date newSchdDate, int prvIndex,
 			boolean addClosingBal) {
-		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(prvIndex);
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinanceScheduleDetail prvSchd = schdData.getFinanceScheduleDetails().get(prvIndex);
+		FinanceMain fm = schdData.getFinanceMain();
 
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
-		sd.setFinReference(finScheduleData.getFinanceMain().getFinReference());
+		sd.setFinID(fm.getFinID());
+		sd.setFinReference(fm.getFinReference());
 		sd.setBpiOrHoliday("");
 		sd.setSchDate(newSchdDate);
 		sd.setDefSchdDate(newSchdDate);
@@ -1713,10 +1714,10 @@ public class ScheduleCalculator {
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
 		if (StringUtils.equals(prvSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
-			if (DateUtility.compare(newSchdDate, financeMain.getGrcPeriodEndDate()) <= 0) {
-				sd.setPftDaysBasis(financeMain.getGrcProfitDaysBasis());
+			if (DateUtility.compare(newSchdDate, fm.getGrcPeriodEndDate()) <= 0) {
+				sd.setPftDaysBasis(fm.getGrcProfitDaysBasis());
 			} else {
-				sd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+				sd.setPftDaysBasis(fm.getProfitDaysBasis());
 			}
 		} else {
 			sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
@@ -1733,10 +1734,10 @@ public class ScheduleCalculator {
 		sd.setNoOfDays(DateUtility.getDaysBetween(newSchdDate, prvSchd.getSchDate()));
 		sd.setDayFactor(CalculationUtil.getInterestDays(prvSchd.getSchDate(), newSchdDate, sd.getPftDaysBasis()));
 
-		finScheduleData.getFinanceScheduleDetails().add(sd);
-		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
+		schdData.getFinanceScheduleDetails().add(sd);
+		schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
-		return finScheduleData;
+		return schdData;
 	}
 
 	/*
@@ -3289,14 +3290,14 @@ public class ScheduleCalculator {
 	 * ________________________________________________________________________________________________________________
 	 */
 
-	private FinScheduleData resetNewSchdDetail(FinScheduleData finScheduleData, Date nextSchdDate, int scheduleFlag) {
+	private FinScheduleData resetNewSchdDetail(FinScheduleData schdData, Date nextSchdDate, int scheduleFlag) {
 		logger.debug("Entering");
 
 		// Set Next Repayment Date
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceMain fm = schdData.getFinanceMain();
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 
-		List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> fsdList = schdData.getFinanceScheduleDetails();
 		int lastIndex = fsdList.size() - 1;
 		FinanceScheduleDetail lastSchd = fsdList.get(lastIndex);
 
@@ -3308,15 +3309,16 @@ public class ScheduleCalculator {
 			}
 		}
 
-		sd.setFinReference(finScheduleData.getFinanceMain().getFinReference());
+		sd.setFinID(fm.getFinID());
+		sd.setFinReference(fm.getFinReference());
 		sd.setSchDate(nextSchdDate);
 		sd.setDefSchdDate(nextSchdDate);
 
 		// Grace Period Flags Setting
-		if (DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) <= 0) {
+		if (DateUtility.compare(nextSchdDate, fm.getGrcPeriodEndDate()) <= 0) {
 
 			// Set Profit On date based on frequency
-			if (FrequencyUtil.isFrqDate(finMain.getGrcPftFrq(), nextSchdDate)) {
+			if (FrequencyUtil.isFrqDate(fm.getGrcPftFrq(), nextSchdDate)) {
 				sd.setPftOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
@@ -3324,12 +3326,11 @@ public class ScheduleCalculator {
 			}
 
 			// Review Date
-			if (finMain.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), nextSchdDate)) {
+			if (fm.isAllowGrcPftRvw() && FrequencyUtil.isFrqDate(fm.getGrcPftRvwFrq(), nextSchdDate)) {
 				sd.setRvwOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
-				if (DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0
-						&& finMain.isFinIsRateRvwAtGrcEnd()) {
+				if (DateUtility.compare(nextSchdDate, fm.getGrcPeriodEndDate()) == 0 && fm.isFinIsRateRvwAtGrcEnd()) {
 					sd.setRvwOnSchDate(true);
 				} else {
 					sd.setRvwOnSchDate(false);
@@ -3337,12 +3338,11 @@ public class ScheduleCalculator {
 			}
 
 			// Set Capitalize On date based on frequency
-			if (finMain.isAllowGrcCpz() && FrequencyUtil.isFrqDate(finMain.getGrcCpzFrq(), nextSchdDate)) {
+			if (fm.isAllowGrcCpz() && FrequencyUtil.isFrqDate(fm.getGrcCpzFrq(), nextSchdDate)) {
 				sd.setCpzOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
-				if (DateUtility.compare(nextSchdDate, finMain.getGrcPeriodEndDate()) == 0
-						&& finMain.isCpzAtGraceEnd()) {
+				if (DateUtility.compare(nextSchdDate, fm.getGrcPeriodEndDate()) == 0 && fm.isCpzAtGraceEnd()) {
 					sd.setCpzOnSchDate(true);
 				} else {
 					sd.setCpzOnSchDate(false);
@@ -3358,8 +3358,8 @@ public class ScheduleCalculator {
 		else {
 
 			// Set Profit On date based on frequency
-			if (FrequencyUtil.isFrqDate(finMain.getRepayPftFrq(), nextSchdDate)) {
-				if (finMain.isFinRepayPftOnFrq()) {
+			if (FrequencyUtil.isFrqDate(fm.getRepayPftFrq(), nextSchdDate)) {
+				if (fm.isFinRepayPftOnFrq()) {
 					sd.setPftOnSchDate(true);
 					sd.setFrqDate(true);
 				} else {
@@ -3371,7 +3371,7 @@ public class ScheduleCalculator {
 			}
 
 			// Review Date
-			if (finMain.isAllowRepayRvw() && FrequencyUtil.isFrqDate(finMain.getRepayRvwFrq(), nextSchdDate)) {
+			if (fm.isAllowRepayRvw() && FrequencyUtil.isFrqDate(fm.getRepayRvwFrq(), nextSchdDate)) {
 				sd.setRvwOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
@@ -3379,7 +3379,7 @@ public class ScheduleCalculator {
 			}
 
 			// Set Capitalize On date based on frequency
-			if (FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), nextSchdDate)) {
+			if (FrequencyUtil.isFrqDate(fm.getRepayCpzFrq(), nextSchdDate)) {
 				sd.setCpzOnSchDate(true);
 				sd.setFrqDate(true);
 			} else {
@@ -3390,7 +3390,7 @@ public class ScheduleCalculator {
 			if (scheduleFlag == CalculationConstants.SCHDFLAG_RPY) {
 				sd.setRepayOnSchDate(true);
 			} else {
-				if (FrequencyUtil.isFrqDate(finMain.getRepayFrq(), nextSchdDate)) {
+				if (FrequencyUtil.isFrqDate(fm.getRepayFrq(), nextSchdDate)) {
 					sd.setRepayOnSchDate(true);
 					sd.setFrqDate(true);
 				} else {
@@ -3404,16 +3404,16 @@ public class ScheduleCalculator {
 		sd.setMrgRate(lastSchd.getMrgRate());
 		sd.setActRate(lastSchd.getActRate());
 		sd.setCalculatedRate(lastSchd.getCalculatedRate());
-		sd.setTDSApplicable(TDSCalculator.isTDSApplicable(finMain));
+		sd.setTDSApplicable(TDSCalculator.isTDSApplicable(fm));
 
-		int iRepay = finScheduleData.getRepayInstructions().size();
-		String schdMethod = finScheduleData.getFinanceMain().getScheduleMethod();
+		int iRepay = schdData.getRepayInstructions().size();
+		String schdMethod = schdData.getFinanceMain().getScheduleMethod();
 		if (iRepay > 0) {
-			schdMethod = finScheduleData.getRepayInstructions().get(iRepay - 1).getRepaySchdMethod();
+			schdMethod = schdData.getRepayInstructions().get(iRepay - 1).getRepaySchdMethod();
 		}
 
-		if (StringUtils.isBlank(finScheduleData.getFinanceMain().getRecalSchdMethod())) {
-			finScheduleData.getFinanceMain().setRecalSchdMethod(schdMethod);
+		if (StringUtils.isBlank(schdData.getFinanceMain().getRecalSchdMethod())) {
+			schdData.getFinanceMain().setRecalSchdMethod(schdMethod);
 		}
 
 		sd.setSchdMethod(schdMethod);
@@ -3424,11 +3424,11 @@ public class ScheduleCalculator {
 			sd.setInstNumber(lastInstNumber + 1);
 		}
 
-		finScheduleData.getFinanceScheduleDetails().add(sd);
-		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
+		schdData.getFinanceScheduleDetails().add(sd);
+		schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
 		logger.debug("Leaving");
-		return finScheduleData;
+		return schdData;
 	}
 
 	/*
@@ -3522,18 +3522,21 @@ public class ScheduleCalculator {
 	 * ________________________________________________________________________________________________________________
 	 */
 
-	private FinScheduleData setRpyInstructDetails(FinScheduleData finScheduleData, Date fromDate, Date toDate,
+	private FinScheduleData setRpyInstructDetails(FinScheduleData schdData, Date fromDate, Date toDate,
 			BigDecimal repayAmount, String schdMethod) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, finMain.getScheduleMethod())
-				|| finMain.isManualSchedule()) {
-			logger.debug("Leaving");
-			return finScheduleData;
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
+		if (StringUtils.equals(CalculationConstants.SCHMTHD_POS_INT, fm.getScheduleMethod()) || fm.isManualSchedule()) {
+			logger.debug(Literal.LEAVING);
+			return schdData;
 		}
 
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> finSchdDetails = schdData.getFinanceScheduleDetails();
 
 		BigDecimal nextInstructAmount = BigDecimal.ZERO;
 		Date nextInstructDate = null;
@@ -3543,8 +3546,8 @@ public class ScheduleCalculator {
 		int instructIndex = -1;
 
 		// Find next date for instruction
-		if (DateUtility.compare(toDate, finMain.getMaturityDate()) >= 0) {
-			nextInstructDate = finMain.getMaturityDate();
+		if (DateUtility.compare(toDate, fm.getMaturityDate()) >= 0) {
+			nextInstructDate = fm.getMaturityDate();
 		} else {
 			int sdSize = finSchdDetails.size();
 			FinanceScheduleDetail curSchd = new FinanceScheduleDetail();
@@ -3555,33 +3558,33 @@ public class ScheduleCalculator {
 				// period - End
 				if (DateUtil.compare(curSchd.getSchDate(), toDate) > 0
 						&& (curSchd.isPftOnSchDate() || curSchd.isRepayOnSchDate())
-						&& DateUtil.compare(curSchd.getSchDate(), finMain.getMaturityDate()) != 0) {
+						&& DateUtil.compare(curSchd.getSchDate(), fm.getMaturityDate()) != 0) {
 					nextInstructDate = curSchd.getSchDate();
 					nextInstructSchdMethod = curSchd.getSchdMethod();
 					break;
 				}
 			}
 			// Next instruction amount and schedule method
-			sortRepayInstructions(finScheduleData.getRepayInstructions());
+			sortRepayInstructions(schdData.getRepayInstructions());
 			if (nextInstructDate != null) {
-				instructIndex = fetchRpyInstruction(finScheduleData, nextInstructDate);
+				instructIndex = fetchRpyInstruction(schdData, nextInstructDate);
 			}
 
 			if (instructIndex >= 0) {
-				nextInstructAmount = finScheduleData.getRepayInstructions().get(instructIndex).getRepayAmount();
-				nextInstructSchdMethod = finScheduleData.getRepayInstructions().get(instructIndex).getRepaySchdMethod();
+				nextInstructAmount = schdData.getRepayInstructions().get(instructIndex).getRepayAmount();
+				nextInstructSchdMethod = schdData.getRepayInstructions().get(instructIndex).getRepaySchdMethod();
 			}
 		}
 
 		RepayInstruction curInstruction = new RepayInstruction();
 
 		// Remove any instructions between fromdate and todate
-		for (int i = 0; i < finScheduleData.getRepayInstructions().size(); i++) {
-			curInstruction = finScheduleData.getRepayInstructions().get(i);
+		for (int i = 0; i < schdData.getRepayInstructions().size(); i++) {
+			curInstruction = schdData.getRepayInstructions().get(i);
 
 			if ((DateUtility.compare(curInstruction.getRepayDate(), fromDate) >= 0
 					&& DateUtility.compare(curInstruction.getRepayDate(), toDate) <= 0)) {
-				finScheduleData.getRepayInstructions().remove(i);
+				schdData.getRepayInstructions().remove(i);
 				i = i - 1;
 			}
 
@@ -3590,35 +3593,37 @@ public class ScheduleCalculator {
 			}
 		}
 
-		finScheduleData.setRepayInstructions(sortRepayInstructions(finScheduleData.getRepayInstructions()));
+		schdData.setRepayInstructions(sortRepayInstructions(schdData.getRepayInstructions()));
 
 		// Add repay instructions on from date
 		RepayInstruction ri = new RepayInstruction();
 		ri.setRepayDate(fromDate);
 		ri.setRepayAmount(repayAmount);
 		ri.setRepaySchdMethod(schdMethod);
-		ri.setFinReference(finMain.getFinReference());
+		ri.setFinID(finID);
+		ri.setFinReference(finReference);
 
-		finScheduleData.getRepayInstructions().add(ri);
+		schdData.getRepayInstructions().add(ri);
 
 		// Add (reset) repay instruction after todate
-		if (DateUtility.compare(toDate, finMain.getMaturityDate()) >= 0 || !isAddNewInstruction) {
-			finScheduleData.setRepayInstructions(sortRepayInstructions(finScheduleData.getRepayInstructions()));
-			return finScheduleData;
+		if (DateUtility.compare(toDate, fm.getMaturityDate()) >= 0 || !isAddNewInstruction) {
+			schdData.setRepayInstructions(sortRepayInstructions(schdData.getRepayInstructions()));
+			return schdData;
 		}
 
 		if (DateUtility.compare(nextInstructDate, fromDate) > 0) {
 			ri = new RepayInstruction();
-			ri.setFinReference(finMain.getFinReference());
+			ri.setFinID(finID);
+			ri.setFinReference(finReference);
 			ri.setRepayDate(nextInstructDate);
 			ri.setRepayAmount(nextInstructAmount);
 			ri.setRepaySchdMethod(nextInstructSchdMethod);
-			finScheduleData.getRepayInstructions().add(ri);
+			schdData.getRepayInstructions().add(ri);
 		}
-		finScheduleData.setRepayInstructions(sortRepayInstructions(finScheduleData.getRepayInstructions()));
+		schdData.setRepayInstructions(sortRepayInstructions(schdData.getRepayInstructions()));
 
-		logger.debug("Leaving");
-		return finScheduleData;
+		logger.debug(Literal.LEAVING);
+		return schdData;
 	}
 
 	/*
@@ -6346,6 +6351,7 @@ public class ScheduleCalculator {
 		FinanceScheduleDetail openSchd = finScheduleData.getFinanceScheduleDetails().get(0);
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
 
+		sd.setFinID(fm.getFinID());
 		sd.setFinReference(fm.getFinReference());
 		sd.setSchDate(bpiDate);
 		sd.setDefSchdDate(bpiDate);

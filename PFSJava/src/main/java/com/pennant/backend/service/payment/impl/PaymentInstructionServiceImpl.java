@@ -161,13 +161,14 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 
 		List<FinAdvancePayments> advancePaymentList = new ArrayList<>();
 
-		FinanceDetail financeDetail = new FinanceDetail();
-		financeDetail.setFinScheduleData(new FinScheduleData());
-		financeDetail.getFinScheduleData().setFinanceMain(new FinanceMain());
-		financeDetail.getFinScheduleData().getFinanceMain().setFinReference(pi.getFinReference());
+		FinanceDetail fd = new FinanceDetail();
+		fd.setFinScheduleData(new FinScheduleData());
+		fd.getFinScheduleData().setFinanceMain(new FinanceMain());
+		fd.getFinScheduleData().getFinanceMain().setFinReference(pi.getFinReference());
 
 		FinAdvancePayments fap = new FinAdvancePayments();
 		fap.setPaymentId(pi.getPaymentInstructionId());
+		fap.setFinID(pi.getFinID());
 		fap.setFinReference(pi.getFinReference());
 		fap.setPaymentType(pi.getPaymentType());
 		fap.setAmtToBeReleased(pi.getPaymentAmount());
@@ -189,8 +190,8 @@ public class PaymentInstructionServiceImpl extends GenericService<PaymentInstruc
 		fap.setiFSC(pi.getBankBranchIFSC());
 		advancePaymentList.add(fap);
 
-		financeDetail.setAdvancePaymentsList(advancePaymentList);
-		this.paymentsProcessService.process(financeDetail, DisbursementConstants.CHANNEL_PAYMENT);
+		fd.setAdvancePaymentsList(advancePaymentList);
+		this.paymentsProcessService.process(fd, DisbursementConstants.CHANNEL_PAYMENT);
 	}
 
 	/**

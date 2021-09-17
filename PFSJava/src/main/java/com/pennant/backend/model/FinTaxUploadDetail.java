@@ -15,6 +15,7 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 
 	private String batchReference;
 	private String taxCode;
+	private Long finID;
 	private String aggrementNo;
 	private String applicableFor;
 	private String applicant;
@@ -51,6 +52,14 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 
 	public void setTaxCode(String taxCode) {
 		this.taxCode = taxCode;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 	public String getAggrementNo() {

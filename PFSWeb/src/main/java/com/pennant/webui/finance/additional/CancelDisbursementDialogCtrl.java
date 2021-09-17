@@ -328,6 +328,7 @@ public class CancelDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 
+		finServiceInstruction.setFinID(finMain.getFinID());
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinServiceEvent.CANCELDISB);
 

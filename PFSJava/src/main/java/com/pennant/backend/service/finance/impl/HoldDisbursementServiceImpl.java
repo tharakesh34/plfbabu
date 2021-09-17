@@ -166,12 +166,13 @@ public class HoldDisbursementServiceImpl extends GenericService<HoldDisbursement
 		auditHeaderDAO.addAudit(auditHeader);
 
 		// save FinInstruction to maintain records
-		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
-		finServiceInstruction.setFinReference(hd.getFinReference());
-		finServiceInstruction.setFromDate(SysParamUtil.getAppDate());
-		finServiceInstruction.setFinEvent(FinServiceEvent.HOLDDISB);
-		finServiceInstruction.setAmount(hd.getHoldLimitAmount());
-		finServiceInstructionDAO.save(finServiceInstruction, "");
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinID(hd.getFinID());
+		fsi.setFinReference(hd.getFinReference());
+		fsi.setFromDate(SysParamUtil.getAppDate());
+		fsi.setFinEvent(FinServiceEvent.HOLDDISB);
+		fsi.setAmount(hd.getHoldLimitAmount());
+		finServiceInstructionDAO.save(fsi, "");
 		financeMainDAO.updateMaintainceStatus(hd.getFinID(), "");
 
 		auditHeader.setAuditTranType(tranType);

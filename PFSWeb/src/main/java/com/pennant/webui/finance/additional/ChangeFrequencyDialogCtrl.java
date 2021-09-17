@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  ChangeFrequencyDialogCtrl.java                          	            * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : ChangeFrequencyDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-10-2011 * *
+ * Modified Date : 05-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -226,8 +208,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -258,8 +239,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -295,7 +275,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		this.cbFrqFromDate.setSelectedItem(comboitem);
 
 		if (financeScheduleDetails != null) {
-			//Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
+			// Date grcEndDate = getFinScheduleData().getFinanceMain().getGrcPeriodEndDate();
 			Date curBussDate = DateUtility.getAppDate();
 			FinanceScheduleDetail prvSchd = null;
 			boolean isPrvShcdAdded = false;
@@ -318,7 +298,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Change Frequency is not allowed for the schedule which has the presentment
+				// Change Frequency is not allowed for the schedule which has the presentment
 				if (curSchd.getPresentmentId() > 0) {
 					this.cbFrqFromDate.getItems().clear();
 					comboitem = new Comboitem();
@@ -329,7 +309,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					isPrvShcdAdded = false;
 					continue;
 				}
-				//Not Review Date
+				// Not Review Date
 				if (!curSchd.isRepayOnSchDate() && !getFinScheduleData().getFinanceMain().isFinRepayPftOnFrq()
 						&& !curSchd.isPftOnSchDate()) {
 					prvSchd = curSchd;
@@ -343,7 +323,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					this.cbFrqFromDate.getItems().clear();
@@ -531,6 +511,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		finServiceInstruction.setPftIntact(this.pftIntact.isChecked());
+		finServiceInstruction.setFinID(financeMain.getFinID());
 		finServiceInstruction.setFinReference(financeMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinServiceEvent.CHGFRQ);
 		finServiceInstruction.setFromDate(fromDate);
@@ -545,7 +526,7 @@ public class ChangeFrequencyDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		getFinScheduleData().getFinanceMain().resetRecalculationFields();
 		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
 
-		//Show Error Details in Schedule Maintenance
+		// Show Error Details in Schedule Maintenance
 		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
 			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
 			getFinScheduleData().getErrorDetails().clear();

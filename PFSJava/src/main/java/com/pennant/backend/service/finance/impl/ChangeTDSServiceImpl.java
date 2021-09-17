@@ -123,6 +123,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		FinServiceInstruction inst = new FinServiceInstruction();
 		inst.setFinEvent(FinServiceEvent.CHANGETDS);
+		inst.setFinID(fm.getFinID());
 		inst.setFinReference(fm.getFinReference());
 		inst.setMaker(auditHeader.getAuditUsrId());
 		inst.setMakerAppDate(SysParamUtil.getAppDate());
@@ -272,6 +273,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 			fsi.setCheckerSysDate(DateUtility.getSysDate());
 		} else {
 			fsi = new FinServiceInstruction();
+			fsi.setFinID(fmi.getFinID());
 			fsi.setFinReference(fmi.getFinReference());
 			fsi.setFromDate(appDate);
 			fsi.setFinEvent(FinServiceEvent.CHANGETDS);

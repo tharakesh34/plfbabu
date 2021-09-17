@@ -663,15 +663,21 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void listSave(FinScheduleData finDetail, String tableType, long logKey) {
+	private void listSave(FinScheduleData schdData, String tableType, long logKey) {
 		Map<Date, Integer> mapDateSeq = new HashMap<>();
 
-		// Finance Schedule Details
-		FinanceMain fm = finDetail.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
+		List<RepayInstruction> repayInstructions = schdData.getRepayInstructions();
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
-		for (FinanceScheduleDetail schd : finDetail.getFinanceScheduleDetails()) {
+		for (FinanceScheduleDetail schd : schedules) {
 			schd.setLastMntBy(fm.getLastMntBy());
+			schd.setFinID(finID);
 			schd.setFinReference(finReference);
 			int seqNo = 0;
 
@@ -690,28 +696,32 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			financeMainDAO.updateSchdVersion(fm, false);
 		}
 
-		financeScheduleDetailDAO.saveList(finDetail.getFinanceScheduleDetails(), tableType, false);
+		financeScheduleDetailDAO.saveList(schedules, tableType, false);
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<>();
-		Date curBDay = SysParamUtil.getAppDate();
-		for (FinanceDisbursement dd : finDetail.getDisbursementDetails()) {
+		Date appDate = SysParamUtil.getAppDate();
+
+		for (FinanceDisbursement dd : disbursements) {
+			dd.setFinID(finID);
 			dd.setFinReference(finReference);
-			dd.setDisbReqDate(curBDay);
+			dd.setDisbReqDate(appDate);
 			dd.setDisbIsActive(true);
 			dd.setLogKey(logKey);
 			dd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			dd.setLastMntBy(finDetail.getFinanceMain().getLastMntBy());
+			dd.setLastMntBy(schdData.getFinanceMain().getLastMntBy());
 		}
-		financeDisbursementDAO.saveList(finDetail.getDisbursementDetails(), tableType, false);
+
+		financeDisbursementDAO.saveList(disbursements, tableType, false);
 
 		// Finance Repay Instruction Details
-		for (RepayInstruction ri : finDetail.getRepayInstructions()) {
+		for (RepayInstruction ri : repayInstructions) {
+			ri.setFinID(finID);
 			ri.setFinReference(finReference);
 			ri.setLogKey(logKey);
 		}
 
-		repayInstructionDAO.saveList(finDetail.getRepayInstructions(), tableType, false);
+		repayInstructionDAO.saveList(repayInstructions, tableType, false);
 	}
 
 	// ******************************************************//

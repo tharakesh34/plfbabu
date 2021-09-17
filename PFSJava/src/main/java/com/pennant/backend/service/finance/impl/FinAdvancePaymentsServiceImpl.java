@@ -829,6 +829,9 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
 		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
 
 		List<FinanceDisbursement> canceldDisbList = new ArrayList<FinanceDisbursement>();
@@ -840,9 +843,12 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		for (FinanceDisbursement disbursement : canceldDisbList) {
 			FinAdvancePayments advancePayments = new FinAdvancePayments();
-			advancePayments.setFinReference(fm.getFinReference());
+
+			advancePayments.setFinID(finID);
+			advancePayments.setFinReference(finReference);
 			advancePayments.setDisbSeq(disbursement.getDisbSeq());
 			advancePayments.setStatus(DisbursementConstants.STATUS_CANCEL);
+
 			finAdvancePaymentsDAO.updateStatus(advancePayments, "");
 		}
 

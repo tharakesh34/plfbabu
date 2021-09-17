@@ -639,6 +639,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		getFinScheduleData().setRestructureDetail(rstDetail);
+		finServiceInstruction.setFinID(fm.getFinID());
 		finServiceInstruction.setFinReference(fm.getFinReference());
 		finServiceInstruction.setFinEvent(FinServiceEvent.RESTRUCTURE);
 		BigDecimal oldPft = getFinScheduleData().getFinanceMain().getTotalGrossPft();

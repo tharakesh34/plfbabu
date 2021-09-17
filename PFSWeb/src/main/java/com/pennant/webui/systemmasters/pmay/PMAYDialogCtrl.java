@@ -55,6 +55,7 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
@@ -237,6 +238,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 			doSetFieldProperties();
 			doCheckRights();
 			if (getPmay().isNewRecord()) {
+				pmay.setFinID(financeMain.getFinID());
 				pmay.setFinReference(financeMain.getFinReference());
 				doShowDialog(pmay);
 			} else {
@@ -1086,6 +1088,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		aPMAY.setFinID(financeMain.getFinID());
 		aPMAY.setFinReference(financeMain.getFinReference());
 		// notified town
 
@@ -1547,7 +1550,10 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		}
 		showErrorDetails(wve, parenttab);
 
-		this.pmay.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		FinScheduleData aSchdData = aFinanceDetail.getFinScheduleData();
+		FinanceMain aFm = aSchdData.getFinanceMain();
+		this.pmay.setFinID(aFm.getFinID());
+		this.pmay.setFinReference(aFm.getFinReference());
 
 		if (StringUtils.isBlank(this.pmay.getRecordType())) {
 			this.pmay.setVersion(this.pmay.getVersion() + 1);
@@ -1562,7 +1568,7 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 		// Pmay data saving issue in finance main
 		if (this.financeDetail != null) {
 			boolean ispMay = this.financeDetail.getFinScheduleData().getFinanceMain().isPmay();
-			aFinanceDetail.getFinScheduleData().getFinanceMain().setPmay(ispMay);
+			aFm.setPmay(ispMay);
 		}
 		logger.debug(Literal.LEAVING);
 	}

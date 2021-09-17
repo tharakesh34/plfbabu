@@ -1,54 +1,41 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  *******************************************************************************************************
- *                                 FILE HEADER                                              			*
+ * FILE HEADER *
  *******************************************************************************************************
  *
- * FileName    		:  CDScheduleCalculator.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES															*
- *                                                                  
- * Creation Date    :  22-08-2019																		*
- *                                                                  
- * Modified Date    :  22-08-2019																		*
- *                                                                  
- * Description 		:	Copied from CScheduleCalculator				 									*                                 
- *                                                                                          
+ * FileName : CDScheduleCalculator.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 22-08-2019 *
+ * 
+ * Modified Date : 22-08-2019 *
+ * 
+ * Description : Copied from CScheduleCalculator *
+ * 
  ********************************************************************************************************
- * Date             Author                   Version      Comments                          			*
+ * Date Author Version Comments *
  ********************************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            			*	 
- *                                                                                          			* 
- * 10-05-2018       Satya	                 0.2          PSD - Ticket : 126189							*
- * 														  While doing Add Disbursement getting 			*
- * 														  ArthemeticException in AccrualService due to  *
- * 														  NoofDays is ZERO in newly added Schedule 		*
- * 01-08-2018  		Mangapathi				 0.3		  PSD - Ticket : 125445, 125588					*
- * 														  Mail Sub : Freezing Period, Dt : 30-May-2018  *
- *                                                        To address Freezing period case when schedule *
- *														  term is in Presentment. 						*                                  			* 
- *            
- * 05-12-2018		Pradeep Varma			 0.4		  Schedules sent for presentment should	and     * 
- *                                                        waiting for fate should be untouched for any  * 
- *                                                        schedule change								* 
- * 05-12-2018		Pradeep Varma			 0.5		  Interest should not be left for future        * 
- *                                                        adjustments based on loan type flag           * 
- *                                                        schedule change								*  
- * 05-12-2018		Pradeep Varma			 0.6		  Adjut Terms while Rate Change				    *
- *                                                                                          			*
- *                                                                                          			* 
+ * 26-04-2011 Pennant 0.1 * * 10-05-2018 Satya 0.2 PSD - Ticket : 126189 * While doing Add Disbursement getting *
+ * ArthemeticException in AccrualService due to * NoofDays is ZERO in newly added Schedule * 01-08-2018 Mangapathi 0.3
+ * PSD - Ticket : 125445, 125588 * Mail Sub : Freezing Period, Dt : 30-May-2018 * To address Freezing period case when
+ * schedule * term is in Presentment. * *
+ * 
+ * 05-12-2018 Pradeep Varma 0.4 Schedules sent for presentment should and * waiting for fate should be untouched for any
+ * * schedule change * 05-12-2018 Pradeep Varma 0.5 Interest should not be left for future * adjustments based on loan
+ * type flag * schedule change * 05-12-2018 Pradeep Varma 0.6 Adjut Terms while Rate Change * * *
  ********************************************************************************************************
  */
 package com.pennant.app.util;
@@ -306,11 +293,12 @@ public class CDScheduleCalculator {
 		return fsData;
 	}
 
-	private FinScheduleData addSchdRcd(FinScheduleData fsData, Date newSchdDate, int idxPrv) {
-		FinanceScheduleDetail prvSchd = fsData.getFinanceScheduleDetails().get(idxPrv);
-		FinanceMain fm = fsData.getFinanceMain();
+	private FinScheduleData addSchdRcd(FinScheduleData schdData, Date newSchdDate, int idxPrv) {
+		FinanceScheduleDetail prvSchd = schdData.getFinanceScheduleDetails().get(idxPrv);
+		FinanceMain fm = schdData.getFinanceMain();
 
 		FinanceScheduleDetail fsd = new FinanceScheduleDetail();
+		fsd.setFinID(fm.getFinID());
 		fsd.setFinReference(fm.getFinReference());
 		fsd.setBpiOrHoliday("");
 		fsd.setSchDate(newSchdDate);
@@ -328,9 +316,9 @@ public class CDScheduleCalculator {
 		fsd.setNoOfDays(DateUtility.getDaysBetween(newSchdDate, prvSchd.getSchDate()));
 		fsd.setDayFactor(CalculationUtil.getInterestDays(prvSchd.getSchDate(), newSchdDate, fsd.getPftDaysBasis()));
 
-		fsData.getFinanceScheduleDetails().add(fsd);
-		fsData.setFinanceScheduleDetails(sortSchdDetails(fsData.getFinanceScheduleDetails()));
-		return fsData;
+		schdData.getFinanceScheduleDetails().add(fsd);
+		schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
+		return schdData;
 	}
 
 	/*
@@ -457,18 +445,21 @@ public class CDScheduleCalculator {
 	 * ________________________________________________________________________________________________________________
 	 */
 
-	private FinScheduleData setRpyInstructDetails(FinScheduleData fsData, Date fromDate, Date toDate,
+	private FinScheduleData setRpyInstructDetails(FinScheduleData schdData, Date fromDate, Date toDate,
 			BigDecimal repayAmount, String schdMethod) {
 		logger.debug("Entering");
 
-		FinanceMain fm = fsData.getFinanceMain();
-		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> fsdList = schdData.getFinanceScheduleDetails();
 
 		BigDecimal nextRIAmount = BigDecimal.ZERO;
 		Date nextRIDate = null;
 		String nextRISchdMethod = null;
 		boolean isAddNewRI = true;
 		int riIndex = -1;
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		// Find next date for instruction
 		if (DateUtility.compare(toDate, fm.getMaturityDate()) >= 0) {
@@ -487,18 +478,18 @@ public class CDScheduleCalculator {
 			}
 
 			// Next instruction amount and schedule method
-			sortRepayInstructions(fsData.getRepayInstructions());
+			sortRepayInstructions(schdData.getRepayInstructions());
 			if (nextRIDate != null) {
-				riIndex = fetchRpyInstruction(fsData, nextRIDate);
+				riIndex = fetchRpyInstruction(schdData, nextRIDate);
 			}
 
 			if (riIndex >= 0) {
-				nextRIAmount = fsData.getRepayInstructions().get(riIndex).getRepayAmount();
-				nextRISchdMethod = fsData.getRepayInstructions().get(riIndex).getRepaySchdMethod();
+				nextRIAmount = schdData.getRepayInstructions().get(riIndex).getRepayAmount();
+				nextRISchdMethod = schdData.getRepayInstructions().get(riIndex).getRepaySchdMethod();
 			}
 		}
 
-		List<RepayInstruction> riList = fsData.getRepayInstructions();
+		List<RepayInstruction> riList = schdData.getRepayInstructions();
 		RepayInstruction curRI = new RepayInstruction();
 
 		// Remove any instructions between fromdate and todate
@@ -523,29 +514,31 @@ public class CDScheduleCalculator {
 		newRI.setRepayDate(fromDate);
 		newRI.setRepayAmount(repayAmount);
 		newRI.setRepaySchdMethod(schdMethod);
-		newRI.setFinReference(fm.getFinReference());
+		newRI.setFinID(finID);
+		newRI.setFinReference(finReference);
 
-		fsData.getRepayInstructions().add(newRI);
+		schdData.getRepayInstructions().add(newRI);
 
 		// Add (reset) repay instruction after todate
 		if (DateUtility.compare(toDate, fm.getMaturityDate()) >= 0 || !isAddNewRI) {
-			fsData.setRepayInstructions(sortRepayInstructions(fsData.getRepayInstructions()));
-			return fsData;
+			schdData.setRepayInstructions(sortRepayInstructions(schdData.getRepayInstructions()));
+			return schdData;
 		}
 
 		if (DateUtility.compare(nextRIDate, fromDate) > 0) {
 			newRI = new RepayInstruction();
-			newRI.setFinReference(fm.getFinReference());
+			newRI.setFinID(finID);
+			newRI.setFinReference(finReference);
 			newRI.setRepayDate(nextRIDate);
 			newRI.setRepayAmount(nextRIAmount);
 			newRI.setRepaySchdMethod(nextRISchdMethod);
-			fsData.getRepayInstructions().add(newRI);
+			schdData.getRepayInstructions().add(newRI);
 		}
 
 		sortRepayInstructions(riList);
-		fsData.setRepayInstructions(riList);
+		schdData.setRepayInstructions(riList);
 		logger.debug("Leaving");
-		return fsData;
+		return schdData;
 	}
 
 	/*
@@ -1044,7 +1037,7 @@ public class CDScheduleCalculator {
 				isRepayComplete = setSchdAmounts(fsData, iFsd, roundAdjMth);
 			}
 
-			//fm.setFinCurrAssetValue(fm.getFinCurrAssetValue().add(curSchd.getDisbAmount()).add(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid()));
+			// fm.setFinCurrAssetValue(fm.getFinCurrAssetValue().add(curSchd.getDisbAmount()).add(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid()));
 
 		}
 
@@ -1196,8 +1189,7 @@ public class CDScheduleCalculator {
 		FinanceScheduleDetail prvSchd = fsdList.get(iPrv);
 		BigDecimal schdInterest = BigDecimal.ZERO;
 
-		if (curSchd.getPresentmentId() > 0
-				&& !StringUtils.equals(FinServiceEvent.RECEIPT, fm.getProcMethod())) {
+		if (curSchd.getPresentmentId() > 0 && !StringUtils.equals(FinServiceEvent.RECEIPT, fm.getProcMethod())) {
 			if ((curSchd.getProfitCalc().add(prvSchd.getProfitBalance().subtract(prvSchd.getCpzAmount())))
 					.compareTo(curSchd.getProfitSchd()) > 0) {
 				curSchd.setRepayAmount(curSchd.getProfitSchd().add(curSchd.getPrincipalSchd()));
@@ -1264,9 +1256,9 @@ public class CDScheduleCalculator {
 				curSchd.setProfitSchd(
 						prvSchd.getProfitBalance().add(curSchd.getProfitCalc()).subtract(prvSchd.getCpzAmount()));
 
-				if (StringUtils.isNotBlank(fm.getReceiptPurpose()) && (StringUtils.equals(fm.getReceiptPurpose(),
-						FinServiceEvent.EARLYRPY)
-						|| StringUtils.equals(fm.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE))) {
+				if (StringUtils.isNotBlank(fm.getReceiptPurpose())
+						&& (StringUtils.equals(fm.getReceiptPurpose(), FinServiceEvent.EARLYRPY)
+								|| StringUtils.equals(fm.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE))) {
 
 					if (curSchd.getSchDate().compareTo(SysParamUtil.getAppDate()) <= 0) {
 						curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
@@ -1482,7 +1474,7 @@ public class CDScheduleCalculator {
 		FinanceScheduleDetail curSchd = fsData.getFinanceScheduleDetails().get(i);
 		FinanceScheduleDetail prvSchd = fsData.getFinanceScheduleDetails().get(i - 1);
 
-		//Different from Normal Loan
+		// Different from Normal Loan
 		curSchd.setPrincipalSchd(prvSchd.getClosingBalance());
 		if (fsData.getPromotion().getActualInterestRate().compareTo(BigDecimal.ZERO) > 0) {
 			curSchd.setRepayAmount(fsData.getFinanceMain().getReqRepayAmount());

@@ -42,6 +42,7 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEligibilityDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -130,22 +131,21 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 	}
 
 	@Override
-	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail referenceDetail, String finReference,
-			long finID) {
+	public FinanceEligibilityDetail prepareElgDetail(FinanceReferenceDetail frd, String finReference, long finID) {
 		FinanceEligibilityDetail detail = new FinanceEligibilityDetail();
 		detail.setFinID(finID);
 		detail.setFinReference(finReference);
-		detail.setElgRuleCode(referenceDetail.getFinRefId());
-		detail.setRuleResultType(referenceDetail.getLovDescRuleReturnType());
-		detail.setCanOverride(referenceDetail.isOverRide());
-		detail.setOverridePerc(referenceDetail.getOverRideValue());
-		detail.setLovDescElgRuleCode(referenceDetail.getLovDescCodelov());
-		detail.setLovDescElgRuleCodeDesc(referenceDetail.getLovDescNamelov());
-		detail.setRuleResultType(referenceDetail.getLovDescRuleReturnType());
-		detail.setElgRuleValue(referenceDetail.getLovDescElgRuleValue());
+		detail.setElgRuleCode(frd.getFinRefId());
+		detail.setRuleResultType(frd.getLovDescRuleReturnType());
+		detail.setCanOverride(frd.isOverRide());
+		detail.setOverridePerc(frd.getOverRideValue());
+		detail.setLovDescElgRuleCode(frd.getLovDescCodelov());
+		detail.setLovDescElgRuleCodeDesc(frd.getLovDescNamelov());
+		detail.setRuleResultType(frd.getLovDescRuleReturnType());
+		detail.setElgRuleValue(frd.getLovDescElgRuleValue());
 		detail.setEligible(false);
 		detail.setRuleResult("");
-		detail.setAllowDeviation(referenceDetail.isAllowDeviation());
+		detail.setAllowDeviation(frd.isAllowDeviation());
 		// detail= getElgResult(detail, financeDetail);
 		detail.setExecute(true);
 		return detail;
@@ -250,48 +250,52 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 	}
 
 	@Override
-	public List<AuditDetail> saveOrUpdate(FinanceDetail financeDetail) {
+	public List<AuditDetail> saveOrUpdate(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		FinanceEligibilityDetail eligibilityDetail = new FinanceEligibilityDetail();
 		String[] fields = PennantJavaUtil.getFieldDetails(eligibilityDetail, eligibilityDetail.getExcludeFields());
 
-		List<FinanceEligibilityDetail> elgRuleList = financeDetail.getElgRuleList();
-		if (elgRuleList != null && !elgRuleList.isEmpty()) {
-			List<FinanceEligibilityDetail> updateList = new ArrayList<FinanceEligibilityDetail>();
-			List<FinanceEligibilityDetail> insertList = new ArrayList<FinanceEligibilityDetail>();
+		List<FinanceEligibilityDetail> elgRuleList = fd.getElgRuleList();
+		List<FinanceEligibilityDetail> updateList = new ArrayList<FinanceEligibilityDetail>();
+		List<FinanceEligibilityDetail> insertList = new ArrayList<FinanceEligibilityDetail>();
 
-			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 
-			for (int i = 0; i < elgRuleList.size(); i++) {
-				FinanceEligibilityDetail detail = elgRuleList.get(i);
-				detail.setFinReference(financeDetail.getFinScheduleData().getFinReference());
-				if (detail.isExecute()) {
-					detail.setLastMntBy(financeMain.getLastMntBy());
-					detail.setLastMntOn(financeMain.getLastMntOn());
-					detail.setRoleCode(financeMain.getRoleCode());
-					detail.setRecordStatus(financeMain.getRecordStatus());
-					if (financeEligibilityDetailDAO.getFinElgDetailCount(detail) > 0) {
-						updateList.add(detail);
-						auditDetails.add(
-								new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
-					} else {
-						insertList.add(detail);
-						auditDetails.add(
-								new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
-					}
-				}
+		int i = 0;
+		for (FinanceEligibilityDetail detail : elgRuleList) {
+			detail.setFinID(fm.getFinID());
+			detail.setFinReference(fm.getFinReference());
+
+			if (!detail.isExecute()) {
+				continue;
 			}
-			if (!insertList.isEmpty()) {
-				saveList(insertList, "");
+
+			detail.setLastMntBy(fm.getLastMntBy());
+			detail.setLastMntOn(fm.getLastMntOn());
+			detail.setRoleCode(fm.getRoleCode());
+			detail.setRecordStatus(fm.getRecordStatus());
+			if (financeEligibilityDetailDAO.getFinElgDetailCount(detail) > 0) {
+				updateList.add(detail);
+				auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
+			} else {
+				insertList.add(detail);
+				auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
 			}
-			if (!updateList.isEmpty()) {
-				financeEligibilityDetailDAO.updateList(updateList);
-			}
-			insertList.clear();
-			updateList.clear();
 		}
+
+		if (!insertList.isEmpty()) {
+			saveList(insertList, "");
+		}
+
+		if (!updateList.isEmpty()) {
+			financeEligibilityDetailDAO.updateList(updateList);
+		}
+
+		insertList.clear();
+		updateList.clear();
 
 		logger.debug(Literal.LEAVING);
 		return auditDetails;

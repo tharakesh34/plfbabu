@@ -208,7 +208,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 	public List<FinanceScheduleDetail> getScheduleDetails(String finreference, String type, long logkey) {
 		StringBuilder sql = new StringBuilder("select");
-		sql.append(" FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
+		sql.append(" FinID, FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
 		sql.append(", DisbOnSchDate, DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate");
 		sql.append(", ActRate, NoOfDays, DayFactor, ProfitCalc, ProfitSchd, PrincipalSchd");
 		sql.append(", RepayAmount, ProfitBalance, DisbAmount, DownPaymentAmount, CpzAmount, CpzBalance");
@@ -242,6 +242,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		public FinanceScheduleDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FinanceScheduleDetail schd = new FinanceScheduleDetail();
 
+			schd.setFinID(rs.getLong("FinID"));
 			schd.setFinReference(rs.getString("FinReference"));
 			schd.setSchDate(rs.getTimestamp("SchDate"));
 			schd.setSchSeq(rs.getInt("SchSeq"));

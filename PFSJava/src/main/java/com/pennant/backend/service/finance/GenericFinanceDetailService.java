@@ -169,6 +169,7 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.RepayData;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
@@ -2305,15 +2306,22 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * Method to save what if inquiry lists
 	 */
 	public void listSave(FinScheduleData schdData, String tableType, boolean isWIF, long logKey, long instructionUID) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 
-		// Finance Schedule Details
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
+		List<RepayInstruction> repayInstructions = schdData.getRepayInstructions();
+
 		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
 		for (FinanceScheduleDetail schedule : schedules) {
 			schedule.setLastMntBy(fm.getLastMntBy());
-			schedule.setFinReference(schdData.getFinReference());
+			schedule.setFinID(finID);
+			schedule.setFinReference(finReference);
 			int seqNo = 0;
 
 			if (mapDateSeq.containsKey(schedule.getSchDate())) {
@@ -2339,8 +2347,10 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
 		Date curBDay = SysParamUtil.getAppDate();
-		for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
-			disbursement.setFinReference(schdData.getFinReference());
+
+		for (FinanceDisbursement disbursement : disbursements) {
+			disbursement.setFinID(finID);
+			disbursement.setFinReference(finReference);
 			disbursement.setDisbReqDate(curBDay);
 			disbursement.setDisbIsActive(true);
 			disbursement.setLogKey(logKey);
@@ -2351,14 +2361,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				disbursement.setInstructionUID(instructionUID);
 			}
 		}
-		financeDisbursementDAO.saveList(schdData.getDisbursementDetails(), tableType, isWIF);
+		financeDisbursementDAO.saveList(disbursements, tableType, isWIF);
 
-		// Finance Repay Instruction Details
-		for (int i = 0; i < schdData.getRepayInstructions().size(); i++) {
-			schdData.getRepayInstructions().get(i).setFinReference(schdData.getFinReference());
-			schdData.getRepayInstructions().get(i).setLogKey(logKey);
+		for (RepayInstruction rpayInst : repayInstructions) {
+			rpayInst.setFinID(finID);
+			rpayInst.setFinReference(finReference);
+			rpayInst.setLogKey(logKey);
 		}
-		repayInstructionDAO.saveList(schdData.getRepayInstructions(), tableType, isWIF);
+		repayInstructionDAO.saveList(repayInstructions, tableType, isWIF);
 
 		// Finance Overdue Penalty Rates
 		if (!isWIF && logKey == 0) {
@@ -2375,9 +2385,12 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 				penaltyRate.setODRuleCode("");
 			}
-			penaltyRate.setFinID(schdData.getFinID());
-			penaltyRate.setFinReference(schdData.getFinReference());
+
+			penaltyRate.setFinID(finID);
+			penaltyRate.setFinReference(finReference);
+
 			penaltyRate.setFinEffectDate(DateUtility.getSysDate());
+
 			finODPenaltyRateDAO.save(penaltyRate, tableType);
 		}
 
@@ -2390,7 +2403,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			finServiceInstructionDAO.saveList(finServiceInstructions, tableType);
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2400,16 +2413,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param finReference
 	 * @param tableType
 	 */
-	public void saveFinIRR(List<FinIRRDetails> finIrrDetailsList, String finReference, TableType tableType) {
-		logger.debug("Entering");
+	public void saveFinIRR(List<FinIRRDetails> finIrrDetailsList, long finID, String finReference,
+			TableType tableType) {
+		logger.debug(Literal.ENTERING);
 
-		if (finIrrDetailsList != null && !finIrrDetailsList.isEmpty()) {
+		if (!finIrrDetailsList.isEmpty()) {
 			for (FinIRRDetails finIrrDetails : finIrrDetailsList) {
+				finIrrDetails.setFinID(finID);
 				finIrrDetails.setFinReference(finReference);
 			}
 			finIRRDetailsDAO.saveList(finIrrDetailsList, tableType);
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

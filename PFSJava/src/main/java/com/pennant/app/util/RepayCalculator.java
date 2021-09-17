@@ -435,7 +435,7 @@ public class RepayCalculator implements Serializable {
 		return rd;
 	}
 
-	private RepayData addRepayRecord(FinanceMain financeMain, RepayData rd, FinanceScheduleDetail curSchd,
+	private RepayData addRepayRecord(FinanceMain fm, RepayData rd, FinanceScheduleDetail curSchd,
 			FinanceScheduleDetail prvSchd, int schdIndex, boolean isDefSchd, boolean isReCal, String method,
 			boolean isLastRcd, OverdueChargeRecovery recovery, String processMethod) {
 		logger.debug(Literal.ENTERING);
@@ -522,8 +522,8 @@ public class RepayCalculator implements Serializable {
 					totWaived = recovery.getTotWaived();
 				} else {
 
-					List<Object> odObjDetailList = recoveryPostingsUtil.recoveryCalculation(rq,
-							financeMain.getProfitDaysBasis(), curBussniessDate, false, true);
+					List<Object> odObjDetailList = recoveryPostingsUtil.recoveryCalculation(rq, fm.getProfitDaysBasis(),
+							curBussniessDate, false, true);
 
 					totWaived = ((FinODDetails) odObjDetailList.get(0)).getTotWaived();
 					recovery = (OverdueChargeRecovery) odObjDetailList.get(1);
@@ -635,7 +635,8 @@ public class RepayCalculator implements Serializable {
 						if (!scheduleMap.containsKey(curBussniessDate)) {
 							FinanceScheduleDetail newSchdlEP = new FinanceScheduleDetail();
 
-							newSchdlEP.setFinReference(rm.getFinReference());
+							newSchdlEP.setFinID(fm.getFinID());
+							newSchdlEP.setFinReference(fm.getFinReference());
 							newSchdlEP.setDefSchdDate(rm.getEarlyPayOnSchDate());
 							newSchdlEP.setSchDate(rm.getEarlyPayOnSchDate());
 							newSchdlEP.setSchSeq(1);

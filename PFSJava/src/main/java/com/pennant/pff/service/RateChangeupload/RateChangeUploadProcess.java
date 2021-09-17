@@ -264,6 +264,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 	private FinServiceInstruction prepareFinServiceInstruction(RateChangeUpload rcu) throws ParseException {
 		FinServiceInstruction fsi = new FinServiceInstruction();
 
+		fsi.setFinID(rcu.getFinID());
 		fsi.setFinReference(rcu.getFinReference());
 		fsi.setBaseRate(rcu.getBaseRateCode());
 		fsi.setSplRate(null);

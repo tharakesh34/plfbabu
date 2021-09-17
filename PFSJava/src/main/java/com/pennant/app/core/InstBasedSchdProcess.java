@@ -269,10 +269,11 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 		}
 	}
 
-	private void doProcessDisbRecord(FinScheduleData finDetail, LoggedInUser userDetails) {
+	private void doProcessDisbRecord(FinScheduleData schdData, LoggedInUser userDetails) {
 		Map<Date, Integer> mapDateSeq = new HashMap<Date, Integer>();
 		// Finance Schedule Details
-		List<FinanceScheduleDetail> schedules = finDetail.getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+
 		for (FinanceScheduleDetail schd : schedules) {
 			int seqNo = 0;
 
@@ -280,23 +281,26 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 				seqNo = mapDateSeq.get(schd.getSchDate());
 				mapDateSeq.remove(schd.getSchDate());
 			}
+
 			seqNo = seqNo + 1;
 			mapDateSeq.put(schd.getSchDate(), seqNo);
 			schd.setSchSeq(seqNo);
 			schd.setLogKey(0);
 		}
 
-		FinanceMain fm = finDetail.getFinanceMain();
+		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+
 		financeDetailService.saveFinSchdDetail(schedules, finID);
 
 		// Finance Disbursement Details
 		mapDateSeq = new HashMap<Date, Integer>();
 		Date curBDay = SysParamUtil.getAppDate();
 
-		for (FinanceDisbursement disbursement : finDetail.getDisbursementDetails()) {
-			disbursement.setFinReference(finDetail.getFinReference());
+		for (FinanceDisbursement disbursement : schdData.getDisbursementDetails()) {
+			disbursement.setFinID(finID);
+			disbursement.setFinReference(finReference);
 			disbursement.setDisbReqDate(curBDay);
 			disbursement.setDisbIsActive(true);
 			disbursement.setLogKey(0);
@@ -308,7 +312,7 @@ public class InstBasedSchdProcess extends GenericService<InstBasedSchdDetails> {
 			}
 		}
 
-		financeDetailService.saveDisbDetails(finDetail.getDisbursementDetails(), finID);
+		financeDetailService.saveDisbDetails(schdData.getDisbursementDetails(), finID);
 	}
 
 	private AuditHeader doProcess(FinanceDetail financeDetail, LoggedInUser userDetails) throws Exception {

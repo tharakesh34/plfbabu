@@ -657,11 +657,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
+		FinReceiptHeader rch = rceiptData.getReceiptHeader();
+
 		FinanceDetail fd = rceiptData.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
-
 		FinanceMain fm = schdData.getFinanceMain();
 
+		String finReference = rch.getReference();
 		long finID = fm.getFinID();
 
 		fm.setRcdMaintainSts(FinServiceEvent.RECEIPT);
@@ -672,8 +674,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (auditHeader.getErrorMessage() != null && auditHeader.getErrorMessage().size() > 0) {
 			return auditHeader;
 		}
-
-		FinReceiptHeader rch = rceiptData.getReceiptHeader();
 
 		String recordStatus = rch.getRecordStatus();
 		if (!PennantConstants.RCD_STATUS_RESUBMITTED.equalsIgnoreCase(recordStatus)
@@ -697,11 +697,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		}
 
-		String finReference = rch.getReference();
-
 		long serviceUID = Long.MIN_VALUE;
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(finID);
 			finServInst.setFinReference(finReference);
 			finServInst.setFinEvent(fd.getModuleDefiner());
 
@@ -1560,6 +1559,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(receiptHeader.getFinID());
 			finServInst.setFinReference(receiptHeader.getReference());
 			finServInst.setFinEvent(fd.getModuleDefiner());
 			schdData.setFinServiceInstruction(finServInst);
@@ -2380,20 +2380,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	/**
 	 * Method for Saving List of Finance Details
 	 * 
-	 * @param scheduleData
+	 * @param schdData
 	 * @param tableType
 	 * @param logKey
 	 */
-	private void listSave(FinScheduleData scheduleData, String tableType, long logKey, boolean saveDisb) {
+	private void listSave(FinScheduleData schdData, String tableType, long logKey, boolean saveDisb) {
 		Map<Date, Integer> mapDateSeq = new HashMap<>();
 
-		FinanceMain fm = scheduleData.getFinanceMain();
-		String finReference = scheduleData.getFinReference();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
+		List<RepayInstruction> repayInstructions = schdData.getRepayInstructions();
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		// Finance Schedule Details
 		if (StringUtils.isEmpty(tableType)) {
-			for (FinanceScheduleDetail curSchd : scheduleData.getFinanceScheduleDetails()) {
+			for (FinanceScheduleDetail curSchd : schedules) {
 				curSchd.setLastMntBy(fm.getLastMntBy());
+				curSchd.setFinID(finID);
 				curSchd.setFinReference(finReference);
 				int seqNo = 0;
 
@@ -2408,7 +2415,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				curSchd.setLogKey(logKey);
 			}
 
-			financeScheduleDetailDAO.saveList(scheduleData.getFinanceScheduleDetails(), tableType, false);
+			financeScheduleDetailDAO.saveList(schedules, tableType, false);
 
 			// Schedule Version Updating
 			financeMainDAO.updateSchdVersion(fm, false);
@@ -2417,24 +2424,26 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (logKey != 0 || saveDisb) {
 			// Finance Disbursement Details
 			mapDateSeq = new HashMap<>();
-			for (FinanceDisbursement dd : scheduleData.getDisbursementDetails()) {
+			for (FinanceDisbursement dd : disbursements) {
+				dd.setFinID(finID);
 				dd.setFinReference(finReference);
 				dd.setDisbIsActive(true);
 				dd.setLogKey(logKey);
 				dd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				dd.setLastMntBy(scheduleData.getFinanceMain().getLastMntBy());
+				dd.setLastMntBy(schdData.getFinanceMain().getLastMntBy());
 			}
-			financeDisbursementDAO.saveList(scheduleData.getDisbursementDetails(), tableType, false);
+			financeDisbursementDAO.saveList(disbursements, tableType, false);
 
 		}
 
 		// Finance Repay Instruction Details
-		if (scheduleData.getRepayInstructions() != null) {
-			for (RepayInstruction curSchd : scheduleData.getRepayInstructions()) {
-				curSchd.setFinReference(finReference);
-				curSchd.setLogKey(logKey);
+		if (repayInstructions != null) {
+			for (RepayInstruction repayInst : repayInstructions) {
+				repayInst.setFinID(finID);
+				repayInst.setFinReference(finReference);
+				repayInst.setLogKey(logKey);
 			}
-			repayInstructionDAO.saveList(scheduleData.getRepayInstructions(), tableType, false);
+			repayInstructionDAO.saveList(repayInstructions, tableType, false);
 		}
 
 	}
@@ -2461,15 +2470,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		FinanceDetail financeDetail = repayData.getFinanceDetail();
-		FinReceiptHeader receiptHeader = repayData.getReceiptHeader();
+		FinanceDetail fd = repayData.getFinanceDetail();
+		FinReceiptHeader rch = repayData.getReceiptHeader();
 		// String usrLanguage = auditHeader.getUsrLanguage();
 		// Need to check with kranthi
-		String usrLanguage = receiptHeader.getUserDetails().getLanguage();
+		String usrLanguage = rch.getUserDetails().getLanguage();
 		// Extended field details Validation
-		if (financeDetail.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+		if (fd.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = fd.getExtendedFieldHeader();
 			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
@@ -2477,15 +2486,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Dedup Check
 		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(repayData.getReceiptHeader().getReceiptModeStatus())
 				&& !RepayConstants.PAYSTATUS_CANCEL.equals(repayData.getReceiptHeader().getReceiptModeStatus())
-				&& receiptHeader.isDedupCheckRequied()) {
+				&& rch.isDedupCheckRequied()) {
 			FinServiceInstruction fsi = new FinServiceInstruction();
-			FinReceiptDetail finReceiptDetail = receiptHeader.getReceiptDetails().get(0);
-			fsi.setFinReference(receiptHeader.getReference());
-			fsi.setValueDate(receiptHeader.getValueDate());
-			fsi.setAmount(receiptHeader.getReceiptAmount());
+			FinReceiptDetail finReceiptDetail = rch.getReceiptDetails().get(0);
+			fsi.setFinID(rch.getFinID());
+			fsi.setFinReference(rch.getReference());
+			fsi.setValueDate(rch.getValueDate());
+			fsi.setAmount(rch.getReceiptAmount());
 			fsi.setTransactionRef(finReceiptDetail.getTransactionRef());
 			fsi.setFavourNumber(finReceiptDetail.getFavourNumber());
-			fsi.setPaymentMode(receiptHeader.getReceiptMode());
+			fsi.setPaymentMode(rch.getReceiptMode());
 			List<ErrorDetail> errors = dedupCheck(fsi);
 			if (CollectionUtils.isNotEmpty(errors)) {
 				auditHeader.setErrorDetails(errors.get(0));
@@ -5003,9 +5013,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fsi.setValueDate(rud.getValueDate());
 		fsi.setAmount(rud.getReceiptAmount());
 		fsi.setAllocationType(rud.getAllocationType());
+
 		if (StringUtils.isNotEmpty(rud.getFundingAc())) {
 			fsi.setFundingAc(Long.parseLong(rud.getFundingAc()));
 		}
+
 		fsi.setPaymentRef(rud.getPaymentRef());
 		fsi.setFavourNumber(rud.getFavourNumber());
 		fsi.setRecalType(rud.getEffectSchdMethod());
@@ -5937,12 +5949,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// FinReceiptData receiptData = setReceiptData(financeDetail,
 		// receiptPurpose);
-		FinanceDetail financeDetail = receiptData.getFinanceDetail();
+		FinanceDetail fd = receiptData.getFinanceDetail();
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		FinReceiptDetail rcd = rch.getReceiptDetails().get(0);
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		FinServiceInstruction fsi = finScheduleData.getFinServiceInstruction();
-		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		FinScheduleData schd = fd.getFinScheduleData();
+		FinServiceInstruction fsi = schd.getFinServiceInstruction();
+		FinanceMain fm = schd.getFinanceMain();
+
+		Date appDate = SysParamUtil.getAppDate();
+		Date sysDate = DateUtility.getSysDate();
 
 		receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
 		if (receiptData.getTotalPastDues().compareTo(rch.getReceiptAmount()) >= 0) {
@@ -5965,15 +5980,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 			BigDecimal earlyPayAmount = receiptData.getRemBal();
 			String recalType = rch.getEffectSchdMethod();
-			finScheduleData.getFinanceMain().setReceiptPurpose(receiptPurpose);
+			schd.getFinanceMain().setReceiptPurpose(receiptPurpose);
 
 			// Calculate Schedule if Part Payment case
 			if (receiptPurposeCtg == 1) {
-				finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rch.getValueDate(), null,
-						earlyPayAmount, recalType);
+				schd = ScheduleCalculator.recalEarlyPaySchedule(schd, rch.getValueDate(), null, earlyPayAmount,
+						recalType);
 				receiptData = receiptCalculator.addPartPaymentAlloc(receiptData);
 			}
-			receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+			receiptData.getFinanceDetail().setFinScheduleData(schd);
 
 			// Allocations Preparation
 			for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
@@ -5990,12 +6005,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptData = receiptCalculator.initiateReceipt(receiptData, false);
 			// financeDetail =
 			// getServiceInstResponse(receiptData.getFinanceDetail().getFinScheduleData());
-			FinanceSummary summary = financeDetail.getFinScheduleData().getFinanceSummary();
+			FinanceSummary summary = fd.getFinScheduleData().getFinanceSummary();
 			summary.setFinODDetail(rch.getFinODDetails());
-			financeDetail.getFinScheduleData().setFinODDetails(rch.getFinODDetails());
+			fd.getFinScheduleData().setFinODDetails(rch.getFinODDetails());
 
 			logger.debug(Literal.LEAVING);
-			return financeDetail;
+			return fd;
 		}
 
 		if (fsi.isReceiptUpload() && dedupCheckRequest(rch, receiptPurpose)) {
@@ -6007,8 +6022,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(rchID, RepayConstants.PAYSTATUS_REALIZED,
 						rch.getRealizationDate());
 				finReceiptDetailDAO.updateReceiptStatusByReceiptId(rchID, RepayConstants.PAYSTATUS_REALIZED);
-				setErrorToFSD(finScheduleData, "0000", "Success");
-				return financeDetail;
+				setErrorToFSD(schd, "0000", "Success");
+				return fd;
 			}
 		}
 
@@ -6053,8 +6068,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			long workFlowId = 0;
 
 			String finEvent = FinServiceEvent.RECEIPT;
-			FinanceWorkFlow financeWorkFlow = financeWorkFlowDAO.getFinanceWorkFlowById(financeMain.getFinType(),
-					finEvent, PennantConstants.WORFLOW_MODULE_FINANCE, "");
+			FinanceWorkFlow financeWorkFlow = financeWorkFlowDAO.getFinanceWorkFlowById(fm.getFinType(), finEvent,
+					PennantConstants.WORFLOW_MODULE_FINANCE, "");
 
 			if (financeWorkFlow != null) {
 				workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
@@ -6078,7 +6093,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				rch.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
 			}
 
-			receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
+			receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(fm);
 			/*
 			 * APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 			 * .get(APIHeader.API_HEADER_KEY); auditHeader.setApiHeader(reqHeaderDetails);
@@ -6094,15 +6109,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			 */
 			BigDecimal earlyPayAmount = receiptData.getRemBal();
 			String recalType = rch.getEffectSchdMethod();
-			finScheduleData.getFinanceMain().setReceiptPurpose(receiptPurpose);
+			schd.getFinanceMain().setReceiptPurpose(receiptPurpose);
 			if (receiptPurposeCtg == 1) {
-				finScheduleData = ScheduleCalculator.recalEarlyPaySchedule(finScheduleData, rch.getValueDate(), null,
-						earlyPayAmount, recalType);
+				schd = ScheduleCalculator.recalEarlyPaySchedule(schd, rch.getValueDate(), null, earlyPayAmount,
+						recalType);
 				receiptData = receiptCalculator.addPartPaymentAlloc(receiptData);
 			}
 			Cloner cloner = new Cloner();
 			FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
-			receiptData.getFinanceDetail().setFinScheduleData(finScheduleData);
+			receiptData.getFinanceDetail().setFinScheduleData(schd);
 			receiptData.getReceiptHeader().setValueDate(rch.getValueDate());
 
 			receiptData.setDueAdjusted(true);
@@ -6126,10 +6141,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					allocate.setWaivedGST(BigDecimal.ZERO);
 				}
 			} else {
-				finScheduleData = financeDetail.getFinScheduleData();
-				finScheduleData = setErrorToFSD(finScheduleData, "90330", receiptPurpose, "");
-				financeDetail.setFinScheduleData(finScheduleData);
-				return financeDetail;
+				schd = fd.getFinScheduleData();
+				schd = setErrorToFSD(schd, "90330", receiptPurpose, "");
+				fd.setFinScheduleData(schd);
+				return fd;
 			}
 
 			receiptData.setBuildProcess("R");
@@ -6142,8 +6157,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail auditErrorDetail : auditHeader.getErrorMessage()) {
-				setErrorToFSD(finScheduleData, auditErrorDetail.getCode(), auditErrorDetail.getError());
-				return financeDetail;
+				setErrorToFSD(schd, auditErrorDetail.getCode(), auditErrorDetail.getError());
+				return fd;
 			}
 		}
 
@@ -6156,16 +6171,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
 			FinRepayHeader rpyHeader = recDtl.getRepayHeader();
 			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinReference(financeMain.getFinReference());
+			finServInst.setFinID(fm.getFinID());
+			finServInst.setFinReference(fm.getFinReference());
+			finServInst.setFinReference(fm.getFinReference());
 			finServInst.setFinEvent(rpyHeader.getFinEvent());
 			finServInst.setAmount(rpyHeader.getRepayAmount());
-			finServInst.setAppDate(SysParamUtil.getAppDate());
-			finServInst.setSystemDate(DateUtility.getSysDate());
+			finServInst.setAppDate(appDate);
+			finServInst.setSystemDate(sysDate);
 			finServInst.setMaker(auditHeader.getAuditUsrId());
-			finServInst.setMakerAppDate(SysParamUtil.getAppDate());
+			finServInst.setMakerAppDate(appDate);
 			finServInst.setMakerSysDate(DateUtil.getSysDate());
 			finServInst.setChecker(auditHeader.getAuditUsrId());
-			finServInst.setCheckerAppDate(SysParamUtil.getAppDate());
+			finServInst.setCheckerAppDate(appDate);
 			finServInst.setCheckerSysDate(DateUtil.getSysDate());
 			finServInst.setReference(String.valueOf(rch.getReceiptID()));
 			finServInstList.add(finServInst);
@@ -6187,7 +6204,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		logger.debug(Literal.LEAVING);
-		return financeDetail;
+		return fd;
 	}
 
 	/**

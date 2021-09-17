@@ -520,16 +520,20 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 	/**
 	 * Method for Adding Schedule term when missing while on disbursement date checking
 	 * 
-	 * @param finScheduleData
+	 * @param schdData
 	 * @param newSchdDate
 	 * @param prvIndex
 	 * @return
 	 */
-	private FinScheduleData addSchdRcd(FinScheduleData finScheduleData, Date newSchdDate, int prvIndex) {
-		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(prvIndex);
+	private FinScheduleData addSchdRcd(FinScheduleData schdData, Date newSchdDate, int prvIndex) {
+		FinanceScheduleDetail prvSchd = schdData.getFinanceScheduleDetails().get(prvIndex);
+
+		FinanceMain fm = schdData.getFinanceMain();
 
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
-		sd.setFinReference(finScheduleData.getFinanceMain().getFinReference());
+
+		sd.setFinID(fm.getFinID());
+		sd.setFinReference(fm.getFinReference());
 		sd.setBpiOrHoliday("");
 		sd.setSchDate(newSchdDate);
 		sd.setDefSchdDate(newSchdDate);
@@ -542,12 +546,12 @@ public class ReScheduleServiceImpl extends GenericService<FinServiceInstruction>
 		sd.setSchdMethod(prvSchd.getSchdMethod());
 		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
 
-		finScheduleData.getFinanceScheduleDetails().add(sd);
-		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
+		schdData.getFinanceScheduleDetails().add(sd);
+		schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
-		finScheduleData.getFinanceMain().setNumberOfTerms(finScheduleData.getFinanceMain().getNumberOfTerms() + 1);
+		fm.setNumberOfTerms(fm.getNumberOfTerms() + 1);
 
-		return finScheduleData;
+		return schdData;
 	}
 
 	/**

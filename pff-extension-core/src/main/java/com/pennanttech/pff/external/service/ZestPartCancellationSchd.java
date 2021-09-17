@@ -21,7 +21,7 @@ public class ZestPartCancellationSchd implements PartCancellationSchd {
 		FinanceMain fm = fsData.getFinanceMain();
 		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
 
-		//Create original schedule list backup
+		// Create original schedule list backup
 		sortFsdList(fsdList);
 		List<FinanceScheduleDetail> orgFsdList = new ArrayList<FinanceScheduleDetail>(1);
 		for (int iFsd = 0; iFsd < fsdList.size(); iFsd++) {
@@ -31,7 +31,7 @@ public class ZestPartCancellationSchd implements PartCancellationSchd {
 
 		Date evtFromDate = fm.getEventFromDate();
 
-		//Add Refund as Part Payment
+		// Add Refund as Part Payment
 		fsdList = addRefundSchd(fsdList, evtFromDate, fm.getMiscAmount());
 
 		BigDecimal newClosingBal = BigDecimal.ZERO;
@@ -62,7 +62,7 @@ public class ZestPartCancellationSchd implements PartCancellationSchd {
 		}
 
 		int idxRemove = -1;
-		//identify the index from the originally stored schedule
+		// identify the index from the originally stored schedule
 		if (removeStartDate != null) {
 			for (int i = 0; i < orgFsdList.size(); i++) {
 				FinanceScheduleDetail fsd = orgFsdList.get(i);
@@ -74,7 +74,7 @@ public class ZestPartCancellationSchd implements PartCancellationSchd {
 		}
 
 		int indRemoveCtr = 0;
-		//Set New Principal and EMI & Bring the date forward
+		// Set New Principal and EMI & Bring the date forward
 		for (int iFsd = idxStart; iFsd < fsdList.size(); iFsd++) {
 			FinanceScheduleDetail fsd = fsdList.get(iFsd);
 			if (DateUtil.compare(fsd.getSchDate(), evtFromDate) <= 0) {
@@ -122,6 +122,7 @@ public class ZestPartCancellationSchd implements PartCancellationSchd {
 			idx = 0;
 		}
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
+		sd.setFinID(fsdList.get(idx).getFinID());
 		sd.setFinReference(fsdList.get(idx).getFinReference());
 		sd.setSchSeq(1);
 		sd.setSchDate(refundDate);

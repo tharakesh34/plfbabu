@@ -948,6 +948,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		FinServiceInstruction finServiceInstruction = finServInstList.get(0);
 
 		finServiceInstruction.setFromDate(SysParamUtil.getAppDate());
+		finServiceInstruction.setFinID(aFinanceMain.getFinID());
 		finServiceInstruction.setFinReference(aFinanceMain.getFinReference());
 		finServiceInstruction.setSchdMethod(aFinanceMain.getScheduleMethod());
 		finServiceInstruction.setFinEvent(FinServiceEvent.LOANDOWNSIZING);

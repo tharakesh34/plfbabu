@@ -102,6 +102,7 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.insurance.InsuranceDetails;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
@@ -990,40 +991,50 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	/**
 	 * Method to save Finance Details
 	 */
-	private void listSave(FinScheduleData schData, boolean isPendding) {
-		logger.debug("Entering");
-		if (!isPendding) {
-			for (int i = 0; i < schData.getFinanceScheduleDetails().size(); i++) {
-				schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-			}
-			financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "", false);
+	private void listSave(FinScheduleData schdData, boolean isPendding) {
+		logger.debug(Literal.ENTERING);
 
-			financeMainDAO.updateSchdVersion(schData.getFinanceMain(), false);
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		List<FinanceDisbursement> disbursements = schdData.getDisbursementDetails();
+		List<RepayInstruction> repayInstructions = schdData.getRepayInstructions();
 
-			for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
-				schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-			}
-			financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "", false);
+		FinanceMain fm = schdData.getFinanceMain();
 
-			for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
-				schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-			}
-			repayInstructionDAO.saveList(schData.getRepayInstructions(), "", false);
-		} else {
-			for (int i = 0; i < schData.getFinanceScheduleDetails().size(); i++) {
-				schData.getFinanceScheduleDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-			}
-			financeScheduleDetailDAO.saveList(schData.getFinanceScheduleDetails(), "_Temp", false);
-			for (int i = 0; i < schData.getDisbursementDetails().size(); i++) {
-				schData.getDisbursementDetails().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-			}
-			financeDisbursementDAO.saveList(schData.getDisbursementDetails(), "_Temp", false);
-			for (int i = 0; i < schData.getRepayInstructions().size(); i++) {
-				schData.getRepayInstructions().get(i).setFinReference(schData.getFinanceMain().getFinReference());
-			}
-			repayInstructionDAO.saveList(schData.getRepayInstructions(), "_Temp", false);
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
+		for (FinanceScheduleDetail schd : schedules) {
+			schd.setFinID(finID);
+			schd.setFinReference(finReference);
 		}
-		logger.debug("Leaving");
+
+		for (FinanceDisbursement disbursement : disbursements) {
+			disbursement.setFinID(finID);
+			disbursement.setFinReference(finReference);
+		}
+
+		for (RepayInstruction rpayIns : repayInstructions) {
+			rpayIns.setFinID(finID);
+			rpayIns.setFinReference(finReference);
+		}
+
+		String tableType = "";
+
+		if (isPendding) {
+			tableType = "_Temp";
+		}
+
+		financeScheduleDetailDAO.saveList(schedules, tableType, false);
+
+		financeDisbursementDAO.saveList(disbursements, tableType, false);
+
+		repayInstructionDAO.saveList(repayInstructions, tableType, false);
+
+		if ("".equals(tableType)) {
+			financeMainDAO.updateSchdVersion(fm, false);
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

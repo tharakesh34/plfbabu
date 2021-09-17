@@ -141,19 +141,20 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 		}
 		String tableType = "";
 		LiabilityRequest liabilityRequest = (LiabilityRequest) auditHeader.getAuditDetail().getModelData();
-		FinanceDetail financeDetail = liabilityRequest.getFinanceDetail();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		FinanceDetail fd = liabilityRequest.getFinanceDetail();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
 		long serviceUID = Long.MIN_VALUE;
-		if (financeDetail.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
+		if (fd.getFinScheduleData().getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinReference(financeMain.getFinReference());
-			finServInst.setFinEvent(financeDetail.getModuleDefiner());
+			finServInst.setFinID(fm.getFinID());
+			finServInst.setFinReference(fm.getFinReference());
+			finServInst.setFinEvent(fd.getModuleDefiner());
 
-			financeDetail.getFinScheduleData().setFinServiceInstruction(finServInst);
+			fd.getFinScheduleData().setFinServiceInstruction(finServInst);
 		}
 
-		for (FinServiceInstruction finSerList : financeDetail.getFinScheduleData().getFinServiceInstructions()) {
+		for (FinServiceInstruction finSerList : fd.getFinScheduleData().getFinServiceInstructions()) {
 			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
 				if (serviceUID == Long.MIN_VALUE) {
 					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
@@ -183,15 +184,14 @@ public class LiabilityRequestServiceImpl extends GenericFinanceDetailService imp
 
 		// set Finance Check List audit details to auditDetails
 		// =======================================
-		if (financeDetail.getFinanceCheckList() != null && !financeDetail.getFinanceCheckList().isEmpty()) {
-			auditDetails.addAll(checkListDetailService.saveOrUpdate(financeDetail, tableType, serviceUID));
+		if (fd.getFinanceCheckList() != null && !fd.getFinanceCheckList().isEmpty()) {
+			auditDetails.addAll(checkListDetailService.saveOrUpdate(fd, tableType, serviceUID));
 		}
 
 		// Save Document Details
-		if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType, financeMain, liabilityRequest.getFinEvent(),
-					serviceUID);
+		if (fd.getDocumentDetailsList() != null && fd.getDocumentDetailsList().size() > 0) {
+			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
+			details = processingDocumentDetailsList(details, tableType, fm, liabilityRequest.getFinEvent(), serviceUID);
 			auditDetails.addAll(details);
 		}
 

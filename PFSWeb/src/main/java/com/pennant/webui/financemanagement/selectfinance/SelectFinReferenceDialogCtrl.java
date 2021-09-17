@@ -457,20 +457,21 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		if (StringUtils.equals(eventCode, FinanceConstants.PMAY)) {
 			long finID = ComponentUtil.getFinID(finReference);
 
-			FinanceDetail financeDetails = getFinanceDetailService().getFinanceDetailsForPmay(finID);
-			if (financeDetails.getPmay() != null) {
-				pmay = financeDetails.getPmay();
+			FinanceDetail fd = getFinanceDetailService().getFinanceDetailsForPmay(finID);
+			if (fd.getPmay() != null) {
+				pmay = fd.getPmay();
 			}
 			if (pmay == null) {
 				pmay = new PMAY();
 				pmay.setNewRecord(true);
-				pmay.setFinReference(financeDetails.getFinReference());
-			} else {
-				pmay.setFinReference(financeDetails.getFinReference());
 			}
+
+			pmay.setFinID(finID);
+			pmay.setFinReference(fd.getFinReference());
+
 			map.put("pmay", pmay);
 			map.put("pmayListCtrl", getPmayListCtrl());
-			map.put("financeDetail", financeDetails);
+			map.put("financeDetail", fd);
 			// call the ZUL-file with the parameters packed in a map
 			try {
 				Executions.createComponents("/WEB-INF/pages/SystemMaster/PMAY/PMAYDialog.zul", null, map);

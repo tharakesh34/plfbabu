@@ -324,6 +324,7 @@ public class HoldEMIDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		FinanceMain finMain = getFinScheduleData().getFinanceMain();
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
 
+		finServiceInstruction.setFinID(finMain.getFinID());
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 
 		try {

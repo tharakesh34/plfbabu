@@ -827,22 +827,25 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode, FinServiceEvent.RECEIPT, "");
 		receiptData.setEnquiry(isEnquiry);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		FinanceDetail financeDetail = receiptData.getFinanceDetail();
-		FinScheduleData fsd = financeDetail.getFinScheduleData();
-		FinanceMain finMain = fsd.getFinanceMain();
-		fsd.setFinServiceInstruction(new FinServiceInstruction());
-		FinServiceInstruction fsi = fsd.getFinServiceInstruction();
-		if (!finMain.isFinIsActive()) {
+		FinanceDetail fd = receiptData.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		schdData.setFinServiceInstruction(new FinServiceInstruction());
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
+		if (!fm.isFinIsActive()) {
 			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		}
 		fsi.setReceiptDetail(new FinReceiptDetail());
 		FinReceiptDetail rcd = fsi.getReceiptDetail();
 
+		fsi.setFinID(fm.getFinID());
 		fsi.setFinReference(loanReference);
+
+		rch.setFinID(fm.getFinID());
 		rch.setReference(loanReference);
 		rch.setCashierBranch(tranBranch);
 
-		rch.setFinType(fsd.getFinanceMain().getFinType());
+		rch.setFinType(schdData.getFinanceMain().getFinType());
 		rch.setReceiptAmount(PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), formatter));
 		rch.setReceiptPurpose(method);
 
@@ -870,7 +873,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		}
 
 		int methodCtg = receiptCalculator.setReceiptCategory(method);
-		fsd.setErrorDetails(new ArrayList<ErrorDetail>(1));
+		schdData.setErrorDetails(new ArrayList<ErrorDetail>(1));
 
 		fsi.setReceivedDate(receiptDate.getValue());
 		if (this.row_valueDate.isVisible()) {

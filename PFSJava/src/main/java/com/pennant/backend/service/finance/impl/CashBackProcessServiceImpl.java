@@ -17,7 +17,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -72,6 +71,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class CashBackProcessServiceImpl implements CashBackProcessService {
@@ -388,7 +388,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 		// Create Finance Service Instruction
 		BigDecimal rcptAmt = actCashBack.subtract(cashBackBal);
-		FinServiceInstruction serviceInstr = createFinServInstr(finReference, rcptAmt, valueDate);
+		FinServiceInstruction serviceInstr = createFinServInstr(finID, finReference, rcptAmt, valueDate);
 		serviceInstr.setAdviseId(cb.getAdviseId());
 		serviceInstr.setAdviseAmount(rcptAmt);
 
@@ -401,22 +401,27 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return actCashBack.subtract(rcptAmt);
 	}
 
-	private FinServiceInstruction createFinServInstr(String finReference, BigDecimal rcptAmount, Date valueDate) {
-
+	private FinServiceInstruction createFinServInstr(long finID, String finReference, BigDecimal rcptAmount,
+			Date valueDate) {
 		FinServiceInstruction fsi = new FinServiceInstruction();
+
+		fsi.setFinID(finID);
 		fsi.setFinReference(finReference);
 		fsi.setModule("Receipts");
 		fsi.setValueDate(valueDate);
 		fsi.setAmount(rcptAmount);
 		fsi.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+
 		long partnerBankId = Long.valueOf(SysParamUtil.getValueAsInt("DISB_PARTNERBANK"));
 		PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(partnerBankId, "_AView");
 
 		if (partnerBankId > 0) {
 			fsi.setFundingAc(partnerBankId);
 		}
+
 		LoggedInUser loggedInUser = new LoggedInUser();
 		loggedInUser.setLoginUsrID(1000);
+
 		fsi.setLoggedInUser(loggedInUser);
 		fsi.setBankCode(partnerBank.getBankCode());
 		fsi.setStatus("A");
@@ -427,7 +432,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		fsi.setRemarks("Cash Back");
 		fsi.setPaymentMode(RepayConstants.PAYTYPE_PAYABLE);
 		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-
 		fsi.setEntity(partnerBank.getEntity());
 		fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
 		fsi.setReceiptdetailExits(false);
@@ -437,7 +441,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		FinReceiptDetail rcd = new FinReceiptDetail();
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rcd.setAmount(fsi.getAmount());
-
 		rcd.setValueDate(valueDate);
 		rcd.setBankCode(partnerBank.getBankCode());
 		rcd.setDepositDate(valueDate);
@@ -445,6 +448,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		if (partnerBankId > 0) {
 			rcd.setFundingAc(partnerBankId);
 		}
+
 		rcd.setReceivedDate(valueDate);
 		rcd.setStatus(fsi.getStatus());
 		rcd.setRemarks("Cash Back");
@@ -468,7 +472,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 				continue;
 			}
 
-			if (DateUtility.compare(curSchd.getSchDate(), valueDate) > 0) {
+			if (DateUtil.compare(curSchd.getSchDate(), valueDate) > 0) {
 				continue;
 			}
 
@@ -578,7 +582,6 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 	}
 
 	private void setTaxPercValues(long finID) {
-
 		Map<String, Object> dataMap = GSTCalculator.getGSTDataMap(finID);
 		List<Rule> rules = ruleDAO.getGSTRuleDetails(RuleConstants.MODULE_GSTRULE, "");
 		String finCcy = SysParamUtil.getAppCurrency();

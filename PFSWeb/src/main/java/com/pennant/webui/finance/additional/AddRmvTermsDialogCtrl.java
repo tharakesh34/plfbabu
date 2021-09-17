@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  WIAddRmvTermsDialogCtrl.java                          	            * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  05-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : WIAddRmvTermsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-10-2011 * *
+ * Modified Date : 05-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -71,6 +53,7 @@ import com.pennant.backend.financeservice.AddTermsService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
@@ -233,8 +216,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -366,23 +348,24 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 			finServiceInstruction.setTerms(this.terms.getValue());
 		}
+
+		FinScheduleData schdData = getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 		try {
 			if (this.fromDateRow.isVisible()) {
 				if (isValidComboValue(this.cbFromDate, Labels.getLabel("label_AddRmvTermsDialog_FromDate.value"))) {
-					getFinScheduleData().getFinanceMain()
-							.setEventFromDate((Date) this.cbFromDate.getSelectedItem().getValue());
-					List<FinanceScheduleDetail> sd = getFinScheduleData().getFinanceScheduleDetails();
+					fm.setEventFromDate((Date) this.cbFromDate.getSelectedItem().getValue());
+					List<FinanceScheduleDetail> sd = schdData.getFinanceScheduleDetails();
 
 					for (int i = 0; i < sd.size(); i++) {
-						if (getFinScheduleData().getFinanceMain().getEventFromDate()
-								.compareTo(sd.get(i).getSchDate()) == 0) {
+						if (fm.getEventFromDate().compareTo(sd.get(i).getSchDate()) == 0) {
 							count = count + (sd.size() - 1) - i;
 						}
 					}
 				}
 				Date fromDate = (Date) this.cbFromDate.getSelectedItem().getValue();
 				finServiceInstruction.setFromDate(fromDate);
-				getFinScheduleData().getFinanceMain().setRecalFromDate(fromDate);
+				fm.setRecalFromDate(fromDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -391,8 +374,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			if (this.recalTypeRow.isVisible()) {
 				if (isValidComboValue(this.cbReCalType, Labels.getLabel("label_AddRmvTermsDialog_RecalType.value"))
 						&& this.cbReCalType.getSelectedIndex() != 0) {
-					getFinScheduleData().getFinanceMain()
-							.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
+					fm.setRecalType(this.cbReCalType.getSelectedItem().getValue().toString());
 
 				}
 
@@ -410,7 +392,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 
 				Date recalFromDate = (Date) this.cbRecalFromDate.getSelectedItem().getValue();
-				getFinScheduleData().getFinanceMain().setRecalFromDate(recalFromDate);
+				fm.setRecalFromDate(recalFromDate);
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -424,7 +406,8 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			throw new WrongValuesException(wvea);
 		}
 
-		finServiceInstruction.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
+		finServiceInstruction.setFinID(fm.getFinID());
+		finServiceInstruction.setFinReference(fm.getFinReference());
 		if (isAddTerms()) {
 			finServiceInstruction.setFinEvent(FinServiceEvent.ADDTERM);
 		} else {
@@ -433,30 +416,29 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		finServiceInstruction.setServiceReqNo(this.serviceReqNo.getValue());
 		finServiceInstruction.setRemarks(this.remarks.getValue());
 
-		getFinScheduleData().getErrorDetails().clear();
+		schdData.getErrorDetails().clear();
 
 		// call change frequency method to calculate new schedules(Service details calling for Schedule calculation)
-		getFinScheduleData().getFinanceMain().setDevFinCalReq(false);
+		fm.setDevFinCalReq(false);
 		if (isAddTerms()) {
-			getFinScheduleData().getFinanceMain()
-					.setEventFromDate(getFinScheduleData().getFinanceMain().getFinStartDate());
-			setFinScheduleData(addTermsService.getAddTermsDetails(getFinScheduleData(), finServiceInstruction));
+			fm.setEventFromDate(fm.getFinStartDate());
+			setFinScheduleData(addTermsService.getAddTermsDetails(schdData, finServiceInstruction));
 		} else {
-			setFinScheduleData(rmvTermsService.getRmvTermsDetails(getFinScheduleData()));
+			setFinScheduleData(rmvTermsService.getRmvTermsDetails(schdData));
 		}
-		finServiceInstruction.setPftChg(getFinScheduleData().getPftChg());
-		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		getFinScheduleData().setFinServiceInstruction(finServiceInstruction);
+		finServiceInstruction.setPftChg(schdData.getPftChg());
+		fm.resetRecalculationFields();
+		schdData.setFinServiceInstruction(finServiceInstruction);
 
-		//Show Error Details in Schedule Maintenance
-		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
-			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
-			getFinScheduleData().getErrorDetails().clear();
+		// Show Error Details in Schedule Maintenance
+		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
+			MessageUtil.showError(schdData.getErrorDetails().get(0));
+			schdData.getErrorDetails().clear();
 		} else {
 
-			getFinScheduleData().setSchduleGenerated(true);
+			schdData.setSchduleGenerated(true);
 			if (getScheduleDetailDialogCtrl() != null) {
-				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
+				getScheduleDetailDialogCtrl().doFillScheduleList(schdData);
 			}
 		}
 
@@ -502,8 +484,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -564,7 +545,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				if (StringUtils.equals("M", curSchd.getSpecifier()) && !isAddTerms()) {
 					continue;
 				}
-				//In Remove Terms the Disbursement Dates Need to be shown
+				// In Remove Terms the Disbursement Dates Need to be shown
 				if (curSchd.isDisbOnSchDate() && !isAddTerms()) {
 					dateCombobox.getItems().clear();
 					comboitem = new Comboitem();
@@ -584,13 +565,13 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Not Allowed for Repayment
+				// Not Allowed for Repayment
 				if (!(curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
@@ -638,7 +619,7 @@ public class AddRmvTermsDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	//Enable till date field if the selected recalculation type is TIIDATE
+	// Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
 		changeRecalType();

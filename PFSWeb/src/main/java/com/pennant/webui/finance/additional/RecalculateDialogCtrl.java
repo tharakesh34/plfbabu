@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  WIRecalculateDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : WIRecalculateDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.additional;
@@ -227,8 +209,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            FinanceMain
+	 * @param aFinanceMain FinanceMain
 	 */
 	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
@@ -318,7 +299,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				//Not Allowed for Repayment
+				// Not Allowed for Repayment
 				if (!curSchd.isRepayOnSchDate()) {
 					continue;
 				}
@@ -328,7 +309,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
+				// Profit Paid (Partial/Full) or Principal Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0
 						|| curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					dateCombobox.getItems().clear();
@@ -420,7 +401,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 											DateUtility.formatToLongDate(finMain.getFinStartDate()),
 											DateUtility.formatToLongDate(finMain.getMaturityDate()) }));
 				}
-				//if schdpftBal greater than zero throw validation
+				// if schdpftBal greater than zero throw validation
 				if (this.cbTillDate.getSelectedItem().getAttribute("pftBal") != null) {
 					throw new WrongValueException(this.cbTillDate, Labels.getLabel("Label_finSchdTillDate"));
 				}
@@ -458,6 +439,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			wve.add(we);
 		}
 
+		finServiceInstruction.setFinID(finMain.getFinID());
 		finServiceInstruction.setFinReference(finMain.getFinReference());
 		finServiceInstruction.setFinEvent(FinServiceEvent.RECALCULATE);
 
@@ -518,8 +500,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				finServiceInstruction.setRecalFromDate(finMain.getMaturityDate());
 				finServiceInstruction.setRecalToDate(finMain.getMaturityDate());
 
-				if (finMain.isApplySanctionCheck()
-						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ADDTERM)) {
+				if (finMain.isApplySanctionCheck() && StringUtils.equals(moduleDefiner, FinServiceEvent.ADDTERM)) {
 					module = moduleDefiner;
 				}
 
@@ -598,8 +579,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -641,7 +621,7 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	//Enable till date field if the selected recalculation type is TIIDATE
+	// Enable till date field if the selected recalculation type is TIIDATE
 	public void onChange$cbReCalType(Event event) {
 		logger.debug("Entering" + event.toString());
 		changeRecalType(true);
@@ -714,23 +694,23 @@ public class RecalculateDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 				FinanceScheduleDetail curSchd = financeScheduleDetails.get(i);
 
-				//Not Allowed for Repayment
+				// Not Allowed for Repayment
 				if (!(curSchd.isRepayOnSchDate()
 						|| (curSchd.isPftOnSchDate() && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0))) {
 					continue;
 				}
 
-				//Profit Paid (Partial/Full)
+				// Profit Paid (Partial/Full)
 				if (curSchd.getSchdPftPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
 
-				//Principal Paid (Partial/Full)
+				// Principal Paid (Partial/Full)
 				if (curSchd.getSchdPriPaid().compareTo(BigDecimal.ZERO) > 0) {
 					continue;
 				}
 
-				// When Add terms done with zero installments and trying with TILLDATE option 
+				// When Add terms done with zero installments and trying with TILLDATE option
 				// Date after closing balance is Zero and not a maturity date should not allow
 				if (curSchd.getSchDate().compareTo(aFinSchData.getFinanceMain().getMaturityDate()) != 0
 						&& curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0

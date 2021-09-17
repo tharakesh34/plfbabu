@@ -57,7 +57,9 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.systemmasters.LoanPurpose;
 import com.pennant.backend.service.finance.PSLDetailService;
@@ -862,7 +864,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 
 		// Fin Reference
 		try {
-			ArrayList<Object> finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");
+			ArrayList<Object> finHeaderList = (ArrayList<Object>) arguments.get("finHeaderList");// FIXME FINID
 			aPSLDetail.setFinReference(String.valueOf(finHeaderList.get(3)));
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -1539,7 +1541,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	public void doSave(FinanceDetail aFinanceDetail, Tab pslDetailsTab, boolean recSave) throws InterruptedException {
+	public void doSave(FinanceDetail aFd, Tab pslDetailsTab, boolean recSave) throws InterruptedException {
 
 		logger.debug("Entering");
 
@@ -1549,7 +1551,10 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		}
 
 		ArrayList<WrongValueException> wve = doWriteComponentsToBean(this.pSLDetail);
-		this.pSLDetail.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
+		FinScheduleData aSchdData = aFd.getFinScheduleData();
+		FinanceMain aFm = aSchdData.getFinanceMain();
+		this.pSLDetail.setFinID(aFm.getFinID());
+		this.pSLDetail.setFinReference(aFm.getFinReference());
 
 		if (!wve.isEmpty() && parenttab != null) {
 			parenttab.setSelected(true);
@@ -1566,7 +1571,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		this.pSLDetail.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		this.pSLDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		this.pSLDetail.setUserDetails(getUserWorkspace().getLoggedInUser());
-		aFinanceDetail.setPslDetail(this.pSLDetail);
+		aFd.setPslDetail(this.pSLDetail);
 
 		logger.debug("Leaving");
 

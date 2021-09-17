@@ -808,7 +808,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	public void doWriteComponentsToBean() throws InterruptedException {
 		logger.debug("Entering");
 		FinServiceInstruction finServInst = new FinServiceInstruction();
-		FinanceMain finMain = getFinScheduleData().getFinanceMain();
+		FinScheduleData schdData = getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceMain finMain = fm;
 		doClearMessage();
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -886,9 +888,9 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// Last date
-		Date lastPaidDate = getFinScheduleData().getFinanceMain().getFinStartDate();
+		Date lastPaidDate = fm.getFinStartDate();
 		Date currBussDate = SysParamUtil.getAppDate();
-		List<FinanceScheduleDetail> schdList = getFinScheduleData().getFinanceScheduleDetails();
+		List<FinanceScheduleDetail> schdList = schdData.getFinanceScheduleDetails();
 		for (int i = 1; i < schdList.size(); i++) {
 
 			FinanceScheduleDetail curSchd = schdList.get(i);
@@ -971,13 +973,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									new String[] {
 											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
 											DateUtil.formatToLongDate(backDate) }));
-						} else if (this.anyDateRateChangeFromDate.getValue()
-								.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
-							throw new WrongValueException(this.anyDateRateChangeFromDate,
-									Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] {
+						} else if (this.anyDateRateChangeFromDate.getValue().compareTo(fm.getMaturityDate()) > 0) {
+							throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
+									"DATE_ALLOWED_BEFORE",
+									new String[] {
 											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
-											DateUtil.formatToLongDate(
-													getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+											DateUtil.formatToLongDate(fm.getMaturityDate()) }));
 						}
 					} else {
 
@@ -987,13 +988,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 									new String[] {
 											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
 											DateUtil.formatToLongDate(lastPaidDate) }));
-						} else if (this.anyDateRateChangeFromDate.getValue()
-								.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
-							throw new WrongValueException(this.anyDateRateChangeFromDate,
-									Labels.getLabel("DATE_ALLOWED_BEFORE", new String[] {
+						} else if (this.anyDateRateChangeFromDate.getValue().compareTo(fm.getMaturityDate()) > 0) {
+							throw new WrongValueException(this.anyDateRateChangeFromDate, Labels.getLabel(
+									"DATE_ALLOWED_BEFORE",
+									new String[] {
 											Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeFromDate.value"),
-											DateUtil.formatToLongDate(
-													getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+											DateUtil.formatToLongDate(fm.getMaturityDate()) }));
 						}
 					}
 
@@ -1041,13 +1041,12 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 										new String[] {
 												Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
 												DateUtil.formatToLongDate(lastPaidDate) }));
-					} else if (this.anyDateRateChangeToDate.getValue()
-							.compareTo(getFinScheduleData().getFinanceMain().getMaturityDate()) > 0) {
-						throw new WrongValueException(this.anyDateRateChangeToDate, Labels.getLabel(
-								"DATE_ALLOWED_BEFORE",
-								new String[] { Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
-										DateUtil.formatToLongDate(
-												getFinScheduleData().getFinanceMain().getMaturityDate()) }));
+					} else if (this.anyDateRateChangeToDate.getValue().compareTo(fm.getMaturityDate()) > 0) {
+						throw new WrongValueException(this.anyDateRateChangeToDate,
+								Labels.getLabel("DATE_ALLOWED_BEFORE",
+										new String[] {
+												Labels.getLabel("label_RateChangeDialog_AnyDateRateChangeToDate.value"),
+												DateUtil.formatToLongDate(fm.getMaturityDate()) }));
 					}
 				}
 				finServInst.setToDate(this.anyDateRateChangeToDate.getValue());
@@ -1153,7 +1152,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			baseRateCode = this.baseRateCodeService.getBaseRateCodeById(finServInst.getBaseRate());
 
 			if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FRQ_TERMS_VALIDATION)) {
-				String errMsg = validateFrq(getFinScheduleData(), finServInst, baseRateCode);
+				String errMsg = validateFrq(schdData, finServInst, baseRateCode);
 
 				if (StringUtils.trimToNull(errMsg) != null) {
 					throw new WrongValueException(this.rate, errMsg);
@@ -1161,39 +1160,38 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			BigDecimal marginRate = finServInst.getMargin();
-			getFinScheduleData().getFinanceMain().setSkipRateReset(false);
+			fm.setSkipRateReset(false);
 			if (marginRate != null && marginRate.compareTo(BigDecimal.ZERO) != 0) {
 				if (MessageUtil.confirm("Do you want to proceed with margin rate only.",
 						MessageUtil.YES | MessageUtil.NO) == MessageUtil.YES) {
 					// Calculating the old base rate if margin exists
-					calcRates(getFinScheduleData(), finServInst, baseRateCode);
+					calcRates(schdData, finServInst, baseRateCode);
 				}
 			}
 		}
 
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY,
-				getFinScheduleData().getFinanceMain().getProductCategory())) {
+		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, fm.getProductCategory())) {
 			finServInst.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
-			getFinScheduleData().getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
+			fm.setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		}
 
-		finServInst.setFinID(getFinScheduleData().getFinanceMain().getFinID());
-		finServInst.setFinReference(getFinScheduleData().getFinanceMain().getFinReference());
+		finServInst.setFinID(fm.getFinID());
+		finServInst.setFinReference(fm.getFinReference());
 		finServInst.setFinEvent(FinServiceEvent.RATECHG);
 
 		if (allowBackDatedRateChange && StringUtils.trimToNull(finServInst.getBaseRate()) != null
 				&& StringUtils.trimToNull(baseRateCode.getbRRepayRvwFrq()) != null) {
 			String bRRpyRvwFrq = baseRateCode.getbRRepayRvwFrq();
-			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(bRRpyRvwFrq);
+			fm.setbRRpyRvwFrq(bRRpyRvwFrq);
 		} else {
-			getFinScheduleData().getFinanceMain().setbRRpyRvwFrq(null);
+			fm.setbRRpyRvwFrq(null);
 		}
 
 		if (this.recalTypeRow.isVisible() && this.cbReCalType.getSelectedItem().getValue().toString()
 				.equals(CalculationConstants.RPYCHG_STEPINST)) {
 
 			Date fromDate = (Date) this.cbRecalFromDate.getSelectedItem().getValue();
-			Date maturityDate = getFinScheduleData().getFinanceMain().getMaturityDate();
+			Date maturityDate = fm.getMaturityDate();
 			finServInst.setSchdMethod(CalculationConstants.RPYCHG_ADJTERMS);
 			finMain.setRecalType(CalculationConstants.RPYCHG_ADJTERMS);
 			finMain.setRecalFromDate(fromDate);
@@ -1203,13 +1201,13 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		FinanceStepPolicyDetail rpyStp = null;
-		if (CollectionUtils.isNotEmpty(getFinScheduleData().getStepPolicyDetails())) {
+		if (CollectionUtils.isNotEmpty(schdData.getStepPolicyDetails())) {
 			rpyStp = sortSPDList(finMain);
 		}
 
 		if (this.recalTypeRow.isVisible() && CalculationConstants.RPYCHG_STEPINST
 				.equals(this.cbReCalType.getSelectedItem().getValue().toString())) {
-			Date maturityDate = getFinScheduleData().getFinanceMain().getMaturityDate();
+			Date maturityDate = fm.getMaturityDate();
 
 			if (PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
 				Date fromDate = (Date) this.cbRecalFromDate.getSelectedItem().getValue();
@@ -1262,21 +1260,21 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 
 		// Service details calling for Schedule calculation
-		setFinScheduleData(rateChangeService.getRateChangeDetails(getFinScheduleData(), finServInst, moduleDefiner));
+		setFinScheduleData(rateChangeService.getRateChangeDetails(schdData, finServInst, moduleDefiner));
 
-		finServInst.setPftChg(getFinScheduleData().getPftChg());
-		getFinScheduleData().getFinanceMain().resetRecalculationFields();
-		getFinScheduleData().setFinServiceInstruction(finServInst);
+		finServInst.setPftChg(schdData.getPftChg());
+		fm.resetRecalculationFields();
+		schdData.setFinServiceInstruction(finServInst);
 
 		// Show Error Details in Schedule Maintainance
-		if (getFinScheduleData().getErrorDetails() != null && !getFinScheduleData().getErrorDetails().isEmpty()) {
-			MessageUtil.showError(getFinScheduleData().getErrorDetails().get(0));
-			getFinScheduleData().getErrorDetails().clear();
+		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
+			MessageUtil.showError(schdData.getErrorDetails().get(0));
+			schdData.getErrorDetails().clear();
 		} else {
-			getFinScheduleData().setSchduleGenerated(true);
+			schdData.setSchduleGenerated(true);
 
 			if (getFinanceMainDialogCtrl() != null) {
-				getFinanceMainDialogCtrl().doFillScheduleList(getFinScheduleData());
+				getFinanceMainDialogCtrl().doFillScheduleList(schdData);
 			}
 			this.window_RateChangeDialog.onClose();
 		}

@@ -266,6 +266,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		long serviceUID = Long.MIN_VALUE;
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(fm.getFinID());
 			finServInst.setFinReference(fm.getFinReference());
 			finServInst.setFinEvent(fd.getModuleDefiner());
 			schdData.setFinServiceInstruction(finServInst);

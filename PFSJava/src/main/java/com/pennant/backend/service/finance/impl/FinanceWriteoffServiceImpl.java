@@ -241,12 +241,13 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
-		Date curBDay = SysParamUtil.getAppDate();
+		Date sysData = SysParamUtil.getAppDate();
 
 		long serviceUID = Long.MIN_VALUE;
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinReference(fm.getFinReference());
+			finServInst.setFinID(finID);
+			finServInst.setFinReference(finReference);
 			finServInst.setFinEvent(fd.getModuleDefiner());
 			schdData.setFinServiceInstruction(finServInst);
 		}
@@ -285,7 +286,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		if (!fm.isWorkflow()) {
 			profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
 
-			AEEvent aeEvent = AEAmounts.procAEAmounts(fm, schedules, profitDetail, AccountingEvent.WRITEOFF, curBDay,
+			AEEvent aeEvent = AEAmounts.procAEAmounts(fm, schedules, profitDetail, AccountingEvent.WRITEOFF, sysData,
 					fm.getMaturityDate());
 
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();

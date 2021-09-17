@@ -505,6 +505,7 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 		}, (rs, rowNum) -> {
 			FinanceDisbursement finDisb = new FinanceDisbursement();
 
+			finDisb.setFinID(rs.getLong("FinID"));
 			finDisb.setFinReference(rs.getString("FinReference"));
 			finDisb.setDisbDate(rs.getTimestamp("DisbDate"));
 			finDisb.setDisbSeq(rs.getInt("DisbSeq"));

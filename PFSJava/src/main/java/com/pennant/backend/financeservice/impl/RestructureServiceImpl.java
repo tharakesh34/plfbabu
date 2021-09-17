@@ -443,10 +443,13 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 	private FinScheduleData addSchdRcd(FinScheduleData schdData, Date newSchdDate, int prvIndex) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceMain fm = schdData.getFinanceMain();
+
 		FinanceScheduleDetail prvSchd = schdData.getFinanceScheduleDetails().get(prvIndex);
 
 		FinanceScheduleDetail sd = new FinanceScheduleDetail();
-		sd.setFinReference(schdData.getFinanceMain().getFinReference());
+		sd.setFinID(fm.getFinID());
+		sd.setFinReference(fm.getFinReference());
 		sd.setBpiOrHoliday("");
 		sd.setSchDate(newSchdDate);
 		sd.setDefSchdDate(newSchdDate);
@@ -460,7 +463,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		schdData.getFinanceScheduleDetails().add(sd);
 		schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
-		schdData.getFinanceMain().setNumberOfTerms(schdData.getFinanceMain().getNumberOfTerms() + 1);
+		fm.setNumberOfTerms(fm.getNumberOfTerms() + 1);
 
 		logger.debug(Literal.LEAVING);
 		return schdData;

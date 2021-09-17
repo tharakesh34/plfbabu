@@ -298,34 +298,37 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 	/**
 	 * Method for Adding Schedule term when missing while on disbursement date checking
 	 * 
-	 * @param finScheduleData
+	 * @param schdData
 	 * @param newSchdDate
 	 * @param prvIndex
 	 * @return
 	 */
-	private FinScheduleData addSchdRcd(FinScheduleData finScheduleData, Date newSchdDate, int prvIndex) {
-		FinanceScheduleDetail prvSchd = finScheduleData.getFinanceScheduleDetails().get(prvIndex);
+	private FinScheduleData addSchdRcd(FinScheduleData schdData, Date newSchdDate, int prvIndex) {
+		FinanceScheduleDetail prvSchd = schdData.getFinanceScheduleDetails().get(prvIndex);
 
-		FinanceScheduleDetail sd = new FinanceScheduleDetail();
-		sd.setFinReference(finScheduleData.getFinanceMain().getFinReference());
-		sd.setBpiOrHoliday("");
-		sd.setSchDate(newSchdDate);
-		sd.setDefSchdDate(newSchdDate);
+		FinanceScheduleDetail schdule = new FinanceScheduleDetail();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		sd.setBaseRate(prvSchd.getBaseRate());
-		sd.setSplRate(prvSchd.getSplRate());
-		sd.setMrgRate(prvSchd.getMrgRate());
-		sd.setActRate(prvSchd.getActRate());
-		sd.setCalculatedRate(prvSchd.getCalculatedRate());
-		sd.setSchdMethod(prvSchd.getSchdMethod());
-		sd.setPftDaysBasis(prvSchd.getPftDaysBasis());
+		schdule.setFinID(fm.getFinID());
+		schdule.setFinReference(fm.getFinReference());
+		schdule.setBpiOrHoliday("");
+		schdule.setSchDate(newSchdDate);
+		schdule.setDefSchdDate(newSchdDate);
 
-		finScheduleData.getFinanceScheduleDetails().add(sd);
-		finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
+		schdule.setBaseRate(prvSchd.getBaseRate());
+		schdule.setSplRate(prvSchd.getSplRate());
+		schdule.setMrgRate(prvSchd.getMrgRate());
+		schdule.setActRate(prvSchd.getActRate());
+		schdule.setCalculatedRate(prvSchd.getCalculatedRate());
+		schdule.setSchdMethod(prvSchd.getSchdMethod());
+		schdule.setPftDaysBasis(prvSchd.getPftDaysBasis());
 
-		finScheduleData.getFinanceMain().setNumberOfTerms(finScheduleData.getFinanceMain().getNumberOfTerms() + 1);
+		schdData.getFinanceScheduleDetails().add(schdule);
+		schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
-		return finScheduleData;
+		fm.setNumberOfTerms(fm.getNumberOfTerms() + 1);
+
+		return schdData;
 	}
 
 	/**

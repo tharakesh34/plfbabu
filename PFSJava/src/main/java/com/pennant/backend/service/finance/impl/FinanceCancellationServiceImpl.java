@@ -204,6 +204,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinID(finID);
 			finServInst.setFinReference(finReference);
 			finServInst.setFinEvent(fd.getModuleDefiner());
 
