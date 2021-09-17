@@ -1050,7 +1050,7 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		AuditDetail auditDetail = vasRecordingValidation.validation(auditHeader.getAuditDetail(),
+		AuditDetail auditDetail = getVasRecordingValidation().validation(auditHeader.getAuditDetail(),
 				auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -2779,8 +2779,11 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		this.collateralSetupDAO = collateralSetupDAO;
 	}
 
-	public void setVasRecordingValidation(VasRecordingValidation vasRecordingValidation) {
-		this.vasRecordingValidation = vasRecordingValidation;
+	public VasRecordingValidation getVasRecordingValidation() {
+		if (vasRecordingValidation == null) {
+			this.vasRecordingValidation = new VasRecordingValidation(vASRecordingDAO);
+		}
+		return this.vasRecordingValidation;
 	}
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {

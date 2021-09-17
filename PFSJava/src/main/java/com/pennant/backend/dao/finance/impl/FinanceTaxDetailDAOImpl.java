@@ -209,7 +209,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 			ps.setString(index++, td.getCountry());
 			ps.setString(index++, td.getProvince());
 			ps.setString(index++, td.getCity());
-			ps.setObject(index++, JdbcUtil.getLong(td.getPinCodeId()));
+			ps.setObject(index++, td.getPinCodeId());
 			ps.setString(index++, td.getPinCode());
 			ps.setString(index++, td.getSezCertificateNo());
 			ps.setDate(index++, JdbcUtil.getDate(td.getSezValueDate()));

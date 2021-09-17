@@ -70,7 +70,6 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	@XmlElement
 	private String collateralRef;
-	private long finID;
 	@XmlElement
 	private String finReference;
 	@XmlElement(name = "cif")
@@ -208,14 +207,6 @@ public class CollateralSetup extends AbstractWorkflowEntity {
 
 	public void setCollateralRef(String collateralRef) {
 		this.collateralRef = collateralRef;
-	}
-
-	public long getFinID() {
-		return finID;
-	}
-
-	public void setFinID(long finID) {
-		this.finID = finID;
 	}
 
 	public String getFinReference() {

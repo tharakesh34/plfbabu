@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VehicleDealerListCtrl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-09-2011    														*
- *                                                                  						*
- * Modified Date    :  29-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VehicleDealerListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-09-2011 * *
+ * Modified Date : 29-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 01-05-2018		Vinay					 0.2   Module code added for individual module  *                                                                                   * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-09-2011 Pennant 0.1 * * 01-05-2018 Vinay 0.2 Module code added for individual module * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.amtmasters.vehicledealer;
@@ -170,7 +152,7 @@ public class VehicleDealerListCtrl extends GFCBaseListCtrl<VehicleDealer> {
 		registerField("dealerTelephone", listheader_DealerTelephone, SortOrder.NONE, dealerTelephone,
 				sortOperator_dealerTelephone, Operators.STRING);
 		registerField("email", listheader_Email, SortOrder.NONE, email, sortOperator_email, Operators.STRING);
-		registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
+		// registerField("dealerFax", listheader_DealerFax, SortOrder.NONE);
 		registerField("dealerProvince", listheader_DealerProvince, SortOrder.NONE, dealerProvince,
 				sortOperator_dealerProvince, Operators.STRING);
 		registerField("dealerCity", listheader_DealerCity, SortOrder.NONE, dealerCity, sortOperator_dealerCity,

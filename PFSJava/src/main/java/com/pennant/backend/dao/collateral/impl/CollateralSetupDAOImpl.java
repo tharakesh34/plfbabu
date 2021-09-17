@@ -58,14 +58,14 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		StringBuilder sql = new StringBuilder();
 		sql.append("Insert Into CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" (CollateralRef, FinID, FinReference, DepositorId, CollateralType, CollateralCcy");
+		sql.append(" (CollateralRef, FinReference, DepositorId, CollateralType, CollateralCcy");
 		sql.append(", MaxCollateralValue, SpecialLTV, CollateralLoc, Valuator, ExpiryDate, ReviewFrequency");
 		sql.append(", NextReviewDate, MultiLoanAssignment, Status, ThirdPartyAssignment, Remarks");
 		sql.append(", CollateralValue, BankLTV, BankValuation, Version , LastMntBy, LastMntOn, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, CreatedBy, CreatedOn)");
 		sql.append(" Values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -73,7 +73,6 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			int index = 1;
 
 			ps.setString(index++, cs.getCollateralRef());
-			ps.setLong(index++, JdbcUtil.setLong(cs.getFinID()));
 			ps.setString(index++, cs.getFinReference());
 			ps.setLong(index++, JdbcUtil.setLong(cs.getDepositorId()));
 			ps.setString(index++, cs.getCollateralType());
@@ -318,7 +317,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		sql.append(" count(CollateralRef)");
 		sql.append(" From CollateralSetup");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where CollateralRef = ? and Status is null and FinID is null");
+		sql.append(" Where CollateralRef = ? and Status is null and FinReference is null");
 
 		logger.debug(Literal.SQL + sql.toString());
 

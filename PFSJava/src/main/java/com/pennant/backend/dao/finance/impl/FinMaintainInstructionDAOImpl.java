@@ -209,7 +209,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 		StringBuilder sql = new StringBuilder("Update FinMaintainInstructions");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set FinID = ?, FinReference = ?, Event = ?, TDSApplicable = ?, TdsPercentage = ?");
-		sql.append(", TdsStartDate = ?, TdsEndDate = ?, TdsLimit = ?");
+		sql.append(", TdsStartDate = ?, TdsEndDate = ?, TdsLimit = ?, Version = ?");
 		sql.append(", LastMntBy = ?, LastMntOn = ?, RecordStatus= ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where FinMaintainId = ?");

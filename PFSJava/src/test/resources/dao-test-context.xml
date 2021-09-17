@@ -82,8 +82,5 @@
 	<bean id="finOptionDAO" class="com.pennant.backend.dao.finance.putcall.impl.FinOptionDAOImpl" parent="sequenceDao" />
 	<bean id="subventionUploadDAO" class="com.pennant.pff.dao.subvention.SubventionUploadDAOImpl" parent="sequenceDao" />
 	<bean id="postingsDAO" class="com.pennant.backend.dao.rulefactory.impl.PostingsDAOImpl" parent="sequenceDao" />
-	<bean id="finFeeChargesDAO" class="com.pennant.backend.dao.rulefactory.impl.FinFeeChargesDAOImpl" parent="basicDao" />
-	
-	
-	
+	<bean id="finFeeChargesDAO" class="com.pennant.backend.dao.rulefactory.impl.FinFeeChargesDAOImpl" parent="basicDao" />	
 </beans>

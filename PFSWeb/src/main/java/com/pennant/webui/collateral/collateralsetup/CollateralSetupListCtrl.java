@@ -182,7 +182,6 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		registerField("nextReviewDate", listheader_NextReviewDate, SortOrder.ASC, nextReviewDate,
 				sortOperator_NextReviewDate, Operators.DATE);
 		registerField("nextRoleCode");
-		registerField("FinID");
 		registerField("finReference");
 		registerField("status");
 

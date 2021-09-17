@@ -266,7 +266,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		long serviceUID = Long.MIN_VALUE;
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinID(fm.getFinID());
+			finServInst.setFinID(finID);
 			finServInst.setFinReference(fm.getFinReference());
 			finServInst.setFinEvent(fd.getModuleDefiner());
 			schdData.setFinServiceInstruction(finServInst);
@@ -314,6 +314,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 			penaltyRate.setODRuleCode("");
 		}
+
+		penaltyRate.setFinID(finID);
 		penaltyRate.setFinReference(fm.getFinReference());
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
 
@@ -843,6 +845,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			penaltyRate.setODAllowWaiver(false);
 			penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 		}
+
+		penaltyRate.setFinID(fm.getFinID());
 		penaltyRate.setFinReference(fm.getFinReference());
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
 

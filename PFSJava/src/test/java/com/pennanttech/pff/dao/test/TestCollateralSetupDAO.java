@@ -59,7 +59,6 @@ public class TestCollateralSetupDAO {
 		CollateralSetup cs = new CollateralSetup();
 		cs = collateralSetupDAO.getCollateralSetupByRef("CT3403300006", "");
 		cs.setCollateralRef(cs.getCollateralRef() + 1);
-		cs.setFinID(5354);
 		collateralSetupDAO.save(cs, "");
 	}
 
