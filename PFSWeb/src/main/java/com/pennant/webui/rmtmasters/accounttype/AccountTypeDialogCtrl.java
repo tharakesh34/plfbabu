@@ -117,6 +117,7 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	private long custSysAccHeadMax;
 	private long internalAccHeadMin;
 	private long internalAccHeadMax;
+	private boolean postEventReq = false;
 
 	// ServiceDAOs / Domain Classes
 	private transient AccountTypeService accountTypeService;
@@ -354,14 +355,18 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 	 */
 	public void onClick$btnCopyTo(Event event) throws InterruptedException {
 		logger.debug("Entering");
+		postEventReq = true;
 		doClose(this.btnSave.isVisible());
+		postEventReq = false;
 		logger.debug("Leaving");
 
 	}
 
 	protected void doPostClose() {
-		Events.postEvent("onClick$button_AccountTypeList_NewAccountType", accountTypeListCtrl.window_AccountTypeList,
-				getAccountType());
+		if (postEventReq) {
+			Events.postEvent("onClick$button_AccountTypeList_NewAccountType",
+					accountTypeListCtrl.window_AccountTypeList, getAccountType());
+		}
 	}
 
 	/**

@@ -52,7 +52,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Checkbox;
-import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -85,7 +84,7 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> {
 	protected Listbox listBoxCurrency;
 
 	protected Textbox ccyCode;
-	protected Intbox ccyNumber;
+	protected Textbox ccyNumber;
 	protected Textbox ccyDesc;
 	protected Textbox ccySwiftCode;
 	protected Checkbox ccyIsActive;
@@ -141,7 +140,7 @@ public class CurrencyListCtrl extends GFCBaseListCtrl<Currency> {
 
 		registerField("ccyCode", listheader_CcyCode, SortOrder.ASC, ccyCode, sortOperator_ccyCode, Operators.STRING);
 		registerField("ccyNumber", listheader_CcyNumber, SortOrder.NONE, ccyNumber, sortOperator_ccyNumber,
-				Operators.NUMERIC);
+				Operators.STRING);
 		registerField("ccyDesc", listheader_CcyDesc, SortOrder.NONE, ccyDesc, sortOperator_ccyDesc, Operators.STRING);
 		registerField("ccySwiftCode", listheader_CcySwiftCode, SortOrder.NONE, ccySwiftCode, sortOperator_ccySwiftCode,
 				Operators.STRING);

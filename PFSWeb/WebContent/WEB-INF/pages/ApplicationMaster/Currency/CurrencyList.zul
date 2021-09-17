@@ -64,7 +64,7 @@
 								<uppercasebox id="ccyCode" width="100px" maxlength="3" />
 								<label id="label_CurrencySearch_CcyNumber" value="${c:l('label_CurrencySearch_CcyNumber.value')}" />
 								<listbox id="sortOperator_ccyNumber" width="43px" mold="select" rows="1" />
-								<intbox id="ccyNumber" width="100px" maxlength="3" />
+								<textbox id="ccyNumber" width="100px" maxlength="3" />
 							</row>
 							<row>
 								<label id="label_CurrencySearch_CcyDesc" value="${c:l('label_CurrencySearch_CcyDesc.value')}" />
