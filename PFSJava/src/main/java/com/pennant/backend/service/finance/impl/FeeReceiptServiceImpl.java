@@ -120,39 +120,45 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		logger.debug(Literal.ENTERING);
 
 		// Receipt Header Details
-		FinReceiptHeader receiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptID, "_FView");
+		FinReceiptHeader rch = finReceiptHeaderDAO.getReceiptHeaderByID(receiptID, "_FView");
 
-		if (receiptHeader == null) {
-			return receiptHeader;
+		if (rch == null) {
+			return rch;
 		}
 
 		// Fetch Receipt Detail List
 		List<FinReceiptDetail> receiptDetailList = finReceiptDetailDAO.getReceiptHeaderByID(receiptID, "_TView");
 
 		// Fetch Repay Headers List
-		String reference = receiptHeader.getReference();
-		long finID = receiptHeader.getFinID();
-		List<FinRepayHeader> rpyHeaderList = financeRepaymentsDAO.getFinRepayHeadersByRef(finID,
-				TableType.TEMP_TAB.getSuffix());
+		String reference = rch.getReference();
+		Long finID = rch.getFinID();
+
+		List<FinRepayHeader> rphList = new ArrayList<>();
+
+		if (finID != null && finID > 0) {
+			rphList = financeRepaymentsDAO.getFinRepayHeadersByRef(finID, TableType.TEMP_TAB.getSuffix());
+		}
 
 		for (FinReceiptDetail receiptDetail : receiptDetailList) {
-			for (FinRepayHeader finRepayHeader : rpyHeaderList) {
+			for (FinRepayHeader finRepayHeader : rphList) {
 				if (finRepayHeader.getReceiptSeqID() == receiptDetail.getReceiptSeqID()) {
 					receiptDetail.getRepayHeaders().add(finRepayHeader);
 				}
 			}
 		}
-		receiptHeader.setReceiptDetails(receiptDetailList);
+
+		rch.setReceiptDetails(receiptDetailList);
 
 		// Paid Fee Details
-		reference = receiptHeader.getExtReference();
+		reference = rch.getExtReference();
 		if (StringUtils.isBlank(reference)) {
-			reference = receiptHeader.getReference();
+			reference = rch.getReference();
 		}
-		receiptHeader.setPaidFeeList(getPaidFinFeeDetails(reference, receiptHeader.getReceiptID(), "_TView"));
+
+		rch.setPaidFeeList(getPaidFinFeeDetails(reference, rch.getReceiptID(), "_TView"));
 
 		logger.debug(Literal.LEAVING);
-		return receiptHeader;
+		return rch;
 	}
 
 	/**

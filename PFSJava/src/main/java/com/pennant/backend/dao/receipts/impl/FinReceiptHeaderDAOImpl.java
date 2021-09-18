@@ -96,13 +96,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" FinReceiptHeader").append(tableType.getSuffix());
-		sql.append("(ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose, RcdMaintainSts");
-		sql.append(", ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount, EffectSchdMethod, ReceiptModeStatus");
-		sql.append(", RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks, GDRAvailable");
-		sql.append(", ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount, CashierBranch, InitiateDate");
-		sql.append(", DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount, ExtReference");
-		sql.append(", Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber, CollectionAgentId");
-		sql.append(", ActFinReceipt, FinDivision, PostBranch, ReasonCode, CancelRemarks, KnockOffType");
+		sql.append("(ReceiptID, ReceiptDate, ReceiptType, RecAgainst, FinID, Reference, ReceiptPurpose");
+		sql.append(", RcdMaintainSts, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount, EffectSchdMethod");
+		sql.append(", ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate, Remarks");
+		sql.append(", GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount, CashierBranch");
+		sql.append(", InitiateDate, DepositProcess, DepositBranch, LppAmount, GstLpiAmount, GstLppAmount");
+		sql.append(", ExtReference, Module, SubReceiptMode, ReceiptChannel, ReceivedFrom, PanNumber");
+		sql.append(", CollectionAgentId, ActFinReceipt, FinDivision, PostBranch");
+		sql.append(", ReasonCode, CancelRemarks, KnockOffType");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate");
 		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate");
@@ -110,7 +111,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -118,10 +119,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(rh.getReceiptID()));
+			ps.setLong(index++, rh.getReceiptID());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceiptDate()));
 			ps.setString(index++, rh.getReceiptType());
 			ps.setString(index++, rh.getRecAgainst());
+			ps.setObject(index++, JdbcUtil.getLong(rh.getFinID()));
 			ps.setString(index++, rh.getReference());
 			ps.setString(index++, rh.getReceiptPurpose());
 			ps.setString(index++, rh.getRcdMaintainSts());
@@ -182,7 +184,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getReceiptSource());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
-			ps.setObject(index++, JdbcUtil.getLong(rh.getClosureTypeId()));
+			ps.setObject(index++, JdbcUtil.setLong(rh.getClosureTypeId()));
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
 			ps.setString(index++, rh.getEntityCode());
@@ -279,7 +281,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
 			ps.setString(index++, rh.getExtReference());
-			ps.setObject(index++, JdbcUtil.getLong(rh.getClosureTypeId()));
+			ps.setObject(index++, JdbcUtil.setLong(rh.getClosureTypeId()));
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
 			ps.setString(index++, rh.getEntityCode());
@@ -1280,7 +1282,8 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 	private StringBuilder getSqlQuery(String type) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ReceiptID, ReceiptDate, ReceiptType, RecAgainst, Reference, ReceiptPurpose, RcdMaintainSts");
+		sql.append(
+				" ReceiptID, ReceiptDate, ReceiptType, RecAgainst, FinID, Reference, ReceiptPurpose, RcdMaintainSts");
 		sql.append(", InstructionUID, ReceiptMode, ExcessAdjustTo, AllocationType, ReceiptAmount, EffectSchdMethod");
 		sql.append(", ReceiptModeStatus, RealizationDate, CancelReason, WaviedAmt, TotFeeAmount, BounceDate");
 		sql.append(", Remarks, GDRAvailable, ReleaseType, ThirdPartyName, ThirdPartyMobileNum, LpiAmount");
@@ -1330,6 +1333,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setReceiptDate(rs.getTimestamp("ReceiptDate"));
 			rh.setReceiptType(rs.getString("ReceiptType"));
 			rh.setRecAgainst(rs.getString("RecAgainst"));
+			rh.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 			rh.setReference(rs.getString("Reference"));
 			rh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rh.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
@@ -1386,7 +1390,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setValueDate(rs.getDate("ValueDate"));
 			rh.setTransactionRef(rs.getString("TransactionRef"));
 			rh.setDepositDate(rs.getDate("DepositDate"));
-			rh.setPartnerBankId(JdbcUtil.setLong(rs.getLong("PartnerBankId")));
+			rh.setPartnerBankId(JdbcUtil.getLong(rs.getObject("PartnerBankId")));
 			rh.setPrvReceiptPurpose(rs.getString("PrvReceiptPurpose"));
 			rh.setReceiptSource(rs.getString("ReceiptSource"));
 			rh.setRecAppDate(rs.getDate("RecAppDate"));

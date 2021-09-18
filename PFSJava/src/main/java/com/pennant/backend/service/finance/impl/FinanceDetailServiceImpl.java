@@ -550,9 +550,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* Customer Details */
-		if (custID != 0 && custID != Long.MIN_VALUE) {
-			fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_AView"));
-		}
+		fd.setCustomerDetails(customerDetailsService.getCustomerDetailsById(custID, true, "_AView"));
 
 		/* Guaranteer Details */
 		fd.setGurantorsDetailList(guarantorDetailService.getGuarantorDetail(finID, "_TView"));

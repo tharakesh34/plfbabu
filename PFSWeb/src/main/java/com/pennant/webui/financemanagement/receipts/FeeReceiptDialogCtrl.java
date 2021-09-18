@@ -1648,7 +1648,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @throws Exception
 	 */
 	public void executeAccounting() throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
 		AEEvent aeEvent = new AEEvent();
@@ -1669,7 +1669,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Map<String, Object> map = null;
 		long accountingSetID = 0;
 		if (this.groupbox_Finance.isVisible()) {
-			map = getFeeReceiptService().getGLSubHeadCodes(rch.getFinID());
+			map = feeReceiptService.getGLSubHeadCodes(rch.getFinID());
 			accountingSetID = AccountingConfigCache.getAccountSetID(rch.getFinType(), AccountingEvent.FEEPAY,
 					FinanceConstants.MODULEID_FINTYPE);
 		} else {
@@ -1687,6 +1687,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		amountCodes.setPartnerBankAcType(receiptDetail.getPartnerBankAcType());
 		amountCodes.setPaidFee(receiptDetail.getAmount());
 		amountCodes.setFinType(rch.getFinType());
+
 		if (map != null) {
 			amountCodes.setBusinessvertical((String) map.get("BUSINESSVERTICAL"));
 			amountCodes.setFinbranch((String) map.get("FINBRANCH"));

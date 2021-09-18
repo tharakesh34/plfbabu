@@ -263,11 +263,12 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 		sql.append(" Set ProductCode = ?, PostingAgainst = ?, PrimaryLinkRef = ?, Fee = ?, RenewalFee = ?");
 		sql.append(", FeePaymentMode = ?, TermInsuranceLien = ?, ProviderName = ?, PolicyNumber = ?");
 		sql.append(", MedicalApplicable = ?, MedicalStatus = ?, ValueDate = ?, AccrualTillDate = ?, EntityCode = ?");
-		sql.append(", RecurringDate = ?, DsaId = ?, DmaId = ?, FulfilOfficerId = ?, ReferralId = ?, Version = ?");
-		sql.append(", LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
-		sql.append(", NextTaskId = ?, Remarks = ?, Reason = ?, CancelAmt = ?, ServiceReqNumber = ?");
+		sql.append(", RecurringDate = ?, DsaId = ?, DmaId = ?, FulfilOfficerId = ?, ReferralId = ?");
+		sql.append(", Remarks = ?, Reason = ?, CancelAmt = ?, ServiceReqNumber = ?");
 		sql.append(", CancelAfterFLP = ?, OldVasReference = ?, ManualAdviseId = ?, ReceivableAdviseId = ?");
-		sql.append(" RecordType = ?, WorkflowId = ?, VasStatus = ?, FinanceProcess = ?, PaidAmt = ?, WaivedAmt = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?, VasStatus = ?, FinanceProcess = ?, PaidAmt = ?, WaivedAmt = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(" Where VasReference = ?");
 
 		if (!type.endsWith("_Temp")) {
@@ -298,14 +299,6 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, vasR.getDmaId());
 			ps.setString(index++, vasR.getFulfilOfficerId());
 			ps.setString(index++, vasR.getReferralId());
-			ps.setInt(index++, vasR.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getLastMntBy()));
-			ps.setTimestamp(index++, vasR.getLastMntOn());
-			ps.setString(index++, vasR.getRecordStatus());
-			ps.setString(index++, vasR.getRoleCode());
-			ps.setString(index++, vasR.getNextRoleCode());
-			ps.setString(index++, vasR.getTaskId());
-			ps.setString(index++, vasR.getNextTaskId());
 			ps.setString(index++, vasR.getRemarks());
 			ps.setString(index++, vasR.getReason());
 			ps.setBigDecimal(index++, vasR.getCancelAmt());
@@ -320,6 +313,14 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setBoolean(index++, vasR.isFinanceProcess());
 			ps.setBigDecimal(index++, vasR.getPaidAmt());
 			ps.setBigDecimal(index++, vasR.getWaivedAmt());
+			ps.setInt(index++, vasR.getVersion());
+			ps.setLong(index++, JdbcUtil.setLong(vasR.getLastMntBy()));
+			ps.setTimestamp(index++, vasR.getLastMntOn());
+			ps.setString(index++, vasR.getRecordStatus());
+			ps.setString(index++, vasR.getRoleCode());
+			ps.setString(index++, vasR.getNextRoleCode());
+			ps.setString(index++, vasR.getTaskId());
+			ps.setString(index++, vasR.getNextTaskId());
 
 			ps.setString(index++, vasR.getVasReference());
 
