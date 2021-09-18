@@ -634,8 +634,8 @@ public class FinanceCheckListReferenceDialogCtrl extends GFCBaseCtrl<FinanceChec
 				String remarks = commentsTxtBoxMap.get(key) == null ? "" : commentsTxtBoxMap.get(key).getValue();
 				finChkListRef.setRemarks(remarks);
 				if (getFinanceDetail() != null) {
-					finChkListRef.setFinReference(fm.getFinReference());
 					finChkListRef.setFinID(fm.getFinID());
+					finChkListRef.setFinReference(fm.getFinReference());
 				}
 				if (notAllowedToShowMap.containsKey(prevAnswersMap.get(questionId).getQuestionId())) {
 					continue;

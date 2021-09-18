@@ -2534,6 +2534,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		List<FinOption> finOptions = fd.getFinOptions();
 		if (CollectionUtils.isNotEmpty(finOptions)) {
 			for (FinOption finOption : fd.getFinOptions()) {
+				finOption.setFinID(finID);
 				finOption.setFinReference(finReference);
 				finOption.setTaskId(fm.getTaskId());
 				finOption.setNextTaskId(fm.getNextTaskId());
@@ -10589,15 +10590,15 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		CollateralAssignment collateralAssignment = null;
 		if (CollectionUtils.isNotEmpty(financeMains) && pricingDetail.isSplit()) {
-			for (FinanceMain financeMain : financeMains) {
+			for (FinanceMain fm : financeMains) {
 				if (CollectionUtils.isNotEmpty(financeDetail.getCollateralAssignmentList())) {
 					for (CollateralAssignment parentColAssignment : financeDetail.getCollateralAssignmentList()) {
 						collateralAssignment = new CollateralAssignment();
-						collateralAssignment.setReference(financeMain.getFinReference());
+						collateralAssignment.setReference(fm.getFinReference());
 						collateralAssignment.setCollateralRef(parentColAssignment.getCollateralRef());
 
-						collateralAssignment.setAssignPerc(setCollateralAssignmenForChildLoans(financeMain,
-								totalLoanAmt, parentColAssignment.getAssignPerc()));
+						collateralAssignment.setAssignPerc(setCollateralAssignmenForChildLoans(fm, totalLoanAmt,
+								parentColAssignment.getAssignPerc()));
 						parentColAssignment.setAssignPerc(
 								parentColAssignment.getAssignPerc().subtract(collateralAssignment.getAssignPerc()));
 						collateralAssignment.setModule(FinanceConstants.MODULE_NAME);
@@ -10619,7 +10620,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						Cloner cloner = new Cloner();
 						JointAccountDetail jointAccountDetail = cloner.deepClone(details);
 						jointAccountDetail.setId(Long.MIN_VALUE);
-						jointAccountDetail.setFinReference(financeMain.getFinReference());
+						jointAccountDetail.setFinID(fm.getFinID());
+						jointAccountDetail.setFinReference(fm.getFinReference());
 						jointAccountDetail.setNewRecord(true);
 						if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
 							try {

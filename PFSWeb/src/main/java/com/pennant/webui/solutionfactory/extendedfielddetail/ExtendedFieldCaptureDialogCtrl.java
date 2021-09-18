@@ -357,19 +357,6 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 		return auditHeader;
 	}
 
-	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * @throws IOException
-	 * @throws ScriptException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws NoSuchFieldException
-	 * @throws IllegalAccessException
-	 * @throws IllegalArgumentException
-	 */
 	public void doSave()
 			throws InterruptedException, ParseException, ScriptException, IOException, NoSuchMethodException,
 			NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {

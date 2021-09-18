@@ -53,6 +53,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
@@ -261,13 +262,14 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
+		String finReference = fm.getFinReference();
 		long finID = fm.getFinID();
 
 		long serviceUID = Long.MIN_VALUE;
 		if (schdData.getFinServiceInstructions().isEmpty()) {
 			FinServiceInstruction finServInst = new FinServiceInstruction();
 			finServInst.setFinID(finID);
-			finServInst.setFinReference(fm.getFinReference());
+			finServInst.setFinReference(finReference);
 			finServInst.setFinEvent(fd.getModuleDefiner());
 			schdData.setFinServiceInstruction(finServInst);
 		}
@@ -374,7 +376,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				&& fd.getGurantorsDetailList().size() > 0) {
 			fd.setGurantorsDetailList(fd.getGurantorsDetailList());
 			List<AuditDetail> details = fd.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details, tableType.getSuffix(), fm.getFinReference());
+			details = processingGuarantorDetailList(details, tableType.getSuffix(), finID, finReference);
 			auditDetails.addAll(details);
 		}
 
@@ -385,15 +387,15 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				&& fd.getJointAccountDetailList().size() > 0) {
 			fd.setJointAccountDetailList(fd.getJointAccountDetailList());
 			List<AuditDetail> details = fd.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details, tableType.getSuffix(), fm.getFinReference());
+			details = processingJointAccountDetailList(details, tableType.getSuffix(), finID, finReference);
 			auditDetails.addAll(details);
 		}
 
 		// Save Document Details
 		if (fd.getDocumentDetailsList() != null && fd.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, tableType.getSuffix(), schdData.getFinanceMain(),
-					fd.getModuleDefiner(), serviceUID);
+			details = processingDocumentDetailsList(details, tableType.getSuffix(), fm, fd.getModuleDefiner(),
+					serviceUID);
 			auditDetails.addAll(details);
 		}
 
@@ -402,7 +404,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			// =======================================
 			if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
-				details = processingCollateralAssignmentList(details, tableType.getSuffix(), schdData.getFinanceMain());
+				details = processingCollateralAssignmentList(details, tableType.getSuffix(), fm);
 				auditDetails.addAll(details);
 			}
 		} else {
@@ -411,7 +413,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			if (fd.getFinanceCollaterals() != null && !fd.getFinanceCollaterals().isEmpty()) {
 				fd.setFinanceCollaterals(fd.getFinanceCollaterals());
 				List<AuditDetail> details = fd.getAuditDetailMap().get("FinCollateral");
-				details = processingFinCollateralDetailList(details, tableType.getSuffix(), fm.getFinReference());
+				details = processingFinCollateralDetailList(details, tableType.getSuffix(), finReference);
 				auditDetails.addAll(details);
 			}
 		}
@@ -668,7 +670,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				guarantorDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = fd.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details, "_Temp", finReference);
+			details = processingGuarantorDetailList(details, "_Temp", finID, finReference);
 			auditDetailList.addAll(details);
 		}
 
@@ -679,7 +681,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 				jointAccountDetail.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			}
 			List<AuditDetail> details = fd.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details, "_Temp", finReference);
+			details = processingJointAccountDetailList(details, "_Temp", finID, finReference);
 			auditDetailList.addAll(details);
 		}
 
@@ -756,7 +758,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
 		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		Date curBDay = DateUtility.getAppDate();
+		Date appDate = SysParamUtil.getAppDate();
 		// Finance Stage Accounting Process
 		// =======================================
 		auditHeader = executeStageAccounting(auditHeader);
@@ -768,7 +770,9 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// =====================================
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+
 		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
 
 		FinanceProfitDetail profitDetail = profitDetailsDAO.getFinProfitDetailsById(finID);
 
@@ -792,7 +796,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 
 		if (accountsetID > 0) {
 			AEEvent aeEvent = AEAmounts.procAEAmounts(fm, schdData.getFinanceScheduleDetails(), profitDetail,
-					accEventCode, curBDay, fm.getMaturityDate());
+					accEventCode, appDate, fm.getMaturityDate());
 			AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 
 			// FinanceWriteoffPayment set the writeoffPayAmount,WriteoffPayAccount
@@ -846,8 +850,8 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			penaltyRate.setODMaxWaiverPerc(BigDecimal.ZERO);
 		}
 
-		penaltyRate.setFinID(fm.getFinID());
-		penaltyRate.setFinReference(fm.getFinReference());
+		penaltyRate.setFinID(finID);
+		penaltyRate.setFinReference(finReference);
 		penaltyRate.setFinEffectDate(DateUtility.getSysDate());
 
 		FinODPenaltyRate oldPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(finID, "");
@@ -860,8 +864,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Save Document Details
 		if (fd.getDocumentDetailsList() != null && fd.getDocumentDetailsList().size() > 0) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("DocumentDetails");
-			details = processingDocumentDetailsList(details, "", schdData.getFinanceMain(), fd.getModuleDefiner(),
-					serviceUID);
+			details = processingDocumentDetailsList(details, "", fm, fd.getModuleDefiner(), serviceUID);
 			auditDetails.addAll(details);
 			listDocDeletion(fd, "_Temp");
 		}
@@ -879,7 +882,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// Guarantor Details
 		if (fd.getGurantorsDetailList() != null && !fd.getGurantorsDetailList().isEmpty()) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("GuarantorDetails");
-			details = processingGuarantorDetailList(details, "", fm.getFinReference());
+			details = processingGuarantorDetailList(details, "", finID, finReference);
 			auditDetails.addAll(details);
 
 		}
@@ -887,7 +890,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 		// JointAccount Details
 		if (fd.getJointAccountDetailList() != null && !fd.getJointAccountDetailList().isEmpty()) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("JointAccountDetails");
-			details = processingJointAccountDetailList(details, "", fm.getFinReference());
+			details = processingJointAccountDetailList(details, "", finID, finReference);
 			auditDetails.addAll(details);
 
 		}
@@ -904,7 +907,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			// =======================================
 			if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
 				List<AuditDetail> details = fd.getAuditDetailMap().get("CollateralAssignments");
-				details = processingCollateralAssignmentList(details, "", schdData.getFinanceMain());
+				details = processingCollateralAssignmentList(details, "", fm);
 				auditDetails.addAll(details);
 			}
 		} else {
@@ -912,7 +915,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			if (fd.getFinanceCollaterals() != null && !fd.getFinanceCollaterals().isEmpty()) {
 				fd.setFinanceCollaterals(fd.getFinanceCollaterals());
 				List<AuditDetail> details = fd.getAuditDetailMap().get("FinCollateral");
-				details = processingFinCollateralDetailList(details, "", fm.getFinReference());
+				details = processingFinCollateralDetailList(details, "", finReference);
 				auditDetails.addAll(details);
 			}
 		}
@@ -1415,7 +1418,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param Finreference
 	 * @return
 	 */
-	private List<AuditDetail> processingGuarantorDetailList(List<AuditDetail> auditDetails, String type,
+	private List<AuditDetail> processingGuarantorDetailList(List<AuditDetail> auditDetails, String type, long finID,
 			String finReference) {
 
 		boolean saveRecord = false;
@@ -1446,6 +1449,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 			guarantorDetail.setWorkflowId(0);
+			guarantorDetail.setFinID(finID);
 			guarantorDetail.setFinReference(finReference);
 
 			if (guarantorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
@@ -1519,7 +1523,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	 * @param Finreference
 	 * @return
 	 */
-	private List<AuditDetail> processingJointAccountDetailList(List<AuditDetail> auditDetails, String type,
+	private List<AuditDetail> processingJointAccountDetailList(List<AuditDetail> auditDetails, String type, long finID,
 			String finReference) {
 
 		boolean saveRecord = false;
@@ -1550,6 +1554,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 			}
 
 			jointAccountDetail.setWorkflowId(0);
+			jointAccountDetail.setFinID(finID);
 			jointAccountDetail.setFinReference(finReference);
 
 			if (jointAccountDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {

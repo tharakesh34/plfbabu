@@ -1304,6 +1304,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 		// co-applicant details
 		for (JointAccountDetail jad : fd.getJointAccountDetailList()) {
+			jad.setFinID(fm.getFinID());
 			jad.setFinReference(fm.getFinReference());
 			jad.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			if (!moveLoanStage) {

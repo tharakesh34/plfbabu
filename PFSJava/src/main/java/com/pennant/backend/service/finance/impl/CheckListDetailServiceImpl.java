@@ -187,8 +187,11 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 			checkListIdSet.add(financeReferenceDetail.getFinRefId());
 		}
 
-		List<CheckListDetail> checkListDetailAllList = checkListDetailDAO.getCheckListDetailByChkList(checkListIdSet,
-				"_AView");
+		List<CheckListDetail> checkListDetailAllList = new ArrayList<>();
+
+		if (!checkListIdSet.isEmpty()) {
+			checkListDetailAllList = checkListDetailDAO.getCheckListDetailByChkList(checkListIdSet, "_AView");
+		}
 
 		long prevCheckListId = 0L;
 		for (CheckListDetail checkListDetail : checkListDetailAllList) {

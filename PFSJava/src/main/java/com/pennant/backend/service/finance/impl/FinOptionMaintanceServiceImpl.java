@@ -92,7 +92,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 	}
 
-	private List<AuditDetail> processingFinOptionList(List<AuditDetail> auditDetails, String finReference,
+	private List<AuditDetail> processingFinOptionList(List<AuditDetail> auditDetails, long finID, String finReference,
 			TableType type) {
 		logger.debug(Literal.ENTERING);
 
@@ -121,6 +121,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 				finOption.setNextTaskId("");
 			}
 
+			finOption.setFinID(finID);
 			finOption.setFinReference(finReference);
 			finOption.setWorkflowId(0);
 
@@ -323,7 +324,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		List<FinCovenantType> covenantTypes = fmi.getFinCovenantTypeList();
 		if (CollectionUtils.isNotEmpty(covenantTypes)) {
 			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinCovenants");
-			details = processingFinOptionList(details, fmi.getFinReference(), TableType.VIEW);
+			// FIXME FINID
+			details = processingFinOptionList(details, fmi.getFinID(), fmi.getFinReference(), TableType.VIEW);
 			auditDetails.addAll(details);
 		}
 
@@ -466,8 +468,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		return auditHeader;
 	}
 
-	private List<AuditDetail> setFinOptionAuditData(FinMaintainInstruction finMaintainInstruction, String auditTranType,
-			String method) {
+	private List<AuditDetail> setFinOptionAuditData(FinMaintainInstruction fmi, String auditTranType, String method) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
@@ -475,15 +476,16 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 
 		String[] fields = PennantJavaUtil.getFieldDetails(finOption, finOption.getExcludeFields());
 
-		for (int i = 0; i < finMaintainInstruction.getFinOptions().size(); i++) {
-			FinOption finOptions = finMaintainInstruction.getFinOptions().get(i);
+		for (int i = 0; i < fmi.getFinOptions().size(); i++) {
+			FinOption finOptions = fmi.getFinOptions().get(i);
 
 			if (StringUtils.isEmpty(finOptions.getRecordType())) {
 				continue;
 			}
 
-			finOptions.setFinReference(finMaintainInstruction.getFinReference());
-			finOptions.setWorkflowId(finMaintainInstruction.getWorkflowId());
+			finOptions.setFinID(fmi.getFinID());
+			finOptions.setFinReference(fmi.getFinReference());
+			finOptions.setWorkflowId(fmi.getWorkflowId());
 
 			boolean isRcdType = false;
 
@@ -492,7 +494,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 				isRcdType = true;
 			} else if (finOptions.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 				finOptions.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				if (finMaintainInstruction.isWorkflow()) {
+				if (fmi.isWorkflow()) {
 					isRcdType = true;
 				}
 			} else if (finOptions.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
@@ -514,10 +516,10 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 				}
 			}
 
-			finOptions.setRecordStatus(finMaintainInstruction.getRecordStatus());
-			finOptions.setUserDetails(finMaintainInstruction.getUserDetails());
-			finOptions.setLastMntOn(finMaintainInstruction.getLastMntOn());
-			finOptions.setLastMntBy(finMaintainInstruction.getLastMntBy());
+			finOptions.setRecordStatus(fmi.getRecordStatus());
+			finOptions.setUserDetails(fmi.getUserDetails());
+			finOptions.setLastMntOn(fmi.getLastMntOn());
+			finOptions.setLastMntBy(fmi.getLastMntBy());
 
 			auditDetails.add(
 					new AuditDetail(auditTranType, i + 1, fields[0], fields[1], finOptions.getBefImage(), finOptions));

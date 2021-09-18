@@ -55,6 +55,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerExtLiability;
 import com.pennant.backend.model.customermasters.CustomerIncome;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceExposure;
@@ -100,6 +101,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private List<GuarantorDetail> guarantorDetailList = new ArrayList<GuarantorDetail>();
 	private List<GuarantorDetail> oldVar_GuarantorDetailList = new ArrayList<GuarantorDetail>();
 	int ccDecimal = 0;
+
+	private long finID;
 	private String finreference = "";
 	private String custCIF = "";
 	private Object financeMainDialogCtrl;
@@ -163,10 +166,13 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		// READ OVERHANDED parameters !
 		if (arguments.containsKey("financeDetail")) {
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
-			finreference = financeDetail.getFinScheduleData().getFinanceMain().getFinReference();
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
+			FinanceMain fm = schdData.getFinanceMain();
+			finID = fm.getFinID();
+			finreference = fm.getFinReference();
 			custCIF = financeDetail.getCustomerDetails().getCustomer().getCustCIF();
-			ccDecimal = CurrencyUtil.getFormat(financeDetail.getFinScheduleData().getFinanceMain().getFinCcy());
-			ccy = financeDetail.getFinScheduleData().getFinanceMain().getFinCcy();
+			ccDecimal = CurrencyUtil.getFormat(fm.getFinCcy());
+			ccy = fm.getFinCcy();
 		}
 
 		if (arguments.containsKey("financeMainDialogCtrl")) {
@@ -327,9 +333,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	public void doSave_GuarantorDetail(FinanceDetail aFinanceDetail, boolean isSaveRecord) {
 		logger.debug("Entering ");
+
+		FinScheduleData schdData = aFinanceDetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
 		if (guarantorDetailList != null && !this.guarantorDetailList.isEmpty()) {
 			for (GuarantorDetail details : guarantorDetailList) {
-				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
+				details.setFinID(finID);
+				details.setFinReference(finReference);
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
 				details.setRecordStatus(aFinanceDetail.getUserAction());
@@ -350,9 +364,17 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 */
 	public void doSave_JointAccountDetail(FinanceDetail aFinanceDetail, boolean isSaveRecord) {
 		logger.debug("Entering ");
+
+		FinScheduleData schdData = aFinanceDetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+
 		if (jointAccountDetailList != null && !this.jointAccountDetailList.isEmpty()) {
 			for (JointAccountDetail details : jointAccountDetailList) {
-				details.setFinReference(aFinanceDetail.getFinScheduleData().getFinanceMain().getFinReference());
+				details.setFinID(finID);
+				details.setFinReference(finReference);
 				details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				details.setUserDetails(getUserWorkspace().getLoggedInUser());
 				details.setRecordStatus(aFinanceDetail.getUserAction());
@@ -370,18 +392,24 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onClick$btnAddJointDetails(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		updateFinanceDetails();
+
 		if (StringUtils.isEmpty(this.custCIF)) {
 			MessageUtil.showError("Please Select The Customer");
 			return;
 		}
+
 		JointAccountDetail jointAccountDetail = new JointAccountDetail();
+
 		FinanceMain financeMain = null;
 		if (getFinanceDetail() != null && getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
 			financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		}
+
 		jointAccountDetail.setNewRecord(true);
 		jointAccountDetail.setWorkflowId(0);
+		jointAccountDetail.setFinID(finID);
 		jointAccountDetail.setFinReference(finreference);
+
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jointAccountDetail", jointAccountDetail);
 		map.put("finJointAccountCtrl", this);
@@ -393,6 +421,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		map.put("ccy", ccy);
 		map.put("filter", setFilter(getjointAcFilter()));
 		map.put("coAppFilter", setFilter(getGurantorFilter())); // For getting coapplicant list from getGurantorFilter()
+
 		if (financeMainDialogCtrl != null && financeMainDialogCtrl instanceof FinanceMainBaseCtrl) {
 			map.put("jointAccountDetailList", tempJointAccountDetailList);
 			map.put("applicationNo", ((FinanceMainBaseCtrl) financeMainDialogCtrl).getApplicationNo());
@@ -401,12 +430,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 			map.put("applicationNo", financeMain.getApplicationNo());
 			map.put("leadId", financeMain.getOfferId());
 		}
+
 		try {
 			Executions.createComponents("/WEB-INF/pages/JointAccountDetail/JointAccountDetailDialog.zul",
 					window_JointAccountDetailDialog, map);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -596,18 +627,23 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	public void onClick$btnAddGurantorDetails(Event event) throws InterruptedException {
 		logger.debug("Entering" + event.toString());
 		updateFinanceDetails();
+
 		if (StringUtils.isEmpty(this.custCIF)) {
 			MessageUtil.showError("Please Select The Customer");
 			return;
 		}
+
 		FinanceMain financeMain = null;
 		if (getFinanceDetail() != null && getFinanceDetail().getFinScheduleData().getFinanceMain() != null) {
 			financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		}
+
 		GuarantorDetail guarantorDetail = new GuarantorDetail();
 		guarantorDetail.setNewRecord(true);
 		guarantorDetail.setWorkflowId(0);
+		guarantorDetail.setFinID(finID);
 		guarantorDetail.setFinReference(finreference);
+
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("guarantorDetail", guarantorDetail);
 		map.put("finJointAccountCtrl", this);

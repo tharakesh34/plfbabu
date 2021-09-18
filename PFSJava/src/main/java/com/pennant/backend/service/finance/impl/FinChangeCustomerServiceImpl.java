@@ -206,8 +206,8 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 			return;
 		}
 
-		String finReference = fcc.getFinReference();
 		long finID = fcc.getFinID();
+		String finReference = fcc.getFinReference();
 		changeCustomerDetails(fcc);
 
 		FinanceTaxDetail td = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_Temp");
@@ -231,6 +231,7 @@ public class FinChangeCustomerServiceImpl extends GenericService<FinChangeCustom
 		jd.setVersion(ajd.getVersion());
 		jd.setLastMntOn(ajd.getLastMntOn());
 		jd.setLastMntBy(ajd.getLastMntBy());
+		jd.setFinID(finID);
 		jd.setFinReference(finReference);
 		jd.setCustCIF(fcc.getCustCif());
 
