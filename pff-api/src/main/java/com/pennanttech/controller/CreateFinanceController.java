@@ -2434,7 +2434,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public FinanceDetail getFinanceDetails(long finID) {
 		logger.debug(Literal.ENTERING);
+		
 		FinanceDetail fd = null;
+		
 		try {
 			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 

@@ -1173,7 +1173,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceType financeType = schdData.getFinanceType();
 		if (isWIF && reqCustDetail && fm != null) {
 
-			if (StringUtils.equals(financeType.getFinDivision(), FinanceConstants.FIN_DIVISION_RETAIL)) {
+			if (FinanceConstants.FIN_DIVISION_RETAIL.equals(financeType.getFinDivision())) {
 
 				long custId = fm.getCustID();
 				if (custId != 0) {
@@ -1202,6 +1202,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					wifcustomer.setLovDescCustCtgCodeName("Individual");
 					fd.setCustomer(wifcustomer);
 				}
+
 				fd.getCustomer().setCustomerIncomeList(prepareIncomeDetails());
 				String finType = financeType.getFinType();
 
@@ -1553,7 +1554,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	private void setFinanceDetails(FinanceDetail fd, String type, boolean isWIF) {
-
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 
 		long finID = fm.getFinID();

@@ -30,6 +30,7 @@ import com.pennant.app.constants.FrequencyCodeTypes;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
+import com.pennant.app.model.FrequencyDetails;
 import com.pennant.app.model.RateDetail;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
@@ -39,7 +40,6 @@ import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BaseRateDAO;
-import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.applicationmaster.FlagDAO;
 import com.pennant.backend.dao.applicationmaster.PinCodeDAO;
@@ -133,6 +133,7 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Salutation;
 import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
+import com.pennant.backend.service.applicationmaster.BranchService;
 import com.pennant.backend.service.applicationmaster.RelationshipOfficerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
@@ -186,7 +187,7 @@ public class FinanceDataValidation {
 
 	private BaseRateDAO baseRateDAO;
 	private SplRateDAO splRateDAO;
-	private BranchDAO branchDAO;
+	private BranchService branchService;
 	private CustomerDAO customerDAO;
 	private FinanceMainDAO financeMainDAO;
 	private FinanceDetailService financeDetailService;
@@ -243,83 +244,84 @@ public class FinanceDataValidation {
 	 * Method for Validating Finance Schedule Prepared Data against application masters.
 	 * 
 	 * @param vldGroup
-	 * @param finScheduleData
+	 * @param schdData
 	 * @param apiFlag
 	 * @param financeDetail
 	 * @return
 	 */
-	public FinScheduleData financeDataValidation(String vldGroup, FinScheduleData finScheduleData, boolean apiFlag,
-			FinanceDetail finDetail, boolean isEMI) {
+	public FinScheduleData financeDataValidation(String vldGroup, FinScheduleData schdData, boolean apiFlag,
+			FinanceDetail fd, boolean isEMI) {
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
-		int ccyFormat = CurrencyUtil.getFormat(finMain.getFinCcy());
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+		int ccyFormat = CurrencyUtil.getFormat(fm.getFinCcy());
 
-		List<ErrorDetail> errorDetails = null;
 		boolean isAPICall = apiFlag;
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
-		// Non Finance validation
-		errorDetails = nonFinanceValidation(vldGroup, finScheduleData, isAPICall, finDetail);
+		List<ErrorDetail> errors = new ArrayList<>();
+		schdData.setErrorDetails(errors);
 
-		if (financeType.isFinIsGenRef())
-			finMain.setFinReference(null);
+		nonFinanceValidation(vldGroup, schdData, fd);
 
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		if (finType.isFinIsGenRef())
+			fm.setFinReference(null);
+
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+
+			return schdData;
 		}
 
-		// Basic Details validation
-		errorDetails = basicValidation(vldGroup, finScheduleData, isAPICall, finDetail, isEMI);
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		basicValidation(schdData, fd, isEMI);
+
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+
+			return schdData;
 		}
 
-		// Grace Details Validation
-		if (finMain.isAllowGrcPeriod()) {
-			errorDetails = graceValidation(vldGroup, finScheduleData, isAPICall);
-			if (!errorDetails.isEmpty()) {
-				finScheduleData.setErrorDetails(errorDetails);
-				return finScheduleData;
+		if (fm.isAllowGrcPeriod()) {
+			graceValidation(schdData);
+
+			if (!errors.isEmpty()) {
+				schdData.setErrorDetails(errors);
+
+				return schdData;
 			}
 		}
 
-		// Repayments Details Validation
-		errorDetails = repayValidation(vldGroup, finScheduleData, isAPICall);
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		repayValidation(schdData);
+
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+
+			return schdData;
 		}
 
-		// Vas Recording validations
-		errorDetails = vasRecordingValidations(vldGroup, finScheduleData, isAPICall, "");
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		errors = vasRecordingValidations(vldGroup, schdData, isAPICall, "");
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+			return schdData;
 		}
 
-		// Vas Fee validations
-		if (finScheduleData.getVasRecordingList() != null && !finScheduleData.getVasRecordingList().isEmpty()) {
-			errorDetails = vasFeeValidations(vldGroup, finScheduleData);
-			if (!errorDetails.isEmpty()) {
-				finScheduleData.setErrorDetails(errorDetails);
-				return finScheduleData;
+		if (CollectionUtils.isNotEmpty(schdData.getVasRecordingList())) {
+			errors = vasFeeValidations(vldGroup, schdData);
+			if (!errors.isEmpty()) {
+				schdData.setErrorDetails(errors);
+				return schdData;
 			}
 		}
 
-		// Fee validations
 		// TODO FIX
 		boolean stp;
-		if (finDetail == null) {
+		if (fd == null) {
 			stp = true;
 		} else {
-			stp = finDetail.isStp();
+			stp = fd.isStp();
 		}
 
-		// As per IMD Changes paid can be done through IMD only
-		List<FinFeeDetail> feeList = finScheduleData.getFinFeeDetailList();
+		List<FinFeeDetail> feeList = schdData.getFinFeeDetailList();
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup) && !CollectionUtils.isEmpty(feeList)) {
 			for (FinFeeDetail feeDetail : feeList) {
 				// As per IMD Changes PAID can be happen through IMD only
@@ -327,82 +329,82 @@ public class FinanceDataValidation {
 					String[] valueParm = new String[2];
 					valueParm[0] = feeDetail.getFeeTypeCode();
 					valueParm[1] = "0";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("IMD006", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("IMD006", valueParm)));
 				}
 			}
 		}
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+			return schdData;
 		} // IMD
 
-		errorDetails = doValidateFees(finScheduleData, stp);
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		errors = doValidateFees(schdData, stp);
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+			return schdData;
 		}
 
 		// Step validations
-		if (finScheduleData.getStepPolicyDetails() != null && !finScheduleData.getStepPolicyDetails().isEmpty()) {
-			finScheduleData.setStepPolicyDetails(finScheduleData.getStepPolicyDetails(), true);
-			errorDetails = stepValidations(vldGroup, finScheduleData, isAPICall);
-			if (!errorDetails.isEmpty()) {
-				finScheduleData.setErrorDetails(errorDetails);
-				return finScheduleData;
+		if (schdData.getStepPolicyDetails() != null && !schdData.getStepPolicyDetails().isEmpty()) {
+			schdData.setStepPolicyDetails(schdData.getStepPolicyDetails(), true);
+			errors = stepValidations(vldGroup, schdData, isAPICall);
+			if (!errors.isEmpty()) {
+				schdData.setErrorDetails(errors);
+				return schdData;
 			}
 		}
 
-		if (finMain.getFinAssetValue().compareTo(BigDecimal.ZERO) > 0) {
-			if (finMain.getFinAssetValue().compareTo(financeType.getFinMinAmount()) == -1) {
+		if (fm.getFinAssetValue().compareTo(BigDecimal.ZERO) > 0) {
+			if (fm.getFinAssetValue().compareTo(finType.getFinMinAmount()) == -1) {
 				String[] valueParm = new String[1];
-				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), ccyFormat);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
+				valueParm[0] = PennantApplicationUtil.amountFormate(finType.getFinMinAmount(), ccyFormat);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 			}
 		}
 		// Net Loan Amount
-		BigDecimal netLoanAmount = finMain.getFinAmount().subtract(finMain.getDownPayment());
+		BigDecimal netLoanAmount = fm.getFinAmount().subtract(fm.getDownPayment());
 		// This is violating Over Draft Loan
-		if (finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-			if (netLoanAmount.compareTo(financeType.getFinMinAmount()) < 0) {
+		if (schdData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+			if (netLoanAmount.compareTo(finType.getFinMinAmount()) < 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMinAmount(), ccyFormat);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
+				valueParm[0] = PennantApplicationUtil.amountFormate(finType.getFinMinAmount(), ccyFormat);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90132", valueParm)));
 			}
 		}
 
-		if (financeType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
-			if (finMain.getFinAssetValue().compareTo(financeType.getFinMaxAmount()) > 0) {
+		if (finType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
+			if (fm.getFinAssetValue().compareTo(finType.getFinMaxAmount()) > 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), ccyFormat);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
+				valueParm[0] = PennantApplicationUtil.amountFormate(finType.getFinMaxAmount(), ccyFormat);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
 			}
 		}
 
-		if (financeType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
-			if (netLoanAmount.compareTo(financeType.getFinMaxAmount()) > 0) {
+		if (finType.getFinMaxAmount().compareTo(zeroAmount) > 0) {
+			if (netLoanAmount.compareTo(finType.getFinMaxAmount()) > 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = PennantApplicationUtil.amountFormate(financeType.getFinMaxAmount(), ccyFormat);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
+				valueParm[0] = PennantApplicationUtil.amountFormate(finType.getFinMaxAmount(), ccyFormat);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90133", valueParm)));
 			}
 		}
 
-		if (finMain.getReqRepayAmount().compareTo(BigDecimal.ZERO) < 0) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90187", null)));
+		if (fm.getReqRepayAmount().compareTo(BigDecimal.ZERO) < 0) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90187", null)));
 		}
 
-		if (finMain.getReqRepayAmount().compareTo(netLoanAmount) > 0) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90188", null)));
+		if (fm.getReqRepayAmount().compareTo(netLoanAmount) > 0) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90188", null)));
 		}
 
-		errorDetails.addAll(finODPenaltyRateValidation(finScheduleData));
+		errors.addAll(finODPenaltyRateValidation(schdData));
 		// OCR Validations
-		errorDetails.addAll(finOCRValidation(finDetail));
-		if (!errorDetails.isEmpty()) {
-			finScheduleData.setErrorDetails(errorDetails);
-			return finScheduleData;
+		errors.addAll(finOCRValidation(fd));
+		if (!errors.isEmpty()) {
+			schdData.setErrorDetails(errors);
+			return schdData;
 		}
 
-		return finScheduleData;
+		return schdData;
 	}
 
 	/**
@@ -1678,7 +1680,7 @@ public class FinanceDataValidation {
 		}
 		// validate finance branch
 		if (isCreateLoan || StringUtils.isNotBlank(finMain.getFinBranch())) {
-			Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
+			Branch branch = branchService.getBranch(finMain.getFinBranch());
 			if (branch == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finMain.getFinBranch();
@@ -3588,79 +3590,71 @@ public class FinanceDataValidation {
 		return errorDetails;
 	}
 
-	private List<ErrorDetail> nonFinanceValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall,
-			FinanceDetail finDetail) {
-		// Re-Initialize Error Details
-		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		boolean isCreateLoan = false;
+	private void nonFinanceValidation(String vldGroup, FinScheduleData schdData, FinanceDetail fd) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		if (StringUtils.equals(vldGroup, PennantConstants.VLD_CRT_LOAN)) {
-			isCreateLoan = true;
-		}
+		FinanceMain fm = schdData.getFinanceMain();
 
-		// Validate Finance Currency if not default currency
-		if (!StringUtils.equals(finMain.getFinCcy(), SysParamUtil.getAppCurrency())) {
-			boolean currencyExists = currencyDAO.isExistsCurrencyCode(finMain.getFinCcy());
-			if (!currencyExists) {
+		String finCcy = fm.getFinCcy();
+		String swiftBranchCode = fm.getSwiftBranchCode();
+		String finBranch = fm.getFinBranch();
+		String repayMethod = fm.getFinRepayMethod();
+		String finPurpose = fm.getFinPurpose();
+
+		boolean isCreateLoan = PennantConstants.VLD_CRT_LOAN.equals(vldGroup);
+
+		String appCurrency = SysParamUtil.getAppCurrency();
+
+		if (!appCurrency.equals(finCcy)) {
+			// FIXME :: move to cache
+			if (!currencyDAO.isExistsCurrencyCode(finCcy)) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getFinCcy();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90120", valueParm)));
-				return errorDetails;
+				valueParm[0] = finCcy;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90120", valueParm)));
+				return;
 			}
 		}
 
-		// Validate finance branch (Swift Branch was set after validation)
-		// Theoretically, it should never go inside in the if condition
-		if (StringUtils.isBlank(finMain.getSwiftBranchCode())) {
-			if (isCreateLoan || StringUtils.isNotBlank(finMain.getFinBranch())) {
-				Branch branch = branchDAO.getBranchById(finMain.getFinBranch(), "");
-				if (branch == null) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getFinBranch();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
-				}
+		if (StringUtils.isBlank(swiftBranchCode) && (isCreateLoan || StringUtils.isNotBlank(finBranch))) {
+			Branch branch = branchService.getBranch(finBranch);
+
+			if (branch == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finBranch;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90129", valueParm)));
 			}
 		}
 
-		// Validate Repayment Method
-		// TODO: To be confirmed from where it should be taken?
-		// PennantStaticListUtil.getRepayMethods() OR MandateConstants or
-		// FinanceConstants??
-		if (isCreateLoan) {
-			String repayMethod = finMain.getFinRepayMethod();
+		if (!isCreateLoan) {
+			return;
+		}
 
-			// finRepay method
-			if (StringUtils.isNotBlank(repayMethod)) {
-				List<ValueLabel> repayMethods = PennantStaticListUtil.getRepayMethods();
-				boolean repayMehodSts = false;
-				for (ValueLabel value : repayMethods) {
-					if (StringUtils.equals(value.getValue(), repayMethod)) {
-						repayMehodSts = true;
-						break;
-					}
+		if (StringUtils.isNotBlank(repayMethod)) {
+			List<ValueLabel> repayMethods = PennantStaticListUtil.getRepayMethods();
+			boolean repayMehodSts = false;
+			for (ValueLabel value : repayMethods) {
+				if (StringUtils.equals(value.getValue(), repayMethod)) {
+					repayMehodSts = true;
+					break;
 				}
+			}
 
-				if (!repayMehodSts) {
-					String[] valueParm = new String[1];
-					valueParm[0] = repayMethod;
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90307", valueParm)));
-				}
+			if (!repayMehodSts) {
+				String[] valueParm = new String[1];
+				valueParm[0] = repayMethod;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90307", valueParm)));
 			}
 		}
 
-		if (isCreateLoan) {
-			String finPurpose = finMain.getFinPurpose();
-			if (StringUtils.isNotBlank(finPurpose)) {
-				LoanPurpose loanPurpose = loanPurposeDAO.getLoanPurposeById(finPurpose, "");
-				if (loanPurpose == null || !loanPurpose.isLoanPurposeIsActive()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = finPurpose;
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
-				}
+		if (StringUtils.isNotBlank(finPurpose)) {
+			// FIXME :: move to cache
+			LoanPurpose loanPurpose = loanPurposeDAO.getLoanPurposeById(finPurpose, "");
+			if (loanPurpose == null || !loanPurpose.isLoanPurposeIsActive()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finPurpose;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90701", valueParm)));
 			}
 		}
-		return errorDetails;
 	}
 
 	/*
@@ -3669,189 +3663,187 @@ public class FinanceDataValidation {
 	 * =======================================
 	 */
 
-	private List<ErrorDetail> basicValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall,
-			FinanceDetail finDetail, boolean isEMI) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void basicValidation(FinScheduleData schdData, FinanceDetail fd, boolean isEMI) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		FinanceMain fm = schdData.getFinanceMain();
+
+		FinanceType finType = schdData.getFinanceType();
+
+		String applicationNo = fm.getApplicationNo();
+		Date finStartDate = fm.getFinStartDate();
+		String productCategory = fm.getProductCategory();
+		BigDecimal finAmount = fm.getFinAmount();
+		BigDecimal finAssetValue = fm.getFinAssetValue();
+		BigDecimal downPayBank = fm.getDownPayBank();
+		BigDecimal downPaySupl = fm.getDownPaySupl();
+		BigDecimal downPayment = downPayBank.add(downPaySupl);
+
 		BigDecimal zeroAmount = BigDecimal.ZERO;
 
-		// Application number
 		if (!ImplementationConstants.CLIENT_NFL) {
-			if (StringUtils.isNotBlank(finMain.getApplicationNo())
-					&& finMain.getApplicationNo().length() > LengthConstants.LEN_REF) {
+			if (StringUtils.isNotBlank(applicationNo) && applicationNo.length() > LengthConstants.LEN_REF) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Application Number";
 				valueParm[1] = LengthConstants.LEN_REF + " characters";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
 			}
 		}
 
-		// Finance start date
-		Date appDate = SysParamUtil.getAppDate();
 		if (!isEMI) {
-			Date minReqFinStartDate = DateUtility.addDays(appDate, -SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE"));
-			if (finMain.getFinStartDate().compareTo(minReqFinStartDate) <= 0) {
+			int backDatedDays = SysParamUtil.getValueAsInt("BACKDAYS_STARTDATE");
+			Date minReqFinStartDate = DateUtil.addDays(appDate, -backDatedDays);
+
+			if (finStartDate.compareTo(minReqFinStartDate) <= 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = SysParamUtil.getValueAsString("BACKDAYS_STARTDATE");
-				valueParm[1] = DateUtility.format(DateUtility.addDays(minReqFinStartDate, 1),
-						PennantConstants.XMLDateFormat);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90134", valueParm)));
+				valueParm[0] = String.valueOf(backDatedDays);
+				valueParm[1] = DateUtil.format(DateUtil.addDays(minReqFinStartDate, 1), PennantConstants.XMLDateFormat);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90134", valueParm)));
 			}
 		}
-		Date maxReqFinStartDate = DateUtility.addDays(appDate, +SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
-		if (finMain.getFinStartDate().compareTo(maxReqFinStartDate) > 0) {
+
+		Date maxReqFinStartDate = DateUtil.addDays(appDate, +SysParamUtil.getValueAsInt("FUTUREDAYS_STARTDATE") + 1);
+
+		if (finStartDate.compareTo(maxReqFinStartDate) > 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Loan Start Date";
-			valueParm[1] = DateUtility.format(DateUtility.addDays(maxReqFinStartDate, 1),
-					PennantConstants.XMLDateFormat);
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", valueParm)));
+			valueParm[1] = DateUtil.format(DateUtil.addDays(maxReqFinStartDate, 1), PennantConstants.XMLDateFormat);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65027", valueParm)));
 		}
 
-		// Loan Amount Validation
-		if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-			if (finMain.getFinAmount().compareTo(zeroAmount) <= 0) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(finMain.getFinAmount().doubleValue());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
-			}
+		if (!FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory) && finAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(finAmount.doubleValue());
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
 		}
 
-		//
-		if (financeType.isAlwMaxDisbCheckReq() && finMain.getFinAssetValue().compareTo(zeroAmount) <= 0) {
+		if (finType.isAlwMaxDisbCheckReq() && finAssetValue.compareTo(zeroAmount) <= 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finAssetValue";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 		}
 
-		// finAssetValue
-		if (finMain.getFinAssetValue().compareTo(zeroAmount) > 0) {
-			if (finMain.getFinAmount().compareTo(finMain.getFinAssetValue()) > 0) {
+		if (finAssetValue.compareTo(BigDecimal.ZERO) > 0 && finAmount.compareTo(finAssetValue) > 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "finAmount";
+			valueParm[1] = "finAssetValue";
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+		}
+
+		fm.setDownPayment(downPayment);
+
+		if (finType.isFinIsDwPayRequired() && fd != null) {
+			setDownpaymentRulePercentage(finType, fm, fd);
+			BigDecimal reqDwnPay = getPercentageValue(finAmount, fm.getMinDownPayPerc());
+
+			if (downPayment.compareTo(finAmount) >= 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Sum of Bank & Supplier Down payments";
+				valueParm[1] = String.valueOf(reqDwnPay);
+				valueParm[2] = String.valueOf(finAmount);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30567", valueParm)));
+			}
+
+			if (downPayment.compareTo(reqDwnPay) < 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "finAmount";
-				valueParm[1] = "finAssetValue";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+				valueParm[0] = "Sum of Bank & Supplier Down payments";
+				valueParm[1] = String.valueOf(reqDwnPay);
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
 			}
-		}
 
-		finMain.setDownPayment(finMain.getDownPayBank().add(finMain.getDownPaySupl()));
-
-		// validate downpay Bank and supplier
-		if (financeType.isFinIsDwPayRequired()) {
-			if (finDetail != null) {
-				setDownpaymentRulePercentage(financeType, finMain, finDetail);
-				BigDecimal reqDwnPay = getPercentageValue(finMain.getFinAmount(), finMain.getMinDownPayPerc());
-				BigDecimal downPayment = finMain.getDownPayBank().add(finMain.getDownPaySupl());
-
-				if (downPayment.compareTo(finMain.getFinAmount()) >= 0) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "Sum of Bank & Supplier Down payments";
-					valueParm[1] = String.valueOf(reqDwnPay);
-					valueParm[2] = String.valueOf(finMain.getFinAmount());
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30567", valueParm)));
-				}
-
-				if (downPayment.compareTo(reqDwnPay) < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Sum of Bank & Supplier Down payments";
-					valueParm[1] = String.valueOf(reqDwnPay);
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30569", valueParm)));
-				}
-			}
-		} else if (finMain.getDownPayBank().compareTo(zeroAmount) != 0
-				|| finMain.getDownPaySupl().compareTo(zeroAmount) != 0) {
+		} else if (downPayBank.compareTo(BigDecimal.ZERO) != 0 || downPaySupl.compareTo(BigDecimal.ZERO) != 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Down pay bank";
 			valueParm[1] = "Supplier";
-			valueParm[2] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90203", valueParm)));
+			valueParm[2] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90203", valueParm)));
 		}
-		String tdsType = finMain.getTdsType();
-		if (finMain.isTDSApplicable()) {
-			// Loan Queue TDS is Applicable but in Loan Type it is marked as False
-			if (!financeType.isTdsApplicable()) {
+
+		String tdsType = fm.getTdsType();
+
+		if (fm.isTDSApplicable()) {
+
+			if (!finType.isTdsApplicable()) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "tds";
-				valueParm[1] = financeType.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+				valueParm[1] = finType.getFinType();
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 			}
-			// Validating TDS Type
-			String loanTypeTdsType = financeType.getTdsType();
-			if (StringUtils.isNotBlank(tdsType)) {
-				// Loan type TDS Type as USER or AUTO or MANUAL
-				if (!"#".equals(loanTypeTdsType)) {
-					// If TDS Type is not != User selection
-					if (!PennantConstants.TDS_USER_SELECTION.equals(loanTypeTdsType)) {
-						// Loan Type value and Loan Queue Value should be same
-						if (!StringUtils.equals(tdsType, loanTypeTdsType)) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "tdsType";
-							valueParm[1] = loanTypeTdsType;
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
-						}
-						// From Loan Queue passing Different Values
-					} else if (!(StringUtils.equalsIgnoreCase(tdsType, PennantConstants.TDS_AUTO)
-							|| StringUtils.equalsIgnoreCase(tdsType, PennantConstants.TDS_MANUAL))) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "tdsType";
-						valueParm[1] = PennantConstants.TDS_AUTO + " , " + PennantConstants.TDS_MANUAL;
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
-					}
+
+			String loanTypeTdsType = finType.getTdsType();
+			if (StringUtils.isNotBlank(tdsType) && !"#".equals(loanTypeTdsType)) {
+				if (!PennantConstants.TDS_USER_SELECTION.equals(loanTypeTdsType) && !loanTypeTdsType.equals(tdsType)) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "tdsType";
+					valueParm[1] = loanTypeTdsType;
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+				} else if (!(PennantConstants.TDS_AUTO.equalsIgnoreCase(tdsType)
+						|| PennantConstants.TDS_MANUAL.equalsIgnoreCase(tdsType))) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "tdsType";
+					valueParm[1] = PennantConstants.TDS_AUTO + " , " + PennantConstants.TDS_MANUAL;
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
 				}
-				// With out passing TDS Type in Loan Queue but in Loan Type TDS type is USER or AUTO or MANUAL
 			} else if (StringUtils.isBlank(tdsType) && !"#".equals(loanTypeTdsType)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "tdsType";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30561", valueParm)));
 			}
-			// TDS is not applicable in loan queue but passing TDS Type value from API
 		} else if (StringUtils.isNotBlank(tdsType) && !"#".equals(tdsType)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "tdsType";
 			valueParm[1] = "tdsApplicable is true";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
 		}
-		if (finMain.isQuickDisb()) {
-			if (!financeType.isQuickDisb()) {
-				String[] valueParm = new String[3];
-				valueParm[0] = "quickDisb";
-				valueParm[1] = financeType.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+
+		if (fm.isQuickDisb() && !finType.isQuickDisb()) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "quickDisb";
+			valueParm[1] = finType.getFinType();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+		}
+
+		if (!errors.isEmpty()) {
+			return;
+		}
+
+		if (fm.isManualSchedule()) {
+			manualScheduleValidation(schdData);
+
+			if (!errors.isEmpty()) {
+				return;
 			}
 		}
-		// RETURN IF ANY ERROR AFTER VERY BASIC VALIDATION
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
-		}
 
-		// Allow Manual Schedule
-		if (finMain.isManualSchedule()) {
-			errorDetails = manualScheduleValidation(vldGroup, finScheduleData);
-			if (!errorDetails.isEmpty()) {
-				return errorDetails;
+		if (fm.getPlanDeferCount() > 0) {
+			planDefermentValidation(schdData);
+
+			if (!errors.isEmpty()) {
+				return;
 			}
 		}
 
-		// Planned Deferments
-		if (finMain.getPlanDeferCount() > 0) {
-			errorDetails = planDefermentValidation(vldGroup, finScheduleData);
-			if (!errorDetails.isEmpty()) {
-				return errorDetails;
-			}
-		}
-		// planned EMI
-		errorDetails = planEMIHolidayValidation(vldGroup, finScheduleData);
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		planEMIHolidayValidation(schdData);
+
+		if (!errors.isEmpty()) {
+			return;
 		}
 
-		// Step Loan?
-		errorDetails = stepLoanValidation(vldGroup, finScheduleData);
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
-		}
-
-		return errorDetails;
+		stepLoanValidation(schdData);
 	}
 
 	/*
@@ -3898,53 +3890,56 @@ public class FinanceDataValidation {
 		}
 	}
 
-	private List<ErrorDetail> graceValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void graceValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
 
 		// Allow Grace?
-		if (!financeType.isFInIsAlwGrace()) {
+		if (!finType.isFInIsAlwGrace()) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90135", valueParm)));
-			return errorDetails;
+			valueParm[0] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90135", valueParm)));
+
+			return;
 		}
 
 		// Grace Terms & Grace End Date are Mutually Exclusive
-		if (finMain.getGraceTerms() > 0 && finMain.getGrcPeriodEndDate() != null) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90152", null)));
-			return errorDetails;
+		if (fm.getGraceTerms() > 0 && fm.getGrcPeriodEndDate() != null) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90152", null)));
+
+			return;
 		}
 
 		// Both Grace Terms & Grace End Date are not present
-		if (finMain.getGraceTerms() == 0 && finMain.getGrcPeriodEndDate() == null) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90184", null)));
-			return errorDetails;
+		if (fm.getGraceTerms() == 0 && fm.getGrcPeriodEndDate() == null) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90184", null)));
+
+			return;
 		}
 
 		// Validate Profit Details
-		errorDetails = gracePftFrqValidation(finScheduleData);
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		gracePftFrqValidation(schdData);
+
+		if (CollectionUtils.isNotEmpty(errors)) {
+			return;
 		}
 
 		// Grace Rate Validations
-		errorDetails = graceRateValidation(finScheduleData);
+		graceRateValidation(schdData);
 
 		// Validate Review Details
-		errorDetails = gracePftReviewValidation(finScheduleData);
+		gracePftReviewValidation(schdData);
 
 		// Validate Capitalization Details
-		errorDetails = gracePftCpzValidation(finScheduleData);
+		gracePftCpzValidation(schdData);
 
 		// Validate Grace Payment and Methods
-		errorDetails = graceSchdValidation(finScheduleData);
+		graceSchdValidation(schdData);
 
 		// Validate Grace Dates
-		errorDetails = graceDatesValidation(finScheduleData);
-
-		return errorDetails;
+		graceDatesValidation(schdData);
 	}
 
 	/*
@@ -3953,197 +3948,232 @@ public class FinanceDataValidation {
 	 * =======================================
 	 */
 
-	private List<ErrorDetail> repayValidation(String vldGroup, FinScheduleData finScheduleData, boolean isAPICall) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void repayValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		// Number of Terms & Maturity Date are Mutually Exclusive
-		// This is not applicable for OverDraft Web services
-		if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-			if (finMain.getNumberOfTerms() > 0 && finMain.getMaturityDate() != null) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
-				return errorDetails;
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		String productCategory = fm.getProductCategory();
+		Date maturityDate = fm.getMaturityDate();
+		int numberOfTerms = fm.getNumberOfTerms();
+		String subVentionFrom = fm.getSubVentionFrom();
+		Long manufacturerDealerId = fm.getManufacturerDealerId();
+		String scheduleMethod = fm.getScheduleMethod();
+
+		int finMinTerm = finType.getFinMinTerm();
+		int finMaxTerm = finType.getFinMaxTerm();
+		boolean subventionReq = finType.isSubventionReq();
+
+		/* Number of Terms & Maturity Date are Mutually Exclusive This is not applicable for OverDraft Web services */
+		if (!FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory)) {
+			if (numberOfTerms > 0 && maturityDate != null) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90190", null)));
+
+				return;
 			}
 		}
 
 		// Both Grace Terms & Grace End Date are not present
-		if (finMain.getNumberOfTerms() == 0 && finMain.getMaturityDate() == null) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90191", null)));
-			return errorDetails;
+		if (numberOfTerms == 0 && maturityDate == null) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90191", null)));
+
+			return;
 		}
 
 		// validate min and max terms with loanType config.
-		if (financeType.getFinMinTerm() > 0 && financeType.getFinMaxTerm() > 0) {
-			if (finMain.getNumberOfTerms() < financeType.getFinMinTerm()
-					|| finMain.getNumberOfTerms() > financeType.getFinMaxTerm()) {
+		if (finMinTerm > 0 && finMaxTerm > 0) {
+			if (numberOfTerms < finMinTerm || numberOfTerms > finMaxTerm) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Repay";
-				valueParm[1] = String.valueOf(financeType.getFinMinTerm());
-				valueParm[2] = String.valueOf(financeType.getFinMaxTerm());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
-				return errorDetails;
+				valueParm[1] = String.valueOf(finMinTerm);
+				valueParm[2] = String.valueOf(finMaxTerm);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
+
+				return;
 			}
 		}
 
-		if (financeType.isSubventionReq()) {
-
-			if (StringUtils.isBlank(finMain.getSubVentionFrom())) {
+		if (subventionReq) {
+			if (StringUtils.isBlank(subVentionFrom)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "subVentionFrom";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+				return;
 			}
 
-			if (StringUtils.isNotBlank(finMain.getSubVentionFrom()) && finMain.getManufacturerDealerId() == null) {
+			if (StringUtils.isNotBlank(subVentionFrom) && manufacturerDealerId == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "ManufacturerDealerId";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+				return;
 			}
 
 			List<ValueLabel> subVenFrom = PennantStaticListUtil.getSubVentionFrom();
 			boolean isSubVenFrom = false;
+
 			for (ValueLabel value : subVenFrom) {
-				if (StringUtils.equals(value.getValue(), finMain.getSubVentionFrom())) {
+				if (StringUtils.equals(value.getValue(), subVentionFrom)) {
 					isSubVenFrom = true;
 					break;
 				}
 			}
+
 			if (!isSubVenFrom) {
 				String[] valueParm = new String[2];
 				valueParm[0] = App.getLabel("label_ApplicableFor");
 				valueParm[1] = Labels.getLabel("label_Dealer") + "," + Labels.getLabel("label_Manufacturer");
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90281", valueParm)));
 			}
 
-			int count = vehicleDealerService.getApprovedVehicleDealerCountById(finMain.getManufacturerDealerId(),
-					finMain.getSubVentionFrom().equals("DSM") ? "DSM" : "MANF");
+			int count = vehicleDealerService.getApprovedVehicleDealerCountById(manufacturerDealerId,
+					subVentionFrom.equals("DSM") ? "DSM" : "MANF");
+
 			if (count <= 0) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getDmaCode();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
-				return errorDetails;
+				valueParm[0] = fm.getDmaCode();
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90501", valueParm)));
+
+				return;
 			}
 		}
-		// Repay Rate Validations
-		errorDetails = repayRateValidation(finScheduleData);
 
-		// Repayment Schedule Method (If not blanks validation already happens
-		// in defaulting)
-		if (!StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_NOPAY)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)
-				&& !StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_POS_INT)) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90189", null)));
+		// Repay Rate Validations
+		repayRateValidation(schdData);
+
+		/* Repayment Schedule Method (If not blanks validation already happens in defaulting) */
+		if (!CalculationConstants.SCHMTHD_NOPAY.equals(scheduleMethod)
+				&& !CalculationConstants.SCHMTHD_EQUAL.equals(scheduleMethod)
+				&& !CalculationConstants.SCHMTHD_PFT.equals(scheduleMethod)
+				&& !CalculationConstants.SCHMTHD_PFTCPZ.equals(scheduleMethod)
+				&& !CalculationConstants.SCHMTHD_PRI.equals(scheduleMethod)
+				&& !CalculationConstants.SCHMTHD_PRI_PFT.equals(scheduleMethod)
+				&& !CalculationConstants.SCHMTHD_POS_INT.equals(scheduleMethod)) {
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90189", null)));
 		}
 
 		// Validate Repayment Details
-		errorDetails = repayFrqValidation(finScheduleData);
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		repayFrqValidation(schdData);
+
+		if (!errors.isEmpty()) {
+			return;
 		}
 
 		// Validate Profit Details
-		errorDetails = repayPftFrqValidation(finScheduleData);
+		repayPftFrqValidation(schdData);
 
 		// Validate Review Details
-		errorDetails = repayPftReviewValidation(finScheduleData);
+		repayPftReviewValidation(schdData);
 
 		// Validate Capitalization Details
-		errorDetails = repayPftCpzValidation(finScheduleData);
+		repayPftCpzValidation(schdData);
 
 		// Pay on interest frequency
-		if (finMain.isFinRepayPftOnFrq() && !financeType.isFinRepayPftOnFrq()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90227", null)));
+		if (fm.isFinRepayPftOnFrq() && !finType.isFinRepayPftOnFrq()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90227", null)));
 		}
 
 		// Validate Repay Dates
-		errorDetails = repayDatesValidation(finScheduleData);
+		repayDatesValidation(schdData);
 
 		// validation for od Loan
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeType.getProductCategory())) {
-			errorDetails = odDatesValidation(finScheduleData);
+		if (FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory)) {
+			odDatesValidation(schdData);
 		}
 
 		// Validate BPI
-		if (financeType.isAlwBPI()) {
-			errorDetails = bpiValidation(finScheduleData);
-		} else if (finMain.isAlwBPI()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90228", null)));
-			return errorDetails;
+		if (finType.isAlwBPI()) {
+			bpiValidation(schdData);
+		} else if (fm.isAlwBPI()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90228", null)));
+			return;
 		}
 
 		// Advance EMI Validation
-		if (StringUtils.isNotBlank(finMain.getAdvType())) {
-			if (financeType.getAdvMinTerms() > 0 && financeType.getAdvMaxTerms() > 0) {
-				if (finMain.getAdvTerms() < financeType.getAdvMinTerms()
-						|| finMain.getAdvTerms() > financeType.getAdvMaxTerms()) {
-					String[] valueParm = new String[3];
-					valueParm[0] = "Advance Intrest/EMI";
-					valueParm[1] = String.valueOf(financeType.getAdvMinTerms());
-					valueParm[2] = String.valueOf(financeType.getAdvMaxTerms());
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
-					return errorDetails;
-				}
-			}
-			if (finMain.getAdvTerms() >= finMain.getNumberOfTerms()) {
+		int advTerms = fm.getAdvTerms();
+		int advMaxTerms = finType.getAdvMaxTerms();
+		int advMinTerms = finType.getAdvMinTerms();
+
+		if (StringUtils.isNotBlank(fm.getAdvType())) {
+			if ((advMinTerms > 0 && advMaxTerms > 0) && (advTerms < advMinTerms || advTerms > advMaxTerms)) {
 				String[] valueParm = new String[3];
-				valueParm[0] = "Advance Intrest/EMI" + String.valueOf(finMain.getAdvTerms());
-				valueParm[1] = " Number of terms : " + String.valueOf(finMain.getNumberOfTerms());
-				;
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-				return errorDetails;
+				valueParm[0] = "Advance Intrest/EMI";
+				valueParm[1] = String.valueOf(advMinTerms);
+				valueParm[2] = String.valueOf(advMaxTerms);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90272", valueParm)));
+
+				return;
 			}
-		} else if (finMain.getAdvTerms() > 0) {
+			if (advTerms >= numberOfTerms) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "Advance Intrest/EMI" + String.valueOf(advTerms);
+				valueParm[1] = " Number of terms : " + String.valueOf(numberOfTerms);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
+
+				return;
+			}
+		} else if (advTerms > 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Advance Intrest/EMI";
-			valueParm[1] = financeType.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
-			return errorDetails;
+			valueParm[1] = finType.getFinType();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+
+			return;
 		}
 
-		if (financeType.isAlwHybridRate()) {
-			if (finMain.getFixedRateTenor() < 0) {
+		if (finType.isAlwHybridRate()) {
+			if (fm.getFixedRateTenor() < 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Fixed Rate Tenor";
 				valueParm[1] = "0";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
-				return errorDetails;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65012", valueParm)));
+
+				return;
 			}
 
-			if (finMain.getFixedRateTenor() >= finMain.getNumberOfTerms()) {
+			if (fm.getFixedRateTenor() >= numberOfTerms) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "Fixed Rate Tenor : " + String.valueOf(finMain.getFixedRateTenor());
-				valueParm[1] = " Number of terms : " + String.valueOf(finMain.getNumberOfTerms());
-				;
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
-				return errorDetails;
+				valueParm[0] = "Fixed Rate Tenor : " + String.valueOf(fm.getFixedRateTenor());
+				valueParm[1] = " Number of terms : " + String.valueOf(numberOfTerms);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30565", valueParm)));
+
+				return;
 			}
 
 			// validate isAlwUnderConstruction
-			if (!financeType.isGrcAdjReq()) {
-				if (finMain.isAlwGrcAdj()) {
+			if (!finType.isGrcAdjReq()) {
+				if (fm.isAlwGrcAdj()) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "Alw Under Construction";
-					valueParm[1] = finMain.getFinType();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+					valueParm[1] = fm.getFinType();
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
 				}
 			}
 
-			if (finMain.getFixedRateTenor() > 0 && finMain.getFixedTenorRate().compareTo(BigDecimal.ZERO) <= 0) {
+			if (fm.getFixedRateTenor() > 0 && fm.getFixedTenorRate().compareTo(BigDecimal.ZERO) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Fixed Tenor Rate";
 				valueParm[1] = "0";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
-				return errorDetails;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+
+				return;
 			}
 		}
-
-		return errorDetails;
 	}
 
 	/*
@@ -4152,56 +4182,52 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> odDatesValidation(FinScheduleData finScheduleData) {
+	private void odDatesValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		String droplineFrq = fm.getDroplineFrq();
+		Date firstDroplineDate = fm.getFirstDroplineDate();
 
 		// it should match with frequency
-		if ((StringUtils.isNotBlank(finMain.getDroplineFrq())) && (finMain.getFirstDroplineDate() != null)) {
-			if (!FrequencyUtil.isFrqDate(finMain.getDroplineFrq(), finMain.getFirstDroplineDate())) {
+		if ((StringUtils.isNotBlank(droplineFrq)) && (firstDroplineDate != null)) {
+			if (!FrequencyUtil.isFrqDate(droplineFrq, firstDroplineDate)) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "FirstDroplineDate: " + finMain.getFirstDroplineDate();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91123", valueParm)));
+				valueParm[0] = "FirstDroplineDate: " + firstDroplineDate;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91123", valueParm)));
 			}
 		}
-		return errorDetails;
-
 	}
 
-	private List<ErrorDetail> manualScheduleValidation(String vldGroup, FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void manualScheduleValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
 
-		// Finance Type allow Manual Schedule?
-		if (!financeType.isManualSchedule()) {
+		if (!finType.isManualSchedule()) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90138", valueParm)));
+			valueParm[0] = fm.getFinType();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90138", valueParm)));
 		}
 
-		// Manual Schedule with Grace
-		if (!finMain.isAllowGrcPeriod()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90186", null)));
+		if (!fm.isAllowGrcPeriod()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90186", null)));
 		}
 
-		// Planned Deferment Requested
-		if (finMain.getPlanDeferCount() > 0) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90140", null)));
+		if (fm.getPlanDeferCount() > 0) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90140", null)));
 		}
 
-		// Finance Type allow Step?
-		if (!finMain.isStepFinance()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90144", null)));
+		if (!fm.isStepFinance()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90144", null)));
 		}
 
-		// Planned EMI Holiday Requested
-		if (finMain.isPlanEMIHAlw()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90149", null)));
+		if (fm.isPlanEMIHAlw()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90149", null)));
 		}
-
-		return errorDetails;
 	}
 
 	/*
@@ -4210,43 +4236,39 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> planDefermentValidation(String vldGroup, FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void planDefermentValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		// Finance Type allow Planned Deferments?
-		if (!financeType.isAlwPlanDeferment()) {
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		if (!finType.isAlwPlanDeferment()) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90139", valueParm)));
+			valueParm[0] = fm.getFinType();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90139", valueParm)));
 		}
 
-		// Repay Rate Basis not Flat Converting to Reducing
-		if (!StringUtils.equals(finMain.getRepayRateBasis(), CalculationConstants.RATE_BASIS_C)) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90151", null)));
+		if (!CalculationConstants.RATE_BASIS_C.equals(fm.getRepayRateBasis())) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90151", null)));
 		}
 
-		// Requested more deferments than defined in finance type?
-		if (finMain.getPlanDeferCount() > financeType.getPlanDeferCount()) {
+		if (fm.getPlanDeferCount() > finType.getPlanDeferCount()) {
 			String[] valueParm = new String[3];
-			valueParm[0] = Integer.toString(finMain.getPlanDeferCount());
-			valueParm[1] = Integer.toString(financeType.getPlanDeferCount());
-			valueParm[2] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90141", valueParm)));
+			valueParm[0] = Integer.toString(fm.getPlanDeferCount());
+			valueParm[1] = Integer.toString(finType.getPlanDeferCount());
+			valueParm[2] = fm.getFinType();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90141", valueParm)));
 		}
 
-		// Planned EMI Holidays also requested?
-		if (finMain.isPlanEMIHAlw()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90142", null)));
+		if (fm.isPlanEMIHAlw()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90142", null)));
 		}
 
-		// Stepping also requested?
-		if (finMain.isStepFinance()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90143", null)));
+		if (fm.isStepFinance()) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90143", null)));
 		}
-
-		return errorDetails;
 	}
 
 	/*
@@ -4255,124 +4277,124 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> stepLoanValidation(String vldGroup, FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void stepLoanValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		if (!finMain.isStepFinance()) {
-			if (finMain.isAlwManualSteps() || StringUtils.isNotBlank(finMain.getStepPolicy())
-					|| StringUtils.isNotBlank(finMain.getStepType())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90163", valueParm)));
-				return errorDetails;
-			}
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		boolean fmStepFinance = fm.isStepFinance();
+		boolean ftStepFinance = finType.isStepFinance();
+		String scheduleMethod = fm.getScheduleMethod();
+		String stepType = fm.getStepType();
+
+		if (!fmStepFinance && (fm.isAlwManualSteps() || StringUtils.isNotBlank(fm.getStepPolicy())
+				|| StringUtils.isNotBlank(stepType))) {
+			String[] valueParm = new String[1];
+			valueParm[0] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90163", valueParm)));
+
+			return;
 		}
 
-		// Finance Type allow Step?
-		if (finMain.isStepFinance() && !financeType.isStepFinance()) {
+		if (fmStepFinance && !ftStepFinance) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91129", valueParm)));
-			return errorDetails;
-		} else if (!finMain.isStepFinance() && financeType.isSteppingMandatory()) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91128", valueParm)));
-			return errorDetails;
+			valueParm[0] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91129", valueParm)));
+
+			return;
 		}
 
-		if (finMain.isStepFinance()) {
-			// ScheduleMethod
-			if (StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFT)
-					|| StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCPZ)
-					|| StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_PFTCAP)) {
+		if (!fmStepFinance && finType.isSteppingMandatory()) {
+			String[] valueParm = new String[1];
+			valueParm[0] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91128", valueParm)));
+
+			return;
+		}
+
+		if (fmStepFinance) {
+			if (CalculationConstants.SCHMTHD_PFT.equals(scheduleMethod)
+					|| CalculationConstants.SCHMTHD_PFTCPZ.equals(scheduleMethod)
+					|| CalculationConstants.SCHMTHD_PFTCAP.equals(scheduleMethod)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Interest only on Frequency";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30552", valueParm)));
-				return errorDetails;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30552", valueParm)));
+
+				return;
 			}
 
-			if (StringUtils.equals(finMain.getStepType(), FinanceConstants.STEPTYPE_PRIBAL)
-					&& StringUtils.equals(finMain.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+			if (FinanceConstants.STEPTYPE_PRIBAL.equals(stepType)
+					&& CalculationConstants.SCHMTHD_EQUAL.equals(scheduleMethod)) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Equal Installments (Principal and Interest)";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30555", valueParm)));
-				return errorDetails;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30555", valueParm)));
+
+				return;
 			}
 
-			if (finMain.isPlanEMIHAlw()) {
+			if (fm.isPlanEMIHAlw()) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Planned EMI";
 				valueParm[1] = "step";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90283", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90283", valueParm)));
 			}
 		}
 
-		// Planned EMI Holidays also requested?
-		/*
-		 * if (finMain.isPlanEMIHAlw()) { errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("90150", null))); }
-		 */
-
-		// Manual Steps Requested?
-		if (finMain.isAlwManualSteps()) {
-			// Allow Manual Step?
-			if (!financeType.isAlwManualSteps()) {
+		if (fm.isAlwManualSteps()) {
+			if (!finType.isAlwManualSteps()) {
 				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90145", valueParm)));
-				return errorDetails;
+				valueParm[0] = fm.getFinType();
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90145", valueParm)));
+
+				return;
 			}
 
-			if (StringUtils.isNotBlank(finMain.getStepPolicy())) {
+			if (StringUtils.isNotBlank(fm.getStepPolicy())) {
 				String[] valueParm = new String[2];
-				valueParm[0] = finMain.getStepPolicy();
+				valueParm[0] = fm.getStepPolicy();
 				valueParm[1] = "loan with allow manualSteps";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
-				return errorDetails;
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+
+				return;
 			}
-			// Step Type
-			if (PennantConstants.STEPPING_CALC_PERC.equals(financeType.getCalcOfSteps())
-					&& !FinanceConstants.STEPTYPE_EMI.equals(finMain.getStepType())
-					&& !FinanceConstants.STEPTYPE_PRIBAL.equals(finMain.getStepType())) {
+
+			if (PennantConstants.STEPPING_CALC_PERC.equals(finType.getCalcOfSteps())
+					&& !FinanceConstants.STEPTYPE_EMI.equals(stepType)
+					&& !FinanceConstants.STEPTYPE_PRIBAL.equals(stepType)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = new StringBuilder(10).append(FinanceConstants.STEPTYPE_EMI).append(" & ")
 						.append(FinanceConstants.STEPTYPE_PRIBAL).toString();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90148", valueParm)));
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90148", valueParm)));
 			}
 
-			// step aggregate
-			if (finScheduleData.getStepPolicyDetails() == null || finScheduleData.getStepPolicyDetails().isEmpty()) {
+			if (schdData.getStepPolicyDetails() == null || schdData.getStepPolicyDetails().isEmpty()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "step";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
 			}
 
-		} else if (finMain.isStepFinance()) {
-			// Step Policy requested
-			if (StringUtils.isBlank(finMain.getStepPolicy())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90146", null)));
+		} else if (fmStepFinance) {
+			if (StringUtils.isBlank(fm.getStepPolicy())) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90146", null)));
 			} else {
-				if (!StringUtils.containsIgnoreCase(financeType.getAlwdStepPolicies(), finMain.getStepPolicy())) {
+				if (!StringUtils.containsIgnoreCase(finType.getAlwdStepPolicies(), fm.getStepPolicy())) {
 					String[] valueParm = new String[2];
-					valueParm[0] = finMain.getFinType();
-					valueParm[1] = financeType.getAlwdStepPolicies();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90147", valueParm)));
+					valueParm[0] = fm.getFinType();
+					valueParm[1] = finType.getAlwdStepPolicies();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90147", valueParm)));
 				}
 
-				// Validate stepPolicy code
-				StepPolicyHeader stepHeader = stepPolicyService
-						.getApprovedStepPolicyHeaderById(finMain.getStepPolicy());
+				StepPolicyHeader stepHeader = stepPolicyService.getApprovedStepPolicyHeaderById(fm.getStepPolicy());
 				if (stepHeader == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = finMain.getStepPolicy();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90252", valueParm)));
+					valueParm[0] = fm.getStepPolicy();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90252", valueParm)));
 				}
 			}
 		}
-
-		return errorDetails;
 	}
 
 	/*
@@ -4381,209 +4403,239 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> planEMIHolidayValidation(String vldGroup, FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void planEMIHolidayValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		if (!financeType.isPlanEMIHAlw() && finMain.isPlanEMIHAlw()) {
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		if (!finType.isPlanEMIHAlw() && fm.isPlanEMIHAlw()) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
-			valueParm[1] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
-			return errorDetails;
+			valueParm[1] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+
+			return;
 		}
 
-		if (finMain.isPlanEMIHAlwInGrace()) {
-			if (!financeType.isalwPlannedEmiInGrc()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
-				valueParm[1] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
-				return errorDetails;
-			}
+		if (fm.isPlanEMIHAlwInGrace() && !finType.isalwPlannedEmiInGrc()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
+			valueParm[1] = fm.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+
+			return;
 		}
 
-		if (finMain.isPlanEMIHAlwInGrace()) {
-			if (!finMain.isAllowGrcPeriod()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
-				valueParm[1] = "allowGrcPeriod is false";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
-				return errorDetails;
-			}
+		if (fm.isPlanEMIHAlwInGrace() && !fm.isAllowGrcPeriod()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Planned EMI Holiday(planEMIHAlw)";
+			valueParm[1] = "allowGrcPeriod is false";
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+
+			return;
 		}
 
-		if (finMain.isPlanEMIHAlw()) {
-			if (StringUtils.isBlank(finMain.getPlanEMIHMethod())) {
+		String planEMIHMethod = fm.getPlanEMIHMethod();
+		if (!fm.isPlanEMIHAlw() && (StringUtils.isNotBlank(planEMIHMethod) || fm.getPlanEMIHMaxPerYear() > 0
+				|| fm.getPlanEMIHMax() > 0 || fm.getPlanEMIHLockPeriod() > 0 || fm.isPlanEMICpz())) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90241", null)));
+
+			return;
+		}
+
+		if (StringUtils.isBlank(planEMIHMethod)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "planEMIHMethod";
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+			return;
+		}
+
+		if (fm.getPlanEMIHMaxPerYear() == 0) {
+			fm.setPlanEMIHMaxPerYear(finType.getPlanEMIHMaxPerYear());
+		}
+
+		if (fm.getPlanEMIHMaxPerYear() < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PlanEMIHMaxPerYear";
+			valueParm[1] = "0";
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+
+			return;
+		}
+
+		if (!finType.isPlanEMICpz() && fm.isPlanEMICpz()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "planEMICpz";
+			valueParm[1] = finType.getFinType();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+
+			return;
+		}
+
+		if (!fm.isPlanEMICpz()) {
+			fm.setPlanEMICpz(finType.isPlanEMICpz());
+		}
+
+		if (fm.getPlanEMIHMax() == 0) {
+			fm.setPlanEMIHMax(finType.getPlanEMIHMax());
+		}
+
+		if (fm.getPlanEMIHMax() < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PlanEMIHMax";
+			valueParm[1] = "0";
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+
+			return;
+		}
+
+		if (fm.getPlanEMIHLockPeriod() == 0) {
+			fm.setPlanEMIHLockPeriod(finType.getPlanEMIHLockPeriod());
+		}
+
+		if (fm.getPlanEMIHLockPeriod() < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PlanEMIHLockPeriod";
+			valueParm[1] = "0";
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+
+			return;
+		}
+
+		if (!FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)
+				&& !FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = FinanceConstants.PLANEMIHMETHOD_FRQ + "," + FinanceConstants.PLANEMIHMETHOD_ADHOC;
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90238", valueParm)));
+
+			return;
+		}
+
+		if (fm.getPlanEMIHMaxPerYear() > 11) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(11);
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90239", valueParm)));
+
+			return;
+		}
+
+		if (fm.getPlanEMIHMax() > (fm.getNumberOfTerms() - 1)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = String.valueOf(fm.getNumberOfTerms() - 1);
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90240", valueParm)));
+
+			return;
+		}
+
+		if (fm.getPlanEMIHMax() > finType.getPlanEMIHMax()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PlanEMIHMax";
+			valueParm[1] = String.valueOf(finType.getPlanEMIHMax());
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+
+			return;
+		}
+
+		if (fm.getPlanEMIHMaxPerYear() > finType.getPlanEMIHMaxPerYear()) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PlanEMIHMaxPerYear";
+			valueParm[1] = String.valueOf(finType.getPlanEMIHMaxPerYear());
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+
+			return;
+		}
+
+		if (!(finType.getPlanEMIHLockPeriod() >= fm.getPlanEMIHLockPeriod())) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "PlanEMIHLockPeriod";
+			valueParm[1] = String.valueOf(finType.getPlanEMIHLockPeriod());
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
+
+			return;
+		}
+
+		if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+			if (CollectionUtils.isEmpty(schdData.getApiPlanEMIHmonths())) {
 				String[] valueParm = new String[1];
-				valueParm[0] = "planEMIHMethod";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-				return errorDetails;
+				valueParm[0] = "planEMIHmonths";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+				return;
 			}
-			if (finMain.getPlanEMIHMaxPerYear() == 0) {
-				finMain.setPlanEMIHMaxPerYear(financeType.getPlanEMIHMaxPerYear());
-			}
-			if (finMain.getPlanEMIHMaxPerYear() < 0) {
+
+			if (schdData.getApiPlanEMIHmonths().size() > fm.getPlanEMIHMaxPerYear()) {
 				String[] valueParm = new String[2];
-				valueParm[0] = "PlanEMIHMaxPerYear";
-				valueParm[1] = "0";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
-				return errorDetails;
+				valueParm[0] = "PlanEMIHmonths";
+				valueParm[1] = "PlanEMIHMaxPerYear";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+
+				return;
 			}
-			if (!financeType.isPlanEMICpz()) {
-				if (finMain.isPlanEMICpz()) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "planEMICpz";
-					valueParm[1] = financeType.getFinType();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
-					return errorDetails;
+
+			for (FinPlanEmiHoliday detail : schdData.getApiPlanEMIHmonths()) {
+				int count = 0;
+
+				if (!(detail.getPlanEMIHMonth() > 0 && detail.getPlanEMIHMonth() <= 12)) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "holidayMonth";
+					valueParm[1] = "1";
+					valueParm[2] = "12";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", valueParm)));
+
+					return;
 				}
-			}
-			if (!finMain.isPlanEMICpz()) {
-				finMain.setPlanEMICpz(financeType.isPlanEMICpz());
-			}
-			if (finMain.getPlanEMIHMax() == 0) {
-				finMain.setPlanEMIHMax(financeType.getPlanEMIHMax());
-			}
 
-			if (finMain.getPlanEMIHMax() < 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "PlanEMIHMax";
-				valueParm[1] = "0";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
-				return errorDetails;
-			}
-			if (finMain.getPlanEMIHLockPeriod() == 0) {
-				finMain.setPlanEMIHLockPeriod(financeType.getPlanEMIHLockPeriod());
-			}
-			if (finMain.getPlanEMIHLockPeriod() < 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "PlanEMIHLockPeriod";
-				valueParm[1] = "0";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
-				return errorDetails;
-			}
-			// planEMIHMethod
-			if (!StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)
-					&& !StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = FinanceConstants.PLANEMIHMETHOD_FRQ + "," + FinanceConstants.PLANEMIHMETHOD_ADHOC;
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90238", valueParm)));
-				return errorDetails;
-			}
-			// planEMIHMaxPerYear
-			if (finMain.getPlanEMIHMaxPerYear() > 11) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(11);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90239", valueParm)));
-				return errorDetails;
-			}
-			// planEMIHMax
-			if (finMain.getPlanEMIHMax() > (finMain.getNumberOfTerms() - 1)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = String.valueOf(finMain.getNumberOfTerms() - 1);
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90240", valueParm)));
-				return errorDetails;
-			}
-			if (finMain.getPlanEMIHMax() > financeType.getPlanEMIHMax()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "PlanEMIHMax";
-				valueParm[1] = String.valueOf(financeType.getPlanEMIHMax());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
-				return errorDetails;
-			}
-			if (finMain.getPlanEMIHMaxPerYear() > financeType.getPlanEMIHMaxPerYear()) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "PlanEMIHMaxPerYear";
-				valueParm[1] = String.valueOf(financeType.getPlanEMIHMaxPerYear());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
-				return errorDetails;
-			}
-			if (!(financeType.getPlanEMIHLockPeriod() >= finMain.getPlanEMIHLockPeriod())) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "PlanEMIHLockPeriod";
-				valueParm[1] = String.valueOf(financeType.getPlanEMIHLockPeriod());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("30568", valueParm)));
-				return errorDetails;
-			}
-			if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_FRQ)) {
-				if (finScheduleData.getApiPlanEMIHmonths() == null
-						|| finScheduleData.getApiPlanEMIHmonths().isEmpty()) {
+				for (FinPlanEmiHoliday planEmiMnths : schdData.getApiPlanEMIHmonths()) {
+					if (detail.getPlanEMIHMonth() == planEmiMnths.getPlanEMIHMonth()) {
+						count++;
+					}
+				}
+
+				if (count >= 2) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "planEMIHmonths";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					if (finScheduleData.getApiPlanEMIHmonths().size() > finMain.getPlanEMIHMaxPerYear()) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "PlanEMIHmonths";
-						valueParm[1] = "PlanEMIHMaxPerYear";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
-						return errorDetails;
-					}
-					for (FinPlanEmiHoliday detail : finScheduleData.getApiPlanEMIHmonths()) {
-						int count = 0;
-						if (!(detail.getPlanEMIHMonth() > 0 && detail.getPlanEMIHMonth() <= 12)) {
-							String[] valueParm = new String[3];
-							valueParm[0] = "holidayMonth";
-							valueParm[1] = "1";
-							valueParm[2] = "12";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("65031", valueParm)));
-							return errorDetails;
-						}
-						for (FinPlanEmiHoliday planEmiMnths : finScheduleData.getApiPlanEMIHmonths()) {
-							if (detail.getPlanEMIHMonth() == planEmiMnths.getPlanEMIHMonth()) {
-								count++;
-							}
-						}
-						if (count >= 2) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "holidayMonth";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
-							return errorDetails;
-						}
-					}
-				}
-			} else if (StringUtils.equals(finMain.getPlanEMIHMethod(), FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
-				if (finScheduleData.getApiPlanEMIHDates() == null || finScheduleData.getApiPlanEMIHDates().isEmpty()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "planEMIHDates";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
-					return errorDetails;
-				} else {
-					if (finScheduleData.getApiPlanEMIHDates().size() > finMain.getPlanEMIHMax()) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "PlanEMIHDates";
-						valueParm[1] = "PlanEMIHMax";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
-						return errorDetails;
-					}
+					valueParm[0] = "holidayMonth";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
 
-					for (FinPlanEmiHoliday emiDates : finScheduleData.getApiPlanEMIHDates()) {
-						int count = 0;
-						for (FinPlanEmiHoliday duplicateDates : finScheduleData.getApiPlanEMIHDates()) {
-							if (emiDates.getPlanEMIHDate().compareTo(duplicateDates.getPlanEMIHDate()) == 0) {
-								count++;
-							}
-						}
-						if (count >= 2) {
-							String[] valueParm = new String[1];
-							valueParm[0] = "PlanEMIHDates";
-							errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
-							return errorDetails;
-						}
-					}
-
+					return;
 				}
 			}
-		} else if (StringUtils.isNotBlank(finMain.getPlanEMIHMethod()) || finMain.getPlanEMIHMaxPerYear() > 0
-				|| finMain.getPlanEMIHMax() > 0 || finMain.getPlanEMIHLockPeriod() > 0 || finMain.isPlanEMICpz()) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90241", null)));
-			return errorDetails;
-		}
 
-		return errorDetails;
+		} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+			if (CollectionUtils.isEmpty(schdData.getApiPlanEMIHDates())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "planEMIHDates";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+
+				return;
+			}
+			if (schdData.getApiPlanEMIHDates().size() > fm.getPlanEMIHMax()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "PlanEMIHDates";
+				valueParm[1] = "PlanEMIHMax";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90220", valueParm)));
+
+				return;
+			}
+
+			for (FinPlanEmiHoliday emiDates : schdData.getApiPlanEMIHDates()) {
+				int count = 0;
+				for (FinPlanEmiHoliday duplicateDates : schdData.getApiPlanEMIHDates()) {
+					if (emiDates.getPlanEMIHDate().compareTo(duplicateDates.getPlanEMIHDate()) == 0) {
+						count++;
+					}
+				}
+
+				if (count >= 2) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "PlanEMIHDates";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90273", valueParm)));
+
+					return;
+				}
+			}
+		}
 	}
 
 	/*
@@ -4592,157 +4644,176 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> graceRateValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
-		BigDecimal zeroValue = BigDecimal.ZERO;
+	private void graceRateValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		Date appDate = SysParamUtil.getAppDate();
+
+		BigDecimal grcMaxRate = fm.getGrcMaxRate();
+		BigDecimal grcMinRate = fm.getGrcMinRate();
+		String grcRateBasis = fm.getGrcRateBasis();
+		BigDecimal grcPftRate = fm.getGrcPftRate();
+		String graceBaseRate = fm.getGraceBaseRate();
+		BigDecimal grcMargin = fm.getGrcMargin();
+
+		String finGrcBaseRate = finType.getFinGrcBaseRate();
 
 		// validate MinRate and MaxRate fields
-		if (finMain.getGrcMinRate().compareTo(finMain.getGrcMaxRate()) > 0) {
+		if (grcMinRate.compareTo(grcMaxRate) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = "Grace Max Rate:" + finMain.getGrcMaxRate();
-			valueParm[1] = "Grace Min Rate:" + finMain.getGrcMinRate();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+			valueParm[0] = "Grace Max Rate:" + grcMaxRate;
+			valueParm[1] = "Grace Min Rate:" + grcMinRate;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 		}
+
 		// Rate Type/Rate Basis
-		if (!StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_F)
-				&& !StringUtils.equals(finMain.getGrcRateBasis(), CalculationConstants.RATE_BASIS_R)) {
+		if (!CalculationConstants.RATE_BASIS_F.equals(grcRateBasis)
+				&& !CalculationConstants.RATE_BASIS_R.equals(grcRateBasis)) {
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getGrcRateBasis();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90211", valueParm)));
+			valueParm[0] = grcRateBasis;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90211", valueParm)));
 		}
 
 		// Actual Rate
-		if (finMain.getGrcPftRate().compareTo(zeroValue) < 0) {
+		if (grcPftRate.compareTo(BigDecimal.ZERO) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90153", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90153", valueParm)));
 		}
 
 		// Both Grace and Base Rates found
-		if (StringUtils.isNotBlank(finMain.getGraceBaseRate()) && finMain.getGrcPftRate().compareTo(zeroValue) != 0) {
+		if (StringUtils.isNotBlank(graceBaseRate) && grcPftRate.compareTo(BigDecimal.ZERO) != 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90154", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90154", valueParm)));
 		}
 
 		// Base Rate requested?
-		if (StringUtils.isBlank(finMain.getGraceBaseRate())
-				&& StringUtils.isNotBlank(financeType.getFinGrcBaseRate())) {
+		if (StringUtils.isBlank(graceBaseRate) && StringUtils.isNotBlank(finGrcBaseRate)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Grace";
-			valueParm[1] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90232", valueParm)));
+			valueParm[1] = fm.getFinType();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90232", valueParm)));
 		}
 
-		if (StringUtils.isNotBlank(finMain.getGraceBaseRate())) {
-			// Allow Base Rate?
-			if (StringUtils.isBlank(financeType.getFinGrcBaseRate())) {
+		if (StringUtils.isBlank(graceBaseRate)) {
+			if (grcPftRate.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(finGrcBaseRate)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Grace Profit Rate";
+				valueParm[1] = fm.getFinType();
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+			}
+		}
+
+		// Allow Base Rate?
+		if (StringUtils.isNotBlank(graceBaseRate)) {
+			if (StringUtils.isBlank(finGrcBaseRate)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Grace";
-				valueParm[1] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90136", valueParm)));
+				valueParm[1] = fm.getFinType();
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90136", valueParm)));
 			} else {
 				// Base Rate code found?
-				String brCode = finMain.getGraceBaseRate();
-				String currency = finMain.getFinCcy();// TODO: discuss with
-														// pradeep
-				currency = financeType.getFinCcy();
-
-				int rcdCount = baseRateDAO.getBaseRateCountById(brCode, currency, "");
-				if (rcdCount <= 0) {
+				String currency = finType.getFinCcy();
+				// FIXME :: Move to cache
+				if (baseRateDAO.getBaseRateCountById(graceBaseRate, currency, "") <= 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = brCode;
-					valueParm[1] = finMain.getFinCcy();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90137", valueParm)));
+					valueParm[0] = graceBaseRate;
+					valueParm[1] = fm.getFinCcy();
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90137", valueParm)));
 				}
 
 				// validate special rate code
-				if (StringUtils.isNotBlank(finMain.getGraceSpecialRate())) {
-					rcdCount = splRateDAO.getSpecialRateCountById(finMain.getGraceSpecialRate(), "");
-					if (rcdCount <= 0) {
+				if (StringUtils.isNotBlank(fm.getGraceSpecialRate())) {
+					if (splRateDAO.getSpecialRateCountById(fm.getGraceSpecialRate(), "") <= 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = finMain.getGraceSpecialRate();
+						valueParm[0] = fm.getGraceSpecialRate();
 						valueParm[1] = "Grace";
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90230", valueParm)));
+
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90230", valueParm)));
 					}
 				}
 			}
-		} else if (finMain.getGrcPftRate().compareTo(BigDecimal.ZERO) > 0
-				&& StringUtils.isNotBlank(financeType.getFinGrcBaseRate())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Grace Profit Rate";
-			valueParm[1] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
 		}
 
 		// Special Rate code
-		if (StringUtils.isNotBlank(finMain.getGraceSpecialRate()) && StringUtils.isBlank(finMain.getGraceBaseRate())) {
+		if (StringUtils.isNotBlank(fm.getGraceSpecialRate()) && StringUtils.isBlank(graceBaseRate)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
 		}
 
 		// Margin
-		if (finMain.getGrcMargin().compareTo(zeroValue) != 0 && StringUtils.isBlank(finMain.getGraceBaseRate())) {
+		if (grcMargin.compareTo(BigDecimal.ZERO) != 0 && StringUtils.isBlank(graceBaseRate)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
 		}
 
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		if (CollectionUtils.isNotEmpty(errors)) {
+			return;
 		}
 
 		// Validate Against Minimum and Maximum Rate
-		if (finMain.getGrcMinRate().compareTo(zeroValue) == 0 && finMain.getGrcMaxRate().compareTo(zeroValue) == 0) {
-			// No further validation required
-			return errorDetails;
+		if (grcMinRate.compareTo(BigDecimal.ZERO) == 0 && grcMaxRate.compareTo(BigDecimal.ZERO) == 0) {
+			return;
 		}
 
 		BigDecimal netRate = BigDecimal.ZERO;
-		// Base Rate
-		if (StringUtils.isNotBlank(finMain.getGraceBaseRate())) {
-			RateDetail rate = new RateDetail();
-			rate.setBaseRateCode(finMain.getGraceBaseRate());
-			rate.setCurrency(finMain.getFinCcy());
-			rate.setSplRateCode(finMain.getGraceSpecialRate());
-			rate.setMargin(finMain.getGrcMargin());
-			rate.setValueDate(DateUtility.getAppDate());
-			rate = RateUtil.getRefRate(rate);
-			if (rate.getErrorDetails() != null) {
-				errorDetails.add(rate.getErrorDetails());
-			}
-			if (errorDetails != null && !errorDetails.isEmpty()) {
-				return errorDetails;
-			}
-			netRate = rate.getNetRefRateLoan();
 
-			// Check Against Minimum Rate
-			if (finMain.getGrcMinRate().compareTo(zeroValue) != 0) {
-				if (netRate.compareTo(finMain.getGrcMinRate()) < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = round4(netRate).toString();
-					valueParm[1] = round4(finMain.getGrcMinRate()).toString();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90172", valueParm)));
-				}
-			}
-
-			// Check Against Maximum Rate
-			if (finMain.getGrcMaxRate().compareTo(zeroValue) != 0) {
-				if (netRate.compareTo(finMain.getGrcMaxRate()) > 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = round4(netRate).toString();
-					valueParm[1] = round4(finMain.getGrcMaxRate()).toString();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90173", valueParm)));
-				}
-			}
-		} else {
-			netRate = finMain.getGrcPftRate();
+		if (StringUtils.isBlank(graceBaseRate)) {
+			return;
 		}
 
-		return errorDetails;
+		// Base Rate
+		RateDetail rate = new RateDetail();
+		rate.setBaseRateCode(graceBaseRate);
+		rate.setCurrency(fm.getFinCcy());
+		rate.setSplRateCode(fm.getGraceSpecialRate());
+		rate.setMargin(grcMargin);
+		rate.setValueDate(appDate);
+		RateUtil.getRefRate(rate);
+
+		if (rate.getErrorDetails() != null) {
+			errors.add(rate.getErrorDetails());
+		}
+
+		if (CollectionUtils.isNotEmpty(errors)) {
+			return;
+		}
+
+		netRate = rate.getNetRefRateLoan();
+
+		// Check Against Minimum Rate
+		if (grcMinRate.compareTo(BigDecimal.ZERO) != 0 && netRate.compareTo(grcMinRate) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = round4(netRate).toString();
+			valueParm[1] = round4(grcMinRate).toString();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90172", valueParm)));
+		}
+
+		// Check Against Maximum Rate
+		if (grcMaxRate.compareTo(BigDecimal.ZERO) != 0 && netRate.compareTo(grcMaxRate) > 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = round4(netRate).toString();
+			valueParm[1] = round4(grcMaxRate).toString();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90173", valueParm)));
+		}
 	}
 
 	/*
@@ -4751,72 +4822,77 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> gracePftFrqValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+	private void gracePftFrqValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		String moveNone = HolidayHandlerTypes.MOVE_NONE;
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		String grcPftFrq = fm.getGrcPftFrq();
+		Date finStartDate = fm.getFinStartDate();
+		int grcTerms = fm.getGraceTerms();
+		Date nextGrcPftDate = fm.getNextGrcPftDate();
+		Date grcPrdEndDate = fm.getGrcPeriodEndDate();
 
 		// Validate Profit Frequency
-		ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getGrcPftFrq());
+		ErrorDetail tempError = FrequencyUtil.validateFrequency(grcPftFrq);
 		if (tempError != null) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90156", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90156", valueParm)));
 		}
 
 		// Validate with Allowed frequency days.
-		boolean isValid = validateAlwFrqDays(finMain.getGrcPftFrq(),
-				finScheduleData.getFinanceType().getFrequencyDays());
-		if (!isValid) {
+		if (!validateAlwFrqDays(grcPftFrq, finType.getFrequencyDays())) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Grace";
-			valueParm[1] = finMain.getGrcPftFrq();
-			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+			valueParm[1] = grcPftFrq;
+			valueParm[2] = finType.getFrequencyDays();
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
 
 		// First Interest Frequency Date Vs Start Date
-		if (finMain.getNextGrcPftDate().compareTo(finMain.getFinStartDate()) <= 0) {
+		if (nextGrcPftDate.compareTo(finStartDate) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextGrcPftDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getFinStartDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90162", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextGrcPftDate);
+			valueParm[1] = DateUtil.formatToShortDate(finStartDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90162", valueParm)));
 		}
 
 		// Return if any error
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		if (!errors.isEmpty()) {
+			return;
 		}
 
 		// Default Calculated Grace End Date using terms
-		if (finMain.getGraceTerms() > 0) {
-			finMain.setCalGrcTerms(finMain.getGraceTerms());
-			List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getGrcPftFrq(), finMain.getGraceTerms(),
-					finMain.getNextGrcPftDate(), HolidayHandlerTypes.MOVE_NONE, true).getScheduleList();
+		if (grcTerms > 0) {
+			fm.setCalGrcTerms(grcTerms);
+			FrequencyDetails frequency = FrequencyUtil.getNextDate(grcPftFrq, grcTerms, nextGrcPftDate, moveNone, true);
 
-			Date geDate = null;
-			if (scheduleDateList != null) {
-				Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-				geDate = DateUtility.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
+			List<Calendar> schdDates = frequency.getScheduleList();
+
+			if (schdDates != null) {
+				fm.setCalGrcEndDate(schdDates.get(schdDates.size() - 1).getTime());
 			}
 
-			finMain.setCalGrcEndDate(geDate);
 		} else {
-			finMain.setCalGrcEndDate(finMain.getGrcPeriodEndDate());
-			int terms = FrequencyUtil.getTerms(finMain.getGrcPftFrq(), finMain.getNextGrcPftDate(),
-					finMain.getGrcPeriodEndDate(), true, true).getTerms();
-			finMain.setCalGrcTerms(terms);
+			fm.setCalGrcEndDate(grcPrdEndDate);
+			fm.setCalGrcTerms(FrequencyUtil.getTerms(grcPftFrq, nextGrcPftDate, grcPrdEndDate, true, true).getTerms());
 		}
 
 		// First Interest Frequency Date Vs Grace Period End Date
-		if (finMain.getNextGrcPftDate().compareTo(finMain.getCalGrcEndDate()) > 0) {
+		if (nextGrcPftDate.compareTo(fm.getCalGrcEndDate()) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextGrcPftRvwDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90161", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(fm.getNextGrcPftRvwDate());
+			valueParm[1] = DateUtil.formatToShortDate(fm.getCalGrcEndDate());
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90161", valueParm)));
 		}
-
-		return errorDetails;
-
 	}
 
 	/*
@@ -4825,58 +4901,66 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> gracePftReviewValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void gracePftReviewValidation(FinScheduleData schData) {
+		List<ErrorDetail> errors = schData.getErrorDetails();
+
+		FinanceMain fm = schData.getFinanceMain();
+		FinanceType finType = schData.getFinanceType();
+
+		boolean finGrcIsRvwAlw = finType.isFinGrcIsRvwAlw();
+		String frequencyDays = finType.getFrequencyDays();
+
+		String grcPftRvwFrq = fm.getGrcPftRvwFrq();
+		Date nextGrcPftRvwDate = fm.getNextGrcPftRvwDate();
+		boolean allowGrcPftRvw = fm.isAllowGrcPftRvw();
+		Date finStartDate = fm.getFinStartDate();
+		Date calGrcEndDate = fm.getCalGrcEndDate();
 
 		// Allow Profit Rate Review
-		if (!financeType.isFinGrcIsRvwAlw()) {
-			if (finMain.isAllowGrcPftRvw() || StringUtils.isNotBlank(finMain.getGrcPftRvwFrq())
-					|| finMain.getNextGrcPftRvwDate() != null) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90164", null)));
-				return errorDetails;
-			} else {
-				return errorDetails;
+		if (!finGrcIsRvwAlw) {
+			if (allowGrcPftRvw || StringUtils.isNotBlank(grcPftRvwFrq) || nextGrcPftRvwDate != null) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90164", null)));
 			}
+
+			return;
 		}
 
 		// Validate Profit Review Frequency
-		ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getGrcPftRvwFrq());
-		if (tempError != null) {
+		ErrorDetail error = FrequencyUtil.validateFrequency(grcPftRvwFrq);
+		if (error != null) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90157", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90157", valueParm)));
 		}
 
 		// Validate with Allowed frequency days.
-		boolean isValid = validateAlwFrqDays(finMain.getGrcPftRvwFrq(),
-				finScheduleData.getFinanceType().getFrequencyDays());
-		if (!isValid) {
+		if (!validateAlwFrqDays(grcPftRvwFrq, frequencyDays)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Grace";
-			valueParm[1] = finMain.getGrcPftRvwFrq();
-			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+			valueParm[1] = grcPftRvwFrq;
+			valueParm[2] = frequencyDays;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
 
 		// First Interest Review Frequency Date Vs Start Date
-		if (finMain.getNextGrcPftRvwDate().compareTo(finMain.getFinStartDate()) <= 0) {
+		if (nextGrcPftRvwDate.compareTo(finStartDate) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextGrcPftRvwDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getFinStartDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90166", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextGrcPftRvwDate);
+			valueParm[1] = DateUtil.formatToShortDate(finStartDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90166", valueParm)));
 		}
 
 		// First Interest Review Frequency Date Vs Grace Period End Date
-		if (finMain.getNextGrcPftRvwDate().compareTo(finMain.getCalGrcEndDate()) > 0) {
+		if (nextGrcPftRvwDate.compareTo(calGrcEndDate) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextGrcPftRvwDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90165", valueParm)));
-		}
+			valueParm[0] = DateUtil.formatToShortDate(nextGrcPftRvwDate);
+			valueParm[1] = DateUtil.formatToShortDate(calGrcEndDate);
 
-		return errorDetails;
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90165", valueParm)));
+		}
 	}
 
 	/*
@@ -4885,58 +4969,66 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> gracePftCpzValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void gracePftCpzValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		boolean finGrcIsIntCpz = finType.isFinGrcIsIntCpz();
+		String frequencyDays = finType.getFrequencyDays();
+
+		String grcCpzFrq = fm.getGrcCpzFrq();
+		Date nextGrcCpzDate = fm.getNextGrcCpzDate();
+		boolean allowGrcCpz = fm.isAllowGrcCpz();
+		Date finStartDate = fm.getFinStartDate();
+		Date calGrcEndDate = fm.getCalGrcEndDate();
 
 		// Allow Profit Capitalization
-		if (!financeType.isFinGrcIsIntCpz()) {
-			if (finMain.isAllowGrcCpz() || StringUtils.isNotBlank(finMain.getGrcCpzFrq())
-					|| finMain.getNextGrcCpzDate() != null) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90167", null)));
-				return errorDetails;
-			} else {
-				return errorDetails;
+		if (!finGrcIsIntCpz) {
+			if (allowGrcCpz || StringUtils.isNotBlank(grcCpzFrq) || nextGrcCpzDate != null) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90167", null)));
 			}
+
+			return;
 		}
 
 		// Validate Profit Capitalization Frequency
-		ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getGrcCpzFrq());
-		if (tempError != null) {
+		ErrorDetail error = FrequencyUtil.validateFrequency(grcCpzFrq);
+		if (error != null) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Grace";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90158", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90158", valueParm)));
 		}
 
 		// Validate with Allowed frequency days.
-		boolean isValid = validateAlwFrqDays(finMain.getGrcCpzFrq(),
-				finScheduleData.getFinanceType().getFrequencyDays());
-		if (!isValid) {
+		if (!validateAlwFrqDays(grcCpzFrq, frequencyDays)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Grace";
-			valueParm[1] = finMain.getGrcCpzFrq();
-			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+			valueParm[1] = grcCpzFrq;
+			valueParm[2] = frequencyDays;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
 
 		// First Interest Capitalization Frequency Date Vs Start Date
-		if (finMain.getNextGrcCpzDate().compareTo(finMain.getFinStartDate()) <= 0) {
+		if (nextGrcCpzDate.compareTo(finStartDate) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextGrcCpzDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getFinStartDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90168", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextGrcCpzDate);
+			valueParm[1] = DateUtil.formatToShortDate(finStartDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90168", valueParm)));
 		}
 
 		// First Interest Capitalization Frequency Date Vs Grace End Date
-		if (finMain.getNextGrcCpzDate().compareTo(finMain.getCalGrcEndDate()) > 0) {
+		if (nextGrcCpzDate.compareTo(calGrcEndDate) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextGrcCpzDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90169", valueParm)));
-		}
+			valueParm[0] = DateUtil.formatToShortDate(nextGrcCpzDate);
+			valueParm[1] = DateUtil.formatToShortDate(calGrcEndDate);
 
-		return errorDetails;
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90169", valueParm)));
+		}
 	}
 
 	/*
@@ -4945,51 +5037,57 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> graceSchdValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void graceSchdValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		if (finMain.isAllowGrcRepay()) {
-			if (!financeType.isFinIsAlwGrcRepay()) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90170", null)));
-			} else {
-				if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_NOPAY)
-						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFT)
-						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCPZ)
-						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_GRCENDPAY)
-						&& !StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Grace";
-					valueParm[1] = finMain.getGrcSchdMthd();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90210", valueParm)));
-				}
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		String grcSchdMthd = fm.getGrcSchdMthd();
+		BigDecimal grcMaxAmount = fm.getGrcMaxAmount();
+
+		if (!fm.isAllowGrcRepay()) {
+			if (StringUtils.isNotBlank(grcSchdMthd)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90171", null)));
 			}
 		} else {
-			if (StringUtils.isNotBlank(finMain.getGrcSchdMthd())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90171", null)));
+			if (!finType.isFinIsAlwGrcRepay()) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90170", null)));
+			} else {
+				if (!CalculationConstants.SCHMTHD_NOPAY.equals(grcSchdMthd)
+						&& !CalculationConstants.SCHMTHD_PFT.equals(grcSchdMthd)
+						&& !CalculationConstants.SCHMTHD_PFTCPZ.equals(grcSchdMthd)
+						&& !CalculationConstants.SCHMTHD_GRCENDPAY.equals(grcSchdMthd)
+						&& !CalculationConstants.SCHMTHD_PFTCAP.equals(grcSchdMthd)) {
+
+					String[] valueParm = new String[2];
+					valueParm[0] = "Grace";
+					valueParm[1] = grcSchdMthd;
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90210", valueParm)));
+				}
 			}
 		}
-		if (!StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
 
-			if (finMain.getGrcMaxAmount() != null && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) > 0) {
+		if (!CalculationConstants.SCHMTHD_PFTCAP.equals(grcSchdMthd)) {
+			if (grcMaxAmount != null && grcMaxAmount.compareTo(BigDecimal.ZERO) > 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "GrcMaxAmount";
 				valueParm[1] = CalculationConstants.SCHMTHD_PFTCAP;
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
 
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90298", valueParm)));
 			}
 		}
-		if (StringUtils.equals(finMain.getGrcSchdMthd(), CalculationConstants.SCHMTHD_PFTCAP)) {
-			if (finMain.getGrcMaxAmount() != null && finMain.getGrcMaxAmount().compareTo(BigDecimal.ZERO) <= 0) {
+
+		if (CalculationConstants.SCHMTHD_PFTCAP.equals(grcSchdMthd)) {
+			if (grcMaxAmount != null && grcMaxAmount.compareTo(BigDecimal.ZERO) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "GrcMaxAmount";
 				valueParm[1] = "0";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 			}
 		}
-		return errorDetails;
 	}
 
 	/*
@@ -4998,38 +5096,41 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> graceDatesValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void graceDatesValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		Date geDate = finMain.getCalGrcEndDate();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
 
-		// If Next Profit date is not as Grace End Date, it should match with
-		// frequency
-		if (finMain.getNextGrcPftDate().compareTo(geDate) != 0
-				&& !FrequencyUtil.isFrqDate(finMain.getGrcPftFrq(), finMain.getNextGrcPftDate())) {
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90177", null)));
+		Date calGrcEndDate = fm.getCalGrcEndDate();
+		Date nextGrcPftDate = fm.getNextGrcPftDate();
+		String grcPftFrq = fm.getGrcPftFrq();
+		Date pftRvwDate = fm.getNextGrcPftRvwDate();
+		String grcPftRvwFrq = fm.getGrcPftRvwFrq();
+		Date nextGrcCpzDate = fm.getNextGrcCpzDate();
+		String grcCpzFrq = fm.getGrcCpzFrq();
+
+		boolean finGrcIsRvwAlw = finType.isFinGrcIsRvwAlw();
+		boolean finGrcIsIntCpz = finType.isFinGrcIsIntCpz();
+
+		/* If Next Profit date is not as Grace End Date, it should match with frequency */
+		if (nextGrcPftDate.compareTo(calGrcEndDate) != 0 && !FrequencyUtil.isFrqDate(grcPftFrq, nextGrcPftDate)) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90177", null)));
 		}
 
-		// If Next Profit Review date is not as Grace End Date, it should match
-		// with frequency
-		if (financeType.isFinGrcIsRvwAlw()) {
-			if (finMain.getNextGrcPftRvwDate().compareTo(geDate) != 0
-					&& !FrequencyUtil.isFrqDate(finMain.getGrcPftRvwFrq(), finMain.getNextGrcPftRvwDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90178", null)));
+		/* If Next Profit Review date is not as Grace End Date, it should match with frequency */
+		if (finGrcIsRvwAlw) {
+			if (pftRvwDate.compareTo(calGrcEndDate) != 0 && !FrequencyUtil.isFrqDate(grcPftRvwFrq, pftRvwDate)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90178", null)));
 			}
 		}
 
-		// If Next Profit capitalization date is not as Grace End Date, it
-		// should match with frequency
-		if (financeType.isFinGrcIsIntCpz()) {
-			if (finMain.getNextGrcCpzDate().compareTo(geDate) != 0
-					&& !FrequencyUtil.isFrqDate(finMain.getGrcCpzFrq(), finMain.getNextGrcCpzDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90179", null)));
+		/* If Next Profit capitalization date is not as Grace End Date, it should match with frequency */
+		if (finGrcIsIntCpz) {
+			if (nextGrcCpzDate.compareTo(calGrcEndDate) != 0 && !FrequencyUtil.isFrqDate(grcCpzFrq, nextGrcCpzDate)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90179", null)));
 			}
 		}
-		return errorDetails;
 	}
 
 	/*
@@ -5038,160 +5139,174 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> repayRateValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void repayRateValidation(FinScheduleData schdData) {
+		Date appDate = SysParamUtil.getAppDate();
+
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
 		BigDecimal zeroValue = BigDecimal.ZERO;
 		final String REPAY = "Repay";
 
-		// Consumer durables will take the defaulted rate. No validation
-		// required
-		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, finMain.getProductCategory())) {
-			return errorDetails;
+		String finBaseRate = finType.getFinBaseRate();
+		BigDecimal repayProfitRate = fm.getRepayProfitRate();
+		String repayRateBasis = fm.getRepayRateBasis();
+		String repayBaseRate = fm.getRepayBaseRate();
+		String productCategory = fm.getProductCategory();
+		String repaySpecialRate = fm.getRepaySpecialRate();
+		String loanType = fm.getFinType();
+
+		/* Consumer durables will take the defaulted rate. No validation required */
+		if (FinanceConstants.PRODUCT_CD.equals(productCategory)) {
+			return;
 		}
 
 		// Rate Type/Rate Basis
-		if (!StringUtils.equals(finMain.getRepayRateBasis(), CalculationConstants.RATE_BASIS_F)
-				&& !StringUtils.equals(finMain.getRepayRateBasis(), CalculationConstants.RATE_BASIS_C)
-				&& !StringUtils.equals(finMain.getRepayRateBasis(), CalculationConstants.RATE_BASIS_R)) {
+		if (!CalculationConstants.RATE_BASIS_F.equals(repayRateBasis)
+				&& !CalculationConstants.RATE_BASIS_C.equals(repayRateBasis)
+				&& !CalculationConstants.RATE_BASIS_R.equals(repayRateBasis)) {
+
 			String[] valueParm = new String[1];
-			valueParm[0] = finMain.getRepayRateBasis();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90211", valueParm)));
+			valueParm[0] = repayRateBasis;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90211", valueParm)));
 		}
 
 		// Actual Rate
-		if (StringUtils.isBlank(financeType.getFinBaseRate())
-				&& finMain.getRepayProfitRate().compareTo(zeroValue) < 0) {
+		if (StringUtils.isBlank(finBaseRate) && repayProfitRate.compareTo(BigDecimal.ZERO) < 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = REPAY;
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90153", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90153", valueParm)));
 		}
 
 		// Both Grace and Base Rates found
-		if (StringUtils.isNotBlank(finMain.getRepayBaseRate())
-				&& finMain.getRepayProfitRate().compareTo(zeroValue) != 0) {
+		if (StringUtils.isNotBlank(repayBaseRate) && repayProfitRate.compareTo(BigDecimal.ZERO) != 0) {
 			String[] valueParm = new String[1];
 			valueParm[0] = REPAY;
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90154", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90154", valueParm)));
 		}
 
 		// validate base rate
-		if (StringUtils.isBlank(finMain.getRepayBaseRate()) && StringUtils.isNotBlank(financeType.getFinBaseRate())) {
+		if (StringUtils.isBlank(repayBaseRate) && StringUtils.isNotBlank(finBaseRate)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = REPAY;
-			valueParm[1] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90232", valueParm)));
+			valueParm[1] = loanType;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90232", valueParm)));
 		}
 
 		// Base Rate requested?
-		if (StringUtils.isNotBlank(finMain.getRepayBaseRate())) {
+		if (StringUtils.isNotBlank(repayBaseRate)) {
 			// Allow Base Rate?
-			if (StringUtils.isBlank(financeType.getFinBaseRate())) {
+			if (StringUtils.isBlank(finBaseRate)) {
 				String[] valueParm = new String[2];
 				valueParm[0] = REPAY;
-				valueParm[1] = finMain.getFinType();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90136", valueParm)));
+				valueParm[1] = loanType;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90136", valueParm)));
 			} else {
 				// Base Rate code found?
-				String brCode = finMain.getRepayBaseRate();
-				String currency = finMain.getFinCcy();
-				currency = financeType.getFinCcy();
-
-				int rcdCount = baseRateDAO.getBaseRateCountById(brCode, currency, "");
-				if (rcdCount <= 0) {
+				String brCode = repayBaseRate;
+				String currency = finType.getFinCcy();
+				// FIXME :: move to cache
+				if (baseRateDAO.getBaseRateCountById(brCode, currency, "") <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = brCode;
-					valueParm[1] = finMain.getFinCcy();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90137", valueParm)));
+					valueParm[1] = fm.getFinCcy();
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90137", valueParm)));
 				}
 
 				// validate special rate code
-				if (StringUtils.isNotBlank(finMain.getRepaySpecialRate())) {
-					rcdCount = splRateDAO.getSpecialRateCountById(finMain.getRepaySpecialRate(), "");
-					if (rcdCount <= 0) {
+				if (StringUtils.isNotBlank(repaySpecialRate)) {
+					// FIXME :: move to cache
+					if (splRateDAO.getSpecialRateCountById(repaySpecialRate, "") <= 0) {
 						String[] valueParm = new String[2];
-						valueParm[0] = finMain.getRepaySpecialRate();
+						valueParm[0] = repaySpecialRate;
 						valueParm[1] = REPAY;
-						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90230", valueParm)));
+
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90230", valueParm)));
 					}
 				}
 			}
-		} else if (finMain.getRepayProfitRate().compareTo(BigDecimal.ZERO) > 0
-				&& StringUtils.isNotBlank(financeType.getFinBaseRate())) {
+		} else if (repayProfitRate.compareTo(BigDecimal.ZERO) > 0 && StringUtils.isNotBlank(finBaseRate)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "repayPftRate";
-			valueParm[1] = finMain.getFinType();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
+			valueParm[1] = loanType;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90204", valueParm)));
 		}
 
 		// Special Rate code
-		if (StringUtils.isNotBlank(finMain.getRepaySpecialRate()) && StringUtils.isBlank(finMain.getRepayBaseRate())) {
+		if (StringUtils.isNotBlank(repaySpecialRate) && StringUtils.isBlank(repayBaseRate)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = REPAY;
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
 		}
 
 		// Margin
-		if (finMain.getRepayMargin().compareTo(zeroValue) != 0 && StringUtils.isBlank(finMain.getRepayBaseRate())) {
+		if (fm.getRepayMargin().compareTo(BigDecimal.ZERO) != 0 && StringUtils.isBlank(repayBaseRate)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = REPAY;
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90155", valueParm)));
 		}
 
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		if (!errors.isEmpty()) {
+			return;
 		}
 
 		// Validate Against Minimum and Maximum Rate
-		if (finMain.getRpyMinRate().compareTo(zeroValue) == 0 && finMain.getRpyMaxRate().compareTo(zeroValue) == 0) {
-			// No further validation required
-			return errorDetails;
+		BigDecimal rpyMinRate = fm.getRpyMinRate();
+		BigDecimal rpyMaxRate = fm.getRpyMaxRate();
+		if (rpyMinRate.compareTo(BigDecimal.ZERO) == 0 && rpyMaxRate.compareTo(BigDecimal.ZERO) == 0) {
+			return;
 		}
 
-		BigDecimal netRate = BigDecimal.ZERO;
+		if (StringUtils.isBlank(repayBaseRate)) {
+			return;
+		}
+
 		// Base Rate
-		if (StringUtils.isNotBlank(finMain.getRepayBaseRate())) {
-			RateDetail rate = new RateDetail();
-			rate.setBaseRateCode(finMain.getRepayBaseRate());
-			rate.setCurrency(finMain.getFinCcy());
-			rate.setSplRateCode(finMain.getRepaySpecialRate());
-			rate.setMargin(finMain.getRepayMargin());
-			rate.setValueDate(DateUtility.getAppDate());
-			rate = RateUtil.getRefRate(rate);
-			if (rate.getErrorDetails() != null) {
-				errorDetails.add(rate.getErrorDetails());
-			}
-			if (errorDetails != null && !errorDetails.isEmpty()) {
-				return errorDetails;
-			}
-			netRate = rate.getNetRefRateLoan();
+		RateDetail rate = new RateDetail();
+		rate.setBaseRateCode(repayBaseRate);
+		rate.setCurrency(fm.getFinCcy());
+		rate.setSplRateCode(repaySpecialRate);
+		rate.setMargin(fm.getRepayMargin());
+		rate.setValueDate(appDate);
+		RateUtil.getRefRate(rate);
 
-			// Check Against Minimum Rate
-			if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-				if (netRate.compareTo(finMain.getRpyMinRate()) < 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = round4(netRate).toString();
-					valueParm[1] = round4(finMain.getRpyMinRate()).toString();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90174", valueParm)));
-				}
-			}
-
-			// Check Against Maximum Rate
-			if (finMain.getRpyMaxRate().compareTo(zeroValue) != 0) {
-				if (netRate.compareTo(finMain.getRpyMaxRate()) > 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = round4(netRate).toString();
-					valueParm[1] = round4(finMain.getRpyMaxRate()).toString();
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90175", valueParm)));
-				}
-			}
-
-		} else {
-			netRate = finMain.getRepayProfitRate();
+		if (rate.getErrorDetails() != null) {
+			errors.add(rate.getErrorDetails());
 		}
 
-		return errorDetails;
+		if (CollectionUtils.isNotEmpty(errors)) {
+			return;
+		}
+
+		BigDecimal netRate = rate.getNetRefRateLoan();
+
+		// Check Against Minimum Rate
+		if (!FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory) && netRate.compareTo(rpyMinRate) < 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = round4(netRate).toString();
+			valueParm[1] = round4(rpyMinRate).toString();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90174", valueParm)));
+		}
+
+		// Check Against Maximum Rate
+		if (rpyMaxRate.compareTo(zeroValue) != 0 && netRate.compareTo(rpyMaxRate) > 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = round4(netRate).toString();
+			valueParm[1] = round4(rpyMaxRate).toString();
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90175", valueParm)));
+		}
+
 	}
 
 	/*
@@ -5200,126 +5315,127 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> repayFrqValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void repayFrqValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		String moveNone = HolidayHandlerTypes.MOVE_NONE;
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		String repayFrq = fm.getRepayFrq();
+		String profitDaysBasis = fm.getProfitDaysBasis();
+		Date nextRepayDate = fm.getNextRepayDate();
+		Date calGrcEndDate = fm.getCalGrcEndDate();
+		int numberOfTerms = fm.getNumberOfTerms();
+		String productCategory = fm.getProductCategory();
+
+		String frequencyDays = finType.getFrequencyDays();
 
 		// Validate Repayment Frequency
-		ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getRepayFrq());
-		if (tempError != null) {
+		ErrorDetail error = FrequencyUtil.validateFrequency(repayFrq);
+
+		if (error != null) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Repay";
-			valueParm[1] = finMain.getRepayFrq();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90159", valueParm)));
+			valueParm[1] = repayFrq;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90159", valueParm)));
 		}
 
-		boolean isValid = validateAlwFrqDays(finMain.getRepayFrq(),
-				finScheduleData.getFinanceType().getFrequencyDays());
-		if (!isValid) {
+		if (!validateAlwFrqDays(repayFrq, frequencyDays)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Repay";
-			valueParm[1] = finMain.getRepayFrq();
-			valueParm[2] = financeType.getFrequencyDays();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+			valueParm[1] = repayFrq;
+			valueParm[2] = frequencyDays;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
 
 		// Interest Days Basis should be 15E/360 ISDA OR Actual/365 Fixed when
 		if (ImplementationConstants.FRQ_15DAYS_REQ) {
-			String repay = FrequencyUtil.getFrequencyCode(finMain.getRepayFrq());
+			String repay = FrequencyUtil.getFrequencyCode(repayFrq);
 			if (StringUtils.isNotEmpty(repay)) {
 				// Frequency Code
 				if (!FrequencyCodeTypes.FRQ_15DAYS.equals(repay)
-						&& CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())) {
+						&& CalculationConstants.IDB_15E360IA.equals(profitDaysBasis)) {
 					String frqCode = Labels.getLabel("label_Select_15DAYS");
 					String[] valueParm = new String[2];
 					valueParm[0] = "Repay Frequency ";
 					valueParm[1] = "'" + frqCode + "'";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
-					return errorDetails;
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+
+					return;
 				}
 
 				// Interest Days Basis
-				if (!CalculationConstants.IDB_15E360IA.equals(finMain.getProfitDaysBasis())
+				if (!CalculationConstants.IDB_15E360IA.equals(profitDaysBasis)
 						&& FrequencyCodeTypes.FRQ_15DAYS.equals(repay)) {
-					String profitDaysBasis = Labels.getLabel("label_ProfitDaysBasis_15E_360IA");//
+					String label = Labels.getLabel("label_ProfitDaysBasis_15E_360IA");//
 					String[] valueParm = new String[2];
 					valueParm[0] = "profitDaysBasis";
-					valueParm[1] = "'" + profitDaysBasis + "'";
-					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
-					return errorDetails;
+					valueParm[1] = "'" + label + "'";
+
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90337", valueParm)));
+
+					return;
 
 				}
 			}
 		}
 
 		// First Repayment Date Vs Start Date
-		if (finMain.getNextRepayDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
+		if (nextRepayDate.compareTo(calGrcEndDate) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90192", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextRepayDate);
+			valueParm[1] = DateUtil.formatToShortDate(calGrcEndDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90192", valueParm)));
 		}
 
 		// Return if any error
-		if (!errorDetails.isEmpty()) {
-			return errorDetails;
+		if (!errors.isEmpty()) {
+			return;
 		}
 
+		Date baseDate = null;
+		boolean isBaseDt = false;
+
 		// Default Calculated Maturity Date using terms
-		if (finMain.getNumberOfTerms() > 0) {
-			if (!finScheduleData.getFinanceMain().getProductCategory().equals(FinanceConstants.PRODUCT_ODFACILITY)) {
-				finMain.setCalTerms(finMain.getNumberOfTerms());
-				List<Calendar> scheduleDateList = FrequencyUtil.getNextDate(finMain.getRepayFrq(),
-						finMain.getNumberOfTerms(), finMain.getNextRepayDate(), HolidayHandlerTypes.MOVE_NONE, true)
-						.getScheduleList();
-
-				Date matDate = null;
-				if (scheduleDateList != null) {
-					Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-					matDate = DateUtility
-							.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
-				}
-
-				finMain.setCalMaturity(matDate);
+		Date maturityDate = fm.getMaturityDate();
+		if (numberOfTerms > 0) {
+			if (!FinanceConstants.PRODUCT_ODFACILITY.equals(productCategory)) {
+				fm.setCalTerms(numberOfTerms);
+				baseDate = nextRepayDate;
+				isBaseDt = true;
 
 			} else {
-
-				if (StringUtils.isNotBlank(finMain.getRepayFrq()) && finMain.getNextRepayDate() != null) {
-					List<Calendar> scheduleDateList = FrequencyUtil
-							.getNextDate(finMain.getRepayFrq(), finMain.getNumberOfTerms(), finMain.getFinStartDate(),
-									HolidayHandlerTypes.MOVE_NONE, false, 0)
-							.getScheduleList();
-
-					if (scheduleDateList != null) {
-						Calendar calendar = scheduleDateList.get(scheduleDateList.size() - 1);
-						Date matDate = DateUtility
-								.getDBDate(DateUtility.format(calendar.getTime(), PennantConstants.DBDateFormat));
-						finMain.setCalMaturity(matDate);
-					}
+				if (StringUtils.isNotBlank(repayFrq) && nextRepayDate != null) {
+					baseDate = fm.getFinStartDate();
 				}
 			}
 
-			// }
+			FrequencyDetails frq = FrequencyUtil.getNextDate(repayFrq, numberOfTerms, baseDate, moveNone, isBaseDt);
+
+			List<Calendar> schdDates = frq.getScheduleList();
+			if (schdDates != null) {
+				fm.setCalMaturity(DateUtil.getDatePart(schdDates.get(schdDates.size() - 1).getTime()));
+			}
 		} else {
 			// Default Calculated Terms based on Maturity Date
-			finMain.setCalMaturity(finMain.getMaturityDate());
-			int terms = FrequencyUtil
-					.getTerms(finMain.getRepayFrq(), finMain.getNextRepayDate(), finMain.getMaturityDate(), true, true)
-					.getTerms();
-			finMain.setCalTerms(terms);
+			fm.setCalMaturity(maturityDate);
+			fm.setCalTerms(FrequencyUtil.getTerms(repayFrq, nextRepayDate, maturityDate, true, true).getTerms());
 		}
 
 		// First Repayment Date Vs Maturity Date
-		if (finMain.getNextRepayDate().compareTo(finMain.getCalMaturity()) > 0) {
+		if (nextRepayDate.compareTo(fm.getCalMaturity()) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getMaturityDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90193", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextRepayDate);
+			valueParm[1] = DateUtil.formatToShortDate(maturityDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90193", valueParm)));
 		}
-
-		return errorDetails;
-
 	}
 
 	/*
@@ -5328,46 +5444,52 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> repayPftFrqValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+	private void repayPftFrqValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		String repayPftFrq = fm.getRepayPftFrq();
+		String frequencyDays = finType.getFrequencyDays();
+		Date nextRepayPftDate = fm.getNextRepayPftDate();
+		Date calGrcEndDate = fm.getCalGrcEndDate();
+		Date nextRepayDate = fm.getNextRepayDate();
 
 		// Validate Profit Frequency Frequency
-		ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getRepayPftFrq());
-		if (tempError != null) {
+		ErrorDetail error = FrequencyUtil.validateFrequency(repayPftFrq);
+		if (error != null) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Repay";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90156", valueParm)));
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90156", valueParm)));
 		}
 
 		// Validate with Allowed frequency days.
-		boolean isValid = validateAlwFrqDays(finMain.getRepayPftFrq(),
-				finScheduleData.getFinanceType().getFrequencyDays());
-		if (!isValid) {
+		if (!validateAlwFrqDays(repayPftFrq, frequencyDays)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Repay";
-			valueParm[1] = finMain.getRepayPftFrq();
-			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+			valueParm[1] = repayPftFrq;
+			valueParm[2] = frequencyDays;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
 
 		// First Repayment Frequency Date Vs Start Date/Grace End Date
-		if (finMain.getNextRepayPftDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
+		if (nextRepayPftDate.compareTo(calGrcEndDate) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayPftDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90194", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextRepayPftDate);
+			valueParm[1] = DateUtil.formatToShortDate(calGrcEndDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90194", valueParm)));
 		}
 
 		// First Interest Frequency Date Vs Next Repayment Date
-		if (finMain.getNextRepayPftDate().compareTo(finMain.getNextRepayDate()) > 0) {
+		if (nextRepayPftDate.compareTo(nextRepayDate) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayPftDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getNextRepayDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90195", valueParm)));
-		}
+			valueParm[0] = DateUtil.formatToShortDate(nextRepayPftDate);
+			valueParm[1] = DateUtil.formatToShortDate(nextRepayDate);
 
-		return errorDetails;
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90195", valueParm)));
+		}
 	}
 
 	/*
@@ -5376,57 +5498,67 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> repayPftReviewValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void repayPftReviewValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		boolean finIsRvwAlw = finType.isFinIsRvwAlw();
+		String frequencyDays = finType.getFrequencyDays();
+
+		String repayRvwFrq = fm.getRepayRvwFrq();
+		boolean allowRepayRvw = fm.isAllowRepayRvw();
+		Date nextRepayRvwDate = fm.getNextRepayRvwDate();
+		Date calGrcEndDate = fm.getCalGrcEndDate();
+		Date calMaturity = fm.getCalMaturity();
 
 		// Allow Profit Rate Review
-		if (!financeType.isFinIsRvwAlw()) {
-			if (finMain.isAllowRepayRvw() || StringUtils.isNotBlank(finMain.getRepayRvwFrq())
-					|| finMain.getNextRepayRvwDate() != null) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90196", null)));
-				return errorDetails;
-			} else {
-				return errorDetails;
+		if (!finIsRvwAlw) {
+			if (allowRepayRvw || StringUtils.isNotBlank(repayRvwFrq) || nextRepayRvwDate != null) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90196", null)));
 			}
+
+			return;
 		}
 
 		// Validate Profit Review Frequency
-		ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getRepayRvwFrq());
-		if (tempError != null) {
+		ErrorDetail error = FrequencyUtil.validateFrequency(repayRvwFrq);
+
+		if (error != null) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Repay";
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90157", valueParm)));
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90157", valueParm)));
 		}
 
 		// Validate with Allowed frequency days.
-		boolean isValid = validateAlwFrqDays(finMain.getRepayRvwFrq(),
-				finScheduleData.getFinanceType().getFrequencyDays());
-		if (!isValid) {
+		if (!validateAlwFrqDays(repayRvwFrq, frequencyDays)) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "Repay";
-			valueParm[1] = finMain.getRepayRvwFrq();
-			valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+			valueParm[1] = repayRvwFrq;
+			valueParm[2] = frequencyDays;
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 		}
+
 		// First Repayment Profit Review Date Vs Start Date/Grace End Date
-		if (finMain.getNextRepayRvwDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
+		if (nextRepayRvwDate.compareTo(calGrcEndDate) <= 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayRvwDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90197", valueParm)));
+			valueParm[0] = DateUtil.formatToShortDate(nextRepayRvwDate);
+			valueParm[1] = DateUtil.formatToShortDate(calGrcEndDate);
+
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90197", valueParm)));
 		}
 
 		// First Repayment Profit Review Date Vs Maturity Date
-		if (finMain.getNextRepayRvwDate().compareTo(finMain.getCalMaturity()) > 0) {
+		if (nextRepayRvwDate.compareTo(calMaturity) > 0) {
 			String[] valueParm = new String[2];
-			valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayRvwDate());
-			valueParm[1] = DateUtility.formatToShortDate(finMain.getCalMaturity());
-			errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90198", valueParm)));
-		}
+			valueParm[0] = DateUtility.formatToShortDate(nextRepayRvwDate);
+			valueParm[1] = DateUtility.formatToShortDate(calMaturity);
 
-		return errorDetails;
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90198", valueParm)));
+		}
 	}
 
 	/*
@@ -5435,61 +5567,71 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> repayPftCpzValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
+	private void repayPftCpzValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		FinanceType finType = schdData.getFinanceType();
+
+		boolean finIsIntCpz = finType.isFinIsIntCpz();
+		String frequencyDays = finType.getFrequencyDays();
+
+		String repayCpzFrq = fm.getRepayCpzFrq();
+		Date nextRepayCpzDate = fm.getNextRepayCpzDate();
+		boolean allowRepayCpz = fm.isAllowRepayCpz();
+		Date calMaturity = fm.getCalMaturity();
+		Date calGrcEndDate = fm.getCalGrcEndDate();
 
 		// Allow Profit Capitalization
-		if (!financeType.isFinIsIntCpz()) {
-			if (finMain.isAllowRepayCpz() || StringUtils.isNotBlank(finMain.getRepayCpzFrq())
-					|| finMain.getNextRepayCpzDate() != null) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90199", null)));
-				return errorDetails;
-			} else {
-				return errorDetails;
+		if (!finIsIntCpz) {
+			if (allowRepayCpz || StringUtils.isNotBlank(repayCpzFrq) || nextRepayCpzDate != null) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90199", null)));
 			}
+
+			return;
 		}
 
-		if (financeType.isFinIsIntCpz()) {
+		if (finIsIntCpz) {
 			// Validate Profit Capitalization Frequency
-			ErrorDetail tempError = FrequencyUtil.validateFrequency(finMain.getRepayCpzFrq());
-			if (tempError != null) {
+			ErrorDetail error = FrequencyUtil.validateFrequency(repayCpzFrq);
+
+			if (error != null) {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Repay";
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90158", valueParm)));
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90158", valueParm)));
 			}
 
 			// Validate with Allowed frequency days.
-			boolean isValid = validateAlwFrqDays(finMain.getRepayCpzFrq(),
-					finScheduleData.getFinanceType().getFrequencyDays());
-			if (!isValid) {
+			if (!validateAlwFrqDays(repayCpzFrq, frequencyDays)) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "Repay";
-				valueParm[1] = finMain.getRepayCpzFrq();
-				valueParm[2] = finScheduleData.getFinanceType().getFrequencyDays();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
+				valueParm[1] = repayCpzFrq;
+				valueParm[2] = frequencyDays;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90271", valueParm)));
 			}
 
-			// First Interest Capitalization Frequency Date Vs Start Date/GE
-			// Date
-			if (finMain.getNextRepayCpzDate().compareTo(finMain.getCalGrcEndDate()) <= 0) {
+			/* First Interest Capitalization Frequency Date Vs Start Date/GE Date */
+			if (nextRepayCpzDate.compareTo(calGrcEndDate) <= 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayCpzDate());
-				valueParm[1] = DateUtility.formatToShortDate(finMain.getCalGrcEndDate());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90225", valueParm)));
+				valueParm[0] = DateUtil.formatToShortDate(nextRepayCpzDate);
+				valueParm[1] = DateUtil.formatToShortDate(calGrcEndDate);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90225", valueParm)));
 			}
 
 			// First Interest Capitalization Frequency Date Vs M
-			if (finMain.getNextRepayCpzDate().compareTo(finMain.getCalMaturity()) > 0) {
+			if (nextRepayCpzDate.compareTo(calMaturity) > 0) {
 				String[] valueParm = new String[2];
-				valueParm[0] = DateUtility.formatToShortDate(finMain.getNextRepayCpzDate());
-				valueParm[1] = DateUtility.formatToShortDate(finMain.getCalMaturity());
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90226", valueParm)));
+				valueParm[0] = DateUtil.formatToShortDate(nextRepayCpzDate);
+				valueParm[1] = DateUtil.formatToShortDate(calMaturity);
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90226", valueParm)));
 			}
 		}
 
-		return errorDetails;
+		return;
 	}
 
 	/*
@@ -5498,37 +5640,47 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> repayDatesValidation(FinScheduleData finScheduleData) {
+	private void repayDatesValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
 
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		// it should match with frequency
-		if ((StringUtils.isNotBlank(finMain.getRepayFrq())) && (finMain.getNextRepayDate() != null)) {
-			if (!FrequencyUtil.isFrqDate(finMain.getRepayFrq(), finMain.getNextRepayDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90183", null)));
-			}
-		}
-		// it should match with frequency
-		if ((StringUtils.isNotBlank(finMain.getRepayRvwFrq())) && (finMain.getNextRepayRvwDate() != null)) {
-			if (!FrequencyUtil.isFrqDate(finMain.getRepayRvwFrq(), finMain.getNextRepayRvwDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90181", null)));
-			}
-		}
+		String repayFrq = fm.getRepayFrq();
+		String repayRvwFrq = fm.getRepayRvwFrq();
+		String repayCpzFrq = fm.getRepayCpzFrq();
+		String repayPftFrq = fm.getRepayPftFrq();
+
+		Date nextRepayDate = fm.getNextRepayDate();
+		Date nextRepayRvwDate = fm.getNextRepayRvwDate();
+		Date nextRepayCpzDate = fm.getNextRepayCpzDate();
+		Date nextRepayPftDate = fm.getNextRepayPftDate();
 
 		// it should match with frequency
-		if ((StringUtils.isNotBlank(finMain.getRepayCpzFrq())) && (finMain.getNextRepayCpzDate() != null)) {
-			if (!FrequencyUtil.isFrqDate(finMain.getRepayCpzFrq(), finMain.getNextRepayCpzDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90182", null)));
+		if ((StringUtils.isNotBlank(repayFrq)) && (nextRepayDate != null)) {
+			if (!FrequencyUtil.isFrqDate(repayFrq, nextRepayDate)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90183", null)));
 			}
 		}
-		if ((StringUtils.isNotBlank(finMain.getRepayPftFrq())) && (finMain.getNextRepayPftDate() != null)) {
-			if (!FrequencyUtil.isFrqDate(finMain.getRepayPftFrq(), finMain.getNextRepayPftDate())) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90180", null)));
-			}
-		}
-		return errorDetails;
 
+		// it should match with frequency
+		if ((StringUtils.isNotBlank(repayRvwFrq)) && (nextRepayRvwDate != null)) {
+			if (!FrequencyUtil.isFrqDate(repayRvwFrq, nextRepayRvwDate)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90181", null)));
+			}
+		}
+
+		// it should match with frequency
+		if ((StringUtils.isNotBlank(repayCpzFrq)) && (nextRepayCpzDate != null)) {
+			if (!FrequencyUtil.isFrqDate(repayCpzFrq, nextRepayCpzDate)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90182", null)));
+			}
+		}
+
+		if ((StringUtils.isNotBlank(repayPftFrq)) && (nextRepayPftDate != null)) {
+			if (!FrequencyUtil.isFrqDate(repayPftFrq, nextRepayPftDate)) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90180", null)));
+			}
+		}
 	}
 
 	/*
@@ -5537,51 +5689,47 @@ public class FinanceDataValidation {
 	 * _______________________________________________________________________________________________________________
 	 */
 
-	private List<ErrorDetail> bpiValidation(FinScheduleData finScheduleData) {
-		List<ErrorDetail> errorDetails = finScheduleData.getErrorDetails();
-		FinanceMain finMain = finScheduleData.getFinanceMain();
+	private void bpiValidation(FinScheduleData schdData) {
+		List<ErrorDetail> errors = schdData.getErrorDetails();
+		FinanceMain fm = schdData.getFinanceMain();
 
-		if (!finMain.isAlwBPI()) {
-			if (!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)) {
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90229", null)));
-				return errorDetails;
-			}
+		String bpiTreatment = fm.getBpiTreatment();
+		if (!fm.isAlwBPI() && !FinanceConstants.BPI_NO.equals(bpiTreatment)) {
+			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90229", null)));
+			return;
 		}
+
 		String frqBPI = null;
 		Date frqDate;
-		if (finMain.isAllowGrcPeriod()) {
-			frqBPI = finMain.getGrcPftFrq();
-			frqDate = finMain.getNextGrcPftDate();
-		} else {
-			frqBPI = finMain.getRepayPftFrq();
-			frqDate = finMain.getNextRepayPftDate();
-		}
-		if (finMain.isAlwBPI()) {
-			Date bpiDate = DateUtility
-					.getDate(DateUtility.format(
-							FrequencyUtil.getNextDate(frqBPI, 1, finMain.getFinStartDate(),
-									HolidayHandlerTypes.MOVE_NONE, false).getNextFrequencyDate(),
-							PennantConstants.dateFormat));
-			if (DateUtility.compare(bpiDate, frqDate) >= 0) {
-				/*
-				 * errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetails("30571", null))); return errorDetails;
-				 */
-				finMain.setBpiTreatment(FinanceConstants.BPI_NO);
-			}
-		}
-		if (StringUtils.isNotBlank(finMain.getBpiTreatment())) {
-			if (!StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_NO)
-					&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_DISBURSMENT)
-					&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHEDULE)
-					&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_CAPITALIZE)
-					&& !StringUtils.equals(finMain.getBpiTreatment(), FinanceConstants.BPI_SCHD_FIRSTEMI)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = finMain.getBpiTreatment();
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90185", valueParm)));
-			}
-		}
-		return errorDetails;
 
+		if (fm.isAllowGrcPeriod()) {
+			frqBPI = fm.getGrcPftFrq();
+			frqDate = fm.getNextGrcPftDate();
+		} else {
+			frqBPI = fm.getRepayPftFrq();
+			frqDate = fm.getNextRepayPftDate();
+		}
+
+		if (fm.isAlwBPI()) {
+			FrequencyDetails frequency = FrequencyUtil.getNextDate(frqBPI, 1, fm.getFinStartDate(),
+					HolidayHandlerTypes.MOVE_NONE, false);
+			Date bpiDate = DateUtil.getDatePart(frequency.getNextFrequencyDate());
+			if (DateUtil.compare(bpiDate, frqDate) >= 0) {
+				fm.setBpiTreatment(FinanceConstants.BPI_NO);
+			}
+		}
+
+		if (StringUtils.isNotBlank(bpiTreatment)) {
+			if (!FinanceConstants.BPI_NO.equals(bpiTreatment) && !FinanceConstants.BPI_DISBURSMENT.equals(bpiTreatment)
+					&& !FinanceConstants.BPI_SCHEDULE.equals(bpiTreatment)
+					&& !FinanceConstants.BPI_CAPITALIZE.equals(bpiTreatment)
+					&& !FinanceConstants.BPI_SCHD_FIRSTEMI.equals(bpiTreatment)) {
+				String[] valueParm = new String[1];
+				valueParm[0] = bpiTreatment;
+
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90185", valueParm)));
+			}
+		}
 	}
 
 	/**
@@ -8356,18 +8504,13 @@ public class FinanceDataValidation {
 		}
 		logger.debug(Literal.LEAVING);
 	}
-	/*
-	 * ######################################################################### #######################################
-	 * DEFAULT SETTER GETTER METHODS #########################################################################
-	 * #######################################
-	 */
 
 	public void setBaseRateDAO(BaseRateDAO baseRateDAO) {
 		this.baseRateDAO = baseRateDAO;
 	}
 
-	public void setBranchDAO(BranchDAO branchDAO) {
-		this.branchDAO = branchDAO;
+	public void setBranchService(BranchService branchService) {
+		this.branchService = branchService;
 	}
 
 	public void setCustomerDAO(CustomerDAO customerDAO) {

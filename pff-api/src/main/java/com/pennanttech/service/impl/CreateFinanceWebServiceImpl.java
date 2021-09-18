@@ -151,12 +151,12 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		}
 
 		if (StringUtils.isBlank(custCIF) && StringUtils.isBlank(coreBankId)) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
 			String[] valueParm = new String[1];
 			valueParm[0] = "Cif/CoreBankId";
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
-			return response;
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
+			return fd;
 		}
 
 		String[] logFields = getLogFields(fd);
@@ -221,7 +221,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 	public FinanceDetail createOverDraftLoanValidation(FinanceDetail fd) {
 		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceType financeType = schdData.getFinanceType();
+		FinanceType finType = schdData.getFinanceType();
 
 		FinanceMain fm = schdData.getFinanceMain();
 
@@ -233,7 +233,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			finID = financeMainDAO.getFinID(finReference);
 		}
 
-		if (!financeType.isFinIsGenRef()) {
+		if (!finType.isFinIsGenRef()) {
 			fd = createFinanceController.getFinanceDetails(finID);
 			WSReturnStatus wsrStatus = fd.getReturnStatus();
 
@@ -1088,19 +1088,17 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	private String[] getLogFields(FinanceDetail financeDetail) {
-		logger.debug(Literal.ENTERING);
+	private String[] getLogFields(FinanceDetail fd) {
 		String[] logfields = new String[3];
-		FinScheduleData finscheduleData = financeDetail.getFinScheduleData();
-		if (finscheduleData != null) {
-			FinanceMain finMain = finscheduleData.getFinanceMain();
-			if (finMain != null) {
-				logfields[0] = finMain.getCustCIF();
-				logfields[1] = finMain.getFinType();
-				logfields[2] = String.valueOf(finMain.getFinAmount());
-			}
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		if (fm != null) {
+			logfields[0] = fm.getCustCIF();
+			logfields[1] = fm.getFinType();
+			logfields[2] = String.valueOf(fm.getFinAmount());
 		}
-		logger.debug(Literal.LEAVING);
+
 		return logfields;
 	}
 

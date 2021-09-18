@@ -1,41 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  *
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  FrequencyUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : FrequencyUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -394,13 +385,17 @@ public class FrequencyUtil implements Serializable {
 		return "00";
 	}
 
-	public static FrequencyDetails getFrequencyDetail(String frequency) {
-		return validateFrequency(new FrequencyDetails(frequency));
+	public static FrequencyDetails getFrequencyDetail(String code) {
+		FrequencyDetails frequency = new FrequencyDetails(code);
+		validateFrequency(frequency);
+
+		return frequency;
 	}
 
-	public static ErrorDetail validateFrequency(String frequency) {
-		FrequencyDetails frequencyDetails = validateFrequency(new FrequencyDetails(frequency));
-		return frequencyDetails.getErrorDetails();
+	public static ErrorDetail validateFrequency(String code) {
+		FrequencyDetails frequency = new FrequencyDetails(code);
+		validateFrequency(frequency);
+		return frequency.getErrorDetails();
 	}
 
 	/*
@@ -410,146 +405,129 @@ public class FrequencyUtil implements Serializable {
 	 * 
 	 * @return FrequencyDetails
 	 */
-	public static FrequencyDetails validateFrequency(FrequencyDetails frequencyDetail) {
-		FrequencyDetails frequencyDetails = parseDetails(frequencyDetail);
+	public static void validateFrequency(FrequencyDetails frequency) {
+		parseDetails(frequency);
 
-		if (frequencyDetails.getErrorDetails() == null) {
-			frequencyDetails = validateFreqCode(frequencyDetails);
+		if (frequency.getErrorDetails() == null) {
+			validateFreqCode(frequency);
 		}
-
-		return frequencyDetails;
-
 	}
 
-	private static FrequencyDetails validateFreqCode(FrequencyDetails frequencyDetail) {
+	private static void validateFreqCode(FrequencyDetails frequency) {
+		ErrorDetail error = null;
 
-		char frqCode = frequencyDetail.getFrequencyCode().charAt(0);
+		char frqCode = frequency.getFrequencyCode().charAt(0);
+
+		int frequencyMonth = frequency.getFrequencyMonth();
+		int frequencyDay = frequency.getFrequencyDay();
+		String frqDesc = null;
+		String label = null;
+
 		switch (frqCode) {
 		case 'Y':
+			error = validMonthDay(1, 12, 1, frqMthDays[frequencyMonth - 1], frequency);
+
+			label = Labels.getLabel("label_Select_Yearly");
+
+			frqDesc = label + "," + getYearlyConstants()[frequencyMonth - 1] + " " + frequencyDay;
+
+			break;
 		case '2':
+			error = validMonthDay(1, 12, 1, frqMthDays[frequencyMonth - 1], frequency);
+
+			label = Labels.getLabel("label_Select_2Yearly");
+
+			frqDesc = label + "," + getYearlyConstants()[frequencyMonth - 1] + " " + frequencyDay;
+			break;
 		case '3':
-			frequencyDetail.setErrorDetails(
-					validMonthDay(1, 12, 1, frqMthDays[frequencyDetail.getFrequencyMonth() - 1], frequencyDetail));
+			error = validMonthDay(1, 12, 1, frqMthDays[frequencyMonth - 1], frequency);
 
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			label = Labels.getLabel("label_Select_3Yearly");
 
-			String label = "label_Select_Yearly";
-			if (frqCode == '2') {
-				label = "label_Select_2Yearly";
-			} else if (frqCode == '3') {
-				label = "label_Select_3Yearly";
-			}
+			frqDesc = label + "," + getYearlyConstants()[frequencyMonth - 1] + " " + frequencyDay;
 
-			frequencyDetail.setFrequencyDescription(
-					Labels.getLabel(label) + "," + getYearlyConstants()[frequencyDetail.getFrequencyMonth() - 1] + " "
-							+ frequencyDetail.getFrequencyDay());
 			break;
 		case 'H':
 
-			frequencyDetail.setErrorDetails(validMonthDay(1, 6, 1, 31, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(1, 6, 1, 31, frequency);
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_HalfYearly") + ","
-					+ getHalfyearlyconstants()[frequencyDetail.getFrequencyMonth() - 1] + " "
-					+ frequencyDetail.getFrequencyDay());
+			label = Labels.getLabel("label_Select_HalfYearly");
+
+			frqDesc = label + "," + getHalfyearlyconstants()[frequencyMonth - 1] + " " + frequencyDay;
+
 			break;
-
 		case 'Q':
 
-			frequencyDetail.setErrorDetails(validMonthDay(1, 4, 1, 31, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(1, 4, 1, 31, frequency);
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Quarterly") + ","
-					+ getQuarterlyconstants()[frequencyDetail.getFrequencyMonth() - 1] + " "
-					+ frequencyDetail.getFrequencyDay());
+			label = Labels.getLabel("label_Select_Quarterly");
+
+			frqDesc = label + "," + getQuarterlyconstants()[frequencyMonth - 1] + " " + frequencyDay;
+
 			break;
-
 		case 'B':
 
-			frequencyDetail.setErrorDetails(validMonthDay(1, 2, 1, 31, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(1, 2, 1, 31, frequency);
+			label = Labels.getLabel("label_Select_BiMonthly");
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_BiMonthly") + ","
-					+ getBimonthlyconstants()[frequencyDetail.getFrequencyMonth() - 1] + " "
-					+ frequencyDetail.getFrequencyDay());
+			frqDesc = label + "," + getBimonthlyconstants()[frequencyMonth - 1] + " " + frequencyDay;
+
 			break;
-
 		case 'M':
 
-			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 31, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(0, 0, 1, 31, frequency);
 
-			frequencyDetail.setFrequencyDescription(
-					Labels.getLabel("label_Select_Monthly") + "," + frequencyDetail.getFrequencyDay());
+			label = Labels.getLabel("label_Select_Monthly");
+
+			frqDesc = label + "," + frequencyDay;
 			break;
 
 		case 'F':
 
-			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 15, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(0, 0, 1, 15, frequency);
+			label = Labels.getLabel("label_Select_Fortnightly");
 
-			frequencyDetail.setFrequencyDescription(
-					Labels.getLabel("label_Select_Fortnightly") + "," + frequencyDetail.getFrequencyDay());
+			frqDesc = label + "," + frequencyDay;
 			break;
 		case 'T':
 
-			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 15, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(0, 0, 1, 15, frequency);
+			label = Labels.getLabel("label_Select_15DAYS");
 
-			frequencyDetail.setFrequencyDescription(
-					Labels.getLabel("label_Select_15DAYS") + "," + frequencyDetail.getFrequencyDay());
+			frqDesc = label + "," + frequencyDay;
 			break;
 
 		case 'X':
 
-			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 14, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(0, 0, 1, 14, frequency);
+			label = Labels.getLabel("label_Select_BiWeekly");
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_BiWeekly") + ","
-					+ getBiWeeklyconstants()[frequencyDetail.getFrequencyDay() - 1] + " "
-					+ frequencyDetail.getFrequencyDay());
+			frqDesc = label + "," + getBiWeeklyconstants()[frequencyDay - 1] + " " + frequencyDay;
 			break;
 
 		case 'W':
 
-			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 1, 7, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
+			error = validMonthDay(0, 0, 1, 7, frequency);
+			label = Labels.getLabel("label_Select_Weekly");
 
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Weekly") + ","
-					+ getWeeklyconstants()[frequencyDetail.getFrequencyDay() - 1]);
+			frqDesc = label + "," + getWeeklyconstants()[frequencyDay - 1];
 			break;
 
 		case 'D':
 
-			frequencyDetail.setErrorDetails(validMonthDay(0, 0, 0, 0, frequencyDetail));
-			if (frequencyDetail.getErrorDetails() != null) {
-				return frequencyDetail;
-			}
-			frequencyDetail.setFrequencyDescription(Labels.getLabel("label_Select_Daily"));
+			error = validMonthDay(0, 0, 0, 0, frequency);
+			label = Labels.getLabel("label_Select_Daily");
+			frqDesc = label;
 			break;
 		default:
-			frequencyDetail.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, "Invalid Frequency Code", null));
+			error = new ErrorDetail(PennantConstants.ERR_9999, "Invalid Frequency Code", null);
 		}
 
-		return frequencyDetail;
+		if (error == null) {
+			frequency.setFrequencyDescription(frqDesc);
+		}
+
+		frequency.setErrorDetails(error);
 	}
 
 	private static ErrorDetail getErrorDetail(String errorField, String errorCode, String[] errParm,
@@ -558,52 +536,47 @@ public class FrequencyUtil implements Serializable {
 				SessionUserDetails.getUserLanguage());
 	}
 
-	private static FrequencyDetails parseDetails(FrequencyDetails frequencyDetails) {
-		String[] errParm = new String[2];
+	private static void parseDetails(FrequencyDetails frequency) {
+		String[] errParm = new String[1];
 
-		if (frequencyDetails == null) {
-			frequencyDetails = new FrequencyDetails();
+		String code = frequency.getFrequency();
+
+		String[] valueParm = new String[] { code };
+
+		if (StringUtils.isBlank(code)) {
 			errParm[0] = " ";
-			frequencyDetails.setErrorDetails(getErrorDetail("Frequency", "51001", errParm, new String[] { " " }));
-			return frequencyDetails;
+			frequency.setErrorDetails(getErrorDetail("Frequency", "51001", errParm, valueParm));
 
+			return;
 		}
 
-		if (StringUtils.isBlank(frequencyDetails.getFrequency())) {
-			errParm[0] = " ";
-			frequencyDetails.setErrorDetails(
-					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
-			return frequencyDetails;
+		if (StringUtils.trimToEmpty(code).length() != 5) {
+			errParm[0] = code;
+			frequency.setErrorDetails(getErrorDetail("Frequency", "51001", errParm, valueParm));
+
+			return;
 		}
 
-		if (StringUtils.trimToEmpty(frequencyDetails.getFrequency()).length() != 5) {
-			errParm[0] = frequencyDetails.getFrequency();
-			frequencyDetails.setErrorDetails(
-					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
-			return frequencyDetails;
-		}
-
-		frequencyDetails.setFrequencyCode(getFrequencyCode(frequencyDetails.getFrequency()));
+		frequency.setFrequencyCode(getFrequencyCode(code));
 
 		try {
-			frequencyDetails.setFrequencyMonth(getIntFrequencyMth(frequencyDetails.getFrequency()));
+			frequency.setFrequencyMonth(getIntFrequencyMth(code));
 		} catch (NumberFormatException nfe) {
-			errParm[0] = Labels.getLabel("common.Month") + ":" + getFrequencyMth(frequencyDetails.getFrequency());
-			frequencyDetails.setErrorDetails(
-					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
-			return frequencyDetails;
+			errParm[0] = Labels.getLabel("common.Month") + ":" + getFrequencyMth(code);
+			frequency.setErrorDetails(getErrorDetail("Frequency", "51001", errParm, valueParm));
+
+			return;
 		}
 
 		try {
-			frequencyDetails.setFrequencyDay(getIntFrequencyDay(frequencyDetails.getFrequency()));
+			frequency.setFrequencyDay(getIntFrequencyDay(code));
 		} catch (NumberFormatException nfe) {
-			errParm[0] = Labels.getLabel("common.Day") + ":" + getFrequencyDay(frequencyDetails.getFrequency());
-			frequencyDetails.setErrorDetails(
-					getErrorDetail("Frequency", "51001", errParm, new String[] { frequencyDetails.getFrequency() }));
-			return frequencyDetails;
+			errParm[0] = Labels.getLabel("common.Day") + ":" + getFrequencyDay(code);
+			frequency.setErrorDetails(getErrorDetail("Frequency", "51001", errParm, valueParm));
+
+			return;
 		}
 
-		return frequencyDetails;
 	}
 
 	private static ErrorDetail validMonthDay(int startMth, int endMth, int startDay, int endDay,
@@ -1271,7 +1244,7 @@ public class FrequencyUtil implements Serializable {
 				HolidayHandlerTypes.getHolidayHandler(""));
 	}
 
-	public static FrequencyDetails getTerms(String frequency, Date startDate, Date endDate, boolean includeStartDate,
+	public static FrequencyDetails getTerms(String code, Date startDate, Date endDate, boolean includeStartDate,
 			boolean includeEndDate, String holidayHandlerTypes) {
 
 		List<Calendar> scheduleList = new ArrayList<Calendar>();
@@ -1281,17 +1254,18 @@ public class FrequencyUtil implements Serializable {
 		int cont = -1;
 		String[] errParm = new String[2];
 
-		FrequencyDetails frequencyDetails = validateFrequency(new FrequencyDetails(frequency));
+		FrequencyDetails frequency = new FrequencyDetails(code);
+		validateFrequency(frequency);
 
-		if (frequencyDetails.getErrorDetails() != null) {
-			return frequencyDetails;
+		if (frequency.getErrorDetails() != null) {
+			return frequency;
 		}
 
 		if (startDate.after(endDate) || (startDate.equals(endDate) && !includeStartDate)) {
 			errParm[0] = startDate.toString();
 			errParm[1] = endDate.toString();
-			frequencyDetails.setErrorDetails(getErrorDetail("Start Date", "51002", errParm, errParm));
-			return frequencyDetails;
+			frequency.setErrorDetails(getErrorDetail("Start Date", "51002", errParm, errParm));
+			return frequency;
 		}
 
 		if (includeStartDate) {
@@ -1302,7 +1276,7 @@ public class FrequencyUtil implements Serializable {
 		}
 
 		while (cont == -1) {
-			tempDate = getNextDate(frequency, 1, tempDate, holidayHandlerTypes, false, 0).getNextFrequencyDate();
+			tempDate = getNextDate(code, 1, tempDate, holidayHandlerTypes, false, 0).getNextFrequencyDate();
 			calDate.setTime(tempDate);
 			cont = DateUtility.compare(tempDate, endDate);
 			if (cont == 0) {
@@ -1323,11 +1297,11 @@ public class FrequencyUtil implements Serializable {
 			terms++;
 		}
 
-		frequencyDetails.setTerms(terms);
-		frequencyDetails.setScheduleList(scheduleList);
-		frequencyDetails.setNextFrequencyDate(scheduleList.get(0).getTime());
+		frequency.setTerms(terms);
+		frequency.setScheduleList(scheduleList);
+		frequency.setNextFrequencyDate(scheduleList.get(0).getTime());
 
-		return frequencyDetails;
+		return frequency;
 	}
 
 	public static String getMonthFrqValue(String monthValue, String frqCode) {

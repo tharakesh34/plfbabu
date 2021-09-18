@@ -1284,6 +1284,23 @@
 		</createIndex>
 	</changeSet>
 
-
+	<changeSet id="71" author="murthy.y">
+		<addColumn tableName="ADTFINRECEIPTHEADER">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	<changeSet id="71.1" author="murthy.y">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINRECEIPTHEADER SET FINID = (SELECT M.FINID FROM FINID_MAPPING M WHERE ADTFINRECEIPTHEADER.REFERENCE = M.FINREFERENCE);
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="71.2" author="murthy.y">
+		<createIndex tableName="ADTFINRECEIPTHEADER" indexName="idx_adtfinreceiptheader_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
+	</changeSet>
+	
 
 </databaseChangeLog>

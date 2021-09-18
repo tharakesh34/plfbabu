@@ -131,7 +131,7 @@ public class GenerateTableList {
 
 			for (String tableName : tableNames) {
 				String sql = "Select distinct FinId, FinReference from " + tableName
-						+ " Where FinReference = '1500AGR0009365'";
+						+ " Where FinReference = '1500AGR0009370'";
 
 				System.out.println(sql);
 				ResultSet executeQuery = null;
