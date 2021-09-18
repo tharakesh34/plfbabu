@@ -10,6 +10,7 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 public class AutoKnockOffData implements Serializable {
 	private static final long serialVersionUID = -388636206896888118L;
 
+	private long finID;
 	private String finReference;
 	private Date valueDate;
 	private List<AutoKnockOffFeeMapping> feeMappingList;
@@ -25,6 +26,14 @@ public class AutoKnockOffData implements Serializable {
 
 	public AutoKnockOffData() {
 		super();
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

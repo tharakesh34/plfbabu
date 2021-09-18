@@ -138,6 +138,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1992,6 +1993,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 
 		if (this.groupbox_Finance.isVisible()) {
+			header.setFinID(ComponentUtil.getFinID(this.finReference));
 			header.setReference(this.finReference.getValue());
 		} else if (this.groupbox_Customer.isVisible()) {
 			// Cust ID

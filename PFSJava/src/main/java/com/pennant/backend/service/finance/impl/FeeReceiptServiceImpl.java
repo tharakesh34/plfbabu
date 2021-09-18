@@ -851,22 +851,26 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		logger.debug(Literal.ENTERING);
 
 		LoggedInUser userDetails = fsi.getLoggedInUser();
+
 		if (SessionUserDetails.getLogiedInUser() != null) {
 			userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		}
+
 		List<FinFeeDetail> paidFeeList = null;
 		String finDivision = null;
+
+		Long finID = null;
 		if (StringUtils.isNotBlank(fsi.getFinReference())) {
 			String finReference = fsi.getFinReference();
 
-			Long finID = financeMainDAO.getFinID(finReference, TableType.TEMP_TAB);
+			finID = financeMainDAO.getFinID(finReference, TableType.TEMP_TAB);
 
 			if (finID == null) {
 				return ErrorUtil.getErrorDetail(new ErrorDetail("9999"), userDetails.getLanguage());
 			}
 
-			FinanceMain financeMain = this.financeMainDAO.getFinBasicDetails(finID, "_Temp");
-			if (financeMain == null) {
+			FinanceMain fm = this.financeMainDAO.getFinBasicDetails(finID, "_Temp");
+			if (fm == null) {
 				return ErrorUtil.getErrorDetail(new ErrorDetail("9999"), userDetails.getLanguage());
 			}
 			// FinFeedetails under temp table
@@ -876,23 +880,27 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			if (errorDetail != null) {
 				return errorDetail;
 			}
-			fsi.setCurrency(financeMain.getFinCcy());
-			fsi.setCustCIF(financeMain.getCustCIF());
-			fsi.setCustID(financeMain.getCustID());
-			fsi.setFinType(financeMain.getFinType());
-			fsi.setCurrency(financeMain.getFinCcy());
-			fsi.setFromBranch(financeMain.getFinBranch());
+			fsi.setCurrency(fm.getFinCcy());
+			fsi.setCustCIF(fm.getCustCIF());
+			fsi.setCustID(fm.getCustID());
+			fsi.setFinType(fm.getFinType());
+			fsi.setCurrency(fm.getFinCcy());
+			fsi.setFromBranch(fm.getFinBranch());
 			fsi.setToBranch(userDetails.getBranchCode());
-			finDivision = financeMain.getLovDescFinDivision();
+			finDivision = fm.getLovDescFinDivision();
 		} else {
 			paidFeeList = fsi.getFinFeeDetails();
 		}
 
 		FinReceiptHeader header = new FinReceiptHeader();
+
+		header.setFinID(finID);
 		header.setReference(fsi.getFinReference());
 		header.setCustCIF(fsi.getCustCIF());
 		header.setCustID(fsi.getCustID());
+
 		long receiptId = finReceiptHeaderDAO.generatedReceiptID(header);
+
 		fsi.setReceiptId(receiptId);
 		header.setReceiptDate(SysParamUtil.getAppDate());
 		header.setFinType(fsi.getFinType());

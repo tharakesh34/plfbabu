@@ -1155,41 +1155,44 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	}
 
 	private FinReceiptData doFillData(String finReference, Date valueDate) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
 		try {
-			// FinanceDetail
 			List<ReceiptAllocationDetail> allocationListData = null;
-			// feature date amount is not calculated
+
 			if (receiptData != null) {
 				allocationListData = receiptData.getReceiptHeader().getAllocations();
 			}
+
 			receiptData = receiptService.getFinReceiptDataById(finReference, AccountingEvent.EARLYSTL,
 					FinServiceEvent.RECEIPT, "");
-			FinReceiptHeader receiptHeader = receiptData.getReceiptHeader();
-			receiptHeader.setReference(finReference);
-			receiptHeader.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-			receiptHeader.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-			receiptHeader.setReceiptDate(SysParamUtil.getAppDate());
-			receiptHeader.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-			receiptHeader.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-			receiptHeader.setNewRecord(true);
+
+			FinReceiptHeader rch = receiptData.getReceiptHeader();
+			rch.setFinID(receiptData.getFinID());
+			rch.setReference(finReference);
+			rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+			rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+			rch.setReceiptDate(SysParamUtil.getAppDate());
+			rch.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
+			rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+			rch.setNewRecord(true);
 
 			FinReceiptDetail finReceiptDetail = new FinReceiptDetail();
 			// finReceiptDetail.setReceivedDate(detail.getSchDate());
 			finReceiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			finReceiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-			receiptHeader.getReceiptDetails().add(finReceiptDetail);
+			rch.getReceiptDetails().add(finReceiptDetail);
 
-			receiptHeader.setValueDate(valueDate);
+			rch.setValueDate(valueDate);
 			FinanceMain financeMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-			receiptData.setReceiptHeader(receiptHeader);
+			receiptData.setReceiptHeader(rch);
 			receiptData.setFinReference(financeMain.getFinReference());
 
 			receiptData.setBuildProcess("I");
 
 			receiptData.setValueDate(valueDate);
-			receiptData.setReceiptHeader(receiptHeader);
+			receiptData.setReceiptHeader(rch);
 			receiptData.setForeClosureEnq(true);
 
 			Cloner cloner = new Cloner();

@@ -71,7 +71,6 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class AutoKnockOffProcessService extends ServiceHelper {
-	private static final long serialVersionUID = 1L;
 
 	private transient RepaymentProcessUtil repaymentProcessUtil;
 	private transient ReceiptCalculator receiptCalculator;
@@ -92,42 +91,43 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		BigDecimal availableAmount = knockOffData.getBalAmount();
 		BigDecimal emiAmount = BigDecimal.ZERO;
 
-		FinReceiptHeader header = receiptData.getReceiptHeader();
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
-		header.setReference(finreference);
-		header.setReceiptDate(knockOffData.getValueDate());
-		header.setValueDate(knockOffData.getValueDate());
-		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
+		rch.setFinID(knockOffData.getFinID());
+		rch.setReference(finreference);
+		rch.setReceiptDate(knockOffData.getValueDate());
+		rch.setValueDate(knockOffData.getValueDate());
+		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
+		rch.setKnockOffType(RepayConstants.KNOCKOFF_TYPE_AUTO);
 		// header.setPayAgainstId(knockOffData.getPayableId());
-		header.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		header.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
-		header.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
-		header.setEffectSchdMethod(PennantConstants.List_Select);
-		header.setActFinReceipt(true);
-		header.setReceiptMode(getPaymentType(knockOffData.getPayableType()));
-		header.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
-		header.setRealizationDate(knockOffData.getValueDate());
-		header.setLogSchInPresentment(true);
-		header.setPostBranch("EOD");
-		header.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		rch.setReceiptPurpose(FinServiceEvent.SCHDRPY);
+		rch.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		rch.setAllocationType(RepayConstants.ALLOCATIONTYPE_AUTO);
+		rch.setEffectSchdMethod(PennantConstants.List_Select);
+		rch.setActFinReceipt(true);
+		rch.setReceiptMode(getPaymentType(knockOffData.getPayableType()));
+		rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rch.setRealizationDate(knockOffData.getValueDate());
+		rch.setLogSchInPresentment(true);
+		rch.setPostBranch("EOD");
+		rch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
-		Date valueDate = header.getValueDate();
+		Date valueDate = rch.getValueDate();
 		receiptData.setBuildProcess("I");
-		receiptData.setAllocList(header.getAllocations());
+		receiptData.setAllocList(rch.getAllocations());
 		receiptData.setValueDate(valueDate);
-		header.setValueDate(null);
+		rch.setValueDate(null);
 		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
 		if (fm != null) {
 			fm.setEventProperties(knockOffData.getEventProperties());
 		}
 		receiptData = receiptCalculator.initiateReceipt(receiptData, false);
 
-		header = receiptData.getReceiptHeader();
-		BigDecimal pastDues = header.getTotalPastDues().getTotalDue();
-		BigDecimal totalBounces = header.getTotalBounces().getTotalDue();
-		BigDecimal totalRcvAdvises = header.getTotalRcvAdvises().getTotalDue();
+		rch = receiptData.getReceiptHeader();
+		BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
+		BigDecimal totalBounces = rch.getTotalBounces().getTotalDue();
+		BigDecimal totalRcvAdvises = rch.getTotalRcvAdvises().getTotalDue();
 		BigDecimal totalDues = pastDues.add(totalBounces).add(totalRcvAdvises);
 
 		if (totalDues.compareTo(BigDecimal.ZERO) <= 0) {
@@ -135,7 +135,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 			return;
 		}
 
-		List<ReceiptAllocationDetail> allocationDtls = header.getAllocations();
+		List<ReceiptAllocationDetail> allocationDtls = rch.getAllocations();
 
 		for (AutoKnockOffFeeMapping feeMapping : feeMappingList) {
 			if (availableAmount.compareTo(BigDecimal.ZERO) <= 0) {
@@ -189,21 +189,21 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 
 		List<FinReceiptDetail> receiptDetails = new ArrayList<>();
 
-		FinReceiptDetail receiptDetail = new FinReceiptDetail();
-		receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-		receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-		receiptDetail.setPaymentType(getPaymentType(knockOffData.getPayableType()));
-		receiptDetail.setPayAgainstID(knockOffData.getPayableId());
-		receiptDetail.setAmount(receiptAmount);
-		receiptDetail.setDueAmount(receiptAmount);
-		receiptDetail.setStatus(RepayConstants.PAYSTATUS_REALIZED);
-		receiptDetail.setValueDate(knockOffData.getValueDate());
-		receiptDetail.setReceivedDate(knockOffData.getValueDate());
-		receiptDetail.setNoReserve(true);
+		FinReceiptDetail rcd = new FinReceiptDetail();
+		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+		rcd.setPaymentType(getPaymentType(knockOffData.getPayableType()));
+		rcd.setPayAgainstID(knockOffData.getPayableId());
+		rcd.setAmount(receiptAmount);
+		rcd.setDueAmount(receiptAmount);
+		rcd.setStatus(RepayConstants.PAYSTATUS_REALIZED);
+		rcd.setValueDate(knockOffData.getValueDate());
+		rcd.setReceivedDate(knockOffData.getValueDate());
+		rcd.setNoReserve(true);
 
-		receiptDetails.add(receiptDetail);
+		receiptDetails.add(rcd);
 
-		header.setReceiptDetails(receiptDetails);
+		rch.setReceiptDetails(receiptDetails);
 
 		if (receiptAmount.compareTo(BigDecimal.ZERO) <= 0) {
 			knockOffData.setReason("No dues to knock off");
@@ -216,13 +216,13 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		xcessPayable.setTotPaidNow(receiptAmount);
 		xcessPayable.setPayableID(knockOffData.getPayableId());
 
-		if (RepayConstants.PAYTYPE_PAYABLE.equals(receiptDetail.getPaymentType())) {
-			ManualAdvise advise = manualAdviseDAO.getManualAdviseById(receiptDetail.getPayAgainstID(), "_View");
+		if (RepayConstants.PAYTYPE_PAYABLE.equals(rcd.getPaymentType())) {
+			ManualAdvise advise = manualAdviseDAO.getManualAdviseById(rcd.getPayAgainstID(), "_View");
 			xcessPayable.setFeeTypeCode(advise.getFeeTypeCode());
 		}
-		header.setReceiptAmount(receiptAmount);
+		rch.setReceiptAmount(receiptAmount);
 
-		header.getXcessPayables().add(xcessPayable);
+		rch.getXcessPayables().add(xcessPayable);
 
 		FinScheduleData fsd = receiptData.getFinanceDetail().getFinScheduleData();
 
@@ -323,9 +323,9 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 		FinReceiptData receiptData = new FinReceiptData();
 		receiptData.setFinReference(finReference);
 
-		FinanceDetail financeDetail = new FinanceDetail();
-		receiptData.setFinanceDetail(financeDetail);
-		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinanceDetail fd = new FinanceDetail();
+		receiptData.setFinanceDetail(fd);
+		FinScheduleData schdData = fd.getFinScheduleData();
 		schdData.setFinReference(finReference);
 
 		// Finance Details from Main Table View
@@ -338,9 +338,11 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 
 		schdData.setFinID(fm.getFinID());
 
-		FinReceiptHeader receiptHeader = new FinReceiptHeader();
-		receiptData.setReceiptHeader(receiptHeader);
-		receiptHeader.setReference(fm.getFinReference());
+		FinReceiptHeader rch = new FinReceiptHeader();
+		receiptData.setReceiptHeader(rch);
+
+		rch.setFinID(fm.getFinID());
+		rch.setReference(fm.getFinReference());
 
 		Entity entity = entityDAO.getEntity(fm.getLovDescEntityCode(), "");
 		if (entity != null) {
@@ -372,7 +374,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 			CustomerDetails customerDetails = new CustomerDetails();
 			customerDetails.setCustomer(customerDAO.getCustomerByID(fm.getCustID(), "_AView"));
 			customerDetails.setCustID(fm.getCustID());
-			financeDetail.setCustomerDetails(customerDetails);
+			fd.setCustomerDetails(customerDetails);
 		}
 
 		// Fetch Excess Amount Details

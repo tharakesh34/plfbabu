@@ -328,8 +328,8 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setReceiptDate(this.receiptDate);
 		entity.setReceiptType(this.receiptType);
 		entity.setRecAgainst(this.recAgainst);
-		entity.setReference(this.reference);
 		entity.setFinID(this.finID);
+		entity.setReference(this.reference);
 		entity.setReceiptPurpose(this.receiptPurpose);
 		entity.setReceiptMode(this.receiptMode);
 		entity.setExcessAdjustTo(this.excessAdjustTo);

@@ -249,6 +249,7 @@ public class AdvancePaymentService extends ServiceHelper {
 
 			/* Excess Movement */
 			FinReceiptHeader rch = new FinReceiptHeader();
+			rch.setFinID(fm.getFinID());
 			rch.setReference(fm.getFinReference());
 			long receiptID = finReceiptHeaderDAO.generatedReceiptID(rch);
 
@@ -375,7 +376,10 @@ public class AdvancePaymentService extends ServiceHelper {
 	private FinReceiptHeader prepareReceipt(FinReceiptHeader rch, FinanceMain fm, BigDecimal receiptAmount,
 			String receiptMode, Date valueDate, long excessID, FinanceScheduleDetail curSchd, long linkedTranId) {
 
+		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+
+		rch.setFinID(finID);
 		rch.setReference(finReference);
 		rch.setReceiptDate(valueDate);
 		rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);

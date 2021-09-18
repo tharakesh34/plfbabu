@@ -4401,15 +4401,18 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// FIXME: PV: CODE REVIEW PENDING
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
-		int finFormatter = CurrencyUtil
-				.getFormat(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
+		FinanceDetail fd = receiptData.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		int finFormatter = CurrencyUtil.getFormat(fm.getFinCcy());
 
 		Date curBussDate = SysParamUtil.getAppDate();
 		FinReceiptHeader header = receiptData.getReceiptHeader();
 		header.setReceiptDate(curBussDate);
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		header.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);
-		header.setReference(this.finReference.getValue());
+		header.setFinID(fm.getFinID());
+		header.setReference(fm.getFinReference());
 
 		if (this.row_knockOff_Type.isVisible()) {
 			if (isKnockOff) {
