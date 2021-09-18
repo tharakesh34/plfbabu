@@ -281,7 +281,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceivedDate()));
 			ps.setString(index++, rh.getExtReference());
-			ps.setObject(index++, JdbcUtil.setLong(rh.getClosureTypeId()));
+			ps.setObject(index++, rh.getClosureTypeId());
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
 			ps.setString(index++, rh.getEntityCode());

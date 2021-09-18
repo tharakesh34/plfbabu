@@ -258,18 +258,18 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		}
 
 		Date appDate = SysParamUtil.getAppDate();
-		FinServiceInstruction finServInst = new FinServiceInstruction();
-		finServInst.setFinID(rch.getFinID());
-		finServInst.setFinReference(rch.getReference());
-		finServInst.setFinEvent(AccountingEvent.FEEPAY);
-		finServInst.setAppDate(appDate);
-		finServInst.setAmount(rch.getReceiptAmount());
-		finServInst.setSystemDate(DateUtility.getSysDate());
-		finServInst.setMaker(auditHeader.getAuditUsrId());
-		finServInst.setMakerAppDate(appDate);
-		finServInst.setMakerSysDate(DateUtility.getSysDate());
-		finServInst.setReference(String.valueOf(rch.getReceiptID()));
-		finServiceInstructionDAO.save(finServInst, tableType.getSuffix());
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinID(rch.getFinID());
+		fsi.setFinReference(rch.getReference());
+		fsi.setFinEvent(AccountingEvent.FEEPAY);
+		fsi.setAppDate(appDate);
+		fsi.setAmount(rch.getReceiptAmount());
+		fsi.setSystemDate(DateUtility.getSysDate());
+		fsi.setMaker(auditHeader.getAuditUsrId());
+		fsi.setMakerAppDate(appDate);
+		fsi.setMakerSysDate(DateUtility.getSysDate());
+		fsi.setReference(String.valueOf(rch.getReceiptID()));
+		finServiceInstructionDAO.save(fsi, tableType.getSuffix());
 
 		for (FinReceiptDetail receiptDetail : rch.getReceiptDetails()) {
 			receiptDetail.setReceiptID(receiptID);
