@@ -1,9 +1,5 @@
 package com.pennant.backend.dao.finance.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -70,10 +65,8 @@ public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> i
 	 * 
 	 * save FinTypeVASProducts
 	 * 
-	 * @param FinTypeVASProducts
-	 *            (finTypeVASProducts)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param FinTypeVASProducts (finTypeVASProducts)
+	 * @param type               (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -147,14 +140,10 @@ public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> i
 
 	@Override
 	public List<FinTypeVASProducts> getVASProductsByFinType(String finType, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(
-				" t1.FinType, t1.VasProduct, t1.Mandatory, t1.Version, t1.LastMntBy, t1.LastMntOn, t1.RecordStatus, t1.RoleCode");
-		sql.append(
-				", t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId, t3.ProductType, t4.ProductCtgDesc");
-		sql.append(", t5.DealerName ManufacturerDesc, t2.RecAgainst, t2.VasFee");
+		sql.append(" t1.FinType, t1.VasProduct, t1.Mandatory, t1.Version, t1.LastMntBy, t1.LastMntOn");
+		sql.append(", t1.RecordStatus, t1.RoleCode, t1.NextRoleCode, t1.TaskId, t1.NextTaskId, t1.RecordType");
+		sql.append(", t1.WorkflowId, t3.ProductType, t4.ProductCtgDesc, t5.DealerName, t2.RecAgainst, t2.VasFee");
 		sql.append(" from FinTypeVASProducts");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" t1 left outer join VasStructure  t2 on t1.VasProduct = t2.ProductCode");
@@ -163,58 +152,39 @@ public class FinTypeVASProductsDAOImpl extends SequenceDao<FinTypeVASProducts> i
 		sql.append(" left outer join AMTVehicleDealer t5 on t2.ManufacturerId = t5.DealerId");
 		sql.append(" Where FinType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setString(1, finType), (rs, rowNum) -> {
+			FinTypeVASProducts vas = new FinTypeVASProducts();
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
-				}
-			}, new RowMapper<FinTypeVASProducts>() {
-				@Override
-				public FinTypeVASProducts mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinTypeVASProducts vas = new FinTypeVASProducts();
+			vas.setFinType(rs.getString("FinType"));
+			vas.setVasProduct(rs.getString("VasProduct"));
+			vas.setMandatory(rs.getBoolean("Mandatory"));
+			vas.setVersion(rs.getInt("Version"));
+			vas.setLastMntBy(rs.getLong("LastMntBy"));
+			vas.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			vas.setRecordStatus(rs.getString("RecordStatus"));
+			vas.setRoleCode(rs.getString("RoleCode"));
+			vas.setNextRoleCode(rs.getString("NextRoleCode"));
+			vas.setTaskId(rs.getString("TaskId"));
+			vas.setNextTaskId(rs.getString("NextTaskId"));
+			vas.setRecordType(rs.getString("RecordType"));
+			vas.setWorkflowId(rs.getLong("WorkflowId"));
+			vas.setProductType(rs.getString("ProductType"));
+			vas.setProductCtgDesc(rs.getString("ProductCtgDesc"));
+			vas.setManufacturerDesc(rs.getString("DealerName"));
+			vas.setRecAgainst(rs.getString("RecAgainst"));
+			vas.setVasFee(rs.getBigDecimal("VasFee"));
 
-					vas.setFinType(rs.getString("FinType"));
-					vas.setVasProduct(rs.getString("VasProduct"));
-					vas.setMandatory(rs.getBoolean("Mandatory"));
-					vas.setVersion(rs.getInt("Version"));
-					vas.setLastMntBy(rs.getLong("LastMntBy"));
-					vas.setLastMntOn(rs.getTimestamp("LastMntOn"));
-					vas.setRecordStatus(rs.getString("RecordStatus"));
-					vas.setRoleCode(rs.getString("RoleCode"));
-					vas.setNextRoleCode(rs.getString("NextRoleCode"));
-					vas.setTaskId(rs.getString("TaskId"));
-					vas.setNextTaskId(rs.getString("NextTaskId"));
-					vas.setRecordType(rs.getString("RecordType"));
-					vas.setWorkflowId(rs.getLong("WorkflowId"));
-					vas.setProductType(rs.getString("ProductType"));
-					vas.setProductCtgDesc(rs.getString("ProductCtgDesc"));
-					vas.setManufacturerDesc(rs.getString("ManufacturerDesc"));
-					vas.setRecAgainst(rs.getString("RecAgainst"));
-					vas.setVasFee(rs.getBigDecimal("VasFee"));
-
-					return vas;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return vas;
+		});
 	}
 
 	/**
 	 * Fetch the Record Finance Flags details by key field
 	 * 
-	 * @param finRef
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finRef (String)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return finFlagsDetail
 	 */
 	@Override

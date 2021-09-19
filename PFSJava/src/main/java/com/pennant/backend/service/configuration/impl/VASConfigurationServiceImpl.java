@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASConfigurationServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASConfigurationServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 * *
+ * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.service.configuration.impl;
 
 import java.util.ArrayList;
@@ -72,6 +54,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.VASConsatnts;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * Service implementation for methods that depends on <b>VASConfiguration</b>.<br>
@@ -95,8 +78,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -110,8 +92,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	}
 
 	/**
-	 * @param vASConfigurationDAO
-	 *            the vASConfigurationDAO to set
+	 * @param vASConfigurationDAO the vASConfigurationDAO to set
 	 */
 	public void setVASConfigurationDAO(VASConfigurationDAO vASConfigurationDAO) {
 		this.vASConfigurationDAO = vASConfigurationDAO;
@@ -169,8 +150,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * Configuration. by using VASConfigurationDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -186,10 +166,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * Configuration. by using VASConfigurationDAO's update method 3) Audit the record in to AuditHeader and
 	 * AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -218,7 +196,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			getVASConfigurationDAO().update(vASConfiguration, tableType);
 		}
 
-		//ExtendedFieldHeader processing
+		// ExtendedFieldHeader processing
 		List<AuditDetail> headerDetail = vASConfiguration.getExtendedFieldHeader().getAuditDetailMap()
 				.get("ExtendedFieldHeader");
 		ExtendedFieldHeader extFieldHeader = (ExtendedFieldHeader) headerDetail.get(0).getModelData();
@@ -227,7 +205,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		if (extFieldHeader.isNewRecord()) {
 			moduleId = getExtendedFieldHeaderDAO().save(extFieldHeader, tableType);
 
-			//Setting Module ID to List
+			// Setting Module ID to List
 			List<ExtendedFieldDetail> list = extFieldHeader.getExtendedFieldDetails();
 			if (list != null && list.size() > 0) {
 				for (ExtendedFieldDetail ext : list) {
@@ -262,8 +240,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * VasStructure by using VASConfigurationDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -278,7 +255,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 		VASConfiguration vASConfiguration = (VASConfiguration) auditHeader.getAuditDetail().getModelData();
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		List<AuditDetail> auditDetailsList = new ArrayList<AuditDetail>();
 		ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
@@ -306,39 +283,43 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	/**
 	 * getVASConfigurationById fetch the details by using VASConfigurationDAO's getVASConfigurationById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return VASConfiguration
 	 */
 	@Override
 	public VASConfiguration getVASConfigurationByCode(String productCode) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		VASConfiguration vasConfiguration = getVASConfigurationDAO().getVASConfigurationByCode(productCode, "_View");
-		ExtendedFieldHeader extFldHeader = null;
-		if (vasConfiguration != null) {
-			extFldHeader = getExtendedFieldHeaderDAO().getExtendedFieldHeaderByModuleName(VASConsatnts.MODULE_NAME,
-					vasConfiguration.getProductCode(), "_View");
-			if (extFldHeader != null) {
-				extFldHeader.setExtendedFieldDetails(
-						getExtendedFieldDetailDAO().getExtendedFieldDetailById(extFldHeader.getModuleId(), "_View"));
-			}
-			vasConfiguration.setExtendedFieldHeader(extFldHeader);
-			vasConfiguration.setPremiumCalcDetList(
-					getVASConfigurationDAO().getPremiumCalcDetails(vasConfiguration.getProductCode(), "_View"));
+		VASConfiguration vasConfig = vASConfigurationDAO.getVASConfigurationByCode(productCode, "_View");
+
+		if (vasConfig == null) {
+			logger.debug(Literal.ENTERING);
+			return vasConfig;
 		}
-		logger.debug("Leaving");
-		return vasConfiguration;
+
+		String productCd = vasConfig.getProductCode();
+		String module = VASConsatnts.MODULE_NAME;
+
+		ExtendedFieldHeader efh = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module, productCd, "_View");
+
+		if (efh != null) {
+			long moduleId = efh.getModuleId();
+			efh.setExtendedFieldDetails(extendedFieldDetailDAO.getExtendedFieldDetailById(moduleId, "_View"));
+		}
+
+		vasConfig.setExtendedFieldHeader(efh);
+		vasConfig.setPremiumCalcDetList(vASConfigurationDAO.getPremiumCalcDetails(productCd, "_View"));
+
+		logger.debug(Literal.ENTERING);
+		return vasConfig;
 	}
 
 	/**
 	 * getApprovedVASConfigurationById fetch the details by using VASConfigurationDAO's getVASConfigurationById method .
 	 * with parameter id and type as blank. it fetches the approved records from the VasStructure.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return VASConfiguration
 	 */
 
@@ -373,8 +354,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to
 	 * AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -413,7 +393,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			}
 		}
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
 
 		if (extendedFieldHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
@@ -455,14 +435,14 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 		List<AuditDetail> auditDetailList = new ArrayList<AuditDetail>();
 
-		//Extended filed header
+		// Extended filed header
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		auditDetailList.add(new AuditDetail(tranType, 1, extendedFieldHeader.getBefImage(), extendedFieldHeader));
 
-		//Extended Field Detail List
+		// Extended Field Detail List
 		auditDetailList.addAll(listDeletion(extendedFieldHeader, "_Temp", auditHeader.getAuditTranType()));
 
-		//VAS Detail
+		// VAS Detail
 		getVASConfigurationDAO().delete(vASConfiguration, "_Temp");
 		String[] fields = PennantJavaUtil.getFieldDetails(new VASConfiguration(), vASConfiguration.getExcludeFields());
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
@@ -484,8 +464,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * workFlow table by using getVASConfigurationDAO().delete with parameters vASConfiguration,"_Temp" 3) Audit the
 	 * record in to AuditHeader and AdtVasStructure by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -502,7 +481,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
-		//ExtendedFieldHeader
+		// ExtendedFieldHeader
 		ExtendedFieldHeader extendedFieldHeader = vASConfiguration.getExtendedFieldHeader();
 		getExtendedFieldHeaderDAO().delete(extendedFieldHeader, "_Temp");
 		processVASPremiumCalcDetsils(vASConfiguration, "_Temp");
@@ -514,7 +493,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				vASConfiguration.getBefImage(), vASConfiguration));
 
-		//VASConfiguration Deletion
+		// VASConfiguration Deletion
 		getVASConfigurationDAO().delete(vASConfiguration, "_Temp");
 
 		auditHeader.setAuditDetails(auditDetailsList);
@@ -528,10 +507,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method, boolean onlineRequest) {
@@ -544,10 +521,10 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 		VASConfiguration vasConfiguration = (VASConfiguration) auditDetail.getModelData();
 		String usrLanguage = vasConfiguration.getUserDetails().getLanguage();
 
-		//Extended field details
+		// Extended field details
 		auditHeader = getAuditDetails(auditHeader, method);
 
-		//Extended field details
+		// Extended field details
 		ExtendedFieldHeader extendedFieldHeader = vasConfiguration.getExtendedFieldHeader();
 		if (extendedFieldHeader != null) {
 			List<AuditDetail> details = extendedFieldHeader.getAuditDetailMap().get("ExtendedFieldHeader");
@@ -577,10 +554,8 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 	 * mismatch conditions Fetch the error details from getVASConfigurationDAO().getErrorDetail with Error ID and
 	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -606,14 +581,16 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 
 		if (vASConfiguration.isNewRecord()) { // for New record or new record into work flow
 
-			if (!vASConfiguration.isWorkflow()) {// With out Work flow only new records  
-				if (befVASConfiguration != null) { // Record Already Exists in the table then error  
+			if (!vASConfiguration.isWorkflow()) {// With out Work flow only new records
+				if (befVASConfiguration != null) { // Record Already Exists in the table then error
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 				}
 			} else { // with work flow
-				if (vASConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befVASConfiguration != null || tempVASConfiguration != null) { // if records already exists in the main table
+				if (vASConfiguration.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is
+																									// new
+					if (befVASConfiguration != null || tempVASConfiguration != null) { // if records already exists in
+																						// the main table
 						auditDetail.setErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm));
 					}
@@ -646,7 +623,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 				}
 			} else {
 
-				if (tempVASConfiguration == null) { // if records not exists in the Work flow table 
+				if (tempVASConfiguration == null) { // if records not exists in the Work flow table
 					auditDetail
 							.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm));
 				}
@@ -659,7 +636,7 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			}
 		}
 
-		// If VAS Structure Product Code is already utilized in Workflow 
+		// If VAS Structure Product Code is already utilized in Workflow
 		if (StringUtils.equals(PennantConstants.RECORD_TYPE_DEL, vASConfiguration.getRecordType())) {
 			boolean workflowExists = getFinanceWorkFlowDAO().isWorkflowExists(vASConfiguration.getProductCode(),
 					PennantConstants.WORFLOW_MODULE_VAS);
@@ -700,14 +677,14 @@ public class VASConfigurationServiceImpl extends GenericService<VASConfiguration
 			}
 		}
 
-		//Audit Detail Preparation for Extended Field Header
+		// Audit Detail Preparation for Extended Field Header
 		AuditDetail auditDetail = new AuditDetail(auditTranType, 1, extendedFieldHeader.getBefImage(),
 				extendedFieldHeader);
 		List<AuditDetail> auditDetailHeaderList = new ArrayList<AuditDetail>();
 		auditDetailHeaderList.add(auditDetail);
 		auditDetailMap.put("ExtendedFieldHeader", auditDetailHeaderList);
 
-		//Audit Detail Preparation for Extended Field Detail
+		// Audit Detail Preparation for Extended Field Detail
 		if (extendedFieldHeader.getExtendedFieldDetails() != null
 				&& extendedFieldHeader.getExtendedFieldDetails().size() > 0) {
 			auditDetailMap.put("ExtendedFieldDetails", getExtendedFieldsValidation()

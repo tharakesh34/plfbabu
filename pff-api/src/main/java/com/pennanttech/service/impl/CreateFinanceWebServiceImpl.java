@@ -182,6 +182,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			}
 
 			financeDataValidation.financeDataValidation(PennantConstants.VLD_CRT_LOAN, schdData, true, fd, false);
+
 			if (!schdData.getErrorDetails().isEmpty()) {
 				return getErrorMessage(schdData);
 			}

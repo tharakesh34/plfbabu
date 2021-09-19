@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RelationshipOfficerServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-09-2011    														*
- *                                                                  						*
- * Modified Date    :  12-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : RelationshipOfficerServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-09-2011 *
+ * * Modified Date : 12-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -114,8 +96,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	 * in the table. based on the module workFlow Configuration. by using RelationshipOfficerDAO's update method 3)
 	 * Audit the record in to AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -152,8 +133,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	 * RelationshipOfficers by using RelationshipOfficerDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -177,10 +157,8 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	/**
 	 * getRelationshipOfficerById fetch the details by using RelationshipOfficerDAO's getRelationshipOfficerById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return RelationshipOfficer
 	 */
 
@@ -193,13 +171,12 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	 * getApprovedRelationshipOfficerById fetch the details by using RelationshipOfficerDAO's getRelationshipOfficerById
 	 * method . with parameter id and type as blank. it fetches the approved records from the RelationshipOfficers.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return RelationshipOfficer
 	 */
 
 	public RelationshipOfficer getApprovedRelationshipOfficerById(String id) {
-		return getRelationshipOfficerDAO().getRelationshipOfficerById(id, "_AView");
+		return relationshipOfficerDAO.getRelationshipOfficerById(id, "_AView");
 	}
 
 	/**
@@ -214,8 +191,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	 * flow 5) Audit the record in to AuditHeader and AdtRelationshipOfficers by using
 	 * auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -280,8 +256,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	 * the record in to AuditHeader and AdtRelationshipOfficers by using auditHeaderDAO.addAudit(auditHeader) for Work
 	 * flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -309,8 +284,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 	 * for any mismatch conditions Fetch the error details from getRelationshipOfficerDAO().getErrorDetail with Error ID
 	 * and language as parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader) {
@@ -339,7 +313,8 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 		RelationshipOfficer relationshipOfficer = (RelationshipOfficer) auditDetail.getModelData();
 
 		// Check the unique keys.
-		if (relationshipOfficer.isNewRecord() && PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())
+		if (relationshipOfficer.isNewRecord()
+				&& PennantConstants.RECORD_TYPE_NEW.equals(relationshipOfficer.getRecordType())
 				&& relationshipOfficerDAO.isDuplicateKey(relationshipOfficer.getROfficerCode(),
 						relationshipOfficer.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
 			String[] parameters = new String[1];
@@ -361,7 +336,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = new AuditDetail();
-		//setting mandatory validation for rOfficerCode,rOfficerDeptCode,rOfficerDesc
+		// setting mandatory validation for rOfficerCode,rOfficerDeptCode,rOfficerDesc
 		if (StringUtils.isBlank(relationshipOfficer.getROfficerCode())) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "rOfficerCode";
@@ -377,7 +352,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 			valueParm[0] = "rOfficerDeptCode";
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30561", "", valueParm)));
 		}
-		//Dept code master data validation
+		// Dept code master data validation
 		if (StringUtils.isNotBlank(relationshipOfficer.getROfficerDeptCode())) {
 			Department department = departmentDAO.getDepartmentById(relationshipOfficer.getROfficerDeptCode(), "");
 			if (department == null) {
@@ -387,7 +362,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
 			}
 		}
-		//validate Phone number
+		// validate Phone number
 		String mobileNumber = relationshipOfficer.getMobileNO();
 		if (StringUtils.isNotBlank(mobileNumber)) {
 
@@ -396,7 +371,7 @@ public class RelationshipOfficerServiceImpl extends GenericService<RelationshipO
 			}
 		}
 
-		//Desg code master data validation
+		// Desg code master data validation
 		if (StringUtils.isNotBlank(relationshipOfficer.getGenDesignation())) {
 
 			Designation designation = designationDAO.getDesignationById(relationshipOfficer.getGenDesignation(), "");

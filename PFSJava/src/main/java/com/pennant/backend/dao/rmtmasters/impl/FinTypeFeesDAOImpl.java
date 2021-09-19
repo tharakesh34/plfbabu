@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * * Modified
+ * Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -110,10 +92,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -145,52 +125,35 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
 	public List<FinTypeFees> getFinTypeFeesList(String finType, String finEvent, String type, boolean origination,
 			int moduleId) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where FinType = ? and FinEvent = ? and Active = ?");
 		sql.append(" and OriginationFee = ? and ModuleId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		FinTypeRowMapper rowMapper = new FinTypeRowMapper(type);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finType);
-					ps.setString(index++, finEvent);
-					ps.setInt(index++, 1);
-					ps.setBoolean(index++, origination);
-					ps.setInt(index++, moduleId);
-				}
-			}, rowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			ps.setString(index++, finType);
+			ps.setString(index++, finEvent);
+			ps.setInt(index++, 1);
+			ps.setBoolean(index++, origination);
+			ps.setInt(index++, moduleId);
+		}, new FinTypeRowMapper(type));
 	}
 
 	/**
 	 * Fetch the Record Scheme Fees details by key fields
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return List<FinTypeFees>
 	 */
 	@Override
@@ -233,10 +196,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -301,10 +262,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
@@ -344,8 +303,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * This method refresh the Record.
 	 * 
-	 * @param FinanceType
-	 *            (financeType)
+	 * @param FinanceType (financeType)
 	 * @return void
 	 */
 	@Override
@@ -358,10 +316,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	 * 
 	 * save Finance Types
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -404,10 +360,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	 * This method updates the Record RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Types by key FinType and Version
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -452,10 +406,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	 * This method Deletes the Record from the RMTFinanceTypes or RMTFinanceTypes_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Finance Types by key FinType
 	 * 
-	 * @param Finance
-	 *            Types (financeType)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Types (financeType)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -486,8 +438,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * This method initialize the Record.
 	 * 
-	 * @param FinanceType
-	 *            (financeType)
+	 * @param FinanceType (financeType)
 	 * @return FinanceType
 	 */
 
@@ -590,10 +541,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * Fetch the Record Fee Types details by key reference
 	 * 
-	 * @param reference
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param reference (long)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return FinanceTypeFees
 	 */
 	@Override
@@ -716,10 +665,8 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 	/**
 	 * Fetch the Record Finance Types details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceType
 	 */
 	@Override
