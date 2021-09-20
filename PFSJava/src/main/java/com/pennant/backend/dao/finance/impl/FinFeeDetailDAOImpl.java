@@ -721,7 +721,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		StringBuilder sql = new StringBuilder("Update FinFeeDetail");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Set PaidAmount = ?, PaidAmountOriginal = ?, PaidAmountGST = ?, RemainingFee = ?");
-		sql.append(" RemainingFeeOriginal = ?, RemainingFeeGST = ?, PaidTDS = ?, RemTDS = ?, LastMntOn = ?");
+		sql.append(", RemainingFeeOriginal = ?, RemainingFeeGST = ?, PaidTDS = ?, RemTDS = ?, LastMntOn = ?");
 		sql.append(" Where FeeID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());

@@ -138,6 +138,7 @@ import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.web.util.ComponentUtil;
 import com.rits.cloning.Cloner;
 
 /**
@@ -577,6 +578,7 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} else {
 			FinanceMain main = (FinanceMain) dataObject;
 			if (main != null) {
+				finReference.setObject(main);
 				this.finReference.setValue(main.getFinReference(), "");
 				this.finType.setValue(main.getFinType(), main.getLovDescFinTypeName());
 				this.finCcy.setValue(main.getFinCcy(), CurrencyUtil.getCcyDesc(main.getFinCcy()));
@@ -1236,52 +1238,54 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						return;
 					}
 				}
-				FinReceiptHeader header = getReceiptHeader();
-				if (header.getReceiptDetails().isEmpty()) {
-					FinReceiptDetail receiptDetail = new FinReceiptDetail();
-					receiptDetail.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
-					receiptDetail.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
-					header.getReceiptDetails().add(receiptDetail);
+				FinReceiptHeader rch = getReceiptHeader();
+				if (rch.getReceiptDetails().isEmpty()) {
+					FinReceiptDetail rcd = new FinReceiptDetail();
+					rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+					rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
+					rch.getReceiptDetails().add(rcd);
 				}
-				header.setRemarks(this.remarks.getValue());
-				header.setTransactionRef(this.favourNo.getValue());
-				header.setBankCode(this.bankCode.getValue());
-				for (FinReceiptDetail receiptDetail : header.getReceiptDetails()) {
-					receiptDetail.setAmount(header.getReceiptAmount());
-					receiptDetail.setPaymentType(header.getReceiptMode());
-					receiptDetail.setFavourNumber(this.favourNo.getValue());
-					receiptDetail.setValueDate(this.valueDate.getValue());
-					receiptDetail.setBankCode(this.bankCode.getValue());
-					receiptDetail.setFavourName(this.favourName.getValue());
-					receiptDetail.setDepositDate(this.depositDate.getValue());
-					receiptDetail.setDepositNo(this.depositNo.getValue());
-					receiptDetail.setPaymentRef(this.paymentRef.getValue());
-					receiptDetail.setTransactionRef(this.transactionRef.getValue());
-					receiptDetail.setChequeAcNo(this.chequeAcNo.getValue());
+				rch.setRemarks(this.remarks.getValue());
+				rch.setTransactionRef(this.favourNo.getValue());
+				rch.setBankCode(this.bankCode.getValue());
+				for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
+					rcd.setAmount(rch.getReceiptAmount());
+					rcd.setPaymentType(rch.getReceiptMode());
+					rcd.setFavourNumber(this.favourNo.getValue());
+					rcd.setValueDate(this.valueDate.getValue());
+					rcd.setBankCode(this.bankCode.getValue());
+					rcd.setFavourName(this.favourName.getValue());
+					rcd.setDepositDate(this.depositDate.getValue());
+					rcd.setDepositNo(this.depositNo.getValue());
+					rcd.setPaymentRef(this.paymentRef.getValue());
+					rcd.setTransactionRef(this.transactionRef.getValue());
+					rcd.setChequeAcNo(this.chequeAcNo.getValue());
 					// bank branch id
 					Object obj = this.bankBranch.getAttribute("bankBranchID");
 					if (obj != null) {
-						receiptDetail.setBankBranchID(Long.valueOf(String.valueOf(obj)));
+						rcd.setBankBranchID(Long.valueOf(String.valueOf(obj)));
 					} else {
-						receiptDetail.setBankBranchID(0);
+						rcd.setBankBranchID(0);
 					}
 
 					if (!this.fundingAccount.getValue().isEmpty()) {
-						receiptDetail.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
+						rcd.setFundingAc(Long.valueOf(this.fundingAccount.getValue()));
 					}
-					receiptDetail.setReceivedDate(this.receivedDate.getValue());
+					rcd.setReceivedDate(this.receivedDate.getValue());
 
-					if (receiptDetail.getRepayHeaders().isEmpty()) {
+					if (rcd.getRepayHeaders().isEmpty()) {
 						FinRepayHeader repayHeader = new FinRepayHeader();
-						repayHeader.setFinReference(this.finReference.getValue());
+
+						repayHeader.setFinID(rch.getFinID());
+						repayHeader.setFinReference(rch.getReference());
 						repayHeader.setValueDate(this.receivedDate.getValue());
 						repayHeader.setFinEvent(FinServiceEvent.FEEPAYMENT);
-						repayHeader.setRepayAmount(header.getReceiptAmount());
+						repayHeader.setRepayAmount(rch.getReceiptAmount());
 
-						receiptDetail.getRepayHeaders().add(repayHeader);
+						rcd.getRepayHeaders().add(repayHeader);
 					} else {
-						receiptDetail.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
-						receiptDetail.getRepayHeaders().get(0).setRepayAmount(header.getReceiptAmount());
+						rcd.getRepayHeaders().get(0).setValueDate(this.receivedDate.getValue());
+						rcd.getRepayHeaders().get(0).setRepayAmount(rch.getReceiptAmount());
 					}
 				}
 			}
@@ -1992,7 +1996,9 @@ public class FeeReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		header.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 
 		if (this.groupbox_Finance.isVisible()) {
-			// header.setFinID(ComponentUtil.getFinID(this.finReference));
+			if (header.getFinID() == null || header.getFinID() == 0) {
+				header.setFinID(ComponentUtil.getFinID(this.finReference));
+			}
 			header.setReference(this.finReference.getValue());
 		} else if (this.groupbox_Customer.isVisible()) {
 			// Cust ID

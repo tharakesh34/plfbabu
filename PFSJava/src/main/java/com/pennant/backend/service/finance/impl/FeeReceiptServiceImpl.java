@@ -1248,6 +1248,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			// Creating Excess
 			if (excess == null) {
 				excess = new FinExcessAmount();
+
+				excess.setFinID(finID);
 				excess.setFinReference(reference);
 				excess.setAmountType(rch.getExcessAdjustTo());
 				excess.setAmount(excessAmt);

@@ -13,6 +13,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -44,18 +45,36 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public int lockFinAdvancePayments(long headerId, long userId, Long[] paymentIdList) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into Disbursement_Requests_Header");
+		sql.append(" Select ?, Channel, PaymentID, ?, ? From (");
+		sql.append(" Select PaymentID, 'D' Channel, Status From FinAdvancePayments");
+		sql.append(" Union All");
+		sql.append(" Select PaymentInstructionID PaymentID, 'P' Channel, Status From PaymentInstructions) t");
+		sql.append(" Where t.PaymentID in (");
+		sql.append(JdbcUtil.getInCondition(Arrays.asList(paymentIdList)));
+		sql.append(")");
+		sql.append(" and t.Status = ? and T.PaymentID not in (Select PaymentID From Disbursement_Requests_Header)");
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			return this.jdbcOperations.update(DisbursementRequestsQueries.getInsertHeaderQuery(), ps -> {
+			return this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
 				ps.setLong(index++, headerId);
 				ps.setLong(index++, userId);
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
-				ps.setObject(index++, Arrays.asList(paymentIdList));
+
+				for (Long paymentID : paymentIdList) {
+					ps.setLong(index++, paymentID);
+				}
+
+				ps.setObject(index++, paymentIdList.toString());
 				ps.setString(index++, "APPROVED");
 			});
-		} catch (Exception e) {
-			//
+		} catch (DataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return 0;
@@ -68,7 +87,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public int deleteDisbursementBatch(long headerId) {
-		return execute("DELETE FROM DISBURSEMENT_REQUESTS_HEADER WHERE HEADER_ID = ?", headerId);
+		return execute("DELETE FROM DISBURSEMENT_REQUESTS WHERE HEADER_ID = ?", headerId);
 	}
 
 	@Override
@@ -86,65 +105,85 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	public List<DisbursementRequest> logDisbursementBatch(DisbursementRequest requestData) {
 		final String DISB_FI_EMAIL = SysParamUtil.getValueAsString("DISB_FI_EMAIL");
 
-		return jdbcOperations.query(DisbursementRequestsQueries.getSelectAllQuery(), ps -> {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PaymentId CustCIF, FinID, FinReference, AmtTobeReleased, Disbursement_Type, LLDate, PayableLoc");
+		sql.append(", PrintingLoc  CustShrtName, Customer_Mobile, Customer_Email, Customer_State, Customer_City");
+		sql.append(", Customer_Address1, Customer_Address2, Customer_Address3, Customer_Address4, Customer_Address5");
+		sql.append(", BankName, BranchDesc, Benficiary_Branch_State, Benficiary_Branch_City, MICR_Code, IFSC_Code");
+		sql.append(", Beneficiary_Mobile, Benficiry_Email, BeneficiaryAccno, BeneficiaryName");
+		sql.append(", Benficiary_State, Benficiary_City");
+		sql.append(", Benficiary_Address1, Benficiary_Address2, Benficiary_Address3");
+		sql.append(", Benficiary_Address4, Benficiary_Address5");
+		sql.append(", Payment_Detail1, Payment_Detail2, Payment_Detail3, Payment_Detail4");
+		sql.append(", Payment_Detail5, Payment_Detail6, Payment_Detail7");
+		sql.append(", Status, Remarks, Channel");
+		sql.append(", PartnerBank_Id, PartnerBank_Code, PartnerBank_Account");
+		sql.append(", AlwFileDownload, Cheque_Number, FinAmount");
+		sql.append(" From Int_Disbursement_Request_View");
+		sql.append(" Where PaymentId IN (Select PaymentId From Disbursement_Requests_Header Where ID = (?))");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, requestData.getHeaderId());
 		}, (rs, rowNum) -> {
 			DisbursementRequest req = new DisbursementRequest();
 
 			req.setAutoDownload(requestData.isAutoDownload());
-			req.setDisbursementId(getValueAsLong(rs, "DISBURSEMENT_ID"));
-			req.setCustCIF(getValueAsString(rs, "CUSTCIF"));
-			req.setFinID(getValueAsLong(rs, "FINID"));
-			req.setFinReference(getValueAsString(rs, "FINREFERENCE"));
-			req.setDisbursementAmount(getValueAsBigDecimal(rs, "DISBURSEMENT_AMOUNT"));
-			req.setDisbursementType(getValueAsString(rs, "DISBURSEMENT_TYPE"));
-			req.setDisbursementDate(getValueAsDate(rs, "DISBURSEMENT_DATE"));
-			req.setDraweeLocation(getValueAsString(rs, "DRAWEE_LOCATION"));
-			req.setPrintLocation(getValueAsString(rs, "PRINT_LOCATION"));
-			req.setCustomerName(getValueAsString(rs, "CUSTOMER_NAME"));
-			req.setCustomerMobile(getValueAsString(rs, "CUSTOMER_MOBILE"));
-			req.setCustomerEmail(getValueAsString(rs, "CUSTOMER_EMAIL"));
-			req.setCustomerState(getValueAsString(rs, "CUSTOMER_STATE"));
-			req.setCustomerCity(getValueAsString(rs, "CUSTOMER_CITY"));
-			req.setCustomerAddress1(getValueAsString(rs, "CUSTOMER_ADDRESS1"));
-			req.setCustomerAddress2(getValueAsString(rs, "CUSTOMER_ADDRESS2"));
-			req.setCustomerAddress3(getValueAsString(rs, "CUSTOMER_ADDRESS3"));
-			req.setCustomerAddress4(getValueAsString(rs, "CUSTOMER_ADDRESS4"));
-			req.setCustomerAddress5(getValueAsString(rs, "CUSTOMER_ADDRESS5"));
-			req.setBenficiaryBank(getValueAsString(rs, "BENFICIARY_BANK"));
-			req.setBenficiaryBranch(getValueAsString(rs, "BENFICIARY_BRANCH"));
-			req.setBenficiaryBranchState(getValueAsString(rs, "BENFICIARY_BRANCH_STATE"));
-			req.setBenficiaryBranchCity(getValueAsString(rs, "BENFICIARY_BRANCH_CITY"));
-			req.setMicrCode(getValueAsString(rs, "MICR_CODE"));
-			req.setIfscCode(getValueAsString(rs, "IFSC_CODE"));
-			req.setBenficiaryAccount(getValueAsString(rs, "BENFICIARY_ACCOUNT"));
-			req.setBenficiaryName(getValueAsString(rs, "BENFICIARY_NAME"));
-			req.setBenficiaryMobile(getValueAsString(rs, "BENFICIARY_MOBILE"));
-			req.setBenficiryEmail(getValueAsString(rs, "BENFICIRY_EMAIL"));
-			req.setBenficiryState(getValueAsString(rs, "BENFICIRY_STATE"));
-			req.setBenficiryCity(getValueAsString(rs, "BENFICIRY_CITY"));
-			req.setBenficiaryAddress1(getValueAsString(rs, "BENFICIARY_ADDRESS1"));
-			req.setBenficiaryAddress2(getValueAsString(rs, "BENFICIARY_ADDRESS2"));
-			req.setBenficiaryAddress3(getValueAsString(rs, "BENFICIARY_ADDRESS3"));
-			req.setBenficiaryAddress4(getValueAsString(rs, "BENFICIARY_ADDRESS4"));
-			req.setBenficiaryAddress5(getValueAsString(rs, "BENFICIARY_ADDRESS5"));
-			req.setPaymentDetail1(getValueAsString(rs, "PAYMENT_DETAIL1"));
-			req.setPaymentDetail2(getValueAsString(rs, "PAYMENT_DETAIL2"));
-			req.setPaymentDetail3(getValueAsString(rs, "PAYMENT_DETAIL3"));
-			req.setPaymentDetail4(getValueAsString(rs, "PAYMENT_DETAIL4"));
-			req.setPaymentDetail5(getValueAsString(rs, "PAYMENT_DETAIL5"));
-			req.setPaymentDetail6(getValueAsString(rs, "PAYMENT_DETAIL6"));
-			req.setPaymentDetail7(getValueAsString(rs, "PAYMENT_DETAIL7"));
-			req.setStatus(getValueAsString(rs, "STATUS"));
-			req.setRemarks(getValueAsString(rs, "REMARKS"));
-			req.setChannel(getValueAsString(rs, "CHANNEL"));
-			req.setPartnerBankId(getValueAsLong(rs, "PARTNER_BANK_ID"));
-			req.setPartnerBankCode(getValueAsString(rs, "PARTNER_BANK_CODE"));
-			req.setAlwFileDownload(getValueAsBoolean(rs, "ALW_FILE_DOWNLOAD"));
-			req.setPartnerBankAccount(getValueAsString(rs, "PARTNERBANK_ACCOUNT"));
-			req.setChequeNumber(getValueAsString(rs, "CHEQUE_NUMBER"));
-			req.setLoanAmount(getValueAsBigDecimal(rs, "FINAMOUNT"));
-			// default data
+
+			req.setDisbursementId(getValueAsLong(rs, "PaymentId"));
+			req.setCustCIF(getValueAsString(rs, "CustCIf"));
+			req.setFinID(getValueAsLong(rs, "Finid"));
+			req.setFinReference(getValueAsString(rs, "FinReference"));
+			req.setDisbursementAmount(getValueAsBigDecimal(rs, "AmtTobeReleased"));
+			req.setDisbursementType(getValueAsString(rs, "Disbursement_Type"));
+			req.setDisbursementDate(getValueAsDate(rs, "LLDate"));
+			req.setDraweeLocation(getValueAsString(rs, "PayableLoc"));
+			req.setPrintLocation(getValueAsString(rs, "PrintingLoc"));
+			req.setCustomerName(getValueAsString(rs, "CustShrtName"));
+			req.setCustomerMobile(getValueAsString(rs, "Customer_Mobile"));
+			req.setCustomerEmail(getValueAsString(rs, "Customer_Email"));
+			req.setCustomerState(getValueAsString(rs, "Customer_State"));
+			req.setCustomerCity(getValueAsString(rs, "Customer_City"));
+			req.setCustomerAddress1(getValueAsString(rs, "Customer_Address1"));
+			req.setCustomerAddress2(getValueAsString(rs, "Customer_Address2"));
+			req.setCustomerAddress3(getValueAsString(rs, "Customer_Address3"));
+			req.setCustomerAddress4(getValueAsString(rs, "Customer_Address4"));
+			req.setCustomerAddress5(getValueAsString(rs, "Customer_Address5"));
+			req.setBenficiaryBank(getValueAsString(rs, "BankName"));
+			req.setBenficiaryBranch(getValueAsString(rs, "BranchDesc"));
+			req.setBenficiaryBranchState(getValueAsString(rs, "Benficiary_Branch_State"));
+			req.setBenficiaryBranchCity(getValueAsString(rs, "Benficiary_Branch_City"));
+			req.setMicrCode(getValueAsString(rs, "MICR_Code"));
+			req.setIfscCode(getValueAsString(rs, "IFSC_Code"));
+			req.setBenficiaryAccount(getValueAsString(rs, "BeneficiaryAccno"));
+			req.setBenficiaryName(getValueAsString(rs, "BeneficiaryName"));
+			req.setBenficiaryMobile(getValueAsString(rs, "Beneficiary_Mobile"));
+			req.setBenficiryEmail(getValueAsString(rs, "Benficiry_Email"));
+			req.setBenficiryState(getValueAsString(rs, "Benficiary_State"));
+			req.setBenficiryCity(getValueAsString(rs, "Benficiary_City"));
+			req.setBenficiaryAddress1(getValueAsString(rs, "Benficiary_Address1"));
+			req.setBenficiaryAddress2(getValueAsString(rs, "Benficiary_Address2"));
+			req.setBenficiaryAddress3(getValueAsString(rs, "Benficiary_Address3"));
+			req.setBenficiaryAddress4(getValueAsString(rs, "Benficiary_Address4"));
+			req.setBenficiaryAddress5(getValueAsString(rs, "Benficiary_Address5"));
+			req.setPaymentDetail1(getValueAsString(rs, "Payment_Detail1"));
+			req.setPaymentDetail2(getValueAsString(rs, "Payment_Detail2"));
+			req.setPaymentDetail3(getValueAsString(rs, "Payment_Detail3"));
+			req.setPaymentDetail4(getValueAsString(rs, "Payment_Detail4"));
+			req.setPaymentDetail5(getValueAsString(rs, "Payment_Detail5"));
+			req.setPaymentDetail6(getValueAsString(rs, "Payment_Detail6"));
+			req.setPaymentDetail7(getValueAsString(rs, "Payment_Detail7"));
+			req.setStatus(getValueAsString(rs, "Status"));
+			req.setRemarks(getValueAsString(rs, "Remarks"));
+			req.setChannel(getValueAsString(rs, "Channel"));
+			req.setPartnerBankId(getValueAsLong(rs, "PartnerBank_Id"));
+			req.setPartnerBankCode(getValueAsString(rs, "PartnerBank_Code"));
+			req.setAlwFileDownload(getValueAsBoolean(rs, "AlwFileDownload"));
+			req.setPartnerBankAccount(getValueAsString(rs, "PartnerBank_Account"));
+			req.setChequeNumber(getValueAsString(rs, "Cheque_Number"));
+			req.setLoanAmount(getValueAsBigDecimal(rs, "FinAmount"));
+
 			req.setPaymentDetail1(DISB_FI_EMAIL);
 			req.setHeaderId(requestData.getHeaderId());
 			req.setRespBatchId(0L);
@@ -153,7 +192,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			long id = insertDisbursement(req);
 			req.setId(id);
 
-			logger.debug(String.format("DISBURSEMENT_ID : %d", id));
+			logger.debug("DISBURSEMENT_ID : {}", id);
 
 			return req;
 		});
@@ -182,7 +221,18 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public List<FinAdvancePayments> getAdvancePayments(long headerId) {
-		return this.jdbcOperations.query(DisbursementRequestsQueries.getSelectQuery(), ps -> {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PaymentId, PaymentType, fa.PartnerBankID, PartnerbankCode, AlwFileDownload, Channel From (");
+		sql.append(" Select PaymentId, PaymentType, PartnerBankID, Status, 'D' Channel");
+		sql.append(" From FinAdvancePayments");
+		sql.append(" Union all");
+		sql.append(" Select PaymentInstructionId PaymentId, PaymentType, PartnerBankID, Status, 'P' Channel");
+		sql.append(" From PaymentInstructions) fa");
+		sql.append(" Inner Join PartnerBanks pb On pf.PartnerBankId = FA.PartnerBankId");
+		sql.append(" Where PaymentId In (Select PaymentId From Disbursement_Requests_Header Where Id = ?)");
+		sql.append(" and fa.Status = ?");
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
 
 			ps.setLong(index++, headerId);
@@ -191,12 +241,12 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		}, (rs, rowNum) -> {
 			FinAdvancePayments fa = new FinAdvancePayments();
 
-			fa.setPaymentId(rs.getLong("PAYMENTID"));
-			fa.setPaymentType(rs.getString("PAYMENTTYPE"));
-			fa.setPartnerBankID(rs.getLong("PARTNERBANKID"));
-			fa.setPartnerbankCode(rs.getString("PARTNERBANKCODE"));
-			fa.setAlwFileDownload(rs.getBoolean("ALWFILEDOWNLOAD"));
-			fa.setChannel(rs.getString("CHANNEL"));
+			fa.setPaymentId(rs.getLong("PaymentId"));
+			fa.setPaymentType(rs.getString("PaymentType"));
+			fa.setPartnerBankID(rs.getLong("PartnerBankID"));
+			fa.setPartnerbankCode(rs.getString("PartnerbankCode"));
+			fa.setAlwFileDownload(rs.getBoolean("AlwFileDownload"));
+			fa.setChannel(rs.getString("Channel"));
 
 			return fa;
 		});
@@ -205,10 +255,26 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	private long insertDisbursement(DisbursementRequest req) {
 		final KeyHolder keyHolder = new GeneratedKeyHolder();
 
+		StringBuilder sql = new StringBuilder();
+		sql.append("Insert Into Disbursement_Requests (");
+		sql.append(" Disbursement_Id, CustCIF, FinID, FinReference, Disbursement_Amount, Disbursement_Type");
+		sql.append(", Disbursement_Date, Drawee_Location, Print_Location, Customer_Name, Customer_Mobile");
+		sql.append(", Customer_Email, Customer_State, Customer_City, Customer_Address1, Customer_Address2");
+		sql.append(", Customer_Address3, Customer_Address4, Customer_Address5, Benficiary_Bank, Benficiary_Branch");
+		sql.append(", Benficiary_Branch_State, Benficiary_Branch_City, MICR_Code, IFSC_Code");
+		sql.append(", Benficiary_Account, Benficiary_Name, Benficiary_Mobile, Benficiry_Email, Benficiry_State");
+		sql.append(", Benficiry_City, Benficiary_Address1, Benficiary_Address2, Benficiary_Address3");
+		sql.append(", Benficiary_Address4, Benficiary_Address5, Payment_detail1, Payment_detail2, Payment_detail3");
+		sql.append(", Payment_detail4, Payment_detail5, Payment_detail6, Payment_detail7, Status, Remarks");
+		sql.append(", Channel, Batch_Id, Auto_Download, Header_Id");
+		sql.append(", Partnerbank_Id, Partnerbank_Code, Partnerbank_Account, Cheque_Number, Downloaded_On)");
+		sql.append(" Values (");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
 		try {
 			this.jdbcOperations.update(con -> {
-				PreparedStatement ps = con.prepareStatement(DisbursementRequestsQueries.getInsertQuery(),
-						new String[] { "id" });
+				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
 				int index = 1;
 
 				ps.setLong(index++, req.getDisbursementId());
@@ -278,17 +344,16 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public void updateBatchFailureStatus(DisbursementRequest req) {
-		updateStatus("FINADVANCEPAYMENTS", "PAYMENTID", req);
-		updateStatus("PAYMENTINSTRUCTIONS", "PAYMENTINSTRUCTIONID", req);
-		updateStatus("INSURANCEPAYMENTINSTRUCTIONS", "ID", req);
+		updateStatus("FinAdvancePayments", "PaymentId", req);
+		updateStatus("PaymentInstructions", "PaymentInstructionId", req);
 	}
 
 	private void updateStatus(String tableName, String colName, DisbursementRequest req) {
 		StringBuilder sql = new StringBuilder("Update ");
 		sql.append(tableName);
-		sql.append(" SET STATUS = ? WHERE ");
+		sql.append(" Set Status = ? Where ");
 		sql.append(colName);
-		sql.append(" IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE HEADER_ID = ?)");
+		sql.append(" In (Select Disbursement_Id From Disbursement_Requests Where Header_Id = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -300,7 +365,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public int updateBatchStatus(DisbursementRequest req) {
-		String sql = "UPDATE DISBURSEMENT_REQUESTS SET BATCH_ID = ?, STATUS = ? WHERE HEADER_ID = ? AND DISBURSEMENT_TYPE = ?";
+		String sql = "Update Disbursement_Requests Set Batch_Id = ?, Status = ? Where Header_Id = ? and Disbursement_Type = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -317,11 +382,11 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		if (batchCount > 0) {
 			if (req.isDisbursements()) {
-				disbursementsCount = updateStatusWithBatchID("FINADVANCEPAYMENTS", "PAYMENTID", req);
+				disbursementsCount = updateStatusWithBatchID("FinAdvancePayments", "PaymentId", req);
 			}
 
 			if (req.isPayments()) {
-				paymentsCount = updateStatusWithBatchID("PAYMENTINSTRUCTIONS", "PAYMENTINSTRUCTIONID", req);
+				paymentsCount = updateStatusWithBatchID("PaymentInstructions", "PaymentInstructionId", req);
 			}
 
 			if (batchCount == (disbursementsCount + paymentsCount + insurancesCount)) {
@@ -335,11 +400,11 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	}
 
 	private int updateStatusWithBatchID(String tableName, String colName, DisbursementRequest req) {
-		StringBuilder sql = new StringBuilder("Update ");
+		StringBuilder sql = new StringBuilder("Update");
 		sql.append(tableName);
-		sql.append(" SET STATUS = ? WHERE ");
+		sql.append(" Set Status = ? Where ");
 		sql.append(colName);
-		sql.append(" IN (SELECT DISBURSEMENT_ID FROM DISBURSEMENT_REQUESTS WHERE HEADER_ID = ? and BATCH_ID = ?)");
+		sql.append(" In (Select Disbursement_Id From Disbursement_Requests Where Header_Id = ? and Batch_Id = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -389,7 +454,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public void lockMovement(long requestId) {
-		String sql = "UPDATE DISBURSEMENT_MOVEMENTS SET PROCESS_FLAG = ?, FAILURE_REASON = ? WHERE ID = ?";
+		String sql = "Update Disbursement_Movements Set Process_Flag = ?, Failure_Reason = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -402,7 +467,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public void updateMovement(DisbursementRequest request, int processFlag) {
-		String sql = "UPDATE DISBURSEMENT_MOVEMENTS SET PROCESS_FLAG = ?, FAILURE_REASON = ?, FILE_LOCATION = ?, PROCESSED_ON = ? WHERE ID = ?";
+		String sql = "Update Disbursement_Movements Set Process_Flag = ?, Failure_Reason = ?, File_Location = ?, Processed_On = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -426,7 +491,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 		final String reason = failureReason;
 
-		String sql = "UPDATE DISBURSEMENT_MOVEMENTS SET PROCESS_FLAG = ?, FAILURE_REASON = ? WHERE ID = ?";
+		String sql = "Update Disbursement_Movements Set Process_Flag = ?, Failure_Reason = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -463,7 +528,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public void deleteMovement(long requestId) {
-		String sql = "DELETE FROM DISBURSEMENT_MOVEMENTS WHERE ID = ? AND PROCESS_FLAG = ?";
+		String sql = "Delete From Disbursement_Movements Where Id = ? and Process_Flag = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -475,7 +540,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public int updateRespBatch(DisbursementDetails detail, long respBatchId) {
-		String sql = "Update DISBURSEMENT_REQUESTS Set RESP_BATCH_ID = ?, STATUS = ?, REALIZATION_DATE = ?, REJECT_REASON = ?, TRANSACTIONREF = ? WHERE DISBURSEMENT_ID = ?";
+		String sql = "Update Disbursement_Requests Set Resp_Batch_Id = ?, Status = ?, Realization_Date = ?, Reject_Reason = ?, TransactionRef = ? Where Disbursement_Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -500,7 +565,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public String isDisbursementExist(DisbursementDetails detail) {
-		String sql = "Select DISBURSEMENT_ID from DISBURSEMENT_REQUESTS where DISBURSEMENT_ID = ?";
+		String sql = "Select Disbursement_Id From Disbursement_Requests Where Disbursement_Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -593,7 +658,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 	@Override
 	public List<DisbursementRequest> getDisbursementInstructions(DisbursementRequest req) {
-		StringBuilder sql = new StringBuilder("SELECT");
+		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PAYMENTID, CUSTCIF, FINID, FINREFERENCE, FINTYPE");
 		sql.append(", AMTTOBERELEASED, DISBURSEMENT_TYPE, PAYABLELOC, PRINTINGLOC");
 		sql.append(", BANKNAME, MICR_CODE, IFSC_CODE, DISBDATE");

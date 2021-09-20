@@ -96,7 +96,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(fe.getExcessID()));
+			ps.setLong(index++, fe.getExcessID());
 			ps.setLong(index++, fe.getFinID());
 			ps.setString(index++, fe.getFinReference());
 			ps.setString(index++, fe.getAmountType());
