@@ -15637,55 +15637,6 @@ UNION ALL
 		</createProcedure>
 	</changeSet>
 
-	<changeSet id="12_pre" author="rajesh.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_save_and_drop_dependencies ('plf', 'financemainmaintenance_view');
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="12" author="rajesh.n">
-		<createView viewName="financemainmaintenance_view" replaceIfExists="true">
-			<![CDATA[
-				SELECT T1.FINREFERENCE,
-					T1.FINTYPE,
-					T1.FINCCY,
-					T1.CALROUNDINGMODE,
-					T1.ROUNDINGTARGET,
-					T1.FINBRANCH,
-					T1.CUSTID,
-					T1.FINSTARTDATE,
-					T1.MATURITYDATE,
-					T1.CLOSINGSTATUS
-				FROM FINANCEMAIN_TEMP T1
-				UNION ALL
-				SELECT T1.FINREFERENCE,
-					T1.FINTYPE,
-					T1.FINCCY,
-					T1.CALROUNDINGMODE,
-					T1.ROUNDINGTARGET,
-					T1.FINBRANCH,
-					T1.CUSTID,
-					T1.FINSTARTDATE,
-					T1.MATURITYDATE,
-					T1.CLOSINGSTATUS
-				FROM FINANCEMAIN T1
-				WHERE NOT (EXISTS ( SELECT 1
-           FROM FINANCEMAIN_TEMP
-          WHERE FINANCEMAIN_TEMP.FINREFERENCE= T1.FINREFERENCE))
-		   ]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="12_post" author="rajesh.n" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'financemainmaintenance_view');
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="13_pre" author="rajesh.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
