@@ -297,9 +297,8 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 			}
 
 			transactionManager.commit(status);
-			transactionManager.rollback(status);
 		} catch (Exception e) {
-
+			transactionManager.rollback(status);
 			logger.info("ConcurrencyException {}", e.getMessage());
 			throw new ConcurrencyException();
 		}

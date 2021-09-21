@@ -70,7 +70,6 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 					ps.setLong(index++, paymentID);
 				}
 
-				ps.setObject(index++, paymentIdList.toString());
 				ps.setString(index++, "APPROVED");
 			});
 		} catch (DataAccessException e) {
