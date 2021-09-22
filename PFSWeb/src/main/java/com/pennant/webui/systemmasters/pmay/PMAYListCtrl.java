@@ -181,7 +181,6 @@ public class PMAYListCtrl extends GFCBaseListCtrl<PMAY> {
 		// Get the selected record.
 		Listitem selectedItem = this.listBoxPmay.getSelectedItem();
 		long finID = (Long) selectedItem.getAttribute("finID");
-		String finReference = (String) selectedItem.getAttribute("finReference");
 		PMAY pmay = pmayService.getPMAY(finID, "_View");
 
 		if (pmay == null) {

@@ -32,6 +32,7 @@ public class PMAYListModelItemRenderer implements ListitemRenderer<PMAY>, Serial
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(pmay.getRecordType()));
 		lc.setParent(item);
+		item.setAttribute("finID", pmay.getFinID());
 		item.setAttribute("finReference", pmay.getFinReference());
 
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPMAYItemDoubleClicked");
