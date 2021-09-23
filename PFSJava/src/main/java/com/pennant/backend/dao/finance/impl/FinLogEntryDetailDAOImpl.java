@@ -27,7 +27,7 @@ public class FinLogEntryDetailDAOImpl extends SequenceDao<FinLogEntryDetail> imp
 		sql.append(" FinLogEntryDetail");
 		sql.append("( FinID, FinReference, LogKey, EventAction, SchdlRecal, PostDate, ReversalCompleted");
 		sql.append(") values(");
-		sql.append("?, ?, ?, ?, ?, ?");
+		sql.append("?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		entryDetail.setLogKey(getNextValue("SeqFinLogEntryDetail"));

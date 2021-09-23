@@ -181,7 +181,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public void update(ManualAdvise ma, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update ManualAdvise");
 		sql.append(tableType.getSuffix());
-		sql.append(" Set AdviseType = ?, FinID = ?  FinReference = ?, FeeTypeID = ?");
+		sql.append(" Set AdviseType = ?, FinID = ?,  FinReference = ?, FeeTypeID = ?");
 		sql.append(", Sequence = ?, AdviseAmount = ?, PaidAmount = ?");
 		sql.append(", WaivedAmount = ?, Remarks = ?, BounceID = ?, ReceiptID = ?");
 		sql.append(", ValueDate = ?, PostDate = ?, ReservedAmt = ?, BalanceAmt = ?");
@@ -189,7 +189,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", WaivedCGST = ?, WaivedSGST = ?, WaivedIGST = ?, WaivedUGST = ?, WaivedCESS = ?");
 		sql.append(", FinSource = ?, DueCreation = ?, LinkedTranId = ?");
 		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ? , NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
-		sql.append(" RecordType = ?, WorkflowId = ?");
+		sql.append(", RecordType = ?, WorkflowId = ?");
 		sql.append(" Where AdviseID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -211,6 +211,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setDate(index++, JdbcUtil.getDate(ma.getValueDate()));
 			ps.setDate(index++, JdbcUtil.getDate(ma.getPostDate()));
 			ps.setBigDecimal(index++, ma.getReservedAmt());
+			ps.setBigDecimal(index++, ma.getBalanceAmt());
 			ps.setBigDecimal(index++, ma.getPaidCGST());
 			ps.setBigDecimal(index++, ma.getPaidSGST());
 			ps.setBigDecimal(index++, ma.getPaidUGST());
@@ -232,6 +233,8 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, ma.getNextTaskId());
 			ps.setString(index++, ma.getRecordType());
 			ps.setLong(index++, JdbcUtil.setLong(ma.getWorkflowId()));
+			
+			ps.setLong(index++, ma.getAdviseID());
 
 		});
 

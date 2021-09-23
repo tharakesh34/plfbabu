@@ -5168,6 +5168,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(rch.getReference(), "_AView", false);
 
 		FinReceiptData rd = new FinReceiptData();
+		rd.setFinID(rch.getFinID());
 		rd.setFinReference(rch.getReference());
 		rd.setReceiptHeader(rch);
 

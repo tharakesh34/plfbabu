@@ -18,7 +18,7 @@
 							autodisable="button_CreditAppReviewList_CreditAppReviewSearch,button_CreditApplicationReviewList_PrintList,button_CreditApplicationReviewList_NewCreditApplicationReview,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CreditApplicationReviewList_CreditApplicationReviewSearchDialog.tooltiptext')}"
 							sclass="z-toolbarbutton" />
-						<button id="button_CreditApplicationReviewList_PrintList" label="${c:l('label_Print')}"
+						<button id="print" label="${c:l('label_Print')}"
 							autodisable="button_CreditApplicationReviewList_CreditApplicationReviewSearchDialog,button_CreditApplicationReviewList_PrintList,button_CreditApplicationReviewList_NewCreditApplicationReview,btnRefresh,btnHelp"
 							tooltiptext="${c:l('button_CreditApplicationReviewList_PrintList.tooltiptext')}" sclass="z-toolbarbutton" />
 					</toolbar>

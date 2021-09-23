@@ -85,7 +85,7 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 				hd.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return hd;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -140,7 +140,7 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 		StringBuilder sql = new StringBuilder("Update HoldDisbursement");
 		sql.append(tableType.getSuffix());
 		sql.append(" Set Hold = ?, TotalLoanAmt = ?, DisbursedAmount = ?, HoldLimitAmount = ?, Remarks = ?");
-		sql.append(" LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
+		sql.append(", LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?, TaskId = ?");
 		sql.append(", NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where FinID = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
@@ -182,7 +182,7 @@ public class HoldDisbursementDAOImpl extends BasicDao<HoldDisbursement> implemen
 		StringBuilder sql = new StringBuilder("Delete From HoldDisbursement");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where FinID = ?");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
 		logger.debug(Literal.SQL + sql.toString());
 

@@ -868,7 +868,9 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForList(sql, Long.class, 0);
+		return this.jdbcOperations.query(sql, ps -> ps.setInt(1, 0), (rs, rowNum) -> {
+			return JdbcUtil.getLong(rs.getObject(1));
+		});
 	}
 
 	@Override

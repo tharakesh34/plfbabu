@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related PaymentOrderIssues. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related PaymentOrderIssues. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * RepaymentOrderIssueion or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. RepaymentOrderIssueion or retransmission of
+ * the materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentOrderIssueListModelItemRenderer.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-08-2011    														*
- *                                                                  						*
- * Modified Date    :  12-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentOrderIssueListModelItemRenderer.java * * Author : PENNANT TECHONOLOGIES * * Creation Date :
+ * 12-08-2011 * * Modified Date : 12-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.webui.finance.payorderissue.model;
 
@@ -101,7 +83,10 @@ public class PayOrderIssueListModelItemRenderer implements ListitemRenderer<PayO
 		lc.setParent(item);
 		lc = new Listcell(PennantJavaUtil.getLabel(payOrderIssueHeader.getRecordType()));
 		lc.setParent(item);
+		
+		item.setAttribute("finID", payOrderIssueHeader.getFinID());
 		item.setAttribute("finRef", payOrderIssueHeader.getFinReference());
+		
 		ComponentsCtrl.applyForward(item, "onDoubleClick=onPayOrderIssueItemDoubleClicked");
 	}
 }

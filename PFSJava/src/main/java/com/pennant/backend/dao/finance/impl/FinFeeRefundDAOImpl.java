@@ -103,7 +103,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 	public void update(FinFeeRefundHeader frh, String type) {
 		StringBuilder sql = new StringBuilder("Update FinFeeRefundHeader");
 		sql.append(type);
-		sql.append(" Set HeaderId = ?, FinID = ?, FinReference = ?, LinkedTranId = ?");
+		sql.append(" Set FinID = ?, FinReference = ?, LinkedTranId = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?");
 		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?");
@@ -114,7 +114,6 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, frh.getHeaderId());
 			ps.setLong(index++, frh.getFinID());
 			ps.setString(index++, frh.getFinReference());
 			ps.setLong(index++, frh.getLinkedTranId());
@@ -128,6 +127,8 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 			ps.setString(index++, frh.getNextTaskId());
 			ps.setString(index++, frh.getRecordType());
 			ps.setLong(index++, frh.getWorkflowId());
+			
+			ps.setLong(index++, frh.getHeaderId());
 		});
 
 		if (recordCount == 0) {
@@ -258,7 +259,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 				fr.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return fr;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -354,7 +355,7 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 	public void update(FinFeeRefundDetails frd, String type) {
 		StringBuilder sql = new StringBuilder("Update FinFeeRefundDetails");
 		sql.append(type);
-		sql.append(" Set Id = ?, HeaderId = ?, FeeId = ?, RefundAmount = ?");
+		sql.append(" Set HeaderId = ?, FeeId = ?, RefundAmount = ?");
 		sql.append(", RefundAmtGST = ?, RefundAmtOriginal = ?, RefundAmtTDS = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
@@ -365,7 +366,6 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, frd.getId());
 			ps.setLong(index++, frd.getHeaderId());
 			ps.setLong(index++, frd.getFeeId());
 			ps.setBigDecimal(index++, frd.getRefundAmount());
@@ -382,6 +382,8 @@ public class FinFeeRefundDAOImpl extends SequenceDao<FinFeeRefundHeader> impleme
 			ps.setString(index++, frd.getNextTaskId());
 			ps.setString(index++, frd.getRecordType());
 			ps.setLong(index++, frd.getWorkflowId());
+			
+			ps.setLong(index++, frd.getId());
 		});
 
 		if (recordCount == 0) {

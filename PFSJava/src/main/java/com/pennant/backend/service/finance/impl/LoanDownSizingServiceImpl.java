@@ -345,6 +345,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		FinAssetAmtMovement assetAmtMovt = new FinAssetAmtMovement();
 
 		assetAmtMovt.setFinServiceInstID(finServInst.getServiceSeqId());
+		assetAmtMovt.setFinID(fm.getFinID());
 		assetAmtMovt.setFinReference(fm.getFinReference());
 		assetAmtMovt.setMovementDate(SysParamUtil.getAppDate());
 
