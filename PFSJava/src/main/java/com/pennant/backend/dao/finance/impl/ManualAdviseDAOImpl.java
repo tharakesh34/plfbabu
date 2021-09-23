@@ -414,7 +414,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public List<ManualAdviseMovements> getAdviseMovements(long id) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" mam.MovementID, mam.MovementDate, mam.MovementAmount");
-		sql.append(", mam.PaidAmount, mam.WaivedAmount, mam.Status, T2.ReceiptMode, mam.TaxHeaderId");
+		sql.append(", mam.PaidAmount, mam.WaivedAmount, mam.Status, rh.ReceiptMode, mam.TaxHeaderId");
 		sql.append(", mam.PaidCGST, mam.PaidSGST, mam.PaidUGST, mam.PaidIGST, mam.PaidCESS");
 		sql.append(", mam.WaivedCGST, mam.WaivedSGST, mam.WaivedUGST, mam.WaivedIGST, mam.WaivedCESS");
 		sql.append(" From ManualAdviseMovements mam");
