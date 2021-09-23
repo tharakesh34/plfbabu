@@ -799,12 +799,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			long receiptSeqID = rcd.getReceiptSeqID();
 
 			ManualAdviseMovements payAdvMovement = rcd.getPayAdvMovement();
-			TaxHeader taxHeader = payAdvMovement.getTaxHeader();
 
 			if (!rcd.isDelRecord()) {
 				receiptSeqID = finReceiptDetailDAO.save(rcd, tableType);
 
 				if (payAdvMovement != null) {
+					TaxHeader taxHeader = payAdvMovement.getTaxHeader();
 					if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
 						Long headerId = taxHeaderDetailsDAO.save(taxHeader, TableType.TEMP_TAB.getSuffix());
@@ -882,6 +882,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 				BigDecimal payableAmt = rcd.getAmount();
 				if (payAdvMovement != null) {
+					TaxHeader taxHeader = payAdvMovement.getTaxHeader();
 					if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
 						List<Taxes> taxDetails = taxHeader.getTaxDetails();
 						for (Taxes taxes : taxDetails) {
