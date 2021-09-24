@@ -141,6 +141,16 @@ public class ProvisionServiceImpl extends GenericFinanceDetailService implements
 		return provisionDAO.getProvisionByFinId(finID, TableType.MAIN_TAB, false);
 	}
 
+	@Override
+	public Provision getProvisionByFinId(long finID, TableType tableType) {
+		Provision provision = provisionDAO.getProvisionByFinId(finID, tableType, false);
+		if (provision != null) {
+			provision.setProvisionAmounts(provisionDAO.getProvisionAmounts(provision.getId(), tableType));
+		}
+
+		return provision;
+	}
+
 	public Provision getProvisionById(long id, TableType tableType) {
 		Provision provision = provisionDAO.getProvisionById(id, tableType, false);
 

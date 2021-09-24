@@ -53,4 +53,6 @@ public interface ProvisionService {
 
 	List<ProvisionAmount> getProvisionAmounts(long id, TableType mainTab);
 
+	Provision getProvisionByFinId(long finID, TableType tableType);
+
 }

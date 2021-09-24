@@ -187,7 +187,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 		final Provision aProvision = (Provision) selectedItem.getAttribute("data");
 
 		String finType = null;
-		Provision provision = provisionService.getProvisionById(aProvision.getFinID(), TableType.VIEW);
+		Provision provision = provisionService.getProvisionByFinId(aProvision.getFinID(), TableType.VIEW);
 
 		if (provision == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
@@ -244,7 +244,7 @@ public class ManualProvisioningListCtrl extends GFCBaseListCtrl<Provision> {
 				provision.setWorkflowId(getWorkFlowId());
 			}
 
-			Provision oldProvision = provisionService.getProvisionById(aProvision.getFinID(), TableType.AVIEW);
+			Provision oldProvision = provisionService.getProvisionByFinId(aProvision.getFinID(), TableType.AVIEW);
 			provision.setOldProvision(oldProvision);
 			doShowDialogPage(provision);
 		} else {
