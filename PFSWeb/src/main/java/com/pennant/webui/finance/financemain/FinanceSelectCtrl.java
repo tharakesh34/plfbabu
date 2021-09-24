@@ -3688,6 +3688,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// FinMaintainInstruction
 			FinMaintainInstruction finMaintainInstruction = new FinMaintainInstruction();
+			finMaintainInstruction.setFinID(finID);
 			finMaintainInstruction.setFinReference(finRef);
 			if (StringUtils.equals(aFinanceMain.getRcdMaintainSts(), moduleDefiner)) {
 				finMaintainInstruction = finCovenantMaintanceService.getFinMaintainInstructionByFinRef(finID,

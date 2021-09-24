@@ -584,6 +584,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		FinanceRepayments repayment = new FinanceRepayments();
 
 		repayment.setReceiptId(receiptId);
+		repayment.setFinID(fm.getFinID());
 		repayment.setFinReference(fm.getFinReference());
 		repayment.setFinSchdDate(curSchd.getSchDate());
 		repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);

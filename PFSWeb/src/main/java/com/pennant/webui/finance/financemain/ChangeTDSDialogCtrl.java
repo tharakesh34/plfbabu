@@ -420,6 +420,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		if (this.tDSApplicable.isChecked() && istdsAllowToModify) {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
 			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
+			lowerTxDeduction.setFinID(this.financeMain.getFinID());
 			lowerTxDeduction.setFinReference(this.financeMain.getFinReference());
 			getFinanceDetail().getFinScheduleData().getLowerTaxDeductionDetails().clear();
 			lowerTxDeduction.setSeqNo(1);

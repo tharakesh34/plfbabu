@@ -467,6 +467,7 @@ public class RepayCalculator implements Serializable {
 
 				// Finance Repay Queue object Data Preparation
 				FinRepayQueue rq = new FinRepayQueue();
+
 				rq.setFinReference(rm.getFinReference());
 				rq.setBranch(rm.getFinBranch());
 				rq.setFinType(rm.getFinType());

@@ -8919,6 +8919,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		List<LowerTaxDeduction> lowerTaxDeductions = aFinanceDetail.getFinScheduleData().getLowerTaxDeductionDetails();
 		if (CollectionUtils.isNotEmpty(lowerTaxDeductions)) {
 			for (LowerTaxDeduction lowerTaxDeduction : lowerTaxDeductions) {
+				lowerTaxDeduction.setFinID(afinanceMain.getFinID());
 				lowerTaxDeduction.setFinReference(afinanceMain.getFinReference());
 				lowerTaxDeduction.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 				lowerTaxDeduction.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -14417,6 +14418,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (this.tDSApplicable.isChecked()) {
 			List<LowerTaxDeduction> lowerTaxdedecutions = new ArrayList<LowerTaxDeduction>();
 			LowerTaxDeduction lowerTxDeduction = new LowerTaxDeduction();
+			lowerTxDeduction.setFinID(aFinanceMain.getFinID());
 			lowerTxDeduction.setFinReference(aFinanceMain.getFinReference());
 			lowerTxDeduction.setSeqNo(1);
 

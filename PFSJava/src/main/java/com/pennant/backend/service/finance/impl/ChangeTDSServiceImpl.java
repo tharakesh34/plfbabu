@@ -133,6 +133,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
 		LowerTaxDeduction lowerTaxDeduction = new LowerTaxDeduction();
+		lowerTaxDeduction.setFinID(fm.getFinID());
 		lowerTaxDeduction.setFinReference(fm.getFinReference());
 		lowerTaxDeduction.setStartDate(fmi.getTdsStartDate());
 		lowerTaxDeduction.setEndDate(fmi.getTdsEndDate());
@@ -194,8 +195,8 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
 		FinanceMain fm = new FinanceMain();
-		fm.setFinReference(fmi.getFinReference());
 		fm.setFinID(fmi.getFinID());
+		fm.setFinReference(fmi.getFinReference());
 
 		financeMainDAO.deleteFinreference(fm, TableType.TEMP_TAB, false, false);
 
@@ -290,6 +291,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		finServiceInstructionDAO.save(fsi, "");
 
 		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinID(fmi.getFinID());
 		financeMain.setFinReference(fmi.getFinReference());
 		financeMainDAO.deleteFinreference(financeMain, TableType.TEMP_TAB, false, true);
 
@@ -358,6 +360,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 
 		FinanceMain financeMain = new FinanceMain();
+		financeMain.setFinID(fmi.getFinID());
 		financeMain.setFinReference(fmi.getFinReference());
 		financeMainDAO.deleteFinreference(financeMain, TableType.TEMP_TAB, false, false);
 
@@ -443,6 +446,7 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 		List<LowerTaxDeduction> ltdList = new ArrayList<LowerTaxDeduction>();
 
 		LowerTaxDeduction ltd = new LowerTaxDeduction();
+		ltd.setFinID(fm.getFinID());
 		ltd.setFinReference(fm.getFinReference());
 		ltd.setStartDate(fmi.getTdsStartDate());
 		ltd.setEndDate(fmi.getTdsEndDate());

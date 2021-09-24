@@ -183,7 +183,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			int index = 1;
 
 			ps.setLong(index++, tid.getRepayID());
-			ps.setString(index, tid.getTaxFor());
+			ps.setString(index++, tid.getTaxFor());
 			ps.setBigDecimal(index++, tid.getReceivedAmount());
 			ps.setBigDecimal(index++, tid.getCGST());
 			ps.setBigDecimal(index++, tid.getIGST());

@@ -4087,6 +4087,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// Create log entry for Action for Schedule Modification
 					// =======================================
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+					entryDetail.setFinID(schdData.getFinID());
 					entryDetail.setFinReference(schdData.getFinReference());
 					entryDetail
 							.setEventAction(StringUtils.isBlank(fd.getAccountingEventCode()) ? AccountingEvent.ADDDBSN
@@ -9214,6 +9215,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		FinanceRepayments repayment = new FinanceRepayments();
 		Date curAppDate = SysParamUtil.getAppDate();
 
+		repayment.setFinID(finMain.getFinID());
 		repayment.setFinReference(finMain.getFinReference());
 		repayment.setFinSchdDate(bpiDate);
 		repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);

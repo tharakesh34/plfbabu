@@ -1456,6 +1456,7 @@ public class RepaymentPostingsUtil {
 
 		FinanceRepayments repayment = new FinanceRepayments();
 		repayment.setReceiptId(receiptId);
+		repayment.setFinID(queue.getFinID());
 		repayment.setFinReference(queue.getFinReference());
 		repayment.setFinSchdDate(queue.getRpyDate());
 		repayment.setFinRpyFor(queue.getFinRpyFor());
