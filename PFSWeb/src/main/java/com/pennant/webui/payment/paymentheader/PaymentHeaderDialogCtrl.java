@@ -698,6 +698,13 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		// Fin Id
+		try {
+			aPaymentHeader.setFinID(this.financeMain.getFinID());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		// Fin Reference
 		try {
 			aPaymentHeader.setFinReference(this.financeMain.getFinReference());

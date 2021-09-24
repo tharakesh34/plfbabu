@@ -64,7 +64,7 @@
 								<row>
 									<label id="label_FinTaxDetailUploadList_BatchReference" value="${c:l('label_FinTaxDetailUploadList_BatchReference.value')}" />
 									<listbox id="sortOperator_BatchReference" width="43px" mold="select" rows="1" />
-									<textbox id="batchReference" width="150px" maxlength="20" />
+									<intbox id="batchReference" width="150px" maxlength="20" />
 									<label id="label_FinTaxDetailUploadList_FileName" value="${c:l('label_FinTaxDetailUploadList_FileName.value')}" />
 									<listbox id="sortOperator_FileName" width="43px" mold="select" rows="1" />
 									<textbox id="fileName" width="250px" maxlength="100" />

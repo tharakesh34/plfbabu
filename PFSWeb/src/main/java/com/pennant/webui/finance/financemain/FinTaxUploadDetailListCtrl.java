@@ -13,31 +13,14 @@
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinTaxDetailUploadListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  20-06-2017    														*
- *                                                                  						*
- * Modified Date    :      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinTaxDetailUploadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 20-06-2017 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  20-06-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 20-06-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -55,6 +38,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Datebox;
 import org.zkoss.zul.Grid;
+import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
@@ -106,7 +90,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 
 	// NEEDED for the ReUse in the SearchWindow
 
-	protected Textbox batchReference; // autowired
+	protected Intbox batchReference; // autowired
 	protected Listbox sortOperator_BatchReference; // autowired
 
 	protected Textbox fileName; // autowired
@@ -167,7 +151,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 				"button_FinTaxUploadDetailList_NewFinTaxUploadDetail", true);
 
 		registerField("batchReference", listheader_BatchReference, SortOrder.ASC, batchReference,
-				sortOperator_BatchReference, Operators.STRING);
+				sortOperator_BatchReference, Operators.NUMERIC);
 		registerField("fileName", listheader_FileName, SortOrder.NONE, fileName, sortOperator_FileName,
 				Operators.STRING);
 
@@ -205,8 +189,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -216,8 +199,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InterruptedException
 	 */
 	public void onClick$button_FinTaxUploadDetailList_NewFinTaxUploadDetail(Event event) throws InterruptedException {
@@ -233,8 +215,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onFinTaxUploadDetailItemDoubleClicked(Event event) throws Exception {
 		logger.debug("Entering");
@@ -328,8 +309,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinTaxUploadDetailList_Search(Event event) {
 		search();
@@ -338,8 +318,7 @@ public class FinTaxUploadDetailListCtrl extends GFCBaseListCtrl<FinTaxUploadHead
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) throws InterruptedException {
 		new PTListReportUtils("FinTaxUploadHeader", searchObject, this.pagingFinTaxDetailUploadList.getTotalSize() + 1);

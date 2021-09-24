@@ -255,6 +255,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 
 		// Payment Header
 		PaymentHeader ph = new PaymentHeader();
+		ph.setFinID(finMain.getFinID());
 		ph.setFinReference(finMain.getFinReference());
 		ph.setPaymentType(DisbursementConstants.CHANNEL_PAYMENT);
 		ph.setCreatedOn(appDate);
