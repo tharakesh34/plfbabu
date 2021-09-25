@@ -1369,6 +1369,10 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 				}
 			} else if (aJVPosting.getTotCreditsByBatchCcy().compareTo(aJVPosting.getTotDebitsByBatchCcy()) == 0) {
 				if (doProcess(aJVPosting, tranType)) {
+					// User Notification for Role Identification
+					if (StringUtils.isBlank(aJVPosting.getNextTaskId())) {
+						aJVPosting.setNextRoleCode("");
+					}
 					// List Detail Refreshment
 					refreshList();
 

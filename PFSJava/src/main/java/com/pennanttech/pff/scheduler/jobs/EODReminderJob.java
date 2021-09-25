@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -12,13 +12,13 @@ import com.pennanttech.pff.eod.EODService;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class AutoEODJob extends AbstractJob {
+public class EODReminderJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		logger.debug(Literal.ENTERING);
 
-		getEODService(context).startEOD();
+		getEODService(context).sendReminderNotification();
 	}
 
 	private EODService getEODService(JobExecutionContext context) {

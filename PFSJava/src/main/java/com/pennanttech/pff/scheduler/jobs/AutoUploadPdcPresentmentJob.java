@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
@@ -8,12 +8,12 @@ import com.pennant.backend.service.financemanagement.impl.PresentmentJobService;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
 
-public class AutoUploadPresentmentJob extends AbstractJob {
-
+public class AutoUploadPdcPresentmentJob extends AbstractJob {
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		try {
-			getUploadService(context).uploadPresentment(context.getJobDetail().getJobDataMap().get("job").toString());
+			JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+			getUploadService(context).uploadPresentment(jobDataMap.get("job").toString());
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

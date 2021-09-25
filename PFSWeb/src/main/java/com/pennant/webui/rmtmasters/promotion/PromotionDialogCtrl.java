@@ -970,7 +970,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			 */
 			if (this.actualInterestRate.getValue() != null) {
 				if (this.actualInterestRate.getValue().compareTo(BigDecimal.ZERO) > 0
-						&& StringUtils.isNotEmpty(this.finBaseRate.getBaseValue())) {
+						&& this.finBaseRate.getMarginValue().compareTo(BigDecimal.ZERO) > 0) {
 					throw new WrongValueException(this.actualInterestRate,
 							Labels.getLabel("EITHER_OR",
 									new String[] { Labels.getLabel("label_PromotionDialog_FinBaseRate.value"),
@@ -1401,7 +1401,8 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		}
 
 		// Actual Interest Rate
-		if (!this.actualInterestRate.isDisabled() && !consumerDurable) {
+		if (!this.actualInterestRate.isDisabled() && !consumerDurable
+				&& this.finBaseRate.getMarginValue().compareTo(BigDecimal.ZERO) == 0) {
 			this.actualInterestRate.setConstraint(new PTDecimalValidator(
 					Labels.getLabel("label_PromotionDialog_ActualInterestRate.value"), 9, true, false, 9999));
 		}

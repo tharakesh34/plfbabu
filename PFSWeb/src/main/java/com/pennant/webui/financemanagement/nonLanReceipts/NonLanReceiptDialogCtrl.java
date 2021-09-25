@@ -1,52 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
-
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * 
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReceiptDialogCtrl.java                           					*
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-06-2011    														*
- *                                                                  						*
- * Modified Date    :  03-06-2011    														*
- *                                                                  						*
- * Description 		:																		*	
- *                                                                                          *
+ * * FileName : ReceiptDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-06-2011 * * Modified
+ * Date : 03-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                        	* 
- * 29-09-2018       somasekhar               0.2         added backdate sp also,            * 
- * 10-10-2018       somasekhar               0.3         Ticket id:124998,defaulting receipt* 
- *                                                       purpose and excessadjustto for     * 
- *                                                       closed loans                       *
- *                                                       Ticket id:124998                   * 
- * 13-06-2018       Siva					 0.2        Receipt auto printing on approval   * 
- *                                                                                          * 
- * 13-06-2018       Siva					 0.3        Receipt Print Option Added 			* 
- *                                                                                          * 
- * 17-06-2018		Srinivasa Varma			 0.4		PSD 126950                          * 
- *                                                                                          *
- * 19-06-2018		Siva			 		 0.5		Auto Receipt Number Generation      * 
- * 																							*
- * 28-06-2018		Siva			 		 0.6		Stop printing Receipt if receipt 
- * 												     mode status is either cancel or Bounce * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * 29-09-2018 somasekhar 0.2 added backdate sp also, * 10-10-2018 somasekhar 0.3 Ticket
+ * id:124998,defaulting receipt* purpose and excessadjustto for * closed loans * Ticket id:124998 * 13-06-2018 Siva 0.2
+ * Receipt auto printing on approval * * 13-06-2018 Siva 0.3 Receipt Print Option Added * * 17-06-2018 Srinivasa Varma
+ * 0.4 PSD 126950 * * 19-06-2018 Siva 0.5 Auto Receipt Number Generation * * 28-06-2018 Siva 0.6 Stop printing Receipt
+ * if receipt mode status is either cancel or Bounce * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.nonLanReceipts;
@@ -527,11 +505,11 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("Entity", getReceiptData().getReceiptHeader().getEntityCode(), Filter.OP_EQUAL);
 		String filVal = "";
-		if ("#".equals(getReceiptData().getReceiptHeader().getSubReceiptMode())) {
-			filVal = getReceiptData().getReceiptHeader().getReceiptMode();
-		} else {
-			filVal = getReceiptData().getReceiptHeader().getSubReceiptMode();
-		}
+		/*
+		 * if ("#".equals(getReceiptData().getReceiptHeader().getSubReceiptMode())) { filVal =
+		 * getReceiptData().getReceiptHeader().getReceiptMode(); } else { filVal =
+		 * getReceiptData().getReceiptHeader().getSubReceiptMode(); }
+		 */
 		filters[1] = new Filter("PaymentMode", filVal, Filter.OP_EQUAL);
 		this.fundingAccount.setFilters(filters);
 
@@ -729,8 +707,7 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnReceipt.isVisible());
@@ -1068,6 +1045,9 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				FinReceiptData data = receiptData;
 
 				FinReceiptHeader rch = data.getReceiptHeader();
+				rch.setBankCode(this.bankCode.getValue());
+				rch.setDepositDate(this.depositDate.getValue());
+
 				List<FinReceiptDetail> receiptDetails = rch.getReceiptDetails();
 
 				FinReceiptDetail receiptDetail = new FinReceiptDetail();
@@ -1176,20 +1156,15 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					nextTaskId = getNextTaskIds(taskId, rch);
 				}
 
-				if ("".equals(nextTaskId)) {
-					nextRoleCode = getFirstTaskOwner();
-				} else {
-					String[] nextTasks = nextTaskId.split(";");
-
-					if (nextTasks.length > 0) {
-						for (int i = 0; i < nextTasks.length; i++) {
-							if (nextRoleCode.length() > 1) {
-								nextRoleCode = nextRoleCode.concat(",");
-							}
-							nextRoleCode += getTaskOwner(nextTasks[i]);
-						}
-					}
-				}
+				// PSD#178475 -wrong message populates due to whenever nextTaskId is empty ,sets nextRoleCode as
+				// FirstTaskOwner.this is not there is receipts .
+				/*
+				 * if ("".equals(nextTaskId)) { nextRoleCode = getFirstTaskOwner(); } else { String[] nextTasks =
+				 * nextTaskId.split(";");
+				 * 
+				 * if (nextTasks.length > 0) { for (int i = 0; i < nextTasks.length; i++) { if (nextRoleCode.length() >
+				 * 1) { nextRoleCode = nextRoleCode.concat(","); } nextRoleCode += getTaskOwner(nextTasks[i]); } } }
+				 */
 
 				if (isNotesMandatory(taskId, rch)) {
 					if (!notesEntered) {
@@ -1331,11 +1306,11 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String received = this.receivedFrom.getValue();
 		if (received.equalsIgnoreCase(RepayConstants.RECEIVED_CUSTOMER)) {
-			this.extReference.setValue(rch.getExtReference());//customer
+			this.extReference.setValue(rch.getExtReference());// customer
 			this.custCIF.setValue(rch.getCustCIF(), rch.getCustShrtName());
 			rch.setReference(String.valueOf(rch.getCustID()));
 		} else {
-			this.extReference.setValue(rch.getReference());//non lan
+			this.extReference.setValue(rch.getReference());// non lan
 			this.label_NonReceiptDialog_CustID.setVisible(false);
 			this.hbox_NonReceiptDialog.setVisible(false);
 		}

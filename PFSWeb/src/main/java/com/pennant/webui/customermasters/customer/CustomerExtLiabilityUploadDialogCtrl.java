@@ -40,7 +40,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
@@ -315,7 +314,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			break;
 		case 7:
 			// Loan Date
-			ce.setFinDate(DateUtil.parse(cellValue, DateFormat.LONG_DATE));
+			ce.setFinDate(getValueAsDate(cellValue));
 			break;
 		case 8:
 			// Status
@@ -484,6 +483,28 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		} catch (NumberFormatException e) {
 			throw new WrongValueException("The given file having wrong formatted values : " + value);
 		}
+	}
+
+	private Date getValueAsDate(String value) {
+		value = getValue(value);
+		if (value == null) {
+			throw new WrongValueException("The given file having wrong formatted values : " + value);
+		}
+
+		Date derivedDate = null;
+
+		try {
+			derivedDate = DateUtil.parse(value, "dd-MM-yyyy");
+		} catch (IllegalArgumentException e) {
+
+			try {
+				derivedDate = DateUtil.parse(value, DateFormat.LONG_DATE);
+			} catch (IllegalArgumentException ex) {
+				throw new WrongValueException("Invalid Date format" + value);
+			}
+		}
+
+		return derivedDate;
 	}
 
 	private int getListAsInt(String value) {
@@ -687,6 +708,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			}
 
 			try {
+				emiType = DateUtil.getDay(appDate) + "-" + emiType;
 				emiDate = DateUtil.parse(emiType, DateFormat.LONG_DATE);
 			} catch (IllegalArgumentException e) {
 				errors.append("EMI Month format is wrong, Please provide valid format;");
@@ -705,7 +727,6 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			}
 
 			if (StringUtils.isEmpty(elp.getEmiClearance())) {
-				errors.append("Month Clearance is Mandatory;");
 				break;
 			}
 
@@ -797,16 +818,10 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 	}
 
-	/**
-	 * Prepare the liability list
-	 * 
-	 * @param customerExtLiability
-	 * @param paymentdetails
-	 * @param list
-	 */
 	private List<String> prepareLiabilityValuesFromObject(CustomerExtLiability customerExtLiability,
 			ExtLiabilityPaymentdetails paymentdetails) {
-		ArrayList<String> list = new ArrayList<>();
+		List<String> list = new ArrayList<>();
+
 		list.add(String.valueOf(customerExtLiability.getId()));
 		// Product
 		list.add(customerExtLiability.getFinType());
@@ -831,8 +846,8 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 
 		// Loan Date
 		Date finDate = customerExtLiability.getFinDate();
-		if (finDate != null && DateUtility.format(finDate, "dd-MM-yyyy") != null) {
-			list.add(DateUtility.format(finDate, "dd-MM-yyyy"));
+		if (finDate != null && DateUtil.format(finDate, "dd-MM-yyyy") != null) {
+			list.add(DateUtil.format(finDate, "dd-MM-yyyy"));
 		} else {
 			list.add(" ");
 		}
@@ -1213,13 +1228,6 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		}
 	}
 
-	/**
-	 * Create a Cell for a Row
-	 * 
-	 * @param row
-	 * @param columnCount
-	 * @param field
-	 */
 	private static void createCell(Row row, int columnCount, String field) {
 		Cell cell = row.createCell(columnCount);
 		cell.setCellType(CellType.STRING);
@@ -1234,20 +1242,13 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 */
 	public static List<ExtLiabilityPaymentdetails> getPaymentDetails(CustomerExtLiability customerExtLiability) {
 		// getting the emi list between app date and loan start date
-		Date dtStartDate = com.pennant.app.util.DateUtility.addMonths(customerExtLiability.getFinDate(), -1);
-		Date dtEndDate = com.pennant.app.util.DateUtility.addMonths(dtStartDate, -6);
+		Date dtStartDate = DateUtil.addMonths(customerExtLiability.getFinDate(), -1);
+		Date dtEndDate = DateUtil.addMonths(dtStartDate, -6);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate,
 				customerExtLiability.getExtLiabilitiesPayments());
 		return months;
 	}
 
-	/**
-	 * Retrieve the Repayments Frequency from start date and end date
-	 * 
-	 * @param startDate
-	 * @param endDate
-	 * @return
-	 */
 	private static List<ExtLiabilityPaymentdetails> getFrequency(final Date startDate, final Date endDate,
 			List<ExtLiabilityPaymentdetails> payments) {
 		List<ExtLiabilityPaymentdetails> list = new ArrayList<>();
@@ -1261,9 +1262,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			String key = DateUtil.format(tempStartDate, DateFormat.LONG_MONTH);
 			temp.setEmiType(key);
 			for (ExtLiabilityPaymentdetails payment : payments) {
-				Date paymentDt = DateUtil.parse(payment.getEmiType(), DateFormat.LONG_DATE);
-				String pmtDt = DateUtil.format(paymentDt, DateFormat.LONG_MONTH);
-				if (key.equals(pmtDt)) {
+				if (key.equals(payment.getEmiType())) {
 					temp.setEmiClearance(payment.getEmiClearance());
 					temp.setEmiClearedDay(payment.getEmiClearedDay());
 					break;

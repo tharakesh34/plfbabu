@@ -3527,14 +3527,6 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving");
 	}
 
-	protected boolean doCustomDelete(final FinanceDetail afinanceDetail, String tranType) {
-		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
-
-		afinanceDetail.getFinScheduleData().setFinanceMain(afinanceMain);
-
-		return true;
-	}
-
 	private void doDelete() throws Exception {
 		logger.debug(Literal.ENTERING);
 
@@ -3550,6 +3542,38 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doDelete(keyReference, afinanceDetail);
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void onDoDelete(FinanceDetail fd) {
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
+		String tranType = PennantConstants.TRAN_DEL;
+		if (StringUtils.isBlank(fm.getRecordType())) {
+			fm.setVersion(fm.getVersion() + 1);
+			fm.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+			if (isWorkFlowEnabled()) {
+				fm.setNewRecord(true);
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
+			}
+		}
+
+		try {
+			fd.getFinScheduleData().setFinanceMain(fm);
+
+			if (doProcess(fd, tranType)) {
+				if (getWIFFinanceMainListCtrl() != null) {
+					refreshList();
+				}
+
+				closeDialog();
+			}
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	/**
@@ -3932,7 +3956,10 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
+		} catch (final Exception e) {
+			MessageUtil.showError(e);
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -4001,18 +4028,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Method for Processing Finance Detail Object for Database Operation
-	 * 
-	 * @param afinanceMain
-	 * @param tranType
-	 * @return
-	 * @throws JaxenException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType)
-			throws JaxenException, IllegalAccessException, InvocationTargetException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;

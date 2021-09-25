@@ -28,15 +28,16 @@ import com.pennanttech.pennapps.core.FactoryException;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class CacheManager {
-	private static final Logger log = LogManager.getLogger(CacheNodeListener.class);
+	private static final Logger log = LogManager.getLogger(CacheManager.class);
 
-	private static Map<String, String> caches = new HashMap<String, String>();
+	private static Map<String, String> caches = new HashMap<>();
 	private static DefaultCacheManager cacheManager = null;
 
 	private static boolean activated = false;
 	private static boolean enabled = false;
 	private static int nodes = 0;
 	private static long sleepTime;
+	private static long clusterSize;
 
 	private CacheAdmin cacheAdmin;
 
@@ -56,7 +57,7 @@ public class CacheManager {
 			return;
 		}
 
-		new Thread(new CacheNodeListener(cacheAdmin)).start();
+		// new Thread(new CacheNodeListener(cacheAdmin)).start();
 
 		String configPathName = App.getResourcePath(App.CONFIG, "cache", "cache-config.xml");
 		if ("WEB".equals(App.TYPE.name())) {
@@ -71,8 +72,7 @@ public class CacheManager {
 		File file = new File(configPathName);
 
 		if (!file.exists()) {
-			log.warn(String.format("Cache configuration file %s is not avaliable % s location", file.getName(),
-					file.getParent()));
+			log.warn("Cache configuration file {} is not avaliable {} s location", file.getName(), file.getParent());
 			return;
 		}
 
@@ -128,14 +128,14 @@ public class CacheManager {
 	}
 
 	public static void verifyCache() {
-		log.debug(Literal.ENTERING);
-
 		if (!enabled) {
 			activated = false;
 			return;
 		}
 
-		if (cacheManager.getClusterSize() == nodes) {
+		setClusterSize(cacheManager.getClusterSize());
+
+		if (clusterSize == nodes) {
 			if (!activated) {
 				Set<String> cacheSet = cacheManager.getCacheNames();
 
@@ -143,17 +143,18 @@ public class CacheManager {
 					Cache<Object, Object> cache = cacheManager.getCache(string);
 					cache.clearAsync();
 				}
-				log.info(String.format("Cache activaded for in %d nodes", cacheManager.getClusterSize()));
 			}
 			activated = true;
 		} else {
-			if (enabled) {
-				log.info(String.format("Cache deactivated %d/%d:", cacheManager.getClusterSize(), nodes));
-			}
 			activated = false;
 		}
 
-		log.debug(Literal.LEAVING);
+		if (activated) {
+			log.info("Cache is in active {}/{}:", clusterSize, nodes);
+		} else {
+			log.warn("Cache is not active {}/{}:", clusterSize, nodes);
+		}
+
 	}
 
 	public static CacheStats getNodeDetails() {
@@ -191,6 +192,14 @@ public class CacheManager {
 		return stats;
 	}
 
+	public static String getClusterName() {
+		if (cacheManager == null) {
+			return null;
+		}
+
+		return cacheManager.getClusterName();
+	}
+
 	public static int getNodes() {
 		return nodes;
 	}
@@ -211,4 +220,11 @@ public class CacheManager {
 		CacheManager.enabled = enabled;
 	}
 
+	public static long getClusterSize() {
+		return clusterSize;
+	}
+
+	public static void setClusterSize(long clusterSize) {
+		CacheManager.clusterSize = clusterSize;
+	}
 }

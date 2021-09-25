@@ -1515,7 +1515,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
 				avaAmount = detail.getAvailableAmount().add(avaAmount);
 				if (detail.getTaxHeader() != null
-						&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+						&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
 					// GST Calculations
 					TaxHeader taxHeader = detail.getTaxHeader();
 					List<Taxes> taxDetails = taxHeader.getTaxDetails();
@@ -1529,41 +1529,49 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				}
 			}
 		}
+
+		if ((amount.compareTo(BigDecimal.ZERO)) < 0) {
+			throw new WrongValueException(paymentAmt,
+					Labels.getLabel("label_PaymentHeaderDialog_payAmountErrorMsg.value"));
+		}
+
+		if ((amount.compareTo(avaAmount)) > 0) {
+			amount = avaAmount;
+			paymentAmt.setValue(PennantApplicationUtil.formateAmount(avaAmount, ccyFormatter));
+		}
+
 		for (PaymentDetail detail : getPaymentDetailList()) {
-			if ((amount.compareTo(avaAmount)) > 0) {
-				amount = avaAmount;
-				paymentAmt.setValue(PennantApplicationUtil.formateAmount(avaAmount, ccyFormatter));
+			if (!String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
+				continue;
 			}
-			if (String.valueOf(FinanceConstants.MANUAL_ADVISE_PAYABLE).equals(detail.getAmountType())) {
 
-				BigDecimal balAmount = detail.getAvailableAmount();
-				if (detail.getTaxHeader() != null
-						&& StringUtils.equals(detail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					// GST Calculations
-					TaxHeader taxHeader = detail.getTaxHeader();
-					List<Taxes> taxDetails = taxHeader.getTaxDetails();
-					BigDecimal gstAmount = BigDecimal.ZERO;
-					if (CollectionUtils.isNotEmpty(taxDetails)) {
-						for (Taxes taxes : taxDetails) {
-							gstAmount = gstAmount.add(taxes.getNetTax());
-						}
+			BigDecimal balAmount = detail.getAvailableAmount();
+			if (detail.getTaxHeader() != null
+					&& FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(detail.getTaxComponent())) {
+				// GST Calculations
+				TaxHeader taxHeader = detail.getTaxHeader();
+				List<Taxes> taxDetails = taxHeader.getTaxDetails();
+				BigDecimal gstAmount = BigDecimal.ZERO;
+				if (CollectionUtils.isNotEmpty(taxDetails)) {
+					for (Taxes taxes : taxDetails) {
+						gstAmount = gstAmount.add(taxes.getNetTax());
 					}
-					balAmount = balAmount.add(gstAmount);
 				}
+				balAmount = balAmount.add(gstAmount);
+			}
 
-				if (balAmount.compareTo(amount) >= 0) {
-					detail.setAmount(amount);
-					amount = BigDecimal.ZERO;
-				} else if (balAmount.compareTo(amount) == -1) {
-					amt1 = amount;
-					amt1 = amt1.subtract(balAmount);
-					if (amt1.compareTo(balAmount) <= 1) {
-						detail.setAmount(balAmount);
-					} else {
-						detail.setAmount(BigDecimal.ZERO);
-					}
-					amount = amt1;
+			if (balAmount.compareTo(amount) >= 0) {
+				detail.setAmount(amount);
+				amount = BigDecimal.ZERO;
+			} else if (balAmount.compareTo(amount) == -1) {
+				amt1 = amount;
+				amt1 = amt1.subtract(balAmount);
+				if (amt1.compareTo(balAmount) <= 1) {
+					detail.setAmount(balAmount);
+				} else {
+					detail.setAmount(BigDecimal.ZERO);
 				}
+				amount = amt1;
 			}
 		}
 		doFillHeaderList(getPaymentDetailList());
@@ -1953,6 +1961,12 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		PaymentDetail paymentDetail = (PaymentDetail) paymentAmt.getAttribute("object");
 		for (PaymentDetail detail : getPaymentDetailList()) {
 			if (paymentDetail.getReferenceId() == detail.getReferenceId()) {
+				if ((amount.compareTo(BigDecimal.ZERO)) < 0) {
+					paymentAmt.setValue(BigDecimal.ZERO);
+					throw new WrongValueException(paymentAmt,
+							Labels.getLabel("label_PaymentHeaderDialog_payAmountErrorMsg.value"));
+				}
+
 				if ((detail.getAvailableAmount().compareTo(amount)) == -1) {
 					throw new WrongValueException(paymentAmt,
 							Labels.getLabel("label_PaymentHeaderDialog_paymentAmountErrorMsg.value"));
@@ -2081,6 +2095,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 					paymentAmount.setValue(PennantApplicationUtil.formateAmount(paidAmount, ccyFormatter));
 					paymentAmount.addForward("onChange", self, "onPayAmountForEventChanges");
 					paymentAmount.setAttribute("object", advise);
+					paymentAmount.setConstraint("NO NEGATIVE");
 					lc.appendChild(paymentAmount);
 					lc.setParent(item);
 					lc = new Listcell();

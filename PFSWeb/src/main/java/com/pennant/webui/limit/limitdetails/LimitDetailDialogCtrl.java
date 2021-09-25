@@ -1325,9 +1325,12 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 				String reference = "";
 				if (StringUtils.isNotBlank(aLimitHeader.getCustCIF())) {
 					reference = aLimitHeader.getCustCIF();
-				} else {
+				} else if (StringUtils.isNotBlank(aLimitHeader.getRuleCode())) {
 					reference = aLimitHeader.getRuleCode();
+				} else {
+					reference = aLimitHeader.getCustGrpCode();
 				}
+
 				String msg = PennantApplicationUtil.getSavingStatus(aLimitHeader.getRoleCode(),
 						aLimitHeader.getNextRoleCode(), reference, " Limit Setup ", aLimitHeader.getRecordStatus());
 				Clients.showNotification(msg, "info", null, null, -1);

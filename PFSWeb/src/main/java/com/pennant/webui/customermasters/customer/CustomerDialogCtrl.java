@@ -4638,7 +4638,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				return false;
 			}
 			// checking customer dedupe from loan origination
-			if (validateAllDetails && validateChildDetails && aCustomer.isCustIsActive()) {
+			if (validateAllDetails && validateChildDetails) {
 				tab.setSelected(true);
 				CustomerDetails tCustomerDetails = aCustomerDetails;
 				String finType = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType();

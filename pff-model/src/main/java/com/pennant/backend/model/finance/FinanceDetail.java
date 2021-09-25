@@ -23,7 +23,6 @@
  */
 package com.pennant.backend.model.finance;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -81,6 +80,7 @@ import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.model.spreadsheet.SpreadSheet;
+import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.pff.sampling.model.Sampling;
 import com.pennanttech.pennapps.pff.verification.model.Verification;
@@ -94,7 +94,7 @@ import com.pennanttech.pff.model.external.interfacedetails.InterfaceServiceDetai
 		"finOCRHeader", "returnStatus", "receiptProcessingAmt", "returnStatus" })
 @XmlRootElement(name = "finance")
 @XmlAccessorType(XmlAccessType.NONE)
-public class FinanceDetail implements Serializable {
+public class FinanceDetail extends AbstractWorkflowEntity {
 	private static final long serialVersionUID = 3947699402597772444L;
 
 	private long finID;
@@ -810,14 +810,6 @@ public class FinanceDetail implements Serializable {
 
 	public void setDataFetchComplete(boolean dataFetchComplete) {
 		this.dataFetchComplete = dataFetchComplete;
-	}
-
-	public String getUserAction() {
-		return userAction;
-	}
-
-	public void setUserAction(String userAction) {
-		this.userAction = userAction;
 	}
 
 	public BigDecimal getScore() {

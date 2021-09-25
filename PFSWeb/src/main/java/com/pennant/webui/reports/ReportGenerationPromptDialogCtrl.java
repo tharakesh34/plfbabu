@@ -2499,11 +2499,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			if ("where".equals(whereCondition.toString().trim())) {
-				whereCondition.append(" FM.FINISACTIVE = " + 0 + " and FM.CLOSINGSTATUS = '"
-						+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "'");
+				whereCondition.append(" FM.WRITEOFFLOAN = " + 1);
 			} else {
-				whereCondition.append(" and FM.FINISACTIVE = " + 0 + " and FM.CLOSINGSTATUS = '"
-						+ FinanceConstants.CLOSE_STATUS_WRITEOFF + "'");
+				whereCondition.append(" and FM.WRITEOFFLOAN = " + 1);
 			}
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
@@ -2857,9 +2855,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 					FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			filters = nocFilter;
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
-			Filter[] writeOffFilter = new Filter[2];
-			writeOffFilter[0] = Filter.equalTo("FINISACTIVE", 0);
-			writeOffFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_WRITEOFF);
+			Filter[] writeOffFilter = new Filter[1];
+			writeOffFilter[0] = Filter.equalTo("WRITEOFFLOAN", 1);
 			filters = writeOffFilter;
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_SubventionAmortReport")
 				|| StringUtils.equals(reportMenuCode, "menu_Item_SubventionMISReport")) {

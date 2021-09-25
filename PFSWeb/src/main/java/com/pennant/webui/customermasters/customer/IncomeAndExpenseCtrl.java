@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDialogCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 09-05-2018		Vinay					 0.2      Extended Details tab changes for 		*
- * 													  Customer Enquiry menu based on rights	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * 09-05-2018 Vinay 0.2 Extended Details tab changes for * Customer Enquiry menu based on
+ * rights * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
@@ -107,13 +89,13 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void doRenderIncomeList(List<CustomerIncome> customerIncomes, Listbox listbox, int ccyFormatter) {
 
 		Map<String, List<CustomerIncome>> mapData = prepareGroup(customerIncomes);
-		//	render
+		// render
 		renderData(listbox, ccyFormatter, mapData);
-		//Gross Income
+		// Gross Income
 		appendTotalItem(listbox, ccyFormatter, BigDecimal.ZERO, "Gross Income", CUST_GRC_INCOME_CELL);
-		//Gross Expense
+		// Gross Expense
 		appendTotalItem(listbox, ccyFormatter, BigDecimal.ZERO, "Gross Expense", CUST_GRC_EXP_CELL);
-		//Net Income
+		// Net Income
 		appendTotalItem(listbox, ccyFormatter, BigDecimal.ZERO, "Net Income", CUST_NET_INCOME_CELL);
 
 		calculateTotal(listbox, ccyFormatter);
@@ -161,7 +143,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * @param mapData
 	 */
 	private void renderData(Listbox listbox, int ccyFormatter, Map<String, List<CustomerIncome>> mapData) {
-		//render start
+		// render start
 		listbox.getItems().clear();
 
 		Set<Entry<String, List<CustomerIncome>>> entrySet = mapData.entrySet();
@@ -170,7 +152,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 			String key = entry.getKey();
 			List<CustomerIncome> data = entry.getValue();
 
-			//add Group
+			// add Group
 			addlistGroup(data.get(0), listbox);
 
 			for (CustomerIncome customerIncome2 : data) {
@@ -238,7 +220,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 		hbox = new Hbox();
 		space = new Space();
 		space.setSpacing("2px");
-		//space.setSclass("mandatory");
+		// space.setSclass("mandatory");
 		margin.setMaxlength(6);
 		margin.setValue(PennantApplicationUtil.formateAmount(custinc.getMargin(), ccyFormatter));
 		/*
@@ -440,10 +422,10 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 				List<Component> listCells = listIt.getChildren();
 				Listcell incExp = (Listcell) listCells.get(0);
 
-				//getting income or expense from first cell
+				// getting income or expense from first cell
 				String incomeExp = incExp.getLabel();
 
-				//income type
+				// income type
 				ExtendedCombobox extincomeType = (ExtendedCombobox) listCells.get(1).getChildren().get(0);
 				IncomeType incomeType = (IncomeType) extincomeType.getObject();
 				// Getting Margin
@@ -453,14 +435,19 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 				BigDecimal actAmount = getCalculatedAmount(margin.getValue(), income.getActualValue());
 
-				//for gross income and expense total's
-				if (StringUtils.equals(PennantConstants.INCOME, incomeExp)) {
-					totIncome = totIncome.add(actAmount);
-				} else if (StringUtils.equals(PennantConstants.EXPENSE, incomeExp)) {
-					totExpense = totExpense.add(actAmount);
+				String recordType = ((CustomerIncome) listIt.getAttribute("data")).getRecordType();
+
+				// for gross income and expense total's
+				if (!(PennantConstants.RECORD_TYPE_CAN.equals(recordType)
+						|| PennantConstants.RECORD_TYPE_DEL.equals(recordType))) {
+					if (PennantConstants.INCOME.equals(incomeExp)) {
+						totIncome = totIncome.add(actAmount);
+					} else if (PennantConstants.EXPENSE.equals(incomeExp)) {
+						totExpense = totExpense.add(actAmount);
+					}
 				}
 
-				//Preparing group total map
+				// Preparing group total map
 				if (incomeType != null) {
 					String groupKey = incomeType.getIncomeExpense() + "-" + incomeType.getCategory();
 					if (mapTotal.containsKey(groupKey)) {
@@ -476,24 +463,24 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 
-		//sub group totals
+		// sub group totals
 		for (String groupkey : mapTotal.keySet()) {
-			//Setting the group total values
+			// Setting the group total values
 			Listcell gropTotalCell = (Listcell) listbox.getFellowIfAny(groupkey);
 			if (gropTotalCell != null) {
 				gropTotalCell.setLabel(PennantApplicationUtil.formatAmount(mapTotal.get(groupkey), ccyFormatter));
 			}
 		}
 
-		//Gross Income
+		// Gross Income
 		Listcell grsIncCell = (Listcell) listbox.getFellowIfAny(CUST_GRC_INCOME_CELL);
 		grsIncCell.setLabel(PennantApplicationUtil.formatAmount(totIncome, ccyFormatter));
 
-		//Gross Expense
+		// Gross Expense
 		Listcell grsExpCell = (Listcell) listbox.getFellowIfAny(CUST_GRC_EXP_CELL);
 		grsExpCell.setLabel(PennantApplicationUtil.formatAmount(totExpense, ccyFormatter));
 
-		//Net Income
+		// Net Income
 		Listcell netIncCell = (Listcell) listbox.getFellowIfAny(CUST_NET_INCOME_CELL);
 		netIncome = totIncome.subtract(totExpense);
 		netIncCell.setLabel(PennantApplicationUtil.formatAmount(netIncome, ccyFormatter));
@@ -674,7 +661,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 					&& StringUtils.equals(aCustomerIncome.getIncomeType(), customerIncome.getIncomeType())
 					&& (aCustomerIncome.getCustId() == customerIncome.getCustId())) {
 
-				//checking data is updated or not
+				// checking data is updated or not
 				if (!aCustomerIncome.getMargin().equals(customerIncome.getMargin())
 						|| !aCustomerIncome.getIncome().equals(customerIncome.getIncome())) {
 					aCustomerIncome.setNewRecord(false);
@@ -709,7 +696,7 @@ public class IncomeAndExpenseCtrl extends GFCBaseCtrl<CustomerDetails> {
 		custIncomeType.setDescColumn("IncomeTypeDesc");
 		custIncomeType.setValidateColumns(new String[] { "IncomeTypeCode" });
 		custIncomeType.setValue(custinc.getIncomeType(), custinc.getIncomeTypeDesc());
-		//Object data preparing
+		// Object data preparing
 		IncomeType incomeType = new IncomeType();
 		incomeType.setCategory(custinc.getCategory());
 		incomeType.setIncomeExpense(custinc.getIncomeExpense());

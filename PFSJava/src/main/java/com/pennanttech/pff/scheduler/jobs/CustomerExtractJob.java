@@ -1,4 +1,4 @@
-package com.pennanttech.pff.schedule.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -13,7 +13,6 @@ import com.pennanttech.pff.process.ExtractCustomerData;
 @DisallowConcurrentExecution
 @PersistJobDataAfterExecution
 public class CustomerExtractJob extends AbstractJob {
-	private ExtractCustomerData extractCustomerData;
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {

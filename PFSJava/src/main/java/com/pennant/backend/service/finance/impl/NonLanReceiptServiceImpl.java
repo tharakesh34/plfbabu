@@ -130,6 +130,10 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			return receiptHeader;
 		}
 
+		if (receiptHeader.getReasonCode() == null) {
+			receiptHeader.setReasonCode(Long.valueOf(0));
+		}
+
 		List<FinReceiptDetail> receiptDetailList = finReceiptDetailDAO.getNonLanReceiptHeader(receiptID, type);
 
 		int size = receiptDetailList.size();

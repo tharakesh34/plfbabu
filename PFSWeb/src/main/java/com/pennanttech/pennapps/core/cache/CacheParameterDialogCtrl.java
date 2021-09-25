@@ -16,6 +16,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
@@ -50,7 +51,7 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 
 	@SuppressWarnings("unchecked")
 	public void onCreate$window_CacheProcessDialog(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_CacheProcessDialog);
 
@@ -71,17 +72,19 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 			MessageUtil.showError(e);
 			this.window_CacheProcessDialog.onClose();
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnSave(Event event) throws InterruptedException {
-		logger.debug(event.toString());
+		logger.debug(Literal.ENTERING);
 		doSave();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onClick$btnClose(Event event) {
+		logger.debug(Literal.ENTERING);
 		doClose(this.btnSave.isVisible());
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onChange$nodeCount(Event event) throws InterruptedException {
@@ -97,22 +100,22 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 	}
 
 	public void doWriteBeanToComponents(Map<String, Object> arguments) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		for (String key : arguments.keySet()) {
-			if (StringUtils.contains(key, "node_count")) {
+			if (StringUtils.contains(key, "NODE_COUNT")) {
 				this.nodeCount.setValue((int) arguments.get(key));
-			} else if (StringUtils.contains(key, "cache_verify_sleep")) {
+			} else if (StringUtils.contains(key, "CACHE_VERIFY_SLEEP")) {
 				this.verifyTime.setValue((long) arguments.get(key));
-			} else if (StringUtils.contains(key, "cache_update_sleep")) {
+			} else if (StringUtils.contains(key, "CACHE_UPDATE_SLEEP")) {
 				this.sleepTime.setValue((long) arguments.get(key));
 			}
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doWriteComponentsToBean(CacheStats cacheStats) {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
@@ -143,12 +146,12 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 			throw new WrongValuesException(wvea);
 		}
 
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 
 	}
 
 	private void doSetValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 
 		if (!this.verifyTime.isReadonly()) {
 			this.verifyTime.setConstraint(new PTNumberValidator("Verify Time", true, false, 999999999));
@@ -159,15 +162,15 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 		if (!this.nodeCount.isReadonly()) {
 			this.nodeCount.setConstraint(new PTNumberValidator("Node Count", true, false, 999));
 		}
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doRemoveValidation() {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		this.nodeCount.setConstraint("");
 		this.sleepTime.setConstraint("");
 		this.verifyTime.setConstraint("");
-		logger.debug("Leaving ");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected void refreshList() {
@@ -175,7 +178,7 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 	}
 
 	public void doSave() throws InterruptedException {
-		logger.debug("Entering ");
+		logger.debug(Literal.ENTERING);
 		final CacheStats cacheStats = new CacheStats();
 		doSetValidation();
 		doWriteComponentsToBean(cacheStats);
@@ -185,7 +188,7 @@ public class CacheParameterDialogCtrl extends GFCBaseCtrl<CacheStats> {
 		getCacheAdmin().updateParameters(cacheStats);
 		refreshList();
 		closeDialog();
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public CacheNodesListCtrl getCacheProcessListCtrl() {

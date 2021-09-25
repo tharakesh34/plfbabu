@@ -34,7 +34,7 @@
 		<property name="jndiName" value="jdbc/PFFEXT" />
 		<property name="lookupOnStartup" value="true" />
 	</bean>
-
+	
 	<bean id="portalDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="resourceRef" value="true" />
 		<property name="jndiName" value="jdbc/PDP" />

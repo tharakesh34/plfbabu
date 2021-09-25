@@ -7,6 +7,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennanttech.pff.core.TableType;
 
 public interface LimitHeaderDAO {
 
@@ -56,4 +57,5 @@ public interface LimitHeaderDAO {
 
 	FinanceType getLimitFieldsByFinTpe(String finType, Set<String> fields);
 
+	boolean isDuplicateKey(String ruleCode, String limitStructureCode, TableType tableType);
 }

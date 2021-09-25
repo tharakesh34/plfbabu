@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  JavaScriptBuilder.java	                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-07-2013    														*
- *                                                                  						*
- * Modified Date    :  23-05-2013    														*
- *                                                                  						*
- * Description 		:  JavaScript Builder              		                          		*
- *                                                                                          *
+ * * FileName : JavaScriptBuilder.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-07-2013 * * Modified
+ * Date : 23-05-2013 * * Description : JavaScript Builder * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-07-2013       Chaitanya Varma	   	      0.1       		                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-07-2013 Chaitanya Varma 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant;
@@ -131,7 +113,7 @@ public class JavaScriptBuilder extends Groupbox {
 
 	private int uniqueId = 0;
 	private int logicCount = 0;
-	private int mode = 1; //(1-SelectFromFields, 2-All)
+	private int mode = 1; // (1-SelectFromFields, 2-All)
 	private int currentDesktopHeight;
 	private int borderLayoutHeight = 0;
 	private int noOfRowsVisible = 5;
@@ -139,18 +121,20 @@ public class JavaScriptBuilder extends Groupbox {
 	private int spaceCount = 0;
 	public static final int borderlayoutMainNorth = 100;
 
-	private RuleReturnType ruleType = RuleReturnType.BOOLEAN; //Default Boolean Type
+	private RuleReturnType ruleType = RuleReturnType.BOOLEAN; // Default Boolean Type
 	private RuleModule ruleModule;
 	private ModuleMapping moduleMapping = null;
 	private Set<String> fieldsSet = new HashSet<String>();
 
 	private boolean editable = true;
-	private boolean readOnly = true; //FIXME Temporary Solution for Saving
+	private boolean readOnly = true; // FIXME Temporary Solution for Saving
 
 	private List<ValueLabel> operatorsList = PennantStaticListUtil.getOperators("JS"); // retrieve all the operators
-	private List<ValueLabel> operandTypesList = PennantStaticListUtil.getOperandTypes("JS"); // retrieve all selection types
+	private List<ValueLabel> operandTypesList = PennantStaticListUtil.getOperandTypes("JS"); // retrieve all selection
+																								// types
 	private List<ValueLabel> logicalOperatorsList = PennantStaticListUtil.getLogicalOperators("JS");// retrieve values
-	private List<GlobalVariable> globalVariableList = SysParamUtil.getGlobaVariableList();// retrieve values from table--GlobalVariable
+	private List<GlobalVariable> globalVariableList = SysParamUtil.getGlobaVariableList();// retrieve values from
+																							// table--GlobalVariable
 	private List<RBFieldDetail> objectFieldList = null;// retrieve values
 	private List<JSRuleReturnType> jsRuleReturnTypeList = null;
 
@@ -188,7 +172,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.setHeight("100%");
 		this.setStyle("overflow:auto;");
 
-		this.groupbox = new Groupbox(); //Groupbox
+		this.groupbox = new Groupbox(); // Groupbox
 		this.groupbox.setParent(this);
 
 		this.tabbox = new Tabbox(); // Tabbox
@@ -291,8 +275,7 @@ public class JavaScriptBuilder extends Groupbox {
 	/**
 	 * Create a new Condition
 	 * 
-	 * @param condition(String)
-	 *            to build new condition based on the dbQuery
+	 * @param condition(String) to build new condition based on the dbQuery
 	 * @param label(String)
 	 * @return treeItem(TreeItem)
 	 */
@@ -779,7 +762,8 @@ public class JavaScriptBuilder extends Groupbox {
 				resultCombobox.setAttribute("calculatedFields", resultComboboxCalcFields);
 				fillComboBox(resultCombobox, resultComboboxValue, jsRuleReturnType.getListOfData(), "");
 
-				//for deviation case we added this (old code: } else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())) {	)
+				// for deviation case we added this (old code: } else if
+				// (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())) { )
 			} else if (StringUtils.equals(RuleConstants.COMPONENTTYPE_DECIMAL, jsRuleReturnType.getComponentType())
 					|| StringUtils.equals(RuleConstants.COMPONENTTYPE_INTEGER, jsRuleReturnType.getComponentType())) {
 				Label buttonCalculate = new Label(); // Calculation
@@ -907,13 +891,13 @@ public class JavaScriptBuilder extends Groupbox {
 		Treechildren treeChildren = (Treechildren) treeItem.getParent();
 		Label label = (Label) treeItem.getFellowIfAny(treeCell.getId() + "_statement");
 
-		if (label != null && StringUtils.equalsIgnoreCase(label.getValue(), "IF")) { //IF BLOCK
+		if (label != null && StringUtils.equalsIgnoreCase(label.getValue(), "IF")) { // IF BLOCK
 			Treeitem parentItem = (Treeitem) treeChildren.getParent();
 			String parentuUID = parentItem.getTreerow().getChildren().get(0).getId();
-			//NESTED IF
+			// NESTED IF
 			parentItem.getFellowIfAny(parentuUID + "_btn_NESTEDIF").setVisible(true);
 			parentItem.getFellowIfAny("space_" + parentuUID + "_btn_NESTEDIF").setVisible(true);
-			//RESULT
+			// RESULT
 			if (parentItem.getFellowIfAny(parentuUID + "_RESULT") != null) {
 				parentItem.getFellowIfAny(parentuUID + "_RESULT").setVisible(true);
 			}
@@ -1085,29 +1069,29 @@ public class JavaScriptBuilder extends Groupbox {
 	public void doSetButtonProperties(Treechildren treeChildren, String currentuUID, String newuUID, String label) {
 		logger.debug("Entering");
 
-		if (StringUtils.equalsIgnoreCase(label, "ELSEIF")) { //ELSEIF
-			//ELSE
+		if (StringUtils.equalsIgnoreCase(label, "ELSEIF")) { // ELSEIF
+			// ELSE
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_ELSE").setVisible(false);
-		} else if (StringUtils.equalsIgnoreCase(label, "ELSE")) { //ELSE
-			//ELSEIF
+		} else if (StringUtils.equalsIgnoreCase(label, "ELSE")) { // ELSE
+			// ELSEIF
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSEIF").setVisible(false);
-			//treeChildren.getFellowIfAny(newuUID + "_leftOperand_space").setVisible(false);
-			//ELSE
+			// treeChildren.getFellowIfAny(newuUID + "_leftOperand_space").setVisible(false);
+			// ELSE
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny(currentuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + currentuUID + "_btn_ELSE").setVisible(false);
-			//AND
+			// AND
 			treeChildren.getFellowIfAny(newuUID + "_btn_AND").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_AND").setVisible(false);
-		} else if (StringUtils.equalsIgnoreCase(label, "IF")) { //IF
-			//NESTED IF
+		} else if (StringUtils.equalsIgnoreCase(label, "IF")) { // IF
+			// NESTED IF
 			treeChildren.getFellowIfAny(currentuUID + "_btn_NESTEDIF").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + currentuUID + "_btn_NESTEDIF").setVisible(false);
-			//CALCULATE
+			// CALCULATE
 			treeChildren.getFellowIfAny(currentuUID + "_btn_CALCULATE").setVisible(false);
-			//if (this.ruleType == RuleReturnType.OBJECT) {
+			// if (this.ruleType == RuleReturnType.OBJECT) {
 			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
 					treeChildren.getFellowIfAny(currentuUID + "_RESULT" + count).setVisible(false);
@@ -1118,23 +1102,23 @@ public class JavaScriptBuilder extends Groupbox {
 			} else {
 				treeChildren.getFellowIfAny(currentuUID + "_RESULT").setVisible(false);
 			}
-		} else if (StringUtils.equalsIgnoreCase(label, "AND")) { //AND
-			//ELSE
+		} else if (StringUtils.equalsIgnoreCase(label, "AND")) { // AND
+			// ELSE
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_ELSE").setVisible(false);
-			//ELSE IF
+			// ELSE IF
 			treeChildren.getFellowIfAny(newuUID + "_btn_ELSEIF").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_ELSEIF").setVisible(false);
-			//NESTED IF
+			// NESTED IF
 			treeChildren.getFellowIfAny(newuUID + "_btn_NESTEDIF").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_NESTEDIF").setVisible(false);
-			//CALCULATE
+			// CALCULATE
 			treeChildren.getFellowIfAny(newuUID + "_btn_CALCULATE").setVisible(false);
 			treeChildren.getFellowIfAny("space_" + newuUID + "_btn_CALCULATE").setVisible(false);
-			//RESULT TextBox
-			//treeChildren.getFellowIfAny(newuUID + "_RESULT").setVisible(false);
+			// RESULT TextBox
+			// treeChildren.getFellowIfAny(newuUID + "_RESULT").setVisible(false);
 
-			//if (this.ruleType == RuleReturnType.OBJECT) {
+			// if (this.ruleType == RuleReturnType.OBJECT) {
 			if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
 				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
 					treeChildren.getFellowIfAny(newuUID + "_RESULT" + count).setVisible(false);
@@ -1245,7 +1229,7 @@ public class JavaScriptBuilder extends Groupbox {
 		String operandTypeValue = operandType.getSelectedItem().getValue();
 
 		if (operandType.getSelectedIndex() == 0) {
-			//Do nothing
+			// Do nothing
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.STATICTEXT)) {
 			if (StringUtils.equals(type, "operator")) {
 				excludeFields = ", > , >= , < , <= , IN , NOT IN ,";
@@ -1272,9 +1256,9 @@ public class JavaScriptBuilder extends Groupbox {
 				excludeFields = " , " + RuleConstants.STATICTEXT + " , " + RuleConstants.DBVALUE + " , ";
 			}
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.FUNCTION)) {
-			//Do nothing
+			// Do nothing
 		} else if (StringUtils.equals(operandTypeValue, RuleConstants.SUBQUERY)) {
-			//Do nothing
+			// Do nothing
 		}
 
 		logger.debug("Leaving");
@@ -1671,7 +1655,7 @@ public class JavaScriptBuilder extends Groupbox {
 	}
 
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
-	// +++++++++++++++  GUI OPERATIONS  ++++++++++++++++ //
+	// +++++++++++++++ GUI OPERATIONS ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
 	/**
@@ -2103,335 +2087,349 @@ public class JavaScriptBuilder extends Groupbox {
 
 		Treecell treeCell;
 		Treeitem treeItem;
+		List<Component> treeItems = null;
 		String uUID = "";
+		if (treeChildren != null) {
+			treeItems = treeChildren.getChildren();
 
-		List<Component> treeItems = treeChildren.getChildren();
-		List<String> objectResultList = null;
-		List<String> queryResultList = null;
+			List<String> objectResultList = null;
+			List<String> queryResultList = null;
 
-		for (int i = 0; i < treeItems.size(); i++) {
-			treeItem = (Treeitem) treeItems.get(i);
-			treeCell = (Treecell) treeItem.getTreerow().getChildren().get(0);
-			uUID = treeCell.getId();
-			boolean elseCondition = false;
-			boolean flag = true;
+			for (int i = 0; i < treeItems.size(); i++) {
+				treeItem = (Treeitem) treeItems.get(i);
+				treeCell = (Treecell) treeItem.getTreerow().getChildren().get(0);
+				uUID = treeCell.getId();
+				boolean elseCondition = false;
+				boolean flag = true;
 
-			// Remove Button
-			Button buttonRemove = (Button) treeCell.getFellowIfAny(uUID + "_RmvCond");
-			if (!buttonRemove.isDisabled()) {
-				actualBlock += "~";
-			}
-
-			Component labelStatement = treeCell.getFellowIfAny(uUID + "_statement");
-			String statementValue = "";
-			if (labelStatement != null) {
-				// IF/ELSE IF/ELSE
-				statementValue = getOperandValue(labelStatement);
-
-				if (StringUtils.equalsIgnoreCase(statementValue, "ELSE")) {
+				// Remove Button
+				Button buttonRemove = (Button) treeCell.getFellowIfAny(uUID + "_RmvCond");
+				if (!buttonRemove.isDisabled()) {
 					actualBlock += "~";
-					elseCondition = true;
+				}
+
+				Component labelStatement = treeCell.getFellowIfAny(uUID + "_statement");
+				String statementValue = "";
+				if (labelStatement != null) {
+					// IF/ELSE IF/ELSE
+					statementValue = getOperandValue(labelStatement);
+
+					if (StringUtils.equalsIgnoreCase(statementValue, "ELSE")) {
+						actualBlock += "~";
+						elseCondition = true;
+					} else {
+						for (int j = this.spaceCount; j > 0; j--) {
+							this.query += "\t\t";
+						}
+					}
+
+					actualBlock += "(" + "|";
+					actualBlock += statementValue + "|";
 				} else {
-					for (int j = this.spaceCount; j > 0; j--) {
-						this.query += "\t\t";
-					}
-				}
-
-				actualBlock += "(" + "|";
-				actualBlock += statementValue + "|";
-			} else {
-				// AND/OR
-				Combobox comboLogicalOperator = (Combobox) treeCell.getFellowIfAny(uUID + "_logicalOperator");
-				this.query = this.query.substring(0, this.query.length() - 4); //For removing the opening braces 
-				logicCount++;
-				this.spaceCount--;
-				statementValue = getOperandValue(comboLogicalOperator);
-				actualBlock += "(" + "|";
-				actualBlock += comboLogicalOperator.getSelectedItem().getLabel() + "|";
-				flag = false;
-			}
-
-			this.query += " " + statementValue;
-
-			if (!elseCondition) {
-				this.query += " (";
-
-				// Left Operand Type
-				Component comboLeftOperandType = treeCell.getFellowIfAny(uUID + "_leftOperandType");
-				String leftOperandTypeValue = getOperandValue(comboLeftOperandType);
-
-				actualBlock += leftOperandTypeValue + "|";
-
-				// Left Operand
-				Component leftOperand = treeCell.getFellowIfAny(uUID + "_leftOperand");
-				String leftOperandValue = getOperandValue(leftOperand);
-				actualBlock += leftOperandValue + "|";
-
-				if (StringUtils.isNotBlank(leftOperandValue)
-						&& StringUtils.equalsIgnoreCase(leftOperandTypeValue, RuleConstants.FIELDLIST)) {
-					fieldsSet.add(leftOperandValue);
-				}
-
-				// Left Operand Calculation Fields
-				String leftOperandCalculatedFields = " ";
-				if (StringUtils.equals(RuleConstants.STATICTEXT, leftOperandTypeValue)) {
-					leftOperandValue = "'" + leftOperandValue + "'";
-				} else if (StringUtils.equals(RuleConstants.CALCVALUE, leftOperandTypeValue)) {
-					if (leftOperand.getAttribute("calculatedFields") != null) {
-						leftOperandCalculatedFields = (String) leftOperand.getAttribute("calculatedFields");
-					}
-				}
-				actualBlock += leftOperandCalculatedFields + "|";
-
-				for (String calculateField : leftOperandCalculatedFields.split(",")) {
-					fieldsSet.add(calculateField);
-				}
-
-				// Operator
-				Component comboLogicalOperator = treeCell.getFellowIfAny(uUID + "_operator");
-				String logicalOperatorValue = getOperandValue(comboLogicalOperator);
-				actualBlock += logicalOperatorValue + "|";
-
-				// Right Operand Type
-				Component rightOperandType = treeCell.getFellowIfAny(uUID + "_rightOperandType");
-				String rightOperandTypeValue = getOperandValue(rightOperandType);
-				actualBlock += rightOperandTypeValue + "|";
-
-				// Right Operand
-				Component rightOperand = treeCell.getFellowIfAny(uUID + "_rightOperand");
-				String rightOperandValue = getOperandValue(rightOperand);
-				actualBlock += rightOperandValue + "|";
-
-				if (StringUtils.equals(rightOperandTypeValue, RuleConstants.FIELDLIST)) {
-					fieldsSet.add(rightOperandValue);
-				}
-
-				// IN Operator/ NOT IN Operator
-				if (StringUtils.equals(logicalOperatorValue, Labels.getLabel("IN_LABEL"))
-						|| StringUtils.equals(logicalOperatorValue, Labels.getLabel("NOTIN_LABEL"))) {
-					String[] values = rightOperandValue.split(",");
-
-					for (int j = 0; j < values.length; j++) {
-						if (j > 0) {
-							this.query += " || ";
-						} else {
-							this.query += " ( ";
-						}
-						//TODO Numeric values to be developed
-						this.query += leftOperandValue
-								+ (logicalOperatorValue.equals(Labels.getLabel("IN_LABEL")) ? " == " : " != ") + "'"
-								+ values[j].trim() + "'";
-					}
-					this.query += " ) ";
-				} else {
-					if (StringUtils.equals(rightOperandTypeValue, RuleConstants.STATICTEXT)
-							|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)) {
-						rightOperandValue = "'" + rightOperandValue + "'";
-					}
-
-					this.query += leftOperandValue + " ";
-					this.query += logicalOperatorValue + " ";
-					this.query += rightOperandValue;
-				}
-
-				// Right Operand Calculation Fields
-				String rightOperandCalculatedFields = " ";
-				if (rightOperand.getAttribute("calculatedFields") != null) {
-					rightOperandCalculatedFields = (String) rightOperand.getAttribute("calculatedFields");
-				}
-				actualBlock += rightOperandCalculatedFields + "|";
-
-				for (String calculateField : rightOperandCalculatedFields.split(",")) {
-					fieldsSet.add(calculateField);
-				}
-			}
-
-			// AND Button
-			Label buttonAnd = (Label) treeCell.getFellowIfAny(uUID + "_btn_AND");
-			if (buttonAnd.isVisible()) {
-				actualBlock += "1|";
-			} else {
-				actualBlock += "0|";
-			}
-
-			// ELSE Button
-			Label buttonElse = (Label) treeCell.getFellowIfAny(uUID + "_btn_ELSE");
-			if (buttonElse.isVisible()) {
-				actualBlock += "1|";
-			} else {
-				actualBlock += "0|";
-			}
-
-			// ELSE IF Button
-			Label buttonElseIf = (Label) treeCell.getFellowIfAny(uUID + "_btn_ELSEIF");
-			if (buttonElseIf.isVisible()) {
-				actualBlock += "1|";
-			} else {
-				actualBlock += "0|";
-			}
-
-			// NESTED IF Button
-			Label buttonNestedIf = (Label) treeCell.getFellowIfAny(uUID + "_btn_NESTEDIF");
-			if (buttonNestedIf.isVisible()) {
-				actualBlock += "1|";
-			} else {
-				actualBlock += "0|";
-			}
-
-			// CALCULATE Button
-			Label buttonCalculate = (Label) treeCell.getFellowIfAny(uUID + "_btn_CALCULATE");
-			if (buttonCalculate.isVisible()) {
-				actualBlock += "1|";
-			} else {
-				actualBlock += "0|";
-			}
-
-			// RESULT
-			Component resultComponent = treeCell.getFellowIfAny(uUID + "_RESULT");
-			String resultValue = null;
-			objectResultList = new ArrayList<String>();
-
-			if (resultComponent != null && resultComponent.isVisible()) {
-				// Result Calculation Fields
-				String resultCalculatedFields = " ";
-				resultValue = getOperandValue(resultComponent);
-
-				if (resultComponent.getAttribute("calculatedFields") != null) {
-					resultCalculatedFields = (String) resultComponent.getAttribute("calculatedFields");
-				}
-
-				actualBlock += resultValue + "|";
-				actualBlock += resultCalculatedFields + "|";
-
-				for (String calculateField : resultCalculatedFields.split(",")) {
-					fieldsSet.add(calculateField);
-				}
-				//} else if (this.ruleType == RuleReturnType.OBJECT) {
-			} else if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
-				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
-					String componentType = this.jsRuleReturnTypeList.get(count).getComponentType();
-
-					//for deviation case we added this (old code: if (StringUtils.equalsIgnoreCase(componentType, "decimal")) {  )
-					if (StringUtils.equalsIgnoreCase(componentType, "decimal")
-							|| StringUtils.equalsIgnoreCase(componentType, "integer")) {
-						Component calculateButton = treeCell.getFellowIfAny(uUID + "_btn_CALCULATE" + count);
-						if (calculateButton != null) {
-							if (calculateButton.isVisible()) {
-								actualBlock += "1" + "|";
-							} else {
-								actualBlock += "0" + "|";
-							}
-						}
-					}
-
-					Component objectResultComponent = treeCell.getFellowIfAny(uUID + "_RESULT" + count);
-					if (objectResultComponent != null) {
-						// Object Result Calculation Fields
-						String resultCalculatedFields = " ";
-
-						String objectResultValue = "";
-
-						if (objectResultComponent.isVisible()) {
-							objectResultValue = getOperandValue(objectResultComponent);
-						}
-
-						objectResultList.add(objectResultValue);
-
-						if (objectResultComponent.getAttribute("calculatedFields") != null) {
-							resultCalculatedFields = (String) objectResultComponent.getAttribute("calculatedFields");
-						}
-
-						actualBlock += objectResultValue + "|";
-						actualBlock += resultCalculatedFields + "|";
-
-						for (String calculateField : resultCalculatedFields.split(",")) {
-							fieldsSet.add(calculateField);
-						}
-					}
-
-				}
-			}
-
-			if (elseCondition) {
-				this.query += " {\n";
-			} else {
-				this.query += ") {\n";
-			}
-
-			this.spaceCount++;
-			if (treeItem.getTreechildren() != null && treeItem.getTreechildren().getChildren().size() > 0) {
-				getQuery(treeItem.getTreechildren()); // Children Tree begins from here
-			} else {
-				// Using the logicCount we are closing the braces
-				if (logicCount > 0 && treeItem.getTreechildren() == null) {
-					this.query = this.query.substring(0, this.query.length() - 4);
-					while (logicCount > 0) {
-						this.query += ")";
-						logicCount--;
-					}
-					this.query += ") {\n";
+					// AND/OR
+					Combobox comboLogicalOperator = (Combobox) treeCell.getFellowIfAny(uUID + "_logicalOperator");
+					this.query = this.query.substring(0, this.query.length() - 4); // For removing the opening braces
+					logicCount++;
+					this.spaceCount--;
+					statementValue = getOperandValue(comboLogicalOperator);
+					actualBlock += "(" + "|";
+					actualBlock += comboLogicalOperator.getSelectedItem().getLabel() + "|";
 					flag = false;
 				}
-			}
 
-			actualBlock += "~)|";
+				this.query += " " + statementValue;
 
-			if (resultComponent != null && resultComponent.isVisible()) {
-				for (int j = this.spaceCount; j > 0; j--) {
-					this.query += "\t\t";
+				if (!elseCondition) {
+					this.query += " (";
+
+					// Left Operand Type
+					Component comboLeftOperandType = treeCell.getFellowIfAny(uUID + "_leftOperandType");
+					String leftOperandTypeValue = getOperandValue(comboLeftOperandType);
+
+					actualBlock += leftOperandTypeValue + "|";
+
+					// Left Operand
+					Component leftOperand = treeCell.getFellowIfAny(uUID + "_leftOperand");
+					String leftOperandValue = getOperandValue(leftOperand);
+					actualBlock += leftOperandValue + "|";
+
+					if (StringUtils.isNotBlank(leftOperandValue)
+							&& StringUtils.equalsIgnoreCase(leftOperandTypeValue, RuleConstants.FIELDLIST)) {
+						fieldsSet.add(leftOperandValue);
+					}
+
+					// Left Operand Calculation Fields
+					String leftOperandCalculatedFields = " ";
+					if (StringUtils.equals(RuleConstants.STATICTEXT, leftOperandTypeValue)) {
+						leftOperandValue = "'" + leftOperandValue + "'";
+					} else if (StringUtils.equals(RuleConstants.CALCVALUE, leftOperandTypeValue)) {
+						if (leftOperand.getAttribute("calculatedFields") != null) {
+							leftOperandCalculatedFields = (String) leftOperand.getAttribute("calculatedFields");
+						}
+					}
+					actualBlock += leftOperandCalculatedFields + "|";
+
+					for (String calculateField : leftOperandCalculatedFields.split(",")) {
+						fieldsSet.add(calculateField);
+					}
+
+					// Operator
+					Component comboLogicalOperator = treeCell.getFellowIfAny(uUID + "_operator");
+					String logicalOperatorValue = getOperandValue(comboLogicalOperator);
+					actualBlock += logicalOperatorValue + "|";
+
+					// Right Operand Type
+					Component rightOperandType = treeCell.getFellowIfAny(uUID + "_rightOperandType");
+					String rightOperandTypeValue = getOperandValue(rightOperandType);
+					actualBlock += rightOperandTypeValue + "|";
+
+					// Right Operand
+					Component rightOperand = treeCell.getFellowIfAny(uUID + "_rightOperand");
+					String rightOperandValue = getOperandValue(rightOperand);
+					actualBlock += rightOperandValue + "|";
+
+					if (StringUtils.equals(rightOperandTypeValue, RuleConstants.FIELDLIST)) {
+						fieldsSet.add(rightOperandValue);
+					}
+
+					// IN Operator/ NOT IN Operator
+					if (StringUtils.equals(logicalOperatorValue, Labels.getLabel("IN_LABEL"))
+							|| StringUtils.equals(logicalOperatorValue, Labels.getLabel("NOTIN_LABEL"))) {
+						String[] values = rightOperandValue.split(",");
+
+						for (int j = 0; j < values.length; j++) {
+							if (j > 0) {
+								this.query += " || ";
+							} else {
+								this.query += " ( ";
+							}
+							// TODO Numeric values to be developed
+							this.query += leftOperandValue
+									+ (logicalOperatorValue.equals(Labels.getLabel("IN_LABEL")) ? " == " : " != ") + "'"
+									+ values[j].trim() + "'";
+						}
+						this.query += " ) ";
+					} else {
+						if (StringUtils.equals(rightOperandTypeValue, RuleConstants.STATICTEXT)
+								|| StringUtils.equals(rightOperandTypeValue, RuleConstants.DBVALUE)) {
+							rightOperandValue = "'" + rightOperandValue + "'";
+						}
+
+						this.query += leftOperandValue + " ";
+						this.query += logicalOperatorValue + " ";
+						this.query += rightOperandValue;
+					}
+
+					// Right Operand Calculation Fields
+					String rightOperandCalculatedFields = " ";
+					if (rightOperand.getAttribute("calculatedFields") != null) {
+						rightOperandCalculatedFields = (String) rightOperand.getAttribute("calculatedFields");
+					}
+					actualBlock += rightOperandCalculatedFields + "|";
+
+					for (String calculateField : rightOperandCalculatedFields.split(",")) {
+						fieldsSet.add(calculateField);
+					}
 				}
 
-				if (this.ruleType == RuleReturnType.STRING) {
-					this.query += "Result = '" + resultValue + "' ; return; ";
+				// AND Button
+				Label buttonAnd = (Label) treeCell.getFellowIfAny(uUID + "_btn_AND");
+				if (buttonAnd.isVisible()) {
+					actualBlock += "1|";
 				} else {
-					this.query += "Result = " + resultValue + " ; return; ";
+					actualBlock += "0|";
 				}
 
-				this.spaceCount--;
-				this.query += " \n ";
-
-				for (int j = this.spaceCount; j > 0; j--) {
-					query += "\t\t";
+				// ELSE Button
+				Label buttonElse = (Label) treeCell.getFellowIfAny(uUID + "_btn_ELSE");
+				if (buttonElse.isVisible()) {
+					actualBlock += "1|";
+				} else {
+					actualBlock += "0|";
 				}
 
-				this.query += "}";
-				//} else if (this.ruleType == RuleReturnType.OBJECT) {
-			} else if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
-				queryResultList = new ArrayList<String>();
+				// ELSE IF Button
+				Label buttonElseIf = (Label) treeCell.getFellowIfAny(uUID + "_btn_ELSEIF");
+				if (buttonElseIf.isVisible()) {
+					actualBlock += "1|";
+				} else {
+					actualBlock += "0|";
+				}
 
-				for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
-					Component objectResultComponent = treeCell.getFellowIfAny(uUID + "_RESULT" + count);
+				// NESTED IF Button
+				Label buttonNestedIf = (Label) treeCell.getFellowIfAny(uUID + "_btn_NESTEDIF");
+				if (buttonNestedIf.isVisible()) {
+					actualBlock += "1|";
+				} else {
+					actualBlock += "0|";
+				}
 
-					if (objectResultComponent != null && objectResultComponent.isVisible()) {
-						JSRuleReturnType jsRuleReturnType = jsRuleReturnTypeList.get(count);
-						String resultLabel = jsRuleReturnType.getResultLabel();
+				// CALCULATE Button
+				Label buttonCalculate = (Label) treeCell.getFellowIfAny(uUID + "_btn_CALCULATE");
+				if (buttonCalculate.isVisible()) {
+					actualBlock += "1|";
+				} else {
+					actualBlock += "0|";
+				}
 
-						//if (StringUtils.isNotBlank(resultLabel)) {
-						queryResultList.add(resultLabel + objectResultList.get(count) + ";");
-						//} else {
-						//	queryResultList.add(objectResultList.get(count));
-						//}
+				// RESULT
+				Component resultComponent = treeCell.getFellowIfAny(uUID + "_RESULT");
+				String resultValue = null;
+				objectResultList = new ArrayList<String>();
+
+				if (resultComponent != null && resultComponent.isVisible()) {
+					// Result Calculation Fields
+					String resultCalculatedFields = " ";
+					resultValue = getOperandValue(resultComponent);
+
+					if (resultComponent.getAttribute("calculatedFields") != null) {
+						resultCalculatedFields = (String) resultComponent.getAttribute("calculatedFields");
+					}
+
+					actualBlock += resultValue + "|";
+					actualBlock += resultCalculatedFields + "|";
+
+					for (String calculateField : resultCalculatedFields.split(",")) {
+						fieldsSet.add(calculateField);
+					}
+					// } else if (this.ruleType == RuleReturnType.OBJECT) {
+				} else if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+					for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
+						String componentType = this.jsRuleReturnTypeList.get(count).getComponentType();
+
+						// for deviation case we added this (old code: if (StringUtils.equalsIgnoreCase(componentType,
+						// "decimal")) { )
+						if (StringUtils.equalsIgnoreCase(componentType, "decimal")
+								|| StringUtils.equalsIgnoreCase(componentType, "integer")) {
+							Component calculateButton = treeCell.getFellowIfAny(uUID + "_btn_CALCULATE" + count);
+							if (calculateButton != null) {
+								if (calculateButton.isVisible()) {
+									actualBlock += "1" + "|";
+								} else {
+									actualBlock += "0" + "|";
+								}
+							}
+						}
+
+						Component objectResultComponent = treeCell.getFellowIfAny(uUID + "_RESULT" + count);
+						if (objectResultComponent != null) {
+							// Object Result Calculation Fields
+							String resultCalculatedFields = " ";
+
+							String objectResultValue = "";
+
+							if (objectResultComponent.isVisible()) {
+								objectResultValue = getOperandValue(objectResultComponent);
+							}
+
+							objectResultList.add(objectResultValue);
+
+							if (objectResultComponent.getAttribute("calculatedFields") != null) {
+								resultCalculatedFields = (String) objectResultComponent
+										.getAttribute("calculatedFields");
+							}
+
+							actualBlock += objectResultValue + "|";
+							actualBlock += resultCalculatedFields + "|";
+
+							for (String calculateField : resultCalculatedFields.split(",")) {
+								fieldsSet.add(calculateField);
+							}
+						}
 
 					}
 				}
 
-				if (!queryResultList.isEmpty()) {
+				if (elseCondition) {
+					this.query += " {\n";
+				} else {
+					this.query += ") {\n";
+				}
+
+				this.spaceCount++;
+				if (treeItem.getTreechildren() != null && treeItem.getTreechildren().getChildren().size() > 0) {
+					getQuery(treeItem.getTreechildren()); // Children Tree begins from here
+				} else {
+					// Using the logicCount we are closing the braces
+					if (logicCount > 0 && treeItem.getTreechildren() == null) {
+						this.query = this.query.substring(0, this.query.length() - 4);
+						while (logicCount > 0) {
+							this.query += ")";
+							logicCount--;
+						}
+						this.query += ") {\n";
+						flag = false;
+					}
+				}
+
+				actualBlock += "~)|";
+
+				if (resultComponent != null && resultComponent.isVisible()) {
 					for (int j = this.spaceCount; j > 0; j--) {
 						this.query += "\t\t";
 					}
 
-					this.query += "Result = ";
-
-					for (String string : queryResultList) {
-						this.query += string;
+					if (this.ruleType == RuleReturnType.STRING) {
+						this.query += "Result = '" + resultValue + "' ; return; ";
+					} else {
+						this.query += "Result = " + resultValue + " ; return; ";
 					}
 
-					this.query += " return; ";
-				}
-
-				if (flag) {
 					this.spaceCount--;
-					this.query += "\n";
+					this.query += " \n ";
+
+					for (int j = this.spaceCount; j > 0; j--) {
+						query += "\t\t";
+					}
+
+					this.query += "}";
+					// } else if (this.ruleType == RuleReturnType.OBJECT) {
+				} else if (this.jsRuleReturnTypeList != null && !this.jsRuleReturnTypeList.isEmpty()) {
+					queryResultList = new ArrayList<String>();
+
+					for (int count = 0; count < this.jsRuleReturnTypeList.size(); count++) {
+						Component objectResultComponent = treeCell.getFellowIfAny(uUID + "_RESULT" + count);
+
+						if (objectResultComponent != null && objectResultComponent.isVisible()) {
+							JSRuleReturnType jsRuleReturnType = jsRuleReturnTypeList.get(count);
+							String resultLabel = jsRuleReturnType.getResultLabel();
+
+							// if (StringUtils.isNotBlank(resultLabel)) {
+							queryResultList.add(resultLabel + objectResultList.get(count) + ";");
+							// } else {
+							// queryResultList.add(objectResultList.get(count));
+							// }
+
+						}
+					}
+
+					if (!queryResultList.isEmpty()) {
+						for (int j = this.spaceCount; j > 0; j--) {
+							this.query += "\t\t";
+						}
+
+						this.query += "Result = ";
+
+						for (String string : queryResultList) {
+							this.query += string;
+						}
+
+						this.query += " return; ";
+					}
+
+					if (flag) {
+						this.spaceCount--;
+						this.query += "\n";
+
+						for (int j = this.spaceCount; j > 0; j--) {
+							this.query += "\t\t";
+						}
+
+						this.query += "}";
+					}
+				} else if (labelStatement != null) {
+					this.spaceCount--;
+					this.query += " \n ";
 
 					for (int j = this.spaceCount; j > 0; j--) {
 						this.query += "\t\t";
@@ -2439,17 +2437,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 					this.query += "}";
 				}
-			} else if (labelStatement != null) {
-				this.spaceCount--;
-				this.query += " \n ";
 
-				for (int j = this.spaceCount; j > 0; j--) {
-					this.query += "\t\t";
-				}
-
-				this.query += "}";
 			}
-
 		}
 
 		logger.debug("Leaving");
@@ -2889,9 +2878,9 @@ public class JavaScriptBuilder extends Groupbox {
 		logger.debug("Leaving");
 	}
 
-	//================================================================================
-	//============================== Getters and Setters =============================
-	//================================================================================
+	// ================================================================================
+	// ============================== Getters and Setters =============================
+	// ================================================================================
 
 	public void setActualBlock(String actualBlock) {
 		this.actualBlock = actualBlock;

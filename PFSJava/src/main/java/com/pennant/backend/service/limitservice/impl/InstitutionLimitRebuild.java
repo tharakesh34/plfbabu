@@ -131,8 +131,10 @@ public class InstitutionLimitRebuild {
 			if (limitFilterQuery != null) {
 				String sqlQuery = limitFilterQuery.getSQLQuery();
 
-				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, false));
-				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), sqlQuery, true));
+				String whereClause = getWhereClause(fieldMap, sqlQuery);
+
+				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), whereClause, false));
+				financeMains.addAll(limitHeaderDAO.getInstitutionLimitFields(fieldMap.get("fm_"), whereClause, true));
 			}
 
 			financeMains.forEach(financeMain -> {
@@ -522,4 +524,44 @@ public class InstitutionLimitRebuild {
 		return limitFieldMap;
 	}
 
+	private String getWhereClause(Map<String, Set<String>> fieldMap, String whereClause) {
+		StringBuilder whereCls = new StringBuilder();
+
+		Set<String> fmSet = fieldMap.get("fm_");
+		Set<String> ctSet = fieldMap.get("ct_");
+		Set<String> ftSet = fieldMap.get("ft_");
+
+		whereClause = whereClause.replace("(", "");
+		whereClause = whereClause.replace(")", "");
+		whereClause = whereClause.replace("Where", "");
+		whereClause = whereClause.replace("where", "");
+		whereClause = whereClause.replace("WHERE", "");
+
+		String[] split = whereClause.split("and | AND| And");
+
+		for (int i = 0; i < split.length; i++) {
+			if (whereCls.length() > 1) {
+				whereCls.append(" and ");
+			} else {
+				whereCls.append(" Where ");
+			}
+
+			String[] col = split[i].split("=");
+			String colName = col[0].trim();
+
+			if (fmSet.stream().anyMatch(colName::equalsIgnoreCase)) {
+				whereCls.append("fm.");
+			} else if (ctSet.stream().anyMatch(colName::equalsIgnoreCase)) {
+				whereCls.append("ct.");
+			} else if (ftSet.stream().anyMatch(colName::equalsIgnoreCase)) {
+				whereCls.append("ft.");
+			}
+
+			whereCls.append(colName);
+			whereCls.append(" = ");
+			whereCls.append(col[1]);
+		}
+
+		return whereCls.toString();
+	}
 }

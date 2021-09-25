@@ -6434,13 +6434,11 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		if (receiptData.getPaidNow()
-				.compareTo(rch.getReceiptAmount().add(rch.getTdsAmount()).add(receiptData.getExcessAvailable())) > 0) {
+		if (receiptData.getPaidNow().compareTo(rch.getReceiptAmount().add(rch.getTdsAmount())) > 0) {
 			String[] args = new String[2];
 
 			args[0] = PennantApplicationUtil.amountFormate(receiptData.getPaidNow(), formatter);
-			args[1] = PennantApplicationUtil.amountFormate(
-					rch.getReceiptAmount().add(rch.getTdsAmount()).add(receiptData.getExcessAvailable()), formatter);
+			args[1] = PennantApplicationUtil.amountFormate(rch.getReceiptAmount().add(rch.getTdsAmount()), formatter);
 			MessageUtil.showError(Labels.getLabel("label_Allocation_More_than_receipt", args));
 			return false;
 		}

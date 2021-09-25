@@ -236,8 +236,7 @@ public class ExtendedFieldDetailsService {
 
 		String finCategory = extendedFieldRenderDAO.getCategory(reference);
 		if (finCategory != null) {
-			tableName = getTableName(ExtendedFieldConstants.MODULE_LOAN, finCategory,
-					FinServiceEvent.ORG);
+			tableName = getTableName(ExtendedFieldConstants.MODULE_LOAN, finCategory, FinServiceEvent.ORG);
 		}
 
 		if (tableName != null) {
@@ -355,7 +354,7 @@ public class ExtendedFieldDetailsService {
 		auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
 		auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
 
-		//FIXME:Need to rechecks for which case InstructioinUid Required.
+		// FIXME:Need to rechecks for which case InstructioinUid Required.
 		if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
 			String tableName = StringUtils.trimToEmpty(extendedFieldRender.getTableName()).toUpperCase();
 			if (tableName.startsWith("LOAN_") && tableName.endsWith("_ED")) {
@@ -440,7 +439,7 @@ public class ExtendedFieldDetailsService {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())
 						&& exists) {
-					//If saved record has been updated then it should be updated in the table.
+					// If saved record has been updated then it should be updated in the table.
 					updateRecord = true;
 					saveRecord = false;
 				}
@@ -584,7 +583,7 @@ public class ExtendedFieldDetailsService {
 				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
-					//If saved record has been updated then it should be updated in the table.
+					// If saved record has been updated then it should be updated in the table.
 					updateRecord = true;
 					saveRecord = false;
 				}
@@ -715,7 +714,7 @@ public class ExtendedFieldDetailsService {
 					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
 						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
-						//If saved record has been updated then it should be updated in the table.
+						// If saved record has been updated then it should be updated in the table.
 						updateRecord = true;
 						saveRecord = false;
 					}
@@ -1107,12 +1106,12 @@ public class ExtendedFieldDetailsService {
 				FinanceConstants.DEDUP_COLLATERAL, querySubCode);
 
 		String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup_Temp T1"
-				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + "PROPERTY"
+				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + querySubCode
 				+ "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery() + " union all "
 				+ " Select T1.CollateralRef, T2.CUSTSHRTNAME From CollateralSetup T1"
-				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + "PROPERTY"
+				+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_" + querySubCode
 				+ "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
-				+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + "PROPERTY"
+				+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + querySubCode
 				+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
 
 		List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery,
@@ -1262,19 +1261,20 @@ public class ExtendedFieldDetailsService {
 
 			if (!render.isWorkflow()) {// With out Work flow only new records
 				if (befExtRender != null) { // Record Already Exists in the
-												// table then error
+											// table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
 
-				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if  records type is new 
+				if (render.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
 					if (befExtRender != null || tempRender != null) { // if records already exists in the main table
 						auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 					}
 				} else { // if records not exists in the Main flow table
 					if (befExtRender == null && tempRender == null) {
-						//FIXME: commented the below line, showing an alert while modifying the approved records
-						//auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
+						// FIXME: commented the below line, showing an alert while modifying the approved records
+						// auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm,
+						// null));
 					}
 				}
 			}
@@ -1282,10 +1282,10 @@ public class ExtendedFieldDetailsService {
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!render.isWorkflow()) { // With out Work flow for update and
-											// delete
+										// delete
 
 				if (befExtRender == null) { // if records not exists in the main
-												// table
+											// table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, null));
 				} else {
 
@@ -1804,7 +1804,6 @@ public class ExtendedFieldDetailsService {
 		return sb.toString();
 	}
 
-
 	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module,
 			String subModule, String event) {
 		logger.debug(Literal.ENTERING);
@@ -1976,8 +1975,7 @@ public class ExtendedFieldDetailsService {
 	/**
 	 * Method Getting the extended field render details
 	 * 
-	 * @param String
-	 *            reference
+	 * @param String reference
 	 **/
 	public ExtendedFieldRender getExtendedFieldRender(String module, String subModule, String reference) {
 
@@ -2016,11 +2014,13 @@ public class ExtendedFieldDetailsService {
 			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null")
-					? "" : String.valueOf(extFieldMap.get("NextTaskId")));
+			extendedFieldRender
+					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null")
-					? "" : String.valueOf(extFieldMap.get("RecordType")));
+			extendedFieldRender
+					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
 			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
 			extFieldMap.remove("WorkflowId");
@@ -2288,16 +2288,14 @@ public class ExtendedFieldDetailsService {
 	}
 
 	/**
-	 * @param extendedFieldRenderDAO
-	 *            the extendedFieldRenderDAO to set
+	 * @param extendedFieldRenderDAO the extendedFieldRenderDAO to set
 	 */
 	public void setExtendedFieldRenderDAO(ExtendedFieldRenderDAO extendedFieldRenderDAO) {
 		this.extendedFieldRenderDAO = extendedFieldRenderDAO;
 	}
 
 	/**
-	 * @param scriptValidationService
-	 *            the scriptValidationService to set
+	 * @param scriptValidationService the scriptValidationService to set
 	 */
 	public void setScriptValidationService(ScriptValidationService scriptValidationService) {
 		this.scriptValidationService = scriptValidationService;

@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -6,20 +6,22 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
-import com.pennant.backend.service.finance.lmsservicelog.impl.LMSServiceLogAlerts;
 import com.pennanttech.pennapps.core.job.AbstractJob;
+import com.pennanttech.pff.external.DisbursementResponse;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class LMSServiceLogAlertsJob extends AbstractJob {
+public class AutoDisbursementUploadJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		getCovenantAlertsService(context).sendAlerts();
+		getDisbursementReponseProcess(context).processAutoResponseFiles();
+
 	}
 
-	private LMSServiceLogAlerts getCovenantAlertsService(JobExecutionContext context) {
+	private DisbursementResponse getDisbursementReponseProcess(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (LMSServiceLogAlerts) jobDataMap.get("lmsServiceLogAlerts");
+		return (DisbursementResponse) jobDataMap.get("disbursementResponse");
 	}
+
 }

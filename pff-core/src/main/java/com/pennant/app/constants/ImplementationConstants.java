@@ -134,7 +134,6 @@ public class ImplementationConstants {
 		ALLOW_ADV_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_EMI", false);
 		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
-		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
 		ALLOW_LOAN_DOWNSIZING = getValueAsBoolean(extensions, "ALLOW_LOAN_DOWNSIZING", false);
@@ -167,7 +166,6 @@ public class ImplementationConstants {
 
 		ACCOUNTING_VALIDATION = getValueAsBoolean(extensions, "ACCOUNTING_VALIDATION", false);
 		RCU_DOC_FIELDS_DISABLED = getValueAsBoolean(extensions, "RCU_DOC_FIELDS_DISABLED", false);
-		COLLATERAL_DEDUP_WARNING = getValueAsBoolean(extensions, "COLLATERAL_DEDUP_WARNING", false);
 
 		CUSTOMIZED_TEMPLATES = getValueAsBoolean(extensions, "CUSTOMIZED_TEMPLATES", false);
 		DERIVED_EMI_REQ = getValueAsBoolean(extensions, "DERIVED_EMI_REQ", false);
@@ -203,6 +201,8 @@ public class ImplementationConstants {
 		PRESENT_RESP_BOUNCE_REMARKS_MAN = getValueAsBoolean(extensions, "PRESENT_RESP_BOUNCE_REMARKS_MAN", false);
 		VAS_VALIDATION_FOR_PREMIUM_CALC = getValueAsBoolean(extensions, "VAS_VALIDATION_FOR_PREMIUM_CALC", false);
 		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean(extensions, "SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
+		// this constant should be true for goderaj
+		CHEQUE_AMOUNT_ZERO_UDC = getValueAsBoolean(extensions, "CHEQUE_AMOUNT_ZERO_UDC", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -400,7 +400,6 @@ public class ImplementationConstants {
 	public static boolean NOC_LINKED_LOANS_CHECK_REQ;
 	public static boolean ACCOUNTING_VALIDATION;
 	public static boolean RCU_DOC_FIELDS_DISABLED;
-	public static boolean COLLATERAL_DEDUP_WARNING;
 	public static boolean NOC_GENERATION_MULTIPLE;
 	public static boolean CUSTOMIZED_TEMPLATES;
 	public static boolean DERIVED_EMI_REQ;
@@ -493,6 +492,7 @@ public class ImplementationConstants {
 	public static boolean VAS_VALIDATION_FOR_PREMIUM_CALC;
 	public static boolean DISBURSEMENT_INSTRUCTIONS_OFF_LINE;
 	public static boolean SNAP_SHOT_DATE_AS_CUR_BUS_DATE;
+	public static boolean CHEQUE_AMOUNT_ZERO_UDC;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

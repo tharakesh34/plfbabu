@@ -1,53 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BaseRateDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BaseRateDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified Date
+ * : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -56,7 +37,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -69,6 +49,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
 
@@ -86,10 +67,8 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	/**
 	 * Fetch the Record BaseRates details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return BaseRate
 	 */
 	@Override
@@ -259,89 +238,63 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	 * @return
 	 */
 	private List<BaseRate> getBaseRateListByType(String bRType, String currency, Date bREffDate, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BRType, Currency, BREffDate, BRRate, LastMdfDate");
 		sql.append(" from RMTBaseRates");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where BRType = ? and Currency = ? and BREffDate <= ?");
-		sql.append(" order by BREffDate desc");
+		sql.append(" Where BRType = ? and Currency = ? and BREffDate <= ? and BRTypeIsActive = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, bRType);
-					ps.setString(index++, currency);
-					ps.setDate(index++, JdbcUtil.getDate(bREffDate));
-				}
-			}, new RowMapper<BaseRate>() {
-				@Override
-				public BaseRate mapRow(ResultSet rs, int rowNum) throws SQLException {
-					BaseRate br = new BaseRate();
+		List<BaseRate> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, bRType);
+			ps.setString(index++, currency);
+			ps.setDate(index++, JdbcUtil.getDate(bREffDate));
+			ps.setInt(index++, 1);
+		}, (rs, rowNum) -> {
+			BaseRate br = new BaseRate();
 
-					br.setBRType(rs.getString("BRType"));
-					br.setCurrency(rs.getString("Currency"));
-					br.setBREffDate(rs.getTimestamp("BREffDate"));
-					br.setBRRate(rs.getBigDecimal("BRRate"));
-					br.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
+			br.setBRType(rs.getString("BRType"));
+			br.setCurrency(rs.getString("Currency"));
+			br.setBREffDate(rs.getTimestamp("BREffDate"));
+			br.setBRRate(rs.getBigDecimal("BRRate"));
+			br.setLastMdfDate(rs.getTimestamp("LastMdfDate"));
 
-					return br;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return br;
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+		return list.stream().sorted((l1, l2) -> DateUtil.compare(l2.getBREffDate(), l1.getBREffDate()))
+				.collect(Collectors.toList());
 	}
 
 	public List<BaseRate> getBaseRateHistByType(String bRType, String currency, Date bREffDate) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" BRType, BREffDate, BRRate");
 		sql.append(" from RMTBaseRates");
 		sql.append(" Where brtype = ? and Currency = ?");
 		sql.append(" and BREffDate >= (select max(BREffDate) from rmtbaserates");
-		sql.append(" Where brtype = ? and Currency = ? and breffdate <= ?)");
+		sql.append(" Where brtype = ? and Currency = ? and breffdate <= ?) and BRTypeIsActive = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, bRType);
-					ps.setString(index++, currency);
-					ps.setString(index++, bRType);
-					ps.setString(index++, currency);
-					ps.setDate(index++, JdbcUtil.getDate(bREffDate));
-				}
-			}, new RowMapper<BaseRate>() {
-				@Override
-				public BaseRate mapRow(ResultSet rs, int rowNum) throws SQLException {
-					BaseRate br = new BaseRate();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setString(index++, bRType);
+			ps.setString(index++, currency);
+			ps.setString(index++, bRType);
+			ps.setString(index++, currency);
+			ps.setDate(index++, JdbcUtil.getDate(bREffDate));
+			ps.setInt(index++, 1);
+		}, (rs, rowNum) -> {
+			BaseRate br = new BaseRate();
 
-					br.setBRType(rs.getString("BRType"));
-					br.setBREffDate(rs.getTimestamp("BREffDate"));
-					br.setBRRate(rs.getBigDecimal("BRRate"));
+			br.setBRType(rs.getString("BRType"));
+			br.setBREffDate(rs.getTimestamp("BREffDate"));
+			br.setBRRate(rs.getBigDecimal("BRRate"));
 
-					return br;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return br;
+		});
 	}
 
 	/**
@@ -452,8 +405,7 @@ public class BaseRateDAOImpl extends BasicDao<BaseRate> implements BaseRateDAO {
 	 * This method Deletes the Record from the RMTBaseRates If Record not deleted then throws DataAccessException with
 	 * error 41003. delete BaseRates greater than effective date
 	 * 
-	 * @param BaseRates
-	 *            (baseRate)
+	 * @param BaseRates (baseRate)
 	 * @return void
 	 * @throws DataAccessException
 	 * 

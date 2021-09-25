@@ -1002,6 +1002,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
+		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
 		if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
 			this.searchObj.addFilter(new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL));

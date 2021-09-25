@@ -30,6 +30,7 @@ import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.util.QueryUtil;
 
 public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements LimitHeaderDAO {
 	private static Logger logger = LogManager.getLogger(LimitHeaderDAOImpl.class);
@@ -64,10 +65,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	/**
 	 * Fetch the Record Limit Header details by Customer ID
 	 * 
-	 * @param Customerid
-	 *            (String )
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customerid (String )
+	 * @param type       (String) ""/_Temp/_View
 	 * @return LimitHeader
 	 */
 
@@ -131,7 +130,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 							lh.setCustMName(rs.getString("CustMName"));
 							lh.setCustFullName(rs.getString("CustFullName"));
 							lh.setCustGrpCode(rs.getString("CustGrpCode"));
-							//lh.setCustGrpRO1(rs.getString("CustGrpRO1"));	
+							// lh.setCustGrpRO1(rs.getString("CustGrpRO1"));
 						}
 						return lh;
 					});
@@ -145,10 +144,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	/**
 	 * Fetch the Record Limit Header details by Customer Group Code
 	 * 
-	 * @param GroupCode
-	 *            (String )
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param GroupCode (String )
+	 * @param type      (String) ""/_Temp/_View
 	 * @return LimitHeader
 	 */
 	@Override
@@ -255,10 +252,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 *
 	 * save Limit Header
 	 * 
-	 * @param Limit
-	 *            Header (LimitDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Header (LimitDetails)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -294,10 +289,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * This method updates the Record LimitHeader or LimitHeader_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Limit Header by key HeaderId and Version
 	 * 
-	 * @param Limit
-	 *            Header (limitHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Header (limitHeader)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * 
 	 * @throws DataAccessException
@@ -336,10 +329,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * This method Deletes the Record from the LimitHeader or LimitHeader_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Limit Header by key HeaderId
 	 * 
-	 * @param Limit
-	 *            Header (LimitHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Limit Header (LimitHeader)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -371,10 +362,8 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	/**
 	 * Fetch the Record Limit Header details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitDetails
 	 */
 	@Override
@@ -402,7 +391,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		try {
 			limitHeader = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			//logger.warn("Exception: ", e);
+			// logger.warn("Exception: ", e);
 			limitHeader = null;
 		}
 		logger.debug(Literal.LEAVING);
@@ -583,8 +572,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 	 * Method for fetch number of records from limitHeader
 	 * 
 	 * @param headerId
-	 * @param customer
-	 *            group
+	 * @param customer group
 	 * 
 	 * @return Integer
 	 */
@@ -748,18 +736,29 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 
 	@Override
 	public List<FinanceMain> getInstitutionLimitFields(Set<String> ruleFields, String whereClause, boolean orgination) {
-		StringBuilder sql = new StringBuilder("select ");
-		sql.append(ruleFields.toString().replace("[", "").replace("]", ""));
+		StringBuilder sql = new StringBuilder("Select ");
+
+		for (String field : ruleFields) {
+			sql.append(" fm.").append(field).append(",");
+		}
+
+		sql.deleteCharAt(sql.length() - 1);
 
 		if (orgination) {
 			sql.append(", 1 LimitValid");
 		}
 		sql.append(" from FinanceMain");
+
 		if (orgination) {
 			sql.append(TableType.TEMP_TAB.getSuffix());
 		}
-		sql.append(" ");
+
+		sql.append(" fm");
+		sql.append(" Inner Join Customers ct on ct.CustID = fm.CustID");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType ");
+
 		sql.append(whereClause);
+
 		if (orgination) {
 			if (App.DATABASE == Database.ORACLE) {
 				sql.append(" and RcdMaintainSts IS NULL ");
@@ -779,5 +778,31 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		}
 
 		return new ArrayList<FinanceMain>();
+	}
+
+	@Override
+	public boolean isDuplicateKey(String ruleCode, String limitStructureCode, TableType tableType) {
+		String sql;
+		String whereClause = "RuleCode = ? and LimitStructureCode = ?";
+
+		Object obj = new Object[] { ruleCode, limitStructureCode };
+
+		switch (tableType) {
+		case MAIN_TAB:
+			sql = QueryUtil.getCountQuery("LimitHeader", whereClause);
+			break;
+		case TEMP_TAB:
+			sql = QueryUtil.getCountQuery("LimitHeader_Temp", whereClause);
+			break;
+		default:
+			sql = QueryUtil.getCountQuery(new String[] { "LimitHeader_Temp", "LimitHeader" }, whereClause);
+
+			obj = new Object[] { ruleCode, limitStructureCode, ruleCode, limitStructureCode };
+			break;
+		}
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.queryForObject(sql, Integer.class, obj) > 0;
 	}
 }

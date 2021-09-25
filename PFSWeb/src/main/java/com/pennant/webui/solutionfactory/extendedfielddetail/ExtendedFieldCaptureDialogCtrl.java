@@ -1,14 +1,9 @@
 package com.pennant.webui.solutionfactory.extendedfielddetail;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.script.ScriptException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -31,27 +26,24 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
-import com.pennant.backend.model.collateral.CollateralSetup;
-import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.dedup.DedupParmService;
 import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.component.extendedfields.ExtendedFieldsGenerator;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -225,23 +217,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * when the "save" button is clicked. <br>
-	 * 
-	 * @param event
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws ParseException
-	 * @throws IOException
-	 * @throws ScriptException
-	 * @throws NoSuchMethodException
-	 * @throws SecurityException
-	 * @throws NoSuchFieldException
-	 */
-	public void onClick$btnSave(Event event)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException,
-			ScriptException, IOException, NoSuchMethodException, NoSuchFieldException, SecurityException {
+	public void onClick$btnSave(Event event) throws AppException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -357,9 +333,7 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 		return auditHeader;
 	}
 
-	public void doSave()
-			throws InterruptedException, ParseException, ScriptException, IOException, NoSuchMethodException,
-			NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+	public void doSave() throws AppException {
 		logger.debug("Entering");
 
 		final ExtendedFieldRender aExetendedFieldRender = getExtendedFieldRender();
@@ -370,47 +344,6 @@ public class ExtendedFieldCaptureDialogCtrl extends GFCBaseCtrl<ExtendedFieldRen
 		// Do data level validations here
 		Map<String, Object> fielValueMap = generator.doSave(getExtendedFieldHeader().getExtendedFieldDetails(), false);
 		aExetendedFieldRender.setMapValues(fielValueMap);
-
-		if (!ImplementationConstants.COLLATERAL_DEDUP_WARNING && this.queryId > 0) {
-			DedupParm dedupParm = this.dedupParmService.getApprovedDedupParmById(this.queryCode,
-					FinanceConstants.DEDUP_COLLATERAL, this.querySubCode);
-
-			String sqlQuery = "Select T1.CollateralRef, T2.CUSTSHRTNAME, T2.CUSTCIF DepositorCif From CollateralSetup_Temp T1"
-					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
-					+ this.querySubCode + "_ED_Temp  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
-					+ " union all "
-					+ " Select T1.CollateralRef, T2.CUSTSHRTNAME, T2.CUSTCIF DepositorCif From CollateralSetup T1"
-					+ " Inner Join Customers T2 On T2.CustId = T1.DEPOSITORID" + " Inner Join Collateral_"
-					+ this.querySubCode + "_ED  T3 On T3.REFERENCE = T1.COLLATERALREF " + dedupParm.getSQLQuery()
-					+ " And NOT EXISTS (SELECT 1 FROM Collateral_" + this.querySubCode
-					+ "_ED_TEMP  WHERE REFERENCE = T1.CollateralRef)";
-
-			List<CollateralSetup> collateralSetupList = this.dedupParmService.queryExecution(sqlQuery, fielValueMap);
-			String customerCIF = "";
-			if (collateralSetupList != null && !collateralSetupList.isEmpty()) {
-				boolean recordFound = true;
-				customerCIF = collateralSetupList.get(0).getDepositorCif();
-				if (collateralSetupList.size() == 1) {
-					if (StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils.equals(
-							collateralSetupList.get(0).getCollateralRef(), aExetendedFieldRender.getReference())) {
-						recordFound = false;
-					}
-				} else {
-					recordFound = false;
-					for (CollateralSetup collateralSetup : collateralSetupList) {
-						if (!(StringUtils.isNotBlank(aExetendedFieldRender.getReference()) && StringUtils
-								.equals(collateralSetup.getCollateralRef(), aExetendedFieldRender.getReference()))) {
-							recordFound = true;
-							customerCIF = collateralSetup.getDepositorCif();
-						}
-					}
-				}
-				if (recordFound) {
-					MessageUtil.showError(Labels.getLabel("Collateral_Dedup_Error_Message") + customerCIF);
-					return;
-				}
-			}
-		}
 
 		// Post Validations for the Extended fields
 		String postValidationScript = getExtendedFieldRenderDialogCtrl().getPostValidationScript();

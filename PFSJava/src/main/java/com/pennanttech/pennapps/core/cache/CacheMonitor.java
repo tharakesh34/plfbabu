@@ -1,50 +1,8 @@
-/**
- * Copyright 2011 - Pennant Technologies
- * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
- * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
- */
-
-/**
- ********************************************************************************************
- *                                 FILE HEADER                                              *
- ********************************************************************************************
- *																							*
- * FileName    		:  GenericCacheMonitor.java                            		    		* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-06-2017    														*
- *                                                                  						*
- * Modified Date    :  27-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
- ********************************************************************************************
- * Date             Author                   Version      Comments                          *
- ********************************************************************************************
- * 27-06-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- ********************************************************************************************
- */
-
 package com.pennanttech.pennapps.core.cache;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -52,6 +10,7 @@ public class CacheMonitor implements Runnable {
 	private static final Logger log = LogManager.getLogger(CacheMonitor.class);
 
 	private CacheAdmin cacheAdmin;
+	private static int nodeCount = 0;
 
 	public CacheMonitor(CacheAdmin cacheAdmin) {
 		super();
@@ -62,21 +21,49 @@ public class CacheMonitor implements Runnable {
 	public void run() {
 		log.trace(Literal.ENTERING);
 
+		ThreadContext.put("MODULE", "CACHE");
 		CacheStats stats = CacheManager.getNodeDetails();
 
-		// delete old status data from DB based on the clustered Name , Node
-		try {
-			log.info(String.format("Deleting the old status of %s Cluster, %s  IP, %s Node", stats.getClusterName(),
-					stats.getClusterIp(), stats.getClusterNode()));
-			this.cacheAdmin.delete(stats.getClusterName(), stats.getClusterIp(), stats.getClusterNode());
-		} catch (Exception e) {
-			log.error("Error while deleting the existing cache details / No records to delete");
+		String clusterNode = stats.getClusterNode();
+
+		clusterNode = clusterNode.split("-")[0];
+
+		if (stats.getClusterName() != null) {
+			try {
+				log.info(String.format("Deleting the old status of %s Cluster, %s IP, %s Node", stats.getClusterName(),
+						stats.getClusterIp(), clusterNode));
+				this.cacheAdmin.delete(stats.getClusterName(), stats.getClusterIp(), clusterNode);
+			} catch (Exception e) {
+				log.error("Error while deleting the existing cache details / No records to delete");
+			}
 		}
 
-		while (CacheManager.isEnabled()) {
+		while (true) {
+			log.info("Running the cache monitor....");
+
+			setNodeCount(this.cacheAdmin.getNodeCount());
+
+			CacheManager.setNodes(nodeCount);
+
 			CacheManager.verifyCache();
 			stats = CacheManager.getNodeDetails();
-			CacheStats existingCache = cacheAdmin.getCacheStats(stats.getClusterName(), stats.getClusterNode());
+
+			clusterNode = stats.getClusterNode();
+
+			clusterNode = clusterNode.split("-")[0];
+
+			if (CacheManager.isActivated() && CacheManager.getClusterSize() != CacheManager.getNodes()) {
+				log.info("Deleting the Activated cache details, ");
+				log.info(" ClusterName %s, ClusterIp %s, Cluster Node %s", stats.getClusterName(), stats.getClusterIp(),
+						clusterNode);
+				log.info(" Active Status :%s ", CacheManager.isActivated());
+				log.info(" Cluster Size : %s ", CacheManager.getClusterSize());
+				log.info(" Node Size : %s ", CacheManager.getClusterSize());
+
+				this.cacheAdmin.delete(stats.getClusterName(), stats.getClusterIp(), clusterNode);
+			}
+
+			CacheStats existingCache = cacheAdmin.getCacheStats(stats.getClusterName(), clusterNode);
 
 			if (existingCache != null) {
 				cacheAdmin.update(stats);
@@ -93,7 +80,14 @@ public class CacheMonitor implements Runnable {
 			if (CacheManager.getCacheManager() == null) {
 				return;
 			}
+
+			log.info("Cache monitor is completed....");
 		}
 
 	}
+
+	public static void setNodeCount(int nodeCount) {
+		CacheMonitor.nodeCount = nodeCount;
+	}
+
 }

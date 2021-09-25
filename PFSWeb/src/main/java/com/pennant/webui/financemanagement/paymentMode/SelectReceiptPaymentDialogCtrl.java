@@ -712,6 +712,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			if (customer != null) {
 				label_ReceiptPayment_CustomerName.setValue(customer.getCustShrtName());
 				this.custId = customer.getCustID();
+			} else {
+				MessageUtil.showError("Invalid Customer Please Select valid Customer");
 			}
 		}
 

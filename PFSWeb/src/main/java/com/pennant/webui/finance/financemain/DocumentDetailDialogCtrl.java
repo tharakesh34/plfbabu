@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScheduleDetailDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScheduleDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -463,7 +445,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			return;
 		}
 
-		//Covenant Documents
+		// Covenant Documents
 		ArrayList<CovenantDocument> covenantDocList = new ArrayList<>();
 		if (financeDetail != null) {
 			if (CollectionUtils.isNotEmpty(financeDetail.getCovenants())) {
@@ -507,7 +489,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			listitem.setAttribute("data", documentDetail);
 			ComponentsCtrl.applyForward(listitem, "onDoubleClick=onFinDocumentItemDoubleClicked");
 
-			//Finding the document is covenant document or not.
+			// Finding the document is covenant document or not.
 			boolean isCovenantDoc = false;
 			if (CollectionUtils.isNotEmpty(covenantDocList)) {
 				for (CovenantDocument covenantDoc : covenantDocList) {
@@ -517,14 +499,14 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 						break;
 					}
 				}
-				//Not rendering the Customer documents in Document Detail tab.
+				// Not rendering the Customer documents in Document Detail tab.
 				if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode()))) {
 					this.listBoxDocumentDetails.appendChild(listitem);
 				}
 				docDetailMap.put(documentDetail.getDocCategory(), documentDetail);
 			}
 
-			//Not rendering the Customer and covenant documents in Document Detail tab.
+			// Not rendering the Customer and covenant documents in Document Detail tab.
 			if (!(DocumentCategories.CUSTOMER.getKey().equals(documentDetail.getCategoryCode())) && !isCovenantDoc) {
 				this.listBoxDocumentDetails.appendChild(listitem);
 			}
@@ -682,6 +664,7 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			customerDocument.setLovDescCustDocIssuedCountry(finDocumentDetail.getLovDescCustDocIssuedCountry());
 			customerDocument.setCustDocIssuedOn(finDocumentDetail.getCustDocIssuedOn());
 			customerDocument.setCustDocIsVerified(finDocumentDetail.isCustDocIsVerified());
+			customerDocument.setRemarks(finDocumentDetail.getRemarks());
 			customerDocument.setCustDocRcvdOn(finDocumentDetail.getCustDocRcvdOn());
 			customerDocument.setCustDocSysName(finDocumentDetail.getCustDocSysName());
 			customerDocument.setCustDocTitle(finDocumentDetail.getCustDocTitle());
@@ -757,6 +740,12 @@ public class DocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			DMSQueue queue = dMSService.getImageByUri(finDocumentDetail.getDocUri());
 			finDocumentDetail.setDocImage(queue.getDocImage());
 			finDocumentDetail.setDoctype(queue.getDocExt());
+		} else {
+			if (docImage == null) {
+				if (docRefId != null && docRefId != Long.MIN_VALUE) {
+					finDocumentDetail.setDocImage(dMSService.getById(docRefId));
+				}
+			}
 		}
 
 		return finDocumentDetail;

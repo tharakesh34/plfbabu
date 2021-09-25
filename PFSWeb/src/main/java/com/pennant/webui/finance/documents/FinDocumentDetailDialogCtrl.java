@@ -841,6 +841,8 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	}
 
 	protected boolean doCustomDelete(final DocumentDetails aDocumentDetails, String tranType) {
+		aDocumentDetails.setNewRecord(true);
+
 		if (isNewDocument()) {
 			tranType = PennantConstants.TRAN_DEL;
 			AuditHeader auditHeader = newDocumentProcess(aDocumentDetails, tranType);

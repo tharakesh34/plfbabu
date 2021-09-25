@@ -3883,7 +3883,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		CustomerDetails customerDetails = (CustomerDetails) auditHeader.getAuditDetail().getModelData();
 		String usrLanguage = customerDetails.getCustomer().getUserDetails().getLanguage();
-		String custctg = customerDetails.getCustomer().getCustCtgCode();
 
 		// Rating Validation
 		if (customerDetails.getRatingsList() != null && customerDetails.getRatingsList().size() > 0) {
@@ -3891,54 +3890,50 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 			details = getRatingValidation().ratingListValidation(details, method, usrLanguage);
 			auditDetails.addAll(details);
 		}
-		if (custctg.equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
-			// EmploymentDetail Validation
-			if (customerDetails.getCustomer().getCustEmpSts() != null) {
-				if ("EMPLOY".equals(customerDetails.getCustomer().getCustEmpSts())) {
-					List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EmploymentDetail");
-					details = getEmploymentDetailValidation().employmentDetailListValidation(details, method,
-							usrLanguage);
-					auditDetails.addAll(details);
-				}
-			}
 
-			// Rating Validation
-			if (customerDetails.getEmploymentDetailsList() != null
-					&& customerDetails.getEmploymentDetailsList().size() > 0) {
-				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Employment");
+		// EmploymentDetail Validation
+		if (customerDetails.getCustomer().getCustEmpSts() != null) {
+			if ("EMPLOY".equals(customerDetails.getCustomer().getCustEmpSts())) {
+				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EmploymentDetail");
 				details = getEmploymentDetailValidation().employmentDetailListValidation(details, method, usrLanguage);
 				auditDetails.addAll(details);
 			}
+		}
 
-			// PhoneNumber Validation
-			if (customerDetails.getCustomerPhoneNumList() != null
-					&& customerDetails.getCustomerPhoneNumList().size() > 0) {
-				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("PhoneNumber");
-				details = getPhoneNumberValidation().phoneNumberListValidation(details, method, usrLanguage);
-				auditDetails.addAll(details);
-			}
+		// Rating Validation
+		if (customerDetails.getEmploymentDetailsList() != null
+				&& customerDetails.getEmploymentDetailsList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Employment");
+			details = getEmploymentDetailValidation().employmentDetailListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
 
-			// Income Validation
-			if (customerDetails.getCustomerIncomeList() != null && customerDetails.getCustomerIncomeList().size() > 0) {
-				auditDetails.addAll(
-						getCustomerIncomeValidation().incomeListValidation(customerDetails, method, usrLanguage));
-			}
+		// PhoneNumber Validation
+		if (customerDetails.getCustomerPhoneNumList() != null && customerDetails.getCustomerPhoneNumList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("PhoneNumber");
+			details = getPhoneNumberValidation().phoneNumberListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
 
-			// PRelation Validation
-			if (customerDetails.getCustomerEMailList() != null && customerDetails.getCustomerEMailList().size() > 0) {
-				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EMail");
-				details = getCustomerEMailValidation().emailListValidation(details, method, usrLanguage);
-				auditDetails.addAll(details);
-			}
+		// Income Validation
+		if (customerDetails.getCustomerIncomeList() != null && customerDetails.getCustomerIncomeList().size() > 0) {
+			auditDetails
+					.addAll(getCustomerIncomeValidation().incomeListValidation(customerDetails, method, usrLanguage));
+		}
 
-			// Document Validation
-			if (customerDetails.getCustomerDocumentsList() != null
-					&& customerDetails.getCustomerDocumentsList().size() > 0) {
-				List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Document");
-				details = getDocumentValidation().documentListValidation(details, method, usrLanguage);
-				auditDetails.addAll(details);
-			}
+		// PRelation Validation
+		if (customerDetails.getCustomerEMailList() != null && customerDetails.getCustomerEMailList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("EMail");
+			details = getCustomerEMailValidation().emailListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
 
+		// Document Validation
+		if (customerDetails.getCustomerDocumentsList() != null
+				&& customerDetails.getCustomerDocumentsList().size() > 0) {
+			List<AuditDetail> details = customerDetails.getAuditDetailMap().get("Document");
+			details = getDocumentValidation().documentListValidation(details, method, usrLanguage);
+			auditDetails.addAll(details);
 		}
 
 		// Address Validation

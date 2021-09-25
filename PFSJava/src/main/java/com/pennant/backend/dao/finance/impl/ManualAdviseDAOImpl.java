@@ -233,7 +233,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, ma.getNextTaskId());
 			ps.setString(index++, ma.getRecordType());
 			ps.setLong(index++, JdbcUtil.setLong(ma.getWorkflowId()));
-			
+
 			ps.setLong(index++, ma.getAdviseID());
 
 		});
@@ -706,7 +706,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	@Override
 	public void reverseUtilise(long adviseID, BigDecimal amount) {
-		String sql = "Update ManualAdvise Set PaidAmount = PaidAmount - ?, BalanceAmt = ?, HoldDue = ? Where AdviseID = ?";
+		String sql = "Update ManualAdvise Set PaidAmount = PaidAmount - ?, BalanceAmt = BalanceAmt + ?, HoldDue = ? Where AdviseID = ?";
 
 		logger.debug(Literal.SQL);
 

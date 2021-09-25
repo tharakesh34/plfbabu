@@ -11,21 +11,32 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.util.FinanceConstants;
 
 import jxl.Cell;
 
 public class BeanFactory {
-	//BASE RATE "UNITTEST" IN RMTBaseRates MUST BE AVAILABLE	with 11% latest
-	//SPECIAL RATE "UNITTEST" IN RMTSplRates MUST BE AVAILABLE	with 1.5% latest
-	//So Net Rate will be 11% - 1.5% + Margin = 10%
+	// BASE RATE "UNITTEST" IN RMTBaseRates MUST BE AVAILABLE with 11% latest
+	// SPECIAL RATE "UNITTEST" IN RMTSplRates MUST BE AVAILABLE with 1.5% latest
+	// So Net Rate will be 11% - 1.5% + Margin = 10%
 	// TDS_PERCENTAGE may be 20
 
-	//INSERT INTO RMTBASERATECODES (BRTYPE, BRTYPEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTROLECODE, WORKFLOWID, BRTYPEISACTIVE) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', 'MSTGRP1_MAKER', '0', '1')
-	//INSERT INTO RMTBASERATES (BRTYPE, CURRENCY, BREFFDATE, BRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, WORKFLOWID, BRTYPEISACTIVE) VALUES ('MIBOR', 'INR', TO_DATE('2015-04-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '11', '0', TO_DATE('2015-04-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1000', TO_DATE('2017-02-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', '0', '1')
-	//INSERT INTO RMTSPLRATECODES (SRTYPE, SRTYPEDESC, SRISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
-	//INSERT INTO RMTSPLRATES (SRTYPE, SREFFDATE, SRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1.5', '0', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
+	// INSERT INTO RMTBASERATECODES (BRTYPE, BRTYPEDESC, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, NEXTROLECODE,
+	// WORKFLOWID, BRTYPEISACTIVE) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1007', TO_DATE('2010-01-01
+	// 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', 'MSTGRP1_MAKER', '0', '1')
+	// INSERT INTO RMTBASERATES (BRTYPE, CURRENCY, BREFFDATE, BRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY,
+	// LASTMNTON, RECORDSTATUS, WORKFLOWID, BRTYPEISACTIVE) VALUES ('MIBOR', 'INR', TO_DATE('2015-04-09 00:00:00',
+	// 'YYYY-MM-DD HH24:MI:SS'), '11', '0', TO_DATE('2015-04-09 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1000',
+	// TO_DATE('2017-02-18 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), 'Approved', '0', '1')
+	// INSERT INTO RMTSPLRATECODES (SRTYPE, SRTYPEDESC, SRISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDTYPE,
+	// WORKFLOWID) VALUES ('UNITTEST', 'UNIT TEST CASE PURPOSE ONLY', '1', '1', '1007', TO_DATE('2010-01-01 00:00:00',
+	// 'YYYY-MM-DD HH24:MI:SS'), '0', '1')
+	// INSERT INTO RMTSPLRATES (SRTYPE, SREFFDATE, SRRATE, DELEXISTINGRATES, LASTMDFDATE, VERSION, LASTMNTBY, LASTMNTON,
+	// RECORDTYPE, WORKFLOWID) VALUES ('UNITTEST', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1.5', '0',
+	// TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1007', TO_DATE('2010-01-01 00:00:00', 'YYYY-MM-DD
+	// HH24:MI:SS'), '0', '1')
 
 	public static final String BASE_RATE = "UNITTEST";
 	public static final String SPECIAL_RATE = "UNITTEST";
@@ -58,16 +69,19 @@ public class BeanFactory {
 	private static FinScheduleData getConvSchd(Cell[] cells, String testType) {
 		FinScheduleData schedule = new FinScheduleData();
 		schedule.setFinanceMain(new FinanceMain());
+		schedule.setFinanceType(new FinanceType());
 		schedule.getDisbursementDetails().add(new FinanceDisbursement());
 		schedule.getFeeRules().add(new FeeRule());
 
 		FinanceMain fm = schedule.getFinanceMain();
 
-		String cellStrValue;
+		String cellStrValue = Dataset.getString(cells, 37);
 
-		//_______________________________________________________________________________________________
-		//Basic Details
-		//_______________________________________________________________________________________________
+		schedule.setFinanceType(new FinanceTypeDataFactory().getFianceType(cellStrValue));
+
+		// _______________________________________________________________________________________________
+		// Basic Details
+		// _______________________________________________________________________________________________
 		cellStrValue = Dataset.getString(cells, 0);
 
 		fm.setFinReference(cellStrValue);
@@ -98,7 +112,7 @@ public class BeanFactory {
 			fm.setProfitDaysBasis(CalculationConstants.IDB_30U360);
 		}
 
-		//Planned Deferments
+		// Planned Deferments
 		cellStrValue = Dataset.getString(cells, 4);
 		if (cellStrValue.equals("DY")) {
 			fm.setPlanDeferCount(3);
@@ -106,7 +120,7 @@ public class BeanFactory {
 			fm.setPlanDeferCount(0);
 		}
 
-		//Planned EMI Holidays
+		// Planned EMI Holidays
 		cellStrValue = Dataset.getString(cells, 5);
 		if (cellStrValue.equals("EF")) {
 			fm.setPlanEMIHAlw(true);
@@ -139,7 +153,7 @@ public class BeanFactory {
 			fm.setPlanEMIHAlw(false);
 		}
 
-		//BPI Methods
+		// BPI Methods
 		fm.setAlwBPI(true);
 		fm.setBpiPftDaysBasis(fm.getProfitDaysBasis());
 		cellStrValue = Dataset.getString(cells, 11);
@@ -156,7 +170,7 @@ public class BeanFactory {
 			fm.setBpiTreatment(FinanceConstants.BPI_SCHD_FIRSTEMI);
 		}
 
-		//TDS Applicable
+		// TDS Applicable
 		cellStrValue = Dataset.getString(cells, 15);
 		if (cellStrValue.equals("TY")) {
 			fm.setTDSApplicable(true);
@@ -164,7 +178,7 @@ public class BeanFactory {
 			fm.setTDSApplicable(false);
 		}
 
-		//Fee and Charges
+		// Fee and Charges
 		fm.setFeeChargeAmt(new BigDecimal(1000000));
 		FinFeeDetail feeDtl = new FinFeeDetail();
 		feeDtl.setCalculatedAmount(fm.getFeeChargeAmt());
@@ -195,18 +209,18 @@ public class BeanFactory {
 		schedule.getFinFeeDetailList().add(feeDtl);
 		schedule.getDisbursementDetails().set(0, fd);
 
-		//Dropline
+		// Dropline
 		fm.setDroplineFrq(null);
 		fm.setFirstDroplineDate(null);
 		fm.setPftServicingODLimit(false);
 
-		//Step Finance
+		// Step Finance
 		cellStrValue = Dataset.getString(cells, 6);
 		if (cellStrValue.equals("SN")) {
 			fm.setStepFinance(false);
 		} else {
 			fm.setStepFinance(true);
-			//Dummy Policy Name
+			// Dummy Policy Name
 			if (cellStrValue.equals("SE")) {
 				fm.setStepType(FinanceConstants.STEPTYPE_EMI);
 				fm.setStepPolicy("STEPEMI");
@@ -221,15 +235,15 @@ public class BeanFactory {
 			fm.setNoOfSteps(4);
 		}
 
-		//_______________________________________________________________________________________________
-		//GRACE Details
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
+		// GRACE Details
+		// _______________________________________________________________________________________________
 
 		fm = setGraceDetails(fm, cells, testType);
 
-		//_______________________________________________________________________________________________
-		//REPAYMENT Details
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
+		// REPAYMENT Details
+		// _______________________________________________________________________________________________
 
 		fm.setRepayPftFrq(MNTH_FRQ);
 		fm.setAllowRepayRvw(true);
@@ -237,7 +251,7 @@ public class BeanFactory {
 		fm.setRepayFrq(QTLY_FRQ);
 		fm.setMaturityDate(DateUtility.getDate("25/01/2021"));
 
-		//RATE BASIS: FIXED OR REFERENCE RATE
+		// RATE BASIS: FIXED OR REFERENCE RATE
 		cellStrValue = Dataset.getString(cells, 16);
 		if (cellStrValue.equals("FIX")) {
 			if (testType.equals("GENSCHD")) {
@@ -260,7 +274,7 @@ public class BeanFactory {
 			}
 		}
 
-		//Schedule Method
+		// Schedule Method
 		cellStrValue = Dataset.getString(cells, 12);
 		if (cellStrValue.equals("NP")) {
 			fm.setScheduleMethod(CalculationConstants.SCHMTHD_NOPAY);
@@ -274,7 +288,7 @@ public class BeanFactory {
 			fm.setScheduleMethod(CalculationConstants.SCHMTHD_EQUAL);
 		}
 
-		//Next Dates
+		// Next Dates
 		if (fm.isAllowGrcPeriod()) {
 			fm.setNumberOfTerms(36);
 			fm.setNextRepayPftDate(date_bpi_1year);
@@ -287,7 +301,7 @@ public class BeanFactory {
 			fm.setNextRepayDate(date_bpi_1quarter);
 		}
 
-		//Capitalize
+		// Capitalize
 		cellStrValue = Dataset.getString(cells, 14);
 		if (cellStrValue.equals("CY")) {
 			fm.setAllowRepayCpz(true);
@@ -301,7 +315,7 @@ public class BeanFactory {
 			fm.setAllowRepayCpz(false);
 		}
 
-		//Pay profit on frequency
+		// Pay profit on frequency
 		cellStrValue = Dataset.getString(cells, 13);
 		if (cellStrValue.equals("IY")) {
 			fm.setFinRepayPftOnFrq(true);
@@ -360,7 +374,7 @@ public class BeanFactory {
 		fm.setGrcPftRvwFrq(QTLY_FRQ);
 		fm.setNextGrcPftRvwDate(date_bpi_1quarter);
 
-		//Grace Capitalize
+		// Grace Capitalize
 		cellStrValue = Dataset.getString(cells, 9);
 		if (cellStrValue.equals("F")) {
 			fm.setAllowGrcCpz(true);
@@ -380,7 +394,7 @@ public class BeanFactory {
 			fm.setCpzAtGraceEnd(false);
 		}
 
-		//Grace Schedule Method
+		// Grace Schedule Method
 		fm.setAllowGrcRepay(true);
 		cellStrValue = Dataset.getString(cells, 8);
 		if (cellStrValue.equals("GE")) {
@@ -466,12 +480,16 @@ public class BeanFactory {
 	private static FinScheduleData getConvSrvSchd(Cell[] cells) {
 		FinScheduleData schedule = new FinScheduleData();
 		schedule.setFinanceMain(new FinanceMain());
+		schedule.setFinanceType(new FinanceType());
 		schedule.getDisbursementDetails().add(new FinanceDisbursement());
 		schedule.getFeeRules().add(new FeeRule());
 
 		FinanceMain fm = schedule.getFinanceMain();
 
-		String cellStrValue;
+		String cellStrValue = Dataset.getString(cells, 37);
+
+		schedule.setFinanceType(new FinanceTypeDataFactory().getFianceType(cellStrValue));
+
 		Boolean isGraceRequired = false;
 		cellStrValue = Dataset.getString(cells, 3);
 
@@ -481,9 +499,9 @@ public class BeanFactory {
 			isGraceRequired = false;
 		}
 
-		//_______________________________________________________________________________________________
-		//Basic Details
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
+		// Basic Details
+		// _______________________________________________________________________________________________
 		fm.setFinCcy("INR");
 		fm.setFinStartDate(DateUtility.getDate("10/01/2017"));
 		fm.setFinAmount(new BigDecimal(110000000));
@@ -513,9 +531,9 @@ public class BeanFactory {
 		fm.setGrcPeriodEndDate(fm.getFinStartDate());
 		fm.setAllowGrcPeriod(false);
 
-		//_______________________________________________________________________________________________
-		//REPAYMENT Details
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
+		// REPAYMENT Details
+		// _______________________________________________________________________________________________
 
 		fm.setRepayPftFrq(MNTH_FRQ);
 		fm.setAllowRepayRvw(true);
@@ -526,9 +544,9 @@ public class BeanFactory {
 		fm.setRepaySpecialRate(SPECIAL_RATE);
 		fm.setRepayMargin(MARGIN_RATE);
 
-		//fm.setRepayProfitRate(new BigDecimal(10));
+		// fm.setRepayProfitRate(new BigDecimal(10));
 
-		//Schedule Method
+		// Schedule Method
 		cellStrValue = Dataset.getString(cells, 2);
 		if (cellStrValue.equals("IP")) {
 			fm.setScheduleMethod(CalculationConstants.SCHMTHD_PFT);
@@ -538,7 +556,7 @@ public class BeanFactory {
 			fm.setScheduleMethod(CalculationConstants.SCHMTHD_EQUAL);
 		}
 
-		//Next Dates
+		// Next Dates
 		if (isGraceRequired) {
 			fm.setNumberOfTerms(18);
 			fm.setNextRepayPftDate(DateUtility.getDate("25/08/2017"));
@@ -556,9 +574,9 @@ public class BeanFactory {
 		fm.setRecalToDate(fm.getMaturityDate());
 		fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
 
-		//_______________________________________________________________________________________________
-		//GRACE Details
-		//_______________________________________________________________________________________________
+		// _______________________________________________________________________________________________
+		// GRACE Details
+		// _______________________________________________________________________________________________
 		if (isGraceRequired) {
 			fm = setSrvGraceDetails(fm, cells);
 		}
@@ -580,13 +598,13 @@ public class BeanFactory {
 		fm.setGrcPftRvwFrq(fm.getGrcPftFrq());
 		fm.setNextGrcPftRvwDate(fm.getNextGrcPftDate());
 
-		//Grace Capitalize
+		// Grace Capitalize
 		fm.setAllowGrcCpz(true);
 		fm.setGrcCpzFrq(QTLY_FRQ);
 		fm.setNextGrcCpzDate(date_bpi_1quarter);
 		fm.setCpzAtGraceEnd(true);
 
-		//Grace Schedule Method
+		// Grace Schedule Method
 		fm.setAllowGrcRepay(true);
 		fm.setGrcSchdMthd(CalculationConstants.SCHMTHD_GRCENDPAY);
 

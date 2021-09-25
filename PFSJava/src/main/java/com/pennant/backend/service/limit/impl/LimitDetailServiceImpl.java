@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitDetailServiceImpl.java                                          * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitDetailServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * *
+ * Modified Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.limit.impl;
@@ -113,6 +95,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.notification.Notification;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
 
 /**
@@ -151,8 +134,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -182,8 +164,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * Configuration. by using LimitDetailDAO's update method 3) Audit the record in to AuditHeader and AdtLIMIT_DETAILS
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -199,10 +180,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * Configuration. by using LimitDetailDAO's update method 3) Audit the record in to AuditHeader and AdtLIMIT_DETAILS
 	 * by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -247,8 +226,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * LIMIT_DETAILS by using LimitDetailDAO's delete method with type as Blank 3) Audit the record in to AuditHeader
 	 * and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -275,10 +253,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	/**
 	 * getLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return LimitDetail
 	 */
 
@@ -333,8 +309,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * getApprovedLimitDetailById fetch the details by using LimitDetailDAO's getLimitDetailById method. with parameter
 	 * id and type as blank. it fetches the approved records from the LIMIT_DETAILS.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return LimitDetail
 	 */
 
@@ -406,8 +381,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtLIMIT_DETAILS by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -457,15 +431,15 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			}
 		}
 
-		//rebuild is required for group hear since , first group added to the customer ,
-		//then created the set up for the group 
+		// rebuild is required for group hear since , first group added to the customer ,
+		// then created the set up for the group
 		if (rebuild) {
 			if (limitHeader.getCustomerGroup() != 0 && limitHeader.getCustomerGroup() != Long.MIN_VALUE) {
 				limitRebuild.processCustomerGroupRebuild(limitHeader.getCustomerGroup(), false, true);
 			}
 
 			if (limitHeader.getCustomerId() != 0 && limitHeader.getCustomerId() != Long.MIN_VALUE) {
-				//check customer active finance before calling the rebuild
+				// check customer active finance before calling the rebuild
 
 				int count = getFinanceMainDAO().getFinCountByCustId(limitHeader.getCustomerId());
 				if (count > 0) {
@@ -619,7 +593,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		List<Object> returnList = new ArrayList<Object>();
 
-		//  Validate customer group is in EOD process or not
+		// Validate customer group is in EOD process or not
 		int custGrpQueuingCount = this.customerGroupQueuingDAO.getCountByGrpId(groupId);
 		if (custGrpQueuingCount > 0) {
 			returnList.add(custGrpQueuingCount);
@@ -628,7 +602,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		}
 
 		try {
-			// Prepare and insert	
+			// Prepare and insert
 			CustomerGroupQueuing custGrpQueuing = prepareCustomerGroupQueue(groupId);
 			this.customerGroupQueuingDAO.insertCustGrpQueueForRebuild(custGrpQueuing);
 			this.customerQueuingDAO.insertCustomerQueueing(groupId, false);
@@ -643,7 +617,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			returnList.add(0);
 			returnList.add(false); // Customer Group Rebuild Failed
 			this.customerGroupQueuingDAO.updateStatus(groupId, EodConstants.PROGRESS_FAILED);
-			//this.customerQueuingDAO.updateCustomerQueuingStatus(groupId, EodConstants.PROGRESS_FAILED); // Check Required or Not ?
+			// this.customerQueuingDAO.updateCustomerQueuingStatus(groupId, EodConstants.PROGRESS_FAILED); // Check
+			// Required or Not ?
 			logger.debug("Exception: ", e);
 
 		} finally {
@@ -713,8 +688,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * workFlow table by using getLimitDetailDAO().delete with parameters limitDetail,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtLIMIT_DETAILS by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -742,10 +716,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -755,7 +727,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				onlineRequest);
 		auditHeader.setAuditDetail(auditDetail);
 
-		//AuditDetail auditDetail=auditHeader.getAuditDetail();
+		// AuditDetail auditDetail=auditHeader.getAuditDetail();
 
 		auditHeader = getAuditDetails(auditHeader, method, onlineRequest);
 
@@ -1022,7 +994,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	}
 
-	//////////####### FOR DEMO #########////////////
+	////////// ####### FOR DEMO #########////////////
 	/**
 	 * Method to process External finance Detail through Excel file
 	 * 
@@ -1078,7 +1050,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 					if ("E".equals(headerDetails.getRecordStatus())) {
 						logger.error("Please Check the values");
 					} else {
-						// Save Finance Data into DataBase						
+						// Save Finance Data into DataBase
 						successRcdCount = successRcdCount + 1;
 						processFinanceData(user, headerDetails);
 					}
@@ -1312,10 +1284,8 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	 * mismatch conditions Fetch the error details from getLimitDetailDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -1339,14 +1309,29 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 		if (limitDetail.isNewRecord()) { // for New record or new record into work flow
 
-			if (!limitDetail.isWorkflow()) {// With out Work flow only new records  
-				if (befLimitDetail != null) { // Record Already Exists in the table then error  
+			// Check the unique keys.
+			if (PennantConstants.RECORD_TYPE_NEW.equals(limitDetail.getRecordType())
+					&& limitHeaderDAO.isDuplicateKey(limitDetail.getRuleCode(), limitDetail.getLimitStructureCode(),
+							limitDetail.isWorkflow() ? TableType.BOTH_TAB : TableType.MAIN_TAB)) {
+				String[] parameters = new String[2];
+
+				parameters[0] = PennantJavaUtil.getLabel("label_LimitParmDialog_QueryCode.value") + ":"
+						+ limitDetail.getRuleCode();
+				parameters[1] = PennantJavaUtil.getLabel("label_StructureCode") + ":"
+						+ limitDetail.getLimitStructureCode();
+
+				auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41008", parameters, null));
+			}
+
+			if (!limitDetail.isWorkflow()) {// With out Work flow only new records
+				if (befLimitDetail != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (limitDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if records type is new
-					if (befLimitDetail != null || tempLimitDetail != null) { // if records already exists in the main table
+					if (befLimitDetail != null || tempLimitDetail != null) { // if records already exists in the main
+																				// table
 						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 					}
@@ -1381,7 +1366,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 				}
 			} else {
 
-				if (tempLimitDetail == null) { // if records not exists in the Work flow table 
+				if (tempLimitDetail == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				} else if (oldLimitDetail != null
@@ -1448,7 +1433,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			}
 		}
 
-		//validate group and lines
+		// validate group and lines
 		for (LimitDetails limitDetail : limitDetails) {
 			BigDecimal sactioned = limitDetail.getLimitSanctioned();
 
@@ -1459,7 +1444,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 			if (!StringUtils.isEmpty(limitDetail.getGroupCode())) {
 				List<String> validList = groupLineMap.get(limitDetail.getGroupCode());
-				//validateChild
+				// validateChild
 				BigDecimal childMaxAmount = getMaxSactionedAmt(validList, limitDetails);
 
 				if (sactioned.compareTo(childMaxAmount) < 0) {
@@ -1474,7 +1459,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			}
 		}
 
-		//validate total
+		// validate total
 		BigDecimal total = BigDecimal.ZERO;
 		BigDecimal maxofGroups = BigDecimal.ZERO;
 		for (LimitDetails limitDetail : limitDetails) {
@@ -1555,7 +1540,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			}
 		}
 
-		//validate expiryDate and reviewDate
+		// validate expiryDate and reviewDate
 		if (limitHeader.getLimitRvwDate() != null && limitHeader.getLimitExpiryDate() != null) {
 			if (limitHeader.getLimitRvwDate().compareTo(limitHeader.getLimitExpiryDate()) > 0) {
 				String[] valueParm = new String[2];
@@ -1853,8 +1838,7 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 	}
 
 	/**
-	 * @param limitDetailDAO
-	 *            the limitDetailDAO to set
+	 * @param limitDetailDAO the limitDetailDAO to set
 	 */
 
 	public void setLimitDetailDAO(LimitDetailDAO limitDetailsDAO) {

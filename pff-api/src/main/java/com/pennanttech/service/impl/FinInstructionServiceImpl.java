@@ -3199,6 +3199,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		List<FeeWaiverDetail> feeWaiverDetails = feeWaiverHeader.getFeeWaiverDetails();
 
 		// Validating The Waiver amount with the Balance
+
+		BigDecimal totCurWaivedAmt = BigDecimal.ZERO;
 		for (FeeWaiverDetail fwd : feeWaiverDetails) {
 			for (FeeWaiverDetail compareWithBalance : actaulfeeWaiverDetails) {
 				if (StringUtils.equals(fwd.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
@@ -3212,6 +3214,24 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 						return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 					}
 				}
+			}
+
+			if (fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) < 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Current Waiver amount";
+				valueParm[1] = "0";
+				return APIErrorHandlerService.getFailedStatus("91121", valueParm);
+			}
+
+			if (fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
+				totCurWaivedAmt = totCurWaivedAmt.add(fwd.getCurrWaiverAmount());
+			}
+
+			if (totCurWaivedAmt.compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Total current Waived amount";
+				valueParm[1] = "0";
+				return APIErrorHandlerService.getFailedStatus("91121", valueParm);
 			}
 		}
 		boolean feeCode = false;

@@ -1796,9 +1796,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				+ afinanceMain.getFinReference();
 
 		MessageUtil.confirm(msg, evnt -> {
-
 			if (Messagebox.ON_YES.equals(evnt.getName())) {
-
 				onDoDelete(afinanceDetail, afinanceMain);
 			}
 		});

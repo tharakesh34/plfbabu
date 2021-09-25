@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -6,28 +6,25 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
-import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.dms.service.DMSService;
 
-@DisallowConcurrentExecution
 @PersistJobDataAfterExecution
-public class MobAgencyReciptLimitUpdateJob extends AbstractJob {
-
+@DisallowConcurrentExecution
+public class DMSJob extends AbstractJob {
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		try {
-			getNonLanReceiptService(context).processCollectionAPILog();
+			getDMSService(context).processDocuments();
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			logger.debug(Literal.LEAVING);
 		}
-
 	}
 
-	private NonLanReceiptService getNonLanReceiptService(JobExecutionContext context) {
+	private DMSService getDMSService(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (NonLanReceiptService) jobDataMap.get("nonLanReceiptService");
-
+		return (DMSService) jobDataMap.get("dMSService");
 	}
 
 }

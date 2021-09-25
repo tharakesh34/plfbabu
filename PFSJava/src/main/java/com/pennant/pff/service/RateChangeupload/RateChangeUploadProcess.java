@@ -576,21 +576,6 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			}
 
-			error = "Either Base Rate or Actual Rate Should be Entered";
-			if (StringUtils.isBlank(rateChange.getBaseRateCode())
-					&& rateChange.getActualRate().compareTo(BigDecimal.ZERO) <= 0
-					&& rateChange.getMargin().compareTo(BigDecimal.ZERO) == 0) {
-				if (remarks.length() > 0) {
-					remarks.append(", ");
-				}
-				remarks.append(error);
-				rateChange.setUploadStatusRemarks(remarks.toString());
-				rateChange.setStatus("F");
-				rateChange.setErrorDetail(getErrorDetail("RCU001", error));
-				continue;
-
-			}
-
 			/*
 			 * if (rateChange.getSpecialRate() != null || StringUtils.isNotEmpty(rateChange.getSpecialRate())) { error =
 			 * "SpecialRate Code is not valid"; boolean splRate =
@@ -608,7 +593,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 				rateChange.setErrorDetail(getErrorDetail("RCU004", error));
 			}
 
-			error = "Actual Rate should be lesser/Equal to 9999 and greater than 0";
+			error = "Actual Rate should be lesser/Equal to 9999 and greater than/Equal to 0";
 			if (rateChange.getActualRate().intValue() > 9999 || rateChange.getActualRate().intValue() < 0) {
 				if (remarks.length() > 0) {
 					remarks.append(", ");

@@ -44,4 +44,5 @@ public interface ChequeHeaderDAO {
 	ChequeHeader getChequeHeaderByRef(long finID, String type);
 
 	boolean isChequeDetilsExists(long finID);
+
 }

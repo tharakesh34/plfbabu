@@ -11661,7 +11661,7 @@
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 	</bean>
 
-	<bean id="eodService" class="com.pennanttech.pff.jobs.EODServiceImpl">
+	<bean id="eodService" class="com.pennanttech.pff.eod.EODServiceImpl">
 		<property name="eODConfigDAO" ref="eODConfigDAO" />
 		<property name="bpsService" ref="bpsService" />
 		<property name="secLoginlogDAO" ref="secLoginlogDAO" />
@@ -12187,6 +12187,7 @@
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="rateChangeService" ref="rateChangeService" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="baseRateDAO" ref="baseRateDAO" />
 	</bean>
 
 	<!--============ Restructure Details ============== -->
@@ -12432,6 +12433,7 @@
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="mandateService" ref="mandateService" />
 		<property name="transactionManager" ref="transactionManager" />
+		<property name="chequeHeaderDAO" ref="chequeHeaderDAO" />
 	</bean>
 
 	<bean id="rescheduleReportGenerationDAO"

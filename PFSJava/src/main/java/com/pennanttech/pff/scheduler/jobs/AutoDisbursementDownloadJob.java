@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -6,20 +6,22 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
-import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennanttech.pennapps.core.job.AbstractJob;
+import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class SecurityUserAccountLockJob extends AbstractJob {
+public class AutoDisbursementDownloadJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		getSecurityUserDAO(context).lockUserAccounts();
+		getDisbursementRequestService(context).processInstructions();
+
 	}
 
-	private SecurityUserDAO getSecurityUserDAO(JobExecutionContext context) {
+	private DisbursementRequestService getDisbursementRequestService(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (SecurityUserDAO) jobDataMap.get("securityUserDAO");
+		return (DisbursementRequestService) jobDataMap.get("disbursementRequestService");
 	}
+
 }

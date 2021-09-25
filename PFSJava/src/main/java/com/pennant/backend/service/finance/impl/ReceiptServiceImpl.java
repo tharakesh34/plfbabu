@@ -3672,7 +3672,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptDetail rcd = fsi.getReceiptDetail();
 
 		long finID = fsi.getFinID();
-		String finReference = fsi.getFinReference();
 		Date appDate = SysParamUtil.getAppDate();
 		String receiptMode = fsi.getPaymentMode();
 		String subReceiptMode = fsi.getSubReceiptMode();
@@ -3750,17 +3749,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!StringUtils.isBlank(rcd.getRemarks()) && 100 < rcd.getRemarks().length()) {
 			finScheduleData = setErrorToFSD(finScheduleData, "RU0005", null);
 			return receiptData;
-		}
-
-		// Sub Receipt Mode Mode
-		boolean isDeveloperFinance = financeMainDAO.isDeveloperFinance(finID, "", false);
-		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
-			if (!isDeveloperFinance && StringUtils.equals(subReceiptMode, RepayConstants.RECEIPTMODE_ESCROW)) {
-				parm0 = "Sub Receipt Mode";
-				parm1 = RepayConstants.RECEIPTMODE_ESCROW + " Allowed only for developer finance";
-				finScheduleData = setErrorToFSD(finScheduleData, "90281", parm0, parm1);
-				return receiptData;
-			}
 		}
 
 		// DE#555: In receipt upload, If the sub receipt mode is ESCROW and receipt mode is ONLINE ,
@@ -4694,7 +4682,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (pftIdx >= 0 && pftPaid.compareTo(BigDecimal.ZERO) > 0) {
-			allocationsList.get(pftIdx).setPaidAmount(npftPaid);
+			allocationsList.get(pftIdx).setPaidAmount(pftPaid);
 			allocationsList.get(pftIdx).setTdsPaid(pftPaid.subtract(npftPaid));
 		}
 

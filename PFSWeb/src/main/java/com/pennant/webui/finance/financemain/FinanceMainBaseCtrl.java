@@ -40,6 +40,7 @@
 package com.pennant.webui.finance.financemain;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
@@ -62,6 +63,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.xml.stream.FactoryConfigurationError;
@@ -1099,6 +1102,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate;
 	protected Datebox subventionEndDate_two;
 	private SubventionDetail oldSubventionDetail;
+	protected transient boolean oldVar_finOCRRequired;
 
 	/**
 	 * default constructor.<br>
@@ -5208,6 +5212,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oldVar_cbTdsType = this.cbTdsType.getSelectedIndex();
 		this.oldVar_odTDSApplicable = this.odTDSApplicable.isChecked();
 		this.oldVar_manualSchedule = this.manualSchedule.isChecked();
+		this.oldVar_finOCRRequired = this.finOCRRequired.isChecked();
 
 		// Step Finance Details
 		this.oldVar_stepFinance = this.stepFinance.isChecked();
@@ -5721,6 +5726,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		BigDecimal oldTdsAmt = PennantApplicationUtil.unFormateAmount(this.oldVal_LimitAmt, formatter);
 		BigDecimal newTdsAmt = PennantApplicationUtil.unFormateAmount(this.tDSLimitAmt.getActualValue(), formatter);
 		if (oldTdsAmt.compareTo(newTdsAmt) != 0) {
+			return true;
+		}
+
+		if (this.oldVar_finOCRRequired != this.finOCRRequired.isChecked()) {
 			return true;
 		}
 
@@ -7252,7 +7261,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Finance Fee Details
 		if (finFeeDetailListCtrl != null) {
-			finFeeDetailListCtrl.processFeeDetails(afd.getFinScheduleData(), true);
+			finFeeDetailListCtrl.processFeeDetails(afd.getFinScheduleData(), false);
 		}
 
 		// Document Details Saving
@@ -8203,20 +8212,41 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				if (autoDownloadMap != null && !autoDownloadMap.isEmpty()) {
 					List<DocumentDetails> downLoaddocLst = autoDownloadMap.get("autoDownLoadDocs");
-					if (downLoaddocLst != null && downLoaddocLst.size() > 0) {
-						for (DocumentDetails ldocDetails : downLoaddocLst) {
+					String format = "";
+
+					if (CollectionUtils.isNotEmpty(downLoaddocLst)) {
+						if (downLoaddocLst.size() == 1) {
+							DocumentDetails ldocDetails = downLoaddocLst.get(0);
+
 							if (PennantConstants.DOC_TYPE_PDF.equals(ldocDetails.getDoctype())) {
-								Filedownload.save(new AMedia(ldocDetails.getDocName(), "pdf", "application/pdf",
-										ldocDetails.getDocImage()));
-
+								format = "pdf";
 							} else {
+								format = "msword";
+							}
 
-								Filedownload.save(new AMedia(ldocDetails.getDocName(), "msword", "application/msword",
-										ldocDetails.getDocImage()));
+							Filedownload.save(new AMedia(ldocDetails.getDocName(), format, "application/" + format,
+									ldocDetails.getDocImage()));
+						} else {
+							try (ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream()) {
+								try (ZipOutputStream out = new ZipOutputStream(arrayOutputStream)) {
+									for (DocumentDetails ldocDetails : downLoaddocLst) {
+										byte[] byteArray = ldocDetails.getDocImage();
 
+										out.putNextEntry(new ZipEntry(ldocDetails.getDocName()));
+										out.write(byteArray);
+
+										out.closeEntry();
+									}
+
+									out.close();
+
+									byte[] tobytes = arrayOutputStream.toByteArray();
+									Filedownload.save(new AMedia("Aggrements.zip", "zip", "application/*", tobytes));
+								}
 							}
 						}
 					}
+
 					downLoaddocLst = null;
 				}
 
@@ -11544,6 +11574,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.stepFinance.setDisabled(true);
 		}
 
+		if (!this.stepFinance.isChecked()) {
+			this.setStepDetailDialogCtrl(null);
+		}
+
 		// Clear Step Details Tab Data on User Action
 		if (isAction) {
 			getFinanceDetail().getFinScheduleData().getStepPolicyDetails().clear();
@@ -12649,7 +12683,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
-			if (!getComboboxValue(this.subVentionFrom).equals(PennantConstants.List_Select)) {
+			if (financeType.isSubventionReq()
+					&& !getComboboxValue(this.subVentionFrom).equals(PennantConstants.List_Select)) {
 				this.manufacturerDealer.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FinanceMainDialog_ManufacturerDealer.value"), null, true));
 				aFinanceMain.setManufacturerDealerName(this.manufacturerDealer.getValue());
@@ -13623,7 +13658,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				if (aFinanceMain.getMaturityDate() != null) {
+				if (aFinanceMain.getMaturityDate() != null && !FinServiceEvent.CHGFRQ.equals(moduleDefiner)) {
 					aFinanceMain.setNumberOfTerms(FrequencyUtil.getTerms(aFinanceMain.getRepayFrq(),
 							aFinanceMain.getNextRepayDate(), aFinanceMain.getMaturityDate(), true, true).getTerms());
 				} else {
@@ -16161,6 +16196,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)
 				&& !isReadOnly("FinanceMainDialog_AutoScheduleBuild")) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_AutoScheduleBuild"), this.finStartDate);
+		}
+
+		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
+			this.finOCRRequired.setDisabled(true);
+			this.alwLoanSplit.setDisabled(true);
+			this.alwLoanSplit.setChecked(false);
 		}
 
 		logger.debug(Literal.LEAVING);

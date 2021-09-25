@@ -1890,7 +1890,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			boolean finExcessAmtExists = finExcessAmountDAO.isFinExcessAmtExists(finID);
 			if (finExcessAmtExists) {
-				MessageUtil.showError(Labels.getLabel("EXCESS/MANUALADVISE_EXITS"));
+				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
 				return;
 			}
 
@@ -1898,7 +1898,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			List<ManualAdvise> manualAdvise = financeWriteoffService.getManualAdviseByRef(finID,
 					FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
 			if (CollectionUtils.isNotEmpty(manualAdvise)) {
-				MessageUtil.showError(Labels.getLabel("EXCESS/MANUALADVISE_EXITS"));
+				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
 				return;
 			}
 

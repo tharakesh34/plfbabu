@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 public class CacheStats implements Serializable {
 	private static final long serialVersionUID = 1L;
 
+	private long id;
 	private String clusterName;
 	private int clusterSize = 0;
 	private String clusterNode;
@@ -40,6 +41,14 @@ public class CacheStats implements Serializable {
 	private long updateSleepTime;
 
 	private List<String> cacheNames = new ArrayList<String>();
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 
 	public String getClusterName() {
 		return clusterName;
@@ -173,7 +182,9 @@ public class CacheStats implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder("Cluster Name   : ");
+		StringBuilder builder = new StringBuilder();
+		builder.append("\n");
+		builder.append("Cluster Name   : ");
 		builder.append(getClusterName());
 
 		builder.append("\n");

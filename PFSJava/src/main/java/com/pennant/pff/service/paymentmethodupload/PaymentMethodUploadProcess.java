@@ -21,6 +21,8 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.PaymentMethodUploadDAO;
+import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
+import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.mandate.Mandate;
@@ -28,6 +30,7 @@ import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUpload;
 import com.pennant.pff.model.paymentmethodupload.PaymentMethodUploadHeader;
 import com.pennanttech.dataengine.constants.ExecutionStatus;
@@ -38,6 +41,7 @@ import com.pennanttech.pennapps.core.App.Type;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.TableType;
 
 public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	private static final Logger logger = LogManager.getLogger(PaymentMethodUploadProcess.class);
@@ -46,6 +50,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 	private PlatformTransactionManager transactionManager;
 	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
 	private MandateService mandateService;
+	private ChequeHeaderDAO chequeHeaderDAO;
 
 	/**
 	 * Process
@@ -316,6 +321,26 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			paymentMethodUploadDAO.updateFinRepaymethod(changePayment);
 			paymentMethodUploadDAO.updateChangePaymentDetails(changePayment);
 
+			if (MandateConstants.TYPE_PDC.equals(changePayment.getFinRepayMethod())) {
+				if (!chequeHeaderDAO.isChequeDetilsExists(changePayment.getFinID())) {
+					ChequeHeader chequeHeader = new ChequeHeader();
+					chequeHeader.setRoleCode("");
+					chequeHeader.setNextRoleCode("");
+					chequeHeader.setTaskId("");
+					chequeHeader.setNextTaskId("");
+					chequeHeader.setVersion(1);
+					chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					chequeHeader.setRecordType("");
+					chequeHeader.setWorkflowId(0);
+
+					chequeHeader.setFinReference(changePayment.getFinReference());
+					chequeHeader.setNoOfCheques(0);
+					chequeHeader.setTotalAmount(BigDecimal.ZERO);
+					chequeHeader.setActive(true);
+					chequeHeaderDAO.save(chequeHeader, TableType.MAIN_TAB);
+				}
+			}
+
 			this.transactionManager.commit(txStatus);
 			logger.info("Completed Payment Method Change upload >> {}:", finReference);
 
@@ -412,4 +437,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 		this.paymentMethodUploadDAO = paymentMethodUploadDAO;
 	}
 
+	public void setChequeHeaderDAO(ChequeHeaderDAO chequeHeaderDAO) {
+		this.chequeHeaderDAO = chequeHeaderDAO;
+	}
 }

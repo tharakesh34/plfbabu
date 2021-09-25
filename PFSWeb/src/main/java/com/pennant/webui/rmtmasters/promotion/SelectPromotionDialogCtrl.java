@@ -1,43 +1,25 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectPromotionDialogCtrl.java                                       * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectPromotionDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * *
+ * Modified Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.promotion;
@@ -47,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -59,6 +42,7 @@ import org.zkoss.zul.Button;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
@@ -233,8 +217,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param promotion
-	 *            The entity that need to be passed to the dialog.
+	 * @param promotion The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Promotion promotion) {
 		logger.debug("Entering");
@@ -275,14 +258,14 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 	private void doSetValidation() {
 		logger.debug("Entering");
 
-		//Code
+		// Code
 		if (!this.promotionCode.isReadonly()) {
 			this.promotionCode
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_PromotionDialog_PromotionCode.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
 		}
 
-		//Finance Type
+		// Finance Type
 		this.finType.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_PromotionDialog_FinType.value"), null, true, true));
 
@@ -349,6 +332,10 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 			wve.add(we);
 		}
 
+		if (StringUtils.isEmpty(this.finCcy)) {
+			this.finCcy = SysParamUtil.getAppCurrency();
+		}
+
 		// Finance Type
 		try {
 			FinanceType FinanceTypeObj = (FinanceType) this.finType.getObject();
@@ -371,7 +358,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 						aPromotion.getFinType(), FinanceConstants.MODULEID_FINTYPE);
 			}
 
-			//Fees
+			// Fees
 			for (FinTypeFees finTypeFee : finTypeFeesList) {
 				finTypeFee.setVersion(1);
 				finTypeFee.setRecordType(PennantConstants.RCD_ADD);
@@ -385,7 +372,7 @@ public class SelectPromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 				finTypeFee.setNewRecord(true);
 			}
 
-			//Accounting
+			// Accounting
 			for (FinTypeAccounting finTypeAccounting : finTypeAccountingList) {
 				finTypeAccounting.setVersion(1);
 				finTypeAccounting.setRecordType(PennantConstants.RCD_ADD);

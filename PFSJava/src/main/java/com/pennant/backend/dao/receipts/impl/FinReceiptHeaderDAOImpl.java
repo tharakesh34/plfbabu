@@ -107,11 +107,11 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
 		sql.append(", RecordType, WorkflowId, RefWaiverAmt, Source, ValueDate, TransactionRef, DepositDate");
 		sql.append(", PartnerBankId, PrvReceiptPurpose, ReceiptSource, RecAppDate, ReceivedDate");
-		sql.append(", ClosureTypeId, SourceofFund, TdsAmount, EntityCode");
+		sql.append(", ClosureTypeId, SourceofFund, TdsAmount, EntityCode, BankCode");
 		sql.append(") values(");
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -188,6 +188,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getSourceofFund());
 			ps.setBigDecimal(index++, rh.getTdsAmount());
 			ps.setString(index++, rh.getEntityCode());
+			ps.setString(index++, rh.getBankCode());
 		});
 
 		return rh.getId();
@@ -219,6 +220,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
+
 			ps.setDate(index++, JdbcUtil.getDate(rh.getReceiptDate()));
 			ps.setString(index++, rh.getReceiptType());
 			ps.setString(index++, rh.getRecAgainst());
@@ -267,7 +269,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setLong(index++, rh.getWorkflowId());
 			ps.setString(index++, rh.getFinDivision());
 			ps.setString(index++, rh.getPostBranch());
-			ps.setLong(index++, rh.getReasonCode());
+			ps.setObject(index++, JdbcUtil.getLong(rh.getReasonCode()));
 			ps.setString(index++, rh.getCancelRemarks());
 			ps.setString(index++, rh.getKnockOffType());
 			ps.setBigDecimal(index++, rh.getRefWaiverAmt());
@@ -275,7 +277,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getValueDate()));
 			ps.setString(index++, rh.getTransactionRef());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getDepositDate()));
-			ps.setLong(index++, rh.getPartnerBankId());
+			ps.setObject(index++, JdbcUtil.getLong(rh.getPartnerBankId()));
 			ps.setString(index++, rh.getPrvReceiptPurpose());
 			ps.setString(index++, rh.getReceiptSource());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));

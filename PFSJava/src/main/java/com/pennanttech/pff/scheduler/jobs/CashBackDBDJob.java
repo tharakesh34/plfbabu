@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -7,21 +7,25 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
 import com.pennanttech.pennapps.core.job.AbstractJob;
-import com.pennanttech.pff.external.DisbursementResponse;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.cashback.CashBackDBDProcess;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class AutoDisbursementUploadJob extends AbstractJob {
+public class CashBackDBDJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		getDisbursementReponseProcess(context).processAutoResponseFiles();
+		try {
+			getCashBackDBDProcess(context).autoCashBackProcess();
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		}
 
 	}
 
-	private DisbursementResponse getDisbursementReponseProcess(JobExecutionContext context) {
+	private CashBackDBDProcess getCashBackDBDProcess(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (DisbursementResponse) jobDataMap.get("disbursementResponse");
+		return (CashBackDBDProcess) jobDataMap.get("cashBackDBDProcess");
 	}
-
 }

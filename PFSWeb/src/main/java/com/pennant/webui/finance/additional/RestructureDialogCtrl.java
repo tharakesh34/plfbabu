@@ -60,6 +60,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RestructureType;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
@@ -735,6 +736,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 						&& curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
 					continue;
 				}
+
+				if (FinanceConstants.FLAG_HOLIDAY.equals(curSchd.getBpiOrHoliday())) {
+					continue;
+				}
+
 				if (fillAfter.compareTo(curSchd.getSchDate()) < 0) {
 					comboitem = new Comboitem();
 					comboitem.setLabel(DateUtility.formatToLongDate(curSchd.getSchDate()));

@@ -409,6 +409,24 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		logger.debug(Literal.LEAVING);
 	}
 
+	@Override
+	protected void onDoDelete(final ReceiptUploadHeader ruh) {
+		String tranType = PennantConstants.TRAN_DEL;
+
+		ruh.setVersion(ruh.getVersion() + 1);
+		ruh.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+
+		try {
+			if (doProcess(ruh, tranType)) {
+				refreshList();
+				closeDialog();
+			}
+
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+	}
+
 	/**
 	 * Set the components for edit mode. <br>
 	 */

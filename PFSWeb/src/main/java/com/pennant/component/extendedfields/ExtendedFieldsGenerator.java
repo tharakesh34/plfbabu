@@ -1,45 +1,28 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldsGenerator.java                                         * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-05-2016    														*
- *                                                                  						*
- * Modified Date    :  19-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldsGenerator.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-05-2016 * *
+ * Modified Date : 19-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-05-2016       Murthy	                 0.1                                            * 
- *                                                                                          * 
- * 19-06-2018       Sai Krishna              0.2          story #413 Allow scriptlet for    * 
- *                                                        extended fields without UI.       * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-05-2016 Murthy 0.1 * * 19-06-2018 Sai Krishna 0.2 story #413 Allow scriptlet for * extended fields without UI. * *
+ * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.component.extendedfields;
 
 import java.lang.reflect.Field;
@@ -135,6 +118,7 @@ import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.framework.web.AbstractController;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -175,7 +159,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	// Constants for scriptlets.
 	private static final String SCRIPTLET_DELIMITER = "^^";
 	private static final String SCRIPT_DELIMITER = ">>";
-	//Constant for static list 
+	// Constant for static list
 	private static final String DELIMITER_PIPELINE = "|";
 	// story #699 Allow Additional filters for extended combobox.
 	private List<ExtendedFieldDetail> extendedFieldDetails = new ArrayList<>();
@@ -725,7 +709,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	 * @throws ParseException
 	 */
 	public Map<String, Object> doSave(List<ExtendedFieldDetail> extendedFieldDetailList, boolean isReadOnly)
-			throws ParseException {
+			throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> values = new HashMap<String, Object>();
@@ -748,7 +732,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 
 			String id = getComponentId(detail.getFieldName());
-			//PSD#163298 Issue addressed for mandatory validations While Resubmitting.
+			// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 			if (!isReadOnly) {
 				isReadOnly = !detail.isEditable();
 			}
@@ -826,7 +810,8 @@ public class ExtendedFieldsGenerator extends AbstractController {
 						Longbox longbox = (Longbox) component;
 						longbox.setConstraint("");
 						longbox.setErrorMessage("");
-						if (!longbox.isReadonly() && !longbox.isDisabled() && !isReadOnly) {// TODO: Check for LONG Validation
+						if (!longbox.isReadonly() && !longbox.isDisabled() && !isReadOnly) {// TODO: Check for LONG
+																							// Validation
 							longbox.setConstraint(
 									new PTNumberValidator(detail.getFieldLabel(), detail.isFieldMandatory(), false,
 											Integer.parseInt(String.valueOf(detail.getFieldMinValue())),
@@ -1542,12 +1527,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * Method for getting the Row
 	 * 
-	 * @param intreturn
-	 *            detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
-	 * @param Row
-	 *            row
-	 * @param int
-	 *            i
+	 * @param intreturn detail1.getFieldSeqOrder() - detail2.getFieldSeqOrder(); columnCount
+	 * @param Row       row
+	 * @param int       i
 	 * @return Row row
 	 */
 	private Row getRow(int columnCount, Row row, int i) {
@@ -1565,8 +1547,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * Method for getting the label
 	 * 
-	 * @param String
-	 *            labelName
+	 * @param String labelName
 	 * @return Label label
 	 */
 	private Label getLabel(ExtendedFieldDetail detail) {
@@ -1811,7 +1792,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 
 		currencyBox.getChildren().get(3).setId(currencyBox.getId().concat("_cdb"));
-		//set id to currency  text box
+		// set id to currency text box
 		currencyBox.getChildren().get(1).setId(currencyBox.getId().concat("_cdt"));
 
 		if (isCommodity) {
@@ -1955,7 +1936,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		extendedCombobox.setId(getComponentId(fieldName));
 		extendedCombobox.setReadonly(isReadOnly);
 
-		//Setting the id's to  ExtendedCombobox inner components like Textbox and button for Scriptlet using
+		// Setting the id's to ExtendedCombobox inner components like Textbox and button for Scriptlet using
 		extendedCombobox.getChildren().get(1).getChildren().get(0).setId(extendedCombobox.getId().concat("_ctb"));
 		extendedCombobox.getChildren().get(1).getChildren().get(1).setId(extendedCombobox.getId().concat("_ctb_but"));
 
@@ -2334,7 +2315,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		Filter[] filters = new Filter[filterList.size()];
 		for (int i = 0; i < filterList.size(); i++) {
 			String[] paramsArray = StringUtils.split(filterList.get(i), SCRIPT_DELIMITER);
-			if (App.DATABASE == Database.POSTGRES) { //FIXME Temporary filters with hardcoded values
+			if (App.DATABASE == Database.POSTGRES) { // FIXME Temporary filters with hardcoded values
 				if ("projectId".equals(paramsArray[0])) {
 					if (!StringUtils.equals(" ", paramsArray[1])) {
 						filters[i] = new Filter(paramsArray[0], Integer.parseInt(paramsArray[1]),
@@ -2666,7 +2647,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		groupbox.setId(container.getFieldName());
 		Caption caption = new Caption(StringUtils.trimToEmpty(container.getFieldLabel()));
 		caption.setParent(groupbox);
-		//adding script let events to component
+		// adding script let events to component
 		addEventListener(groupbox, container);
 		return groupbox;
 	}
@@ -3059,8 +3040,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	/**
 	 * Method for Preparing component id
 	 * 
-	 * @param String
-	 *            fieldName
+	 * @param String fieldName
 	 * @return String id
 	 */
 	private String getComponentId(String fieldName) {

@@ -1956,9 +1956,7 @@ public class ReceiptCalculator {
 		// Event Fee Apportionment
 
 		// Schedules and LPP & LPI Apportionment
-		if (rch.getBalAmount().compareTo(BigDecimal.ZERO) > 0) {
-			receiptData = scheduleApportion(receiptData, isPresentment);
-		}
+		receiptData = scheduleApportion(receiptData, isPresentment);
 
 		// LPP & LPI Apportionment as separate
 		if (rch.isPenalSeparate()) {
@@ -2611,59 +2609,38 @@ public class ReceiptCalculator {
 		return repayHierarchy == null ? "" : repayHierarchy;
 	}
 
-	public FinReceiptData calApportion(char[] rpyOrder, FinReceiptData receiptData) {
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
+	public FinReceiptData calApportion(char[] rpyOrder, FinReceiptData rd) {
+		FinReceiptHeader rch = rd.getReceiptHeader();
 		int receiptPurposeCtg = setReceiptCategory(rch.getReceiptPurpose());
 
-		boolean adjSchedule = receiptData.isAdjSchedule();
-
-		BigDecimal priPaidAvailable = BigDecimal.ZERO;
-		if (adjSchedule && receiptPurposeCtg == 2 && rch.getFutPriIdx() > 0 && rch.getPriIdx() > 0) {
-			priPaidAvailable = rch.getAllocations().get(rch.getPriIdx()).getPaidAvailable();
-		}
-
-		BigDecimal pftPaidAvailable = BigDecimal.ZERO;
-
-		if (adjSchedule && receiptPurposeCtg == 2 && rch.getPftIdx() != -1 && rch.getFutPftIdx() != -1) {
-			pftPaidAvailable = rch.getAllocations().get(rch.getPftIdx()).getPaidAvailable();
-		}
-
 		for (char repayTo : rpyOrder) {
-			switch (repayTo) {
-			case RepayConstants.REPAY_PRINCIPAL:
-				receiptData = priApportion(receiptData);
-				if (priPaidAvailable.compareTo(BigDecimal.ZERO) <= 0) {
-					receiptData = priApportion(receiptData);
+			List<ReceiptAllocationDetail> allocations = rch.getAllocations();
+			if (repayTo == RepayConstants.REPAY_PRINCIPAL) {
+				rd = priApportion(rd);
+				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getFutPriIdx() > 0 && rch.getPriIdx() > 0
+						&& allocations.get(rch.getPriIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
+					rd = priApportion(rd);
 				}
-				break;
-			case RepayConstants.REPAY_PROFIT:
-				receiptData = intApportion(receiptData);
+			} else if (repayTo == RepayConstants.REPAY_PROFIT) {
+				rd = intApportion(rd);
 				// Common issue 16
-				if (pftPaidAvailable.compareTo(BigDecimal.ZERO) <= 0) {
-					receiptData = repayIntApportion(receiptData);
+				if (rd.isAdjSchedule() && receiptPurposeCtg == 2 && rch.getPftIdx() != -1 && rch.getFutPftIdx() != -1
+						&& allocations.get(rch.getPftIdx()).getPaidAvailable().compareTo(BigDecimal.ZERO) <= 0) {
+					rd = repayIntApportion(rd);
 				}
-				break;
-			case RepayConstants.REPAY_PENALTY:
-				if (!rch.isPenalSeparate()) {
-					receiptData = penalApportion(receiptData);
-				}
-				break;
-			case RepayConstants.REPAY_OTHERS:
-				break;
-			default:
-
-				break;
+			} else if (!rch.isPenalSeparate() && repayTo == RepayConstants.REPAY_PENALTY) {
+				rd = penalApportion(rd);
+			} else if (repayTo == RepayConstants.REPAY_OTHERS) {
+				// Code Related to Schedule Fees & Insurance Deleted
 			}
-
-			if (!adjSchedule) {
-				if (receiptData.getReceiptHeader().getBalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			if (!rd.isAdjSchedule()) {
+				if (rd.getReceiptHeader().getBalAmount().compareTo(BigDecimal.ZERO) <= 0) {
 					break;
 				}
 			}
-
 		}
 
-		return receiptData;
+		return rd;
 	}
 
 	public BigDecimal[] getCompEmiSplit(FinReceiptData receiptData) {

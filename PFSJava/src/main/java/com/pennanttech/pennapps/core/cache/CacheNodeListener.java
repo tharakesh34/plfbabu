@@ -21,7 +21,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class CacheNodeListener implements Runnable {
 	private static final Logger log = LogManager.getLogger(CacheNodeListener.class);
 
-	private int nodes = 0;
 	private CacheAdmin cacheAdmin;
 
 	public CacheNodeListener(CacheAdmin cacheAdmin) {
@@ -43,13 +42,11 @@ public class CacheNodeListener implements Runnable {
 			monitorSleepTime = ((Long) parameters.get(Cache.CACHE_VERIFY_SLEEP)).longValue();
 		}
 
+		CacheManager.setNodes(nodeCount);
+
 		CacheManager.setSleepTime(monitorSleepTime);
 
 		while (true) {
-			if (nodes != nodeCount) {
-				nodes = nodeCount;
-				CacheManager.setNodes(nodes);
-			}
 
 			try {
 				Thread.sleep(nodeListenerSleepTime);
@@ -62,6 +59,8 @@ public class CacheNodeListener implements Runnable {
 				nodeCount = ((Integer) parameters.get(Cache.NODE_COUNT)).intValue();
 				nodeListenerSleepTime = ((Long) parameters.get(Cache.CACHE_UPDATE_SLEEP)).longValue();
 			}
+
+			CacheManager.setNodes(nodeCount);
 		}
 	}
 }

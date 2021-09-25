@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -6,20 +6,20 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
-import com.pennant.backend.service.finance.covenant.impl.PutCallAlerts;
+import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennanttech.pennapps.core.job.AbstractJob;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class FinPutCallAlertsJob extends AbstractJob {
+public class SecurityUserAccountLockJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		getCovenantAlertsService(context).sendAlerts();
+		getSecurityUserDAO(context).lockUserAccounts();
 	}
 
-	private PutCallAlerts getCovenantAlertsService(JobExecutionContext context) {
+	private SecurityUserDAO getSecurityUserDAO(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (PutCallAlerts) jobDataMap.get("putCallAlerts");
+		return (SecurityUserDAO) jobDataMap.get("securityUserDAO");
 	}
 }

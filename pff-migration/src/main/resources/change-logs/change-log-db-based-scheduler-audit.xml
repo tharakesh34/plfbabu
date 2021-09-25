@@ -102,29 +102,29 @@
 			<column name="Id" type="bigint">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-			<column name="Key" type="varchar(100)">
+			<column name="JobKey" type="varchar(100)">
 				<constraints nullable="false" />
 			</column>
 			<column name="Description" type="varchar(200)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Trigger" type="varchar(200)">
+			<column name="JobTrigger" type="varchar(200)">
 				<constraints nullable="false" />
 			</column>
 			<column name="Cron_Expression" type="varchar(100)">
 				<constraints nullable="false" />
 			</column>
-			<column name="Mode" type="number" />
-			<column name="Status" type="number" />
+			<column name="Mode" type="decimal" />
+			<column name="Status" type="decimal" />
 			<column name="Enabled" type="boolean" />
 			<column name="Failure_Notification_Req" type="boolean" />
 			<column name="Host_Name" type="varchar(200)" />
-			<column name="Port" type="number" defaultValue="0"/>
-			<column name="Jmx_Port" type="number" defaultValue="0"/>
+			<column name="Port" type="decimal" defaultValue="0" />
+			<column name="Jmx_Port" type="decimal" defaultValue="0" />
 			<column name="SMTP_Server" type="bigint" />
 			<column name="Notify_Emails" type="varchar(500)" />
 			<column name="Execution_log_Req" type="boolean" />
-			<column name="Execution_Retention_Days" type="number" />
+			<column name="Execution_Retention_Days" type="decimal" />
 			<column name="Version" type="boolean" defaultValueBoolean="0" />
 			<column name="LastMntBy" type="bigint" />
 			<column name="LastMnton" type="datetime" />
@@ -138,5 +138,5 @@
 		</createTable>
 	</changeSet>
 
-	
+
 </databaseChangeLog>

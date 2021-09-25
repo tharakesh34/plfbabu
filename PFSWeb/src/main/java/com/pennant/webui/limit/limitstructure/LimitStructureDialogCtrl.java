@@ -55,6 +55,7 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.ListitemRenderer;
+import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -827,9 +828,13 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		String structCode = limitStructure.getStructureCode();
 		int count = limitStructureService.limitStructureCheck(structCode);
 
+		final String keyReference = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
 		if (count == 0 || limitStructureDetails.isNewRecord()) {
-			final String keyReference = Labels.getLabel("message.Question.Are_you_sure_to_delete_this_record");
-			doDelete(keyReference, limitStructure);
+			MessageUtil.confirm(keyReference, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					onDoDelete(limitStructureDetails);
+				}
+			});
 		} else {
 			MessageUtil.showError(Labels.getLabel("LIMIT_FIELD_MODIFY", new String[] { structCode }));
 			return;
@@ -838,45 +843,44 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	protected void onDoDelete(LimitStructureDetail limitStructureDetails) {
-		if (!limitStructureDetails.isNewRecord()) {
-			if (StringUtils.trimToEmpty(limitStructureDetails.getRecordType()).isEmpty()) {
-				limitStructureDetails.setNewRecord(true);
-				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-			} else if (PennantConstants.RECORD_TYPE_NEW.equals(limitStructureDetails.getRecordType())) {
-				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+	protected void onDoDelete(LimitStructureDetail lsd) {
+		if (!lsd.isNewRecord()) {
+			if (StringUtils.trimToEmpty(lsd.getRecordType()).isEmpty()) {
+				lsd.setNewRecord(true);
+				lsd.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (PennantConstants.RECORD_TYPE_NEW.equals(lsd.getRecordType())) {
+				lsd.setRecordType(PennantConstants.RECORD_TYPE_CAN);
 			} else {
-				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				lsd.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
-			deleteMap.put(limitStructureDetails.getItemPriority(), limitStructureDetails);
-			doClearChild(limitStructureDetails);
-		} else {
-			doClearChild(limitStructureDetails);
-		}
 
+			deleteMap.put(lsd.getItemPriority(), lsd);
+			doClearChild(lsd);
+		} else {
+			doClearChild(lsd);
+		}
 	}
 
-	private void doClearChild(LimitStructureDetail limitStructureDetails) {
+	private void doClearChild(LimitStructureDetail lsd) {
 		logger.debug("Entering");
 
-		if (addHashMap.containsKey(limitStructureDetails.getItemPriority())) {
-			addHashMap.remove(limitStructureDetails.getItemPriority());
+		if (addHashMap.containsKey(lsd.getItemPriority())) {
+			addHashMap.remove(lsd.getItemPriority());
 
 		}
 		doFillListBox();
 		logger.debug("Leaving");
 	}
 
-	private void writeValuetoBean(LimitStructureDetail limitStructureDetails) {
+	private void writeValuetoBean(LimitStructureDetail lsd) {
 		logger.debug("Entering");
-		if (limitStructureDetails.getRecordType() != null
-				&& StringUtils.trimToEmpty(limitStructureDetails.getRecordType()).equals("")) {
-			limitStructureDetails.setVersion(limitStructureDetails.getVersion() + 1);
-			if (limitStructureDetails.isNewRecord()) {
-				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		if (lsd.getRecordType() != null && StringUtils.trimToEmpty(lsd.getRecordType()).equals("")) {
+			lsd.setVersion(lsd.getVersion() + 1);
+			if (lsd.isNewRecord()) {
+				lsd.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			} else {
-				limitStructureDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				limitStructureDetails.setNewRecord(true);
+				lsd.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				lsd.setNewRecord(true);
 			}
 		}
 		logger.debug("Leaving");

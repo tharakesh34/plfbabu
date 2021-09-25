@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -8,25 +8,24 @@ import org.quartz.PersistJobDataAfterExecution;
 
 import com.pennanttech.pennapps.core.job.AbstractJob;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.external.service.ExternalInterfaceService;
+import com.pennanttech.pff.notifications.service.InvokeSysNotifications;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class AutoMandateDownloadJob extends AbstractJob {
+public class SystemNotificationsInvokeJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		try {
-			getExternalInterfaceService(context).processAutoMandateRequest();
+			getInvokeSysNotifications(context).invokeNotifications();
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
 	}
 
-	private ExternalInterfaceService getExternalInterfaceService(JobExecutionContext context) {
+	private InvokeSysNotifications getInvokeSysNotifications(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (ExternalInterfaceService) jobDataMap.get("externalInterfaceService");
+		return (InvokeSysNotifications) jobDataMap.get("invokeSysNotifications");
 	}
-
 }

@@ -815,8 +815,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 						usrLanguage);
 				auditDetails.addAll(details);
 				// Collateral Dedup Validation
-				if (ImplementationConstants.COLLATERAL_DEDUP_WARNING
-						&& !PennantConstants.FINSOURCE_ID_API.equals(collateralSetup.getSourceId())) {
+				if (!PennantConstants.FINSOURCE_ID_API.equals(collateralSetup.getSourceId())) {
 					long queryId = collateralStructure.getQueryId();
 					String querySubCode = collateralStructure.getQuerySubCode();
 					String queryCode = collateralStructure.getQueryCode();

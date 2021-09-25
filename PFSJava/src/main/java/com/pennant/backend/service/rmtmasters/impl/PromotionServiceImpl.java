@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PromotionServiceImpl.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PromotionServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * * Modified
+ * Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.service.rmtmasters.impl;
 
@@ -84,7 +66,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	private PromotionDAO promotionDAO;
 	private FinanceMainDAO financeMainDAO;
 
-	//Child Services
+	// Child Services
 	private FinTypeFeesService finTypeFeesService;
 	private FinTypeAccountingService finTypeAccountingService;
 
@@ -96,8 +78,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * by using PromotionsDAO's update method 3) Audit the record in to AuditHeader and AdtPromotions by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -156,8 +137,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * Promotions by using PromotionsDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtPromotions by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -244,22 +224,20 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	/**
 	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method.
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotions
 	 */
 	@Override
 	public Promotion getPromotionById(String promotionCode, int moduleId) {
 		logger.debug("Entering");
 
-		Promotion promotion = getPromotionDAO().getPromotionById(promotionCode, "_View");
+		Promotion promotion = promotionDAO.getPromotionById(promotionCode, "_View");
 
 		if (promotion != null) {
-			promotion.setFinTypeFeesList(getFinTypeFeesService().getFinTypeFeesById(promotionCode, moduleId));
-			promotion.setFinTypeAccountingList(
-					getFinTypeAccountingService().getFinTypeAccountingListByID(promotionCode, moduleId));
+			promotion.setFinTypeFeesList(finTypeFeesService.getFinTypeFeesById(promotionCode, moduleId));
+			promotion.setFinTypeAccountingList(finTypeAccountingService
+					.getFinTypeAccountingListByID(promotion.getFinType(), FinanceConstants.MODULEID_FINTYPE));
 		}
 
 		logger.debug("Leaving");
@@ -270,10 +248,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	/**
 	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method.
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotions
 	 */
 	@Override
@@ -293,10 +269,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	/**
 	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method.
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotions
 	 */
 	@Override
@@ -316,10 +290,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	/**
 	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionByReferenceId method.
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotions
 	 */
 	@Override
@@ -340,8 +312,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * getApprovedPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method . with parameter id
 	 * and type as blank. it fetches the approved records from the Promotions.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return Promotions
 	 */
 	@Override
@@ -381,10 +352,8 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	/**
 	 * getPromotionsById fetch the details by using PromotionsDAO's getPromotionsById method.
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotions
 	 */
 	@Override
@@ -413,8 +382,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtPromotions by
 	 * using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -514,8 +482,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * workFlow table by using getPromotionDAO().delete with parameters promotion,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtPromotions by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -548,8 +515,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -824,8 +790,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -839,8 +804,7 @@ public class PromotionServiceImpl extends GenericService<Promotion> implements P
 	}
 
 	/**
-	 * @param promotionDAO
-	 *            the promotionDAO to set
+	 * @param promotionDAO the promotionDAO to set
 	 */
 	public void setPromotionDAO(PromotionDAO promotionDAO) {
 		this.promotionDAO = promotionDAO;

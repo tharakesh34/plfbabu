@@ -902,7 +902,8 @@ public class PennantJavaUtil {
 		ModuleUtil.register("BaseRateCode",
 				new ModuleMapping("BaseRateCode", BaseRateCode.class,
 						new String[] { "RMTBaseRateCodes", "RMTBaseRateCodes_AView" }, masterWF,
-						new String[] { "BRType", "BRTypeDesc" }, new String[][] { { "BRType", "1", "MBR00" } }, 400));
+						new String[] { "BRType", "BRTypeDesc" },
+						new Object[][] { { "BRType", "1", "MBR00" }, { "BRTypeIsActive", "0", 1 } }, 400));
 
 		ModuleUtil.register("Branch",
 				new ModuleMapping("Branch", Branch.class, new String[] { "RMTBranches", "RMTBranches_AView" }, masterWF,

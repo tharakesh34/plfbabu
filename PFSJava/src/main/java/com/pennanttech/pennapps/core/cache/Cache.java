@@ -13,6 +13,7 @@ package com.pennanttech.pennapps.core.cache;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.notifications.Listener;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
 import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
@@ -30,6 +31,7 @@ public class Cache<K, V> {
 	protected static final String NODE_COUNT = "NODE_COUNT";
 	protected static final String CACHE_UPDATE_SLEEP = "CACHE_UPDATE_SLEEP";
 	protected static final String CACHE_VERIFY_SLEEP = "CACHE_VERIFY_SLEEP";
+	protected static final String CLUSTER_SIZE = "CLUSTER_SIZE";
 
 	private org.infinispan.Cache<K, V> cache = null;
 	private String name;
@@ -89,19 +91,21 @@ public class Cache<K, V> {
 	}
 
 	private org.infinispan.Cache<K, V> getCache() {
-		log.trace(Literal.ENTERING);
-
-		if (!CacheManager.isRegisterd(name)) {
-			cache = CacheManager.getCacheManager().getCache(name);
-			CacheManager.register(name);
-			log.info(String.format("Cache registerd from %s for the module %s",
-					CacheManager.getCacheManager().getNodeAddress(), name));
-		} else if (cache == null) {
-			log.info("Cache Null Creating Cache" + name);
-			cache = CacheManager.getCacheManager().getCache(name);
+		if (cache != null) {
+			return cache;
 		}
 
-		log.trace(Literal.LEAVING);
+		DefaultCacheManager cacheManager = CacheManager.getCacheManager();
+		if (!CacheManager.isRegisterd(name)) {
+			CacheManager.register(name);
+
+			cache = cacheManager.getCache(name);
+			log.info("Cache registerd from {} for the module {}", cacheManager.getNodeAddress(), name);
+		} else if (cache == null) {
+			log.info("Creating cache for the module {}", name);
+			cache = cacheManager.getCache(name);
+		}
+
 		return cache;
 	}
 
@@ -111,8 +115,7 @@ public class Cache<K, V> {
 		public void entryCreated(CacheEntryCreatedEvent<K, V> event) {
 			// We are only interested in the post event
 			if (!event.isPre()) {
-				log.info(String.format("Entity with the key %s added into the cache for the module %s",
-						event.getKey().toString(), name));
+				log.info("Entity with the key {} added into the cache for the module {}", event.getKey(), name);
 
 			}
 		}
@@ -120,8 +123,7 @@ public class Cache<K, V> {
 		@CacheEntryRemoved
 		public void entryRemoved(CacheEntryRemovedEvent<K, V> event) {
 			if (!event.isPre()) {
-				log.trace(String.format("Entity with the key %s removed from the cache for the module %s",
-						event.getKey().toString(), name));
+				log.info("Entity with the key {} removed from the cache for the module {}", event.getKey(), name);
 			}
 		}
 	}

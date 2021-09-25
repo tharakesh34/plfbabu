@@ -1345,13 +1345,15 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 					cheqDetails.setBankName(branch.getBankName());
 				}
 				cheqDetails.setAccountNo(this.accNumber.getValue());
-				if (StringUtils.equals(this.chequeType.getSelectedItem().getValue().toString(),
-						FinanceConstants.REPAYMTH_PDC)) {
-					cheqDetails.setAmount(
-							PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(), ccyEditField));
-				} else {
+
+				cheqDetails
+						.setAmount(PennantApplicationUtil.unFormateAmount(this.amount.getActualValue(), ccyEditField));
+
+				if (ImplementationConstants.CHEQUE_AMOUNT_ZERO_UDC && !FinanceConstants.REPAYMTH_PDC
+						.equals(this.chequeType.getSelectedItem().getValue().toString())) {
 					cheqDetails.setAmount(PennantApplicationUtil.unFormateAmount(BigDecimal.ZERO, ccyEditField));
 				}
+
 				cheqDetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				cheqDetails.setNewRecord(true);
 				cheqDetails.setActive(true);

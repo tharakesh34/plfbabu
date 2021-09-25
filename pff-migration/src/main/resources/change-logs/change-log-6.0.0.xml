@@ -27146,4 +27146,123 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 	  </sql>
 	</changeSet>
 	
+	<changeSet id="PSD#177755_pre" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'filebatchstatus_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#177755.1" author="kavya.n">
+		<createView viewName="FILEBATCHSTATUS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT ID,
+			  		BATCH_NAME FILENAME
+				FROM PRESENTMENT_RESP_HEADER WHERE EVENT = 'IMPORT'
+			]]>
+      	</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#177755_post" author="kavya.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'filebatchstatus_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#178226" author="kavya.n">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM REPORTLIST WHERE CODE = 'NonLanReceipt';
+				INSERT INTO REPORTLIST (CODE, MODULE, FIELDLABELS, FIELDVALUES, FIELDTYPE, ADDFIELDS, REPORTFILENAME, REPORTHEADING, MODULETYPE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, FORMATREQ) VALUES ('NonLanReceipt', 'FinReceiptHeader', 'listheader_ReceiptId.label,listheader_ReceiptDate.label,listheader_ReceiptMode.label,listheader_ReceiptSource.label,listheader_ExternalReference.label,listheader_PayTypeRef.label,listheader_ReceiptAmount.label,listheader_PartnerBank.label', 'ReceiptID,ReceiptDate,ReceiptMode,ReceiptSource,Reference,TransactionRef,ReceiptAmount,PartnerBankCode', 'Long,Date,String,String,String,String,BigDecimal,String', null, 'ReportList08', 'Non-Loan Receipts', 'Loan Management', 1, 1000, CURRENT_TIMESTAMP, 'Approved', null, null, null, null, null, 0, 0);
+        	 ]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#178447" author="Gopal.p">
+		<sql>
+			<![CDATA[
+   		     	DELETE FROM SECROLEGROUPS WHERE GRPID = (SELECT GRPID FROM SECGROUPS WHERE GRPID = (SELECT GRPID FROM SECGROUPRIGHTS WHERE RIGHTID = (SELECT RIGHTID FROM SECRIGHTS WHERE RIGHTNAME = 'menu_Item_LTVBreachReport')));
+        	 ]]>
+		</sql>
+	</changeSet>
+	<changeSet id="PSD#179369" author="Varaprasad.K" dbms="oracle">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.PromotionId),0)+1 into v_maxval from
+			(select PromotionId
+			from Promotions union all select PromotionId from Promotions_Temp) T;
+			EXECUTE IMMEDIATE 'alter sequence SeqPromotions
+			restart
+			start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#179369" author="Varaprasad.K" dbms="postgresql">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.PromotionId),0)+1 into v_maxval from
+			(select
+			PromotionId from Promotions union all select PromotionId from Promotions_Temp) T;
+			EXECUTE 'alter sequence SeqPromotions restart
+			start
+			with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#179369" author="Varaprasad.K" dbms="mssql" >
+		<sql splitStatements="false">
+			<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT @MAXNO=COALESCE(max(T.PromotionId),0)+1
+			from
+			(select PromotionId from Promotions union all select PromotionId from Promotions_Temp) T;
+
+			SET @SQLCmd = '
+			ALTER
+			SEQUENCE [dbo].[SeqPromotions]
+			RESTART WITH '
+			+ CAST( @MAXNO AS VARCHAR(30)) ;
+
+
+			EXEC
+			SP_EXECUTESQL @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="100.1" author="Gopal.p">
+		<createTable tableName="APP_DATES_LOG">
+			<column name="ID" type ="bigint" autoIncrement="true">
+				<constraints primaryKey="true" primaryKeyName="pk_APP_DATES_LOG"/>
+			</column>
+			<column name="Code" type="VarChar(50)"/>
+			<column name="Value" type="VarChar(200)"/>
+			<column name="UpdatedOn" type="DateTime"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="PSD#179338" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDTYPE = 'INTRANGE' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION  WHERE MENUITEMCODE='menu_Item_RateReviewDue') AND FIELDID = 2;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

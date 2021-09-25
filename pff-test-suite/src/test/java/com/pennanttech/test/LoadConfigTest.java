@@ -15,20 +15,22 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.pennant.backend.dao.errordetail.impl.ErrorDetailDAOImpl;
+import com.pennant.cache.util.FinanceConfigCache;
 import com.pennanttech.util.Dataset;
 
 import jxl.read.biff.BiffException;
 
 public class LoadConfigTest {
-	final String[] CONFIG_LOCATIONS = new String[] {
-			"applicationContext-db.xml", "applicationContext-daos.xml", "applicationContext-txn.xml",
-			"applicationContext-test-suite.xml", "interfaceContext-core.xml", "interfaceContext.xml",
-			"extensionContext.xml", "eod-batch-config-service.xml" };
+	final String[] CONFIG_LOCATIONS = new String[] { "applicationContext-db.xml", "applicationContext-daos.xml",
+			"applicationContext-txn.xml", "applicationContext-test-suite.xml", "interfaceContext-core.xml",
+			"interfaceContext.xml", "extensionContext.xml", "eod-batch-config-service.xml" };
 	static ApplicationContext context;
 
 	@BeforeSuite
 	public void setUp() throws BiffException, IOException {
 		System.out.println("Initializing application context...");
+
+		System.out.println(System.getenv("PFF_HOME"));
 
 		BeanDefinition definition = BeanDefinitionBuilder.rootBeanDefinition(Arrays.class, "asList")
 				.addConstructorArgValue(new String[] {}).getBeanDefinition();
@@ -42,14 +44,18 @@ public class LoadConfigTest {
 		context = new ClassPathXmlApplicationContext(CONFIG_LOCATIONS, parent);
 
 		System.out.println("Loading the dataset...");
-		Dataset.load();
+		// Dataset.load();
 	}
 
-	@Test(enabled = false)
+	@Test(enabled = true)
 	public void testBean() {
 		Object bean = context.getBean("errorDetailDAO");
 
 		Assert.assertTrue(bean instanceof ErrorDetailDAOImpl);
+
+		bean = context.getBean("financeConfigCache");
+
+		Assert.assertTrue(bean instanceof FinanceConfigCache);
 
 		bean = null;
 	}

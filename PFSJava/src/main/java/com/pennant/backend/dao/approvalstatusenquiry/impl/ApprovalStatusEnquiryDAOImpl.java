@@ -70,15 +70,14 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		return customerFinanceDetail;
 
 	}
-	
+
 	private String commaJoin(List<String> finReferences) {
 		return finReferences.stream().map(e -> "?").collect(Collectors.joining(","));
 	}
 
-	
 	@Override
-	public List<AuditTransaction> getFinTransactionsList(List<String> finReferences, boolean approvedFinance, boolean facility,
-			String auditEvent) {
+	public List<AuditTransaction> getFinTransactionsList(List<String> finReferences, boolean approvedFinance,
+			boolean facility, String auditEvent) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("Select AuditReference, AuditDate, RoleCode, RoleDesc, LastMntBy");
 		sql.append(", RecordStatus, RecordType, UsrName ");
@@ -133,6 +132,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 			auditTxn.setAuditDate(rs.getTimestamp("AuditDate"));
 			auditTxn.setRoleCode(rs.getString("RoleCode"));
 			auditTxn.setRoleDesc(rs.getString("RoleDesc"));
+			auditTxn.setLastMntBy(rs.getLong("LastMntBy"));
 			auditTxn.setRecordStatus(rs.getString("RecordStatus"));
 			auditTxn.setRecordType(rs.getString("RecordType"));
 			auditTxn.setUsrName(rs.getString("UsrName"));
@@ -147,7 +147,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, FinBranch, CustId, CustCIF, CustShrtName, FinReference, RoleCode");
 		sql.append(", NextRoleCode, RecordType, DeptDesc, PrvRoleDesc, NextRoleDesc, FinType, FinAmount");
-		sql.append(", FinStartDate, LastMntBy, UsrFName, LastMntByUser, FinCcy, FinTypeDesc, LovDescFinDivision");  
+		sql.append(", FinStartDate, LastMntBy, UsrFName, LastMntByUser, FinCcy, FinTypeDesc, LovDescFinDivision");
 
 		if (facility) {
 			sql.append(" from CustomerFacilityDetails");
@@ -186,7 +186,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 			cfd.setLastMntByUser(rs.getString("LastMntByUser"));
 			cfd.setFinCcy(rs.getString("FinCcy"));
 			cfd.setFinTypeDesc(rs.getString("FinTypeDesc"));
-			//	cfd.setLovDescFinDivision(rs.getString("LovDescFinDivision")); (In bean its not available)
+			// cfd.setLovDescFinDivision(rs.getString("LovDescFinDivision")); (In bean its not available)
 
 			if (!facility) {
 				cfd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));

@@ -119,7 +119,7 @@ public class FetchDedupDetails {
 			MasterDefService masterDefService) {
 		super();
 
-		//Data Preparation for Rule Executions
+		// Data Preparation for Rule Executions
 		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
 		FinanceDedup financeDedup = new FinanceDedup();
 		financeDedup.setCustId(customer.getCustID());
@@ -138,10 +138,10 @@ public class FetchDedupDetails {
 		financeDedup.setMotherName(customer.getCustShrtNameLclLng());
 		financeDedup.setFatherName(customer.getCustMotherMaiden());
 
-		//Check Customer is Existing or New Customer Object
+		// Check Customer is Existing or New Customer Object
 		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 
-		//finance data to set in to finance dedup 
+		// finance data to set in to finance dedup
 		financeDedup.setFinanceAmount(aFinanceMain.getFinAmount());
 		financeDedup.setProfitAmount(aFinanceMain.getTotalGrossPft());
 		financeDedup.setFinanceType(aFinanceMain.getFinType());
@@ -182,7 +182,7 @@ public class FetchDedupDetails {
 		financeDedup
 				.setLikeCustLName(financeDedup.getCustLName() != null ? "%" + financeDedup.getCustLName() + "%" : "");
 
-		//For Existing Customer/ New Customer
+		// For Existing Customer/ New Customer
 		List<FinanceDedup> loanDedup = new ArrayList<FinanceDedup>();
 		List<FinanceDedup> dedupeRuleData = dedupParmService.fetchFinDedupDetails(userRole, financeDedup, curLoginUser,
 				aFinanceMain.getFinType());
@@ -190,7 +190,7 @@ public class FetchDedupDetails {
 
 		ShowDedupListBox details = null;
 		Object dataObject;
-		if (!loanDedup.isEmpty() && customer.isCustIsActive()) {
+		if (!loanDedup.isEmpty()) {
 			if (FinanceConstants.FIN_DIVISION_CORPORATE
 					.equals(aFinanceDetail.getFinScheduleData().getFinanceType().getFinDivision())) {
 

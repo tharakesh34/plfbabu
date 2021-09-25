@@ -2188,10 +2188,17 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 			if (details != null) {
 				this.custID.setAttribute("custID", details.getCustID());
 				this.btnFetchAccountDetails.setDisabled(false);
+				Filter[] filtersProvince = new Filter[1];
+				filtersProvince[0] = new Filter("custid", details.getCustID(), Filter.OP_EQUAL);
+				this.mandateRef.setFilters(filtersProvince);
+				this.mandateRef.setReadonly(false);
 			} else {
 				this.accNumber.setValue("");
 				this.accHolderName.setValue("");
 				this.btnFetchAccountDetails.setDisabled(true);
+				this.mandateRef.setValue("");
+				this.mandateRef.setDescription("");
+				this.mandateRef.setReadonly(true);
 			}
 		}
 		// making the loan reference as read only if it is from loan queue

@@ -11,7 +11,7 @@ public class CacheQueries {
 	public static final String UPDATE_CACHE_PARAM;
 
 	private CacheQueries() {
-
+		//
 	}
 
 	static {
@@ -27,20 +27,21 @@ public class CacheQueries {
 
 	private static String getCacheStatusListSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select cluster_name, current_node, cluster_ip, cluster_size, cluster_members");
+		sql.append("select Id, cluster_name, current_node, cluster_ip, cluster_size, cluster_members");
 		sql.append(", cache_count, cache_names, manager_cache_status, enabled, active, node_count");
 		sql.append(", last_mnt_on, last_mnt_by");
 		sql.append(" from cache_stats");
+		sql.append(" Order by ID");
 
 		return sql.toString();
 	}
 
 	private static String getCacheStatusSelectQuery() {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select cluster_name, current_node, cluster_ip, cluster_size, cluster_members");
+		sql.append("select Id, cluster_name, current_node, cluster_ip, cluster_size, cluster_members");
 		sql.append(", cache_count, cache_names, manager_cache_status, enabled, active, node_count");
 		sql.append(" from cache_stats");
-		sql.append(" where cluster_name =:ClusterName and current_node=:ClusterNode ");
+		sql.append(" where cluster_name = ? and current_node like ?");
 
 		return sql.toString();
 	}

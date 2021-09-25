@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -6,26 +6,20 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
+import com.pennant.backend.service.finance.lmsservicelog.impl.LMSServiceLogAlerts;
 import com.pennanttech.pennapps.core.job.AbstractJob;
-import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pff.cashback.CashBackDBDProcess;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class CashBackDBDJob extends AbstractJob {
+public class LMSServiceLogAlertsJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		try {
-			getCashBackDBDProcess(context).autoCashBackProcess();
-		} catch (Exception e) {
-			logger.debug(Literal.EXCEPTION, e);
-		}
-
+		getCovenantAlertsService(context).sendAlerts();
 	}
 
-	private CashBackDBDProcess getCashBackDBDProcess(JobExecutionContext context) {
+	private LMSServiceLogAlerts getCovenantAlertsService(JobExecutionContext context) {
 		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
-		return (CashBackDBDProcess) jobDataMap.get("cashBackDBDProcess");
+		return (LMSServiceLogAlerts) jobDataMap.get("lmsServiceLogAlerts");
 	}
 }

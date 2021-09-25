@@ -43,8 +43,7 @@ public abstract class GenericService<T> {
 	 * nextProcess method do the following steps. if errorMessage List or OverideMessage size is more than 0 then return
 	 * False else return true.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return boolean
 	 */
 
@@ -121,7 +120,11 @@ public abstract class GenericService<T> {
 			entity = getEntity(key);
 
 			if (entity != null) {
-				setEntity(key, entity);
+				try {
+					setEntity(key, entity);
+				} catch (AppException e) {
+					//
+				}
 			}
 		}
 		return entity;
@@ -165,9 +168,9 @@ public abstract class GenericService<T> {
 		DMSQueue dmsQueue = new DMSQueue();
 		dmsQueue.setModule(dm);
 		dmsQueue.setSubModule(dsm);
-		if(dsm == DMSModule.COVENANT){
+		if (dsm == DMSModule.COVENANT) {
 			dmsQueue.setFinReference(dd.getReferenceId());
-		}else {
+		} else {
 			dmsQueue.setFinReference(dd.getFinReference());
 		}
 		dmsQueue.setApplicationNo(dd.getApplicationNo());

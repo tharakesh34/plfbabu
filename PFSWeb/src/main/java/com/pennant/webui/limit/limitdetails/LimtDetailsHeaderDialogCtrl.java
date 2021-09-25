@@ -22,7 +22,6 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 
 public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implements Serializable {
@@ -99,10 +98,8 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		// Group
 		this.group.getTextbox().setReadonly(false);
 		this.group.setModuleName("CustomerGroup");
-		this.group.setValueColumn("CustGrpID");
-		this.group.setDescColumn("CustGrpDesc");
-		this.group.setValueType(DataType.LONG);
-		this.group.setValidateColumns(new String[] { "CustGrpID", "CustGrpCode", "CustGrpDesc" });
+		this.group.setValueColumn("CustGrpCode");
+		this.group.setValidateColumns(new String[] { "CustGrpCode" });
 
 		List<Long> existingGroups = PennantAppUtil.getLimitHeaderCustomer(false, false);
 		Filter[] filters = new Filter[1];
@@ -116,7 +113,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		this.customer.setValueColumn("CustCIF");
 		this.customer.setValidateColumns(
 				new String[] { "CustCIF", "CustShrtName", "CustCtgCode", "CustFName", "CustLName" });
-		//Rule
+		// Rule
 		logger.debug("Leaving");
 	}
 
@@ -131,7 +128,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 			Customer details = (Customer) dataObject;
 			if (details != null) {
 				this.customer.setValue(details.getCustCIF());
-				//this.customer.setDescription(details.getCustShrtName());
+				// this.customer.setDescription(details.getCustShrtName());
 				getLimitHeader().setCustomerId(details.getCustID());
 				getLimitHeader().setCustCIF(details.getCustCIF());
 				getLimitHeader().setCustCoreBank(details.getCustCoreBank());
@@ -160,7 +157,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 			CustomerGroup details = (CustomerGroup) dataObject;
 			if (details != null) {
 				this.group.setValue(details.getCustGrpCode());
-				//this.group.setDescription(details.getCustGrpDesc());
+				// this.group.setDescription(details.getCustGrpDesc());
 				getLimitHeader().setCustomerId(0);
 				getLimitHeader().setCustGrpCode(details.getCustGrpCode());
 				getLimitHeader().setCustomerGroup(details.getCustGrpID());

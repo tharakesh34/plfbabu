@@ -226,13 +226,20 @@
 										<listheader id="listheader_ScheduleDetailDialog_Date" hflex="min" value="" />
 										<listheader id="listheader_ScheduleDetailDialog_ScheduleEvent" hflex="min" />
 										<listheader id="listheader_ScheduleDetailDialog_CalProfit" hflex="min" align="right" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_ScheduleDetailDialog_SchFee" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_TDSAMount" hflex="min"
 											label="${c:l('listheader_TDSAmount.label')}" align="right" />
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_ScheduleDetailDialog_SchProfit" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_Principal" hflex="min" align="right" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listheader_ScheduleDetailDialog_Total" hflex="min" align="right" />
 										<listheader id="listheader_ScheduleDetailDialog_ScheduleEndBal" hflex="min" align="right" />
+										<listheader hflex="min" visible="false"/>
+										<listheader hflex="min" visible="false"/>
 										<listheader id="listHeader_orgPrincipalDue" hflex="min" align="right" visible="false" />
 									</listhead>
 								</listbox>

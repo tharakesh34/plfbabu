@@ -25,7 +25,7 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -102,7 +102,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 	// private DueData dueData;
 	private String module;
 	private int formatter = 2;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 
 	private List<ValueLabel> receiptModeList = PennantAppUtil.getActiveFieldCodeList(RepayConstants.RECEIPT_MODE);
 	private List<ValueLabel> receiptChannelList = PennantAppUtil.getActiveFieldCodeList(RepayConstants.RECEIPT_CHANNEL);
@@ -180,7 +180,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 		fillComboBox(this.receiptChannel, "", receiptChannelList, "POR");
 		fillComboBox(this.subReceiptMode, "", subReceiptModeList, "");
 		fillComboBox(this.receiptSource, "", receiptSourceList, "");
-		//adding new in nonselectlan
+		// adding new in nonselectlan
 		fillComboBox(this.receivedFrom, "", PennantStaticListUtil.getNonLoanReceivedFrom(), "");
 		this.division.setModuleName("DivisionDetail");
 		this.division.setMandatoryStyle(true);
@@ -262,7 +262,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 		String receivedFrom = this.receivedFrom.getSelectedItem().getValue().toString();
 		this.row_CustId.setVisible(false);
 
-		//if receivedFrom is Non_Loan then extendedCombobox will be disabled.
+		// if receivedFrom is Non_Loan then extendedCombobox will be disabled.
 
 		if (StringUtils.equalsIgnoreCase(receivedFrom, Labels.getLabel("label_Receipt_ReceivedFrom_Customer"))) {
 			this.row_CustId.setVisible(true);
@@ -375,7 +375,7 @@ public class SelectNonLanReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceipt
 		}
 
 		try {
-			//finReceiptHeader.setReference(this.extReference.getValue());
+			// finReceiptHeader.setReference(this.extReference.getValue());
 			Customer cust = (Customer) this.customer.getObject();
 			if (cust != null && cust.getId() != 0) {
 				finReceiptHeader.setCustCIF(this.customer.getValue());

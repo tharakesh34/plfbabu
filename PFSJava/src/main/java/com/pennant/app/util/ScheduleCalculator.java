@@ -3389,6 +3389,7 @@ public class ScheduleCalculator {
 			// Repay on Schedule Date
 			if (scheduleFlag == CalculationConstants.SCHDFLAG_RPY) {
 				sd.setRepayOnSchDate(true);
+				sd.setFrqDate(true);
 			} else {
 				if (FrequencyUtil.isFrqDate(fm.getRepayFrq(), nextSchdDate)) {
 					sd.setRepayOnSchDate(true);
@@ -9571,26 +9572,30 @@ public class ScheduleCalculator {
 			HldStart = fsdList.get(idxHldEnd + 1).getSchDate();
 		}
 
-		if (idxHldEnd < 0) {
-			idxHldEnd = 1;
-		}
-
 		// HldStart = fsdList.get(idxHldEnd).getSchDate();
 
 		if (rstDetail.getPriHldPeriod() > 0) {
+			if (idxHldEnd < 0) {
+				idxHldEnd = 1;
+			}
 			idxHldEnd = buildRestructurePRIHLD(fsData, HldStart, idxHldEnd);
 		}
 
 		if (fm.getEventFromDate() == null) {
 			fm.setEventFromDate(rstDetail.getRestructureDate());
-			fm.setRecalFromDate(rstDetail.getRestructureDate());
+			for (FinanceScheduleDetail fsd : fsdList) {
+				if (fsd.isFrqDate() && DateUtil.compare(fsd.getSchDate(), rstDetail.getRestructureDate()) >= 0) {
+					fm.setRecalFromDate(fsd.getSchDate());
+					break;
+				}
+			}
 		}
 
 		fm.setEventToDate(fm.getMaturityDate());
 		fm.setRecalToDate(fm.getMaturityDate());
 
 		if (idxHldEnd < 1) {
-			setRpyInstructDetails(fsData, rstDetail.getRestructureDate(), fm.getMaturityDate(), BigDecimal.ZERO,
+			setRpyInstructDetails(fsData, fm.getRecalFromDate(), fm.getMaturityDate(), BigDecimal.ZERO,
 					fm.getRecalSchdMethod());
 		}
 

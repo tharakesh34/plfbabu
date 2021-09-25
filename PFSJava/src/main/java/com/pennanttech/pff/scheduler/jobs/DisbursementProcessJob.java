@@ -1,4 +1,4 @@
-package com.pennanttech.pff.jobs;
+package com.pennanttech.pff.scheduler.jobs;
 
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobDataMap;
@@ -11,11 +11,15 @@ import com.pennanttech.pff.external.disbursement.DisbursementRequestService;
 
 @PersistJobDataAfterExecution
 @DisallowConcurrentExecution
-public class AutoDisbursementDownloadJob extends AbstractJob {
+public class DisbursementProcessJob extends AbstractJob {
+
+	public DisbursementProcessJob() {
+		super();
+	}
 
 	@Override
-	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		getDisbursementRequestService(context).processInstructions();
+	protected void executeJob(JobExecutionContext context) throws JobExecutionException {
+		getDisbursementRequestService(context).processRequests();
 
 	}
 

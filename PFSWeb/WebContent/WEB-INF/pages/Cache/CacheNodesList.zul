@@ -20,6 +20,7 @@
 					<listbox id="listBoxCacheNodes" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
 						width="35%" height="80%" multiple="false" sizedByContent="true" span="true">
 						<listhead sizable="true">
+							<listheader id="listheader_ClusterSize" width="15px" label="Cluster Size" sort="auto" hflex="min" align="right" />
 							<listheader id="listheader_NodeCount" width="15px" label="Node Count" sort="auto" hflex="min" align="right" />
 							<listheader id="listheader_SleepTime" width="15px" label="Sleep Time" sort="auto" hflex="min" align="right" />
 							<listheader id="listheader_VerifyTime" width="15px" label="Verify Time" sort="auto" hflex="min" align="right" />

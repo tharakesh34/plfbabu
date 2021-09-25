@@ -8014,9 +8014,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				summary.setFinODTotWaived(finODDetails.getTotWaived());
 				summary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
 				summary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
-				if (summary.getFinCurODDays() != 0) {
-					summary.setFinCurODDays(finODDetails.getFinCurODDays());
-				}
 			}
 
 			if (ImplementationConstants.ALLOW_NPA_PROVISION) {

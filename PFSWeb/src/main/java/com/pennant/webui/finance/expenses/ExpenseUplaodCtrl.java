@@ -409,6 +409,11 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 			String reason = null;
 			boolean valid = true;
 
+			if (rowValue.size() < 5) {
+				MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
+				return new ArrayList<>();
+			}
+
 			finReference = rowValue.get(0);
 			expenseTypeCode = rowValue.get(1);
 			percentage = rowValue.get(2);
@@ -497,6 +502,11 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 			if (CollectionUtils.isEmpty(rowValue)) {
 				continue;
+			}
+
+			if (rowValue.size() < 7) {
+				MessageUtil.showError(Labels.getLabel("label_ValidatedUploadFile"));
+				return new ArrayList<>();
 			}
 
 			String reason = null;

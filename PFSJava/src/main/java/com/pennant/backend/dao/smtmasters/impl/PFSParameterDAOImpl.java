@@ -25,6 +25,7 @@
 
 package com.pennant.backend.dao.smtmasters.impl;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,10 +60,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	/**
 	 * Fetch the Record System Parameter details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return PFSParameter
 	 */
 	@Override
@@ -116,10 +115,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * This method Deletes the Record from the SMTparameters or SMTparameters_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete System Parameter by key SysParmCode
 	 * 
-	 * @param System
-	 *            Parameter (pFSParameter)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param System Parameter (pFSParameter)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -153,10 +150,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * 
 	 * save System Parameter
 	 * 
-	 * @param System
-	 *            Parameter (pFSParameter)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param System Parameter (pFSParameter)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -189,10 +184,8 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 	 * This method updates the Record SMTparameters or SMTparameters_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update System Parameter by key SysParmCode and Version
 	 * 
-	 * @param System
-	 *            Parameter (pFSParameter)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param System Parameter (pFSParameter)
+	 * @param type   (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -236,25 +229,23 @@ public class PFSParameterDAOImpl extends BasicDao<PFSParameter> implements PFSPa
 			ps.setString(2, sysParmCode);
 
 		});
+
+		Timestamp updatedOn = new Timestamp(System.currentTimeMillis());
+
+		saveLog(sysParmCode, sysParmValue, updatedOn);
 	}
 
-	/**
-	 * Method for Updating Parameter Value
-	 */
-	@Override
-	public void updateParmValue(PFSParameter pFSParameter) {
-		int recordCount = 0;
-		logger.debug("Entering ");
-		StringBuilder updateSql = new StringBuilder("Update SMTparameters");
-		updateSql.append(" Set SysParmValue = :SysParmValue Where SysParmCode =:SysParmCode ");
+	private void saveLog(String sysParmCode, String sysParmValue, Timestamp updatedOn) {
+		StringBuilder sql = new StringBuilder("Insert Into APP_DATES_LOG");
+		sql.append(" (Code, Value, UpdatedOn)");
+		sql.append(" Values (?, ?, ?)");
 
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(pFSParameter);
-		recordCount = this.jdbcTemplate.update(updateSql.toString(), beanParameters);
+		this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, sysParmCode);
+			ps.setString(2, sysParmValue);
+			ps.setTimestamp(3, updatedOn);
+		});
 
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-		logger.debug("Leaving ");
 	}
 
 	/**

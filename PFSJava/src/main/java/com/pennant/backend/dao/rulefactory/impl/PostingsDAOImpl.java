@@ -447,6 +447,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 	public List<ReturnDataSet> getPostings(String postRef, String finEvent) {
 		StringBuilder sql = getSelectQuery();
 		sql.append(" Where Postref = ? AND FinEvent = ?");
+		sql.append(" order by LinkedTranId, TranOrderId ");
 
 		logger.debug(Literal.SQL + sql.toString());
 

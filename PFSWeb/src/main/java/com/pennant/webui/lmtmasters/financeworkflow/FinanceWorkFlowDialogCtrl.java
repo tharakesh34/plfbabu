@@ -257,10 +257,6 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 				this.finType.setValueColumn("PromotionCode");
 				this.finType.setDescColumn("PromotionDesc");
 				this.finType.setValidateColumns(new String[] { "PromotionCode" });
-
-				Filter[] filters = new Filter[1];
-				filters[0] = new Filter("ReferenceId", 0, Filter.OP_EQUAL);
-				this.finType.setFilters(filters);
 				this.row_finEvent.setVisible(true);
 			} else if (this.moduleName.getSelectedItem().getValue().toString()
 					.equals(PennantConstants.WORFLOW_MODULE_COLLATERAL)) {

@@ -224,7 +224,8 @@ public class LimitRebuildService implements LimitRebuild {
 
 			Map<String, BigDecimal> osPriBal = limitDetailDAO.getOsPriBal(custId);
 			for (FinanceMain fm : financeMains) {
-				fm.setOsPriBal(osPriBal.get(fm.getFinReference()));
+				BigDecimal osPriBalance = osPriBal.get(fm.getFinReference());
+				fm.setOsPriBal(osPriBalance == null ? BigDecimal.ZERO : osPriBalance);
 			}
 
 			LimitHeader limitHeaderByCustomerId = limitHeaderDAO.getLimitHeaderByCustomerId(custId, "");
@@ -671,7 +672,7 @@ public class LimitRebuildService implements LimitRebuild {
 		List<String> groupCodes = new ArrayList<>();
 		groupCodes.add(LimitConstants.LIMIT_ITEM_TOTAL);
 
-		if (!limitLine.equals(LimitConstants.LIMIT_ITEM_UNCLSFD)) {
+		if (!LimitConstants.LIMIT_ITEM_UNCLSFD.equals(limitLine)) {
 			String groupCode = limitGroupLinesDAO.getGroupByLineAndHeader(limitLine, headerId);
 			String parentGroup = groupCode;
 
