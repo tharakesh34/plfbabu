@@ -177,7 +177,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		String phase = SysParamUtil.getValueAsString(PennantConstants.APP_PHASE);
 
 		if (StringUtils.equals(phase, PennantConstants.APP_PHASE_EOD)) {
-			throw new AppException(Labels.getLabel("Amortization_EOD_Check"));
+			throw new AppException(Labels.getLabel("EOD_RUNNING"));
 		}
 
 		long presentmentId = ph.getId();
