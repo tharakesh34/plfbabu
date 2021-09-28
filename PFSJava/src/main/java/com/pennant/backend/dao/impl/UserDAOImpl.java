@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  UserDAOImpl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  10-08-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : UserDAOImpl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 10-08-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.impl;
@@ -64,6 +55,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -119,7 +111,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	}
 
 	public void updateInvalidTries(String userName) {
-		//If parameter value is 3, on 3rd invalid login details entered,  application will disable the user. 
+		// If parameter value is 3, on 3rd invalid login details entered, application will disable the user.
 		int invalidLogins = SysParamUtil.getValueAsInt("MAX_INVALIDLOGINS") - 1;
 
 		Timestamp loginTime = new Timestamp(System.currentTimeMillis());
@@ -179,8 +171,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	/**
 	 * This method fetches records from SecUsers table by UsrLogin
 	 * 
-	 * @param usrLogin
-	 *            (String)
+	 * @param usrLogin (String)
 	 * @return secUser (SecUser)
 	 */
 	@Override
@@ -204,8 +195,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	/**
 	 * This method fetches records from SecUsers table by UsrLogin
 	 * 
-	 * @param usrLogin
-	 *            (String)
+	 * @param usrLogin (String)
 	 * @return secUser (SecUser)
 	 */
 	@Override
@@ -292,8 +282,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 	/**
 	 * This method fetches records from UserOperationRoles_View by UsrID and AppCode
 	 * 
-	 * @param userID
-	 *            (long) {@link List} of {@link SecurityRole}
+	 * @param userID (long) {@link List} of {@link SecurityRole}
 	 * 
 	 */
 	@Override
@@ -306,20 +295,19 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.query(sql.toString(), new Object[] { userID }, (rs, rowNum) -> {
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			SecurityRole role = new SecurityRole();
 			role.setRoleCd(rs.getString("RoleCd"));
 			role.setRoleDesc(rs.getString("RoleDesc"));
 			role.setRoleCategory(rs.getString("RoleCategory"));
 			return role;
-		});
+		}, userID);
 	}
 
 	/**
 	 * This method updates the records in SecUsers table
 	 * 
-	 * @param secUser
-	 *            (SecUser)
+	 * @param secUser (SecUser)
 	 * @throws DataAccessException
 	 */
 	public void update(SecurityUser secUser) {
@@ -425,7 +413,7 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			securityUser.setLastLoginOn(rs.getTimestamp("LASTLOGINON"));
 			securityUser.setLastFailLoginOn(rs.getTimestamp("LASTFAILLOGINON"));
 			securityUser.setLovDescUsrBranchCodeName(rs.getString("LOVDESCUSRBRANCHCODENAME"));
-			securityUser.setBusinessVertical(rs.getLong("BUSINESSVERTICAL"));
+			securityUser.setBusinessVertical(JdbcUtil.getLong(rs.getObject("BUSINESSVERTICAL")));
 			securityUser.setBusinessVerticalCode(rs.getString("BUSINESSVERTICALCODE"));
 			securityUser.setBusinessVerticalDesc(rs.getString("BUSINESSVERTICALDESC"));
 			securityUser.setldapDomainName(rs.getString("LDAPDomainName"));

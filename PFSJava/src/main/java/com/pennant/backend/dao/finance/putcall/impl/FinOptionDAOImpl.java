@@ -59,8 +59,8 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 				ps.setDate(index++, JdbcUtil.getDate(fo.getNextOptionDate()));
 				ps.setString(index++, fo.getAlertType());
 				ps.setString(index++, fo.getAlertToRoles());
-				ps.setLong(index++, fo.getUserTemplate());
-				ps.setLong(index++, fo.getCustomerTemplate());
+				ps.setObject(index++, fo.getUserTemplate());
+				ps.setObject(index++, fo.getCustomerTemplate());
 				ps.setString(index++, fo.getRemarks());
 				ps.setInt(index++, fo.getVersion());
 				ps.setLong(index++, fo.getLastMntBy());
@@ -103,8 +103,8 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 			ps.setDate(index++, JdbcUtil.getDate(fo.getNextOptionDate()));
 			ps.setString(index++, fo.getAlertType());
 			ps.setString(index++, fo.getAlertToRoles());
-			ps.setLong(index++, fo.getUserTemplate());
-			ps.setLong(index++, fo.getCustomerTemplate());
+			ps.setObject(index++, fo.getUserTemplate());
+			ps.setObject(index++, fo.getCustomerTemplate());
 			ps.setString(index++, fo.getRemarks());
 			ps.setTimestamp(index++, fo.getLastMntOn());
 			ps.setString(index++, fo.getRecordStatus());
@@ -274,8 +274,8 @@ public class FinOptionDAOImpl extends SequenceDao<FinOption> implements FinOptio
 			fo.setNextOptionDate(rs.getDate("NextOptionDate"));
 			fo.setAlertType(rs.getString("AlertType"));
 			fo.setAlertToRoles(rs.getString("AlertToRoles"));
-			fo.setUserTemplate(rs.getLong("UserTemplate"));
-			fo.setCustomerTemplate(rs.getLong("CustomerTemplate"));
+			fo.setUserTemplate(JdbcUtil.getLong(rs.getObject("UserTemplate")));
+			fo.setCustomerTemplate(JdbcUtil.getLong(rs.getObject("CustomerTemplate")));
 			fo.setRemarks(rs.getString("Remarks"));
 
 			if (tableType.getSuffix().contains("View")) {

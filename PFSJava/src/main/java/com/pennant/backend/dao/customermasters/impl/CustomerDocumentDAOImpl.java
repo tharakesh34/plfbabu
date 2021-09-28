@@ -161,7 +161,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setBoolean(index++, cd.isCustDocIsAcrive());
 			ps.setString(index++, cd.getCustDocCategory());
 			ps.setString(index++, cd.getCustDocName());
-			ps.setLong(index++, JdbcUtil.setLong(cd.getDocRefId()));
+			ps.setObject(index++, cd.getDocRefId());
 			ps.setString(index++, cd.getDocPurpose());
 			ps.setString(index++, cd.getDocUri());
 			ps.setString(index++, cd.getPdfPassWord());
@@ -298,7 +298,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 				dd.setCategoryCode("CUSTOMER");
 				dd.setDoctype(rs.getString("CustDocType"));
 				dd.setDocName(rs.getString("CustDocName"));
-				dd.setDocRefId(rs.getLong("DocRefId"));
+				dd.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
 				dd.setDocPurpose(rs.getString("DocPurpose"));
 				dd.setDocUri(rs.getString("DocUri"));
 
@@ -316,7 +316,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 					dd.setCustDocIsAcrive(rs.getBoolean("CustDocIsAcrive"));
 					dd.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
 					dd.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
-					dd.setPdfMappingRef(rs.getLong("PdfMappingRef"));
+					dd.setPdfMappingRef(JdbcUtil.getLong(rs.getObject("PdfMappingRef")));
 					dd.setPdfPassWord(rs.getString("PdfPassWord"));
 
 					// dd.setDocExpDateIsMand(rs.getBoolean("DocExpDateIsMand"));
@@ -377,7 +377,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		}, (rs, rowNum) -> {
 			DocumentDetails dd = new DocumentDetails();
 
-			dd.setCustId(rs.getLong("CustID"));
+			dd.setCustId(JdbcUtil.getLong(rs.getObject("CustID")));
 			dd.setDocCategory(rs.getString("CustDocCategory"));
 			dd.setCategoryCode("CUSTOMER");
 			dd.setDoctype(rs.getString("CustDocType"));
@@ -420,12 +420,12 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		}, (rs, rowNum) -> {
 			DocumentDetails dd = new DocumentDetails();
 
-			dd.setCustId(rs.getLong("CustID"));
+			dd.setCustId(JdbcUtil.getLong(rs.getObject("CustID")));
 			dd.setDocCategory(rs.getString("CustDocCategory"));
 			dd.setCategoryCode("CUSTOMER");
 			dd.setDoctype(rs.getString("CustDocType"));
 			dd.setDocName(rs.getString("CustDocName"));
-			dd.setDocRefId(rs.getLong("DocRefId"));
+			dd.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
 			dd.setDocPurpose(rs.getString("DocPurpose"));
 			dd.setDocUri(rs.getString("DocUri"));
 			dd.setCustDocTitle(rs.getString("CustDocTitle"));
@@ -630,7 +630,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			cd.setCustDocRcvdOn(rs.getTimestamp("CustDocRcvdOn"));
 			cd.setCustDocCategory(rs.getString("CustDocCategory"));
 			cd.setCustDocName(rs.getString("CustDocName"));
-			cd.setDocRefId(rs.getLong("DocRefId"));
+			cd.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
 			cd.setCustDocExpDate(rs.getTimestamp("CustDocExpDate"));
 			cd.setCustDocIssuedOn(rs.getTimestamp("CustDocIssuedOn"));
 			cd.setCustDocIssuedCountry(rs.getString("CustDocIssuedCountry"));
@@ -650,7 +650,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 				cd.setDocIssuedAuthorityMand(rs.getBoolean("DocIssuedAuthorityMand"));
 				cd.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
 				cd.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
-				cd.setPdfMappingRef(rs.getLong("PdfMappingRef"));
+				cd.setPdfMappingRef(JdbcUtil.getLong(rs.getObject("PdfMappingRef")));
 				cd.setPdfPassWord(rs.getString("PdfPassWord"));
 			}
 

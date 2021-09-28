@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LegalDocumentDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-06-2018    														*
- *                                                                  						*
- * Modified Date    :  18-06-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LegalDocumentDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-06-2018 * * Modified
+ * Date : 18-06-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-06-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-06-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.legal.impl;
 
 import java.sql.PreparedStatement;
@@ -64,6 +46,7 @@ import com.pennant.backend.dao.legal.LegalDocumentDAO;
 import com.pennant.backend.model.legal.LegalDocument;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -157,7 +140,7 @@ public class LegalDocumentDAOImpl extends SequenceDao<LegalDocument> implements 
 					ld.setDocumentName(rs.getString("DocumentName"));
 					ld.setDocumentTypeVerify(rs.getString("DocumentTypeVerify"));
 					ld.setDocumentRemarks(rs.getString("DocumentRemarks"));
-					ld.setDocumentReference(rs.getLong("DocumentReference"));
+					ld.setDocumentReference(JdbcUtil.getLong(rs.getObject("DocumentReference")));
 					ld.setDocumentTypeApprove(rs.getString("DocumentTypeApprove"));
 					ld.setDocumentAccepted(rs.getString("DocumentAccepted"));
 					ld.setUploadDocumentType(rs.getString("UploadDocumentType"));

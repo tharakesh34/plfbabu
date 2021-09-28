@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VehicleDealerDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-09-2011    														*
- *                                                                  						*
- * Modified Date    :  29-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VehicleDealerDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-09-2011 * * Modified
+ * Date : 29-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.amtmasters.impl;
@@ -168,7 +150,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 					vd.setCalculationRule(rs.getString("CalculationRule"));
 					vd.setPaymentMode(rs.getString("PaymentMode"));
 					vd.setAccountNumber(rs.getString("AccountNumber"));
-					vd.setAccountingSetId(rs.getLong("AccountingSetId"));
+					vd.setAccountingSetId(JdbcUtil.getLong(rs.getObject("AccountingSetId")));
 					vd.setPanNumber(rs.getString("PanNumber"));
 					vd.setUidNumber(rs.getString("UidNumber"));
 					vd.setTaxNumber(rs.getString("TaxNumber"));
@@ -176,7 +158,7 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 					vd.setToprovince(rs.getString("Toprovince"));
 					vd.setAccountNo(rs.getString("AccountNo"));
 					vd.setAccountType(rs.getString("AccountType"));
-					vd.setBankBranchID(rs.getLong("BankBranchID"));
+					vd.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchID")));
 					vd.setVersion(rs.getInt("Version"));
 					vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 					vd.setLastMntBy(rs.getLong("LastMntBy"));
@@ -255,82 +237,79 @@ public class VehicleDealerDAOImpl extends SequenceDao<VehicleDealer> implements 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<VehicleDealer>() {
-						@Override
-						public VehicleDealer mapRow(ResultSet rs, int rowNum) throws SQLException {
-							VehicleDealer vd = new VehicleDealer();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				VehicleDealer vd = new VehicleDealer();
 
-							vd.setDealerId(rs.getLong("DealerId"));
-							vd.setDealerType(rs.getString("DealerType"));
-							vd.setDealerName(rs.getString("DealerName"));
-							vd.setDealerTelephone(rs.getString("DealerTelephone"));
-							vd.setDealerFax(rs.getString("DealerFax"));
-							vd.setDealerAddress1(rs.getString("DealerAddress1"));
-							vd.setDealerAddress2(rs.getString("DealerAddress2"));
-							vd.setDealerAddress3(rs.getString("DealerAddress3"));
-							vd.setDealerAddress4(rs.getString("DealerAddress4"));
-							vd.setDealerCountry(rs.getString("DealerCountry"));
-							vd.setDealerCity(rs.getString("DealerCity"));
-							vd.setDealerProvince(rs.getString("DealerProvince"));
-							vd.setEmail(rs.getString("Email"));
-							vd.setPOBox(rs.getString("POBox"));
-							vd.setZipCode(rs.getString("ZipCode"));
-							vd.setActive(rs.getBoolean("Active"));
-							vd.setEmirates(rs.getString("Emirates"));
-							vd.setCommisionPaidAt(rs.getString("CommisionPaidAt"));
-							vd.setCode(rs.getString("Code"));
-							vd.setProductCtg(rs.getString("ProductCtg"));
-							vd.setShortCode(rs.getString("ShortCode"));
-							vd.setCalculationRule(rs.getString("CalculationRule"));
-							vd.setPaymentMode(rs.getString("PaymentMode"));
-							vd.setAccountNumber(rs.getString("AccountNumber"));
-							vd.setAccountingSetId(rs.getLong("AccountingSetId"));
-							vd.setPanNumber(rs.getString("PanNumber"));
-							vd.setUidNumber(rs.getString("UidNumber"));
-							vd.setTaxNumber(rs.getString("TaxNumber"));
-							vd.setFromprovince(rs.getString("Fromprovince"));
-							vd.setToprovince(rs.getString("Toprovince"));
-							vd.setAccountNo(rs.getString("AccountNo"));
-							vd.setAccountType(rs.getString("AccountType"));
-							vd.setBankBranchID(rs.getLong("BankBranchID"));
-							vd.setVersion(rs.getInt("Version"));
-							vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							vd.setLastMntBy(rs.getLong("LastMntBy"));
-							vd.setRecordStatus(rs.getString("RecordStatus"));
-							vd.setRoleCode(rs.getString("RoleCode"));
-							vd.setNextRoleCode(rs.getString("NextRoleCode"));
-							vd.setTaskId(rs.getString("TaskId"));
-							vd.setNextTaskId(rs.getString("NextTaskId"));
-							vd.setRecordType(rs.getString("RecordType"));
-							vd.setWorkflowId(rs.getLong("WorkflowId"));
-							vd.setSellerType(rs.getString("SellerType"));
-							vd.setBranchCode(rs.getString("BranchCode"));
-							vd.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+				vd.setDealerId(rs.getLong("DealerId"));
+				vd.setDealerType(rs.getString("DealerType"));
+				vd.setDealerName(rs.getString("DealerName"));
+				vd.setDealerTelephone(rs.getString("DealerTelephone"));
+				vd.setDealerFax(rs.getString("DealerFax"));
+				vd.setDealerAddress1(rs.getString("DealerAddress1"));
+				vd.setDealerAddress2(rs.getString("DealerAddress2"));
+				vd.setDealerAddress3(rs.getString("DealerAddress3"));
+				vd.setDealerAddress4(rs.getString("DealerAddress4"));
+				vd.setDealerCountry(rs.getString("DealerCountry"));
+				vd.setDealerCity(rs.getString("DealerCity"));
+				vd.setDealerProvince(rs.getString("DealerProvince"));
+				vd.setEmail(rs.getString("Email"));
+				vd.setPOBox(rs.getString("POBox"));
+				vd.setZipCode(rs.getString("ZipCode"));
+				vd.setActive(rs.getBoolean("Active"));
+				vd.setEmirates(rs.getString("Emirates"));
+				vd.setCommisionPaidAt(rs.getString("CommisionPaidAt"));
+				vd.setCode(rs.getString("Code"));
+				vd.setProductCtg(rs.getString("ProductCtg"));
+				vd.setShortCode(rs.getString("ShortCode"));
+				vd.setCalculationRule(rs.getString("CalculationRule"));
+				vd.setPaymentMode(rs.getString("PaymentMode"));
+				vd.setAccountNumber(rs.getString("AccountNumber"));
+				vd.setAccountingSetId(JdbcUtil.getLong(rs.getObject("AccountingSetId")));
+				vd.setPanNumber(rs.getString("PanNumber"));
+				vd.setUidNumber(rs.getString("UidNumber"));
+				vd.setTaxNumber(rs.getString("TaxNumber"));
+				vd.setFromprovince(rs.getString("Fromprovince"));
+				vd.setToprovince(rs.getString("Toprovince"));
+				vd.setAccountNo(rs.getString("AccountNo"));
+				vd.setAccountType(rs.getString("AccountType"));
+				vd.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchID")));
+				vd.setVersion(rs.getInt("Version"));
+				vd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				vd.setLastMntBy(rs.getLong("LastMntBy"));
+				vd.setRecordStatus(rs.getString("RecordStatus"));
+				vd.setRoleCode(rs.getString("RoleCode"));
+				vd.setNextRoleCode(rs.getString("NextRoleCode"));
+				vd.setTaskId(rs.getString("TaskId"));
+				vd.setNextTaskId(rs.getString("NextTaskId"));
+				vd.setRecordType(rs.getString("RecordType"));
+				vd.setWorkflowId(rs.getLong("WorkflowId"));
+				vd.setSellerType(rs.getString("SellerType"));
+				vd.setBranchCode(rs.getString("BranchCode"));
+				vd.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								vd.setLovDescCountry(rs.getString("LovDescCountry"));
-								vd.setLovDescCity(rs.getString("LovDescCity"));
-								vd.setLovDescProvince(rs.getString("LovDescProvince"));
-								vd.setCalRuleDesc(rs.getString("CalRuleDesc"));
-								vd.setAccountingSetCode(rs.getString("AccountingSetCode"));
-								vd.setAccountingSetDesc(rs.getString("AccountingSetDesc"));
-								vd.setEmiratesDescription(rs.getString("EmiratesDescription"));
-								vd.setProductCtgDesc(rs.getString("ProductCtgDesc"));
-								vd.setFromprovinceName(rs.getString("FromprovinceName"));
-								vd.setToprovinceName(rs.getString("ToprovinceName"));
-								vd.setBankBranchCode(rs.getString("BankBranchCode"));
-								vd.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
-								vd.setBankName(rs.getString("BankName"));
-								vd.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
-								vd.setBranchMICRCode(rs.getString("BranchMICRCode"));
-								vd.setBranchCity(rs.getString("BranchCity"));
-								vd.setAreaName(rs.getString("AreaName"));
-							}
+				if (StringUtils.trimToEmpty(type).contains("View")) {
+					vd.setLovDescCountry(rs.getString("LovDescCountry"));
+					vd.setLovDescCity(rs.getString("LovDescCity"));
+					vd.setLovDescProvince(rs.getString("LovDescProvince"));
+					vd.setCalRuleDesc(rs.getString("CalRuleDesc"));
+					vd.setAccountingSetCode(rs.getString("AccountingSetCode"));
+					vd.setAccountingSetDesc(rs.getString("AccountingSetDesc"));
+					vd.setEmiratesDescription(rs.getString("EmiratesDescription"));
+					vd.setProductCtgDesc(rs.getString("ProductCtgDesc"));
+					vd.setFromprovinceName(rs.getString("FromprovinceName"));
+					vd.setToprovinceName(rs.getString("ToprovinceName"));
+					vd.setBankBranchCode(rs.getString("BankBranchCode"));
+					vd.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
+					vd.setBankName(rs.getString("BankName"));
+					vd.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
+					vd.setBranchMICRCode(rs.getString("BranchMICRCode"));
+					vd.setBranchCity(rs.getString("BranchCity"));
+					vd.setAreaName(rs.getString("AreaName"));
+				}
 
-							return vd;
-						}
-					});
+				return vd;
+
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}

@@ -89,7 +89,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 				ps.setInt(index++, header.getFailureRecords());
 				ps.setString(index++, header.getStatus());
 
-				ps.setLong(index++, header.getId());
+				ps.setObject(index++, header.getId());
 
 			});
 		} catch (Exception e) {
@@ -110,11 +110,11 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 		}, (rs, rowNum) -> {
 			PaymentMethodUpload pmu = new PaymentMethodUpload();
 
-			pmu.setId(rs.getLong("Id"));
-			pmu.setBatchId(rs.getLong("BatchId"));
-			pmu.setFinID(rs.getLong("FinID"));
+			pmu.setId(JdbcUtil.getLong(rs.getObject("Id")));
+			pmu.setBatchId(JdbcUtil.getLong(rs.getObject("BatchId")));
+			pmu.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 			pmu.setFinReference(rs.getString("FinReference"));
-			pmu.setMandateId(rs.getLong("MandateId"));
+			pmu.setMandateId(JdbcUtil.getLong(rs.getObject("MandateId")));
 			pmu.setFinRepayMethod(rs.getString("FinRepayMethod"));
 			pmu.setUploadStatusRemarks(rs.getString("UploadStatusRemarks"));
 
@@ -136,7 +136,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 				ErrorDetail err = errDetail.get(i);
 				int index = 1;
 
-				ps.setLong(index++, id);
+				ps.setObject(index++, id);
 				ps.setString(index++, err.getCode());
 				ps.setString(index++, err.getError());
 			}
@@ -214,7 +214,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 				ps.setString(index++, StringUtils.trimToEmpty(paymentUpload.getUploadStatusRemarks()));
 				ps.setString(index++, paymentUpload.getStatus());
-				ps.setLong(index++, paymentUpload.getId());
+				ps.setObject(index++, paymentUpload.getId());
 
 			});
 		} catch (Exception e) {
@@ -234,7 +234,7 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 
 				ps.setString(index++, changePayment.getFinRepayMethod());
 				ps.setObject(index++, changePayment.getMandateId());
-				ps.setLong(index++, changePayment.getFinID());
+				ps.setObject(index++, changePayment.getFinID());
 
 			});
 		} catch (Exception e) {

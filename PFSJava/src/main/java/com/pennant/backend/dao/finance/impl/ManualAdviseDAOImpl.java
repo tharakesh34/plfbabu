@@ -365,7 +365,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setLong(index++, JdbcUtil.setLong(mam.getReceiptID()));
 			ps.setLong(index++, JdbcUtil.setLong(mam.getReceiptSeqID()));
 			ps.setLong(index++, JdbcUtil.setLong(mam.getWaiverID()));
-			ps.setLong(index++, JdbcUtil.setLong(mam.getTaxHeaderId()));
+			ps.setObject(index++, mam.getTaxHeaderId());
 			ps.setBigDecimal(index++, mam.getTdsPaid());
 			ps.setBigDecimal(index++, mam.getPaidCGST());
 			ps.setBigDecimal(index++, mam.getPaidSGST());
@@ -404,7 +404,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setStatus(rs.getString("Status"));
 			ma.setReceiptID(rs.getLong("ReceiptID"));
 			ma.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-			ma.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+			ma.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 
 			return ma;
 		});
@@ -436,7 +436,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			mam.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
 			mam.setStatus(rs.getString("Status"));
 			mam.setReceiptMode(rs.getString("ReceiptMode"));
-			mam.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			mam.setPaidCGST(rs.getBigDecimal("PaidCGST"));
 			mam.setPaidSGST(rs.getBigDecimal("PaidSGST"));
 			mam.setPaidUGST(rs.getBigDecimal("PaidUGST"));
@@ -504,7 +504,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			mam.setStatus(rs.getString("Status"));
 			mam.setReceiptID(rs.getLong("ReceiptID"));
 			mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 
 			if (StringUtils.contains(type, "View")) {
 				mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -1337,7 +1337,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			mam.setStatus(rs.getString("Status"));
 			mam.setReceiptID(rs.getLong("ReceiptID"));
 			mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+			mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			mam.setTdsPaid(rs.getBigDecimal("TdsPaid"));
 
 			if (StringUtils.contains(type, "View")) {
@@ -1381,7 +1381,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				mam.setStatus(rs.getString("Status"));
 				mam.setReceiptID(rs.getLong("ReceiptID"));
 				mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 
 				if (StringUtils.contains(type, "View")) {
 					mam.setFeeTypeCode(rs.getString("FeeTypeCode"));
@@ -1540,7 +1540,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				mam.setStatus(rs.getString("Status"));
 				mam.setReceiptID(rs.getLong("ReceiptID"));
 				mam.setReceiptSeqID(rs.getLong("ReceiptSeqID"));
-				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getLong("TaxHeaderId")));
+				mam.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 
 				if (StringUtils.contains(type, "View")) {
 					mam.setFeeTypeCode(rs.getString("FeeTypeCode"));

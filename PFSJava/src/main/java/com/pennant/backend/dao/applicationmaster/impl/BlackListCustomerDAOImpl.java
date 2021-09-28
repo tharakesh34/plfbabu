@@ -109,7 +109,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				su.setCustPassportNo(rs.getString("CustPassportNo"));
 				su.setMobileNumber(rs.getString("MobileNumber"));
 				su.setCustNationality(rs.getString("CustNationality"));
-				su.setEmployer(rs.getLong("Employer"));
+				su.setEmployer(JdbcUtil.getLong(rs.getObject("Employer")));
 				su.setCustIsActive(rs.getBoolean("CustIsActive"));
 				su.setReasonCode(rs.getString("ReasonCode"));
 				su.setSource(rs.getString("Source"));
@@ -350,7 +350,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 			ps.setString(index++, blc.getCustNationality());
 			ps.setString(index++, blc.getReasonCode());
 			ps.setString(index++, blc.getSource());
-			ps.setLong(index++, blc.getEmployer());
+			ps.setObject(index++, blc.getEmployer());
 			ps.setBoolean(index++, blc.isCustIsActive());
 			ps.setInt(index++, blc.getVersion());
 			ps.setLong(index++, blc.getLastMntBy());
@@ -473,7 +473,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setString(index++, blc.getCustNationality());
 				ps.setString(index++, blc.getReasonCode());
 				ps.setString(index++, blc.getSource());
-				ps.setLong(index++, JdbcUtil.setLong(blc.getEmployer()));
+				ps.setObject(index++, blc.getEmployer());
 				ps.setBoolean(index++, blc.isCustIsActive());
 				ps.setInt(index++, blc.getVersion());
 				ps.setLong(index++, JdbcUtil.setLong(blc.getLastMntBy()));
@@ -633,7 +633,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 				ps.setLong(index++, JdbcUtil.setLong(nrc.getId()));
 				ps.setString(index++, nrc.getBlackListCIF());
-				ps.setLong(index++, JdbcUtil.setLong(nrc.getReasonId()));
+				ps.setObject(index++, nrc.getReasonId());
 				ps.setInt(index++, nrc.getVersion());
 				ps.setLong(index++, JdbcUtil.setLong(nrc.getLastMntBy()));
 				ps.setTimestamp(index++, nrc.getLastMntOn());
@@ -668,7 +668,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 
 			nrc.setId(rs.getLong("Id"));
 			nrc.setBlackListCIF(rs.getString("BlackListCIF"));
-			nrc.setReasonId(rs.getLong("ReasonId"));
+			nrc.setReasonId(JdbcUtil.getLong(rs.getObject("ReasonId")));
 			nrc.setVersion(rs.getInt("Version"));
 			nrc.setLastMntBy(rs.getLong("LastMntBy"));
 			nrc.setLastMntOn(rs.getTimestamp("LastMntOn"));

@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  NPAProvisionHeaderDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-05-2020    														*
- *                                                                  						*
- * Modified Date    :  04-05-2020    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : NPAProvisionHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-05-2020 * *
+ * Modified Date : 04-05-2020 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-05-2020       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-05-2020 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -63,6 +45,7 @@ import com.pennant.backend.model.applicationmaster.AssetClassificationHeader;
 import com.pennant.backend.model.applicationmaster.NPAProvisionHeader;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -256,7 +239,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		logger.trace(Literal.SQL + sql.toString());
 
 		AssetClassificationDetail assetClassificationDetail = new AssetClassificationDetail();
-		//assetClassificationDetail.setFinType(finType);
+		// assetClassificationDetail.setFinType(finType);
 
 		SqlParameterSource paramSource = new BeanPropertySqlParameterSource(assetClassificationDetail);
 		RowMapper<AssetClassificationDetail> rowMapper = BeanPropertyRowMapper
@@ -348,33 +331,32 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finType, npaTemplateId },
-					(rs, rowNum) -> {
-						NPAProvisionHeader pa = new NPAProvisionHeader();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				NPAProvisionHeader pa = new NPAProvisionHeader();
 
-						pa.setId(rs.getLong("Id"));
-						pa.setEntity(rs.getString("Entity"));
-						pa.setFinType(rs.getString("FinType"));
-						pa.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+				pa.setId(rs.getLong("Id"));
+				pa.setEntity(rs.getString("Entity"));
+				pa.setFinType(rs.getString("FinType"));
+				pa.setNpaTemplateId(JdbcUtil.getLong(rs.getObject("NpaTemplateId")));
 
-						if (tableType.getSuffix().contains("View")) {
-							pa.setEntityName(rs.getString("EntityName"));
-							pa.setFinTypeName(rs.getString("FinTypeName"));
-						}
+				if (tableType.getSuffix().contains("View")) {
+					pa.setEntityName(rs.getString("EntityName"));
+					pa.setFinTypeName(rs.getString("FinTypeName"));
+				}
 
-						pa.setVersion(rs.getInt("Version"));
-						pa.setLastMntOn(rs.getTimestamp("LastMntOn"));
-						pa.setLastMntBy(rs.getLong("LastMntBy"));
-						pa.setRecordStatus(rs.getString("RecordStatus"));
-						pa.setRoleCode(rs.getString("RoleCode"));
-						pa.setNextRoleCode(rs.getString("NextRoleCode"));
-						pa.setTaskId(rs.getString("TaskId"));
-						pa.setNextTaskId(rs.getString("NextTaskId"));
-						pa.setRecordType(rs.getString("RecordType"));
-						pa.setWorkflowId(rs.getLong("WorkflowId"));
+				pa.setVersion(rs.getInt("Version"));
+				pa.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				pa.setLastMntBy(rs.getLong("LastMntBy"));
+				pa.setRecordStatus(rs.getString("RecordStatus"));
+				pa.setRoleCode(rs.getString("RoleCode"));
+				pa.setNextRoleCode(rs.getString("NextRoleCode"));
+				pa.setTaskId(rs.getString("TaskId"));
+				pa.setNextTaskId(rs.getString("NextTaskId"));
+				pa.setRecordType(rs.getString("RecordType"));
+				pa.setWorkflowId(rs.getLong("WorkflowId"));
 
-						return pa;
-					});
+				return pa;
+			}, finType, npaTemplateId);
 		} catch (EmptyResultDataAccessException e) {
 			logger.info("Record not Found in NPA_PROVISION_HEADER{} for the FinType >>{}", tableType.getSuffix(),
 					finType);
@@ -406,7 +388,7 @@ public class NPAProvisionHeaderDAOImpl extends SequenceDao<NPAProvisionHeader> i
 			ah.setId(rs.getLong("Id"));
 			ah.setEntity(rs.getString("Entity"));
 			ah.setFinType(rs.getString("FinType"));
-			ah.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+			ah.setNpaTemplateId(JdbcUtil.getLong(rs.getObject("NpaTemplateId")));
 
 			if (StringUtils.containsIgnoreCase(tableType.getSuffix(), "view")) {
 				ah.setEntityName(rs.getString("EntityName"));

@@ -161,7 +161,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setBoolean(index++, rh.isActFinReceipt());
 			ps.setString(index++, rh.getFinDivision());
 			ps.setString(index++, rh.getPostBranch());
-			ps.setLong(index++, JdbcUtil.setLong(rh.getReasonCode()));
+			ps.setObject(index++, rh.getReasonCode());
 			ps.setString(index++, rh.getCancelRemarks());
 			ps.setString(index++, rh.getKnockOffType());
 			ps.setInt(index++, rh.getVersion());
@@ -179,7 +179,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setDate(index++, JdbcUtil.getDate(rh.getValueDate()));
 			ps.setString(index++, rh.getTransactionRef());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getDepositDate()));
-			ps.setLong(index++, JdbcUtil.setLong(rh.getPartnerBankId()));
+			ps.setObject(index++, rh.getPartnerBankId());
 			ps.setString(index++, rh.getPrvReceiptPurpose());
 			ps.setString(index++, rh.getReceiptSource());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getRecAppDate()));
@@ -1120,7 +1120,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 				frh.setCashierBranch(rs.getString("CashierBranch"));
 				frh.setInitiateDate(rs.getTimestamp("InitiateDate"));
 				frh.setReceiptSource(rs.getString("ReceiptSource"));
-				frh.setLinkedTranId(rs.getLong("LinkedTranId"));
+				frh.setLinkedTranId(JdbcUtil.getLong(rs.getObject("LinkedTranId")));
 				frh.setEntityCode(rs.getString("EntityCode"));
 				frh.setDepositProcess(rs.getBoolean("DepositProcess"));
 				frh.setDepositBranch(rs.getString("DepositBranch"));
@@ -1376,7 +1376,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setFinDivision(rs.getString("FinDivision"));
 			rh.setPostBranch(rs.getString("PostBranch"));
 			rh.setActFinReceipt(rs.getBoolean("ActFinReceipt"));
-			rh.setReasonCode(rs.getLong("ReasonCode"));
+			rh.setReasonCode(JdbcUtil.getLong(rs.getObject("ReasonCode")));
 			rh.setVersion(rs.getInt("Version"));
 			rh.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			rh.setLastMntBy(rs.getLong("LastMntBy"));

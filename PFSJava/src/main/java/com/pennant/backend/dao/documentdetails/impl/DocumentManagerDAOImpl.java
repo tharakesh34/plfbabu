@@ -11,7 +11,6 @@ import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import com.pennant.backend.dao.documentdetails.DocumentManagerDAO;
 import com.pennant.backend.model.documentdetails.DocumentManager;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -39,7 +38,7 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 				public void setValues(PreparedStatement ps) throws SQLException {
 					ps.setLong(1, docManager.getId());
 					ps.setBytes(2, docManager.getDocImage());
-					ps.setLong(3, JdbcUtil.setLong(docManager.getCustId()));
+					ps.setObject(3, docManager.getCustId());
 					ps.setString(4, docManager.getDocURI());
 
 				}
@@ -54,13 +53,13 @@ public class DocumentManagerDAOImpl extends SequenceDao<DocumentManager> impleme
 		StringBuilder sql = new StringBuilder("Select Id, DocImage, DocURI From DocumentManager Where Id = ?");
 		logger.trace(Literal.SQL + sql.toString());
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (ResultSet rs, int rowNum) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (ResultSet rs, int rowNum) -> {
 				DocumentManager documentManager = new DocumentManager();
 				documentManager.setId(id);
 				documentManager.setDocImage(rs.getBytes(2));
 				documentManager.setDocURI(rs.getString(3));
 				return documentManager;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Document details not found in DocumentManager for the specified id >> {}", id);
 		}

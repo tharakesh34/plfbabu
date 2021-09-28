@@ -42,8 +42,8 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		List<RateChangeUpload> list = this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			RateChangeUpload rc = new RateChangeUpload();
 
-			rc.setId(rs.getLong("Id"));
-			rc.setBatchId(rs.getLong("BatchId"));
+			rc.setId(JdbcUtil.getLong(rs.getObject("Id")));
+			rc.setBatchId(JdbcUtil.getLong(rs.getObject("BatchId")));
 			rc.setFinID(rs.getLong("FinID"));
 			rc.setFinReference(rs.getString("FinReference"));
 			rc.setBaseRateCode(rs.getString("BaseRateCode"));
@@ -123,7 +123,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 				ErrorDetail err = errDetail.get(i);
 
-				ps.setLong(index++, id);
+				ps.setObject(index++, id);
 				ps.setString(index++, err.getCode());
 				ps.setString(index++, err.getError());
 			}
@@ -149,7 +149,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 				ps.setInt(index++, rcuh.getFailureRecords());
 				ps.setString(index++, rcuh.getStatus());
 
-				ps.setLong(index++, rcuh.getId());
+				ps.setObject(index++, rcuh.getId());
 
 			});
 		} catch (Exception e) {
@@ -233,7 +233,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 				ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
 				ps.setString(index++, rcUpload.getStatus());
-				ps.setLong(index++, rcUpload.getId());
+				ps.setObject(index++, rcUpload.getId());
 
 			});
 		} catch (Exception e) {

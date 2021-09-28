@@ -41,6 +41,7 @@ import com.pennant.backend.dao.customermasters.CustomerEmploymentDetailDAO;
 import com.pennant.backend.model.customermasters.CustomerEmploymentDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -59,10 +60,8 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 	/**
 	 * Fetch the Record Customer Employment Details details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerEmploymentDetail
 	 */
 	@Override
@@ -159,10 +158,8 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 	 * This method Deletes the Record from the CustomerEmpDetails or CustomerEmpDetails_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Employment Details by key CustID
 	 * 
-	 * @param Customer
-	 *            Employment Details (customerEmploymentDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Employment Details (customerEmploymentDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -196,10 +193,8 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 	 * 
 	 * save Customer Employment Details
 	 * 
-	 * @param Customer
-	 *            Employment Details (customerEmploymentDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Employment Details (customerEmploymentDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -236,10 +231,8 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 	 * This method updates the Record CustomerEmpDetails or CustomerEmpDetails_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Employment Details by key CustID and Version
 	 * 
-	 * @param Customer
-	 *            Employment Details (customerEmploymentDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Employment Details (customerEmploymentDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -302,7 +295,7 @@ public class CustomerEmploymentDetailDAOImpl extends SequenceDao<CustomerEmploym
 
 			emp.setCustEmpId(rs.getLong("CustEmpId"));
 			emp.setCustID(rs.getLong("CustID"));
-			emp.setCustEmpName(rs.getLong("CustEmpName"));
+			emp.setCustEmpName(JdbcUtil.getLong(rs.getObject("CustEmpName")));
 			emp.setCustEmpDept(rs.getString("CustEmpDept"));
 			emp.setCustEmpDesg(rs.getString("CustEmpDesg"));
 			emp.setCustEmpType(rs.getString("CustEmpType"));

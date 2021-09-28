@@ -41,7 +41,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
 					ps.setLong(1, JdbcUtil.setLong(dMSQueue.getDocManagerID()));
-					ps.setLong(2, JdbcUtil.setLong(dMSQueue.getCustId()));
+					ps.setObject(2, dMSQueue.getCustId());
 					ps.setString(3, dMSQueue.getCustCif());
 					ps.setString(4, dMSQueue.getFinReference());
 					ps.setString(5, dMSQueue.getModule().name());
@@ -86,7 +86,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 				public void setValues(PreparedStatement ps) throws SQLException {
 					ps.setLong(1, JdbcUtil.setLong(dMSQueue.getId()));
 					ps.setLong(2, JdbcUtil.setLong(dMSQueue.getDocManagerID()));
-					ps.setLong(3, JdbcUtil.setLong(dMSQueue.getCustId()));
+					ps.setObject(3, dMSQueue.getCustId());
 					ps.setString(4, dMSQueue.getCustCif());
 					ps.setString(5, dMSQueue.getFinReference());
 					ps.setString(6, dMSQueue.getModule().name());
@@ -141,14 +141,14 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 		sql.append(" where dq.ID = ?");
 		logger.trace(Literal.SQL + sql.toString());
 
-		return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { queueID }, new RowMapper<DMSQueue>() {
+		return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<DMSQueue>() {
 
 			@Override
 			public DMSQueue mapRow(ResultSet rs, int rowNum) throws SQLException {
 				DMSQueue dmsQueue = new DMSQueue();
 				dmsQueue.setId(rs.getLong(1));
 				dmsQueue.setDocManagerID(rs.getLong(2));
-				dmsQueue.setCustId(rs.getLong(3));
+				dmsQueue.setCustId(JdbcUtil.getLong(rs.getObject(3)));
 				dmsQueue.setCustCif(rs.getString(4));
 				dmsQueue.setFinReference(rs.getString(5));
 				dmsQueue.setModule(DMSModule.getModule(rs.getString(6)));
@@ -169,7 +169,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 				return dmsQueue;
 			}
 
-		});
+		}, queueID);
 
 	}
 
@@ -189,7 +189,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, JdbcUtil.setLong(dMSQueue.getCustId()));
+					ps.setObject(1, dMSQueue.getCustId());
 					ps.setString(2, dMSQueue.getCustCif());
 					ps.setString(3, dMSQueue.getFinReference());
 					ps.setString(4, dMSQueue.getDocUri());

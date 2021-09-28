@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  TaxDetailDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-06-2017    														*
- *                                                                  						*
- * Modified Date    :  14-06-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : TaxDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-06-2017 * * Modified
+ * Date : 14-06-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 14-06-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-06-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.sql.PreparedStatement;
@@ -64,6 +46,7 @@ import com.pennant.backend.dao.applicationmaster.TaxDetailDAO;
 import com.pennant.backend.model.applicationmaster.TaxDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -101,7 +84,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, new RowMapper<TaxDetail>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<TaxDetail>() {
 				@Override
 				public TaxDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 					TaxDetail td = new TaxDetail();
@@ -119,7 +102,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 					td.setCityCode(rs.getString("CityCode"));
 					td.setHsnNumber(rs.getString("HsnNumber"));
 					td.setNatureService(rs.getString("NatureService"));
-					td.setPinCodeId(rs.getLong("PinCodeId"));
+					td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 					if (type.contains("View")) {
 						td.setCityName(rs.getString("CityName"));
@@ -143,7 +126,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 
 					return td;
 				}
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -326,7 +309,7 @@ public class TaxDetailDAOImpl extends SequenceDao<TaxDetail> implements TaxDetai
 					td.setCityCode(rs.getString("CityCode"));
 					td.setHsnNumber(rs.getString("HsnNumber"));
 					td.setNatureService(rs.getString("NatureService"));
-					td.setPinCodeId(rs.getLong("PinCodeId"));
+					td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 					td.setVersion(rs.getInt("Version"));
 					td.setLastMntOn(rs.getTimestamp("LastMntOn"));
 					td.setLastMntBy(rs.getLong("LastMntBy"));

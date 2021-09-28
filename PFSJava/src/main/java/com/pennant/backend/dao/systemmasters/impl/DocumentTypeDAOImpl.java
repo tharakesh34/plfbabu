@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DocumentTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DocumentTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.systemmasters.impl;
@@ -65,6 +47,7 @@ import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -293,7 +276,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 				dt.setDocTypeDesc(rs.getString("DocTypeDesc"));
 				dt.setDocIsMandatory(rs.getBoolean("DocIsMandatory"));
 				dt.setDocTypeIsActive(rs.getBoolean("DocTypeIsActive"));
-				dt.setCategoryId(rs.getLong("CategoryId"));
+				dt.setCategoryId(JdbcUtil.getLong(rs.getObject("CategoryId")));
 				dt.setPdd(rs.getBoolean("Pdd"));
 				dt.setOtc(rs.getBoolean("Otc"));
 				dt.setLvReq(rs.getBoolean("LvReq"));
@@ -318,7 +301,7 @@ public class DocumentTypeDAOImpl extends BasicDao<DocumentType> implements Docum
 				dt.setDocIssuedAuthorityMand(rs.getBoolean("DocIssuedAuthorityMand"));
 				dt.setDocIsPdfExtRequired(rs.getBoolean("DocIsPdfExtRequired"));
 				dt.setDocIsPasswordProtected(rs.getBoolean("DocIsPasswordProtected"));
-				dt.setPdfMappingRef(rs.getLong("PdfMappingRef"));
+				dt.setPdfMappingRef(JdbcUtil.getLong(rs.getObject("PdfMappingRef")));
 				dt.setDocExternalRef(rs.getString("docExternalRef"));
 
 				return dt;

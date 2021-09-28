@@ -53,7 +53,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 			uma.setStatus(rs.getString("Status"));
 			uma.setReason(rs.getString("Reason"));
 			uma.setRejectStage(rs.getString("RejectStage"));
-			uma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			uma.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
 			uma.setVersion(rs.getInt("Version"));
 			uma.setLastMntBy(rs.getLong("LastMntBy"));
 			uma.setLastMntOn(rs.getTimestamp("LastMntOn"));

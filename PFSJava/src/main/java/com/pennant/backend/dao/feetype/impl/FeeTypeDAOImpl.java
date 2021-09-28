@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FeeTypeDAOImpl.java                                                  * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-01-2017    														*
- *                                                                  						*
- * Modified Date    :  03-01-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FeeTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-01-2017 * * Modified Date
+ * : 03-01-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-01-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-01-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -66,6 +48,7 @@ import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -275,7 +258,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCd }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FeeType fee = new FeeType();
 
 				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
@@ -284,18 +267,18 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				fee.setActive(rs.getBoolean("Active"));
 				fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
 				fee.setAdviseType(rs.getInt("AdviseType"));
-				fee.setAccountSetId(rs.getLong("AccountSetId"));
+				fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
 				fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
 				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
 				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 				fee.setTaxComponent(rs.getString("TaxComponent"));
 				fee.setrefundable(rs.getBoolean("Refundable"));
 				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
-				fee.setDueAccSet(rs.getLong("DueAccSet"));
+				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 				fee.setTdsReq(rs.getBoolean("TdsReq"));
 
 				return fee;
-			});
+			}, feeTypeCd);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record not found in FeeTypes table with feeTypeCode>>{}", feeTypeCd);
 		}
@@ -361,7 +344,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, (rs, rowNum) -> {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				FeeType f = new FeeType();
 
 				f.setFeeTypeID(rs.getLong("FeeTypeID"));
@@ -370,18 +353,18 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				f.setAdviseType(rs.getInt("AdviseType"));
 				f.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
 				f.setDueAccReq(rs.getBoolean("DueAccReq"));
-				f.setDueAccSet(rs.getLong("DueAccSet"));
+				f.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 				f.setTaxComponent(rs.getString("TaxComponent"));
 				f.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 				f.setAmortzReq(rs.getBoolean("AmortzReq"));
-				f.setAccountSetId(rs.getLong("AccountSetId"));
+				f.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
 				f.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				f.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
 				f.setrefundable(rs.getBoolean("Refundable"));
 				f.setTdsReq(rs.getBoolean("TdsReq"));
 
 				return f;
-			});
+			}, feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record not found in FeeTypes table for the specified FeeTypeCode >> {}", feeTypeCode);
 		}
@@ -514,14 +497,14 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 					fee.setActive(rs.getBoolean("Active"));
 					fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
 					fee.setAdviseType(rs.getInt("AdviseType"));
-					fee.setAccountSetId(rs.getLong("AccountSetId"));
+					fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
 					fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
 					fee.setAmortzReq(rs.getBoolean("AmortzReq"));
 					fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 					fee.setTaxComponent(rs.getString("TaxComponent"));
 					fee.setrefundable(rs.getBoolean("Refundable"));
 					fee.setDueAccReq(rs.getBoolean("DueAccReq"));
-					fee.setDueAccSet(rs.getLong("DueAccSet"));
+					fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 					fee.setTdsReq(rs.getBoolean("TdsReq"));
 
 					return fee;

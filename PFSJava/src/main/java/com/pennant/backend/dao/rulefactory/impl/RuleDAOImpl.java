@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  RuleDAOImpl.java                           							*
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-06-2011    														*
- *                                                                  						*
- * Modified Date    :  03-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : RuleDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-06-2011 * * Modified Date :
+ * 03-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              *  
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-06-2011 Pennant 0.1 * * * * 08-05-2019 Srinivasa Varma 0.2 Development Iteam 81 * * * * *
  ********************************************************************************************
  */
 
@@ -70,6 +52,7 @@ import com.pennant.backend.model.rulefactory.RuleModule;
 import com.pennant.backend.util.RuleConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -86,10 +69,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	/**
 	 * Get Rule by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
@@ -160,7 +141,7 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 			fea.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
 			fea.setActive(rs.getBoolean("Active"));
 			fea.setFields(rs.getString("Fields"));
-			fea.setFeeTypeID(rs.getLong("FeeTypeID"));
+			fea.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
 
 			if (type.contains("View")) {
 				fea.setLovDescGroupName(rs.getString("LovDescGroupName"));
@@ -206,56 +187,55 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 		sql.append(" Order BY SeqOrder");
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { id, module, event, active },
-					new RowMapper<Rule>() {
+			return jdbcOperations.queryForObject(sql.toString(), new RowMapper<Rule>() {
 
-						@Override
-						public Rule mapRow(ResultSet rs, int i) throws SQLException {
-							Rule rule = new Rule();
+				@Override
+				public Rule mapRow(ResultSet rs, int i) throws SQLException {
+					Rule rule = new Rule();
 
-							rule.setRuleId(rs.getLong("RuleId"));
-							rule.setRuleCode(rs.getString("RuleCode"));
-							rule.setRuleModule(rs.getString("RuleModule"));
-							rule.setRuleEvent(rs.getString("RuleEvent"));
-							rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
-							rule.setAllowDeviation(rs.getBoolean("AllowDeviation"));
-							rule.setCalFeeModify(rs.getBoolean("CalFeeModify"));
-							rule.setFeeToFinance(rs.getString("FeeToFinance"));
-							rule.setWaiverDecider(rs.getString("WaiverDecider"));
-							rule.setWaiver(rs.getBoolean("Waiver"));
-							rule.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
-							rule.setSQLRule(rs.getString("SQLRule"));
-							rule.setActualBlock(rs.getString("ActualBlock"));
-							rule.setSeqOrder(rs.getInt("SeqOrder"));
-							rule.setReturnType(rs.getString("ReturnType"));
-							rule.setDeviationType(rs.getString("DeviationType"));
-							rule.setGroupId(rs.getLong("GroupId"));
-							rule.setRevolving(rs.getBoolean("Revolving"));
-							rule.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
-							rule.setActive(rs.getBoolean("Active"));
-							rule.setFields(rs.getString("Fields"));
-							rule.setFeeTypeID(rs.getLong("FeeTypeID"));
+					rule.setRuleId(rs.getLong("RuleId"));
+					rule.setRuleCode(rs.getString("RuleCode"));
+					rule.setRuleModule(rs.getString("RuleModule"));
+					rule.setRuleEvent(rs.getString("RuleEvent"));
+					rule.setRuleCodeDesc(rs.getString("RuleCodeDesc"));
+					rule.setAllowDeviation(rs.getBoolean("AllowDeviation"));
+					rule.setCalFeeModify(rs.getBoolean("CalFeeModify"));
+					rule.setFeeToFinance(rs.getString("FeeToFinance"));
+					rule.setWaiverDecider(rs.getString("WaiverDecider"));
+					rule.setWaiver(rs.getBoolean("Waiver"));
+					rule.setWaiverPerc(rs.getBigDecimal("WaiverPerc"));
+					rule.setSQLRule(rs.getString("SQLRule"));
+					rule.setActualBlock(rs.getString("ActualBlock"));
+					rule.setSeqOrder(rs.getInt("SeqOrder"));
+					rule.setReturnType(rs.getString("ReturnType"));
+					rule.setDeviationType(rs.getString("DeviationType"));
+					rule.setGroupId(rs.getLong("GroupId"));
+					rule.setRevolving(rs.getBoolean("Revolving"));
+					rule.setFixedOrVariableLimit(rs.getString("FixedOrVariableLimit"));
+					rule.setActive(rs.getBoolean("Active"));
+					rule.setFields(rs.getString("Fields"));
+					rule.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								rule.setLovDescGroupName(rs.getString("LovDescGroupName"));
-								rule.setFeeTypeCode(rs.getString("FeeTypeCode"));
-								rule.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-							}
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						rule.setLovDescGroupName(rs.getString("LovDescGroupName"));
+						rule.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						rule.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+					}
 
-							rule.setVersion(rs.getInt("Version"));
-							rule.setLastMntBy(rs.getLong("LastMntBy"));
-							rule.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							rule.setRecordStatus(rs.getString("RecordStatus"));
-							rule.setRoleCode(rs.getString("RoleCode"));
-							rule.setNextRoleCode(rs.getString("NextRoleCode"));
-							rule.setTaskId(rs.getString("TaskId"));
-							rule.setNextTaskId(rs.getString("NextTaskId"));
-							rule.setRecordType(rs.getString("RecordType"));
-							rule.setWorkflowId(rs.getLong("WorkflowId"));
+					rule.setVersion(rs.getInt("Version"));
+					rule.setLastMntBy(rs.getLong("LastMntBy"));
+					rule.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					rule.setRecordStatus(rs.getString("RecordStatus"));
+					rule.setRoleCode(rs.getString("RoleCode"));
+					rule.setNextRoleCode(rs.getString("NextRoleCode"));
+					rule.setTaskId(rs.getString("TaskId"));
+					rule.setNextTaskId(rs.getString("NextTaskId"));
+					rule.setRecordType(rs.getString("RecordType"));
+					rule.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return rule;
-						}
-					});
+					return rule;
+				}
+			}, id, module, event, active);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -284,10 +264,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	/**
 	 * Get Rule by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
@@ -312,10 +290,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	/**
 	 * Get Rule by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
@@ -350,10 +326,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	/**
 	 * Get Rule by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override
@@ -373,11 +347,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 * This method Deletes the Record from the Rules or Rules_Temp. if Record not deleted then throws
 	 * DataAccessException with error code 41004. delete Rules by key RuleCode
 	 * 
-	 * @param Rule
-	 *            (rule)
+	 * @param Rule (rule)
 	 * 
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type (String) ""/_Temp/_View
 	 * 
 	 * @return void
 	 * 
@@ -414,11 +386,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 * 
 	 * save Rules
 	 * 
-	 * @param Rules
-	 *            (rule)
+	 * @param Rules (rule)
 	 * 
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type  (String) ""/_Temp/_View
 	 * 
 	 * @return void
 	 * 
@@ -461,11 +431,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	 * This method updates the Record Rules or Rules_Temp. if Record not updated then throws DataAccessException with
 	 * error 41003. update Rules by key RuleCode and Version
 	 * 
-	 * @param Rules
-	 *            (rule)
+	 * @param Rules (rule)
 	 * 
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param type  (String) ""/_Temp/_View
 	 * 
 	 * @return void
 	 * 
@@ -528,11 +496,9 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	/**
 	 * This method return the columns list of the tables sent as parameters
 	 * 
-	 * @param module
-	 *            (String)
+	 * @param module (String)
 	 * 
-	 * @param event
-	 *            (String)
+	 * @param event  (String)
 	 * 
 	 * @return List
 	 * 
@@ -954,10 +920,8 @@ public class RuleDAOImpl extends SequenceDao<Rule> implements RuleDAO {
 	/**
 	 * Get Rule by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Rule
 	 */
 	@Override

@@ -669,7 +669,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setCustID(rs.getLong("CustID"));
 			mndts.setMandateRef(rs.getString("MandateRef"));
 			mndts.setMandateType(rs.getString("MandateType"));
-			mndts.setBankBranchID(rs.getLong("BankBranchID"));
+			mndts.setBankBranchID(JdbcUtil.getLong(rs.getObject("BankBranchID")));
 			mndts.setAccNumber(rs.getString("AccNumber"));
 			mndts.setAccHolderName(rs.getString("AccHolderName"));
 			mndts.setJointAccHolderName(rs.getString("JointAccHolderName"));
@@ -690,7 +690,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			mndts.setMandateCcy(rs.getString("MandateCcy"));
 			mndts.setOrgReference(rs.getString("OrgReference"));
 			mndts.setDocumentName(rs.getString("DocumentName"));
-			mndts.setDocumentRef(rs.getLong("DocumentRef"));
+			mndts.setDocumentRef(JdbcUtil.getLong(rs.getObject("DocumentRef")));
 			mndts.setExternalRef(rs.getString("ExternalRef"));
 			mndts.setVersion(rs.getInt("Version"));
 			mndts.setLastMntBy(rs.getLong("LastMntBy"));

@@ -47,6 +47,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -503,7 +504,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 					ftf.setFinType(rs.getString("FinType"));
 					ftf.setOriginationFee(rs.getBoolean("OriginationFee"));
 					ftf.setFinEvent(rs.getString("FinEvent"));
-					ftf.setFeeTypeID(rs.getLong("FeeTypeID"));
+					ftf.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
 					ftf.setActive(rs.getBoolean("Active"));
 					ftf.setFeeTypeCode(rs.getString("FeeTypeCode"));
 					ftf.setTaxApplicable(rs.getBoolean("TaxApplicable"));
@@ -618,7 +619,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 			fsd.setFinType(rs.getString("FinType"));
 			fsd.setOriginationFee(rs.getBoolean("OriginationFee"));
 			fsd.setFinEvent(rs.getString("FinEvent"));
-			fsd.setFeeTypeID(rs.getLong("FeeTypeID"));
+			fsd.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
 			fsd.setFeeOrder(rs.getInt("FeeOrder"));
 			fsd.setReferenceId(rs.getLong("ReferenceId"));
 			fsd.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));

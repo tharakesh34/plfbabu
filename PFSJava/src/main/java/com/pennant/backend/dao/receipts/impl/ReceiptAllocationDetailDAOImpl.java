@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceRepaymentsDAOImpl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceRepaymentsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * *
+ * Modified Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.receipts.impl;
@@ -120,7 +102,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 					rad.setPaidGST(rs.getBigDecimal("PaidGST"));
 					rad.setTotalDue(rs.getBigDecimal("TotalDue"));
 					rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-					rad.setTaxHeaderId(rs.getLong("TaxHeaderId"));//TdsDue,TdsPaid,TdsWaived
+					rad.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));// TdsDue,TdsPaid,TdsWaived
 					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
 					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
 					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
@@ -198,7 +180,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 				ps.setBigDecimal(index++, rAD.getPaidGST());
 				ps.setBigDecimal(index++, rAD.getTotalDue());
 				ps.setBigDecimal(index++, rAD.getWaivedGST());
-				ps.setLong(index++, JdbcUtil.setLong(rAD.getTaxHeaderId()));
+				ps.setObject(index++, rAD.getTaxHeaderId());
 				ps.setBigDecimal(index++, rAD.getTdsDue());
 				ps.setBigDecimal(index++, rAD.getTdsPaid());
 				ps.setBigDecimal(index++, rAD.getTdsWaived());
@@ -213,11 +195,11 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 	}
 
-	//MIGRATION PURPOSE
+	// MIGRATION PURPOSE
 	@Override
 	public List<ReceiptAllocationDetail> getDMAllocationsByReference(String reference, String type) {
 
-		//Copied from getAllocationsByReference and added inner join instead of sub query
+		// Copied from getAllocationsByReference and added inner join instead of sub query
 		logger.debug("Entering");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -233,7 +215,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		selectSql.append(StringUtils.trim(type));
 		selectSql.append(" T2 on T1.ReceiptID = T2.ReceiptID");
 
-		//If required ignore cancelled receipts
+		// If required ignore cancelled receipts
 		selectSql.append(" where T1.Reference = :Reference");
 		selectSql.append(" Order by T2.ReceiptID ");
 

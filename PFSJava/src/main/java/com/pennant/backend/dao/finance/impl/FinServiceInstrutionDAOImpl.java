@@ -365,7 +365,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		ps.setBigDecimal(index++, fsd.getPftChg());
 		ps.setLong(index++, JdbcUtil.setLong(fsd.getInstructionUID()));
 		ps.setLong(index++, JdbcUtil.setLong(fsd.getLinkedTranID()));
-		ps.setObject(index++, JdbcUtil.getLong(fsd.getLogKey()));
+		ps.setObject(index++, fsd.getLogKey());
 	}
 
 	private StringBuilder sqlSelectQuery() {

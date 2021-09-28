@@ -67,7 +67,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				ps.setDate(index++, JdbcUtil.getDate(DateUtil.getSysDate()));
 
 				for (Long paymentID : paymentIdList) {
-					ps.setLong(index++, paymentID);
+					ps.setObject(index++, paymentID);
 				}
 
 				ps.setString(index++, "APPROVED");
@@ -198,7 +198,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	}
 
 	private long getValueAsLong(ResultSet rs, String field) throws SQLException {
-		return rs.getLong(field);
+		return JdbcUtil.getLong(rs.getObject(field));
 	}
 
 	private String getValueAsString(ResultSet rs, String field) throws SQLException {
@@ -276,7 +276,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				PreparedStatement ps = con.prepareStatement(sql.toString(), new String[] { "id" });
 				int index = 1;
 
-				ps.setLong(index++, req.getDisbursementId());
+				ps.setObject(index++, req.getDisbursementId());
 				ps.setString(index++, req.getCustCIF());
 				ps.setLong(index++, req.getFinID());
 				ps.setString(index++, req.getFinReference());
@@ -369,7 +369,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		logger.debug(Literal.SQL + sql);
 
 		int batchCount = jdbcOperations.update(sql, ps -> {
-			ps.setLong(1, req.getBatchId());
+			ps.setObject(1, req.getBatchId());
 			ps.setString(2, req.getStatus());
 			ps.setLong(3, req.getHeaderId());
 			ps.setString(4, req.getDisbursementType());
@@ -410,7 +410,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		return jdbcOperations.update(sql.toString(), ps -> {
 			ps.setString(1, req.getStatus());
 			ps.setLong(2, req.getHeaderId());
-			ps.setLong(3, req.getBatchId());
+			ps.setObject(3, req.getBatchId());
 		});
 	}
 
@@ -429,7 +429,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			int index = 1;
 
 			ps.setLong(index++, request.getHeaderId());
-			ps.setLong(index++, request.getBatchId());
+			ps.setObject(index++, request.getBatchId());
 			ps.setString(index++, request.getTargetType());
 			ps.setString(index++, request.getFileName());
 			ps.setString(index++, request.getFileLocation());
@@ -509,7 +509,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 
 			request.setId(rs.getLong(1));
 			request.setHeaderId(rs.getLong(2));
-			request.setBatchId(rs.getLong(3));
+			request.setBatchId(JdbcUtil.getLong(rs.getObject(3)));
 			request.setTargetType(rs.getString(4));
 			request.setFileName(rs.getString(5));
 			request.setFileLocation(rs.getString(6));
@@ -938,7 +938,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				ipi.setPaymentType(rs.getString("PAYMENTTYPE"));
 				ipi.setStatus(rs.getString("STATUS"));
 				ipi.setProviderId(rs.getLong("PROVIDERID"));
-				ipi.setFinID(rs.getLong("FINID"));
+				ipi.setFinID(JdbcUtil.getLong(rs.getObject("FINID")));
 				ipi.setFinReference(rs.getString("FINREFERENCE"));
 				ipi.setPaymentType(rs.getString("DISBURSEMENT_TYPE"));
 
@@ -965,7 +965,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				dr.setId(rs.getLong("ID"));
 				dr.setFinID(rs.getLong("FINID"));
 				dr.setFinReference(rs.getString("FINREFERENCE"));
-				dr.setPaymentId(rs.getLong("DISBURSEMENT_ID"));
+				dr.setPaymentId(JdbcUtil.getLong(rs.getObject("DISBURSEMENT_ID")));
 				dr.setChannel(rs.getString("CHANNEL"));
 				dr.setStatus(rs.getString("STATUS"));
 				dr.setDisbType(rs.getString("DISBURSEMENT_TYPE"));

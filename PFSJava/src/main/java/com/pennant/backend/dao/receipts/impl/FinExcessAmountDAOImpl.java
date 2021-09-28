@@ -272,7 +272,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				FinExcessMovement fe = excessMovement.get(index);
 
 				ps.setLong(i++, JdbcUtil.setLong(fe.getExcessID()));
-				ps.setLong(i++, JdbcUtil.setLong(fe.getReceiptID()));
+				ps.setObject(i++, fe.getReceiptID());
 				ps.setString(i++, fe.getMovementType());
 				ps.setString(i++, fe.getTranType());
 				ps.setBigDecimal(i++, fe.getAmount());
@@ -304,7 +304,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 			int index = 1;
 
 			ps.setLong(index++, JdbcUtil.setLong(fe.getExcessID()));
-			ps.setLong(index++, JdbcUtil.setLong(fe.getReceiptID()));
+			ps.setObject(index++, fe.getReceiptID());
 			ps.setString(index++, fe.getMovementType());
 			ps.setString(index++, fe.getTranType());
 			ps.setBigDecimal(index++, fe.getAmount());
@@ -743,7 +743,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				FinExcessMovement fea = new FinExcessMovement();
 
 				fea.setExcessID(rs.getLong("ExcessID"));
-				fea.setReceiptID(rs.getLong("ReceiptID"));
+				fea.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
 				fea.setMovementType(rs.getString("MovementType"));
 				fea.setTranType(rs.getString("TranType"));
 				fea.setAmount(rs.getBigDecimal("Amount"));
@@ -776,7 +776,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				FinExcessMovement fea = new FinExcessMovement();
 
 				fea.setExcessID(rs.getLong("ExcessID"));
-				fea.setReceiptID(rs.getLong("ReceiptID"));
+				fea.setReceiptID(JdbcUtil.getLong(rs.getObject("ReceiptID")));
 				fea.setMovementType(rs.getString("MovementType"));
 				fea.setTranType(rs.getString("TranType"));
 				fea.setAmount(rs.getBigDecimal("Amount"));
@@ -872,7 +872,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				int index = 1;
 
 				ps.setLong(index++, em.getExcessID());
-				ps.setLong(index++, em.getReceiptID());
+				ps.setObject(index++, em.getReceiptID());
 				ps.setString(index++, em.getMovementType());
 				ps.setString(index++, em.getTranType());
 				ps.setBigDecimal(index++, em.getAmount());

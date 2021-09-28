@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralStructureDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralStructureDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 * *
+ * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -60,6 +42,7 @@ import com.pennant.backend.model.collateral.CollateralStructure;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -77,10 +60,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	/**
 	 * Fetch the Record CollateralStructure details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CollateralStructure
 	 */
 	@Override
@@ -106,7 +87,7 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { colType }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CollateralStructure ct = new CollateralStructure();
 
 				ct.setCollateralType(rs.getString("CollateralType"));
@@ -148,10 +129,10 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 				ct.setValuationPending(rs.getBoolean("ValuationPending"));
 				ct.setQueryId(rs.getLong("QueryId"));
 				ct.setThresholdLtvPercentage(rs.getBigDecimal("ThresholdLtvPercentage"));
-				ct.setCommodityId(rs.getLong("CommodityId"));
+				ct.setCommodityId(JdbcUtil.getLong(rs.getObject("CommodityId")));
 
 				return ct;
-			});
+			}, colType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records not found in CollateralStructure{} for the collateral reference {} ", type, colType);
 		}
@@ -162,10 +143,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	 * This method Deletes the Record from the CollateralStructure or CollateralStructure_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete CollateralStructure by key CollateralType
 	 * 
-	 * @param CollateralStructure
-	 *            (collateralStructure)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralStructure (collateralStructure)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -196,10 +175,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	 * 
 	 * save CollateralStructure
 	 * 
-	 * @param CollateralStructure
-	 *            (collateralStructure)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralStructure (collateralStructure)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -238,10 +215,8 @@ public class CollateralStructureDAOImpl extends BasicDao<CollateralStructure> im
 	 * This method updates the Record CollateralStructure or CollateralStructure_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update CollateralStructure by key CollateralType and Version
 	 * 
-	 * @param CollateralStructure
-	 *            (collateralStructure)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param CollateralStructure (collateralStructure)
+	 * @param type                (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

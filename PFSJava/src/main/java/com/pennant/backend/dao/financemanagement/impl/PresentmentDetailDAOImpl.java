@@ -1320,7 +1320,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			pd.setReceiptID(rs.getLong("ReceiptID"));
 			pd.setErrorCode(rs.getString("ErrorCode"));
 			pd.setErrorDesc(rs.getString("ErrorDesc"));
-			pd.setManualAdviseId(rs.getLong("ManualAdviseId"));
+			pd.setManualAdviseId(JdbcUtil.getLong(rs.getObject("ManualAdviseId")));
 			pd.setVersion(rs.getInt("Version"));
 			pd.setLastMntBy(rs.getLong("LastMntBy"));
 			pd.setLastMntOn(rs.getTimestamp("LastMntOn"));

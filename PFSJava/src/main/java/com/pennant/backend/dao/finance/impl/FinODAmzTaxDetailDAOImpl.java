@@ -86,7 +86,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			ps.setBigDecimal(index++, oatd.getTotalGST());
 			ps.setBigDecimal(index++, oatd.getPaidAmount());
 			ps.setBigDecimal(index++, oatd.getWaivedAmount());
-			ps.setLong(index++, JdbcUtil.getLong(oatd.getInvoiceID()));
+			ps.setObject(index++, JdbcUtil.getLong(oatd.getInvoiceID()));
 		});
 
 		return oatd.getTaxSeqId();
@@ -261,7 +261,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			oda.setTotalGST(rs.getBigDecimal("TotalGST"));
 			oda.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 			oda.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-			oda.setInvoiceID(rs.getLong("InvoiceID"));
+			oda.setInvoiceID(JdbcUtil.getLong(rs.getObject("InvoiceID")));
 
 			return oda;
 		});
@@ -294,7 +294,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 			oda.setTotalGST(rs.getBigDecimal("TotalGST"));
 			oda.setPaidAmount(rs.getBigDecimal("PaidAmount"));
 			oda.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-			oda.setInvoiceID(rs.getLong("InvoiceID"));
+			oda.setInvoiceID(JdbcUtil.getLong(rs.getObject("InvoiceID")));
 
 			return oda;
 		});
@@ -379,7 +379,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 					OverdueTaxMovement oda = taxMovements.get(i);
 					int index = 1;
 
-					ps.setLong(index++, oda.getInvoiceID());
+					ps.setObject(index++, oda.getInvoiceID());
 					ps.setDate(index++, JdbcUtil.getDate(oda.getValueDate()));
 					ps.setDate(index++, JdbcUtil.getDate(oda.getSchDate()));
 					ps.setString(index++, oda.getTaxFor());
@@ -387,7 +387,7 @@ public class FinODAmzTaxDetailDAOImpl extends SequenceDao<FinODAmzTaxDetail> imp
 					ps.setString(index++, oda.getFinReference());
 					ps.setBigDecimal(index++, oda.getPaidAmount());
 					ps.setBigDecimal(index++, oda.getWaivedAmount());
-					ps.setLong(index++, oda.getTaxHeaderId());
+					ps.setObject(index++, oda.getTaxHeaderId());
 				}
 
 				@Override

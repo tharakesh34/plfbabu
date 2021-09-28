@@ -41,7 +41,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 	// Save RiskContainmentUnit in verification_rcu Based on tableType.
 	@Override
 	public String save(RiskContainmentUnit rcu, TableType tableType) {// Prepare
-																			// the
+																		// the
 																		// SQL.
 		StringBuilder sql = new StringBuilder(" insert into verification_rcu");
 		sql.append(tableType.getSuffix());
@@ -350,7 +350,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 					ps.setLong(6, JdbcUtil.setLong(document.getDocumentRefId()));
 					ps.setString(7, document.getDocumentUri());
 					ps.setString(8, document.getInitRemarks());
-					ps.setLong(9, JdbcUtil.setLong(document.getReinitid()));
+					ps.setObject(9, document.getReinitid());
 					ps.setInt(10, document.getVersion());
 					ps.setTimestamp(11, document.getLastMntOn());
 					ps.setLong(12, JdbcUtil.setLong(document.getLastMntBy()));
@@ -535,7 +535,7 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				RCUDocument document = item.getRcuDocuments().get(i);
-				ps.setLong(1, document.getReinitid());
+				ps.setObject(1, document.getReinitid());
 				ps.setLong(2, document.getVerificationId());
 				ps.setInt(3, document.getSeqNo());
 			}
@@ -629,17 +629,16 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 		// Execute the SQL, binding the arguments.
 		logger.trace(Literal.SQL + sql.toString());
 		try {
-			return this.jdbcOperations.query(sql.toString(),
-					new Object[] { keyReference}, (rs, rowNum) -> {
-						RCUDocument rcu = new RCUDocument();
+			return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				RCUDocument rcu = new RCUDocument();
 
-						rcu.setSeqNo((rs.getInt("seqNo")));
-						rcu.setDocumentType(rs.getInt("documentType"));
-						rcu.setDocumentSubId(rs.getString("documentSubId"));
-						rcu.setVerificationId(rs.getLong("verificationId"));
+				rcu.setSeqNo((rs.getInt("seqNo")));
+				rcu.setDocumentType(rs.getInt("documentType"));
+				rcu.setDocumentSubId(rs.getString("documentSubId"));
+				rcu.setVerificationId(rs.getLong("verificationId"));
 
-						return rcu;
-					});
+				return rcu;
+			}, keyReference);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
@@ -649,4 +648,3 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 
 	}
 }
-

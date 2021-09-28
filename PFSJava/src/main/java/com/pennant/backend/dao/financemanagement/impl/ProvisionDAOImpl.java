@@ -249,7 +249,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, provision.getNextTaskId());
 			ps.setString(index++, provision.getRecordType());
 			ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
-			ps.setLong(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
+			ps.setObject(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
 		});
 
 		return provision.getId();
@@ -344,7 +344,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, prv.getNextTaskId());
 			ps.setString(index++, prv.getRecordType());
 			ps.setLong(index++, prv.getWorkflowId());
-			ps.setLong(index++, prv.getNpaTemplateId());
+			ps.setObject(index++, prv.getNpaTemplateId());
 			ps.setLong(index++, prv.getId());
 		});
 	}
@@ -516,7 +516,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			provision.setNextTaskId(rs.getString("NextTaskId"));
 			provision.setRecordType(rs.getString("RecordType"));
 			provision.setWorkflowId(rs.getLong("WorkflowId"));
-			provision.setNpaTemplateId(rs.getLong("NpaTemplateId"));
+			provision.setNpaTemplateId(JdbcUtil.getLong(rs.getObject("NpaTemplateId")));
 
 			if (tableType.getSuffix().toLowerCase().contains("view")) {
 				provision.setFinBranch(rs.getString("FinBranch"));

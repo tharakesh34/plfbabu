@@ -230,7 +230,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ffd.setPaidTDS(rs.getBigDecimal("PaidTDS"));
 			ffd.setRemTDS(rs.getBigDecimal("RemTDS"));
 			ffd.setNetTDS(rs.getBigDecimal("NetTDS"));
-			ffd.setTaxHeaderId(rs.getLong("TaxHeaderId"));
+			ffd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
 			ffd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 			ffd.setActualAmount(rs.getBigDecimal("ActualAmount"));
 
@@ -379,7 +379,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setBigDecimal(index++, fe.getActualAmountOriginal());
 			ps.setBigDecimal(index++, fe.getActualAmountGST());
 			ps.setString(index++, fe.getTransactionId());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getInstructionUID()));
+			ps.setObject(index++, fe.getInstructionUID());
 			ps.setBigDecimal(index++, fe.getNetTDS());
 			ps.setBigDecimal(index++, fe.getPaidTDS());
 			ps.setBigDecimal(index++, fe.getRemTDS());
@@ -391,7 +391,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 			ps.setBigDecimal(index++, fe.getWaivedGST());
 			ps.setLong(index++, JdbcUtil.setLong(fe.getReferenceId()));
-			ps.setLong(index++, JdbcUtil.setLong(fe.getTaxHeaderId()));
+			ps.setObject(index++, fe.getTaxHeaderId());
 			ps.setInt(index++, fe.getVersion());
 			ps.setLong(index++, JdbcUtil.setLong(fe.getLastMntBy()));
 			ps.setTimestamp(index++, fe.getLastMntOn());
@@ -478,7 +478,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setBigDecimal(index++, fe.getNetTDS());
 			ps.setBigDecimal(index++, fe.getPaidTDS());
 			ps.setBigDecimal(index++, fe.getRemTDS());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getInstructionUID()));
+			ps.setObject(index++, fe.getInstructionUID());
 
 			if (!isWIF) {
 				ps.setBigDecimal(index++, fe.getActPercentage());
@@ -487,7 +487,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 
 			ps.setBigDecimal(index++, fe.getWaivedGST());
 			ps.setLong(index++, JdbcUtil.setLong(fe.getReferenceId()));
-			ps.setLong(index++, JdbcUtil.setLong(fe.getTaxHeaderId()));
+			ps.setObject(index++, fe.getTaxHeaderId());
 			ps.setInt(index++, fe.getVersion());
 			ps.setLong(index++, JdbcUtil.setLong(fe.getLastMntBy()));
 			ps.setTimestamp(index++, fe.getLastMntOn());
@@ -877,7 +877,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			fd.setTaxComponent(rs.getString("TaxComponent"));
 			fd.setActualAmountOriginal(rs.getBigDecimal("ActualAmountOriginal"));
 			fd.setActualAmountGST(rs.getBigDecimal("ActualAmountGST"));
-			fd.setInstructionUID(rs.getLong("InstructionUID"));
+			fd.setInstructionUID(JdbcUtil.getLong(rs.getObject("InstructionUID")));
 			fd.setWaivedGST(rs.getBigDecimal("WaivedGST"));
 			fd.setReferenceId(rs.getLong("ReferenceId"));
 			fd.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));

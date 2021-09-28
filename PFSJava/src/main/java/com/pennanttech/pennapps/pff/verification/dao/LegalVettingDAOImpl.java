@@ -181,7 +181,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 				if (document.getDocumentId() == null) {
 					ps.setLong(3, 0);
 				} else {
-					ps.setLong(3, document.getDocumentId());
+					ps.setObject(3, document.getDocumentId());
 				}
 
 				ps.setInt(4, document.getDocumentType());
@@ -189,7 +189,7 @@ public class LegalVettingDAOImpl extends SequenceDao<LegalVetting> implements Le
 				if (document.getDocumentRefId() == null) {
 					ps.setLong(6, 0);
 				} else {
-					ps.setLong(6, document.getDocumentRefId());
+					ps.setObject(6, document.getDocumentRefId());
 				}
 				ps.setString(7, document.getDocumentUri());
 				ps.setInt(8, document.getVersion());

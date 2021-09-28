@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BranchDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BranchDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * * Modified Date :
+ * 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.ArrayList;
@@ -81,10 +63,8 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 	/**
 	 * Fetch the Record Branches details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Branch
 	 */
 	@Override
@@ -110,7 +90,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Branch b = new Branch();
 
 				b.setBranchCode(rs.getString("BranchCode"));
@@ -151,7 +131,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 				b.setNextTaskId(rs.getString("NextTaskId"));
 				b.setRecordType(rs.getString("RecordType"));
 				b.setWorkflowId(rs.getLong("WorkflowId"));
-				b.setPinCodeId(rs.getLong("PinCodeId"));
+				b.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					b.setLovDescBranchCityName(rs.getString("LovDescBranchCityName"));
@@ -167,7 +147,7 @@ public class BranchDAOImpl extends BasicDao<Branch> implements BranchDAO {
 				}
 
 				return b;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Records not found in RMTBranches{} for the BranchCode >> {}", type, id);
 		}

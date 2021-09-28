@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 
 public class PresentmentResponseRowmapper implements RowMapper<PresentmentDetail> {
 
@@ -46,7 +47,7 @@ public class PresentmentResponseRowmapper implements RowMapper<PresentmentDetail
 		pd.setReceiptID(rs.getLong("RECEIPTID"));
 		pd.setErrorCode(rs.getString("ERRORCODE"));
 		pd.setErrorDesc(rs.getString("ERRORDESC"));
-		pd.setManualAdviseId(rs.getLong("MANUALADVISEID"));
+		pd.setManualAdviseId(JdbcUtil.getLong(rs.getObject("MANUALADVISEID")));
 		pd.setAccountNo(rs.getString("ACCOUNT_NUMBER"));
 		// pd.setAcType(rs.getString("ACTYPE"));
 		pd.setUtrNumber(rs.getString("UTR_Number"));

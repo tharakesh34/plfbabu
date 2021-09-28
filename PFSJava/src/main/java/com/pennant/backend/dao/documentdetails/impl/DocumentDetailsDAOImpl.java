@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DocumentDetailsDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-06-2012    														*
- *                                                                  						*
- * Modified Date    :  21-06-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DocumentDetailsDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-06-2012 * *
+ * Modified Date : 21-06-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-06-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-06-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.documentdetails.impl;
@@ -82,10 +64,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	/**
 	 * Fetch the Record Channel Detail details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return documentDetails
 	 */
 	@Override
@@ -99,10 +79,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * This method Deletes the Record from the documentDetailss or documentDetailss_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Channel Detail by key ChannelId
 	 * 
-	 * @param Channel
-	 *            Detail (documentDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Channel Detail (documentDetails)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -180,10 +158,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * 
 	 * save Channel Detail
 	 * 
-	 * @param Channel
-	 *            Detail (documentDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Channel Detail (documentDetails)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -261,10 +237,8 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	 * This method updates the Record documentDetailss or documentDetailss_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Channel Detail by key ChannelId and Version
 	 * 
-	 * @param Channel
-	 *            Detail (documentDetails)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Channel Detail (documentDetails)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -340,7 +314,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			doc.setNextTaskId(rs.getString("NextTaskId"));
 			doc.setRecordType(rs.getString("RecordType"));
 			doc.setWorkflowId(rs.getLong("WorkflowId"));
-			doc.setDocRefId(rs.getLong("DocRefId"));
+			doc.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
 			doc.setInstructionUID(rs.getLong("InstructionUID"));
 
 			return doc;
@@ -392,7 +366,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			dd.setNextTaskId(rs.getString("NextTaskId"));
 			dd.setRecordType(rs.getString("RecordType"));
 			dd.setWorkflowId(rs.getLong("WorkflowId"));
-			dd.setDocRefId(rs.getLong("docRefId"));
+			dd.setDocRefId(JdbcUtil.getLong(rs.getObject("docRefId")));
 			dd.setInstructionUID(rs.getLong("instructionUID"));
 
 			return dd;
@@ -414,7 +388,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				DocumentDetails dd = new DocumentDetails();
 
 				dd.setDocId(rs.getLong("DocId"));
@@ -427,7 +401,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				dd.setRemarks(rs.getString("Remarks"));
 				dd.setDoctype(rs.getString("Doctype"));
 				dd.setDocName(rs.getString("DocName"));
-				dd.setDocRefId(rs.getLong("DocRefId"));
+				dd.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
 				dd.setReferenceId(rs.getString("ReferenceId"));
 				dd.setFinEvent(rs.getString("FinEvent"));
 				dd.setDocUri(rs.getString("DocUri"));
@@ -444,7 +418,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				dd.setInstructionUID(rs.getLong("InstructionUID"));
 
 				return dd;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in DocumentDetails{} for the specified DocId >> {}", id);
 		}
@@ -517,39 +491,37 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { referenceId, category, module },
-					(rs, i) -> {
-						DocumentDetails dd = new DocumentDetails();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				DocumentDetails dd = new DocumentDetails();
+				dd.setDocId(rs.getLong("DocId"));
+				dd.setDocModule(rs.getString("DocModule"));
+				dd.setDocCategory(rs.getString("DocCategory"));
+				dd.setDoctype(rs.getString("Doctype"));
+				dd.setDocName(rs.getString("DocName"));
+				dd.setReferenceId(rs.getString("ReferenceId"));
+				dd.setFinEvent(rs.getString("FinEvent"));
+				dd.setDocPurpose(rs.getString("DocPurpose"));
+				dd.setDocUri(rs.getString("DocUri"));
+				dd.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
+				dd.setDocReceived(rs.getBoolean("DocReceived"));
+				dd.setDocOriginal(rs.getBoolean("DocOriginal"));
+				dd.setDocBarcode(rs.getString("DocBarcode"));
+				dd.setRemarks(rs.getString("Remarks"));
+				dd.setVersion(rs.getInt("Version"));
+				dd.setLastMntBy(rs.getLong("LastMntBy"));
+				dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				dd.setRecordStatus(rs.getString("RecordStatus"));
+				dd.setRoleCode(rs.getString("RoleCode"));
+				dd.setNextRoleCode(rs.getString("NextRoleCode"));
+				dd.setTaskId(rs.getString("TaskId"));
+				dd.setNextTaskId(rs.getString("NextTaskId"));
+				dd.setRecordType(rs.getString("RecordType"));
+				dd.setWorkflowId(rs.getLong("WorkflowId"));
+				dd.setInstructionUID(rs.getLong("InstructionUID"));
+				dd.setDocRefId(JdbcUtil.getLong(rs.getObject("DocRefId")));
 
-						dd.setDocId(rs.getLong("DocId"));
-						dd.setDocModule(rs.getString("DocModule"));
-						dd.setDocCategory(rs.getString("DocCategory"));
-						dd.setDoctype(rs.getString("Doctype"));
-						dd.setDocName(rs.getString("DocName"));
-						dd.setReferenceId(rs.getString("ReferenceId"));
-						dd.setFinEvent(rs.getString("FinEvent"));
-						dd.setDocPurpose(rs.getString("DocPurpose"));
-						dd.setDocUri(rs.getString("DocUri"));
-						dd.setDocReceivedDate(rs.getTimestamp("DocReceivedDate"));
-						dd.setDocReceived(rs.getBoolean("DocReceived"));
-						dd.setDocOriginal(rs.getBoolean("DocOriginal"));
-						dd.setDocBarcode(rs.getString("DocBarcode"));
-						dd.setRemarks(rs.getString("Remarks"));
-						dd.setVersion(rs.getInt("Version"));
-						dd.setLastMntBy(rs.getLong("LastMntBy"));
-						dd.setLastMntOn(rs.getTimestamp("LastMntOn"));
-						dd.setRecordStatus(rs.getString("RecordStatus"));
-						dd.setRoleCode(rs.getString("RoleCode"));
-						dd.setNextRoleCode(rs.getString("NextRoleCode"));
-						dd.setTaskId(rs.getString("TaskId"));
-						dd.setNextTaskId(rs.getString("NextTaskId"));
-						dd.setRecordType(rs.getString("RecordType"));
-						dd.setWorkflowId(rs.getLong("WorkflowId"));
-						dd.setInstructionUID(rs.getLong("InstructionUID"));
-						dd.setDocRefId(rs.getLong("DocRefId"));
-
-						return dd;
-					});
+				return dd;
+			}, referenceId, category, module);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record is not found in DocumentDetails{} for the specified ReferenceId >> ? and DocCategory >> ? and DocModule >> ?",

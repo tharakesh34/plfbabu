@@ -554,7 +554,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 				ps.setBigDecimal(index++, rsd.getLatePftSchdWaivedNow());
 				ps.setBigDecimal(index++, rsd.getPriSchdWaivedNow());
 				ps.setBigDecimal(index++, rsd.getSchdFeeWaivedNow());
-				ps.setLong(index++, JdbcUtil.setLong(rsd.getTaxHeaderId()));
+				ps.setObject(index++, rsd.getTaxHeaderId());
 				ps.setLong(index++, rsd.getWaiverId());
 			}
 

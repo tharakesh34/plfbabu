@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CovenantTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-02-2019    														*
- *                                                                  						*
- * Modified Date    :  06-02-2019    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CovenantTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-02-2019 * * Modified
+ * Date : 06-02-2019 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-02-2019       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-02-2019 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.covenant.impl;
 
 import java.util.List;
@@ -59,6 +41,7 @@ import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.model.finance.covenant.CovenantType;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -309,17 +292,17 @@ public class CovenantTypeDAOImpl extends SequenceDao<CovenantType> implements Co
 			ct.setAlertDays(rs.getInt("AlertDays"));
 			ct.setAlertType(rs.getString("AlertType"));
 			ct.setAlertToRoles(rs.getString("AlertToRoles"));
-			ct.setUserTemplate(rs.getLong("UserTemplate"));
-			ct.setCustomerTemplate(rs.getLong("CustomerTemplate"));
-			
+			ct.setUserTemplate(JdbcUtil.getLong(rs.getObject("UserTemplate")));
+			ct.setCustomerTemplate(JdbcUtil.getLong(rs.getObject("CustomerTemplate")));
+
 			if (type.contains("View")) {
-			ct.setDocTypeName(rs.getString("DocTypeName"));
-			ct.setUserTemplateName(rs.getString("UserTemplateName"));
-			ct.setCustomerTemplateName(rs.getString("CustomerTemplateName"));
-			ct.setUserTemplateCode(rs.getString("UserTemplateCode"));
-			ct.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
+				ct.setDocTypeName(rs.getString("DocTypeName"));
+				ct.setUserTemplateName(rs.getString("UserTemplateName"));
+				ct.setCustomerTemplateName(rs.getString("CustomerTemplateName"));
+				ct.setUserTemplateCode(rs.getString("UserTemplateCode"));
+				ct.setCustomerTemplateCode(rs.getString("CustomerTemplateCode"));
 			}
-			
+
 			ct.setVersion(rs.getInt("Version"));
 			ct.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			ct.setLastMntBy(rs.getLong("LastMntBy"));

@@ -488,7 +488,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setPromotionCode(rs.getString("PromotionCode"));
 				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
 				fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-				fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+				fm.setPromotionSeqId(JdbcUtil.getLong(rs.getObject("PromotionSeqId")));
 				fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 				fm.setCbAmount(rs.getBigDecimal("CbAmount"));
 				fm.setEmployeeName(rs.getString("EmployeeName"));
@@ -742,7 +742,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getBpiPftDaysBasis());
 				ps.setBigDecimal(index++, fm.getFixedTenorRate());
 				ps.setInt(index++, fm.getFixedRateTenor());
-				ps.setLong(index++, JdbcUtil.setLong(fm.getBusinessVertical()));
+				ps.setObject(index++, fm.getBusinessVertical());
 				ps.setString(index++, fm.getGrcAdvType());
 				ps.setInt(index++, fm.getGrcAdvTerms());
 				ps.setString(index++, fm.getAdvType());
@@ -807,7 +807,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setBoolean(index++, fm.isVanReq());
 					ps.setString(index++, fm.getVanCode());
 					ps.setBoolean(index++, fm.isSanBsdSchdle());
-					ps.setLong(index++, JdbcUtil.setLong(fm.getPromotionSeqId()));
+					ps.setObject(index++, fm.getPromotionSeqId());
 					ps.setBigDecimal(index++, fm.getSvAmount());
 					ps.setBigDecimal(index++, fm.getCbAmount());
 					ps.setBoolean(index++, fm.isAlwGrcAdj());
@@ -2338,7 +2338,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setReAgeBucket(rs.getInt("ReAgeBucket"));
 			fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
 			fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-			fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+			fm.setPromotionSeqId(JdbcUtil.getLong(rs.getObject("PromotionSeqId")));
 			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
 			fm.setTdsType(rs.getString("TdsType"));
@@ -4366,7 +4366,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setGrcAdvType(rs.getString("GrcAdvType"));
 			fm.setAdvType(rs.getString("AdvType"));
 			fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-			fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+			fm.setPromotionSeqId(JdbcUtil.getLong(rs.getObject("PromotionSeqId")));
 			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
 			fm.setEmployeeName(rs.getString("EmployeeName"));
@@ -4678,7 +4678,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setAllowDrawingPower(rs.getBoolean("AllowDrawingPower"));
 			fm.setAllowRevolving(rs.getBoolean("AllowRevolving"));
 			fm.setSanBsdSchdle(rs.getBoolean("SanBsdSchdle"));
-			fm.setPromotionSeqId(rs.getLong("PromotionSeqId"));
+			fm.setPromotionSeqId(JdbcUtil.getLong(rs.getObject("PromotionSeqId")));
 			fm.setSvAmount(rs.getBigDecimal("SvAmount"));
 			fm.setCbAmount(rs.getBigDecimal("CbAmount"));
 			fm.setAppliedLoanAmt(rs.getBigDecimal("AppliedLoanAmt"));
@@ -4741,7 +4741,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setApplicationNo(rs.getString("ApplicationNo"));
 				fm.setEligibilityMethod(rs.getLong("EligibilityMethod"));
 				fm.setPftServicingODLimit(rs.getBoolean("PftServicingODLimit"));
-				fm.setBusinessVertical(rs.getLong("BusinessVertical"));
+				fm.setBusinessVertical(JdbcUtil.getLong(rs.getObject("BusinessVertical")));
 				fm.setReAgeBucket(rs.getInt("ReAgeBucket"));
 				fm.setJointCustId(rs.getLong("JointCustId"));
 				fm.setInitiateUser(rs.getLong("InitiateUser"));
@@ -4751,7 +4751,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setPlanEMIHAlwInGrace(rs.getBoolean("PlanEMIHAlwInGrace"));
 				fm.setSchdVersion(rs.getInt("SchdVersion"));
 				fm.setSubVentionFrom(rs.getString("SubVentionFrom"));
-				fm.setManufacturerDealerId(rs.getLong("ManufacturerDealerId"));
+				fm.setManufacturerDealerId(JdbcUtil.getLong(rs.getObject("ManufacturerDealerId")));
 
 				// HL
 				fm.setReqLoanAmt(rs.getBigDecimal("ReqLoanAmt"));
@@ -4772,7 +4772,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setVerification(rs.getString("Verification"));
 				fm.setSourcingBranch(rs.getString("SourcingBranch"));
 				fm.setSourChannelCategory(rs.getString("SourChannelCategory"));
-				fm.setAsmName(rs.getLong("AsmName"));
+				fm.setAsmName(JdbcUtil.getLong(rs.getObject("AsmName")));
 				fm.setAlwGrcAdj(rs.getBoolean("AlwGrcAdj"));
 				fm.setEndGrcPeriodAftrFullDisb(rs.getBoolean("EndGrcPeriodAftrFullDisb"));
 				fm.setAutoIncGrcEndDate(rs.getBoolean("AutoIncGrcEndDate"));

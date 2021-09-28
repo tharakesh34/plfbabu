@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  VASConfigurationDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : VASConfigurationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 * *
+ * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.configuration.impl;
 
@@ -67,6 +49,7 @@ import com.pennant.backend.model.configuration.VASPremiumCalcDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -133,63 +116,62 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { productCode },
-					new RowMapper<VASConfiguration>() {
-						@Override
-						public VASConfiguration mapRow(ResultSet rs, int rowNum) throws SQLException {
-							VASConfiguration vasStructure = new VASConfiguration();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<VASConfiguration>() {
+				@Override
+				public VASConfiguration mapRow(ResultSet rs, int rowNum) throws SQLException {
+					VASConfiguration vasStructure = new VASConfiguration();
 
-							vasStructure.setProductCode(rs.getString("ProductCode"));
-							vasStructure.setProductDesc(rs.getString("ProductDesc"));
-							vasStructure.setRecAgainst(rs.getString("RecAgainst"));
-							vasStructure.setFeeAccrued(rs.getBoolean("FeeAccrued"));
-							vasStructure.setFeeAccounting(rs.getLong("FeeAccounting"));
-							vasStructure.setAccrualAccounting(rs.getLong("AccrualAccounting"));
-							vasStructure.setRecurringType(rs.getBoolean("RecurringType"));
-							vasStructure.setFreeLockPeriod(rs.getInt("FreeLockPeriod"));
-							vasStructure.setPreValidationReq(rs.getBoolean("PreValidationReq"));
-							vasStructure.setPostValidationReq(rs.getBoolean("PostValidationReq"));
-							vasStructure.setActive(rs.getBoolean("Active"));
-							vasStructure.setRemarks(rs.getString("Remarks"));
-							vasStructure.setProductType(rs.getString("ProductType"));
-							vasStructure.setVasFee(rs.getBigDecimal("VasFee"));
-							vasStructure.setBatchId(rs.getLong("BatchId"));
-							vasStructure.setAllowFeeToModify(rs.getBoolean("AllowFeeToModify"));
-							vasStructure.setManufacturerId(rs.getLong("ManufacturerId"));
-							vasStructure.setPreValidation(rs.getString("PreValidation"));
-							vasStructure.setPostValidation(rs.getString("PostValidation"));
-							vasStructure.setFeeType(rs.getLong("FeeType"));
-							vasStructure.setFlpCalculatedOn(rs.getString("FlpCalculatedOn"));
-							vasStructure.setShortCode(rs.getString("ShortCode"));
-							vasStructure.setModeOfPayment(rs.getString("ModeOfPayment"));
-							vasStructure.setAllowFeeType(rs.getString("AllowFeeType"));
-							vasStructure.setMedicalApplicable(rs.getBoolean("MedicalApplicable"));
-							vasStructure.setVersion(rs.getInt("Version"));
-							vasStructure.setLastMntBy(rs.getLong("LastMntBy"));
-							vasStructure.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							vasStructure.setRecordStatus(rs.getString("RecordStatus"));
-							vasStructure.setRoleCode(rs.getString("RoleCode"));
-							vasStructure.setNextRoleCode(rs.getString("NextRoleCode"));
-							vasStructure.setTaskId(rs.getString("TaskId"));
-							vasStructure.setNextTaskId(rs.getString("NextTaskId"));
-							vasStructure.setRecordType(rs.getString("RecordType"));
-							vasStructure.setWorkflowId(rs.getLong("WorkflowId"));
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								vasStructure.setFeeAccountingName(rs.getString("FeeAccountingName"));
-								vasStructure.setAccrualAccountingName(rs.getString("AccrualAccountingName"));
-								vasStructure.setFeeAccountingDesc(rs.getString("FeeAccountingDesc"));
-								vasStructure.setAccrualAccountingDesc(rs.getString("AccrualAccountingDesc"));
-								vasStructure.setProductTypeDesc(rs.getString("ProductTypeDesc"));
-								vasStructure.setProductCategory(rs.getString("ProductCategory"));
-								vasStructure.setManufacturerName(rs.getString("ManufacturerName"));
-								vasStructure.setFeeTypeCode(rs.getString("FeeTypeCode"));
-								vasStructure.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-								vasStructure.setFileName(rs.getString("FileName"));
-							}
+					vasStructure.setProductCode(rs.getString("ProductCode"));
+					vasStructure.setProductDesc(rs.getString("ProductDesc"));
+					vasStructure.setRecAgainst(rs.getString("RecAgainst"));
+					vasStructure.setFeeAccrued(rs.getBoolean("FeeAccrued"));
+					vasStructure.setFeeAccounting(rs.getLong("FeeAccounting"));
+					vasStructure.setAccrualAccounting(rs.getLong("AccrualAccounting"));
+					vasStructure.setRecurringType(rs.getBoolean("RecurringType"));
+					vasStructure.setFreeLockPeriod(rs.getInt("FreeLockPeriod"));
+					vasStructure.setPreValidationReq(rs.getBoolean("PreValidationReq"));
+					vasStructure.setPostValidationReq(rs.getBoolean("PostValidationReq"));
+					vasStructure.setActive(rs.getBoolean("Active"));
+					vasStructure.setRemarks(rs.getString("Remarks"));
+					vasStructure.setProductType(rs.getString("ProductType"));
+					vasStructure.setVasFee(rs.getBigDecimal("VasFee"));
+					vasStructure.setBatchId(rs.getLong("BatchId"));
+					vasStructure.setAllowFeeToModify(rs.getBoolean("AllowFeeToModify"));
+					vasStructure.setManufacturerId(rs.getLong("ManufacturerId"));
+					vasStructure.setPreValidation(rs.getString("PreValidation"));
+					vasStructure.setPostValidation(rs.getString("PostValidation"));
+					vasStructure.setFeeType(JdbcUtil.getLong(rs.getLong("FeeType")));
+					vasStructure.setFlpCalculatedOn(rs.getString("FlpCalculatedOn"));
+					vasStructure.setShortCode(rs.getString("ShortCode"));
+					vasStructure.setModeOfPayment(rs.getString("ModeOfPayment"));
+					vasStructure.setAllowFeeType(rs.getString("AllowFeeType"));
+					vasStructure.setMedicalApplicable(rs.getBoolean("MedicalApplicable"));
+					vasStructure.setVersion(rs.getInt("Version"));
+					vasStructure.setLastMntBy(rs.getLong("LastMntBy"));
+					vasStructure.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					vasStructure.setRecordStatus(rs.getString("RecordStatus"));
+					vasStructure.setRoleCode(rs.getString("RoleCode"));
+					vasStructure.setNextRoleCode(rs.getString("NextRoleCode"));
+					vasStructure.setTaskId(rs.getString("TaskId"));
+					vasStructure.setNextTaskId(rs.getString("NextTaskId"));
+					vasStructure.setRecordType(rs.getString("RecordType"));
+					vasStructure.setWorkflowId(rs.getLong("WorkflowId"));
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						vasStructure.setFeeAccountingName(rs.getString("FeeAccountingName"));
+						vasStructure.setAccrualAccountingName(rs.getString("AccrualAccountingName"));
+						vasStructure.setFeeAccountingDesc(rs.getString("FeeAccountingDesc"));
+						vasStructure.setAccrualAccountingDesc(rs.getString("AccrualAccountingDesc"));
+						vasStructure.setProductTypeDesc(rs.getString("ProductTypeDesc"));
+						vasStructure.setProductCategory(rs.getString("ProductCategory"));
+						vasStructure.setManufacturerName(rs.getString("ManufacturerName"));
+						vasStructure.setFeeTypeCode(rs.getString("FeeTypeCode"));
+						vasStructure.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+						vasStructure.setFileName(rs.getString("FileName"));
+					}
 
-							return vasStructure;
-						}
-					});
+					return vasStructure;
+				}
+			}, productCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record not found in VasStructure{} table for the specified ProductCode >> {}", type,
 					productCode);
@@ -202,10 +184,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 	 * This method Deletes the Record from the VasStructure or VasStructure_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete VASConfiguration by key ProductCode
 	 * 
-	 * @param VASConfiguration
-	 *            (vASConfiguration)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param VASConfiguration (vASConfiguration)
+	 * @param type             (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -238,10 +218,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 	 *
 	 * save VASConfiguration
 	 * 
-	 * @param VASConfiguration
-	 *            (vASConfiguration)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param VASConfiguration (vASConfiguration)
+	 * @param type             (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -281,10 +259,8 @@ public class VASConfigurationDAOImpl extends BasicDao<VASConfiguration> implemen
 	 * This method updates the Record VasStructure or VasStructure_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update VASConfiguration by key ProductCode and Version
 	 * 
-	 * @param VASConfiguration
-	 *            (vASConfiguration)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param VASConfiguration (vASConfiguration)
+	 * @param type             (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

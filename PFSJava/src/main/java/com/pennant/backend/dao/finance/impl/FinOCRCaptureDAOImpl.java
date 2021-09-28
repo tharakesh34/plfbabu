@@ -48,7 +48,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 			ocr.setRemarks(rs.getString("Remarks"));
 			ocr.setReceiptDate(rs.getDate("ReceiptDate"));
 			ocr.setFileName(rs.getString("FileName"));
-			ocr.setDocumentRef(rs.getLong("DocumentRef"));
+			ocr.setDocumentRef(JdbcUtil.getLong(rs.getObject("DocumentRef")));
 			ocr.setVersion(rs.getInt("Version"));
 			ocr.setLastMntBy(rs.getLong("LastMntBy"));
 			ocr.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -88,7 +88,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 			ps.setString(index++, ocr.getRemarks());
 			ps.setDate(index++, JdbcUtil.getDate(ocr.getReceiptDate()));
 			ps.setString(index++, ocr.getFileName());
-			ps.setLong(index++, ocr.getDocumentRef());
+			ps.setObject(index++, JdbcUtil.setLong(ocr.getDocumentRef()));
 			ps.setInt(index++, ocr.getVersion());
 			ps.setLong(index++, ocr.getLastMntBy());
 			ps.setTimestamp(index++, ocr.getLastMntOn());
@@ -153,7 +153,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 			ps.setString(index++, ocr.getRemarks());
 			ps.setDate(index++, JdbcUtil.getDate(ocr.getReceiptDate()));
 			ps.setString(index++, ocr.getFileName());
-			ps.setLong(index++, ocr.getDocumentRef());
+			ps.setObject(index++, ocr.getDocumentRef());
 			ps.setInt(index++, ocr.getVersion());
 			ps.setLong(index++, ocr.getLastMntBy());
 			ps.setTimestamp(index++, ocr.getLastMntOn());

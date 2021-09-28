@@ -227,7 +227,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 					ps.setLong(index++, pstngs.getLinkedTranId());
 					ps.setString(index++, pstngs.getPostref());
 					ps.setString(index++, pstngs.getPostingId());
-					ps.setLong(index++, pstngs.getFinID());
+					ps.setObject(index++, pstngs.getFinID());
 					ps.setString(index++, pstngs.getFinReference());
 					ps.setString(index++, pstngs.getFinEvent());
 					ps.setDate(index++, JdbcUtil.getDate(pstngs.getPostDate()));
@@ -528,7 +528,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			rd.setLinkedTranId(rs.getLong("LinkedTranId"));
 			rd.setPostref(rs.getString("Postref"));
 			rd.setPostingId(rs.getString("PostingId"));
-			rd.setFinID(rs.getLong("FinID"));
+			rd.setFinID(JdbcUtil.getLong(rs.getObject("FinID")));
 			rd.setFinReference(rs.getString("FinReference"));
 			rd.setFinEvent(rs.getString("FinEvent"));
 			rd.setPostDate(JdbcUtil.getDate(rs.getDate("PostDate")));

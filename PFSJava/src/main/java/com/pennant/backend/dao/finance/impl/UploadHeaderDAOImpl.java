@@ -83,8 +83,8 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 				uph.setModule(rs.getString("Module"));
 				uph.setFileDownload(rs.getBoolean("FileDownload"));
 				uph.setApprovedDate(rs.getDate("ApprovedDate"));
-				uph.setMakerId(rs.getLong("MakerId"));
-				uph.setApproverId(rs.getLong("ApproverId"));
+				uph.setMakerId(JdbcUtil.getLong(rs.getObject("MakerId")));
+				uph.setApproverId(JdbcUtil.getLong(rs.getObject("ApproverId")));
 				uph.setVersion(rs.getInt("Version"));
 				uph.setLastMntBy(rs.getLong("LastMntBy"));
 				uph.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -237,8 +237,8 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 				uph.setEntityCode(rs.getString("EntityCode"));
 				uph.setFileDownload(rs.getBoolean("FileDownload"));
 				uph.setApprovedDate(rs.getDate("ApprovedDate"));
-				uph.setMakerId(rs.getLong("MakerId"));
-				uph.setApproverId(rs.getLong("ApproverId"));
+				uph.setMakerId(JdbcUtil.getLong(rs.getObject("MakerId")));
+				uph.setApproverId(JdbcUtil.getLong(rs.getObject("ApproverId")));
 				uph.setVersion(rs.getInt("Version"));
 				uph.setLastMntBy(rs.getLong("LastMntBy"));
 				uph.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -316,8 +316,8 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setString(index++, uh.getEntityCode());
 			ps.setBoolean(index++, uh.isFileDownload());
 			ps.setDate(index++, JdbcUtil.getDate(uh.getApprovedDate()));
-			ps.setLong(index++, uh.getMakerId());
-			ps.setLong(index++, uh.getApproverId());
+			ps.setObject(index++, uh.getMakerId());
+			ps.setObject(index++, uh.getApproverId());
 			ps.setInt(index++, uh.getVersion());
 			ps.setLong(index++, uh.getLastMntBy());
 			ps.setTimestamp(index++, uh.getLastMntOn());
@@ -360,8 +360,8 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setString(index++, uh.getEntityCode());
 			ps.setBoolean(index++, uh.isFileDownload());
 			ps.setDate(index++, JdbcUtil.getDate(uh.getApprovedDate()));
-			ps.setLong(index++, uh.getMakerId());
-			ps.setLong(index++, uh.getApproverId());
+			ps.setObject(index++, uh.getMakerId());
+			ps.setObject(index++, uh.getApproverId());
 			ps.setInt(index++, uh.getVersion());
 			ps.setLong(index++, uh.getLastMntBy());
 			ps.setTimestamp(index++, uh.getLastMntOn());

@@ -16,6 +16,7 @@ import com.pennant.backend.dao.collateral.FinAssetTypeDAO;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -31,10 +32,8 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	 *
 	 * save FinAsset Types
 	 * 
-	 * @param FinAsset
-	 *            Types (finAssetTypes)
-	 * @param type
-	 *            (String) ""/_Temp
+	 * @param FinAsset Types (finAssetTypes)
+	 * @param type     (String) ""/_Temp
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -70,10 +69,8 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	 * This method updates the Record or FinAssetTypes_Temp. if Record not updated then throws DataAccessException with
 	 * error 41004.
 	 * 
-	 * @param FinAssetTypes
-	 *            (finAssetTypes)
-	 * @param type
-	 *            (String) ""/_Temp
+	 * @param FinAssetTypes (finAssetTypes)
+	 * @param type          (String) ""/_Temp
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -127,7 +124,7 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 		}, (rs, rowNum) -> {
 			FinAssetTypes fat = new FinAssetTypes();
 
-			fat.setAssetTypeId(rs.getLong("AssetTypeId"));
+			fat.setAssetTypeId(JdbcUtil.getLong(rs.getObject("AssetTypeId")));
 			fat.setReference(rs.getString("Reference"));
 			fat.setAssetType(rs.getString("AssetType"));
 			fat.setSeqNo(rs.getInt("SeqNo"));
@@ -179,10 +176,8 @@ public class FinAssetTypesDAOImpl extends SequenceDao<FinAssetTypes> implements 
 	 * This method Deletes the Record from the FinAssetTypes or FinAssetTypes_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete FinAssetTypes
 	 * 
-	 * @param FinAssetTypes
-	 *            (finAssetTypes)
-	 * @param type
-	 *            (String) ""/_Temp
+	 * @param FinAssetTypes (finAssetTypes)
+	 * @param type          (String) ""/_Temp
 	 * @return void
 	 * @throws DataAccessException
 	 * 

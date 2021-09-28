@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerAddresDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-05-2011    														*
- *                                                                  						*
- * Modified Date    :  06-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerAddresDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-05-2011 * *
+ * Modified Date : 06-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.customermasters.impl;
@@ -58,6 +40,7 @@ import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -75,10 +58,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	/**
 	 * Fetch the Record Customer Address details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerAddres
 	 */
 	@Override
@@ -103,7 +84,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, addType }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CustomerAddres ca = new CustomerAddres();
 
 				ca.setCustAddressId(rs.getLong("CustAddressId"));
@@ -126,7 +107,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
 				ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
 				ca.setCustDistrict(rs.getString("CustDistrict"));
-				ca.setPinCodeId(rs.getLong("PinCodeId"));
+				ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 				if (type.contains("View")) {
 					ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
@@ -148,7 +129,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				ca.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ca;
-			});
+			}, id, addType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Records are not found in CustomerAddresses{} for the specified CustID >> {} and CustAddrType >> {}",
@@ -215,7 +196,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 			ca.setNextTaskId(rs.getString("NextTaskId"));
 			ca.setRecordType(rs.getString("RecordType"));
 			ca.setWorkflowId(rs.getLong("WorkflowId"));
-			ca.setPinCodeId(rs.getLong("PinCodeId"));
+			ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
@@ -234,10 +215,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 * This method Deletes the Record from the CustomerAddresses or CustomerAddresses_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Customer Address by key CustID
 	 * 
-	 * @param Customer
-	 *            Address (customerAddres)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Address (customerAddres)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -291,10 +270,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 * 
 	 * save Customer Address
 	 * 
-	 * @param Customer
-	 *            Address (customerAddres)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Address (customerAddres)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -339,10 +316,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	 * This method updates the Record CustomerAddresses or CustomerAddresses_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Customer Address by key CustID and Version
 	 * 
-	 * @param Customer
-	 *            Address (customerAddres)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Customer Address (customerAddres)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -501,10 +476,8 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 	/**
 	 * Fetch the Record Customer Address details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerAddres
 	 */
 	@Override
@@ -529,7 +502,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id, priority }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				CustomerAddres ca = new CustomerAddres();
 
 				ca.setCustID(rs.getLong("CustID"));
@@ -551,7 +524,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				ca.setCustAddrLine3(rs.getString("CustAddrLine3"));
 				ca.setCustAddrLine4(rs.getString("CustAddrLine4"));
 				ca.setCustDistrict(rs.getString("CustDistrict"));
-				ca.setPinCodeId(rs.getLong("PinCodeId"));
+				ca.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
 
 				if (StringUtils.trimToEmpty(type).contains("View")) {
 					ca.setLovDescCustAddrTypeName(rs.getString("LovDescCustAddrTypeName"));
@@ -562,7 +535,7 @@ public class CustomerAddresDAOImpl extends SequenceDao<CustomerAddres> implement
 				}
 
 				return ca;
-			});
+			}, id, priority);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record not found in CustomerAddresses{} table for the specified CustID >> {} and CustAddrPriority",
