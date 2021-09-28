@@ -1137,6 +1137,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 					if (penalWaived.compareTo(BigDecimal.ZERO) > 0) {
 						FinanceRepayments repayment = new FinanceRepayments();
+						repayment.setFinID(pdPenality.getFinID());
 						repayment.setFinReference(pdPenality.getFinReference());
 						repayment.setFinPostDate(appDate);
 						repayment.setFinRpyFor(pdPenality.getFinODFor());
@@ -1604,6 +1605,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		FinanceRepayments repayment = new FinanceRepayments();
 
 		repayment.setWaiverId(waiverHeader.getWaiverId());
+		repayment.setFinID(schDetail.getFinID());
 		repayment.setFinReference(schDetail.getFinReference());
 		repayment.setFinSchdDate(schDetail.getSchDate());
 		repayment.setFinRpyFor(FinanceConstants.SCH_TYPE_SCHEDULE);

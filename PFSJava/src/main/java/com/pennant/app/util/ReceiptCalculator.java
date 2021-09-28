@@ -252,6 +252,7 @@ public class ReceiptCalculator {
 		}
 
 		RepayMain rm = new RepayMain();
+		rm.setFinID(fm.getFinID());
 		rm.setFinReference(fm.getFinReference());
 		rm.setFinCcy(fm.getFinCcy());
 		rm.setProfitDaysBais(fm.getProfitDaysBasis());

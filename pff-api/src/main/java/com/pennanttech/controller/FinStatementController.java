@@ -620,6 +620,7 @@ public class FinStatementController extends SummaryDetailService {
 
 			FinReceiptHeader rch = receiptData.getReceiptHeader();
 
+			rch.setFinID(fm.getFinID());
 			rch.setReference(fm.getFinReference());
 			rch.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 			rch.setRecAgainst(RepayConstants.RECEIPTTO_FINANCE);

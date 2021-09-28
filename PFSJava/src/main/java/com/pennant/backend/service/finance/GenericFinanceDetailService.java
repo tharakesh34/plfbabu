@@ -1191,6 +1191,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			// Recreation of Suspense Details , if Finance is in Suspense with Current Max Overdue Days
 			if (odDetail != null) {
 				FinRepayQueue repayQueue = new FinRepayQueue();
+
+				repayQueue.setFinID(finID);
 				repayQueue.setFinReference(finReference);
 				repayQueue.setCustomerID(fm.getCustID());
 				repayQueue.setBranch(fm.getFinBranch());

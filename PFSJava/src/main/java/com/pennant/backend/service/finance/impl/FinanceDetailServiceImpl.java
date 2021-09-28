@@ -3704,6 +3704,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				}
 
 				FinRepayQueue finRepayQueue = new FinRepayQueue();
+
+				finRepayQueue.setFinID(finID);
 				finRepayQueue.setFinReference(finReference);
 				finRepayQueue.setBranch(fm.getFinBranch());
 				finRepayQueue.setFinType(fm.getFinType());

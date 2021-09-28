@@ -362,6 +362,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		aFeeWaiverHeader.setFinID(this.financeMain.getFinID());
 		aFeeWaiverHeader.setFinReference(this.financeMain.getFinReference());
 		aFeeWaiverHeader.setRemarks(this.remarks.getValue());
 		aFeeWaiverHeader.setEvent(this.moduleDefiner);
@@ -1313,8 +1314,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			wd.setCurrActualWaiver(waiverAmount.subtract(taxSplit.gettGST()));
 			wd.setCurrWaiverGST(taxSplit.gettGST());
 
-			if (wd.getTaxHeader() != null
-					&& CollectionUtils.isNotEmpty(wd.getTaxHeader().getTaxDetails())) {
+			if (wd.getTaxHeader() != null && CollectionUtils.isNotEmpty(wd.getTaxHeader().getTaxDetails())) {
 				for (Taxes tax : wd.getTaxHeader().getTaxDetails()) {
 					if (RuleConstants.CODE_CGST.equals(tax.getTaxType())) {
 						tax.setWaivedTax(taxSplit.getcGST());

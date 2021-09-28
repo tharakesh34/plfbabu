@@ -797,6 +797,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 			for (RepayScheduleDetail rsd : rsdList) {
 				finRepayQueue = new FinRepayQueue();
+				finRepayQueue.setFinID(fm.getFinID());
 				finRepayQueue.setFinReference(fm.getFinReference());
 				finRepayQueue.setRpyDate(rsd.getSchDate());
 				finRepayQueue.setFinRpyFor(rsd.getSchdFor());

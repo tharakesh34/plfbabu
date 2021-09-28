@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceSelectCtrl.java                                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceSelectCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * * Modified
+ * Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.receipts;
@@ -347,7 +329,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 		if (isEnquiry) {
 			this.listheader_FinProduct.setVisible(false);
-			//this.listheader_CustCIF.setVisible(false);
+			// this.listheader_CustCIF.setVisible(false);
 			this.listheader_RequestStage.setVisible(false);
 		}
 
@@ -996,6 +978,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
 		// Fee Waivers
 		FeeWaiverHeader feeWaiverHeader = new FeeWaiverHeader();
+		feeWaiverHeader.setFinID(aFinanceMain.getFinID());
 		feeWaiverHeader.setFinReference(aFinanceMain.getFinReference());
 		feeWaiverHeader = feeWaiverHeaderService.getFeeWiaverEnquiryList(feeWaiverHeader);
 		if (feeWaiverHeader.getFeeWaiverDetails().isEmpty()) {
@@ -1088,15 +1071,14 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			searchObject.getSorts().clear();
 			searchObject.addWhereClause("");
 		}
-		//PSD# 144918 && && 146986
+		// PSD# 144918 && && 146986
 		this.searchObject.addTabelName("FinanceMain_AView");
-		//comminted by meena in clix feewaver enquiry not filtered
-		//Filter[] rcdTypeFilter = new Filter[2];
-		//rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
-		//	rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
-		if (!moduleDefiner.equals(FinServiceEvent.COVENANTS)
-				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
-			//this.searchObject.addFilterOr(rcdTypeFilter);
+		// comminted by meena in clix feewaver enquiry not filtered
+		// Filter[] rcdTypeFilter = new Filter[2];
+		// rcdTypeFilter[0] = new Filter("RecordType", PennantConstants.RECORD_TYPE_NEW, Filter.OP_NOT_EQUAL);
+		// rcdTypeFilter[1] = new Filter("RecordType", "", Filter.OP_EQUAL);
+		if (!moduleDefiner.equals(FinServiceEvent.COVENANTS) && !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
+			// this.searchObject.addFilterOr(rcdTypeFilter);
 		}
 
 		if (filterList != null && !filterList.isEmpty()) {

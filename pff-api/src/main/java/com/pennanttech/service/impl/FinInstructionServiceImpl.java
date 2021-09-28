@@ -3101,6 +3101,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FeeWaiverHeader feeWaiver = new FeeWaiverHeader();
 		List<FeeWaiverDetail> actaulfeeWaiverDetails = new ArrayList<>();
 
+		long finID = feeWaiverHeader.getFinID();
 		String finReference = feeWaiverHeader.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
@@ -3154,6 +3155,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		// get fee waiver details from manual advise and finoddetails to prepare the list.
 		feeWaiver.setNewRecord(true);
+		feeWaiver.setFinID(finID);
 		feeWaiver.setFinReference(finReference);
 		feeWaiver = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiver);
 

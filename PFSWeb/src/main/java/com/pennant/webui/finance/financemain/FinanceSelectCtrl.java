@@ -2911,11 +2911,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Fee Waivers
 		FeeWaiverHeader fwh = new FeeWaiverHeader();
 		if (StringUtils.equals(fm.getRcdMaintainSts(), moduleDefiner)) {
+			fwh.setFinID(finID);
 			fwh.setFinReference(finRef);
 			fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(fwh);
 		} else {
 			// get fee waiver details from manual advise and finoddetails to prepare the list.
 			fwh.setNewRecord(true);
+			fwh.setFinID(finID);
 			fwh.setFinReference(finRef);
 			fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(fwh);
 		}

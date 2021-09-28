@@ -2040,6 +2040,7 @@ public class RepaymentProcessUtil {
 			for (int i = 0; i < rsdList.size(); i++) {
 				finRepayQueue = new FinRepayQueue();
 
+				finRepayQueue.setFinID(fm.getFinID());
 				finRepayQueue.setFinReference(fm.getFinReference());
 				finRepayQueue.setRpyDate(rsdList.get(i).getSchDate());
 				finRepayQueue.setFinRpyFor(rsdList.get(i).getSchdFor());
