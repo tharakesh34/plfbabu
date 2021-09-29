@@ -259,7 +259,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 				ps.setLong(index++, ma.getAdviseID());
 				if (tableType == TableType.TEMP_TAB) {
-					ps.setDate(index++, JdbcUtil.getDate(ma.getPrevMntOn()));
+					ps.setTimestamp(index++, ma.getPrevMntOn());
 				} else {
 					ps.setLong(index++, ma.getVersion() - 1);
 				}

@@ -909,10 +909,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering");
 
 		int format = CurrencyUtil.getFormat(financeMain.getFinCcy());
-		;
 
 		FinanceWriteoff writeoff = getFinanceWriteoff();
 
+		writeoff.setFinID(financeMain.getFinID());
 		writeoff.setFinReference(this.finReference.getValue());
 		writeoff.setWrittenoffPri(
 				PennantApplicationUtil.unFormateAmount(this.label_FinWriteoffDialog_WOPriAmt.getValue(), format));
@@ -941,14 +941,14 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		writeoff.setAdjAmount(PennantApplicationUtil.unFormateAmount(this.adjAmount.getValue(), format));
 		writeoff.setRemarks(this.remarks.getValue());
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 		try {
 			if (this.writeoffDate.getValue() == null) {
-				this.writeoffDate.setValue(DateUtility.getAppDate());
+				this.writeoffDate.setValue(SysParamUtil.getAppDate());
 			} else if (!this.writeoffDate.isDisabled()) {
 				this.writeoffDate.setConstraint(
 						new PTDateValidator(Labels.getLabel("label_FinWriteoffDialog_WriteoffDate.value"), false,
-								SysParamUtil.getValueAsDate("APP_DFT_START_DATE"), DateUtility.getAppDate(), true));
+								SysParamUtil.getValueAsDate("APP_DFT_START_DATE"), SysParamUtil.getAppDate(), true));
 			}
 
 			writeoff.setWriteoffDate(this.writeoffDate.getValue());
@@ -965,7 +965,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Method to show error details if occurred
 	 * 
 	 **/
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	private void showErrorDetails(List<WrongValueException> wve, Tab tab) {
 		logger.debug("Entering");
 
 		if (wve.size() > 0) {

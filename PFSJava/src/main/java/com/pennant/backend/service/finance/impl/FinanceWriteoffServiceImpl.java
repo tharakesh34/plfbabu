@@ -122,6 +122,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		String promotionCode = fm.getPromotionCode();
 		long custID = fm.getCustID();
 
+		writeoffHeader.setFinID(finID);
 		writeoffHeader.setFinReference(finReference);
 
 		FinanceDetail fd = new FinanceDetail();

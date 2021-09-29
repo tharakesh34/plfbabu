@@ -6,7 +6,8 @@ public class FinanceWriteoffHeader implements Serializable {
 
 	private static final long serialVersionUID = -1477748770396649402L;
 
-	//Finance Details
+	// Finance Details
+	private long finID;
 	private String finReference;
 	private FinanceWriteoff financeWriteoff;
 	private FinanceDetail financeDetail;
@@ -15,9 +16,13 @@ public class FinanceWriteoffHeader implements Serializable {
 
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
+	}
 
 	public String getFinReference() {
 		return finReference;
