@@ -5598,12 +5598,12 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	private String getBasicFieldsQuery(TableType tableType, boolean isFinReference) {
 		StringBuilder sql = new StringBuilder("Select * From (");
-		sql.append(" Select FinID, FinReference, FinType, FinCategory, CustID, EntityCode, FinDivision");
-		sql.append(", FinBranch, FinAmount, FinCcy, FinPurpose, FinStartDate");
-		sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
-		sql.append(", FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
-		sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
-		sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+		sql.append(" Select FinID, FinReference, fm.FinType, fm.FinCategory, CustID, EntityCode, FinDivision");
+		sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
+		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
+		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
+		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
+		sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 		sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
