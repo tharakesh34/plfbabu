@@ -315,6 +315,7 @@ public class FinCovenantMaintanceDialogCtrl extends GFCBaseCtrl<FinMaintainInstr
 	public void doWriteComponentsToBean(FinMaintainInstruction finMaintainInstruction) {
 		logger.debug("Entering");
 
+		finMaintainInstruction.setFinID(this.financeMain.getFinID());
 		finMaintainInstruction.setFinReference(this.financeMain.getFinReference());
 		finMaintainInstruction.setEvent(this.moduleDefiner);
 

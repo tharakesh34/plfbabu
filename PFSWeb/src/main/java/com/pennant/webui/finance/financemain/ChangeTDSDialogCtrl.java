@@ -394,6 +394,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
+		finMaintainInstruction.setFinID(this.financeMain.getFinID());
 		finMaintainInstruction.setFinReference(this.financeMain.getFinReference());
 		finMaintainInstruction.setEvent(this.moduleDefiner);
 		finMaintainInstruction.settDSApplicable(this.tDSApplicable.isChecked());

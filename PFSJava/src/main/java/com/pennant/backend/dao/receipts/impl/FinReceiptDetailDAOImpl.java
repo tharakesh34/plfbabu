@@ -297,7 +297,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	@Override
 	public Date getMaxReceivedDateByReference(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" max(T1.ValueDate)");
+		sql.append(" max(rch.ValueDate)");
 		sql.append(" From FinReceiptHeader rch");
 		sql.append(" Inner Join FinReceiptDetail rcd on rcd.ReceiptId = rch.ReceiptId");
 		sql.append(" Where rch.Reference = ? AND rcd.Status not in (?, ?) ");

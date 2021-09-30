@@ -3026,6 +3026,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else {
 			type = "_TView";
 		}
+		
+		fmi.setFinID(finID);
 		fmi.setFinReference(finReference);
 
 		FinanceDetail fd = new FinanceDetail();

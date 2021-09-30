@@ -5602,7 +5602,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
-		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
+		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 		sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
@@ -5616,20 +5616,21 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
 			sql.append(" Union all");
-			sql.append(" Select FinID, FinReference, FinType, FinCategory, CustID, EntityCode, FinDivision");
-			sql.append(", FinBranch, FinAmount, FinCcy, FinPurpose, FinStartDate");
-			sql.append(", QuickDisb, FinAssetValue, FinCurrAssetValue");
-			sql.append(", FinIsActive, ClosingStatus, MaturityDate, CalMaturity");
-			sql.append(", RecordStatus, RoleCode, NextRoleCode, WorkflowId");
+			sql.append(" Select FinID, FinReference, fm.FinType, fm.FinCategory, CustID, EntityCode, FinDivision");
+			sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
+			sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
+			sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
+			sql.append(", FinAssetValue, FinCurrAssetValue");
+			sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 			sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
-			sql.append(" Inner Join RmtFinanceTypes ft ft.FinType = fm.FinType");
+			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 			sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
 			if (isFinReference) {
 				sql.append(" Where FinReference = ?");
 			} else {
 				sql.append(" Where FinID = ?");
 			}
-			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		}
 
 		sql.append(" ) fm");

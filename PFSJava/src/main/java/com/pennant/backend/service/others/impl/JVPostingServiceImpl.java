@@ -528,7 +528,7 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 		String reference = jVPosting.getReference();
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference);
+		FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.MAIN_TAB);
 
 		String rcdMntnSts = fm.getRcdMaintainSts();
 

@@ -47,6 +47,7 @@ import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.finoption.FinOption;
@@ -1425,7 +1426,11 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	}
 
 	public void setFinInsturctionDetails(FinMaintainInstruction aFinMaintainInstruction) {
-		aFinMaintainInstruction.setFinReference(financeDetail.getFinScheduleData().getFinReference());
+		FinScheduleData schdData = this.financeDetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		aFinMaintainInstruction.setFinID(fm.getFinID());
+		aFinMaintainInstruction.setFinReference(fm.getFinReference());
 		aFinMaintainInstruction.setEvent(this.moduleCode);
 		aFinMaintainInstruction.setRecordStatus(this.recordStatus.getValue());
 		aFinMaintainInstruction.setFinOptions(this.financeDetail.getFinOptions());

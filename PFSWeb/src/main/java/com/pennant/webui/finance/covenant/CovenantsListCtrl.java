@@ -64,6 +64,7 @@ import org.zkoss.zul.Window;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -981,7 +982,11 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 	public void doWriteComponentsToBean(FinMaintainInstruction finMaintainInstruction) {
 		logger.debug(Literal.ENTERING);
 
-		finMaintainInstruction.setFinReference(financedetail.getFinScheduleData().getFinReference());
+		FinScheduleData schdData = financedetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		finMaintainInstruction.setFinID(fm.getFinID());
+		finMaintainInstruction.setFinReference(fm.getFinReference());
 		finMaintainInstruction.setEvent(this.moduleCode);
 
 		// List
