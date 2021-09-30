@@ -480,6 +480,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		// ++ create the searchObject and init sorting ++//
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class, getListRows());
+		this.searchObj.addField("finID");
 		this.searchObj.addSort("FinReference", false);
 		this.searchObj.addField("finReference");
 		this.searchObj.addField("finType");

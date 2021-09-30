@@ -2398,7 +2398,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		FinLogEntryDetail logDtls = finLogEntryDetailDAO.getFinLogEntryDetail(fm.getFinID());
 		List<FinServiceInstruction> finServiceInstructions = schdData.getFinServiceInstructions();
-		if (CollectionUtils.isNotEmpty(finServiceInstructions)) {
+		if (CollectionUtils.isNotEmpty(finServiceInstructions) && !isWIF) {
 			if (logDtls != null) {
 				finServiceInstructions.forEach(fsi -> fsi.setLogKey(logDtls.getLogKey()));
 			}
