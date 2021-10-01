@@ -765,7 +765,7 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="18.4" author="murthy.y">
+	<changeSet id="18.5" author="murthy.y">
 		<createIndex tableName="finjointaccountdetails_temp" indexName="idx_jointaccountdtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
