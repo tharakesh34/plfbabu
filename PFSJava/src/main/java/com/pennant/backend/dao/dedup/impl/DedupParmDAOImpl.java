@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DedupParmDAOImpl.java                                                * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-08-2011    														*
- *                                                                  						*
- * Modified Date    :  23-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DedupParmDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-08-2011 * * Modified
+ * Date : 23-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-08-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.dedup.impl;
@@ -65,7 +47,6 @@ import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -83,10 +64,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	/**
 	 * Fetch the Record Dedup Parameters details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DedupParm
 	 */
 	@Override
@@ -147,10 +126,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	/**
 	 * Fetch the Record Dedup Parameters details by key field
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return DedupParm
 	 */
 	@Override
@@ -182,10 +159,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 * This method Deletes the Record from the DedupParams or DedupParams_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Dedup Parameters by key QueryCode
 	 * 
-	 * @param Dedup
-	 *            Parameters (dedupParm)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Parameters (dedupParm)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -216,10 +191,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 *
 	 * save Dedup Parameters
 	 * 
-	 * @param Dedup
-	 *            Parameters (dedupParm)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Parameters (dedupParm)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -250,7 +223,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 			ps.setString(index++, dp.getActualBlock());
 			ps.setString(index++, dp.getQuerySubCode());
 			ps.setInt(index++, dp.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(dp.getLastMntBy()));
+			ps.setLong(index++, dp.getLastMntBy());
 			ps.setTimestamp(index++, dp.getLastMntOn());
 			ps.setString(index++, dp.getRecordStatus());
 			ps.setString(index++, dp.getRoleCode());
@@ -258,7 +231,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 			ps.setString(index++, dp.getTaskId());
 			ps.setString(index++, dp.getNextTaskId());
 			ps.setString(index++, dp.getRecordType());
-			ps.setLong(index, JdbcUtil.setLong(dp.getWorkflowId()));
+			ps.setLong(index, dp.getWorkflowId());
 		});
 
 		return dp.getQueryId();
@@ -268,10 +241,8 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 	 * This method updates the Record DedupParams or DedupParams_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Dedup Parameters by key QueryCode and Version
 	 * 
-	 * @param Dedup
-	 *            Parameters (dedupParm)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Dedup Parameters (dedupParm)
+	 * @param type  (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -300,7 +271,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 			ps.setString(index++, dp.getSQLQuery());
 			ps.setString(index++, dp.getActualBlock());
 			ps.setInt(index++, dp.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(dp.getLastMntBy()));
+			ps.setLong(index++, dp.getLastMntBy());
 			ps.setTimestamp(index++, dp.getLastMntOn());
 			ps.setString(index++, dp.getRecordStatus());
 			ps.setString(index++, dp.getRoleCode());
@@ -308,7 +279,7 @@ public class DedupParmDAOImpl extends SequenceDao<DedupParm> implements DedupPar
 			ps.setString(index++, dp.getTaskId());
 			ps.setString(index++, dp.getNextTaskId());
 			ps.setString(index++, dp.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(dp.getWorkflowId()));
+			ps.setLong(index++, dp.getWorkflowId());
 
 			ps.setString(index++, dp.getQueryCode());
 			ps.setString(index++, dp.getQueryModule());

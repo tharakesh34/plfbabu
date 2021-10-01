@@ -178,14 +178,14 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 			ps.setBigDecimal(index++, fsh.getFinCurSuspAmt());
 			ps.setInt(index++, fsh.getVersion());
 			ps.setTimestamp(index++, fsh.getLastMntOn());
-			ps.setLong(index++, JdbcUtil.setLong(fsh.getLastMntBy()));
+			ps.setLong(index++, fsh.getLastMntBy());
 			ps.setString(index++, fsh.getRecordStatus());
 			ps.setString(index++, fsh.getRoleCode());
 			ps.setString(index++, fsh.getNextRoleCode());
 			ps.setString(index++, fsh.getTaskId());
 			ps.setString(index++, fsh.getNextTaskId());
 			ps.setString(index++, fsh.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(fsh.getWorkflowId()));
+			ps.setLong(index++, fsh.getWorkflowId());
 		});
 
 		return fsh.getFinID();
@@ -219,14 +219,14 @@ public class FinanceSuspHeadDAOImpl extends BasicDao<FinanceSuspHead> implements
 			ps.setBigDecimal(index++, fsh.getFinCurSuspAmt());
 			ps.setInt(index++, fsh.getVersion());
 			ps.setTimestamp(index++, fsh.getLastMntOn());
-			ps.setLong(index++, JdbcUtil.setLong(fsh.getLastMntBy()));
+			ps.setLong(index++, fsh.getLastMntBy());
 			ps.setString(index++, fsh.getRecordStatus());
 			ps.setString(index++, fsh.getRoleCode());
 			ps.setString(index++, fsh.getNextRoleCode());
 			ps.setString(index++, fsh.getTaskId());
 			ps.setString(index++, fsh.getNextTaskId());
 			ps.setString(index++, fsh.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(fsh.getWorkflowId()));
+			ps.setLong(index++, fsh.getWorkflowId());
 
 			ps.setLong(index++, fsh.getFinID());
 		});
