@@ -1708,7 +1708,7 @@
 				INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = F.FINTYPE
 				INNER JOIN SMTDIVISIONDETAIL SD ON FT.FINDIVISION = SD.DIVISIONCODE
 				WHERE NOT EXISTS (SELECT 1 EXPR1 FROM FINANCEMAIN_TEMP WHERE FINID = F.FINID)
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
 
@@ -1735,7 +1735,8 @@
 	<changeSet id="WFMV_1" author="Gopal.p">
 		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT T1.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.NUMBEROFTERMS,
 					T1.GRCPERIODENDDATE,
 					T1.ALLOWGRCPERIOD,
@@ -1951,7 +1952,8 @@
 	<changeSet id="WFMV_2" author="Gopal.p">
 		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT T1.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.NUMBEROFTERMS,
 					T1.GRCPERIODENDDATE,
 					T1.ALLOWGRCPERIOD,
@@ -2149,7 +2151,8 @@
 				JOIN RMTFINANCETYPES T7 ON T1.FINTYPE = T7.FINTYPE
 				LEFT JOIN RMTBRANCHES T16 ON T1.FINBRANCH = T16.BRANCHCODE
 				UNION ALL
-				SELECT T1.FINREFERENCE,
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
 					T1.NUMBEROFTERMS,
 					T1.GRCPERIODENDDATE,
 					T1.ALLOWGRCPERIOD,
@@ -6911,7 +6914,7 @@
 				FROM LINKEDFINANCES T1 
 				INNER JOIN FINANCEMAIN F ON T1.LINKEDREFERENCE = F.FINREFERENCE 
 				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
 
@@ -6977,7 +6980,7 @@
 				FROM LINKEDFINANCES_TEMP T1 
 				INNER JOIN FINANCEMAIN F ON T1.LINKEDREFERENCE = F.FINREFERENCE 
 				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
-			]]>	
+			]]>
 		</createView>
 	</changeSet>
 
@@ -12009,7 +12012,7 @@
 				WHERE NOT (EXISTS ( SELECT 1 FROM FINMAINTAININSTRUCTIONS_TEMP
 					WHERE FINMAINTAININSTRUCTIONS_TEMP.FINID = T1.FINID))
 			]]>
-        </createView>
+		</createView>
 	</changeSet>
 
 	<changeSet id="ST#2367.20_post" author="Gopal.p" dbms="postgresql">
@@ -13418,5 +13421,801 @@
 			]]>
 		</sql>
 	</changeSet>
+
+	<changeSet id="ST#2367.41_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finchangecustomer_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.41" author="Gopal.p">
+		<createView viewName="FINCHANGECUSTOMER_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T1.OLDCUSTID,
+					T1.COAPPLICANTID,
+					C.CUSTCTGCODE CUSTCATEGORY,
+					C.CUSTCIF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCHANGECUSTOMER T1
+				JOIN CUSTOMERS C ON T1.OLDCUSTID = C.CUSTID
+				WHERE NOT EXISTS (SELECT 1 FROM FINCHANGECUSTOMER_TEMP
+					WHERE FINCHANGECUSTOMER_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.41_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finchangecustomer_aview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.42_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finchangecustomer_lview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.42" author="Gopal.p">
+		<createView viewName="FINCHANGECUSTOMER_LVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.FINID,
+					T1.FINREFERENCE,
+					T1.OLDCUSTID,
+					C.CUSTCIF,
+					T1.COAPPLICANTID,
+					JC.CUSTCIF JCUSTCIF,
+					C.CUSTCTGCODE CUSTCATEGORY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCHANGECUSTOMER_TEMP T1
+				JOIN CUSTOMERS C ON T1.OLDCUSTID = C.CUSTID
+				LEFT JOIN CUSTOMERS JC ON T1.COAPPLICANTID = JC.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.42_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finchangecustomer_lview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.43_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finchangecustomer_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.43" author="Gopal.p">
+		<createView viewName="FINCHANGECUSTOMER_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T1.FINTYPE,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					C.CUSTID OLDCUSTID,
+					C.CUSTCTGCODE CUSTCATEGORY,
+					C.CUSTCIF
+				FROM FINANCEMAIN_TEMP T1
+				JOIN CUSTOMERS C ON T1.CUSTID = C.CUSTID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.43_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finchangecustomer_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.44_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finchangecustomer_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.44" author="Gopal.p">
+		<createView viewName="FINCHANGECUSTOMER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.ID,
+					T1.FINID,
+					T1.FINREFERENCE,
+					T1.OLDCUSTID,
+					C.CUSTCIF,
+					T1.COAPPLICANTID,
+					JC.CUSTCIF JCUSTCIF,
+					C.CUSTCTGCODE CUSTCATEGORY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCHANGECUSTOMER_TEMP T1
+				JOIN CUSTOMERS C ON T1.OLDCUSTID = C.CUSTID
+				LEFT JOIN CUSTOMERS JC ON T1.COAPPLICANTID = JC.CUSTID
+				UNION ALL
+				SELECT T1.ID,
+					T1.FINID,
+					T1.FINREFERENCE,
+					T1.OLDCUSTID,
+					C.CUSTCIF,
+					T1.COAPPLICANTID,
+					JC.CUSTCIF JCUSTCIF,
+					C.CUSTCTGCODE CUSTCATEGORY,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID
+				FROM FINCHANGECUSTOMER T1
+				JOIN CUSTOMERS C ON T1.OLDCUSTID = C.CUSTID
+				LEFT JOIN CUSTOMERS JC ON T1.COAPPLICANTID = JC.CUSTID
+				WHERE NOT (EXISTS ( SELECT 1 FROM FINCHANGECUSTOMER_TEMP
+					WHERE FINCHANGECUSTOMER_TEMP.ID = T1.ID))
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.44_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finchangecustomer_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.45_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinscheduledetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.45" author="Gopal.p">
+		<createView viewName="WIFFINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.SCHSEQ,
+					T1.SCHDATE,
+					T1.PFTONSCHDATE,
+					T1.REPAYONSCHDATE,
+					T1.CPZONSCHDATE,
+					T1.RVWONSCHDATE,
+					T1.DISBONSCHDATE,
+					T1.DOWNPAYMENTONSCHDATE,
+					T1.BALANCEFORPFTCAL,
+					T1.BASERATE,
+					T1.SPLRATE,
+					T1.ACTRATE,
+					T1.NOOFDAYS,
+					T1.DAYFACTOR,
+					T1.PROFITCALC,
+					T1.PROFITSCHD,
+					T1.PRINCIPALSCHD,
+					T1.REPAYAMOUNT,
+					T1.PROFITBALANCE,
+					T1.DISBAMOUNT,
+					T1.CPZAMOUNT,
+					T1.DOWNPAYMENTAMOUNT,
+					T1.CLOSINGBALANCE,
+					T1.PROFITFRACTION,
+					T1.PRVREPAYAMOUNT,
+					T1.SCHDPFTPAID,
+					T1.SCHPFTPAID,
+					T1.SCHDPRIPAID,
+					T1.SCHPRIPAID,
+					T1.SPECIFIER,
+					T1.DEFSCHDDATE,
+					T1.SCHDMETHOD,
+					T1.MRGRATE,
+					T1.CALONINDRATE,
+					T1.FEECHARGEAMT,
+					T1.CALCULATEDRATE,
+					T1.ORGPFT,
+					T1.ORGPRI,
+					T1.ORGENDBAL,
+					T1.ORGPLANPFT,
+					T1.FEESCHD,
+					T1.SCHDFEEPAID,
+					T1.SCHDFEEOS,
+					T1.INSSCHD,
+					T1.SCHDINSPAID,
+					T1.ADVPFTRATE,
+					T1.ADVPROFIT,
+					T1.ADVREPAYAMOUNT,
+					T1.ADVBASERATE,
+					T1.ADVMARGIN,
+					T1.ADVCALRATE,
+					T1.SUPLRENT,
+					T1.INCRCOST,
+					T1.SUPLRENTPAID,
+					T1.INCRCOSTPAID,
+					T1.ROLLOVERONSCHDATE,
+					T1.ROLLOVERAMOUNT,
+					T1.ROLLOVERAMOUNTPAID,
+					T1.TDSAMOUNT,
+					T1.TDSPAID,
+					T1.PFTDAYSBASIS,
+					T1.INSURANCEAMT,
+					T1.INSTNUMBER,
+					T1.BPIORHOLIDAY,
+					T1.FRQDATE,
+					T1.FEETAX,
+					T1.RECALLOCK,
+					T1.CPZBALANCE
+				FROM WIFFINSCHEDULEDETAILS_TEMP T1
+				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.45_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinscheduledetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.46_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinscheduledetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.46" author="Gopal.p">
+		<createView viewName="WIFFINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.SCHSEQ,
+					T1.SCHDATE,
+					T1.PFTONSCHDATE,
+					T1.REPAYONSCHDATE,
+					T1.CPZONSCHDATE,
+					T1.RVWONSCHDATE,
+					T1.DISBONSCHDATE,
+					T1.DOWNPAYMENTONSCHDATE,
+					T1.BALANCEFORPFTCAL,
+					T1.BASERATE,
+					T1.SPLRATE,
+					T1.ACTRATE,
+					T1.NOOFDAYS,
+					T1.DAYFACTOR,
+					T1.PROFITCALC,
+					T1.PROFITSCHD,
+					T1.PRINCIPALSCHD,
+					T1.REPAYAMOUNT,
+					T1.PROFITBALANCE,
+					T1.DISBAMOUNT,
+					T1.CPZAMOUNT,
+					T1.DOWNPAYMENTAMOUNT,
+					T1.CLOSINGBALANCE,
+					T1.PROFITFRACTION,
+					T1.PRVREPAYAMOUNT,
+					T1.SCHDPFTPAID,
+					T1.SCHPFTPAID,
+					T1.SCHDPRIPAID,
+					T1.SCHPRIPAID,
+					T1.SPECIFIER,
+					T1.DEFSCHDDATE,
+					T1.SCHDMETHOD,
+					T1.MRGRATE,
+					T1.CALONINDRATE,
+					T1.FEECHARGEAMT,
+					T1.CALCULATEDRATE,
+					T1.ORGPFT,
+					T1.ORGPRI,
+					T1.ORGENDBAL,
+					T1.ORGPLANPFT,
+					T1.FEESCHD,
+					T1.SCHDFEEPAID,
+					T1.SCHDFEEOS,
+					T1.INSSCHD,
+					T1.SCHDINSPAID,
+					T1.ADVPFTRATE,
+					T1.ADVPROFIT,
+					T1.ADVREPAYAMOUNT,
+					T1.ADVBASERATE,
+					T1.ADVMARGIN,
+					T1.ADVCALRATE,
+					T1.SUPLRENT,
+					T1.INCRCOST,
+					T1.SUPLRENTPAID,
+					T1.INCRCOSTPAID,
+					T1.ROLLOVERONSCHDATE,
+					T1.ROLLOVERAMOUNT,
+					T1.ROLLOVERAMOUNTPAID,
+					T1.TDSAMOUNT,
+					T1.PFTDAYSBASIS,
+					T1.INSURANCEAMT,
+					T1.INSTNUMBER,
+					T1.BPIORHOLIDAY,
+					T1.FRQDATE,
+					T1.RECALLOCK,
+					T1.TDSPAID,
+					T1.CPZBALANCE
+				FROM WIFFINSCHEDULEDETAILS_TEMP T1
+				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.SCHSEQ,
+					T1.SCHDATE,
+					T1.PFTONSCHDATE,
+					T1.REPAYONSCHDATE,
+					T1.CPZONSCHDATE,
+					T1.RVWONSCHDATE,
+					T1.DISBONSCHDATE,
+					T1.DOWNPAYMENTONSCHDATE,
+					T1.BALANCEFORPFTCAL,
+					T1.BASERATE,
+					T1.SPLRATE,
+					T1.ACTRATE,
+					T1.NOOFDAYS,
+					T1.DAYFACTOR,
+					T1.PROFITCALC,
+					T1.PROFITSCHD,
+					T1.PRINCIPALSCHD,
+					T1.REPAYAMOUNT,
+					T1.PROFITBALANCE,
+					T1.DISBAMOUNT,
+					T1.CPZAMOUNT,
+					T1.DOWNPAYMENTAMOUNT,
+					T1.CLOSINGBALANCE,
+					T1.PROFITFRACTION,
+					T1.PRVREPAYAMOUNT,
+					T1.SCHDPFTPAID,
+					T1.SCHPFTPAID,
+					T1.SCHDPRIPAID,
+					T1.SCHPRIPAID,
+					T1.SPECIFIER,
+					T1.DEFSCHDDATE,
+					T1.SCHDMETHOD,
+					T1.MRGRATE,
+					T1.CALONINDRATE,
+					T1.FEECHARGEAMT,
+					T1.CALCULATEDRATE,
+					T1.ORGPFT,
+					T1.ORGPRI,
+					T1.ORGENDBAL,
+					T1.ORGPLANPFT,
+					T1.FEESCHD,
+					T1.SCHDFEEPAID,
+					T1.SCHDFEEOS,
+					T1.INSSCHD,
+					T1.SCHDINSPAID,
+					T1.ADVPFTRATE,
+					T1.ADVPROFIT,
+					T1.ADVREPAYAMOUNT,
+					T1.ADVBASERATE,
+					T1.ADVMARGIN,
+					T1.ADVCALRATE,
+					T1.SUPLRENT,
+					T1.INCRCOST,
+					T1.SUPLRENTPAID,
+					T1.INCRCOSTPAID,
+					T1.ROLLOVERONSCHDATE,
+					T1.ROLLOVERAMOUNT,
+					T1.ROLLOVERAMOUNTPAID,
+					T1.TDSAMOUNT,
+					T1.PFTDAYSBASIS,
+					T1.INSURANCEAMT,
+					T1.INSTNUMBER,
+					T1.BPIORHOLIDAY,
+					T1.FRQDATE,
+					T1.RECALLOCK,
+					T1.TDSPAID,
+					T1.CPZBALANCE
+				FROM WIFFINSCHEDULEDETAILS T1
+				INNER JOIN WIFFINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM WIFFINSCHEDULEDETAILS_TEMP
+					WHERE WIFFINSCHEDULEDETAILS_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.46_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinscheduledetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.47_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffindisbursementdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.47" author="Gopal.p">
+		<createView viewName="WIFFINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.DISBDATE,
+					T1.DISBSEQ,
+					T1.DISBDESC,
+					T1.DISBACCOUNTID,
+					T1.DISBAMOUNT,
+					T1.DISBDISBURSED,
+					T1.DISBISACTIVE,
+					T1.DISBREMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.DISBREQDATE,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT
+				FROM WIFFINDISBURSEMENTDETAILS_TEMP T1
+				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				 SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.DISBDATE,
+					T1.DISBSEQ,
+					T1.DISBDESC,
+					T1.DISBACCOUNTID,
+					T1.DISBAMOUNT,
+					T1.DISBDISBURSED,
+					T1.DISBISACTIVE,
+					T1.DISBREMARKS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.DISBREQDATE,
+					T1.FEECHARGEAMT,
+					T1.INSURANCEAMT
+				FROM WIFFINDISBURSEMENTDETAILS T1
+				INNER JOIN WIFFINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM WIFFINDISBURSEMENTDETAILS_TEMP
+					WHERE WIFFINDISBURSEMENTDETAILS_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.47_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffindisbursementdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.48_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinrepayinstruction_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.48" author="Gopal.p">
+		<createView viewName="WIFFINREPAYINSTRUCTION_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.REPAYDATE,
+					T1.REPAYAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REPAYSCHDMETHOD
+				FROM WIFFINREPAYINSTRUCTION_TEMP T1
+				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.REPAYDATE,
+					T1.REPAYAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REPAYSCHDMETHOD
+				FROM WIFFINREPAYINSTRUCTION T1
+				INNER JOIN WIFFINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM WIFFINREPAYINSTRUCTION_TEMP
+					WHERE WIFFINREPAYINSTRUCTION_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.48_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinrepayinstruction_tview');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.49_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinrepayinstruction_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.49" author="Gopal.p">
+		<createView viewName="WIFFINREPAYINSTRUCTION_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.REPAYDATE,
+					T1.REPAYAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REPAYSCHDMETHOD
+				FROM WIFFINREPAYINSTRUCTION_TEMP T1
+				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				UNION ALL
+				SELECT FM.FINID,
+					FM.FINREFERENCE,
+					T1.REPAYDATE,
+					T1.REPAYAMOUNT,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.REPAYSCHDMETHOD
+				FROM WIFFINREPAYINSTRUCTION T1
+				INNER JOIN WIFFINANCEMAIN FM ON FM.FINID = T1.FINID
+				WHERE NOT EXISTS (SELECT 1 FROM WIFFINREPAYINSTRUCTION_TEMP
+					WHERE WIFFINREPAYINSTRUCTION_TEMP.FINID = T1.FINID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.49_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinrepayinstruction_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.50_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'wiffinfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.50" author="Gopal.p">
+		<createView viewName="WIFFINFEEDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FEEID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.FEESEQ,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS
+				FROM WIFFINFEEDETAIL_TEMP T1
+				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				UNION ALL
+				SELECT T1.FEEID,
+					FM.FINID,
+					FM.FINREFERENCE,
+					T1.FEESEQ,
+					T1.ORIGINATIONFEE,
+					T1.FINEVENT,
+					T1.FEETYPEID,
+					T1.FEEORDER,
+					T1.CALCULATEDAMOUNT,
+					T1.ACTUALAMOUNT,
+					T1.WAIVEDAMOUNT,
+					T1.PAIDAMOUNT,
+					T1.FEESCHEDULEMETHOD,
+					T1.TERMS,
+					T1.REMAININGFEE,
+					T1.PAYMENTREF,
+					T1.CALCULATIONTYPE,
+					T1.RULECODE,
+					T1.FIXEDAMOUNT,
+					T1.PERCENTAGE,
+					T1.CALCULATEON,
+					T1.ALWDEVIATION,
+					T1.MAXWAIVERPERC,
+					T1.ALWMODIFYFEE,
+					T1.ALWMODIFYFEESCHDMTHD,
+					T1.VASREFERENCE,
+					T1.STATUS,
+					T1.TAXAPPLICABLE,
+					T1.TAXCOMPONENT,
+					T1.PAIDAMOUNTORIGINAL,
+					T1.PAIDAMOUNTGST,
+					T1.NETAMOUNTORIGINAL,
+					T1.NETAMOUNTGST,
+					T1.NETAMOUNT,
+					T1.REMAININGFEEORIGINAL,
+					T1.REMAININGFEEGST,
+					T1.ACTUALAMOUNTORIGINAL,
+					T1.ACTUALAMOUNTGST,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T2.FEETYPECODE,
+					T2.FEETYPEDESC,
+					T1.REFUNDABLE,
+					T1.INSTRUCTIONUID,
+					T1.WAIVEDGST,
+					T1.REFERENCEID,
+					T1.TAXHEADERID,
+					T1.PAIDTDS,
+					T1.REMTDS,
+					T1.NETTDS
+				FROM WIFFINFEEDETAIL T1
+				INNER JOIN WIFFINANCEMAIN FM ON FM.FINID = T1.FINID
+				LEFT JOIN FEETYPES T2 ON T1.FEETYPEID = T2.FEETYPEID
+				WHERE NOT EXISTS (SELECT 1 FROM WIFFINFEEDETAIL_TEMP
+				WHERE WIFFINFEEDETAIL_TEMP.FINID = T1.FINID AND WIFFINFEEDETAIL_TEMP.ORIGINATIONFEE = T1.ORIGINATIONFEE AND WIFFINFEEDETAIL_TEMP.FINEVENT = T1.FINEVENT AND WIFFINFEEDETAIL_TEMP.FEETYPEID = T1.FEETYPEID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#2367.50_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'wiffinfeedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+
 
 </databaseChangeLog>
