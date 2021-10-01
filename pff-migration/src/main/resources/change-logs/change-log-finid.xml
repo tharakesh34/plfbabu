@@ -796,10 +796,10 @@
 	</changeSet>
 	TODO
 	<changeSet id="20" author="murthy.y">
-		<addColumn tableName="finodcrecovery">
-			<column name="FinID" type="bigint" />
-		</addColumn>
-	</changeSet>
+	<addColumn tableName="finodcrecovery">
+		<column name="FinID" type="bigint" />
+	</addColumn>
+</changeSet>
 	<changeSet id="20.2" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -811,6 +811,9 @@
 		<addForeignKeyConstraint constraintName="fk_odcrecovery_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finodcrecovery"
 			referencedColumnNames="FinID" />
+
+	</changeSet>
+	<changeSet id="20.4" author="murthy.y">
 		<createIndex tableName="finodcrecovery" indexName="idx_odcrecovery_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -822,15 +825,18 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="21.2" author="murthy.y">
-		<sql>
+	<sql>
 			<![CDATA[
 				Update finoddetails set FinID = (select m.FinID from FINID_MAPPING m where finoddetails.FinReference = m.FinReference);
 			]]>
-		</sql>
-	</changeSet>
+	</sql>
+</changeSet>
 	<changeSet id="21.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_oddetails_finid" referencedTableName="FinanceMain"
 			baseColumnNames="FinID" baseTableName="finoddetails" referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="21.4" author="murthy.y">
 		<createIndex tableName="finoddetails" indexName="idx_oddetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -847,20 +853,26 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="22.2" author="murthy.y">
-		<sql>
+	<sql>
 			<![CDATA[
 				Update finodpenaltyrates set FinID = (select m.FinID from FINID_MAPPING m where finodpenaltyrates.FinReference = m.FinReference);
 				Update finodpenaltyrates_temp set FinID = (select m.FinID from FINID_MAPPING m where finodpenaltyrates_temp.FinReference = m.FinReference);
 			]]>
-		</sql>
-	</changeSet>
+	</sql>
+</changeSet>
 	<changeSet id="22.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_odpenaltyrates_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finodpenaltyrates"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="22.4" author="murthy.y">
 		<createIndex tableName="finodpenaltyrates" indexName="idx_odpenaltyrates_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="22.5" author="murthy.y">
 		<createIndex tableName="finodpenaltyrates_temp" indexName="idx_odpenaltyrates_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -885,14 +897,22 @@
 		</sql>
 	</changeSet>
 	<changeSet id="23.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finprovisions_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finprovisions" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finprovisions_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finprovisions" referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="23.4" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finprovisions_t_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finprovisions_temp"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="23.5" author="murthy.y">
 		<createIndex tableName="finprovisions" indexName="idx_finprovisions_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="23.6" author="murthy.y">
 		<createIndex tableName="finprovisions_temp" indexName="idx_finprovisions_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -911,9 +931,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="24.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_provmovements_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finprovmovements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_provmovements_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finprovmovements"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="24.4" author="murthy.y">
 		<createIndex tableName="finprovmovements" indexName="idx_provmovements_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -938,12 +961,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="25.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_repayinstruction_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayinstruction"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_repayinstruction_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayinstruction"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="25.4" author="murthy.y">
 		<createIndex tableName="finrepayinstruction" indexName="idx_repayinstruction_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="25.5" author="murthy.y">
 		<createIndex tableName="finrepayinstruction_temp" indexName="idx_repayinstruction_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -968,12 +997,16 @@
 		</sql>
 	</changeSet>
 	<changeSet id="26.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_repayscheduledtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayscheduledetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_repayscheduledtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayscheduledetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="26.4" author="murthy.y">
 		<createIndex tableName="finrepayscheduledetail" indexName="idx_repayscheduledtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+	<changeSet id="26.5" author="murthy.y">
 		<createIndex tableName="finrepayscheduledetail_temp" indexName="idx_repayscheduledtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -992,9 +1025,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="27.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_repaydetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepaydetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_repaydetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepaydetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="27.4" author="murthy.y">
 		<createIndex tableName="finrepaydetails" indexName="idx_repaydetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1013,8 +1049,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="28.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_rpyqueue_finid" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="finrpyqueue" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_rpyqueue_finid" referencedTableName="FinanceMain"
+		baseColumnNames="FinID" baseTableName="finrpyqueue" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="28.4" author="murthy.y">
 		<createIndex tableName="finrpyqueue" indexName="idx_rpyqueue_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1039,31 +1078,42 @@
 		</sql>
 	</changeSet>
 	<changeSet id="29.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_scheduledetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finscheduledetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_scheduledetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finscheduledetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="29.4" author="murthy.y">
 		<createIndex tableName="finscheduledetails" indexName="idx_scheduledetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="29.5" author="murthy.y">
 		<createIndex tableName="finscheduledetails_temp" indexName="idx_scheduledetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="29.4" author="murthy.y">
+	<changeSet id="29.6" author="murthy.y">
 		<createIndex tableName="finscheduledetails" indexName="idx_finschedules_fid_schdate" unique="true">
 			<column name="FinID" type="bigint" />
 			<column name="SchDate" type="datetime" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="29.7" author="murthy.y">
 		<createIndex tableName="finscheduledetails_temp" indexName="idx_finschedules_t_fid_schdate" unique="true">
 			<column name="FinID" type="bigint" />
 			<column name="SchDate" type="datetime" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="29.5" author="murthy.y">
+	<changeSet id="29.8" author="murthy.y">
 		<createIndex tableName="finscheduledetails" indexName="idx_finschedules_fid_priPaid">
 			<column name="FinID" type="bigint" />
 			<column name="SchdPriPaid" type="decimal(18,0)" />
 		</createIndex>
+	</changeSet>
+	<changeSet id="29.9" author="murthy.y">
 		<createIndex tableName="finscheduledetails_temp" indexName="idx_finschedules_t_fid_priPaid">
 			<column name="FinID" type="bigint" />
 			<column name="SchdPriPaid" type="decimal(18,0)" />
@@ -1083,9 +1133,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="30.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_statusdetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finstatusdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_statusdetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finstatusdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="30.4" author="murthy.y">
 		<createIndex tableName="finstatusdetail" indexName="idx_statusdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1110,12 +1163,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="31.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_steppolicydetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finsteppolicydetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_steppolicydetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finsteppolicydetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="31.4" author="murthy.y">
 		<createIndex tableName="finsteppolicydetail" indexName="idx_steppolicydetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="31.5" author="murthy.y">
 		<createIndex tableName="finsteppolicydetail_temp" indexName="idx_steppolicydetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1134,8 +1192,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="32.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_suspdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finsuspdetail" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_suspdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finsuspdetail" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="32.4" author="murthy.y">
 		<createIndex tableName="finsuspdetail" indexName="idx_suspdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1160,14 +1221,22 @@
 		</sql>
 	</changeSet>
 	<changeSet id="33.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_suspheads_finid" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="finsusphead" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_suspheads_finid" referencedTableName="FinanceMain"
+		baseColumnNames="FinID" baseTableName="finsusphead" referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="33.4" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_suspheads_t_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finsusphead_temp"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="33.5" author="murthy.y">
 		<createIndex tableName="finsusphead" indexName="idx_suspheads_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="33.6" author="murthy.y">
 		<createIndex tableName="finsusphead_temp" indexName="idx_suspheads_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1192,12 +1261,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="34.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_writeoffdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finwriteoffdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_writeoffdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finwriteoffdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="34.4" author="murthy.y">
 		<createIndex tableName="finwriteoffdetail" indexName="idx_writeoffdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="34.5" author="murthy.y">
 		<createIndex tableName="finwriteoffdetail_temp" indexName="idx_writeoffdetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1222,12 +1297,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="35.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_lmtcommiditloandtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmtcommidityloandetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_lmtcommiditloandtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmtcommidityloandetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="35.4" author="murthy.y">
 		<createIndex tableName="lmtcommidityloandetail" indexName="idx_lmtcommiditloandtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="35.5" author="murthy.y">
 		<createIndex tableName="lmtcommidityloandetail_temp" indexName="idx_lmtcommiditloandtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1252,12 +1333,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="36.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_lmtcommiditloanhdr_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmtcommidityloanheader"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_lmtcommiditloanhdr_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmtcommidityloanheader"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="36.4" author="murthy.y">
 		<createIndex tableName="lmtcommidityloanheader" indexName="idx_lmtcommiditloanhdr_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="36.5" author="murthy.y">
 		<createIndex tableName="lmtcommidityloanheader_temp" indexName="idx_lmtcommiditloanhdr_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1282,12 +1369,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="37.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_lmtcommodityheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmtcommodityheader"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_lmtcommodityheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmtcommodityheader"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="37.4" author="murthy.y">
 		<createIndex tableName="lmtcommodityheader" indexName="idx_lmtcommodityheader_finid">
 			<column name="FinID" type="bigint" />
-		</createIndex>
+	</changeSet>
+
+	<changeSet id="37.5" author="murthy.y">
+	</createIndex>
 		<createIndex tableName="lmtcommodityheader_temp" indexName="idx_lmtcommodityheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1312,11 +1405,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="38.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_provisions_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="provisions" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_provisions_finid" referencedTableName="FinanceMain"
+		baseColumnNames="FinID" baseTableName="provisions" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="38.4" author="murthy.y">
 		<createIndex tableName="provisions" indexName="idx_provisions_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="38.5" author="murthy.y">
 		<createIndex tableName="provisions_temp" indexName="idx_provisions_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1335,9 +1434,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="39.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_provision_movements_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="provision_movements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_provision_movements_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="provision_movements"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="39.4" author="murthy.y">
 		<createIndex tableName="provision_movements" indexName="idx_provision_movements_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1356,9 +1457,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="40.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_subvention_knock_dtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="subvention_knockoff_details"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_subvention_knock_dtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="subvention_knockoff_details"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="40.4" author="murthy.y">
 		<createIndex tableName="subvention_knockoff_details" indexName="idx_subvention_knock_dtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1383,12 +1486,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="41.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financepremiumdtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financepremiumdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financepremiumdtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financepremiumdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="41.4" author="murthy.y">
 		<createIndex tableName="financepremiumdetail" indexName="idx_financepremiumdtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="41.5" author="murthy.y">
 		<createIndex tableName="financepremiumdetail_temp" indexName="idx_financepremiumdtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1407,9 +1516,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="42.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_advancepaymentdtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="advancepaymentdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_advancepaymentdtls_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="advancepaymentdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="42.4" author="murthy.y">
 		<createIndex tableName="advancepaymentdetails" indexName="idx_advancepaymentdtls_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1434,11 +1546,16 @@
 		</sql>
 	</changeSet>
 	<changeSet id="43.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_adviseuploads_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="adviseuploads" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_adviseuploads_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="adviseuploads" referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="43.4" author="murthy.y">
 		<createIndex tableName="adviseuploads" indexName="idx_adviseuploads_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="43.5" author="murthy.y">
 		<createIndex tableName="adviseuploads_temp" indexName="idx_adviseuploads_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1463,12 +1580,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="44.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_agreementfielddtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="agreementfielddetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_agreementfielddtls_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="agreementfielddetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="44.4" author="murthy.y">
 		<createIndex tableName="agreementfielddetails" indexName="idx_agreementfielddtls_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="44.5" author="murthy.y">
 		<createIndex tableName="agreementfielddetails_temp" indexName="idx_agreementfielddtls_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1487,9 +1610,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="45.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_amortizationque_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="amortizationqueuing"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_amortizationque_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="amortizationqueuing"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="45.4" author="murthy.y">
 		<createIndex tableName="amortizationqueuing" indexName="idx_amortizationque_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1508,9 +1634,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="46.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_amortizationque_log_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="amortizationqueuing_log"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_amortizationque_log_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="amortizationqueuing_log"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="46.4" author="murthy.y">
 		<createIndex tableName="amortizationqueuing_log" indexName="idx_amortizationque_log_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1524,9 +1653,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="47.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_auto_knockoff_excess_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="auto_knockoff_excess"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_auto_knockoff_excess_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="auto_knockoff_excess"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="47.4" author="murthy.y">
 		<createIndex tableName="auto_knockoff_excess" indexName="idx_auto_knockoff_excess_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1545,9 +1677,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="48.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_blockedfinances_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="blockedfinances"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_blockedfinances_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="blockedfinances"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="48.4" author="murthy.y">
 		<createIndex tableName="blockedfinances" indexName="idx_blockedfinances_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1572,12 +1707,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="49.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_bulkprocessdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="bulkprocessdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_bulkprocessdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="bulkprocessdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="49.4" author="murthy.y">
 		<createIndex tableName="bulkprocessdetails" indexName="idx_bulkprocessdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="49.5" author="murthy.y">
 		<createIndex tableName="bulkprocessdetails_temp" indexName="idx_bulkprocessdetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1602,12 +1742,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="50.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_bulkratechangedtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="bulkratechangedetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_bulkratechangedtls_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="bulkratechangedetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="50.4" author="murthy.y">
 		<createIndex tableName="bulkratechangedetails" indexName="idx_bulkratechangedtls_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="50.5" author="murthy.y">
 		<createIndex tableName="bulkratechangedetails_temp" indexName="idx_bulkratechangedtls_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1626,9 +1772,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="51.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_cashbackdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="cashbackdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_cashbackdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="cashbackdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="51.4" author="murthy.y">
 		<createIndex tableName="cashbackdetails" indexName="idx_cashbackdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1653,11 +1802,16 @@
 		</sql>
 	</changeSet>
 	<changeSet id="52.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_chequeheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="chequeheader" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_chequeheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="chequeheader" referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="52.4" author="murthy.y">
 		<createIndex tableName="chequeheader" indexName="idx_chequeheader_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="52.5" author="murthy.y">
 		<createIndex tableName="chequeheader_temp" indexName="idx_chequeheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1676,9 +1830,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="53.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_cibil_customer_ext_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="cibil_customer_extract"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_cibil_customer_ext_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="cibil_customer_extract"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="53.4" author="murthy.y">
 		<createIndex tableName="cibil_customer_extract" indexName="idx_cibil_customer_ext_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1697,9 +1854,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="54.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_cibil_file_info_log_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="cibil_file_info_log"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_cibil_file_info_log_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="cibil_file_info_log"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="54.4" author="murthy.y">
 		<createIndex tableName="cibil_file_info_log" indexName="idx_cibil_file_info_log_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1718,9 +1878,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="55.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_col_allocation_dtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="col_allocation_details"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_col_allocation_dtls_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="col_allocation_details"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="55.4" author="murthy.y">
 		<createIndex tableName="col_allocation_details" indexName="idx_col_allocation_dtls_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1739,9 +1902,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="56.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_collateral_ltv_brea_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="collateral_ltv_breaches"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_collateral_ltv_brea_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="collateral_ltv_breaches"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="56.4" author="murthy.y">
 		<createIndex tableName="collateral_ltv_breaches" indexName="idx_collateral_ltv_brea_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1760,9 +1926,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="57.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_collateralmarklog_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="collateralmarklog"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_collateralmarklog_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="collateralmarklog"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="57.4" author="murthy.y">
 		<createIndex tableName="collateralmarklog" indexName="idx_collateralmarklog_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1787,12 +1956,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="59.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_commitmentmomnts_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="commitmentmovements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_commitmentmomnts_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="commitmentmovements"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="59.4" author="murthy.y">
 		<createIndex tableName="commitmentmovements" indexName="idx_commitmentmomnts_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="59.5" author="murthy.y">
 		<createIndex tableName="commitmentmovements_temp" indexName="idx_commitmentmomnts_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1811,9 +1986,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="60.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_creditreviewdata_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="creditreviewdata"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_creditreviewdata_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="creditreviewdata"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="60.4" author="murthy.y">
 		<createIndex tableName="creditreviewdata" indexName="idx_creditreviewdata_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1832,9 +2010,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="61.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_customerdedupdetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="customerdedupdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_customerdedupdetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="customerdedupdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="61.4" author="murthy.y">
 		<createIndex tableName="customerdedupdetail" indexName="idx_customerdedupdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1853,9 +2034,10 @@
 		</sql>
 	</changeSet>
 	<changeSet id="62.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_dealerresponse_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="dealerresponse"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_dealerresponse_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="dealerresponse" referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="62.4" author="murthy.y">
 		<createIndex tableName="dealerresponse" indexName="idx_dealerresponse_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1874,9 +2056,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="63.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_disbursement_req_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="disbursement_requests"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_disbursement_req_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="disbursement_requests"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="63.4" author="murthy.y">
 		<createIndex tableName="disbursement_requests" indexName="idx_disbursement_req_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1895,8 +2080,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="64.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_disbursments_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="disbursments" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_disbursments_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="disbursments" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="64.4" author="murthy.y">
 		<createIndex tableName="disbursments" indexName="idx_disbursments_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1921,12 +2109,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="65.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_due_diligences_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="due_diligences"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_due_diligences_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="due_diligences" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="65.4" author="murthy.y">
 		<createIndex tableName="due_diligences" indexName="idx_due_diligences_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="65.5" author="murthy.y">
 		<createIndex tableName="due_diligences_temp" indexName="idx_due_diligences_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1945,9 +2138,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="66.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_externaldocuments_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="externaldocuments"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_externaldocuments_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="externaldocuments"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="66.4" author="murthy.y">
 		<createIndex tableName="externaldocuments" indexName="idx_externaldocuments_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -1972,12 +2168,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="68.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_feewaiverheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="feewaiverheader"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_feewaiverheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="feewaiverheader"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="68.4" author="murthy.y">
 		<createIndex tableName="feewaiverheader" indexName="idx_feewaiverheader_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="68.5" author="murthy.y">
 		<createIndex tableName="feewaiverheader_temp" indexName="idx_feewaiverheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2002,11 +2204,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="69.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_finadvancepayments_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="finadvancepayments" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="finadvancepayments" indexName="idx_finadvancepayments_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_finadvancepayments_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="finadvancepayments" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="finadvancepayments" indexName="idx_finadvancepayments_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="69.4" author="murthy.y">
 		<createIndex tableName="finadvancepayments_temp" indexName="idx_finadvancepayments_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2031,12 +2236,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="70.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finagreementdetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finagreementdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finagreementdetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finagreementdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="70.4" author="murthy.y">
 		<createIndex tableName="finagreementdetail" indexName="idx_finagreementdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="70.5" author="murthy.y">
 		<createIndex tableName="finagreementdetail_temp" indexName="idx_finagreementdetail_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2061,12 +2271,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="71.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financechklistref_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financechecklistref"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financechklistref_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financechecklistref"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="71.4" author="murthy.y">
 		<createIndex tableName="financechecklistref" indexName="idx_financechklistref_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="71.5" author="murthy.y">
 		<createIndex tableName="financechecklistref_temp" indexName="idx_financechklistref_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2091,12 +2307,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="72.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financedeviations_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financedeviations"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financedeviations_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financedeviations"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="72.4" author="murthy.y">
 		<createIndex tableName="financedeviations" indexName="idx_financedeviations_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="72.5" author="murthy.y">
 		<createIndex tableName="financedeviations_temp" indexName="idx_financedeviations_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2115,9 +2337,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="73.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financeeligibilitdtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financeeligibilitydetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financeeligibilitdtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financeeligibilitydetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="73.4" author="murthy.y">
 		<createIndex tableName="financeeligibilitydetail" indexName="idx_financeeligibilitdtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2136,9 +2360,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="74.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financelimitprocess_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financelimitprocess"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financelimitprocess_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financelimitprocess"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="74.4" author="murthy.y">
 		<createIndex tableName="financelimitprocess" indexName="idx_financelimitprocess_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2155,6 +2382,9 @@
 		<addForeignKeyConstraint constraintName="fk_financemain_extensn_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financemain_extension"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="75.4" author="murthy.y">
 		<createIndex tableName="financemain_extension" indexName="idx_financemain_extensn_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2173,9 +2403,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="76.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financeratereview_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financeratereview"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financeratereview_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financeratereview"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="76.4" author="murthy.y">
 		<createIndex tableName="financeratereview" indexName="idx_financeratereview_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2194,9 +2427,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="77.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_financescoreheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financescoreheader"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_financescoreheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="financescoreheader"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="77.4" author="murthy.y">
 		<createIndex tableName="financescoreheader" indexName="idx_financescoreheader_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2215,9 +2451,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="78.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finassetamtmovements_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finassetamtmovements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finassetamtmovements_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finassetamtmovements"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="78.4" author="murthy.y">
 		<createIndex tableName="finassetamtmovements" indexName="idx_finassetamtmovements_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2234,20 +2473,26 @@
 		</addColumn>
 	</changeSet>
 	<changeSet id="79.2" author="murthy.y">
-		<sql>
+	<sql>
 			<![CDATA[
 				Update finassetevaluation set FinID = (select m.FinID from FINID_MAPPING m where finassetevaluation.FinReference = m.FinReference);
 				Update finassetevaluation_temp set FinID = (select m.FinID from FINID_MAPPING m where finassetevaluation_temp.FinReference = m.FinReference);
 			]]>
-		</sql>
-	</changeSet>
+	</sql>
+</changeSet>
 	<changeSet id="79.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finassetevaluation_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finassetevaluation"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="79.4" author="murthy.y">
 		<createIndex tableName="finassetevaluation" indexName="idx_finassetevaluation_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="79.5" author="murthy.y">
 		<createIndex tableName="finassetevaluation_temp" indexName="idx_finassetevaluation_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2286,9 +2531,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="81.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finblacklistdetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finblacklistdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finblacklistdetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finblacklistdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="81.4" author="murthy.y">
 		<createIndex tableName="finblacklistdetail" indexName="idx_finblacklistdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2313,12 +2561,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="82.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finchangecustomer_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finchangecustomer"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finchangecustomer_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finchangecustomer"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="82.4" author="murthy.y">
 		<createIndex tableName="finchangecustomer" indexName="idx_finchangecustomer_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="82.5" author="murthy.y">
 		<createIndex tableName="finchangecustomer_temp" indexName="idx_finchangecustomer_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2343,12 +2597,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="83.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_fincovenanttype_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fincovenanttype"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_fincovenanttype_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fincovenanttype"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="83.4" author="murthy.y">
 		<createIndex tableName="fincovenanttype" indexName="idx_fincovenanttype_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="83.5" author="murthy.y">
 		<createIndex tableName="fincovenanttype_temp" indexName="idx_fincovenanttype_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2373,12 +2633,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="84.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_fincovenantlogs_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fincovenanttypelogs"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_fincovenantlogs_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fincovenanttypelogs"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="84.4" author="murthy.y">
 		<createIndex tableName="fincovenanttypelogs" indexName="idx_fincovenantlogs_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="84.5" author="murthy.y">
 		<createIndex tableName="fincovenanttypelogs_temp" indexName="idx_fincovenantlogs_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2417,9 +2683,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="86.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finexcessamount_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexcessamount"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finexcessamount_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexcessamount"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="86.4" author="murthy.y">
 		<createIndex tableName="finexcessamount" indexName="idx_finexcessamount_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2438,9 +2707,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="87.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_excessamount_snapsht_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexcessamount_snapshot"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_excessamount_snapsht_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexcessamount_snapshot"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="87.4" author="murthy.y">
 		<createIndex tableName="finexcessamount_snapshot" indexName="idx_excessamount_snapsht_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2459,9 +2731,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="88.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finexpensedetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexpensedetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finexpensedetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexpensedetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="88.4" author="murthy.y">
 		<createIndex tableName="finexpensedetails" indexName="idx_finexpensedetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2480,9 +2755,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="89.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finexpensemovements_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexpensemovements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finexpensemovements_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finexpensemovements"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="89.4" author="murthy.y">
 		<createIndex tableName="finexpensemovements" indexName="idx_finexpensemovements_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2501,8 +2779,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="90.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finfeeconfig_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeeconfig" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finfeeconfig_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeeconfig" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="90.4" author="murthy.y">
 		<createIndex tableName="finfeeconfig" indexName="idx_finfeeconfig_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2527,11 +2808,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="91.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finfeedetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeedetail" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finfeedetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeedetail" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="91.4" author="murthy.y">
 		<createIndex tableName="finfeedetail" indexName="idx_finfeedetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="91.5" author="murthy.y">
 		<createIndex tableName="finfeedetail_temp" indexName="idx_finfeedetail_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2548,6 +2835,9 @@
 		<addForeignKeyConstraint constraintName="fk_feedetail_snapshot_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeedetail_snapshot"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="92.4" author="murthy.y">
 		<createIndex tableName="finfeedetail_snapshot" indexName="idx_feedetail_snapshot_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2575,9 +2865,15 @@
 		<addForeignKeyConstraint constraintName="fk_finfeerefundheader_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeerefundheader"
 			referencedColumnNames="FinID" />
-		<createIndex tableName="finfeerefundheader" indexName="idx_finfeerefundheader_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+			</changeSet>
+
+<changeSet id="93.4" author="murthy.y">
+	<createIndex tableName="finfeerefundheader" indexName="idx_finfeerefundheader_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="93.5" author="murthy.y">
 		<createIndex tableName="finfeerefundheader_temp" indexName="idx_finfeerefundheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2604,9 +2900,15 @@
 	<changeSet id="94.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finirrdetails_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finirrdetails" referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="94.5" author="murthy.y">
 		<createIndex tableName="finirrdetails" indexName="idx_finirrdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="94.6" author="murthy.y">
 		<createIndex tableName="finirrdetails_temp" indexName="idx_finirrdetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2634,9 +2936,15 @@
 		<addForeignKeyConstraint constraintName="fk_finlegalexpenses_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finlegalexpenses"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="95.4" author="murthy.y">
 		<createIndex tableName="finlegalexpenses" indexName="idx_finlegalexpenses_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="95.5" author="murthy.y">
 		<createIndex tableName="finlegalexpenses_temp" indexName="idx_finlegalexpenses_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2664,9 +2972,15 @@
 		<addForeignKeyConstraint constraintName="fk_finliabilityreq_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finliabilityreq"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="96.4" author="murthy.y">
 		<createIndex tableName="finliabilityreq" indexName="idx_finliabilityreq_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="96.5" author="murthy.y">
 		<createIndex tableName="finliabilityreq_temp" indexName="idx_finliabilityreq_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2691,12 +3005,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="97.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finmaintaininst_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finmaintaininstructions"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finmaintaininst_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finmaintaininstructions"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="97.4" author="murthy.y">
 		<createIndex tableName="finmaintaininstructions" indexName="idx_finmaintaininst_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="97.5" author="murthy.y">
 		<createIndex tableName="finmaintaininstructions_temp" indexName="idx_finmaintaininst_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2723,9 +3043,14 @@
 	<changeSet id="98.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finocrcapture_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finocrcapture" referencedColumnNames="FinID" />
+	</changeSet>
+	<changeSet id="98.4" author="murthy.y">
 		<createIndex tableName="finocrcapture" indexName="idx_finocrcapture_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="98.5" author="murthy.y">
 		<createIndex tableName="finocrcapture_temp" indexName="idx_finocrcapture_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2750,11 +3075,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="99.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finocrheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finocrheader" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finocrheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finocrheader" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="99.4" author="murthy.y">
 		<createIndex tableName="finocrheader" indexName="idx_finocrheader_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="99.5" author="murthy.y">
 		<createIndex tableName="finocrheader_temp" indexName="idx_finocrheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2773,9 +3104,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="100.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finodamztaxdetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finodamztaxdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finodamztaxdetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finodamztaxdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="100.4" author="murthy.y">
 		<createIndex tableName="finodamztaxdetail" indexName="idx_finodamztaxdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2789,9 +3123,11 @@
 	<!-- <changeSet id="101.2" author="murthy.y"> <sql> <![CDATA[ Update finoddetails_snapshot set FinID = (select m.FinID from 
 		FINID_MAPPING m where finoddetails_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
 	<changeSet id="101.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finoddetails_snap_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finoddetails_snapshot"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finoddetails_snap_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finoddetails_snapshot"
+		referencedColumnNames="FinID" />
+</changeSet>
+	<changeSet id="101.4" author="murthy.y">
 		<createIndex tableName="finoddetails_snapshot" indexName="idx_finoddetails_snap_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2810,9 +3146,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="102.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finodpenaltyrats_log_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finodpenaltyrates_log"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finodpenaltyrats_log_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finodpenaltyrates_log"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="102.4" author="murthy.y">
 		<createIndex tableName="finodpenaltyrates_log" indexName="idx_finodpenaltyrats_log_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2837,11 +3176,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="103.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_fin_options_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fin_options" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_fin_options_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fin_options" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="103.4" author="murthy.y">
 		<createIndex tableName="fin_options" indexName="idx_fin_options_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="103.5" author="murthy.y">
 		<createIndex tableName="fin_options_temp" indexName="idx_fin_options_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2860,8 +3205,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="104.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finpftdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finpftdetails" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finpftdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finpftdetails" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="104.4" author="murthy.y">
 		<createIndex tableName="finpftdetails" indexName="idx_finpftdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2880,9 +3228,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="105.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finpftdetails_snap_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finpftdetails_snapshot"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finpftdetails_snap_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finpftdetails_snapshot"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="105.4" author="murthy.y">
 		<createIndex tableName="finpftdetails_snapshot" indexName="idx_finpftdetails_snap_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2907,12 +3258,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="106.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finplanemihdates_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finplanemihdates"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finplanemihdates_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finplanemihdates"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="106.4" author="murthy.y">
 		<createIndex tableName="finplanemihdates" indexName="idx_finplanemihdates_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="106.5" author="murthy.y">
 		<createIndex tableName="finplanemihdates_temp" indexName="idx_finplanemihdates_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2937,12 +3294,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="107.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finplanemihmonths_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finplanemihmonths"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finplanemihmonths_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finplanemihmonths"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="107.4" author="murthy.y">
 		<createIndex tableName="finplanemihmonths" indexName="idx_finplanemihmonths_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="107.5" author="murthy.y">
 		<createIndex tableName="finplanemihmonths_temp" indexName="idx_finplanemihmonths_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2961,9 +3324,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="108.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finreceiptqueuelog_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finreceiptqueuelog"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finreceiptqueuelog_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finreceiptqueuelog"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="108.4" author="murthy.y">
 		<createIndex tableName="finreceiptqueuelog" indexName="idx_finreceiptqueuelog_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -2988,12 +3354,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="109.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finrepayheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayheader"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finrepayheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayheader" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="109.4" author="murthy.y">
 		<createIndex tableName="finrepayheader" indexName="idx_finrepayheader_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="109.5" author="murthy.y">
 		<createIndex tableName="finrepayheader_temp" indexName="idx_finrepayheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3015,6 +3386,9 @@
 		<addForeignKeyConstraint constraintName="fk_finrepayinstrion_log_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayinstruction_log"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="110.4" author="murthy.y">
 		<createIndex tableName="finrepayinstruction_log" indexName="idx_finrepayinstrion_log_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3031,23 +3405,26 @@
 		<addForeignKeyConstraint constraintName="fk_scheduledetails_log_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finscheduledetails_log"
 			referencedColumnNames="FinID" />
-		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduledetails_log_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
-	</changeSet>
-	<changeSet id="111.4" author="murthy.y">
+			</changeSet>
+
+<changeSet id="111.4" author="murthy.y">
+	<createIndex tableName="finscheduledetails_log" indexName="idx_scheduledetails_log_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+	<changeSet id="111.5" author="murthy.y">
 		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_schdate" unique="true">
 			<column name="FinID" type="bigint" />
 			<column name="SchDate" type="datetime" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="111.5" author="murthy.y">
+	<changeSet id="111.6" author="murthy.y">
 		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_priPaid">
 			<column name="FinID" type="bigint" />
 			<column name="SchdPriPaid" type="decimal(18,0)" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="111.6" author="murthy.y">
+	<changeSet id="111.7" author="murthy.y">
 		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_lgKey">
 			<column name="FinID" type="bigint" />
 			<column name="LogKey" type="bigint" />
@@ -3074,12 +3451,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="112.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finserviceinstruction_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finserviceinstruction"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finserviceinstruction_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finserviceinstruction"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="112.4" author="murthy.y">
 		<createIndex tableName="finserviceinstruction" indexName="idx_serviceinstruction_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="112.5" author="murthy.y">
 		<createIndex tableName="finserviceinstruction_temp" indexName="idx_serviceinstruction_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3098,9 +3481,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="113.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_stageaccountinglog_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finstageaccountinglog"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_stageaccountinglog_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finstageaccountinglog"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="113.4" author="murthy.y">
 		<createIndex tableName="finstageaccountinglog" indexName="idx_stageaccountinglog_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3125,11 +3511,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="114.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_fintaxdetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fintaxdetail" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_fintaxdetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fintaxdetail" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="114.4" author="murthy.y">
 		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="114.5" author="murthy.y">
 		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3148,9 +3540,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="115.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_fintaxreceivable_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fintaxreceivable"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_fintaxreceivable_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="fintaxreceivable"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="115.4" author="murthy.y">
 		<createIndex tableName="fintaxreceivable" indexName="idx_fintaxreceivable_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3172,6 +3567,9 @@
 		<addForeignKeyConstraint constraintName="fk_finwaiverdetail_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finwaiverdetail"
 			referencedColumnNames="FinID" />
+	</changeSet>
+
+	<changeSet id="116.4" author="murthy.y">
 		<createIndex tableName="finwaiverdetail" indexName="idx_finwaiverdetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3199,9 +3597,15 @@
 		<addForeignKeyConstraint constraintName="fk_finwaiverheader_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finwaiverheader"
 			referencedColumnNames="FinID" />
-		<createIndex tableName="finwaiverheader" indexName="idx_finwaiverheader_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+			</changeSet>
+
+<changeSet id="117.4" author="murthy.y">
+	<createIndex tableName="finwaiverheader" indexName="idx_finwaiverheader_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="117.5" author="murthy.y">
 		<createIndex tableName="finwaiverheader_temp" indexName="idx_finwaiverheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3226,12 +3630,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="118.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_finwriteoffpayment_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finwriteoffpayment"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_finwriteoffpayment_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finwriteoffpayment"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="118.4" author="murthy.y">
 		<createIndex tableName="finwriteoffpayment" indexName="idx_finwriteoffpayment_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="118.5" author="murthy.y">
 		<createIndex tableName="finwriteoffpayment_temp" indexName="idx_finwriteoffpayment_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3256,12 +3666,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="119.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_holddisbursement_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="holddisbursement"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_holddisbursement_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="holddisbursement"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="119.4" author="murthy.y">
 		<createIndex tableName="holddisbursement" indexName="idx_holddisbursement_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="119.5" author="murthy.y">
 		<createIndex tableName="holddisbursement_temp" indexName="idx_holddisbursement_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3280,9 +3696,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="120.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_incomeamortization_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="incomeamortization"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_incomeamortization_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="incomeamortization"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="120.4" author="murthy.y">
 		<createIndex tableName="incomeamortization" indexName="idx_incomeamortization_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3301,9 +3720,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="121.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_instbasedschddetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="instbasedschddetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_instbasedschddetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="instbasedschddetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="121.4" author="murthy.y">
 		<createIndex tableName="instbasedschddetails" indexName="idx_instbasedschddetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3322,9 +3744,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="122.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_irrscheduledetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="irrscheduledetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_irrscheduledetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="irrscheduledetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="122.4" author="murthy.y">
 		<createIndex tableName="irrscheduledetail" indexName="idx_irrscheduledetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3349,12 +3774,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="123.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_linkedfinances_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="linkedfinances"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_linkedfinances_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="linkedfinances" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="123.4" author="murthy.y">
 		<createIndex tableName="linkedfinances" indexName="idx_linkedfinances_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="123.5" author="murthy.y">
 		<createIndex tableName="linkedfinances_temp" indexName="idx_linkedfinances_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3373,8 +3803,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="124.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_lmsservicelog_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmsservicelog" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_lmsservicelog_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lmsservicelog" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="124.4" author="murthy.y">
 		<createIndex tableName="lmsservicelog" indexName="idx_lmsservicelog_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3399,12 +3832,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="125.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_lowertaxdeduction_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lowertaxdeduction"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_lowertaxdeduction_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="lowertaxdeduction"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="125.4" author="murthy.y">
 		<createIndex tableName="lowertaxdeduction" indexName="idx_lowertaxdeduction_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="125.5" author="murthy.y">
 		<createIndex tableName="lowertaxdeduction_temp" indexName="idx_lowertaxdeduction_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3423,9 +3862,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="126.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_mandate_requests_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="mandate_requests"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_mandate_requests_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="mandate_requests"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="126.4" author="murthy.y">
 		<createIndex tableName="mandate_requests" indexName="idx_mandate_requests_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3444,9 +3886,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="127.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_mandate_response_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="mandate_response"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_mandate_response_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="mandate_response"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="127.4" author="murthy.y">
 		<createIndex tableName="mandate_response" indexName="idx_mandate_response_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3471,11 +3916,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="128.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_manualadvise_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_manualadvise_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="128.4" author="murthy.y">
 		<createIndex tableName="manualadvise" indexName="idx_manualadvise_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="128.5" author="murthy.y">
 		<createIndex tableName="manualadvise_temp" indexName="idx_manualadvise_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3494,9 +3945,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="129.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_manualadvise_cancel_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise_cancel"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_manualadvise_cancel_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise_cancel"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="129.4" author="murthy.y">
 		<createIndex tableName="manualadvise_cancel" indexName="idx_manualadvise_cancel_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3515,9 +3969,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="130.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_manualadvise_snap_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise_snapshot"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_manualadvise_snap_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise_snapshot"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="130.4" author="murthy.y">
 		<createIndex tableName="manualadvise_snapshot" indexName="idx_manualadvise_snap_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3536,9 +3993,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="131.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_monthlyaccumulatedtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="monthlyaccumulatedetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_monthlyaccumulatedtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="monthlyaccumulatedetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="131.4" author="murthy.y">
 		<createIndex tableName="monthlyaccumulatedetail" indexName="idx_monthlyaccumulatedtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3557,9 +4017,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="132.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_multireceiptapproval_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="multireceiptapproval"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_multireceiptapproval_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="multireceiptapproval"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="132.4" author="murthy.y">
 		<createIndex tableName="multireceiptapproval" indexName="idx_multireceiptapproval_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3578,9 +4041,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="133.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_overdraftmovements_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="overdraftmovements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_overdraftmovements_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="overdraftmovements"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="133.4" author="murthy.y">
 		<createIndex tableName="overdraftmovements" indexName="idx_overdraftmovements_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3605,12 +4071,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="134.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_overdraftschedules_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="overdraftscheduledetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_overdraftschedules_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="overdraftscheduledetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="134.4" author="murthy.y">
 		<createIndex tableName="overdraftscheduledetail" indexName="idx_overdraftschedulesl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="134.5" author="murthy.y">
 		<createIndex tableName="overdraftscheduledetail_temp" indexName="idx_overdraftscheduls_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3629,9 +4101,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="135.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_overduetaxmovements_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="overduetaxmovements"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_overduetaxmovements_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="overduetaxmovements"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="135.4" author="murthy.y">
 		<createIndex tableName="overduetaxmovements" indexName="idx_overduetaxmovements_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3656,11 +4131,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="136.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_paymentheader_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="paymentheader" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_paymentheader_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="paymentheader" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="136.4" author="murthy.y">
 		<createIndex tableName="paymentheader" indexName="idx_paymentheader_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="136.5" author="murthy.y">
 		<createIndex tableName="paymentheader_temp" indexName="idx_paymentheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3679,9 +4160,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="137.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_paymentmethod_upload_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="paymentmethod_upload_detail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_paymentmethod_upload_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="paymentmethod_upload_detail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="137.4" author="murthy.y">
 		<createIndex tableName="paymentmethod_upload_detail" indexName="idx_paymentmethod_upload_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3706,12 +4190,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="138.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_payorderissuehdr_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="payorderissueheader"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_payorderissuehdr_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="payorderissueheader"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="138.4" author="murthy.y">
 		<createIndex tableName="payorderissueheader" indexName="idx_payorderissuehdr_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="138.5" author="murthy.y">
 		<createIndex tableName="payorderissueheader_temp" indexName="idx_payorderissuehdr_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3736,11 +4226,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="139.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_pmay_finid" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="pmay" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_pmay_finid" referencedTableName="FinanceMain"
+		baseColumnNames="FinID" baseTableName="pmay" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="139.4" author="murthy.y">
 		<createIndex tableName="pmay" indexName="idx_pmay_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="139.5" author="murthy.y">
 		<createIndex tableName="pmay_temp" indexName="idx_pmay_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3759,9 +4255,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="140.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_pmayeligibilitylog_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="pmayeligibilitylog"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_pmayeligibilitylog_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="pmayeligibilitylog"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="140.4" author="murthy.y">
 		<createIndex tableName="pmayeligibilitylog" indexName="idx_pmayeligibilitylog_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3775,8 +4274,11 @@
 	<!-- <changeSet id="141.2" author="murthy.y"> <sql> <![CDATA[ Update postings set FinID = (select m.FinID from FINID_MAPPING 
 		m where postings.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
 	<changeSet id="141.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_postings_finid" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="postings" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_postings_finid" referencedTableName="FinanceMain"
+		baseColumnNames="FinID" baseTableName="postings" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="141.4" author="murthy.y">
 		<createIndex tableName="postings" indexName="idx_postings_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3795,9 +4297,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="142.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_postings_taxdownload_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="postings_taxdownload"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_postings_taxdownload_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="postings_taxdownload"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="142.4" author="murthy.y">
 		<createIndex tableName="postings_taxdownload" indexName="idx_postings_taxdownload_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3817,12 +4322,18 @@
 		FINID_MAPPING m where presentmentdetails.FinReference = m.FinReference); Update presentmentdetails_temp set FinID = (select 
 		m.FinID from FINID_MAPPING m where presentmentdetails_temp.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
 	<changeSet id="143.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_presentmentdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentmentdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_presentmentdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentmentdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="143.4" author="murthy.y">
 		<createIndex tableName="presentmentdetails" indexName="idx_presentmentdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="143.5" author="murthy.y">
 		<createIndex tableName="presentmentdetails_temp" indexName="idx_presentmentdetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3841,9 +4352,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="144.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_presentment_resp_dtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentment_resp_dtls"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_presentment_resp_dtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentment_resp_dtls"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="144.4" author="murthy.y">
 		<createIndex tableName="presentment_resp_dtls" indexName="idx_presentment_resp_dtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3862,9 +4376,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="145.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_presentment_res_dtll_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentment_resp_dtls_log"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_presentment_res_dtll_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentment_resp_dtls_log"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="145.4" author="murthy.y">
 		<createIndex tableName="presentment_resp_dtls_log" indexName="idx_presentment_res_dtll_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3878,9 +4395,12 @@
 	<!-- <changeSet id="146.2" author="murthy.y"> <sql> <![CDATA[ Update projectedaccruals set FinID = (select m.FinID from 
 		FINID_MAPPING m where projectedaccruals.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
 	<changeSet id="146.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_projectedaccruals_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedaccruals"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_projectedaccruals_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedaccruals"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="146.4" author="murthy.y">
 		<createIndex tableName="projectedaccruals" indexName="idx_projectedaccruals_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3899,9 +4419,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="147.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_projectedaccrl_work_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedaccruals_work"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_projectedaccrl_work_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedaccruals_work"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="147.4" author="murthy.y">
 		<createIndex tableName="projectedaccruals_work" indexName="idx_projectedaccrl_work_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3915,9 +4438,12 @@
 	<!-- <changeSet id="148.2" author="murthy.y"> <sql> <![CDATA[ Update projectedincomeamz set FinID = (select m.FinID from 
 		FINID_MAPPING m where projectedincomeamz.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
 	<changeSet id="148.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_projectedincomeamz_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedincomeamz"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_projectedincomeamz_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedincomeamz"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="148.4" author="murthy.y">
 		<createIndex tableName="projectedincomeamz" indexName="idx_projectedincomeamz_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3936,9 +4462,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="149.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_projectedinamz_work_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedincomeamz_work"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_projectedinamz_work_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="projectedincomeamz_work"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="149.4" author="murthy.y">
 		<createIndex tableName="projectedincomeamz_work" indexName="idx_projectedincamz_work_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3963,11 +4492,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="150.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_psldetail_finid" referencedTableName="FinanceMain"
-			baseColumnNames="FinID" baseTableName="psldetail" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_psldetail_finid" referencedTableName="FinanceMain"
+		baseColumnNames="FinID" baseTableName="psldetail" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="150.4" author="murthy.y">
 		<createIndex tableName="psldetail" indexName="idx_psldetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="150.5" author="murthy.y">
 		<createIndex tableName="psldetail_temp" indexName="idx_psldetail_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -3992,11 +4527,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="151.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_querydetail_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="querydetail" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_querydetail_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="querydetail" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="151.4" author="murthy.y">
 		<createIndex tableName="querydetail" indexName="idx_querydetail_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="151.5" author="murthy.y">
 		<createIndex tableName="querydetail_temp" indexName="idx_querydetail_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4015,9 +4556,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="152.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_ratechange_upddtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="ratechange_upload_details"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_ratechange_upddtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="ratechange_upload_details"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="152.4" author="murthy.y">
 		<createIndex tableName="ratechange_upload_details" indexName="idx_ratechange_upddtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4042,12 +4586,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="153.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_recommendtion_nots_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="recommendation_notes"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_recommendtion_nots_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="recommendation_notes"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="153.4" author="murthy.y">
 		<createIndex tableName="recommendation_notes" indexName="idx_recommendtion_nots_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="153.5" author="murthy.y">
 		<createIndex tableName="recommendation_notes_temp" indexName="idx_recommendtion_nots_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4066,9 +4616,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="154.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_rejfinagreementdtl_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="rejectfinagreementdetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_rejfinagreementdtl_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="rejectfinagreementdetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="154.4" author="murthy.y">
 		<createIndex tableName="rejectfinagreementdetail" indexName="idx_rejfinagreementdtl_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4453,11 +5006,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="173.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_restructure_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="restructure" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_restructure_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="restructure" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="173.4" author="murthy.y">
 		<createIndex tableName="restructure" indexName="idx_restructure_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="173.5" author="murthy.y">
 		<createIndex tableName="restructure_temp" indexName="idx_restructure_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4482,12 +5041,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="174.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_restructure_dtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="restructure_details"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_restructure_dtls_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="restructure_details"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="174.4" author="murthy.y">
 		<createIndex tableName="restructure_details" indexName="idx_restructure_dtls_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="174.5" author="murthy.y">
 		<createIndex tableName="restructure_details_temp" indexName="idx_restructure_dtls_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4512,12 +5077,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="175.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_sanction_condtons_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="sanction_conditions"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_sanction_condtons_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="sanction_conditions"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="175.4" author="murthy.y">
 		<createIndex tableName="sanction_conditions" indexName="idx_sanction_condtons_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="175.5" author="murthy.y">
 		<createIndex tableName="sanction_conditions_temp" indexName="idx_sanction_condtons_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4536,9 +5107,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="176.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_scheduleduetaxdtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="scheduleduetaxdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_scheduleduetaxdtls_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="scheduleduetaxdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="176.4" author="murthy.y">
 		<createIndex tableName="scheduleduetaxdetails" indexName="idx_scheduleduetaxdtls_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4563,12 +5137,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="177.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_subventiondetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="subventiondetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_subventiondetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="subventiondetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="177.4" author="murthy.y">
 		<createIndex tableName="subventiondetails" indexName="idx_subventiondetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="177.5" author="murthy.y">
 		<createIndex tableName="subventiondetails_temp" indexName="idx_subventiondetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4593,12 +5173,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="178.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_subventnschedules_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="subventionscheduledetail"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_subventnschedules_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="subventionscheduledetail"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="178.4" author="murthy.y">
 		<createIndex tableName="subventionscheduledetail" indexName="idx_subventnschedules_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="178.5" author="murthy.y">
 		<createIndex tableName="subventionscheduledetail_temp" indexName="idx_subventnschedules_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4623,12 +5209,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="179.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_synopsisdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="synopsisdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_synopsisdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="synopsisdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="179.4" author="murthy.y">
 		<createIndex tableName="synopsisdetails" indexName="idx_synopsisdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="179.5" author="murthy.y">
 		<createIndex tableName="synopsisdetails_temp" indexName="idx_synopsisdetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4647,9 +5239,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="180.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_uploadfinexpenses_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadfinexpenses"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_uploadfinexpenses_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadfinexpenses"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="180.4" author="murthy.y">
 		<createIndex tableName="uploadfinexpenses" indexName="idx_uploadfinexpenses_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4668,9 +5263,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="181.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_uploadratechangefref_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadratechangefinref"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_uploadratechangefref_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadratechangefinref"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="181.4" author="murthy.y">
 		<createIndex tableName="uploadratechangefinref" indexName="idx_uploadratechangefref_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4689,8 +5287,11 @@
 		</sql>
 	</changeSet>
 	<changeSet id="182.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_uploadreceipt_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadreceipt" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_uploadreceipt_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadreceipt" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="182.4" author="murthy.y">
 		<createIndex tableName="uploadreceipt" indexName="idx_uploadreceipt_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4709,9 +5310,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="183.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_uploadtaxpercent_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadtaxpercent"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_uploadtaxpercent_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="uploadtaxpercent"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="183.4" author="murthy.y">
 		<createIndex tableName="uploadtaxpercent" indexName="idx_uploadtaxpercent_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4736,11 +5340,17 @@
 		</sql>
 	</changeSet>
 	<changeSet id="184.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_vasmovement_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="vasmovement" referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_vasmovement_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="vasmovement" referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="184.4" author="murthy.y">
 		<createIndex tableName="vasmovement" indexName="idx_vasmovement_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="184.5" author="murthy.y">
 		<createIndex tableName="vasmovement_temp" indexName="idx_vasmovement_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4765,12 +5375,18 @@
 		</sql>
 	</changeSet>
 	<changeSet id="185.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_vasmovementdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="vasmovementdetails"
-			referencedColumnNames="FinID" />
+	<addForeignKeyConstraint constraintName="fk_vasmovementdetails_finid"
+		referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="vasmovementdetails"
+		referencedColumnNames="FinID" />
+</changeSet>
+
+	<changeSet id="185.4" author="murthy.y">
 		<createIndex tableName="vasmovementdetails" indexName="idx_vasmovementdetails_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="185.5" author="murthy.y">
 		<createIndex tableName="vasmovementdetails_temp" indexName="idx_vasmovementdetails_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4795,11 +5411,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="186.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wiffinancemain_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffinancemain" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffinancemain" indexName="idx_wiffinancemain_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wiffinancemain_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffinancemain" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffinancemain" indexName="idx_wiffinancemain_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="186.4" author="murthy.y">
 		<createIndex tableName="wiffinancemain_temp" indexName="idx_wiffinancemain_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4824,11 +5443,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="187.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wiffindefermentdtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffindefermentdetail" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffindefermentdetail" indexName="idx_wiffindefermentdtl_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wiffindefermentdtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffindefermentdetail" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffindefermentdetail" indexName="idx_wiffindefermentdtl_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="187.4" author="murthy.y">
 		<createIndex tableName="wiffindefermentdetail_temp" indexName="idx_wiffindefermentdtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4853,11 +5475,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="188.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wiffindefermenthdr_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffindefermentheader" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffindefermentheader" indexName="idx_wiffindefermenthdr_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wiffindefermenthdr_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffindefermentheader" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffindefermentheader" indexName="idx_wiffindefermenthdr_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="188.4" author="murthy.y">
 		<createIndex tableName="wiffindefermentheader_temp" indexName="idx_wiffindefermenthdr_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4882,11 +5507,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="189.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wifdisbursmntdtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffindisbursementdetails" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffindisbursementdetails" indexName="idx_wifdisbursmntdtl_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wifdisbursmntdtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffindisbursementdetails" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffindisbursementdetails" indexName="idx_wifdisbursmntdtl_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="189.4" author="murthy.y">
 		<createIndex tableName="wiffindisbursementdetails_temp" indexName="idx_wifdisbursmntdtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4911,11 +5539,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="190.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wiffinfeecharges_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffinfeecharges" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffinfeecharges" indexName="idx_wiffinfeecharges_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wiffinfeecharges_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffinfeecharges" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffinfeecharges" indexName="idx_wiffinfeecharges_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="190.4" author="murthy.y">
 		<createIndex tableName="wiffinfeecharges_temp" indexName="idx_wiffinfeecharges_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4940,11 +5571,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="191.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wiffinfeedetail_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffinfeedetail" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffinfeedetail" indexName="idx_wiffinfeedetail_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wiffinfeedetail_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffinfeedetail" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffinfeedetail" indexName="idx_wiffinfeedetail_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="191.4" author="murthy.y">
 		<createIndex tableName="wiffinfeedetail_temp" indexName="idx_wiffinfeedetail_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4969,11 +5603,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="192.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wifrepayinstrion_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffinrepayinstruction" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffinrepayinstruction" indexName="idx_wifrepayinstrion_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wifrepayinstrion_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffinrepayinstruction" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffinrepayinstruction" indexName="idx_wifrepayinstrion_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="192.4" author="murthy.y">
 		<createIndex tableName="wiffinrepayinstruction_temp" indexName="idx_wifrepayinstrion_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -4998,31 +5635,40 @@
 		</sql>
 	</changeSet>
 	<changeSet id="193.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wiffinschedules_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffinscheduledetails" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffinscheduledetails" indexName="idx_wiffinschedules_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wiffinschedules_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffinscheduledetails" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffinscheduledetails" indexName="idx_wiffinschedules_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="193.4" author="murthy.y">
 		<createIndex tableName="wiffinscheduledetails_temp" indexName="idx_wiffinschedules_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="193.4" author="murthy.y">
+	<changeSet id="193.5" author="murthy.y">
 		<createIndex tableName="wiffinscheduledetails" indexName="idx_wifschedules_fid_schdate" unique="true">
 			<column name="FinID" type="bigint" />
 			<column name="SchDate" type="datetime" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="193.6" author="murthy.y">
 		<createIndex tableName="wiffinscheduledetails_temp" indexName="idx_wifschedules_t_fid_schdate"
 			unique="true">
 			<column name="FinID" type="bigint" />
 			<column name="SchDate" type="datetime" />
 		</createIndex>
 	</changeSet>
-	<changeSet id="193.5" author="murthy.y">
+	<changeSet id="193.7" author="murthy.y">
 		<createIndex tableName="wiffinscheduledetails" indexName="idx_wifschedules_fid_priPaid">
 			<column name="FinID" type="bigint" />
 			<column name="SchdPriPaid" type="decimal(18,0)" />
 		</createIndex>
+	</changeSet>
+
+	<changeSet id="193.8" author="murthy.y">
 		<createIndex tableName="wiffinscheduledetails_temp" indexName="idx_wifschedules_t_fid_priPaid">
 			<column name="FinID" type="bigint" />
 			<column name="SchdPriPaid" type="decimal(18,0)" />
@@ -5049,11 +5695,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="194.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wifsteppolicydtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wiffinsteppolicydetail" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wiffinsteppolicydetail" indexName="idx_wifsteppolicydtl_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wifsteppolicydtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wiffinsteppolicydetail" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wiffinsteppolicydetail" indexName="idx_wifsteppolicydtl_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="194.4" author="murthy.y">
 		<createIndex tableName="wiffinsteppolicydetail_temp" indexName="idx_wifsteppolicydtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -5078,11 +5727,14 @@
 		</sql>
 	</changeSet>
 	<changeSet id="195.3" author="murthy.y">
-		<!-- <addForeignKeyConstraint constraintName="fk_wifindicativtrmdtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
-			baseTableName="wifindicativetermdetail" referencedColumnNames="FinID" /> -->
-		<createIndex tableName="wifindicativetermdetail" indexName="idx_wifindicativtrmdtl_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<!-- <addForeignKeyConstraint constraintName="fk_wifindicativtrmdtl_finid" referencedTableName="FinanceMain" baseColumnNames="FinID" 
+		baseTableName="wifindicativetermdetail" referencedColumnNames="FinID" /> -->
+	<createIndex tableName="wifindicativetermdetail" indexName="idx_wifindicativtrmdtl_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="195.4" author="murthy.y">
 		<createIndex tableName="wifindicativetermdetail_temp" indexName="idx_wifindicativtrmdtl_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
@@ -5107,9 +5759,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="196.3" author="murthy.y">
-		<createIndex tableName="FINRECEIPTHEADER" indexName="idx_finreceiptheader_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
+	<createIndex tableName="FINRECEIPTHEADER" indexName="idx_finreceiptheader_finid">
+		<column name="FinID" type="bigint" />
+	</createIndex>
+</changeSet>
+
+	<changeSet id="196.4" author="murthy.y">
 		<createIndex tableName="FINRECEIPTHEADER_TEMP" indexName="idx_finreceiptheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>

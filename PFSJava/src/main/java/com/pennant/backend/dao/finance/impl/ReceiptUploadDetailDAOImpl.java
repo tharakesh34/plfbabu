@@ -176,7 +176,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			ps.setString(index++, rud.getReceiptChannel());
 			ps.setString(index++, rud.getReceivedFrom());
 			ps.setString(index++, rud.getPanNumber());
-			ps.setObject(index++, JdbcUtil.setLong(rud.getCollectionAgentId()));
+			ps.setObject(index++, rud.getCollectionAgentId());
 			ps.setBigDecimal(index++, rud.getTdsAmount());
 
 		});

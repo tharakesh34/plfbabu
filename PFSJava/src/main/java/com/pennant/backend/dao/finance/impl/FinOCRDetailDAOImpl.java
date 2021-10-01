@@ -15,7 +15,6 @@ import com.pennant.backend.dao.finance.FinOCRDetailDAO;
 import com.pennant.backend.model.finance.FinOCRDetail;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -73,7 +72,7 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 			ps.setBigDecimal(index++, ocrDtls.getFinancerContribution());
 			ps.setString(index++, ocrDtls.getContributor());
 			ps.setInt(index++, ocrDtls.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getLastMntBy()));
+			ps.setLong(index++, ocrDtls.getLastMntBy());
 			ps.setTimestamp(index++, ocrDtls.getLastMntOn());
 			ps.setString(index++, ocrDtls.getRecordStatus());
 			ps.setString(index++, ocrDtls.getRoleCode());
@@ -81,7 +80,7 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 			ps.setString(index++, ocrDtls.getTaskId());
 			ps.setString(index++, ocrDtls.getNextTaskId());
 			ps.setString(index++, ocrDtls.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getWorkflowId()));
+			ps.setLong(index++, ocrDtls.getWorkflowId());
 
 			ps.setLong(index++, ocrDtls.getDetailID());
 		});
@@ -131,7 +130,7 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 			ps.setString(index++, ocrDtls.getContributor());
 			ps.setInt(index++, ocrDtls.getStepSequence());
 			ps.setInt(index++, ocrDtls.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getLastMntBy()));
+			ps.setLong(index++, ocrDtls.getLastMntBy());
 			ps.setTimestamp(index++, ocrDtls.getLastMntOn());
 			ps.setString(index++, ocrDtls.getRecordStatus());
 			ps.setString(index++, ocrDtls.getRoleCode());
@@ -139,7 +138,7 @@ public class FinOCRDetailDAOImpl extends SequenceDao<FinOCRDetail> implements Fi
 			ps.setString(index++, ocrDtls.getTaskId());
 			ps.setString(index++, ocrDtls.getNextTaskId());
 			ps.setString(index++, ocrDtls.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ocrDtls.getWorkflowId()));
+			ps.setLong(index++, ocrDtls.getWorkflowId());
 		});
 
 		return ocrDtls.getDetailID();

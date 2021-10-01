@@ -505,7 +505,7 @@ public class CustomerQueuingDAOImpl extends BasicDao<CustomerQueuing> implements
 
 		try {
 			jdbcOperations.update(sql.toString(), ps -> {
-				ps.setLong(1, JdbcUtil.setLong(cq.getCustID()));
+				ps.setLong(1, cq.getCustID());
 
 				if (App.DATABASE == Database.POSTGRES) {
 					ps.setObject(2, JdbcUtil.getDate(DateUtil.getSysDate()));

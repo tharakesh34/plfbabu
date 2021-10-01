@@ -332,7 +332,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 	private void parameterizedSetter(PreparedStatement ps, FinServiceInstruction fsd) throws SQLException {
 		int index = 1;
 
-		ps.setLong(index++, JdbcUtil.setLong(fsd.getServiceSeqId()));
+		ps.setLong(index++, fsd.getServiceSeqId());
 		ps.setString(index++, fsd.getFinEvent());
 		ps.setLong(index++, fsd.getFinID());
 		ps.setString(index++, fsd.getFinReference());
@@ -363,8 +363,8 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		ps.setString(index++, fsd.getServiceReqNo());
 		ps.setString(index++, fsd.getRemarks());
 		ps.setBigDecimal(index++, fsd.getPftChg());
-		ps.setLong(index++, JdbcUtil.setLong(fsd.getInstructionUID()));
-		ps.setLong(index++, JdbcUtil.setLong(fsd.getLinkedTranID()));
+		ps.setLong(index++, fsd.getInstructionUID());
+		ps.setLong(index++, fsd.getLinkedTranID());
 		ps.setObject(index++, fsd.getLogKey());
 	}
 

@@ -229,7 +229,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, vasR.getReferralId());
 			ps.setString(index++, vasR.getStatus());
 			ps.setInt(index++, vasR.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getLastMntBy()));
+			ps.setLong(index++, vasR.getLastMntBy());
 			ps.setTimestamp(index++, vasR.getLastMntOn());
 			ps.setString(index++, vasR.getRecordStatus());
 			ps.setString(index++, vasR.getRoleCode());
@@ -237,7 +237,7 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, vasR.getTaskId());
 			ps.setString(index++, vasR.getNextTaskId());
 			ps.setString(index++, vasR.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getWorkflowId()));
+			ps.setLong(index++, vasR.getWorkflowId());
 			ps.setString(index++, vasR.getVasStatus());
 			ps.setBoolean(index++, vasR.isFinanceProcess());
 			ps.setBigDecimal(index++, vasR.getPaidAmt());
@@ -248,8 +248,8 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, vasR.getServiceReqNumber());
 			ps.setBoolean(index++, vasR.isCancelAfterFLP());
 			ps.setString(index++, vasR.getOldVasReference());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getManualAdviseId()));
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getReceivableAdviseId()));
+			ps.setLong(index++, vasR.getManualAdviseId());
+			ps.setLong(index++, vasR.getReceivableAdviseId());
 
 		});
 
@@ -305,16 +305,16 @@ public class VASRecordingDAOImpl extends BasicDao<VASRecording> implements VASRe
 			ps.setString(index++, vasR.getServiceReqNumber());
 			ps.setBoolean(index++, vasR.isCancelAfterFLP());
 			ps.setString(index++, vasR.getOldVasReference());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getManualAdviseId()));
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getReceivableAdviseId()));
+			ps.setLong(index++, vasR.getManualAdviseId());
+			ps.setLong(index++, vasR.getReceivableAdviseId());
 			ps.setString(index++, vasR.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getWorkflowId()));
+			ps.setLong(index++, vasR.getWorkflowId());
 			ps.setString(index++, vasR.getVasStatus());
 			ps.setBoolean(index++, vasR.isFinanceProcess());
 			ps.setBigDecimal(index++, vasR.getPaidAmt());
 			ps.setBigDecimal(index++, vasR.getWaivedAmt());
 			ps.setInt(index++, vasR.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(vasR.getLastMntBy()));
+			ps.setLong(index++, vasR.getLastMntBy());
 			ps.setTimestamp(index++, vasR.getLastMntOn());
 			ps.setString(index++, vasR.getRecordStatus());
 			ps.setString(index++, vasR.getRoleCode());

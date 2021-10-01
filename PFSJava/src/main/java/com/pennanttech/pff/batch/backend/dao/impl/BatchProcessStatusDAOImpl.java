@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.batch.backend.dao.BatchProcessStatusDAO;
 import com.pennanttech.pff.batch.backend.service.impl.BatchProcessStatusServiceImpl;
@@ -97,7 +96,7 @@ public class BatchProcessStatusDAOImpl extends BasicDao<BatchProcessStatus> impl
 					ps.setString(index++, bps.getFileName());
 					ps.setString(index++, bps.getReference());
 					ps.setTimestamp(index++, new Timestamp(bps.getValueDate().getTime()));
-					ps.setLong(index++, JdbcUtil.setLong(bps.getTotalRecords()));
+					ps.setLong(index++, bps.getTotalRecords());
 					ps.setTimestamp(index, new Timestamp(bps.getStartTime().getTime()));
 				}
 			});

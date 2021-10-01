@@ -37,7 +37,6 @@ import com.pennant.backend.dao.finance.financialSummary.DueDiligenceDetailsDAO;
 import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -145,14 +144,14 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 			this.jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getId()));
-				ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getFinID()));
+				ps.setLong(index++, diligenceDtls.getId());
+				ps.setLong(index++, diligenceDtls.getFinID());
 				ps.setString(index++, diligenceDtls.getFinReference());
-				ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getParticularId()));
+				ps.setLong(index++, diligenceDtls.getParticularId());
 				ps.setString(index++, diligenceDtls.getStatus());
 				ps.setString(index++, diligenceDtls.getRemarks());
 				ps.setInt(index++, diligenceDtls.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getLastMntBy()));
+				ps.setLong(index++, diligenceDtls.getLastMntBy());
 				ps.setTimestamp(index++, diligenceDtls.getLastMntOn());
 				ps.setString(index++, diligenceDtls.getRecordStatus());
 				ps.setString(index++, diligenceDtls.getRoleCode());
@@ -160,7 +159,7 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 				ps.setString(index++, diligenceDtls.getTaskId());
 				ps.setString(index++, diligenceDtls.getNextTaskId());
 				ps.setString(index++, diligenceDtls.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getWorkflowId()));
+				ps.setLong(index++, diligenceDtls.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -187,11 +186,11 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getParticularId()));
+			ps.setLong(index++, diligenceDtls.getParticularId());
 			ps.setString(index++, diligenceDtls.getStatus());
 			ps.setString(index++, diligenceDtls.getRemarks());
 			ps.setInt(index++, diligenceDtls.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getLastMntBy()));
+			ps.setLong(index++, diligenceDtls.getLastMntBy());
 			ps.setTimestamp(index++, diligenceDtls.getLastMntOn());
 			ps.setString(index++, diligenceDtls.getRecordStatus());
 			ps.setString(index++, diligenceDtls.getRoleCode());
@@ -199,10 +198,10 @@ public class DueDiligenceDetailsDAOImpl extends SequenceDao<DueDiligenceDetails>
 			ps.setString(index++, diligenceDtls.getTaskId());
 			ps.setString(index++, diligenceDtls.getNextTaskId());
 			ps.setString(index++, diligenceDtls.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getWorkflowId()));
+			ps.setLong(index++, diligenceDtls.getWorkflowId());
 
-			ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getId()));
-			ps.setLong(index++, JdbcUtil.setLong(diligenceDtls.getFinID()));
+			ps.setLong(index++, diligenceDtls.getId());
+			ps.setLong(index++, diligenceDtls.getFinID());
 
 			if (!type.endsWith("_Temp")) {
 				ps.setInt(index++, diligenceDtls.getVersion());

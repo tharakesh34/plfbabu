@@ -219,7 +219,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 					ps.setObject(index++, cd.getDocumentId());
 					ps.setBoolean(index++, cd.isOriginalDocument());
 					ps.setInt(index++, cd.getVersion());
-					ps.setLong(index++, JdbcUtil.setLong(cd.getLastMntBy()));
+					ps.setLong(index++, cd.getLastMntBy());
 					ps.setTimestamp(index++, cd.getLastMntOn());
 					ps.setString(index++, cd.getRecordStatus());
 					ps.setString(index++, cd.getRoleCode());
@@ -227,7 +227,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 					ps.setString(index++, cd.getTaskId());
 					ps.setString(index++, cd.getNextTaskId());
 					ps.setString(index++, cd.getRecordType());
-					ps.setLong(index, JdbcUtil.setLong(cd.getWorkflowId()));
+					ps.setLong(index, cd.getWorkflowId());
 				}
 
 				@Override
@@ -333,7 +333,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 					ps.setObject(index++, cd.getDocumentId());
 					ps.setBoolean(index++, cd.isOriginalDocument());
 					ps.setInt(index++, cd.getVersion());
-					ps.setLong(index++, JdbcUtil.setLong(cd.getLastMntBy()));
+					ps.setLong(index++, cd.getLastMntBy());
 					ps.setTimestamp(index++, cd.getLastMntOn());
 					ps.setString(index++, cd.getRecordStatus());
 					ps.setString(index++, cd.getRoleCode());
@@ -341,7 +341,7 @@ public class CovenantsDAOImpl extends SequenceDao<FinCovenantType> implements Co
 					ps.setString(index++, cd.getTaskId());
 					ps.setString(index++, cd.getNextTaskId());
 					ps.setString(index++, cd.getRecordType());
-					ps.setLong(index++, JdbcUtil.setLong(cd.getWorkflowId()));
+					ps.setLong(index++, cd.getWorkflowId());
 
 					ps.setLong(index++, cd.getId());
 					ps.setString(index, cd.getCovenantType());

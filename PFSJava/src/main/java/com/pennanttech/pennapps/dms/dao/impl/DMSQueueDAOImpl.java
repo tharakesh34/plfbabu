@@ -40,7 +40,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, JdbcUtil.setLong(dMSQueue.getDocManagerID()));
+					ps.setLong(1, dMSQueue.getDocManagerID());
 					ps.setObject(2, dMSQueue.getCustId());
 					ps.setString(3, dMSQueue.getCustCif());
 					ps.setString(4, dMSQueue.getFinReference());
@@ -52,7 +52,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 					ps.setString(10, dMSQueue.getDocType());
 					ps.setString(11, dMSQueue.getDocExt());
 					ps.setTimestamp(12, dMSQueue.getCreatedOn());
-					ps.setLong(13, JdbcUtil.setLong(dMSQueue.getCreatedBy()));
+					ps.setLong(13, dMSQueue.getCreatedBy());
 					ps.setString(14, dMSQueue.getOfferId());
 					ps.setString(15, dMSQueue.getApplicationNo());
 					ps.setString(16, dMSQueue.getAuxiloryFields1());
@@ -84,8 +84,8 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
-					ps.setLong(1, JdbcUtil.setLong(dMSQueue.getId()));
-					ps.setLong(2, JdbcUtil.setLong(dMSQueue.getDocManagerID()));
+					ps.setLong(1, dMSQueue.getId());
+					ps.setLong(2, dMSQueue.getDocManagerID());
 					ps.setObject(3, dMSQueue.getCustId());
 					ps.setString(4, dMSQueue.getCustCif());
 					ps.setString(5, dMSQueue.getFinReference());
@@ -98,7 +98,7 @@ public class DMSQueueDAOImpl extends SequenceDao<DMSQueue> implements DMSQueueDA
 					ps.setString(12, dMSQueue.getDocExt());
 					ps.setString(13, dMSQueue.getDocUri());
 					ps.setDate(14, JdbcUtil.getDate(dMSQueue.getCreatedOn()));
-					ps.setLong(15, JdbcUtil.setLong(dMSQueue.getCreatedBy()));
+					ps.setLong(15, dMSQueue.getCreatedBy());
 					ps.setInt(16, dMSQueue.getProcessingFlag());
 					ps.setInt(17, dMSQueue.getAttemptNum());
 					ps.setString(18, dMSQueue.getErrorCode());

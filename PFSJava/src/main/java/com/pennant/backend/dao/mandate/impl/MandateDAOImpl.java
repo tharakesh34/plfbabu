@@ -195,7 +195,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
 			ps.setString(index++, mdt.getExternalRef());
 			ps.setInt(index++, mdt.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(mdt.getLastMntBy()));
+			ps.setLong(index++, mdt.getLastMntBy());
 			ps.setTimestamp(index++, mdt.getLastMntOn());
 			ps.setString(index++, mdt.getRecordStatus());
 			ps.setString(index++, mdt.getRoleCode());
@@ -203,7 +203,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.getTaskId());
 			ps.setString(index++, mdt.getNextTaskId());
 			ps.setString(index++, mdt.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(mdt.getWorkflowId()));
+			ps.setLong(index++, mdt.getWorkflowId());
 			ps.setString(index++, mdt.getOrgReference());
 			ps.setString(index++, mdt.getBarCodeNumber());
 			ps.setBoolean(index++, mdt.isSwapIsActive());
@@ -267,7 +267,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
 			ps.setString(index++, mdt.getExternalRef());
 			ps.setInt(index++, mdt.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(mdt.getLastMntBy()));
+			ps.setLong(index++, mdt.getLastMntBy());
 			ps.setTimestamp(index++, mdt.getLastMntOn());
 			ps.setString(index++, mdt.getRecordStatus());
 			ps.setString(index++, mdt.getRoleCode());
@@ -275,7 +275,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.getTaskId());
 			ps.setString(index++, mdt.getNextTaskId());
 			ps.setString(index++, mdt.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(mdt.getWorkflowId()));
+			ps.setLong(index++, mdt.getWorkflowId());
 			ps.setDate(index++, JdbcUtil.getDate(mdt.getInputDate()));
 			ps.setString(index++, mdt.getBarCodeNumber());
 			ps.setBoolean(index++, mdt.isSwapIsActive());
@@ -343,7 +343,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setObject(index++, JdbcUtil.getLong(mdt.getDocumentRef()));
 			ps.setString(index++, mdt.getExternalRef());
 			ps.setInt(index++, mdt.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(mdt.getLastMntBy()));
+			ps.setLong(index++, mdt.getLastMntBy());
 			ps.setTimestamp(index++, mdt.getLastMntOn());
 			ps.setString(index++, mdt.getRecordStatus());
 			ps.setString(index++, mdt.getRoleCode());
@@ -351,7 +351,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 			ps.setString(index++, mdt.getTaskId());
 			ps.setString(index++, mdt.getNextTaskId());
 			ps.setString(index++, mdt.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(mdt.getWorkflowId()));
+			ps.setLong(index++, mdt.getWorkflowId());
 			ps.setString(index++, mdt.getBarCodeNumber());
 			ps.setBoolean(index++, mdt.isSwapIsActive());
 			ps.setString(index++, mdt.getEntityCode());

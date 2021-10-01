@@ -186,7 +186,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 				ps.setDate(index++, JdbcUtil.getDate(fmi.getTdsEndDate()));
 				ps.setBigDecimal(index++, fmi.getTdsLimit());
 				ps.setInt(index++, fmi.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(fmi.getLastMntBy()));
+				ps.setLong(index++, fmi.getLastMntBy());
 				ps.setTimestamp(index++, fmi.getLastMntOn());
 				ps.setString(index++, fmi.getRecordStatus());
 				ps.setString(index++, fmi.getRoleCode());
@@ -194,7 +194,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 				ps.setString(index++, fmi.getTaskId());
 				ps.setString(index++, fmi.getNextTaskId());
 				ps.setString(index++, fmi.getRecordType());
-				ps.setLong(index, JdbcUtil.setLong(fmi.getWorkflowId()));
+				ps.setLong(index, fmi.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -228,7 +228,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 			ps.setDate(index++, JdbcUtil.getDate(fmi.getTdsEndDate()));
 			ps.setBigDecimal(index++, fmi.getTdsLimit());
 			ps.setInt(index++, fmi.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(fmi.getLastMntBy()));
+			ps.setLong(index++, fmi.getLastMntBy());
 			ps.setTimestamp(index++, fmi.getLastMntOn());
 			ps.setString(index++, fmi.getRecordStatus());
 			ps.setString(index++, fmi.getRoleCode());
@@ -236,7 +236,7 @@ public class FinMaintainInstructionDAOImpl extends SequenceDao<FinMaintainInstru
 			ps.setString(index++, fmi.getTaskId());
 			ps.setString(index++, fmi.getNextTaskId());
 			ps.setString(index++, fmi.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(fmi.getWorkflowId()));
+			ps.setLong(index++, fmi.getWorkflowId());
 
 			ps.setLong(index, fmi.getFinMaintainId());
 		});

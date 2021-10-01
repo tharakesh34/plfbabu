@@ -177,21 +177,21 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 			int index = 1;
 
 			ps.setString(index++, cm.getCmtReference());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getFinID()));
+			ps.setLong(index++, cm.getFinID());
 			ps.setString(index++, cm.getFinReference());
 			ps.setString(index++, cm.getFinBranch());
 			ps.setString(index++, cm.getFinType());
 			ps.setDate(index++, JdbcUtil.getDate(cm.getMovementDate()));
-			ps.setLong(index++, JdbcUtil.setLong(cm.getMovementOrder()));
+			ps.setLong(index++, cm.getMovementOrder());
 			ps.setString(index++, cm.getMovementType());
 			ps.setBigDecimal(index++, cm.getMovementAmount());
 			ps.setBigDecimal(index++, cm.getCmtAmount());
 			ps.setBigDecimal(index++, cm.getCmtCharges());
 			ps.setBigDecimal(index++, cm.getCmtUtilizedAmount());
 			ps.setBigDecimal(index++, cm.getCmtAvailable());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getLinkedTranId()));
+			ps.setLong(index++, cm.getLinkedTranId());
 			ps.setInt(index++, cm.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getLastMntBy()));
+			ps.setLong(index++, cm.getLastMntBy());
 			ps.setTimestamp(index++, cm.getLastMntOn());
 			ps.setString(index++, cm.getRecordStatus());
 			ps.setString(index++, cm.getRoleCode());
@@ -199,7 +199,7 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 			ps.setString(index++, cm.getTaskId());
 			ps.setString(index++, cm.getNextTaskId());
 			ps.setString(index++, cm.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getWorkflowId()));
+			ps.setLong(index++, cm.getWorkflowId());
 		});
 
 		return cm.getId();
@@ -226,13 +226,13 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(cm.getFinID()));
+			ps.setLong(index++, cm.getFinID());
 			ps.setString(index++, cm.getFinReference());
 			ps.setString(index++, cm.getFinBranch());
 			ps.setString(index++, cm.getFinType());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getLinkedTranId()));
+			ps.setLong(index++, cm.getLinkedTranId());
 			ps.setDate(index++, JdbcUtil.getDate(cm.getMovementDate()));
-			ps.setLong(index++, JdbcUtil.setLong(cm.getMovementOrder()));
+			ps.setLong(index++, cm.getMovementOrder());
 			ps.setString(index++, cm.getMovementType());
 			ps.setBigDecimal(index++, cm.getMovementAmount());
 			ps.setBigDecimal(index++, cm.getCmtAmount());
@@ -240,7 +240,7 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 			ps.setBigDecimal(index++, cm.getCmtUtilizedAmount());
 			ps.setBigDecimal(index++, cm.getCmtAvailable());
 			ps.setInt(index++, cm.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getLastMntBy()));
+			ps.setLong(index++, cm.getLastMntBy());
 			ps.setTimestamp(index++, cm.getLastMntOn());
 			ps.setString(index++, cm.getRecordStatus());
 			ps.setString(index++, cm.getRoleCode());
@@ -248,7 +248,7 @@ public class CommitmentMovementDAOImpl extends BasicDao<CommitmentMovement> impl
 			ps.setString(index++, cm.getTaskId());
 			ps.setString(index++, cm.getNextTaskId());
 			ps.setString(index++, cm.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cm.getWorkflowId()));
+			ps.setLong(index++, cm.getWorkflowId());
 
 			ps.setString(index++, cm.getCmtReference());
 			if (!type.endsWith("_Temp")) {

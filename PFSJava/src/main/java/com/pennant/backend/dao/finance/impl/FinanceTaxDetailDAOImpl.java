@@ -162,7 +162,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				ps.setDate(index++, JdbcUtil.getDate(td.getSezValueDate()));
 				ps.setString(index++, td.getAddressDetail());
 				ps.setInt(index++, td.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(td.getLastMntBy()));
+				ps.setLong(index++, td.getLastMntBy());
 				ps.setTimestamp(index++, td.getLastMntOn());
 				ps.setString(index++, td.getRecordStatus());
 				ps.setString(index++, td.getRoleCode());
@@ -170,7 +170,7 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 				ps.setString(index++, td.getTaskId());
 				ps.setString(index++, td.getNextTaskId());
 				ps.setString(index++, td.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(td.getWorkflowId()));
+				ps.setLong(index++, td.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {

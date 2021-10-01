@@ -305,7 +305,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 				ps.setBigDecimal(index++, rpi.getRepayAmount());
 				ps.setString(index++, rpi.getRepaySchdMethod());
 				ps.setInt(index++, rpi.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(rpi.getLastMntBy()));
+				ps.setLong(index++, rpi.getLastMntBy());
 				ps.setTimestamp(index++, rpi.getLastMntOn());
 				ps.setString(index++, rpi.getRecordStatus());
 				ps.setString(index++, rpi.getRoleCode());
@@ -313,7 +313,7 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 				ps.setString(index++, rpi.getTaskId());
 				ps.setString(index++, rpi.getNextTaskId());
 				ps.setString(index++, rpi.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(rpi.getWorkflowId()));
+				ps.setLong(index++, rpi.getWorkflowId());
 			}
 
 			@Override

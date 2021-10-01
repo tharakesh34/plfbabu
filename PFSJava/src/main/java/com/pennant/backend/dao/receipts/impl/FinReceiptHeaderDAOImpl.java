@@ -157,7 +157,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getReceiptChannel());
 			ps.setString(index++, rh.getReceivedFrom());
 			ps.setString(index++, rh.getPanNumber());
-			ps.setLong(index++, JdbcUtil.setLong(rh.getCollectionAgentId()));
+			ps.setLong(index++, rh.getCollectionAgentId());
 			ps.setBoolean(index++, rh.isActFinReceipt());
 			ps.setString(index++, rh.getFinDivision());
 			ps.setString(index++, rh.getPostBranch());
@@ -166,14 +166,14 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			ps.setString(index++, rh.getKnockOffType());
 			ps.setInt(index++, rh.getVersion());
 			ps.setTimestamp(index++, rh.getLastMntOn());
-			ps.setLong(index++, JdbcUtil.setLong(rh.getLastMntBy()));
+			ps.setLong(index++, rh.getLastMntBy());
 			ps.setString(index++, rh.getRecordStatus());
 			ps.setString(index++, rh.getRoleCode());
 			ps.setString(index++, rh.getNextRoleCode());
 			ps.setString(index++, rh.getTaskId());
 			ps.setString(index++, rh.getNextTaskId());
 			ps.setString(index++, rh.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(rh.getWorkflowId()));
+			ps.setLong(index++, rh.getWorkflowId());
 			ps.setBigDecimal(index++, rh.getRefWaiverAmt());
 			ps.setString(index++, rh.getSource());
 			ps.setDate(index++, JdbcUtil.getDate(rh.getValueDate()));

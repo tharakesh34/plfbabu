@@ -200,7 +200,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				FinBlacklistCustomer bl = blackList.get(i);
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(bl.getFinID()));
+				ps.setLong(index++, bl.getFinID());
 				ps.setString(index++, bl.getFinReference());
 				ps.setString(index++, bl.getCustCIF());
 				ps.setString(index++, bl.getCustFName());
@@ -294,7 +294,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setBoolean(index++, bl.isOverride());
 				ps.setString(index++, bl.getOverrideUser());
 
-				ps.setLong(index++, JdbcUtil.setLong(bl.getFinID()));
+				ps.setLong(index++, bl.getFinID());
 				ps.setString(index++, bl.getCustCIF());
 				ps.setString(index++, bl.getSourceCIF());
 			}
@@ -476,7 +476,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setObject(index++, blc.getEmployer());
 				ps.setBoolean(index++, blc.isCustIsActive());
 				ps.setInt(index++, blc.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(blc.getLastMntBy()));
+				ps.setLong(index++, blc.getLastMntBy());
 				ps.setTimestamp(index++, blc.getLastMntOn());
 				ps.setString(index++, blc.getRecordStatus());
 				ps.setString(index++, blc.getRoleCode());
@@ -484,7 +484,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setString(index++, blc.getTaskId());
 				ps.setString(index++, blc.getNextTaskId());
 				ps.setString(index++, blc.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(blc.getWorkflowId()));
+				ps.setLong(index++, blc.getWorkflowId());
 				ps.setString(index++, blc.getCustCtgCode());
 				ps.setString(index++, blc.getCustCompName());
 				ps.setString(index++, blc.getCustAadhaar());
@@ -631,11 +631,11 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(nrc.getId()));
+				ps.setLong(index++, nrc.getId());
 				ps.setString(index++, nrc.getBlackListCIF());
 				ps.setObject(index++, nrc.getReasonId());
 				ps.setInt(index++, nrc.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(nrc.getLastMntBy()));
+				ps.setLong(index++, nrc.getLastMntBy());
 				ps.setTimestamp(index++, nrc.getLastMntOn());
 				ps.setString(index++, nrc.getRecordStatus());
 				ps.setString(index++, nrc.getRoleCode());
@@ -643,7 +643,7 @@ public class BlackListCustomerDAOImpl extends SequenceDao<BlackListCustomers> im
 				ps.setString(index++, nrc.getTaskId());
 				ps.setString(index++, nrc.getNextTaskId());
 				ps.setString(index++, nrc.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(nrc.getWorkflowId()));
+				ps.setLong(index++, nrc.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);

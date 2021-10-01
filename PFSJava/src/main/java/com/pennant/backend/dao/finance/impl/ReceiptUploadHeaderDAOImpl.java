@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadHeaderDAOImpl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-12-2017    														*
- *                                                                  						*
- * Modified Date    :  17-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-12-2017 * * Modified
+ * Date : 17-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 17-12-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 17-12-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -117,14 +99,14 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(ruh.getUploadHeaderId()));
+				ps.setLong(index++, ruh.getUploadHeaderId());
 				ps.setString(index++, ruh.getFileName());
 				ps.setDate(index++, JdbcUtil.getDate(ruh.getTransactionDate()));
 				ps.setInt(index++, ruh.getTotalRecords());
 				ps.setInt(index++, ruh.getSuccessCount());
 				ps.setInt(index++, ruh.getFailedCount());
 				ps.setInt(index++, ruh.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(ruh.getLastMntBy()));
+				ps.setLong(index++, ruh.getLastMntBy());
 				ps.setTimestamp(index++, ruh.getLastMntOn());
 				ps.setString(index++, ruh.getRecordStatus());
 				ps.setString(index++, ruh.getRoleCode());
@@ -132,7 +114,7 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 				ps.setString(index++, ruh.getTaskId());
 				ps.setString(index++, ruh.getNextTaskId());
 				ps.setString(index++, ruh.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(ruh.getWorkflowId()));
+				ps.setLong(index++, ruh.getWorkflowId());
 				ps.setString(index++, ruh.getEntityCode());
 				ps.setInt(index++, ruh.getUploadProgress());
 			});
@@ -229,14 +211,14 @@ public class ReceiptUploadHeaderDAOImpl extends SequenceDao<ReceiptUploadHeader>
 				ruh.setUploadProgress(rs.getInt("UploadProgress"));
 				ruh.setVersion(rs.getInt("Version"));
 				ruh.setLastMntOn(rs.getTimestamp("LastMntOn"));
-				ruh.setLastMntBy(JdbcUtil.setLong(rs.getLong("LastMntBy")));
+				ruh.setLastMntBy(rs.getLong("LastMntBy"));
 				ruh.setRecordStatus(rs.getString("RecordStatus"));
 				ruh.setRoleCode(rs.getString("RoleCode"));
 				ruh.setNextRoleCode(rs.getString("NextRoleCode"));
 				ruh.setTaskId(rs.getString("TaskId"));
 				ruh.setNextTaskId(rs.getString("NextTaskId"));
 				ruh.setRecordType(rs.getString("RecordType"));
-				ruh.setWorkflowId(JdbcUtil.setLong(rs.getLong("WorkflowId")));
+				ruh.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return ruh;
 			});

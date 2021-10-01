@@ -669,7 +669,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setDate(index++, JdbcUtil.getDate(fm.getFinStartDate()));
 				ps.setBigDecimal(index++, fm.getFinAmount());
 				ps.setBigDecimal(index++, fm.getFinRepaymentAmount());
-				ps.setLong(index++, JdbcUtil.setLong(fm.getCustID()));
+				ps.setLong(index++, fm.getCustID());
 				ps.setInt(index++, fm.getDefferments());
 				ps.setInt(index++, fm.getPlanDeferCount());
 				ps.setString(index++, fm.getFinBranch());
@@ -763,17 +763,17 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setString(index++, fm.getFinPurpose());
 					ps.setString(index++, fm.getFinStatus());
 					ps.setString(index++, fm.getFinStsReason());
-					ps.setLong(index++, JdbcUtil.setLong(fm.getInitiateUser()));
+					ps.setLong(index++, fm.getInitiateUser());
 					ps.setBoolean(index++, fm.isDeviationApproval());
 					ps.setString(index++, fm.getFinPreApprovedRef());
-					ps.setLong(index++, JdbcUtil.setLong(fm.getMandateID()));
+					ps.setLong(index++, fm.getMandateID());
 					ps.setBoolean(index++, fm.isJointAccount());
-					ps.setLong(index++, JdbcUtil.setLong(fm.getJointCustId()));
+					ps.setLong(index++, fm.getJointCustId());
 					ps.setString(index++, fm.getRcdMaintainSts());
 					ps.setString(index++, fm.getNextUserId());
 					ps.setInt(index++, fm.getPriority());
 					ps.setDate(index++, JdbcUtil.getDate(fm.getInitiateDate()));
-					ps.setLong(index++, JdbcUtil.setLong(fm.getAccountsOfficer()));
+					ps.setLong(index++, fm.getAccountsOfficer());
 					ps.setString(index++, fm.getApplicationNo());
 					ps.setString(index++, fm.getDsaCode());
 					ps.setString(index++, fm.getDroplineFrq());
@@ -794,10 +794,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setInt(index++, fm.getAvailedReAgeH());
 					ps.setInt(index++, fm.getReAgeBucket());
 					ps.setInt(index++, fm.getDueBucket());
-					ps.setLong(index++, JdbcUtil.setLong(fm.getEligibilityMethod()));
+					ps.setLong(index++, fm.getEligibilityMethod());
 					ps.setBoolean(index++, fm.isSamplingRequired());
 					ps.setBoolean(index++, fm.isLegalRequired());
-					ps.setLong(index++, JdbcUtil.setLong(fm.getConnector()));
+					ps.setLong(index++, fm.getConnector());
 					ps.setString(index++, fm.getProcessAttributes());
 					ps.setString(index++, fm.getPromotionCode());
 					ps.setBigDecimal(index++, fm.getTdsPercentage());
@@ -851,7 +851,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 				}
 				ps.setInt(index++, fm.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(fm.getLastMntBy()));
+				ps.setLong(index++, fm.getLastMntBy());
 				ps.setTimestamp(index++, fm.getLastMntOn());
 				ps.setString(index++, fm.getRecordStatus());
 				ps.setString(index++, fm.getRoleCode());
@@ -859,7 +859,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				ps.setString(index++, fm.getTaskId());
 				ps.setString(index++, fm.getNextTaskId());
 				ps.setString(index++, fm.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(fm.getWorkflowId()));
+				ps.setLong(index++, fm.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);

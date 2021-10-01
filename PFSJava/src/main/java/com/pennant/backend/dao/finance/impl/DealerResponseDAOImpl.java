@@ -106,14 +106,14 @@ public class DealerResponseDAOImpl extends SequenceDao<DealerResponse> implement
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(dr.getDealerResponseId()));
-			ps.setLong(index++, JdbcUtil.setLong(dr.getDealerId()));
-			ps.setLong(index++, JdbcUtil.setLong(dr.getFinID()));
+			ps.setLong(index++, dr.getDealerResponseId());
+			ps.setLong(index++, dr.getDealerId());
+			ps.setLong(index++, dr.getFinID());
 			ps.setString(index++, dr.getFinReference());
 			ps.setString(index++, dr.getUniqueReference());
 			ps.setString(index++, dr.getAttachmentName());
 			ps.setString(index++, dr.getReqUserRole());
-			ps.setLong(index++, JdbcUtil.setLong(dr.getReqUserid()));
+			ps.setLong(index++, dr.getReqUserid());
 			ps.setString(index++, dr.getStatus());
 			ps.setTimestamp(index++, dr.getRequestDate());
 			ps.setTimestamp(index++, dr.getResponseDate());

@@ -88,7 +88,7 @@ public class FinOCRCaptureDAOImpl extends SequenceDao<FinOCRCapture> implements 
 			ps.setString(index++, ocr.getRemarks());
 			ps.setDate(index++, JdbcUtil.getDate(ocr.getReceiptDate()));
 			ps.setString(index++, ocr.getFileName());
-			ps.setObject(index++, JdbcUtil.setLong(ocr.getDocumentRef()));
+			ps.setObject(index++, ocr.getDocumentRef());
 			ps.setInt(index++, ocr.getVersion());
 			ps.setLong(index++, ocr.getLastMntBy());
 			ps.setTimestamp(index++, ocr.getLastMntOn());

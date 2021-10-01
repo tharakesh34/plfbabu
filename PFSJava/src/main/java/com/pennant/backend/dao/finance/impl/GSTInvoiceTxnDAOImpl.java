@@ -85,8 +85,8 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 			jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(gsti.getInvoiceId()));
-				ps.setLong(index++, JdbcUtil.setLong(gsti.getTransactionID()));
+				ps.setLong(index++, gsti.getInvoiceId());
+				ps.setLong(index++, gsti.getTransactionID());
 				ps.setString(index++, gsti.getInvoiceNo());
 				ps.setDate(index++, JdbcUtil.getDate(gsti.getInvoiceDate()));
 				ps.setBigDecimal(index++, gsti.getInvoice_Amt());
@@ -111,7 +111,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				ps.setString(index++, gsti.getCustomerAddress());
 				ps.setString(index++, gsti.getInvoice_Status());
 				ps.setString(index++, gsti.getInvoiceType());
-				ps.setLong(index++, JdbcUtil.setLong(gsti.getDueInvoiceId()));
+				ps.setLong(index++, gsti.getDueInvoiceId());
 				ps.setString(index++, gsti.getInvoiceFor());
 			});
 		} catch (DuplicateKeyException e) {
@@ -144,8 +144,8 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
 					int index = 1;
 
-					ps.setLong(index++, JdbcUtil.setLong(gstid.getId()));
-					ps.setLong(index++, JdbcUtil.setLong(gstid.getInvoiceId()));
+					ps.setLong(index++, gstid.getId());
+					ps.setLong(index++, gstid.getInvoiceId());
 					ps.setString(index++, gstid.getFeeCode());
 					ps.setBigDecimal(index++, gstid.getFeeAmount());
 					ps.setBigDecimal(index++, gstid.getCGST_RATE());

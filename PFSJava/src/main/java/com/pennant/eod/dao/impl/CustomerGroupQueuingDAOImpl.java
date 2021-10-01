@@ -144,7 +144,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 				}
 
 				ps.setInt(2, progress);
-				ps.setLong(3, JdbcUtil.setLong(groupID));
+				ps.setLong(3, groupID);
 
 			}
 		});
@@ -173,7 +173,7 @@ public class CustomerGroupQueuingDAOImpl extends BasicDao<CustomerQueuing> imple
 				public void setValues(PreparedStatement ps) throws SQLException {
 					ps.setInt(1, EodConstants.PROGRESS_IN_PROCESS);
 					ps.setDate(2, JdbcUtil.getDate(DateUtility.getSysDate()));
-					ps.setLong(3, JdbcUtil.setLong(groupID));
+					ps.setLong(3, groupID);
 					ps.setInt(4, EodConstants.PROGRESS_WAIT);
 
 				}

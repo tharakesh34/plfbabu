@@ -41,7 +41,6 @@ import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -157,7 +156,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getInsClaimReason());
 			ps.setLong(index++, lr.getInitiatedBy());
 			ps.setInt(index++, lr.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(lr.getLastMntBy()));
+			ps.setLong(index++, lr.getLastMntBy());
 			ps.setTimestamp(index++, lr.getLastMntOn());
 			ps.setString(index++, lr.getRecordStatus());
 			ps.setString(index++, lr.getRoleCode());
@@ -165,7 +164,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getTaskId());
 			ps.setString(index++, lr.getNextTaskId());
 			ps.setString(index++, lr.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(lr.getWorkflowId()));
+			ps.setLong(index++, lr.getWorkflowId());
 		});
 
 		return String.valueOf(lr.getId());
@@ -190,7 +189,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getInsClaimReason());
 			ps.setLong(index++, lr.getInitiatedBy());
 			ps.setInt(index++, lr.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(lr.getLastMntBy()));
+			ps.setLong(index++, lr.getLastMntBy());
 			ps.setTimestamp(index++, lr.getLastMntOn());
 			ps.setString(index++, lr.getRecordStatus());
 			ps.setString(index++, lr.getRoleCode());
@@ -198,7 +197,7 @@ public class LiabilityRequestDAOImpl extends SequenceDao<LiabilityRequest> imple
 			ps.setString(index++, lr.getTaskId());
 			ps.setString(index++, lr.getNextTaskId());
 			ps.setString(index++, lr.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(lr.getWorkflowId()));
+			ps.setLong(index++, lr.getWorkflowId());
 			ps.setLong(index++, lr.getId());
 		});
 

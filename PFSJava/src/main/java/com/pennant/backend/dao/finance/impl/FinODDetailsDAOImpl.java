@@ -835,7 +835,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 				ps.setString(index++, odd.getFinODFor());
 				ps.setString(index++, odd.getFinBranch());
 				ps.setString(index++, odd.getFinType());
-				ps.setLong(index++, JdbcUtil.setLong(odd.getCustID()));
+				ps.setLong(index++, odd.getCustID());
 				ps.setDate(index++, JdbcUtil.getDate(odd.getFinODTillDate()));
 				ps.setBigDecimal(index++, odd.getFinCurODAmt());
 				ps.setBigDecimal(index++, odd.getFinCurODPri());

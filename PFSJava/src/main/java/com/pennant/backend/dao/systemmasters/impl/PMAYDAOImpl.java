@@ -13,7 +13,6 @@ import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.PmayEligibilityLog;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -161,7 +160,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 				ps.setBoolean(index++, pmay.isElectricity());
 				ps.setString(index++, pmay.getPmayCategory());
 				ps.setInt(index++, pmay.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(pmay.getLastMntBy()));
+				ps.setLong(index++, pmay.getLastMntBy());
 				ps.setTimestamp(index++, pmay.getLastMntOn());
 				ps.setString(index++, pmay.getRecordStatus());
 				ps.setString(index++, pmay.getRoleCode());
@@ -169,7 +168,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 				ps.setString(index++, pmay.getTaskId());
 				ps.setString(index++, pmay.getNextTaskId());
 				ps.setString(index++, pmay.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(pmay.getWorkflowId()));
+				ps.setLong(index++, pmay.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -213,7 +212,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			ps.setBoolean(index++, pmay.isElectricity());
 			ps.setString(index++, pmay.getPmayCategory());
 			ps.setInt(index++, pmay.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(pmay.getLastMntBy()));
+			ps.setLong(index++, pmay.getLastMntBy());
 			ps.setTimestamp(index++, pmay.getLastMntOn());
 			ps.setString(index++, pmay.getRecordStatus());
 			ps.setString(index++, pmay.getRoleCode());
@@ -221,7 +220,7 @@ public class PMAYDAOImpl extends SequenceDao<PMAY> implements PMAYDAO {
 			ps.setString(index++, pmay.getTaskId());
 			ps.setString(index++, pmay.getNextTaskId());
 			ps.setString(index++, pmay.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(pmay.getWorkflowId()));
+			ps.setLong(index++, pmay.getWorkflowId());
 
 			ps.setLong(index++, pmay.getFinID());
 

@@ -38,7 +38,6 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -144,22 +143,22 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(ch.getHeaderID()));
-				ps.setLong(index++, JdbcUtil.setLong(ch.getFinID()));
+				ps.setLong(index++, ch.getHeaderID());
+				ps.setLong(index++, ch.getFinID());
 				ps.setString(index++, ch.getFinReference());
 				ps.setInt(index++, ch.getNoOfCheques());
 				ps.setBigDecimal(index++, ch.getTotalAmount());
 				ps.setBoolean(index++, ch.isActive());
 				ps.setInt(index++, ch.getVersion());
 				ps.setTimestamp(index++, ch.getLastMntOn());
-				ps.setLong(index++, JdbcUtil.setLong(ch.getLastMntBy()));
+				ps.setLong(index++, ch.getLastMntBy());
 				ps.setString(index++, ch.getRecordStatus());
 				ps.setString(index++, ch.getRoleCode());
 				ps.setString(index++, ch.getNextRoleCode());
 				ps.setString(index++, ch.getTaskId());
 				ps.setString(index++, ch.getNextTaskId());
 				ps.setString(index++, ch.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(ch.getWorkflowId()));
+				ps.setLong(index++, ch.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -182,22 +181,22 @@ public class ChequeHeaderDAOImpl extends SequenceDao<Mandate> implements ChequeH
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(ch.getFinID()));
+			ps.setLong(index++, ch.getFinID());
 			ps.setString(index++, ch.getFinReference());
 			ps.setInt(index++, ch.getNoOfCheques());
 			ps.setBigDecimal(index++, ch.getTotalAmount());
 			ps.setBoolean(index++, ch.isActive());
 			ps.setTimestamp(index++, ch.getLastMntOn());
-			ps.setLong(index++, JdbcUtil.setLong(ch.getLastMntBy()));
+			ps.setLong(index++, ch.getLastMntBy());
 			ps.setString(index++, ch.getRecordStatus());
 			ps.setString(index++, ch.getRoleCode());
 			ps.setString(index++, ch.getNextRoleCode());
 			ps.setString(index++, ch.getTaskId());
 			ps.setString(index++, ch.getNextTaskId());
 			ps.setString(index++, ch.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ch.getWorkflowId()));
+			ps.setLong(index++, ch.getWorkflowId());
 
-			ps.setLong(index++, JdbcUtil.setLong(ch.getHeaderID()));
+			ps.setLong(index++, ch.getHeaderID());
 		});
 
 		if (recordCount == 0) {

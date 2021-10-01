@@ -36,7 +36,6 @@ import com.pennant.backend.model.applicationmasters.Flag;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.util.QueryUtil;
@@ -137,7 +136,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 				ps.setString(index++, flag.getFlagDesc());
 				ps.setBoolean(index++, flag.isActive());
 				ps.setInt(index++, flag.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(flag.getLastMntBy()));
+				ps.setLong(index++, flag.getLastMntBy());
 				ps.setTimestamp(index++, flag.getLastMntOn());
 				ps.setString(index++, flag.getRecordStatus());
 				ps.setString(index++, flag.getRoleCode());
@@ -145,7 +144,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 				ps.setString(index++, flag.getTaskId());
 				ps.setString(index++, flag.getNextTaskId());
 				ps.setString(index++, flag.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(flag.getWorkflowId()));
+				ps.setLong(index++, flag.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -172,7 +171,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 			ps.setString(index++, flag.getFlagDesc());
 			ps.setBoolean(index++, flag.isActive());
 			ps.setInt(index++, flag.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(flag.getLastMntBy()));
+			ps.setLong(index++, flag.getLastMntBy());
 			ps.setTimestamp(index++, flag.getLastMntOn());
 			ps.setString(index++, flag.getRecordStatus());
 			ps.setString(index++, flag.getRoleCode());
@@ -180,7 +179,7 @@ public class FlagDAOImpl extends BasicDao<Flag> implements FlagDAO {
 			ps.setString(index++, flag.getTaskId());
 			ps.setString(index++, flag.getNextTaskId());
 			ps.setString(index++, flag.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(flag.getWorkflowId()));
+			ps.setLong(index++, flag.getWorkflowId());
 
 			ps.setString(index++, flag.getFlagCode());
 			if (tableType == TableType.TEMP_TAB) {

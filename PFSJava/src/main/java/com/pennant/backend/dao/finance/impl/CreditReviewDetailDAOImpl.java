@@ -20,7 +20,6 @@ import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.ExtBreDetails;
 import com.pennant.backend.model.finance.ExtCreditReviewConfig;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -128,7 +127,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				ps.setString(index++, crd.getTemplateName());
 				ps.setInt(index++, crd.getTemplateVersion());
 				ps.setInt(index++, crd.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(crd.getLastMntBy()));
+				ps.setLong(index++, crd.getLastMntBy());
 				ps.setTimestamp(index++, crd.getLastMntOn());
 				ps.setString(index++, crd.getRecordStatus());
 				ps.setString(index++, crd.getRoleCode());
@@ -136,7 +135,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 				ps.setString(index++, crd.getTaskId());
 				ps.setString(index++, crd.getNextTaskId());
 				ps.setString(index++, crd.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(crd.getWorkflowId()));
+				ps.setLong(index++, crd.getWorkflowId());
 
 			});
 		} catch (DuplicateKeyException e) {
@@ -159,7 +158,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 
 			ps.setString(index++, crd.getTemplateData());
 			ps.setInt(index++, crd.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(crd.getLastMntBy()));
+			ps.setLong(index++, crd.getLastMntBy());
 			ps.setTimestamp(index++, crd.getLastMntOn());
 			ps.setString(index++, crd.getRecordStatus());
 			ps.setString(index++, crd.getRoleCode());
@@ -167,7 +166,7 @@ public class CreditReviewDetailDAOImpl extends SequenceDao<CreditReviewDetails> 
 			ps.setString(index++, crd.getTaskId());
 			ps.setString(index++, crd.getNextTaskId());
 			ps.setString(index++, crd.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(crd.getWorkflowId()));
+			ps.setLong(index++, crd.getWorkflowId());
 
 			ps.setString(index++, crd.getFinID());
 			ps.setInt(index++, crd.getTemplateVersion());

@@ -48,7 +48,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.pennant.backend.dao.WorkFlowDetailsDAO;
 import com.pennant.backend.model.WorkFlowDetails;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -144,7 +143,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 			ps.setBoolean(index++, wfd.isWorkFlowActive());
 			ps.setString(index++, wfd.getJsonDesign());
 			ps.setInt(index++, wfd.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(wfd.getLastMntBy()));
+			ps.setLong(index++, wfd.getLastMntBy());
 			ps.setTimestamp(index++, wfd.getLastMntOn());
 			ps.setString(index++, wfd.getRoleCode());
 			ps.setString(index++, wfd.getNextRoleCode());
@@ -165,7 +164,7 @@ public class WorkFlowDetailsDAOImpl extends SequenceDao<WorkFlowDetails> impleme
 
 			ps.setBoolean(index++, wfd.isWorkFlowActive());
 			ps.setInt(index++, wfd.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(wfd.getLastMntBy()));
+			ps.setLong(index++, wfd.getLastMntBy());
 			ps.setTimestamp(index++, wfd.getLastMntOn());
 
 			ps.setLong(index++, wfd.getWorkFlowId());

@@ -319,7 +319,7 @@ public class ExtractCustomerDataDAOImpl extends BasicDao<DownloadHeader> impleme
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
 
-					ps.setLong(index++, JdbcUtil.setLong(cs.getHeaderId()));
+					ps.setLong(index++, cs.getHeaderId());
 					ps.setString(index++, cs.getCif());
 					ps.setString(index++, cs.getFirstName());
 					ps.setString(index++, cs.getMiddleName());

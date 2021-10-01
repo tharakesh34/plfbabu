@@ -271,7 +271,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 				int i = 1;
 				FinExcessMovement fe = excessMovement.get(index);
 
-				ps.setLong(i++, JdbcUtil.setLong(fe.getExcessID()));
+				ps.setLong(i++, fe.getExcessID());
 				ps.setObject(i++, fe.getReceiptID());
 				ps.setString(i++, fe.getMovementType());
 				ps.setString(i++, fe.getTranType());
@@ -303,7 +303,7 @@ public class FinExcessAmountDAOImpl extends SequenceDao<FinExcessAmount> impleme
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(fe.getExcessID()));
+			ps.setLong(index++, fe.getExcessID());
 			ps.setObject(index++, fe.getReceiptID());
 			ps.setString(index++, fe.getMovementType());
 			ps.setString(index++, fe.getTranType());

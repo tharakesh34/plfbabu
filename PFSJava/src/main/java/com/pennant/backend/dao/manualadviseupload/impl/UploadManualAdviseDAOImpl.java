@@ -87,9 +87,9 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(uma.getAdviseId()));
-			ps.setLong(index++, JdbcUtil.setLong(uma.getUploadId()));
-			ps.setLong(index++, JdbcUtil.setLong(uma.getFinID()));
+			ps.setLong(index++, uma.getAdviseId());
+			ps.setLong(index++, uma.getUploadId());
+			ps.setLong(index++, uma.getFinID());
 			ps.setString(index++, uma.getFinReference());
 			ps.setString(index++, uma.getAdviseType());
 			ps.setString(index++, uma.getFeeTypeCode());
@@ -99,7 +99,7 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 			ps.setString(index++, uma.getStatus());
 			ps.setString(index++, uma.getReason());
 			ps.setInt(index++, uma.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(uma.getLastMntBy()));
+			ps.setLong(index++, uma.getLastMntBy());
 			ps.setTimestamp(index++, uma.getLastMntOn());
 			ps.setString(index++, uma.getRecordStatus());
 			ps.setString(index++, uma.getRoleCode());
@@ -107,9 +107,9 @@ public class UploadManualAdviseDAOImpl extends SequenceDao<UploadManualAdvise> i
 			ps.setString(index++, uma.getTaskId());
 			ps.setString(index++, uma.getNextTaskId());
 			ps.setString(index++, uma.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(uma.getWorkflowId()));
+			ps.setLong(index++, uma.getWorkflowId());
 			ps.setString(index++, uma.getRejectStage());
-			ps.setLong(index++, JdbcUtil.setLong(uma.getManualAdviseId()));
+			ps.setLong(index++, uma.getManualAdviseId());
 		});
 
 	}

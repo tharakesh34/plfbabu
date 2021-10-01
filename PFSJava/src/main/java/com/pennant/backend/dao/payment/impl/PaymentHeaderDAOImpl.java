@@ -130,17 +130,17 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(ph.getPaymentId()));
+				ps.setLong(index++, ph.getPaymentId());
 				ps.setString(index++, ph.getPaymentType());
 				ps.setBigDecimal(index++, ph.getPaymentAmount());
 				ps.setDate(index++, JdbcUtil.getDate(ph.getCreatedOn()));
 				ps.setDate(index++, JdbcUtil.getDate(ph.getApprovedOn()));
 				ps.setString(index++, ph.getStatus());
-				ps.setLong(index++, JdbcUtil.setLong(ph.getFinID()));
+				ps.setLong(index++, ph.getFinID());
 				ps.setString(index++, ph.getFinReference());
-				ps.setLong(index++, JdbcUtil.setLong(ph.getLinkedTranId()));
+				ps.setLong(index++, ph.getLinkedTranId());
 				ps.setInt(index++, ph.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(ph.getLastMntBy()));
+				ps.setLong(index++, ph.getLastMntBy());
 				ps.setTimestamp(index++, ph.getLastMntOn());
 				ps.setString(index++, ph.getRecordStatus());
 				ps.setString(index++, ph.getRoleCode());
@@ -148,7 +148,7 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 				ps.setString(index++, ph.getTaskId());
 				ps.setString(index++, ph.getNextTaskId());
 				ps.setString(index++, ph.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(ph.getWorkflowId()));
+				ps.setLong(index++, ph.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -184,9 +184,9 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 			ps.setString(index++, ph.getTaskId());
 			ps.setString(index++, ph.getNextTaskId());
 			ps.setString(index++, ph.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ph.getWorkflowId()));
+			ps.setLong(index++, ph.getWorkflowId());
 
-			ps.setLong(index++, JdbcUtil.setLong(ph.getPaymentId()));
+			ps.setLong(index++, ph.getPaymentId());
 		});
 
 		if (recordCount == 0) {
@@ -393,7 +393,6 @@ public class PaymentHeaderDAOImpl extends SequenceDao<PaymentHeader> implements 
 	 * 
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	@Override
 	public long getNewPaymentHeaderId() {
 		return getNextValue("SeqPaymentHeader");

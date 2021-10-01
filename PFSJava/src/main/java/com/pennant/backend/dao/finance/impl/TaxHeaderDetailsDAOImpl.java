@@ -207,8 +207,8 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 			td.setId(getNextValue("SeqTax_Details"));
 		}
 
-		ps.setLong(index++, JdbcUtil.setLong(td.getId()));
-		ps.setLong(index++, JdbcUtil.setLong(td.getReferenceId()));
+		ps.setLong(index++, td.getId());
+		ps.setLong(index++, td.getReferenceId());
 		ps.setString(index++, td.getTaxType());
 		ps.setBigDecimal(index++, td.getTaxPerc());
 		ps.setBigDecimal(index++, td.getActualTax());
@@ -217,7 +217,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		ps.setBigDecimal(index++, td.getRemFeeTax());
 		ps.setBigDecimal(index++, td.getWaivedTax());
 		ps.setInt(index++, td.getVersion());
-		ps.setLong(index++, JdbcUtil.setLong(td.getLastMntBy()));
+		ps.setLong(index++, td.getLastMntBy());
 		ps.setTimestamp(index++, td.getLastMntOn());
 		ps.setString(index++, td.getRecordStatus());
 		ps.setString(index++, td.getRoleCode());
@@ -225,7 +225,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		ps.setString(index++, td.getTaskId());
 		ps.setString(index++, td.getNextTaskId());
 		ps.setString(index++, td.getRecordType());
-		ps.setLong(index++, JdbcUtil.setLong(td.getWorkflowId()));
+		ps.setLong(index++, td.getWorkflowId());
 	}
 
 	@Override
@@ -262,16 +262,16 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(th.getHeaderId()));
+			ps.setLong(index++, th.getHeaderId());
 
 			if ((Object) th.getInvoiceID() instanceof Long) {
-				ps.setLong(index++, JdbcUtil.setLong(th.getInvoiceID()));
+				ps.setLong(index++, th.getInvoiceID());
 			} else {
 				ps.setNull(index++, Types.NULL);
 			}
 
 			ps.setInt(index++, th.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(th.getLastMntBy()));
+			ps.setLong(index++, th.getLastMntBy());
 			ps.setTimestamp(index++, th.getLastMntOn());
 			ps.setString(index++, th.getRecordStatus());
 			ps.setString(index++, th.getRoleCode());
@@ -279,7 +279,7 @@ public class TaxHeaderDetailsDAOImpl extends SequenceDao<Taxes> implements TaxHe
 			ps.setString(index++, th.getTaskId());
 			ps.setString(index++, th.getNextTaskId());
 			ps.setString(index++, th.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(th.getWorkflowId()));
+			ps.setLong(index++, th.getWorkflowId());
 
 		});
 

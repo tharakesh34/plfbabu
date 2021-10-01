@@ -114,12 +114,12 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentInstructionId()));
-				ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentId()));
+				ps.setLong(index++, pi.getPaymentInstructionId());
+				ps.setLong(index++, pi.getPaymentId());
 				ps.setString(index++, pi.getPaymentType());
 				ps.setBigDecimal(index++, pi.getPaymentAmount());
 				ps.setString(index++, pi.getRemarks());
-				ps.setLong(index++, JdbcUtil.setLong(pi.getPartnerBankId()));
+				ps.setLong(index++, pi.getPartnerBankId());
 				ps.setString(index++, pi.getIssuingBank());
 				ps.setString(index++, pi.getFavourName());
 				ps.setString(index++, pi.getFavourNumber());
@@ -127,7 +127,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				ps.setString(index++, pi.getPrintingLoc());
 				ps.setDate(index++, JdbcUtil.getDate(pi.getValueDate()));
 				ps.setDate(index++, JdbcUtil.getDate(pi.getPostDate()));
-				ps.setLong(index++, JdbcUtil.setLong(pi.getBankBranchId()));
+				ps.setLong(index++, pi.getBankBranchId());
 				ps.setString(index++, pi.getAcctHolderName());
 				ps.setString(index++, pi.getAccountNo());
 				ps.setString(index++, pi.getPhoneCountryCode());
@@ -137,7 +137,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				ps.setBoolean(index++, pi.getActive());
 				ps.setString(index++, pi.getPaymentCCy());
 				ps.setInt(index++, pi.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(pi.getLastMntBy()));
+				ps.setLong(index++, pi.getLastMntBy());
 				ps.setTimestamp(index++, pi.getLastMntOn());
 				ps.setString(index++, pi.getRecordStatus());
 				ps.setString(index++, pi.getRoleCode());
@@ -145,7 +145,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				ps.setString(index++, pi.getTaskId());
 				ps.setString(index++, pi.getNextTaskId());
 				ps.setString(index++, pi.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(pi.getWorkflowId()));
+				ps.setLong(index++, pi.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -171,19 +171,19 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentId()));
+			ps.setLong(index++, pi.getPaymentId());
 			ps.setString(index++, pi.getPaymentType());
 			ps.setBigDecimal(index++, pi.getPaymentAmount());
 			ps.setString(index++, pi.getIssuingBank());
 			ps.setString(index++, pi.getRemarks());
-			ps.setLong(index++, JdbcUtil.setLong(pi.getPartnerBankId()));
+			ps.setLong(index++, pi.getPartnerBankId());
 			ps.setString(index++, pi.getFavourName());
 			ps.setString(index++, pi.getFavourNumber());
 			ps.setString(index++, pi.getPayableLoc());
 			ps.setString(index++, pi.getPrintingLoc());
 			ps.setDate(index++, JdbcUtil.getDate(pi.getValueDate()));
 			ps.setDate(index++, JdbcUtil.getDate(pi.getPostDate()));
-			ps.setLong(index++, JdbcUtil.setLong(pi.getBankBranchId()));
+			ps.setLong(index++, pi.getBankBranchId());
 			ps.setString(index++, pi.getAcctHolderName());
 			ps.setString(index++, pi.getAccountNo());
 			ps.setString(index++, pi.getPhoneCountryCode());
@@ -199,9 +199,9 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			ps.setString(index++, pi.getTaskId());
 			ps.setString(index++, pi.getNextTaskId());
 			ps.setString(index++, pi.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(pi.getWorkflowId()));
+			ps.setLong(index++, pi.getWorkflowId());
 
-			ps.setLong(index++, JdbcUtil.setLong(pi.getPaymentInstructionId()));
+			ps.setLong(index++, pi.getPaymentInstructionId());
 		});
 
 		if (recordCount == 0) {

@@ -748,10 +748,10 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(ph.getId()));
+			ps.setLong(index++, ph.getId());
 			ps.setString(index++, ph.getReference());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getPresentmentDate()));
-			ps.setLong(index++, JdbcUtil.setLong(ph.getPartnerBankId()));
+			ps.setLong(index++, ph.getPartnerBankId());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getFromDate()));
 			ps.setDate(index++, JdbcUtil.getDate(ph.getToDate()));
 			ps.setString(index++, ph.getPresentmentType());
@@ -761,13 +761,13 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setString(index++, ph.getFinBranch());
 			ps.setDate(index++, JdbcUtil.getDate(ph.getSchdate()));
 			ps.setString(index++, ph.getLoanType());
-			ps.setLong(index++, JdbcUtil.setLong(ph.getImportStatusId()));
+			ps.setLong(index++, ph.getImportStatusId());
 			ps.setInt(index++, ph.getTotalRecords());
 			ps.setInt(index++, ph.getProcessedRecords());
 			ps.setInt(index++, ph.getSuccessRecords());
 			ps.setInt(index++, ph.getFailedRecords());
 			ps.setInt(index++, ph.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(ph.getLastMntBy()));
+			ps.setLong(index++, ph.getLastMntBy());
 			ps.setTimestamp(index++, ph.getLastMntOn());
 			ps.setString(index++, ph.getRecordStatus());
 			ps.setString(index++, ph.getRoleCode());
@@ -775,8 +775,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ps.setString(index++, ph.getTaskId());
 			ps.setString(index++, ph.getNextTaskId());
 			ps.setString(index++, ph.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ph.getWorkflowId()));
-			ps.setLong(index++, JdbcUtil.setLong(ph.getdBStatusId()));
+			ps.setLong(index++, ph.getWorkflowId());
+			ps.setLong(index++, ph.getdBStatusId());
 			ps.setString(index++, ph.getBankCode());
 			ps.setString(index++, ph.getEntityCode());
 		});

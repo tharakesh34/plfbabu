@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  UploadAllocationDetailDAOImpl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-07-2018    														*
- *                                                                  						*
- * Modified Date    :  13-07-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : UploadAllocationDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-07-2018 * *
+ * Modified Date : 13-07-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-07-2018       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-07-2018 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.finance.impl;
 
@@ -78,10 +60,8 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 	 * 
 	 * save Promotion
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -111,8 +91,8 @@ public class UploadAllocationDetailDAOImpl extends SequenceDao<UploadAlloctionDe
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				UploadAlloctionDetail uad = uploadAllocationDetailList.get(i);
 				int index = 1;
-				ps.setLong(index++, JdbcUtil.setLong(uad.getUploadDetailId()));
-				ps.setLong(index++, JdbcUtil.setLong(uad.getUploadAlloctionDetailId()));
+				ps.setLong(index++, uad.getUploadDetailId());
+				ps.setLong(index++, uad.getUploadAlloctionDetailId());
 				ps.setString(index++, uad.getRootId());
 				ps.setString(index++, uad.getAllocationType());
 				ps.setString(index++, uad.getReferenceCode());

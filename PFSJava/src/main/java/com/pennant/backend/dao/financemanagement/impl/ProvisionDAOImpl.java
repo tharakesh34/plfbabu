@@ -176,10 +176,10 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setInt(index++, provision.getAssetStageOrder());
 			ps.setBoolean(index++, provision.isNpa());
 			ps.setBoolean(index++, provision.isManualProvision());
-			ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
-			ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
+			ps.setLong(index++, provision.getLinkedTranId());
+			ps.setLong(index++, provision.getChgLinkedTranId());
 			ps.setInt(index++, provision.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
+			ps.setLong(index++, provision.getLastMntBy());
 			ps.setTimestamp(index++, provision.getLastMntOn());
 			ps.setString(index++, provision.getRecordStatus());
 			ps.setString(index++, provision.getRoleCode());
@@ -187,8 +187,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, provision.getTaskId());
 			ps.setString(index++, provision.getNextTaskId());
 			ps.setString(index++, provision.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
-			ps.setObject(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
+			ps.setLong(index++, provision.getWorkflowId());
+			ps.setObject(index++, provision.getNpaTemplateId());
 		});
 
 		return provision.getId();
@@ -216,9 +216,9 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(provision.getId()));
-			ps.setLong(index++, JdbcUtil.setLong(provision.getProvisionId()));
-			ps.setLong(index++, JdbcUtil.setLong(provision.getFinID()));
+			ps.setLong(index++, provision.getId());
+			ps.setLong(index++, provision.getProvisionId());
+			ps.setLong(index++, provision.getFinID());
 			ps.setString(index++, provision.getFinReference());
 			ps.setBigDecimal(index++, provision.getClosingBalance());
 			ps.setBigDecimal(index++, provision.getOutStandPrincipal());
@@ -237,10 +237,10 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setInt(index++, provision.getAssetStageOrder());
 			ps.setBoolean(index++, provision.isNpa());
 			ps.setBoolean(index++, provision.isManualProvision());
-			ps.setLong(index++, JdbcUtil.setLong(provision.getLinkedTranId()));
-			ps.setLong(index++, JdbcUtil.setLong(provision.getChgLinkedTranId()));
+			ps.setLong(index++, provision.getLinkedTranId());
+			ps.setLong(index++, provision.getChgLinkedTranId());
 			ps.setInt(index++, provision.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(provision.getLastMntBy()));
+			ps.setLong(index++, provision.getLastMntBy());
 			ps.setTimestamp(index++, provision.getLastMntOn());
 			ps.setString(index++, provision.getRecordStatus());
 			ps.setString(index++, provision.getRoleCode());
@@ -248,8 +248,8 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 			ps.setString(index++, provision.getTaskId());
 			ps.setString(index++, provision.getNextTaskId());
 			ps.setString(index++, provision.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(provision.getWorkflowId()));
-			ps.setObject(index++, JdbcUtil.setLong(provision.getNpaTemplateId()));
+			ps.setLong(index++, provision.getWorkflowId());
+			ps.setObject(index++, provision.getNpaTemplateId());
 		});
 
 		return provision.getId();
@@ -282,7 +282,7 @@ public class ProvisionDAOImpl extends SequenceDao<Provision> implements Provisio
 					pa.setId(getNextValue("SEQPROVISION_AMOUNTS"));
 				}
 
-				ps.setLong(index++, JdbcUtil.setLong(pa.getId()));
+				ps.setLong(index++, pa.getId());
 				ps.setLong(index++, pa.getProvisionId());
 				ps.setString(index++, pa.getProvisionType());
 				ps.setString(index++, pa.getAssetCode());

@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.pff.verification.DocumentType;
@@ -342,25 +341,25 @@ public class RiskContainmentUnitDAOImpl extends SequenceDao<RiskContainmentUnit>
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
 				RCUDocument document = rcuDocuments.get(i);
 				if (document != null) {
-					ps.setLong(1, JdbcUtil.setLong(document.getVerificationId()));
+					ps.setLong(1, document.getVerificationId());
 					ps.setInt(2, i + 1);
-					ps.setLong(3, JdbcUtil.setLong(document.getDocumentId()));
+					ps.setLong(3, document.getDocumentId());
 					ps.setInt(4, document.getDocumentType());
 					ps.setString(5, document.getDocumentSubId());
-					ps.setLong(6, JdbcUtil.setLong(document.getDocumentRefId()));
+					ps.setLong(6, document.getDocumentRefId());
 					ps.setString(7, document.getDocumentUri());
 					ps.setString(8, document.getInitRemarks());
 					ps.setObject(9, document.getReinitid());
 					ps.setInt(10, document.getVersion());
 					ps.setTimestamp(11, document.getLastMntOn());
-					ps.setLong(12, JdbcUtil.setLong(document.getLastMntBy()));
+					ps.setLong(12, document.getLastMntBy());
 					ps.setString(13, document.getRecordStatus());
 					ps.setString(14, document.getRoleCode());
 					ps.setString(15, document.getNextRoleCode());
 					ps.setString(16, document.getTaskId());
 					ps.setString(17, document.getNextTaskId());
 					ps.setString(18, document.getRecordType());
-					ps.setLong(19, JdbcUtil.setLong(document.getWorkflowId()));
+					ps.setLong(19, document.getWorkflowId());
 					ps.setString(20, document.getAccNumber());
 					ps.setString(21, document.getBankName());
 				}

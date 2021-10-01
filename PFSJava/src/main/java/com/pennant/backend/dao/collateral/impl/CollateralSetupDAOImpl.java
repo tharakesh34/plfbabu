@@ -74,7 +74,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 
 			ps.setString(index++, cs.getCollateralRef());
 			ps.setString(index++, cs.getFinReference());
-			ps.setLong(index++, JdbcUtil.setLong(cs.getDepositorId()));
+			ps.setLong(index++, cs.getDepositorId());
 			ps.setString(index++, cs.getCollateralType());
 			ps.setString(index++, cs.getCollateralCcy());
 			ps.setBigDecimal(index++, cs.getMaxCollateralValue());
@@ -92,7 +92,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setBigDecimal(index++, cs.getBankLTV());
 			ps.setBigDecimal(index++, cs.getBankValuation());
 			ps.setInt(index++, cs.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cs.getLastMntBy()));
+			ps.setLong(index++, cs.getLastMntBy());
 			ps.setTimestamp(index++, cs.getLastMntOn());
 			ps.setString(index++, cs.getRecordStatus());
 			ps.setString(index++, cs.getRoleCode());
@@ -100,8 +100,8 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setString(index++, cs.getTaskId());
 			ps.setString(index++, cs.getNextTaskId());
 			ps.setString(index++, cs.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cs.getWorkflowId()));
-			ps.setLong(index++, JdbcUtil.setLong(cs.getCreatedBy()));
+			ps.setLong(index++, cs.getWorkflowId());
+			ps.setLong(index++, cs.getCreatedBy());
 			ps.setTimestamp(index++, cs.getCreatedOn());
 		});
 
@@ -125,7 +125,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(cs.getDepositorId()));
+			ps.setLong(index++, cs.getDepositorId());
 			ps.setString(index++, cs.getCollateralType());
 			ps.setString(index++, cs.getCollateralCcy());
 			ps.setBigDecimal(index++, cs.getMaxCollateralValue());
@@ -142,7 +142,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setBigDecimal(index++, cs.getBankLTV());
 			ps.setBigDecimal(index++, cs.getBankValuation());
 			ps.setInt(index++, cs.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cs.getLastMntBy()));
+			ps.setLong(index++, cs.getLastMntBy());
 			ps.setTimestamp(index++, cs.getLastMntOn());
 			ps.setString(index++, cs.getRecordStatus());
 			ps.setString(index++, cs.getRoleCode());
@@ -150,7 +150,7 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			ps.setString(index++, cs.getTaskId());
 			ps.setString(index++, cs.getNextTaskId());
 			ps.setString(index++, cs.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cs.getWorkflowId()));
+			ps.setLong(index++, cs.getWorkflowId());
 
 			ps.setString(index++, cs.getCollateralRef());
 		});

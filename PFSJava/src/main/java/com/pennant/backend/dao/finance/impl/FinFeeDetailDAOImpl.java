@@ -338,12 +338,12 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(fe.getFeeID()));
-			ps.setLong(index++, JdbcUtil.setLong(fe.getFinID()));
+			ps.setLong(index++, fe.getFeeID());
+			ps.setLong(index++, fe.getFinID());
 			ps.setString(index++, fe.getFinReference());
 			ps.setBoolean(index++, fe.isOriginationFee());
 			ps.setString(index++, fe.getFinEvent());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getFeeTypeID()));
+			ps.setLong(index++, fe.getFeeTypeID());
 			ps.setInt(index++, fe.getFeeSeq());
 			ps.setInt(index++, fe.getFeeOrder());
 			ps.setBigDecimal(index++, fe.getCalculatedAmount());
@@ -390,10 +390,10 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			}
 
 			ps.setBigDecimal(index++, fe.getWaivedGST());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getReferenceId()));
+			ps.setLong(index++, fe.getReferenceId());
 			ps.setObject(index++, fe.getTaxHeaderId());
 			ps.setInt(index++, fe.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getLastMntBy()));
+			ps.setLong(index++, fe.getLastMntBy());
 			ps.setTimestamp(index++, fe.getLastMntOn());
 			ps.setString(index++, fe.getRecordStatus());
 			ps.setString(index++, fe.getRoleCode());
@@ -401,7 +401,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, fe.getTaskId());
 			ps.setString(index++, fe.getNextTaskId());
 			ps.setString(index++, fe.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getWorkflowId()));
+			ps.setLong(index++, fe.getWorkflowId());
 		});
 
 		return fe.getFeeID();
@@ -440,7 +440,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(fe.getFinID()));
+			ps.setLong(index++, fe.getFinID());
 			ps.setString(index++, fe.getFinReference());
 			ps.setInt(index++, fe.getFeeSeq());
 			ps.setInt(index++, fe.getFeeOrder());
@@ -486,10 +486,10 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			}
 
 			ps.setBigDecimal(index++, fe.getWaivedGST());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getReferenceId()));
+			ps.setLong(index++, fe.getReferenceId());
 			ps.setObject(index++, fe.getTaxHeaderId());
 			ps.setInt(index++, fe.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getLastMntBy()));
+			ps.setLong(index++, fe.getLastMntBy());
 			ps.setTimestamp(index++, fe.getLastMntOn());
 			ps.setString(index++, fe.getRecordStatus());
 			ps.setString(index++, fe.getRoleCode());
@@ -497,8 +497,8 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setString(index++, fe.getTaskId());
 			ps.setString(index++, fe.getNextTaskId());
 			ps.setString(index++, fe.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(fe.getWorkflowId()));
-			ps.setLong(index++, JdbcUtil.setLong(fe.getFeeID()));
+			ps.setLong(index++, fe.getWorkflowId());
+			ps.setLong(index++, fe.getFeeID());
 		});
 
 		if (recordCount <= 0) {
@@ -739,7 +739,7 @@ public class FinFeeDetailDAOImpl extends SequenceDao<FinFeeDetail> implements Fi
 			ps.setBigDecimal(index++, fd.getRemTDS());
 			ps.setTimestamp(index++, fd.getLastMntOn());
 
-			ps.setLong(index++, JdbcUtil.setLong(fd.getFeeID()));
+			ps.setLong(index++, fd.getFeeID());
 		});
 
 		if (recordCount <= 0) {

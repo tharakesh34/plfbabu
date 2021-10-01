@@ -37,7 +37,6 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import com.pennant.backend.dao.finance.LinkedFinancesDAO;
 import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -300,7 +299,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		ps.setString(index++, lnkdFinance.getLinkedReference());
 		ps.setString(index++, lnkdFinance.getStatus());
 		ps.setInt(index++, lnkdFinance.getVersion());
-		ps.setLong(index++, JdbcUtil.setLong(lnkdFinance.getLastMntBy()));
+		ps.setLong(index++, lnkdFinance.getLastMntBy());
 		ps.setTimestamp(index++, lnkdFinance.getLastMntOn());
 		ps.setString(index++, lnkdFinance.getRecordStatus());
 		ps.setString(index++, lnkdFinance.getRoleCode());
@@ -308,7 +307,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		ps.setString(index++, lnkdFinance.getTaskId());
 		ps.setString(index++, lnkdFinance.getNextTaskId());
 		ps.setString(index++, lnkdFinance.getRecordType());
-		ps.setLong(index++, JdbcUtil.setLong(lnkdFinance.getWorkflowId()));
+		ps.setLong(index++, lnkdFinance.getWorkflowId());
 	}
 
 	private void setUpdateParameterizedFields(LinkedFinances lnkdFinance, PreparedStatement ps) throws SQLException {
@@ -316,7 +315,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 
 		ps.setString(index++, lnkdFinance.getStatus());
 		ps.setInt(index++, lnkdFinance.getVersion());
-		ps.setLong(index++, JdbcUtil.setLong(lnkdFinance.getLastMntBy()));
+		ps.setLong(index++, lnkdFinance.getLastMntBy());
 		ps.setTimestamp(index++, lnkdFinance.getLastMntOn());
 		ps.setString(index++, lnkdFinance.getRecordStatus());
 		ps.setString(index++, lnkdFinance.getRoleCode());
@@ -324,7 +323,7 @@ public class LinkedFinancesDAOImpl extends SequenceDao<LinkedFinances> implement
 		ps.setString(index++, lnkdFinance.getTaskId());
 		ps.setString(index++, lnkdFinance.getNextTaskId());
 		ps.setString(index++, lnkdFinance.getRecordType());
-		ps.setLong(index++, JdbcUtil.setLong(lnkdFinance.getWorkflowId()));
+		ps.setLong(index++, lnkdFinance.getWorkflowId());
 
 		ps.setLong(index++, lnkdFinance.getFinID());
 		ps.setString(index, lnkdFinance.getLinkedReference());

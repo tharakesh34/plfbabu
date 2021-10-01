@@ -148,7 +148,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(cd.getCustID()));
+			ps.setLong(index++, cd.getCustID());
 			ps.setString(index++, cd.getCustDocType());
 			ps.setString(index++, cd.getCustDocTitle());
 			ps.setString(index++, cd.getCustDocSysName());
@@ -157,7 +157,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setDate(index++, JdbcUtil.getDate(cd.getCustDocIssuedOn()));
 			ps.setString(index++, cd.getCustDocIssuedCountry());
 			ps.setBoolean(index++, cd.isCustDocIsVerified());
-			ps.setLong(index++, JdbcUtil.setLong(cd.getCustDocVerifiedBy()));
+			ps.setLong(index++, cd.getCustDocVerifiedBy());
 			ps.setBoolean(index++, cd.isCustDocIsAcrive());
 			ps.setString(index++, cd.getCustDocCategory());
 			ps.setString(index++, cd.getCustDocName());
@@ -167,7 +167,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setString(index++, cd.getPdfPassWord());
 			ps.setString(index++, cd.getRemarks());
 			ps.setInt(index++, cd.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cd.getLastMntBy()));
+			ps.setLong(index++, cd.getLastMntBy());
 			ps.setTimestamp(index++, cd.getLastMntOn());
 			ps.setString(index++, cd.getRecordStatus());
 			ps.setString(index++, cd.getRoleCode());
@@ -175,7 +175,7 @@ public class CustomerDocumentDAOImpl extends SequenceDao<CustomerDocument> imple
 			ps.setString(index++, cd.getTaskId());
 			ps.setString(index++, cd.getNextTaskId());
 			ps.setString(index++, cd.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cd.getWorkflowId()));
+			ps.setLong(index++, cd.getWorkflowId());
 		});
 
 		return cd.getCustID();

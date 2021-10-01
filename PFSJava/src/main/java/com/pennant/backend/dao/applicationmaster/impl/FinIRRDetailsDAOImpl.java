@@ -38,7 +38,6 @@ import com.pennant.backend.dao.applicationmaster.FinIRRDetailsDAO;
 import com.pennant.backend.model.finance.FinIRRDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
 
@@ -125,8 +124,8 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			setPreparedStatement(irr, ps);
-			ps.setLong(15, JdbcUtil.setLong(irr.getiRRID()));
-			ps.setLong(16, JdbcUtil.setLong(irr.getFinID()));
+			ps.setLong(15, irr.getiRRID());
+			ps.setLong(16, irr.getFinID());
 		});
 
 		if (recordCount == 0) {
@@ -204,12 +203,12 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 	private void setPreparedStatement(FinIRRDetails irr, PreparedStatement ps) throws SQLException {
 		int index = 1;
 
-		ps.setLong(index++, JdbcUtil.setLong(irr.getiRRID()));
-		ps.setLong(index++, JdbcUtil.setLong(irr.getFinID()));
+		ps.setLong(index++, irr.getiRRID());
+		ps.setLong(index++, irr.getFinID());
 		ps.setString(index++, irr.getFinReference());
 		ps.setBigDecimal(index++, irr.getIRR());
 		ps.setInt(index++, irr.getVersion());
-		ps.setLong(index++, JdbcUtil.setLong(irr.getLastMntBy()));
+		ps.setLong(index++, irr.getLastMntBy());
 		ps.setTimestamp(index++, irr.getLastMntOn());
 		ps.setString(index++, irr.getRecordStatus());
 		ps.setString(index++, irr.getRoleCode());
@@ -217,7 +216,7 @@ public class FinIRRDetailsDAOImpl extends BasicDao<FinIRRDetails> implements Fin
 		ps.setString(index++, irr.getTaskId());
 		ps.setString(index++, irr.getNextTaskId());
 		ps.setString(index++, irr.getRecordType());
-		ps.setLong(index++, JdbcUtil.setLong(irr.getWorkflowId()));
+		ps.setLong(index++, irr.getWorkflowId());
 	}
 
 }

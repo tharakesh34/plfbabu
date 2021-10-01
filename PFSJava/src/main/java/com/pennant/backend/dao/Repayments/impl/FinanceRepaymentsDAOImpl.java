@@ -340,8 +340,8 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(rph.getRepayID()));
-			ps.setLong(index++, JdbcUtil.setLong(rph.getReceiptSeqID()));
+			ps.setLong(index++, rph.getRepayID());
+			ps.setLong(index++, rph.getReceiptSeqID());
 			ps.setLong(index++, rph.getFinID());
 			ps.setString(index++, rph.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(rph.getValueDate()));
@@ -354,7 +354,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			ps.setString(index++, rph.getEarlyPayEffMtd());
 			ps.setDate(index++, JdbcUtil.getDate(rph.getEarlyPayDate()));
 			ps.setBoolean(index++, rph.isSchdRegenerated());
-			ps.setLong(index++, JdbcUtil.setLong(rph.getLinkedTranId()));
+			ps.setLong(index++, rph.getLinkedTranId());
 			ps.setBigDecimal(index++, rph.getTotalSchdFee());
 			ps.setString(index++, rph.getPayApportionment());
 			ps.setBigDecimal(index++, rph.getLatePftAmount());

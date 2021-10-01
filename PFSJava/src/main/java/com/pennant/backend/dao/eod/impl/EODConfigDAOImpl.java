@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EODConfigDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-05-2017    														*
- *                                                                  						*
- * Modified Date    :  24-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EODConfigDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-05-2017 * * Modified
+ * Date : 24-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.eod.impl;
 
 import java.sql.PreparedStatement;
@@ -128,14 +110,14 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 				public void setValues(PreparedStatement ps) throws SQLException {
 					int index = 1;
 
-					ps.setLong(index++, JdbcUtil.setLong(eODConfig.getEodConfigId()));
+					ps.setLong(index++, eODConfig.getEodConfigId());
 					ps.setBoolean(index++, eODConfig.isExtMnthRequired());
 					ps.setDate(index++, JdbcUtil.getDate(eODConfig.getMnthExtTo()));
 					ps.setBoolean(index++, eODConfig.isActive());
 					ps.setBoolean(index++, eODConfig.isInExtMnth());
 					ps.setDate(index++, JdbcUtil.getDate(eODConfig.getPrvExtMnth()));
 					ps.setInt(index++, eODConfig.getVersion());
-					ps.setLong(index++, JdbcUtil.setLong(eODConfig.getLastMntBy()));
+					ps.setLong(index++, eODConfig.getLastMntBy());
 					ps.setTimestamp(index++, eODConfig.getLastMntOn());
 					ps.setString(index++, eODConfig.getRecordStatus());
 					ps.setString(index++, eODConfig.getRoleCode());
@@ -143,7 +125,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 					ps.setString(index++, eODConfig.getTaskId());
 					ps.setString(index++, eODConfig.getNextTaskId());
 					ps.setString(index++, eODConfig.getRecordType());
-					ps.setLong(index++, JdbcUtil.setLong(eODConfig.getWorkflowId()));
+					ps.setLong(index++, eODConfig.getWorkflowId());
 					ps.setBoolean(index++, eODConfig.isAutoEodRequired());
 					ps.setString(index++, eODConfig.getEODStartJobFrequency());
 					ps.setBoolean(index++, eODConfig.isEnableAutoEod());
@@ -210,7 +192,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 				ps.setString(index++, eODConfig.getTaskId());
 				ps.setString(index++, eODConfig.getNextTaskId());
 				ps.setString(index++, eODConfig.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(eODConfig.getWorkflowId()));
+				ps.setLong(index++, eODConfig.getWorkflowId());
 				ps.setBoolean(index++, eODConfig.isAutoEodRequired());
 				ps.setString(index++, eODConfig.getEODStartJobFrequency());
 				ps.setBoolean(index++, eODConfig.isEnableAutoEod());
@@ -232,7 +214,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 				ps.setBoolean(index++, eODConfig.isDelayNotifyReq());
 				ps.setString(index++, eODConfig.getDelayFrequency());
 
-				ps.setLong(index++, JdbcUtil.setLong(eODConfig.getEodConfigId()));
+				ps.setLong(index++, eODConfig.getEodConfigId());
 
 				if (tableType == TableType.TEMP_TAB) {
 					ps.setTimestamp(index, eODConfig.getPrevMntOn());
@@ -314,7 +296,7 @@ public class EODConfigDAOImpl extends SequenceDao<EODConfig> implements EODConfi
 				ps.setBoolean(index++, eODConfig.isInExtMnth());
 				ps.setDate(index++, JdbcUtil.getDate(eODConfig.getPrvExtMnth()));
 
-				ps.setLong(index, JdbcUtil.setLong(eODConfig.getEodConfigId()));
+				ps.setLong(index, eODConfig.getEodConfigId());
 			}
 		});
 

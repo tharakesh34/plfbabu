@@ -130,15 +130,15 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(ma.getAdviseID()));
+				ps.setLong(index++, ma.getAdviseID());
 				ps.setInt(index++, ma.getAdviseType());
-				ps.setLong(index++, JdbcUtil.setLong(ma.getFinID()));
+				ps.setLong(index++, ma.getFinID());
 				ps.setString(index++, ma.getFinReference());
-				ps.setLong(index++, JdbcUtil.setLong(ma.getFeeTypeID()));
+				ps.setLong(index++, ma.getFeeTypeID());
 				ps.setInt(index++, ma.getSequence());
 				ps.setBigDecimal(index++, ma.getAdviseAmount());
-				ps.setLong(index++, JdbcUtil.setLong(ma.getBounceID()));
-				ps.setLong(index++, JdbcUtil.setLong(ma.getReceiptID()));
+				ps.setLong(index++, ma.getBounceID());
+				ps.setLong(index++, ma.getReceiptID());
 				ps.setBigDecimal(index++, ma.getPaidAmount());
 				ps.setBigDecimal(index++, ma.getWaivedAmount());
 				ps.setString(index++, ma.getRemarks());
@@ -158,7 +158,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ps.setBigDecimal(index++, ma.getWaivedCESS());
 				ps.setString(index++, ma.getFinSource());
 				ps.setInt(index++, ma.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(ma.getLastMntBy()));
+				ps.setLong(index++, ma.getLastMntBy());
 				ps.setTimestamp(index++, ma.getLastMntOn());
 				ps.setString(index++, ma.getRecordStatus());
 				ps.setString(index++, ma.getRoleCode());
@@ -166,9 +166,9 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				ps.setString(index++, ma.getTaskId());
 				ps.setString(index++, ma.getNextTaskId());
 				ps.setString(index++, ma.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(ma.getWorkflowId()));
+				ps.setLong(index++, ma.getWorkflowId());
 				ps.setBoolean(index++, ma.isDueCreation());
-				ps.setLong(index++, JdbcUtil.setLong(ma.getLinkedTranId()));
+				ps.setLong(index++, ma.getLinkedTranId());
 				ps.setBoolean(index++, ma.isHoldDue());
 			});
 		} catch (DuplicateKeyException e) {
@@ -232,7 +232,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setString(index++, ma.getTaskId());
 			ps.setString(index++, ma.getNextTaskId());
 			ps.setString(index++, ma.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ma.getWorkflowId()));
+			ps.setLong(index++, ma.getWorkflowId());
 
 			ps.setLong(index++, ma.getAdviseID());
 
@@ -355,16 +355,16 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(mam.getMovementID()));
-			ps.setLong(index++, JdbcUtil.setLong(mam.getAdviseID()));
+			ps.setLong(index++, mam.getMovementID());
+			ps.setLong(index++, mam.getAdviseID());
 			ps.setDate(index++, JdbcUtil.getDate(mam.getMovementDate()));
 			ps.setBigDecimal(index++, mam.getMovementAmount());
 			ps.setBigDecimal(index++, mam.getPaidAmount());
 			ps.setBigDecimal(index++, mam.getWaivedAmount());
 			ps.setString(index++, mam.getStatus());
-			ps.setLong(index++, JdbcUtil.setLong(mam.getReceiptID()));
-			ps.setLong(index++, JdbcUtil.setLong(mam.getReceiptSeqID()));
-			ps.setLong(index++, JdbcUtil.setLong(mam.getWaiverID()));
+			ps.setLong(index++, mam.getReceiptID());
+			ps.setLong(index++, mam.getReceiptSeqID());
+			ps.setLong(index++, mam.getWaiverID());
 			ps.setObject(index++, mam.getTaxHeaderId());
 			ps.setBigDecimal(index++, mam.getTdsPaid());
 			ps.setBigDecimal(index++, mam.getPaidCGST());

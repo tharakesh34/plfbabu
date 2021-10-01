@@ -52,13 +52,13 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index++, JdbcUtil.setLong(knockOff.getId()));
+				ps.setLong(index++, knockOff.getId());
 				ps.setString(index++, knockOff.getCode());
 				ps.setString(index++, knockOff.getDescription());
 				ps.setString(index++, knockOff.getExecutionDays());
 				ps.setBoolean(index++, knockOff.isActive());
 				ps.setInt(index++, knockOff.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(knockOff.getLastMntBy()));
+				ps.setLong(index++, knockOff.getLastMntBy());
 				ps.setTimestamp(index++, knockOff.getLastMntOn());
 				ps.setString(index++, knockOff.getRecordStatus());
 				ps.setString(index++, knockOff.getRoleCode());
@@ -66,7 +66,7 @@ public class AutoKnockOffDAOImpl extends SequenceDao<AutoKnockOff> implements Au
 				ps.setString(index++, knockOff.getTaskId());
 				ps.setString(index++, knockOff.getNextTaskId());
 				ps.setString(index++, knockOff.getRecordType());
-				ps.setLong(index, JdbcUtil.setLong(knockOff.getWorkflowId()));
+				ps.setLong(index, knockOff.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);

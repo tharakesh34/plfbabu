@@ -130,8 +130,8 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index++, JdbcUtil.setLong(pr.getLogKey()));
-			ps.setLong(index++, JdbcUtil.setLong(pr.getFinID()));
+			ps.setLong(index++, pr.getLogKey());
+			ps.setLong(index++, pr.getFinID());
 			ps.setString(index++, pr.getFinReference());
 			ps.setDate(index++, JdbcUtil.getDate(pr.getFinEffectDate()));
 			ps.setBoolean(index++, pr.isApplyODPenalty());
@@ -175,7 +175,7 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 			ps.setString(index++, odpr.getODRuleCode());
 			ps.setBigDecimal(index++, odpr.getoDMinCapAmount());
 			ps.setBoolean(index++, odpr.isoDTDSReq());
-			ps.setLong(index++, JdbcUtil.setLong(odpr.getFinID()));
+			ps.setLong(index++, odpr.getFinID());
 		});
 
 		if (recordCount <= 0) {

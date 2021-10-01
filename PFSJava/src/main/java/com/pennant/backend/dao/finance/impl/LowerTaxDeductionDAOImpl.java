@@ -88,7 +88,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 				ps.setBigDecimal(index++, ltd.getLimitAmt());
 
 				ps.setInt(index++, ltd.getVersion());
-				ps.setLong(index++, JdbcUtil.setLong(ltd.getLastMntBy()));
+				ps.setLong(index++, ltd.getLastMntBy());
 				ps.setTimestamp(index++, ltd.getLastMntOn());
 				ps.setString(index++, ltd.getRecordStatus());
 				ps.setString(index++, ltd.getRoleCode());
@@ -96,7 +96,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 				ps.setString(index++, ltd.getTaskId());
 				ps.setString(index++, ltd.getNextTaskId());
 				ps.setString(index++, ltd.getRecordType());
-				ps.setLong(index++, JdbcUtil.setLong(ltd.getWorkflowId()));
+				ps.setLong(index++, ltd.getWorkflowId());
 			});
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
@@ -124,7 +124,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 			ps.setBigDecimal(index++, ltd.getPercentage());
 			ps.setBigDecimal(index++, ltd.getLimitAmt());
 			ps.setInt(index++, ltd.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(ltd.getLastMntBy()));
+			ps.setLong(index++, ltd.getLastMntBy());
 			ps.setTimestamp(index++, ltd.getLastMntOn());
 			ps.setString(index++, ltd.getRecordStatus());
 			ps.setString(index++, ltd.getRoleCode());
@@ -132,7 +132,7 @@ public class LowerTaxDeductionDAOImpl extends SequenceDao<LowerTaxDeduction> imp
 			ps.setString(index++, ltd.getTaskId());
 			ps.setString(index++, ltd.getNextTaskId());
 			ps.setString(index++, ltd.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ltd.getWorkflowId()));
+			ps.setLong(index++, ltd.getWorkflowId());
 
 			ps.setLong(index++, ltd.getFinID());
 		});

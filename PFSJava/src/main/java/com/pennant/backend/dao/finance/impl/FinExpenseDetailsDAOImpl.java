@@ -34,7 +34,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -72,7 +71,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 			ps.setLong(index++, ed.getExpenseTypeId());
 			ps.setBigDecimal(index++, ed.getAmount());
 			ps.setInt(index++, ed.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(ed.getLastMntBy()));
+			ps.setLong(index++, ed.getLastMntBy());
 			ps.setTimestamp(index++, ed.getLastMntOn());
 			ps.setString(index++, ed.getRecordStatus());
 			ps.setString(index++, ed.getRoleCode());
@@ -80,7 +79,7 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 			ps.setString(index++, ed.getTaskId());
 			ps.setString(index++, ed.getNextTaskId());
 			ps.setString(index++, ed.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(ed.getWorkflowId()));
+			ps.setLong(index++, ed.getWorkflowId());
 
 		});
 

@@ -45,7 +45,6 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
-import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
@@ -197,7 +196,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			ps.setString(index++, cld.getDocType());
 			ps.setBoolean(index++, cld.isRemarksMand());
 			ps.setInt(index++, cld.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cld.getLastMntBy()));
+			ps.setLong(index++, cld.getLastMntBy());
 			ps.setTimestamp(index++, cld.getLastMntOn());
 			ps.setString(index++, cld.getRecordStatus());
 			ps.setString(index++, cld.getRoleCode());
@@ -205,7 +204,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			ps.setString(index++, cld.getTaskId());
 			ps.setString(index++, cld.getNextTaskId());
 			ps.setString(index++, cld.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cld.getWorkflowId()));
+			ps.setLong(index++, cld.getWorkflowId());
 		});
 
 		return cld.getId();
@@ -238,7 +237,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			ps.setString(index++, cld.getDocType());
 			ps.setBoolean(index++, cld.isRemarksMand());
 			ps.setInt(index++, cld.getVersion());
-			ps.setLong(index++, JdbcUtil.setLong(cld.getLastMntBy()));
+			ps.setLong(index++, cld.getLastMntBy());
 			ps.setTimestamp(index++, cld.getLastMntOn());
 			ps.setString(index++, cld.getRecordStatus());
 			ps.setString(index++, cld.getRoleCode());
@@ -246,7 +245,7 @@ public class CheckListDetailDAOImpl extends BasicDao<CheckListDetail> implements
 			ps.setString(index++, cld.getTaskId());
 			ps.setString(index++, cld.getNextTaskId());
 			ps.setString(index++, cld.getRecordType());
-			ps.setLong(index++, JdbcUtil.setLong(cld.getWorkflowId()));
+			ps.setLong(index++, cld.getWorkflowId());
 
 			ps.setLong(index++, cld.getCheckListId());
 			ps.setLong(index++, cld.getAnsSeqNo());
