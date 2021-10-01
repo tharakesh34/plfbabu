@@ -794,7 +794,7 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	TODO
+
 	<changeSet id="20" author="murthy.y">
 		<addColumn tableName="finodcrecovery">
 			<column name="FinID" type="bigint" />
@@ -1377,10 +1377,10 @@
 	<changeSet id="37.4" author="murthy.y">
 		<createIndex tableName="lmtcommodityheader" indexName="idx_lmtcommodityheader_finid">
 			<column name="FinID" type="bigint" />
+		</createIndex>
 	</changeSet>
 
 	<changeSet id="37.5" author="murthy.y">
-	</createIndex>
 		<createIndex tableName="lmtcommodityheader_temp" indexName="idx_lmtcommodityheader_t_finid">
 			<column name="FinID" type="bigint" />
 		</createIndex>
