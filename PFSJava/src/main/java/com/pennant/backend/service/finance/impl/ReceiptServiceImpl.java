@@ -7436,4 +7436,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		this.finFeeConfigService = finFeeConfigService;
 	}
 
+	public void setFinTypeFeesDAO(FinTypeFeesDAO finTypeFeesDAO) {
+		this.finTypeFeesDAO = finTypeFeesDAO;
+	}
+
+	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
+		this.extendedFieldExtensionService = extendedFieldExtensionService;
+	}
 }
