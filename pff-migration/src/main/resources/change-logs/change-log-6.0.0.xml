@@ -23076,180 +23076,6 @@ UNION ALL
 		</sql>
 	</changeSet>
 
-	<!-- Dependency with Finance Main /Receipt Views -->
-
-	<changeSet id="ST#1211.100.9_pre" author="Gopal.p" dbms="postgresql">
-		<sql> 
-			<![CDATA[ 
-				select deps_save_and_drop_dependencies ('plf', 'verification_tv_view'); 
-			]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.9" author="Gopal.p">
-		<createView viewName="VERIFICATION_TV_VIEW" replaceIfExists="true">
-			<![CDATA[	 
-				SELECT TV.VERIFICATIONID,
-				    TV.AGENTCODE,
-				    TV.AGENTNAME,
-				    TV.TYPE,
-				    TV.VERIFIEDDATE,
-				    TV.STATUS,
-				    CS.COLLATERALTYPE,
-				    CS.COLLATERALCCY,
-				    CS.COLLATERALLOC,
-				    TV.REASON,
-				    TV.VALUATIONAMOUNT,
-				    R1.CODE AS REASONCODE,
-				    R1.DESCRIPTION AS REASONDESC,
-				    TV.SUMMARYREMARKS,
-				    TV.SOURCEFORMNAME,
-				    TV.VERIFICATIONFORMNAME,
-				    TV.DOCUMENTNAME,
-				    TV.DOCUMENTREF,
-				    TV.VERSION,
-				    TV.LASTMNTBY,
-				    TV.LASTMNTON,
-				    TV.RECORDSTATUS,
-				    TV.ROLECODE,
-				    TV.NEXTROLECODE,
-				    TV.TASKID,
-				    TV.NEXTTASKID,
-				    TV.RECORDTYPE,
-				    TV.WORKFLOWID,
-				    TV.OBSERVATIONREMARKS,
-				    C.CUSTCIF AS CIF,
-				    V.KEYREFERENCE,
-				    V.CREATEDON,
-				    V.AGENCY,
-				    A.DEALERNAME AS AGENCYNAME,
-				    A.DEALERCITY AS AGENCYCITY,
-				    V.CUSTID,
-				    C.CUSTSHRTNAME AS CUSTNAME,
-				    V.VERIFICATIONCATEGORY,
-				    CS.COLLATERALREF,
-				    CPNH.PHONENUMBER AS CONTACTNUMBER1,
-				    CPNL.PHONENUMBER AS CONTACTNUMBER2,
-				    TV.VALASPERPE,
-				    TV.FINALVALAMT,
-				    TV.DECISIONONVAL,
-				    TV.FINALVALREMARKS,
-				    FM.PRODUCTCATEGORY,
-				    FM.FINTYPE AS LOANTYPE,
-				    FM.LOVDESCFINTYPENAME AS LOVDESCLOANTYPENAME,
-				    FM.SOURCINGBRANCH,
-				    FM.LOVDESCSOURCINGBRANCH
-				FROM VERIFICATION_TV_TEMP TV
-				JOIN VERIFICATIONS V ON V.ID = TV.VERIFICATIONID
-				JOIN ( SELECT COLLATERALSETUP_TEMP.COLLATERALTYPE,
-				            COLLATERALSETUP_TEMP.COLLATERALCCY,
-				            COLLATERALSETUP_TEMP.COLLATERALLOC,
-				            COLLATERALSETUP_TEMP.COLLATERALREF
-				        FROM COLLATERALSETUP_TEMP
-				    UNION
-				        SELECT CSP.COLLATERALTYPE,
-				            CSP.COLLATERALCCY,
-				            CSP.COLLATERALLOC,
-				            CSP.COLLATERALREF
-				           FROM COLLATERALSETUP CSP
-				        WHERE NOT (EXISTS ( SELECT 1
-				                   FROM COLLATERALSETUP_TEMP
-				                  WHERE COLLATERALSETUP_TEMP.COLLATERALREF = CSP.COLLATERALREF))) CS ON CS.COLLATERALREF = V.REFERENCEFOR
-				JOIN COLLATERALSTRUCTURE CST ON CST.COLLATERALTYPE = CS.COLLATERALTYPE
-				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
-				LEFT JOIN CUSTOMERS C ON C.CUSTID = V.CUSTID
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNH ON CPNH.PHONECUSTID = C.CUSTID AND CPNH.PHONETYPEPRIORITY = 5
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNL ON CPNL.PHONECUSTID = C.CUSTID AND CPNL.PHONETYPEPRIORITY = 4
-				LEFT JOIN REASONS R1 ON R1.ID = TV.REASON
-				JOIN FINANCEMAIN_VIEW FM ON FM.FINREFERENCE = V.KEYREFERENCE
-				UNION ALL
-				SELECT TV.VERIFICATIONID,
-					TV.AGENTCODE,
-					TV.AGENTNAME,
-					TV.TYPE,
-					TV.VERIFIEDDATE,
-					TV.STATUS,
-					CS.COLLATERALTYPE,
-					CS.COLLATERALCCY,
-					CS.COLLATERALLOC,
-					TV.REASON,
-					TV.VALUATIONAMOUNT,
-					R1.CODE AS REASONCODE,
-					R1.DESCRIPTION AS REASONDESC,
-					TV.SUMMARYREMARKS,
-					TV.SOURCEFORMNAME,
-					TV.VERIFICATIONFORMNAME,
-					TV.DOCUMENTNAME,
-					TV.DOCUMENTREF,
-					TV.VERSION,
-					TV.LASTMNTBY,
-					TV.LASTMNTON,
-					TV.RECORDSTATUS,
-					TV.ROLECODE,
-					TV.NEXTROLECODE,
-					TV.TASKID,
-					TV.NEXTTASKID,
-					TV.RECORDTYPE,
-					TV.WORKFLOWID,
-					TV.OBSERVATIONREMARKS,
-					C.CUSTCIF AS CIF,
-					V.KEYREFERENCE,
-					V.CREATEDON,
-					V.AGENCY,
-					A.DEALERNAME AS AGENCYNAME,
-					A.DEALERCITY AS AGENCYCITY,
-					V.CUSTID,
-					C.CUSTSHRTNAME AS CUSTNAME,
-					V.VERIFICATIONCATEGORY,
-					CS.COLLATERALREF,
-					CPNH.PHONENUMBER AS CONTACTNUMBER1,
-					CPNL.PHONENUMBER AS CONTACTNUMBER2,
-					TV.VALASPERPE,
-					TV.FINALVALAMT,
-					TV.DECISIONONVAL,
-					TV.FINALVALREMARKS,
-					FM.PRODUCTCATEGORY,
-					FM.FINTYPE AS LOANTYPE,
-					FM.LOVDESCFINTYPENAME AS LOVDESCLOANTYPENAME,
-					FM.SOURCINGBRANCH,
-					FM.LOVDESCSOURCINGBRANCH
-				FROM VERIFICATION_TV TV
-				JOIN VERIFICATIONS V ON V.ID = TV.VERIFICATIONID
-				JOIN ( SELECT COLLATERALSETUP_TEMP.COLLATERALTYPE,
-				            COLLATERALSETUP_TEMP.COLLATERALCCY,
-				            COLLATERALSETUP_TEMP.COLLATERALLOC,
-				            COLLATERALSETUP_TEMP.COLLATERALREF
-				           FROM COLLATERALSETUP_TEMP
-				    UNION
-				      SELECT CSP.COLLATERALTYPE,
-				            CSP.COLLATERALCCY,
-				            CSP.COLLATERALLOC,
-				            CSP.COLLATERALREF
-				      FROM COLLATERALSETUP CSP
-				      WHERE NOT (EXISTS ( SELECT 1
-				                   FROM COLLATERALSETUP_TEMP
-				                  WHERE COLLATERALSETUP_TEMP.COLLATERALREF = CSP.COLLATERALREF))) CS ON CS.COLLATERALREF = V.REFERENCEFOR
-				JOIN COLLATERALSTRUCTURE CST ON CST.COLLATERALTYPE = CS.COLLATERALTYPE
-				LEFT JOIN AMTVEHICLEDEALER A ON A.DEALERID = V.AGENCY
-				LEFT JOIN CUSTOMERS C ON C.CUSTID = V.CUSTID
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNH ON CPNH.PHONECUSTID = C.CUSTID AND CPNH.PHONETYPEPRIORITY = 5
-				LEFT JOIN CUSTOMERPHONENUMBERS CPNL ON CPNL.PHONECUSTID = C.CUSTID AND CPNL.PHONETYPEPRIORITY = 4
-				LEFT JOIN REASONS R1 ON R1.ID = TV.REASON
-				JOIN FINANCEMAIN_VIEW FM ON FM.FINREFERENCE = V.KEYREFERENCE
-				WHERE NOT (EXISTS ( SELECT 1 FROM VERIFICATION_TV_TEMP
-				    WHERE VERIFICATION_TV_TEMP.VERIFICATIONID = TV.VERIFICATIONID))
-		  		]]>
-		</createView>
-	</changeSet>
-
-	<changeSet id="ST#1211.100.9_post" author="Gopal.p" dbms="postgresql">
-		<sql>
-			<![CDATA[
-				select deps_restore_dependencies ('plf', 'verification_tv_view');	
-			]]>
-		</sql>
-	</changeSet>
-
 	<!-- HL- Loan type workflow configuring into Core -->
 
 	<changeSet id="1" author="Gopal">
@@ -24814,10 +24640,6 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#168759.1" author="bhaskar.m">
-		<dropForeignKeyConstraint baseTableName="secusr_reporting_managers_temp" constraintName="fk_reportmng_usrid_t" />
-	</changeSet>
-
 	<changeSet id="PSD#172188_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -25515,7 +25337,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>	
 	
-	<changeSet id="ST#2031.83_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2031.83.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'verification_fi_view');
@@ -25523,7 +25345,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#2031.83" author="Gopal.p">
+	<changeSet id="ST#2031.83.1" author="Gopal.p">
 		<createView viewName="VERIFICATION_FI_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FI.VERIFICATIONID,
@@ -25677,7 +25499,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#2031.83_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2031.83.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'verification_fi_view');
@@ -25685,7 +25507,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#2031.85_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2031.85.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'legaldetails_view');
@@ -25693,7 +25515,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2031.85" author="Gopal.p">
+	<changeSet id="ST#2031.85.1" author="Gopal.p">
 		<createView viewName="LEGALDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.LEGALID,
@@ -25779,7 +25601,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2031.85_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2031.85.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'legaldetails_view');
@@ -26382,7 +26204,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 	  </sql>
 	</changeSet>
 	
-	<changeSet id="PSD#177755_pre" author="kavya.n" dbms="postgresql">
+	<changeSet id="PSD#177755.2_pre" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'filebatchstatus_aview');
@@ -26390,7 +26212,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#177755.1" author="kavya.n">
+	<changeSet id="PSD#177755.2" author="kavya.n">
 		<createView viewName="FILEBATCHSTATUS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT ID,
@@ -26400,7 +26222,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
       	</createView>
 	</changeSet>
 	
-	<changeSet id="PSD#177755_post" author="kavya.n" dbms="postgresql">
+	<changeSet id="PSD#177755.2_post" author="kavya.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'filebatchstatus_aview');
