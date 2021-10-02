@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="ST#3007.1" author="vijaya.a">
+		<addColumn tableName="ADTRMTTRANSACTIONENTRY">
+			<column name="FeeRepeat" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3007.2" author="vijaya.a">
+		<addColumn tableName="ADTRMTTRANSACTIONENTRY">
+			<column name="ReceivableOrPayable" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3007.3" author="vijaya.a">
+		<addColumn tableName="ADTRMTTRANSACTIONENTRY">
+			<column name="AssignmentEntry" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3007.4" author="vijaya.a">
+		<addColumn tableName="ADTRMTTRANSACTIONENTRY">
+			<column name="Bulking" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3007.5" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE ADTRMTTRANSACTIONENTRY SET FEEREPEAT = 0;
+				UPDATE ADTRMTTRANSACTIONENTRY SET RECEIVABLEORPAYABLE = 0;
+				UPDATE ADTRMTTRANSACTIONENTRY SET ASSIGNMENTENTRY = 0;
+				UPDATE ADTRMTTRANSACTIONENTRY SET BULKING = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3007.6" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="FeeRepeat" tableName="ADTRMTTRANSACTIONENTRY" defaultValue="0" />
+		<addDefaultValue columnName="ReceivableOrPayable" tableName="ADTRMTTRANSACTIONENTRY" defaultValue="0" />
+		<addDefaultValue columnName="AssignmentEntry" tableName="ADTRMTTRANSACTIONENTRY" defaultValue="0" />
+		<addDefaultValue columnName="Bulking" tableName="ADTRMTTRANSACTIONENTRY" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3007.6" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTRMTTRANSACTIONENTRY ADD CONSTRAINT DF_ATE_FeeRepeat DEFAULT 0 FOR FeeRepeat;
+				ALTER TABLE ADTRMTTRANSACTIONENTRY ADD CONSTRAINT DF_ATE_ReceivableOrPayable DEFAULT 0 FOR ReceivableOrPayable;
+				ALTER TABLE ADTRMTTRANSACTIONENTRY ADD CONSTRAINT DF_ATE_AssignmentEntry DEFAULT 0 FOR AssignmentEntry;
+				ALTER TABLE ADTRMTTRANSACTIONENTRY ADD CONSTRAINT DF_AFE_Bulking DEFAULT 0 FOR Bulking;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3007.7" author="vijaya.a">
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="FeeRepeat" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="ReceivableOrPayable" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="AssignmentEntry" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="Bulking" />
+	</changeSet>
+
+	<changeSet id="ST#3007.8" author="vijaya.a">
+		<addColumn tableName="ADTFEETYPES">
+			<column name="FeeIncomeOrExpense" type="varchar(50)" />
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="ST#3007.9" author="vijaya.a">
+		<addColumn tableName="ADTFINTYPEFEES">
+			<column name="InclForAssignment" type="boolean" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#3007.10" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				UPDATE ADTFINTYPEFEES SET INCLFORASSIGNMENT = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3007.11" author="vijaya.a" dbms="postgresql, oracle">
+		<addDefaultValue columnName="InclForAssignment" tableName="ADTFINTYPEFEES" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#3007.11" author="vijaya.a" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTFINTYPEFEES ADD CONSTRAINT DF_AFTF_InclForAssignment DEFAULT 0 FOR InclForAssignment;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#3007.12" author="vijaya.a">
+		<addNotNullConstraint tableName="ADTFINTYPEFEES" columnName="InclForAssignment" />
+	</changeSet>
+
+</databaseChangeLog>
