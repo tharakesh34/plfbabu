@@ -22,7 +22,6 @@
 								sclass="z-toolbarbutton" />
 							<button id="btnSave" tooltiptext="${c:l('btnSave.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" sclass="z-toolbarbutton" />
 							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false"
 								autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose" sclass="z-toolbarbutton" />
 						</toolbar>
@@ -174,6 +173,13 @@
 								<hbox>
 									<space spacing="2px" />
 									<checkbox id="fieldEditable" checked="true" />
+								</hbox>
+							</row>
+							<row id="rowfieldIsMaintenanceAllowed" visible="false">
+								<label id="label_ExtendedFieldDetailDialog_IsMaintenanceAllowed" value="${c:l('label_ExtendedFieldDetailDialog_IsMaintenanceAllowed.value')}" />
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="fieldIsMaintAlwd" checked="false" />
 								</hbox>
 							</row>
 							<row id="rowfieldAllowInRule" visible="true">

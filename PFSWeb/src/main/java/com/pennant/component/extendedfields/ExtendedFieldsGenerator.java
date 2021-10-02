@@ -46,6 +46,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Component;
+import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -54,6 +55,7 @@ import org.zkoss.zk.ui.event.EventListener;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.sys.ComponentsCtrl;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.A;
 import org.zkoss.zul.Bandbox;
 import org.zkoss.zul.Bandpopup;
 import org.zkoss.zul.Button;
@@ -105,6 +107,7 @@ import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -126,6 +129,7 @@ import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pff.commodity.model.Commodity;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 @SuppressWarnings("rawtypes")
 public class ExtendedFieldsGenerator extends AbstractController {
@@ -155,6 +159,10 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private int columnCount;
 	private String defaultComponentWidth = "250px";
 	private boolean overflow;
+	private boolean appendActivityLog = false;
+	private ArrayList<Object> finHeaderList;
+	private int seqNo = 0;
+	private long instructionUID = Long.MIN_VALUE;
 
 	// Constants for scriptlets.
 	private static final String SCRIPTLET_DELIMITER = "^^";
@@ -167,6 +175,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private boolean isCommodity = false;
 	private List<String> hsnCodes = new ArrayList<>();
 	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private String moduleDefiner;
 
 	public ExtendedFieldsGenerator() {
 		super();
@@ -190,6 +199,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		if (fieldHeader != null && CollectionUtils.isEmpty(fieldHeader.getExtendedFieldDetails())) {
 			return;
 		}
+
+		if (isAppendActivityLog()) {
+			addActivityLog();
+		}
+
 		setExtendedFieldHeader(fieldHeader);
 		setExtendedFieldDetails(getExtendedFieldHeader().getExtendedFieldDetails());
 
@@ -265,6 +279,26 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private void addActivityLog() {
+		logger.debug(Literal.ENTERING);
+		String border = "border-top: 3px solid #C5C5C5; border-left: 1px solid #C5C5C5; border-right: 1px solid #C5C5C5; border-bottom: 1px solid #C5C5C5;";
+		Hbox hBox = new Hbox();
+		hBox.setStyle(border + " padding-top:15px; padding-left:70%");
+		hBox.setHeight("30px");
+		hBox.setWidth("100%");
+
+		A hyperLink = new A();
+		hyperLink.setLabel(Labels.getLabel("label_ActivityLog_Window"));
+		hyperLink.setStyle("text-align: -webkit-right;");
+		hyperLink.addEventListener(Events.ON_CLICK, event -> onClickActivityLog());
+
+		hBox.appendChild(hyperLink);
+
+		hBox.setParent(this.tabpanel);
+
+		logger.debug(Literal.LEAVING);
+	}
+
 	/**
 	 * Method for render all the child's of the container element.
 	 * 
@@ -328,12 +362,19 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		Component component = getComponent(detail, isReadOnly, hbox, newRecord, parentComponent);
 		if (component != null) {
 			boolean editable = true;
-			if (!detail.isEditable() || isReadOnly) {
-				editable = false;
-			} else if (getUserWorkspace() != null) {
-				editable = getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
+			if (FinServiceEvent.EXTENDEDFIELDS_MAINTAIN.equals(this.moduleDefiner)) {
+				if (!detail.isEditable() || isReadOnly || !detail.isMaintAlwd()) {
+					editable = false;
+				} else {
+					editable = isEditable(detail);
+				}
+			} else {
+				if (!detail.isEditable() || isReadOnly) {
+					editable = false;
+				} else {
+					editable = isEditable(detail);
+				}
 			}
-
 			// 12Jul2018 Bug Fix Related To ExtendedFields CurrencyBox readonly.
 			if (StringUtils.equals(detail.getFieldType(), ExtendedFieldConstants.FIELDTYPE_PHONE)
 					&& component instanceof Hbox) {
@@ -419,6 +460,13 @@ public class ExtendedFieldsGenerator extends AbstractController {
 			}
 		}
 		rows.appendChild(row);
+	}
+
+	private boolean isEditable(ExtendedFieldDetail detail) {
+		if (getUserWorkspace() != null) {
+			return getUserWorkspace().isAllowed(PennantApplicationUtil.getExtendedFieldRightName(detail));
+		}
+		return true;
 	}
 
 	/**
@@ -2391,7 +2439,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		Object object = fieldValueMap.get(fieldName);
 
 		if (object != null && StringUtils.isNotBlank(object.toString())) {
-			checkbox.setChecked(object.toString().equals("true") ? true : false);
+			checkbox.setChecked((object.toString().equals("true") || object.toString().equals("1")) ? true : false);
 		} else if (StringUtils.isNotBlank(detail.getFieldDefaultValue())) {
 			if (StringUtils.equals(PennantConstants.YES, detail.getFieldDefaultValue())) {
 				checkbox.setChecked(true);
@@ -2513,8 +2561,9 @@ public class ExtendedFieldsGenerator extends AbstractController {
 
 			// Data Setting
 			if (fieldValueMap.containsKey(detail.getFieldName()) && fieldValueMap.get(detail.getFieldName()) != null
-					&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString()) && StringUtils
-							.trimToEmpty(fieldValueMap.get(detail.getFieldName()).toString()).equals(radiofields[j])) {
+					&& StringUtils.isNotBlank(fieldValueMap.get(detail.getFieldName()).toString())
+					&& StringUtils.trimToEmpty(fieldValueMap.get(detail.getFieldName()).toString())
+							.equals(StringUtils.trimToEmpty(radiofields[j]))) {
 				radio.setChecked(true);
 			} else {
 				radio.setChecked(false);
@@ -3146,7 +3195,51 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		}
 	}
 
-	// Getters and setters
+	private void onClickActivityLog() {
+		logger.debug(Literal.ENTERING);
+		String tableName = null;
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
+		if (finHeaderList != null && !finHeaderList.isEmpty()) {
+			map.put("label_FinanceMainDialog_FinType.value", finHeaderList.get(0));
+			map.put("label_FinanceMainDialog_FinCcy.value", finHeaderList.get(1));
+			map.put("label_FinanceMainDialog_ScheduleMethod.value", finHeaderList.get(2));
+			map.put("label_FinanceMainDialog_FinReference.value", finHeaderList.get(3));
+			map.put("label_FinanceMainDialog_ProfitDaysBasis.value", finHeaderList.get(4));
+			map.put("label_FinanceMainDialog_CustShrtName.value", finHeaderList.get(9));
+		}
+
+		tableName = getTableName(extendedFieldHeader.getModuleName(), extendedFieldHeader.getSubModuleName(),
+				extendedFieldHeader.getEvent());
+		HashMap<String, Object> arg = new HashMap<>();
+
+		arg.put("tableName", tableName);
+		arg.put("key", Labels.getLabel("label_ExtendedFieldActivityLog_Reference.label"));
+		arg.put("seqNo", this.seqNo);
+		arg.put("instructionUID", instructionUID);
+		arg.put("keyValue", finHeaderList.get(3));
+		arg.put("map", map);
+
+		if (finHeaderList.get(11) != null) {
+			arg.put("moduleCode", finHeaderList.get(11));
+		}
+
+		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/ExtendedFieldActivityLog.zul", window, arg);
+		logger.debug(Literal.LEAVING);
+	}
+
+	private String getTableName(String module, String subModuleName, String event) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(module);
+		sb.append("_");
+		sb.append(subModuleName);
+		if (StringUtils.trimToNull(event) != null) {
+			sb.append("_");
+			sb.append(PennantStaticListUtil.getFinEventCode(event));
+		}
+		sb.append("_ED");
+		return sb.toString();
+	}
+
 	public Window getWindow() {
 		return window;
 	}
@@ -3301,4 +3394,43 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		this.extendedFieldDetailsService = extendedFieldDetailsService;
 	}
 
+	public boolean isAppendActivityLog() {
+		return appendActivityLog;
+	}
+
+	public void setAppendActivityLog(boolean appendActivityLog) {
+		this.appendActivityLog = appendActivityLog;
+	}
+
+	public ArrayList<Object> getFinHeaderList() {
+		return finHeaderList;
+	}
+
+	public void setFinHeaderList(ArrayList<Object> finHeaderList) {
+		this.finHeaderList = finHeaderList;
+	}
+
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	public void setSeqNo(int seqNo) {
+		this.seqNo = seqNo;
+	}
+
+	public long getInstructionUID() {
+		return instructionUID;
+	}
+
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
+	}
+
+	public String getModuleDefiner() {
+		return moduleDefiner;
+	}
+
+	public void setModuleDefiner(String moduleDefiner) {
+		this.moduleDefiner = moduleDefiner;
+	}
 }

@@ -27,6 +27,7 @@ import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -39,7 +40,6 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTMobileNumberValidator;
@@ -89,7 +89,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 	protected Space contactNumber;
 	protected Textbox phoneNumber;
 	protected Label recordType;
-
+	protected Textbox leiNumber;
 	protected Groupbox gb_statusDetails;
 	protected Groupbox gb_ChequeDetails;
 	protected Groupbox gb_NeftDetails;
@@ -255,6 +255,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.printingLoc.setReadonly(isReadOnly("PaymentInstructionDialog_printingLoc"));
 		this.valueDate.setReadonly(isReadOnly("PaymentInstructionDialog_valueDate"));
 		this.partnerBankID.setReadonly(isReadOnly("PaymentInstructionDialog_partnerBankID"));
+		this.leiNumber.setReadonly(isReadOnly("PaymentInstructionDialog_leiNumber"));
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -287,6 +288,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.valueDate.setDisabled(true);
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
+		this.leiNumber.setReadonly(true);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -359,7 +361,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		logger.debug(Literal.ENTERING);
 
 		if (this.paymentHeader.isNewRecord() && paymentInstruction.getPostDate() == null) {
-			this.postDate.setValue(DateUtility.getAppDate());
+			this.postDate.setValue(SysParamUtil.getAppDate());
 		} else {
 			this.postDate.setValue(paymentInstruction.getPostDate());
 		}
@@ -373,8 +375,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 					paymentInstruction.getPartnerBankName());
 		}
 
-		this.paymentAmount
-				.setValue(PennantAppUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
+		this.paymentAmount.setValue(
+				PennantApplicationUtil.formateAmount(this.paymentInstruction.getPaymentAmount(), ccyFormatter));
 		this.remarks.setValue(paymentInstruction.getRemarks());
 		this.tranReference.setValue(paymentInstruction.getTransactionRef());
 		this.status.setValue(paymentInstruction.getStatus());
@@ -401,6 +403,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		this.payableLoc.setValue(paymentInstruction.getPayableLoc());
 		this.printingLoc.setValue(paymentInstruction.getPrintingLoc());
 		this.valueDate.setValue(paymentInstruction.getValueDate());
+		this.leiNumber.setValue(paymentInstruction.getLei());
 		checkPaymentType(paymentInstruction.getPaymentType());
 
 		logger.debug(Literal.LEAVING);
@@ -422,9 +425,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 		}
 
 		try {
-			if (DateUtility.compare(this.postDate.getValue(), DateUtility.getAppDate()) < 0 && !postDate.isDisabled()) {
+			Date appDate = SysParamUtil.getAppDate();
+			if (DateUtility.compare(this.postDate.getValue(), appDate) < 0 && !postDate.isDisabled()) {
 				throw new WrongValueException(this.postDate,
-						"Payment Date should be greater than or equal to :" + DateUtility.getAppDate());
+						"Payment Date should be greater than or equal to :" + appDate);
 			}
 			paymentInstruction.setPostDate(this.postDate.getValue());
 		} catch (WrongValueException we) {
@@ -439,7 +443,7 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 
 		try {
 			paymentInstruction.setPaymentAmount(
-					PennantAppUtil.unFormateAmount(this.paymentAmount.getActualValue(), ccyFormatter));
+					PennantApplicationUtil.unFormateAmount(this.paymentAmount.getActualValue(), ccyFormatter));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -546,6 +550,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			wve.add(we);
 		}
 
+		try {
+			paymentInstruction.setLei(this.leiNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doClearMessage();
 
@@ -615,10 +625,10 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 								PennantRegularExpressions.REGEX_ADDRESS, true));
 			}
 			if (!this.valueDate.isReadonly()) {
-				Date todate = DateUtility.addMonths(DateUtility.getAppDate(), 6);
-				this.valueDate.setConstraint(
-						new PTDateValidator(Labels.getLabel("label_DisbInstructionsDialog_ValueDate.value"), true,
-								DateUtility.getAppDate(), todate, true));
+				Date appDate = SysParamUtil.getAppDate();
+				Date todate = DateUtility.addMonths(appDate, 6);
+				this.valueDate.setConstraint(new PTDateValidator(
+						Labels.getLabel("label_DisbInstructionsDialog_ValueDate.value"), true, appDate, todate, true));
 			}
 		} else {
 			if (!this.bankBranchID.isReadonly()) {
@@ -635,6 +645,12 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountNumber.value"), null,
 								true, minAccNoLength, maxAccNoLength));
 			}
+		}
+
+		if (this.leiNumber.isVisible()) {
+			this.leiNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_LEI.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 
 		logger.debug(Literal.LEAVING);

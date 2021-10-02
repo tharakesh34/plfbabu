@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.cibil;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.pennant.backend.model.collateral.CollateralSetup;
@@ -45,7 +46,7 @@ public interface CIBILDAO {
 
 	void logFileInfo(CibilFileInfo fileInfo);
 
-	long extractCustomers(String segmentType) throws Exception;
+	long extractCustomers(String segmentType, String entity) throws Exception;
 
 	void updateFileStatus(CibilFileInfo fileInfo);
 
@@ -55,7 +56,7 @@ public interface CIBILDAO {
 
 	List<CollateralSetup> getCollateralDetails(long finID, String segmentType);
 
-	List<ChequeDetail> getChequeBounceStatus(long finID);
+	List<ChequeDetail> getChequeBounceStatus(String finReference);
 
 	List<Long> getGuarantorsDetails(long finID, boolean isBankCustomer);
 
@@ -73,4 +74,14 @@ public interface CIBILDAO {
 
 	// changes to differentiate the CIBIL Member ID during CIBIL generation & enquiry
 	CibilMemberDetail getMemberDetailsByType(String bureauType, String type);
+
+	List<Long> getJointAccountDetails(long finID);
+
+	BigDecimal getLastRepaidAmount(String finReference);
+
+	BigDecimal getGuarantorPercentage(long finID);
+
+	List<String> getEntityCodes();
+
+	String getCoAppRelation(String custCIF, long finID);
 }

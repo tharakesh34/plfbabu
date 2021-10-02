@@ -6714,4 +6714,75 @@ UNION ALL
 		]]>
 	</sql>
 </changeSet>
+<changeSet id="DE#544" author="saiteja.r">
+		<sql>
+	  		<![CDATA[
+			  	update data_engine_config set fileprefixname = 'PENNANT_LOAN_BUCKET' where name = 'PENNANT_LOAN_BUCKET';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_FINDETAILS' where name = 'PENNANT_LOAN_FINDETAILS';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_AGRCUSTXREF' where name = 'PENNANT_LOAN_AGRCUSTXREF';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_AGRCHARGES' where name = 'PENNANT_LOAN_AGRCHARGES';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_ADDRESS' where name = 'PENNANT_LOAN_ADDRESS';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_CUSTOMER' where name = 'PENNANT_LOAN_CUSTOMER';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_AGREEMENT' where name = 'PENNANT_LOAN_AGREEMENT';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_SCHEDULE' where name = 'PENNANT_LOAN_SCHEDULE';
+				update data_engine_config set fileprefixname = 'PENNANT_LOAN_ASSET' where name = 'PENNANT_LOAN_ASSET';
+	  		]]>
+		</sql>
+	</changeSet>
+<changeSet id="PSD#160002" author="saiteja.r">
+		<createView viewName="CIBIL_CUSTOMER_LOANS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT At.Segment_Type,
+						Cu.Custid,
+						At.Code AS Fintype,
+						Fm.Finreference,
+						Fm.Finstartdate,
+						Fm.Finapproveddate,
+						Pd.Latestrpydate,
+						Fm.Repayfrq,
+						${add.schema}udf_convertcurrency(Fm.Finassetvalue, Fm.Finccy, 'INR') AS Finassetvalue,
+						${add.schema}udf_convertcurrency(Pd.Totalpribal, Fm.Finccy, 'INR') AS Future_Schedule_Prin,
+						${add.schema}udf_convertcurrency(Pd.Odprincipal + Pd.Odprofit, Fm.Finccy, 'INR') AS Instalment_Due,
+						${add.schema}udf_convertcurrency(Pd.Totalpftpaid + Pd.Totalpripaid, Fm.Finccy, 'INR') AS Instalment_Paid,
+						${add.schema}udf_convertcurrency(Ma.Bounce_Due, Fm.Finccy, 'INR') AS Bounce_Due,
+						${add.schema}udf_convertcurrency(Ma.Bounce_Paid, Fm.Finccy, 'INR') AS Bounce_Paid,
+						${add.schema}udf_convertcurrency(Fo.Late_Payment_Penalty_Due, Fm.Finccy, 'INR') AS Late_Payment_Penalty_Due,
+						${add.schema}udf_convertcurrency(Fo.Late_Payment_Penalty_Paid, Fm.Finccy, 'INR') AS Late_Payment_Penalty_Paid,
+						${add.schema}udf_convertcurrency(Pd.Totalprischd, Fm.Finccy, 'INR') AS Total_Pri_Schd,
+						${add.schema}udf_convertcurrency(Pd.Totalpripaid, Fm.Finccy, 'INR') AS Total_Pri_Paid,
+						${add.schema}udf_convertcurrency(Pd.Totalpftschd, Fm.Finccy, 'INR') AS Total_Pft_Schd,
+						${add.schema}udf_convertcurrency(Pd.Totalpftpaid, Fm.Finccy, 'INR') AS Total_Pft_Paid,
+						${add.schema}udf_convertcurrency(Fe.Excess_Amount, Fm.Finccy, 'INR') AS Excess_Amount,
+						${add.schema}udf_convertcurrency(Fe.Excess_Amt_Paid, Fm.Finccy, 'INR') AS Excess_Amt_Paid,
+						Pd.Curoddays,
+						Pd.Maturitydate,
+						Pd.Curreducingrate,
+						Fm.Closingstatus,
+						Cu.Ownership,
+						Fm.Numberofterms,
+						${add.schema}udf_convertcurrency(Ci.Custincome, Fm.Finccy, 'INR') AS Custincome,
+						Smd.Entitycode
+					FROM Financemain Fm
+				    JOIN Cibil_Customer_Extract Cu ON Cu.Finreference = Fm.Finreference
+				    JOIN Finpftdetails Pd ON Pd.Finreference = Fm.Finreference
+				    JOIN Cibil_Account_Types_Mapping Atm ON Atm.Fin_Type = Fm.Fintype
+				    JOIN Cibil_Account_Types At ON At.Code = Atm.Code AND At.Segment_Type = Atm.Segment_Type
+				    JOIN Rmtfinancetypes Rft ON Rft.Fintype = Pd.Fintype
+				    JOIN Smtdivisiondetail Smd ON Smd.Divisioncode = Rft.Findivision
+				    LEFT JOIN ( SELECT Ma_1.Finreference, Sum(COALESCE(Ma_1.Adviseamount, 0) - COALESCE(Ma_1.Paidamount, 0) - COALESCE(Ma_1.Waivedamount, 0)) AS Bounce_Due, Sum(Ma_1.Paidamount) AS Bounce_Paid FROM Manualadvise Ma_1 WHERE Ma_1.Bounceid > 0 GROUP BY Ma_1.Finreference) Ma ON Ma.Finreference = Fm.Finreference
+				    LEFT JOIN ( SELECT Finoddetails.Finreference, Sum(Finoddetails.Totpenaltybal) AS Late_Payment_Penalty_Due, Sum(Finoddetails.Totpenaltypaid) AS Late_Payment_Penalty_Paid FROM Finoddetails GROUP BY Finoddetails.Finreference) Fo ON Fo.Finreference = Fm.Finreference
+				    LEFT JOIN ( SELECT Finexcessamount.Finreference,Sum(Finexcessamount.Amount) AS Excess_Amount, Sum(COALESCE(Finexcessamount.Utilisedamt, 0) + COALESCE(Finexcessamount.Reservedamt, 0)) AS Excess_Amt_Paid FROM Finexcessamount GROUP BY Finexcessamount.Finreference) Fe ON Fe.Finreference = Fm.Finreference
+				    LEFT JOIN ( SELECT Customerincomes.Custid,COALESCE(Sum(Customerincomes.Custincome), 0) AS Custincome FROM Customerincomes GROUP BY Customerincomes.Custid) Ci ON Ci.Custid = Cu.Custid
+					]]>
+			</createView>
+	</changeSet>
+	
+	<changeSet id="ST#81" author="saiteja.r">
+		<sql>
+			<![CDATA[
+				DELETE FROM RBFIELDDETAILS WHERE RBMODULE='BOUNCE' and RBEVENT='BOUNCE' and RBFLDNAME='br_dpdcount';
+				INSERT INTO RBFIELDDETAILS VALUES ('BOUNCE','BOUNCE','br_dpdcount','DPD count','int',8,'0','0','','static,global','');
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

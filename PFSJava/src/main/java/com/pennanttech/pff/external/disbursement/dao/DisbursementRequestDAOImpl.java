@@ -18,6 +18,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.DisbursementDetails;
 import com.pennant.backend.model.finance.FinAdvancePayments;
@@ -118,6 +119,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", Status, Remarks, Channel");
 		sql.append(", PartnerBank_Id, PartnerBank_Code, PartnerBank_Account");
 		sql.append(", AlwFileDownload, Cheque_Number, FinAmount");
+		sql.append(", LEI, CITY_NAME, PROVINCE_NAME");
 		sql.append(" From Int_Disbursement_Request_View");
 		sql.append(" Where PaymentId IN (Select PaymentId From Disbursement_Requests_Header Where ID = (?))");
 
@@ -182,6 +184,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			req.setPartnerBankAccount(getValueAsString(rs, "PartnerBank_Account"));
 			req.setChequeNumber(getValueAsString(rs, "Cheque_Number"));
 			req.setLoanAmount(getValueAsBigDecimal(rs, "FinAmount"));
+			req.setLei(getValueAsString(rs, "LEI"));
+			req.setCityName(getValueAsString(rs, "CITY_NAME"));
+			req.setProvinceName(getValueAsString(rs, "PROVINCE_NAME"));
 
 			req.setPaymentDetail1(DISB_FI_EMAIL);
 			req.setHeaderId(requestData.getHeaderId());
@@ -265,7 +270,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", Benficiry_City, Benficiary_Address1, Benficiary_Address2, Benficiary_Address3");
 		sql.append(", Benficiary_Address4, Benficiary_Address5, Payment_detail1, Payment_detail2, Payment_detail3");
 		sql.append(", Payment_detail4, Payment_detail5, Payment_detail6, Payment_detail7, Status, Remarks");
-		sql.append(", Channel, Batch_Id, Auto_Download, Header_Id");
+		sql.append(", Channel, Batch_Id, Auto_Download, Header_Id, Lei, City_Name, Province_Name");
 		sql.append(", Partnerbank_Id, Partnerbank_Code, Partnerbank_Account, Cheque_Number, Downloaded_On)");
 		sql.append(" Values (");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -325,6 +330,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				ps.setLong(index++, req.getHeaderId());
 				ps.setBoolean(index++, req.isAutoDownload());
 				ps.setLong(index++, req.getHeaderId());
+				ps.setString(index++, req.getLei());
+				ps.setString(index++, req.getCityName());
+				ps.setString(index++, req.getProvinceName());
 				ps.setLong(index++, req.getPartnerBankId());
 				ps.setString(index++, req.getPartnerBankCode());
 				ps.setString(index++, req.getPartnerBankAccount());
@@ -662,7 +670,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", AMTTOBERELEASED, DISBURSEMENT_TYPE, PAYABLELOC, PRINTINGLOC");
 		sql.append(", BANKNAME, MICR_CODE, IFSC_CODE, DISBDATE");
 		sql.append(", BENEFICIARYACCNO, BENEFICIARYNAME, BENFICIRY_EMAIL, PAYMENTTYPE");
-		sql.append(", PARTNERBANK_CODE, CHANNEL, PAYMENTDETAIL");
+		sql.append(", PARTNERBANK_CODE, CHANNEL, PAYMENTDETAIL, LEI");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW WHERE");
 		sql.append(" FINTYPE = ? AND ENTITYCODE = ? AND PARTNERBANK_CODE = ?");
 
@@ -748,6 +756,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			dr.setBenficiaryBank(rs.getString("BANKNAME"));
 			dr.setChannel(rs.getString("CHANNEL"));
 			dr.setDisbParty(rs.getString("PAYMENTDETAIL"));
+			dr.setLei(rs.getString("LEI"));
 
 			dr.setDisbCCy(ccy);
 
@@ -756,7 +765,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	}
 
 	@Override
-	public FinAdvancePayments getDisbursementInstruction(long paymentId, String channel) {
+	public FinAdvancePayments getDisbursementInstruction(long paymentId, String channel, String disbType) {
 		StringBuilder sql = new StringBuilder("SELECT");
 		sql.append(" PAYMENTID, PARTNERBANK_ID, FINTYPE, BRANCHCODE");
 		sql.append(", BRANCHDESC, PARTNERBANK_CODE, ALWFILEDOWNLOAD, FinID, FINREFERENCE");
@@ -765,6 +774,14 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", CHANNEL, PROVIDERID, STATUS, PAYMENTDETAIL");
 		sql.append(" FROM INT_DISBURSEMENT_REQUEST_VIEW");
 		sql.append(" WHERE PAYMENTID = ? AND CHANNEL = ?");
+
+		Object[] fap = new Object[] { paymentId, channel };
+
+		if (ImplementationConstants.DISB_REQ_RES_FILE_GEN_MODE) {
+			sql.append(" AND PAYMENTTYPE = ?");
+
+			fap = new Object[] { paymentId, channel, disbType };
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -794,7 +811,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 				fp.setPaymentDetail(rs.getString("PAYMENTDETAIL"));
 
 				return fp;
-			}, paymentId, channel);
+			}, fap);
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		}

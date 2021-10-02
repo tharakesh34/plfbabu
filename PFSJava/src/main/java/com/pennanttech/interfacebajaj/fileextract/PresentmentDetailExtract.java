@@ -127,8 +127,9 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					//
 				}
 			}
-			RuleExecutionUtil.PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.clear();
 		}
+
+		RuleExecutionUtil.PRESENTMENT_RESP_SCRIPT_ENGINE_MAP.clear();
 	}
 
 	private void instrumentTypeResponse() {

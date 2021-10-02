@@ -62,9 +62,9 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
 
 public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeader> {
+	private static final Logger logger = LogManager.getLogger(SelectReceiptUploadHeaderDialogCtrl.class);
 
 	private static final long serialVersionUID = 4783031677099154138L;
-	private static final Logger logger = LogManager.getLogger(SelectReceiptUploadHeaderDialogCtrl.class);
 
 	protected Window window_ReceiptUpload;
 
@@ -322,6 +322,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 			saveUploadHeader();
 
 			logger.info("Initiating Import Process For the HeaderID{}", ruh.getId());
+
 			new Thread(() -> {
 				try {
 					receiptUploadHeaderService.initiateImport(ruh, workbook,

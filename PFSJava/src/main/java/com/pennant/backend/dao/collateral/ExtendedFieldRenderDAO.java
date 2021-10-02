@@ -44,4 +44,10 @@ public interface ExtendedFieldRenderDAO {
 	Map<String, String> getAllExtendedFieldMapForUpdateCpid(String tableName, String type);
 
 	Map<String, Object> getExtendedField(String reference, int seqNo, String tableName, String type);
+
+	int getMaxSeq(String reference, String tableName, String tableType);
+
+	Map<String, Object> getExtendedField(String reference, long instructionUID, String tableName, String type);
+
+	void deleteList(String reference, int seqNo, String tableName, String tableType);
 }

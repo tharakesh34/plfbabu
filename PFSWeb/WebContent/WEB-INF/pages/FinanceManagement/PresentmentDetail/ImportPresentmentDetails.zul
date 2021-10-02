@@ -34,11 +34,17 @@
 										<combobox id="instrumentType" width="350px" />
 									</hbox>
 								</row>
+								<row id="rowPartnerBank">
+									<label value="${c:l('label_ImportPresentmentDetails_PartnerBank.value')}" />
+									<hbox>
+										<extendedcombobox id="partnerBank" width="350px" />
+									</hbox>
+								</row>
 								<row id="row1">
 									<label value="${c:l('label_ImportPresentmentDetails_Filename.value')}" />
 									<hbox>
 										<space spacing="2px" sclass="mandatory" id="space_txtFileName" />
-										<textbox id="txtFileName" width="250px" readonly="true" />
+										<textbox id="txtFileName" width="280px" readonly="true" />
 										<button id="btnUpload" tooltiptext="Browse presentment response file." label="Browse" upload="true"
 											autodisable="btnSave,btnUpload" />
 									</hbox>

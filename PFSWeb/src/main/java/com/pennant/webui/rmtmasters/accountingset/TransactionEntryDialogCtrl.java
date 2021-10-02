@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -136,7 +137,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Hbox hbox_entryByInvestment;
 	protected Checkbox openNewFinAc;
 	protected Row row_OpenNewFinAc;
-
+	protected Row row_ShadowPosting;
 	protected Label label_TransactionEntryDialog_PostToCore;
 	protected Hbox hbox_PostToCore;
 
@@ -189,8 +190,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	protected Column column_Operators;
 	protected Button btnSimulate;
 	protected Button btnValidate;
-	JSONArray variables = new JSONArray();
-	HashSet<String> amountcodes = new HashSet<String>();
+	private JSONArray variables = new JSONArray();
+	private Set<String> amountcodes = new HashSet<>();
 	protected Button btnSearchSystemIntAccount;
 
 	protected Space spAccountType;
@@ -1713,6 +1714,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		if (ImplementationConstants.ALLOW_IND_AS && AccountingEvent.INDAS.equals(this.eventCode.getValue())) {
 			feeMap.put("_AMZ", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ"));
+			feeMap.put("_AMZ_N", Labels.getLabel("label_TransactionEntryDialog_Fee_AMZ_N"));
 			return feeMap;
 		}
 
@@ -2068,6 +2070,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 
 		this.openNewFinAc.setChecked(false);
 		this.row_OpenNewFinAc.setVisible(false);
+		this.row_ShadowPosting.setVisible(ImplementationConstants.ALLOW_SHADOW_POSTINGS);
 		// this.btnSearchAccountType.setDisabled(true);
 		this.btnSearchSystemIntAccount.setDisabled(true);
 		// this.btnSearchAccountSubHeadRule.setDisabled(true);

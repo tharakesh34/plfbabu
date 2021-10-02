@@ -24,7 +24,7 @@ public class ForeClosureReport implements Serializable {
 	private String address;
 	private String custCIF;
 	private String vanNumber = "";
-
+	private long finID;
 	private String finReference;
 	private BigDecimal finAmount = BigDecimal.ZERO;
 	private String finAmountInWords = "Zero Only";
@@ -129,6 +129,14 @@ public class ForeClosureReport implements Serializable {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

@@ -83,6 +83,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity {
 	private String finReference;// Display Field
 	private BigDecimal adviseAmount = BigDecimal.ZERO;
 	private TaxHeader taxHeader = new TaxHeader();
+	private Date postingDate;
 
 	public FeeWaiverDetail() {
 		super();
@@ -144,6 +145,7 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity {
 		excludeFields.add("adviseAmount");
 		excludeFields.add("WaiverGST");
 		excludeFields.add("adviseGST");
+		excludeFields.add("postingDate");
 
 		return excludeFields;
 	}
@@ -360,4 +362,11 @@ public class FeeWaiverDetail extends AbstractWorkflowEntity {
 		this.adviseGST = adviseGST;
 	}
 
+	public Date getPostingDate() {
+		return postingDate;
+	}
+
+	public void setPostingDate(Date postingDate) {
+		this.postingDate = postingDate;
+	}
 }

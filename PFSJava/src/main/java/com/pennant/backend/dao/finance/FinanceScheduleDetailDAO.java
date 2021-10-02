@@ -121,4 +121,7 @@ public interface FinanceScheduleDetailDAO {
 
 	void updateTDSChange(List<FinanceScheduleDetail> schedules);
 
+	Date getSchdDateForDPD(long finID, Date appDate);
+
+	List<Date> getScheduleDates(long finID, Date valueDate);
 }

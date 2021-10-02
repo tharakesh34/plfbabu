@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,13 +18,11 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -33,7 +30,6 @@ import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.ForeClosureLetter;
 import com.pennant.backend.model.finance.ForeClosureResponse;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -66,7 +62,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 	private FinanceMainService financeMainService;
 	private SOAReportGenerationService soaReportGenerationService;
 	private FinExcessAmountDAO finExcessAmountDAO;
-	private ManualAdviseDAO manualAdviseDAO;
 	private FeeTypeDAO feeTypeDAO;
 
 	/**
@@ -684,43 +679,17 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			}
 		}
 
-		statementRequest.setDays(1);
-
 		// call controller to get fore-closure letter
 		FinStatementResponse finStatement = null;
 		try {
 			finStatement = finStatementController.getStatement(statementRequest, APIConstants.STMT_FORECLOSURE);
 			FinanceDetail financeDetail = finStatement.getFinance().get(0);
 			FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-			List<FinFeeDetail> fees = finScheduleData.getFeeDues();
 
-			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdvisesByFinRef(finID, "_View");
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
 			TaxAmountSplit taxSplit;
 			BigDecimal totalADgstAmt = BigDecimal.ZERO;
 			BigDecimal totalBCgstFee = BigDecimal.ZERO;
-
-			if (!CollectionUtils.isEmpty(manualAdviseFees)) {
-				for (FinFeeDetail feeDetail : fees) {
-					for (ManualAdvise advisedFees : manualAdviseFees) {
-						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
-							if (StringUtils.equals(feeDetail.getFeeTypeCode(), advisedFees.getFeeTypeCode())) {
-								BigDecimal actualOriginal = feeDetail.getActualAmount();
-								taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
-								feeDetail.setActualAmount(actualOriginal.add(taxSplit.gettGST()));
-								totalADgstAmt = totalADgstAmt.add(taxSplit.gettGST());
-							}
-							if (feeDetail.getFeeID() == advisedFees.getAdviseID()) {
-								if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(advisedFees.getTaxComponent())) {
-									BigDecimal actualOriginal = feeDetail.getActualAmount();
-									taxSplit = GSTCalculator.getExclusiveGST(actualOriginal, taxPercentages);
-									totalBCgstFee = totalBCgstFee.add(taxSplit.gettGST());
-								}
-							}
-						}
-					}
-				}
-			}
 
 			List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getAllExcessAmountsByRef(finID, "");
 
@@ -740,17 +709,22 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 
 			FinanceSummary summary = finScheduleData.getFinanceSummary();
 			letter.setOutStandPrincipal(summary.getOutStandPrincipal());
+			letter.setPricipleAmount(summary.getPrincipal());
+			letter.setFuturePricipleAmount(summary.getFuturePrincipal());
+			letter.setInterestAmount(summary.getInterest());
 			response.setForeClosureFees(finScheduleData.getForeClosureFees());
 			response.setFeeDues(finScheduleData.getFeeDues());
 
 			for (ForeClosure foreClosure : financeDetail.getForeClosureDetails()) {
 				letter.setAccuredIntTillDate(foreClosure.getAccuredIntTillDate());
+				letter.setFutureInterestAmount(foreClosure.getAccuredIntTillDate().subtract(summary.getInterest()));
 				letter.setValueDate(foreClosure.getValueDate());
 				letter.setChargeAmount(foreClosure.getChargeAmount());
 				letter.setForeCloseAmount(foreClosure.getForeCloseAmount());
 				letter.setBounceCharge(foreClosure.getBounceCharge().add(totalBCgstFee));
+				letter.setBounceCharge(foreClosure.getBounceCharge());
 				letter.setTotalLPIAmount(foreClosure.getLPIAmount());
-				letter.setReceivableAdviceAmt(foreClosure.getReceivableADFee().add(totalADgstAmt));
+				letter.setReceivableAdviceAmt(foreClosure.getReceivableADFee());
 			}
 
 			FeeType taxDetail = feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_ODC);
@@ -761,8 +735,8 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 				letter.setChargeAmount(letter.getChargeAmount().add(totPenaltyGstAmt));
 			}
 
-			letter.setForeCloseAmount(letter.getForeCloseAmount().add(totalBCgstFee).add(totalADgstAmt)
-					.add(letter.getTotalLPIAmount().add(totPenaltyGstAmt)));
+			letter.setForeCloseAmount(
+					letter.getForeCloseAmount().add(letter.getTotalLPIAmount().add(totPenaltyGstAmt)));
 			response.setFinReference(finReference);
 			response.setForeClosure(letter);
 			response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
@@ -786,24 +760,24 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		logFields[0] = statementRequest.getCif();
 		APIErrorHandlerService.logKeyFields(logFields);
 
+		long finID = statementRequest.getFinID();
 		String finReference = statementRequest.getFinReference();
-
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";
 			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParm));
 			return finStatementResponse;
+		} else {
+			int count = financeMainDAO.getFinanceCountById(finID, "", false);
+			if (count <= 0) {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
+				return finStatementResponse;
+			}
 		}
 
-		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
-		if (finID == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			finStatementResponse.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParm));
-			return finStatementResponse;
-		}
-
-		statementRequest.setDays(1);
+		statementRequest.setDays(statementRequest.getDays());
 		// call controller to get fore-closure letter
 		FinStatementResponse response = finStatementController.getStatement(statementRequest,
 				APIConstants.STMT_FORECLOSUREV1);
@@ -851,11 +825,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setFinExcessAmountDAO(FinExcessAmountDAO finExcessAmountDAO) {
 		this.finExcessAmountDAO = finExcessAmountDAO;
-	}
-
-	@Autowired
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	@Autowired

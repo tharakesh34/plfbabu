@@ -37,4 +37,6 @@ public interface FeeWaiverHeaderDAO extends BasicCrudDao<FeeWaiverHeader> {
 
 	Date getLastWaiverDate(long finID, Date appDate, Date receiptDate);
 
+	boolean isFeeWaiverInProcess(long finID);
+
 }

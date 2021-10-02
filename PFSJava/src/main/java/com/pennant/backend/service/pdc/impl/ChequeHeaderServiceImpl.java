@@ -768,12 +768,12 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		List<Date> chequedate = new ArrayList<>();
 
 		String finReference = fd.getFinReference();
-		long finID = ch.getFinID();
+		long finID = fd.getFinID();
 		ChequeHeader chequeHeaderDetails = chequeHeaderDAO.getChequeHeaderByRef(finID, tableType);
 
 		if (!PennantConstants.VLD_CRT_LOAN.equalsIgnoreCase(methodName)) {
 			if (ch != null) {
-				if (fd.getFinReference() == null) {
+				if (finReference == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "FinReference";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
@@ -1057,14 +1057,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		List<Date> Chequedate = new ArrayList<>();
 		FinanceMain financeMain = null;
 
-		long finID = ch.getFinID();
+		long finID = fd.getFinID();
 		String finReference = fd.getFinReference();
 
 		ChequeHeader dbChequeHeaderDetails = chequeHeaderDAO.getChequeHeaderByRef(finID, tableType);
 
 		if (!PennantConstants.VLD_CRT_LOAN.equalsIgnoreCase(methodName)) {
 			if (ch != null) {
-				if (fd.getFinReference() == null) {
+				if (finReference == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "FinReference";
 					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));

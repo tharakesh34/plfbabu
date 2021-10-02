@@ -35,6 +35,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -117,7 +118,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 	private String module;
 
-	//Adding Promotion Details to the List Header
+	// Adding Promotion Details to the List Header
 	protected Listheader listheader_ReceiptCancellation_ReceiptRef;
 	protected Listheader listheader_ReceiptCancellation_PromotionCode;
 	protected Listheader listheader_ReceiptCancellation_ReceiptDate;
@@ -158,8 +159,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReceiptCancellationList(Event event) {
 		// Set the page level components.
@@ -280,8 +280,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSearch(Event event) {
 		search();
@@ -290,8 +289,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		this.customer.setValue("");
@@ -311,19 +309,20 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReceiptCancellationList_NewReceiptCancellation(Event event) {
 		logger.debug("Entering");
 
+		FinReceiptData receiptData = new FinReceiptData();
 		// Create a new entity.
 		FinReceiptHeader receiptHeader = new FinReceiptHeader();
 		receiptHeader.setNewRecord(true);
 		receiptHeader.setWorkflowId(getWorkFlowId());
+		receiptData.setReceiptHeader(receiptHeader);
 
 		// Display the dialog page.
-		doShowDialogPage(receiptHeader);
+		doShowDialogPage(receiptData);
 
 		logger.debug("Leaving");
 	}
@@ -332,8 +331,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onReceiptCancellationItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -389,7 +387,14 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 			if (isWorkFlowEnabled() && header.getWorkflowId() == 0) {
 				header.setWorkflowId(getWorkFlowId());
 			}
-			doShowDialogPage(header);
+
+			FinReceiptData receiptData = new FinReceiptData();
+
+			header.setFinCategory(financeDetailService.getFinCategory(header.getFinType()));
+
+			receiptData.setReceiptHeader(header);
+
+			doShowDialogPage(receiptData);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 		}
@@ -411,15 +416,16 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param header
-	 *            The entity that need to be passed to the dialog.
+	 * @param header The entity that need to be passed to the dialog.
 	 */
-	private void doShowDialogPage(FinReceiptHeader header) {
+	private void doShowDialogPage(FinReceiptData receiptData) {
 		logger.debug("Entering");
 
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("receiptHeader", header);
+		arg.put("receiptHeader", receiptData.getReceiptHeader());
+		arg.put("receiptData", receiptData);
 		arg.put("module", this.module);
+		arg.put("moduleCode", this.moduleCode);
 		arg.put("receiptCancellationListCtrl", this);
 
 		try {
@@ -487,7 +493,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptCancellationList,
 					"FinanceType", this.finType.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -519,7 +525,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptCancellationList,
 					"Branch", this.finBranch.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -578,8 +584,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -588,8 +593,7 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
@@ -615,5 +619,9 @@ public class ReceiptCancellationListCtrl extends GFCBaseListCtrl<FinReceiptHeade
 
 	public void setReceiptCancellationService(ReceiptCancellationService receiptCancellationService) {
 		this.receiptCancellationService = receiptCancellationService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 }

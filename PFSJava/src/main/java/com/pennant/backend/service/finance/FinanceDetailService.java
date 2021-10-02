@@ -212,8 +212,6 @@ public interface FinanceDetailService {
 
 	List<ReturnDataSet> getPostingsByLinkTransId(long linkedTranid);
 
-	FinScheduleData getFinSchDataForReceipt(long finID, String type);
-
 	List<FinanceStepPolicyDetail> getFinStepPolicyDetails(long finID, String type, boolean isWIF);
 
 	List<FinanceScheduleDetail> getFinScheduleList(long finID);
@@ -306,4 +304,6 @@ public interface FinanceDetailService {
 	Long getFinID(String referenceId);
 
 	Long getFinID(String referenceId, TableType tableType);
+
+	String getFinCategory(String finType);
 }

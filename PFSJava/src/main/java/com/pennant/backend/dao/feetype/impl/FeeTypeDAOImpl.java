@@ -323,12 +323,12 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { feeTypeCode }, Long.class);
+			return jdbcOperations.queryForObject(sql.toString(), Long.class, feeTypeCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Fee is not found in FeeTypes{} for the specified FeeTypeCode >> {}", type, feeTypeCode);
 		}
 
-		return Long.MIN_VALUE;
+		return null;
 	}
 
 	@Override

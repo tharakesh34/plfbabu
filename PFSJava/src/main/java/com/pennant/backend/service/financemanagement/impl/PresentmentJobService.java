@@ -390,19 +390,16 @@ public class PresentmentJobService extends AbstractInterface {
 	}
 
 	public List<String> getEntityCodes() {
-		logger.debug(Literal.ENTERING);
-		StringBuilder sql = null;
+		String sql = "Select EntityCode From SMTDivisionDetail";
+
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			sql = new StringBuilder("Select EntityCode ");
-			sql.append("from  SMTDivisionDetail where divisioncode = :division ");
-
-			MapSqlParameterSource source = new MapSqlParameterSource();
-
-			return namedJdbcTemplate.queryForList(sql.toString(), source, String.class);
+			return jdbcOperations.queryForList(sql, String.class);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 
@@ -413,17 +410,20 @@ public class PresentmentJobService extends AbstractInterface {
 		sql.append(" PartnerBankID, AccountNo");
 		sql.append(" From PresentmentPartnerBank");
 		sql.append(" Where FinType = ? and MandateType = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
 		try {
-			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql.toString(),
-					new Object[] { finType, mandateType }, (rs, i) -> {
-						Presentment p = new Presentment();
-						p.setPartnerBankId(rs.getLong("PartnerBankID"));
-						p.setAccountNo(rs.getString("AccountNo"));
-						return p;
-					});
+			return jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				Presentment p = new Presentment();
+				p.setPartnerBankId(rs.getLong("PartnerBankID"));
+				p.setAccountNo(rs.getString("AccountNo"));
+				return p;
+			}, finType, mandateType);
 		} catch (EmptyResultDataAccessException e) {
 			logger.error(Literal.EXCEPTION, e);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return null;
 	}

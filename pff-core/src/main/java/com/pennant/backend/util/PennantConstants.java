@@ -644,6 +644,7 @@ public class PennantConstants {
 	public static final String FEETYPE_FPFT_EXEMPTED = "FEETYPE_FPFT_EXEMPTED";
 	public static final String FEETYPE_FPRI_EXEMPTED = "FEETYPE_FPRI_EXEMPTED";
 	public static final String FEETYPE_SUBVENTION = "SUBVEN";
+	public static final String FEETYPE_RESTRUCT_CPZ = "FEETYPE_RESTRUCT_CPZ";
 
 	public static final String COLLATERAL_LTV_CHECK_DISBAMT = "LTVDISBAMT";
 	public static final String COLLATERAL_LTV_CHECK_FINAMT = "LTVFINAMT";
@@ -890,4 +891,8 @@ public class PennantConstants {
 
 	public static final String STEP_SPECIFIER_GRACE = "G";
 	public static final String STEP_SPECIFIER_REG_EMI = "R";
+
+	public static final String MODULETYPE_MAINT = "MAINT";
+	public static final String INSTRUMENT_TYPE_PARTNER_BANK = "INSTRUMENT_TYPE_PARTNER_BANK";
+	public static final String INSTRUMENT_TYPE = "INSTRUMENT_TYPE";
 }

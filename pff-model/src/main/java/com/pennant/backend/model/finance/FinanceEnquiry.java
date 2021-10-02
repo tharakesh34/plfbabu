@@ -110,6 +110,7 @@ public class FinanceEnquiry implements Serializable {
 	private List<CollateralSetup> collateralSetupDetails;
 	private List<ChequeDetail> chequeDetail;
 	private List<CustomerDetails> finGuarenters;
+	private List<CustomerDetails> finCoApplicants;
 	private BigDecimal svAmount = BigDecimal.ZERO;
 	private boolean allowGrcPeriod;
 	private String lovDescFinScheduleOn;
@@ -126,6 +127,7 @@ public class FinanceEnquiry implements Serializable {
 	// Loan Closed Date
 	private Date closedDate;
 	private boolean writeoffLoan;
+	private String entityCode;
 
 	public FinanceEnquiry() {
 
@@ -168,6 +170,7 @@ public class FinanceEnquiry implements Serializable {
 		excludeFields.add("totalCpz");
 		excludeFields.add("loanStsDesc");
 		excludeFields.add("recordStatus");
+		excludeFields.add("entityCode");
 		return excludeFields;
 	}
 
@@ -833,5 +836,21 @@ public class FinanceEnquiry implements Serializable {
 
 	public void setWriteoffLoan(boolean writeoffLoan) {
 		this.writeoffLoan = writeoffLoan;
+	}
+
+	public List<CustomerDetails> getFinCoApplicants() {
+		return finCoApplicants;
+	}
+
+	public void setFinCoApplicants(List<CustomerDetails> finCoApplicants) {
+		this.finCoApplicants = finCoApplicants;
+	}
+
+	public String getEntityCode() {
+		return entityCode;
+	}
+
+	public void setEntityCode(String entityCode) {
+		this.entityCode = entityCode;
 	}
 }

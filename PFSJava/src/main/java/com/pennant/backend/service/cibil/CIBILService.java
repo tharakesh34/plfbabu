@@ -1,5 +1,6 @@
 package com.pennant.backend.service.cibil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public interface CIBILService {
 
 	void logFileInfo(CibilFileInfo fileInfo);
 
-	long extractCustomers(String bureauType) throws Exception;
+	long extractCustomers(String bureauType, String entity) throws Exception;
 
 	void updateFileStatus(CibilFileInfo fileInfo);
 
@@ -42,5 +43,13 @@ public interface CIBILService {
 	List<FinReceiptHeader> getReceiptHeadersByRef(long finID, String type);
 
 	public Date getMaxReceiptDateByRef(long finID);
+
+	BigDecimal getLastRepaidAmount(String finReference);
+
+	BigDecimal getGuarantorPercentage(long finID);
+
+	List<String> getEntities();
+
+	String getCoAppRelation(String custCIF, long finID);
 
 }

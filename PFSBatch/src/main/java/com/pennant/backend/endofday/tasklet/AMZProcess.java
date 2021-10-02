@@ -43,6 +43,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -193,8 +194,9 @@ public class AMZProcess implements Tasklet {
 		}
 		cursorItemReader.close();
 
-		if (!exceptions.isEmpty()) {
-			Exception exception = new Exception(exceptions.get(0));
+		if (CollectionUtils.isNotEmpty(exceptions)) {
+			logger.warn(exceptions.get(0).getMessage());
+			Exception exception = exceptions.get(0);
 			exceptions.clear();
 			exceptions = null;
 			throw exception;

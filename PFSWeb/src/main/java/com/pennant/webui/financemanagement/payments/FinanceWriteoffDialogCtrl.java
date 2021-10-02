@@ -80,6 +80,7 @@ import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -206,6 +207,7 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private NotificationService notificationService;
 
 	private boolean WRITEOFF_FULLAMOUNT = true;
+	private String finEvent = "";
 
 	/**
 	 * default constructor.<br>
@@ -578,6 +580,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			appendAccountingDetailTab(true);
 		}
 
+		appendExtendedFieldDetails(getFinanceDetail(), FinServiceEvent.WRITEOFF);
+
 		logger.debug("Leaving");
 	}
 
@@ -629,6 +633,9 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnWriteoffPay.isVisible());
+		if (extendedFieldCtrl != null && financeWriteoffHeader.getFinanceDetail().getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
 	}
 
 	/**
@@ -1091,6 +1098,11 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// loading Write Off Object Entered Data into Bean
 		aFinanceWriteoffHeader.setFinanceWriteoff(doWriteComponentsToBean());
 
+		// Extended Fields
+		if (aFinanceDetail.getExtendedFieldHeader() != null) {
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(!recSave));
+		}
+
 		String tranType = "";
 		if (isWorkFlowEnabled()) {
 
@@ -1153,6 +1165,10 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					publishNotification(Notify.USER, fm.getFinReference(), fm);
 				} else {
 					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
+				}
+
+				if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
 				}
 
 				closeDialog();
@@ -1361,7 +1377,31 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceWriteoffHeader aFinanceWriteoffHeader = (FinanceWriteoffHeader) auditHeader.getAuditDetail()
 				.getModelData();
+		FinanceDetail aFinanceDetail = aFinanceWriteoffHeader.getFinanceDetail();
 		FinanceMain afinanceMain = aFinanceWriteoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		// Extended Field details
+		if (aFinanceDetail.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
+			details.setReference(afinanceMain.getFinReference());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(afinanceMain.getRecordStatus());
+			details.setRecordType(afinanceMain.getRecordType());
+			details.setVersion(afinanceMain.getVersion());
+			details.setWorkflowId(afinanceMain.getWorkflowId());
+			details.setTaskId(afinanceMain.getTaskId());
+			details.setNextTaskId(afinanceMain.getNextTaskId());
+			details.setRoleCode(afinanceMain.getRoleCode());
+			details.setNextRoleCode(afinanceMain.getNextRoleCode());
+			details.setNewRecord(afinanceMain.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(afinanceMain.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
 
 		try {
 
@@ -1808,5 +1848,13 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	public void setAccrualService(AccrualService accrualService) {
 		this.accrualService = accrualService;
+	}
+
+	public String getFinEvent() {
+		return finEvent;
+	}
+
+	public void setFinEvent(String finEvent) {
+		this.finEvent = finEvent;
 	}
 }

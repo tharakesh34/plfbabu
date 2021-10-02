@@ -2192,11 +2192,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 			} else {
 				this.btnSchdChng.setVisible(false);
 			}
-		} else if (moduleDefiner.equals(FinServiceEvent.RESTRUCTURE)) {
-			if (getUserWorkspace().isAllowed("button_" + dialogName + "_btnRestructureDetail")) {
-				Events.postEvent("onClick$btnRestructure", this.window_ScheduleDetailDialog, null);
-			}
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -2527,12 +2524,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		map.put("finScheduleData", getFinScheduleData());
 		map.put("financeMainDialogCtrl", this);
-		map.put("feeDetailListCtrl", getFinFeeDetailListCtrl());
-		map.put("disbursement", true);
-		map.put("feeChargeAmt", getFinScheduleData().getFinanceMain().getFeeChargeAmt());
-		map.put("isWIF", isWIF);
-		map.put("moduleDefiner", moduleDefiner);
-		map.put("workflowCode", workflowCode);
 
 		try {
 			if (getFinScheduleData().getRestructureDetail() == null) {

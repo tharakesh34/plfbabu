@@ -37,6 +37,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.ImplementationConstants;
@@ -83,6 +84,7 @@ import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.model.dms.DMSModule;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -113,6 +115,9 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 	private transient BankAccountValidationService bankAccountValidationService;
 	private JointAccountDetailDAO jointAccountDetailDAO;
 	private FinFeeDetailDAO finFeeDetailDAO;
+	@Autowired(required = false)
+	@Qualifier("payOrderIssuePostValidationHook")
+	private PostValidationHook postValidationHook;
 
 	public PayOrderIssueServiceImpl() {
 		super();
@@ -436,6 +441,7 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 		logger.debug(Literal.ENTERING);
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
+		doPostHookValidation(auditHeader);
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
@@ -447,6 +453,19 @@ public class PayOrderIssueServiceImpl extends GenericService<PayOrderIssueHeader
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
+	}
+
+	private void doPostHookValidation(AuditHeader auditHeader) {
+		if (postValidationHook == null) {
+			return;
+		}
+
+		List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
+		if (errorDetails == null) {
+			return;
+		}
+
+		auditHeader.setErrorList(ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage()));
 	}
 
 	private AuditDetail validation(AuditDetail auditDetail, String usrLanguage, String method) {

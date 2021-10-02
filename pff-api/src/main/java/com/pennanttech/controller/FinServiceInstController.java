@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.zkoss.util.resource.Labels;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
@@ -74,6 +75,7 @@ import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
+import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.BankDetail;
@@ -115,6 +117,8 @@ import com.pennant.backend.model.finance.JointAccountDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.RestructureCharge;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -214,7 +218,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private FinanceTaxDetailService financeTaxDetailService;
 	private FinAdvancePaymentsDAO finAdvancePaymensDAO;
 	private PostingsPreparationUtil postingsPreparationUtil;
-	private ManualAdviseDAO manualAdviseDAO;
 	private BankDetailDAO bankDetailDAO;
 	private BankDetailService bankDetailService;
 	private CovenantsService covenantsService;
@@ -230,6 +233,7 @@ public class FinServiceInstController extends SummaryDetailService {
 	private InsuranceDetailService insuranceDetailService;
 	private NonLanReceiptService nonLanReceiptService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
+	private RestructureService restructureService;
 
 	public FinanceDetail doAddRateChange(FinServiceInstruction fsi, String eventCode) {
 		logger.debug(Literal.ENTERING);
@@ -323,9 +327,11 @@ public class FinServiceInstController extends SummaryDetailService {
 		} else {
 			FinScheduleData schdData = fd.getFinScheduleData();
 			for (FinFeeDetail fee : feeList) {
-				fee.setFinEvent(eventCode);
-				schdData.getFinFeeDetailList().add(fee);
-				fee.setFeeScheduleMethod(PennantConstants.List_Select);
+				if (!AccountingEvent.RESTRUCTURE.equals(eventCode)) {
+					fee.setFinEvent(eventCode);
+					schdData.getFinFeeDetailList().add(fee);
+					fee.setFeeScheduleMethod(PennantConstants.List_Select);
+				}
 			}
 			feeDetailService.doExecuteFeeCharges(fd, eventCode, fsi, false);
 
@@ -4331,6 +4337,207 @@ public class FinServiceInstController extends SummaryDetailService {
 		return ri;
 	}
 
+	public FinanceDetail doRestructuring(RestructureDetail rd, FinServiceInstruction fsi, String eventCode) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceDetail fd = getFinanceDetails(fsi, eventCode);
+
+		if (fd == null) {
+			fd = new FinanceDetail();
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return fd;
+		}
+
+		FinScheduleData fsd = fd.getFinScheduleData();
+		FinanceMain fm = fsd.getFinanceMain();
+
+		fm.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		fm.setRcdMaintainSts(FinServiceEvent.RESTRUCTURE);
+		fd.setUserAction("");
+		fsi.setBaseRate(rd.getBaseRate());
+		fsi.setMargin(rd.getMargin());
+		fsi.setActualRate(rd.getRepayProfitRate());
+		fsi.setRestructuringType(rd.getRestructureType());
+		fsi.setTerms(rd.getTotNoOfRestructure());
+		fsi.setFromDate(rd.getRestructureDate());
+		fsi.setRecalType(rd.getRecalculationType());
+		fsi.setReqType(rd.getReqType());
+		fsi.setModuleDefiner(FinServiceEvent.RESTRUCTURE);
+
+		if (CalculationConstants.RST_RECAL_ADJUSTTENURE.equals(fsi.getRecalType())) {
+			rd.setTenorChange(true);
+			rd.setEmiRecal(false);
+		} else if (CalculationConstants.RST_RECAL_RECALEMI.equals(fsi.getRecalType())) {
+			rd.setTenorChange(false);
+			rd.setEmiRecal(true);
+		} else {
+			rd.setTenorChange(true);
+			rd.setEmiRecal(true);
+		}
+
+		fd.setModuleDefiner(FinServiceEvent.RESTRUCTURE);
+
+		try {
+			List<FinFeeDetail> finFeeDetailList = fsd.getFinFeeDetailList();
+			if (CollectionUtils.isNotEmpty(finFeeDetailList)) {
+				for (FinFeeDetail ffd : finFeeDetailList) {
+					if (AccountingEvent.VAS_FEE.equals(ffd.getFinEvent())) {
+						finFeeDetailList.remove(ffd);
+					}
+					break;
+				}
+			}
+
+			List<RestructureCharge> chargeList = rd.getChargeList();
+			for (RestructureCharge rstChrg : chargeList) {
+				if (RepayConstants.ALLOCATION_FEE.equals(rstChrg.getAlocType())) {
+					List<FinTypeFees> finTypeFees = financeDetailService.getFinTypeFees(fm.getFinType(), eventCode,
+							false, FinanceConstants.MODULEID_FINTYPE);
+					for (FinTypeFees fee : finTypeFees) {
+						if (StringUtils.equals(fee.getFeeTypeCode(), rstChrg.getFeeCode())) {
+							FinFeeDetail ffd = new FinFeeDetail();
+							ffd.setFinEvent(fee.getFinEvent());
+							ffd.setFeeTypeCode(rstChrg.getFeeCode());
+							ffd.setActualAmount(rstChrg.getActualAmount());
+							ffd.setOriginationFee(fee.isOriginationFee());
+							ffd.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+							ffd.setAlwModifyFee(fee.isAlwModifyFee());
+							fsd.getFinFeeDetailList().add(ffd);
+							fsi.getFinFeeDetails().add(ffd);
+						}
+					}
+				}
+			}
+
+			executeFeeCharges(fd, fsi, eventCode);
+
+			List<ErrorDetail> errorDetails = fd.getFinScheduleData().getErrorDetails();
+
+			if (errorDetails != null) {
+				for (ErrorDetail ed : errorDetails) {
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+					return response;
+				}
+			}
+
+			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
+				List<RestructureCharge> newChrgList = rd.getChargeList();
+				List<RestructureCharge> defChrgList = restructureService.getRestructureChargeList(fsd,
+						rd.getRestructureDate());
+
+				if (CollectionUtils.isEmpty(newChrgList)) {
+					rd.setChargeList(defChrgList);
+				} else {
+					rd.setChargeList(getFinalChargeList(newChrgList, defChrgList));
+				}
+
+				if (!restructureService.checkLoanDues(rd.getChargeList())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = Labels.getLabel("label_Restructure_LoanDues_Validation");
+					ErrorDetail ed = ErrorUtil.getErrorDetail(new ErrorDetail("92021", valueParm));
+					FinanceDetail response = new FinanceDetail();
+					doEmptyResponseObject(response);
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+
+					return response;
+				}
+			}
+
+			fsd.setRestructureDetail(rd);
+			fsd.getFinanceMain().setDevFinCalReq(false);
+			fsd = restructureService.doRestructure(fsd, fsi);
+
+			if (fsd.getErrorDetails() != null) {
+				for (ErrorDetail ed : fsd.getErrorDetails()) {
+					FinanceDetail response = new FinanceDetail();
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+					return response;
+				}
+			}
+
+			fd.setFinScheduleData(fsd);
+			fd = getResponse(fd, fsi);
+
+		} catch (InterfaceException ex) {
+			logger.error("InterfaceException", ex);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9998", ex.getMessage()));
+			return response;
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			APIErrorHandlerService.logUnhandledException(e);
+			FinanceDetail response = new FinanceDetail();
+			doEmptyResponseObject(response);
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
+			return response;
+		}
+
+		logger.debug(Literal.LEAVING);
+		return fd;
+	}
+
+	public List<RestructureCharge> getFinalChargeList(List<RestructureCharge> newChrgList,
+			List<RestructureCharge> defChrgList) {
+		logger.debug(Literal.ENTERING);
+
+		List<RestructureCharge> finalChrgList = new ArrayList<>();
+
+		for (RestructureCharge newRstChrg : newChrgList) {
+			String newAllocType = StringUtils.trimToEmpty(newRstChrg.getAlocType());
+			String newFeeCode = StringUtils.trimToEmpty(newRstChrg.getFeeCode());
+			boolean newCap = newRstChrg.isCapitalized();
+
+			for (RestructureCharge rstChrg : defChrgList) {
+				String rsAllocType = rstChrg.getAlocType();
+				String rsFeeCode = rstChrg.getFeeCode();
+
+				switch (rsAllocType) {
+				case RepayConstants.ALLOCATION_PFT:
+				case RepayConstants.ALLOCATION_PRI:
+				case "BPI":
+					if (!finalChrgList.contains(rstChrg)) {
+						finalChrgList.add(rstChrg);
+					}
+					break;
+				case RepayConstants.ALLOCATION_MANADV:
+					if (RepayConstants.ALLOCATION_MANADV.equals(newAllocType) && newFeeCode.equals(rsFeeCode)
+							&& newCap) {
+						if (!finalChrgList.contains(rstChrg)) {
+							rstChrg.setCapitalized(newCap);
+							finalChrgList.add(rstChrg);
+						}
+					}
+					break;
+				case RepayConstants.ALLOCATION_FEE:
+					if (!finalChrgList.contains(rstChrg) && RepayConstants.ALLOCATION_FEE.equals(newAllocType)
+							&& newFeeCode.equals(rsFeeCode) && newCap) {
+						rstChrg.setActualAmount(newRstChrg.getActualAmount());
+						finalChrgList.add(rstChrg);
+					}
+					break;
+				case RepayConstants.ALLOCATION_BOUNCE:
+				case RepayConstants.ALLOCATION_ODC:
+					if (RepayConstants.ALLOCATION_ODC.equals(newAllocType) && rsFeeCode == null) {
+						rstChrg.setFeeCode(newFeeCode);
+					}
+					if (newFeeCode.equals(rsFeeCode) && !finalChrgList.contains(rstChrg) && newCap) {
+						rstChrg.setCapitalized(newCap);
+						finalChrgList.add(rstChrg);
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finalChrgList;
+	}
+
 	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
 		this.financeDetailService = financeDetailService;
 	}
@@ -4521,5 +4728,9 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
 		this.feeWaiverHeaderService = feeWaiverHeaderService;
+	}
+
+	public void setRestructureService(RestructureService restructureService) {
+		this.restructureService = restructureService;
 	}
 }

@@ -334,6 +334,15 @@
 														<combobox id="finRepayMethod" width="200px" />
 													</hbox>
 												</row>
+												<row id="row_Escrow" visible="false">
+													<label id="label_FinanceMainDialog_Escrow" value="${c:l('label_FinanceMainDialog_Escrow.value')}"/>
+													<hbox>
+														<space spacing="2px" />
+														<checkbox id="escrow" checked="false"/>
+													</hbox>
+													<label id="label_FinanceMainDialog_CustomerBankAcctNumber" value="${c:l('label_FinanceMainDialog_CustomerBankAcctNumber.value')}"/>
+													<extendedcombobox id="customerBankAcct"/>
+												</row>
 												<row visible="false">
 													<label id="label_FinanceMainDialog_FinIsActive" value="${c:l('label_FinanceMainDialog_FinIsActive.value')}"
 														visible="false" />
@@ -538,6 +547,15 @@
 														<space spacing="2px" />
 														<checkbox id="finIsRateRvwAtGrcEnd" checked="false" />
 													</hbox>
+												</row>
+												<row id="row_Subvention">
+													<label id="label_FinanceMainDialog_SubventionFrom" value="${c:l('label_FinanceMainDialog_SubventionFrom.value')}"/>
+													<hbox>
+														<space spacing="2px" id="space_subVentionFrom" sclass="mandatory" />
+														<combobox id="subVentionFrom" width="200px" />
+													</hbox>
+													<label id="label_FinanceMainDialog_ManufacturerDealer" value="${c:l('label_FinanceMainDialog_ManufacturerDealer.value')}"/>
+													<extendedcombobox id="manufacturerDealer" />
 												</row>
 											</rows>
 										</grid>

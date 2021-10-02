@@ -9,6 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import com.pennant.app.constants.DataEngineConstants;
 import com.pennanttech.dataengine.DataEngineExport;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.pennapps.core.App;
@@ -79,13 +80,11 @@ public class OfflineDisbursementImpl implements OfflineDisbursement {
 	}
 
 	public String getConfigByPartnerBnak(String paymentType, long partnerBankId) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("Select Config_Name from Partnerbanks_Data_Engine");
-		sql.append(" Where PaymentType = ? AND PartnerBankId= ?");
+		String sql = "Select Config_Name from Partnerbanks_Data_Engine Where PayMode = ? and PartnerBankId= ? and Type = ? and RequestType = ?";
 
 		try {
-			return jdbcOperations.queryForObject(sql.toString(), new Object[] { paymentType, partnerBankId },
-					String.class);
+			return jdbcOperations.queryForObject(sql, String.class, paymentType, partnerBankId,
+					DataEngineConstants.DISBURSEMENT, DataEngineConstants.EXPORT);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

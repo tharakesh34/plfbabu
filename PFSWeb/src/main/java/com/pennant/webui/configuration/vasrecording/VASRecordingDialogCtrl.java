@@ -781,6 +781,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						FinFeeDetail finFeeDetail = new FinFeeDetail();
 						finFeeDetail.setModuleDefiner(getFinanceDetail().getModuleDefiner());
 						finFeeDetail.setVasReference(aVASRecording.getVasReference());
+						finFeeDetail.setVasProductCode(aVASRecording.getProductCode());
 						finFeeDetail.setOriginationFee(true);
 						finFeeDetail.setFinEvent(AccountingEvent.VAS_FEE);
 						finFeeDetail.setFeeTypeID(0);

@@ -603,8 +603,8 @@ public class TechnicalVerificationDialogCtrl extends GFCBaseCtrl<TechnicalVerifi
 			final Map<String, Object> map = getDefaultArguments(tv);
 			map.put("dialogCtrl", this);
 			map.put("extendedFieldHeader", extendedFieldHeader);
-			map.put("fieldRenderList",
-					extendedFieldCtrl.getExtendedFieldRendeList(tv.getVerificationId(), tableName.toString(), ""));
+			map.put("fieldRenderList", extendedFieldCtrl.getVerificationExtendedFieldsList(tv.getVerificationId(),
+					tableName.toString(), ""));
 			map.put("moduleType", PennantConstants.MODULETYPE_ENQ);
 			Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldRenderDialog.zul",

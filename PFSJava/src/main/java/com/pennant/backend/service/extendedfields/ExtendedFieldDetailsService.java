@@ -24,10 +24,12 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.dao.solutionfactory.ExtendedFieldDetailDAO;
 import com.pennant.backend.dao.staticparms.ExtendedFieldHeaderDAO;
+import com.pennant.backend.model.ScriptError;
 import com.pennant.backend.model.ScriptErrors;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
@@ -35,15 +37,17 @@ import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.dedup.DedupParm;
 import com.pennant.backend.model.extendedfield.ExtendedField;
 import com.pennant.backend.model.extendedfield.ExtendedFieldData;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
-import com.pennant.backend.model.finance.FinServiceInstruction;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.solutionfactory.ExtendedFieldDetail;
 import com.pennant.backend.service.collateral.impl.ExtendedFieldDetailsValidation;
 import com.pennant.backend.service.collateral.impl.ScriptValidationService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.extendedfieldsExtension.ExtendedFieldExtensionService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.CollateralConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
@@ -73,6 +77,7 @@ public class ExtendedFieldDetailsService {
 	private AuditHeaderDAO auditHeaderDAO;
 	@Autowired(required = false)
 	private DedupParmService dedupParmService;
+	private ExtendedFieldExtensionService extendedFieldExtensionService;
 
 	@Autowired
 	protected SamplingDAO samplingDAO;
@@ -246,15 +251,15 @@ public class ExtendedFieldDetailsService {
 		return new ArrayList<>();
 	}
 
-	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> details, String tranType,
-			String method, String module) {
+	public List<AuditDetail> setExtendedFieldsAuditData(List<ExtendedFieldRender> list, String tranType, String method,
+			String module) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
-		for (int i = 0; i < details.size(); i++) {
-			ExtendedFieldRender extendedFieldRender = details.get(i);
-			AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, i + 1, module);
+		for (int i = 0; i < list.size(); i++) {
+			ExtendedFieldRender efr = list.get(i);
+			AuditDetail auditDetail = setExtendedFieldAuditData(efr, tranType, method, i + 1, module);
 			if (auditDetail != null) {
 				auditDetails.add(auditDetail);
 			}
@@ -264,13 +269,13 @@ public class ExtendedFieldDetailsService {
 		return auditDetails;
 	}
 
-	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
-			String method, String module) {
+	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldRender efr, String tranType, String method,
+			String module) {
 		logger.debug(Literal.ENTERING);
 		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
-		AuditDetail auditDetail = setExtendedFieldAuditData(extendedFieldRender, tranType, method, auditSeq, module);
+		AuditDetail auditDetail = setExtendedFieldAuditData(efr, tranType, method, auditSeq, module);
 		if (auditDetail == null) {
 			return auditDetails;
 		}
@@ -280,14 +285,14 @@ public class ExtendedFieldDetailsService {
 		return auditDetails;
 	}
 
-	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldHeader header, ExtendedFieldRender render,
+	public List<AuditDetail> setExtendedFieldsAuditData(ExtendedFieldHeader efh, ExtendedFieldRender render,
 			String tranType, String method, String module) {
 		logger.debug(Literal.ENTERING);
 		int auditSeq = 1;
 		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		if (render.getTableName() == null) {
-			render.setTableName(getTableName(header.getModuleName(), header.getSubModuleName(), header.getEvent()));
+			render.setTableName(getTableName(efh.getModuleName(), efh.getSubModuleName(), efh.getEvent()));
 		}
 
 		AuditDetail auditDetail = setExtendedFieldAuditData(render, tranType, method, auditSeq, module);
@@ -300,39 +305,39 @@ public class ExtendedFieldDetailsService {
 		return auditDetails;
 	}
 
-	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
-			String method, int auditSeq, String module) {
+	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender efr, String tranType, String method, int auditSeq,
+			String module) {
 		logger.debug(Literal.ENTERING);
 
-		if (extendedFieldRender == null) {
+		if (efr == null) {
 			return null;
 		}
-		if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
+		if (StringUtils.isEmpty(StringUtils.trimToEmpty(efr.getRecordType()))) {
 			return null;
 		}
 
 		boolean isRcdType = false;
-		if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			isRcdType = true;
-		} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			if (extendedFieldRender.isWorkflow()) {
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			if (efr.isWorkflow()) {
 				isRcdType = true;
 			}
-		} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 		}
 
 		if ("saveOrUpdate".equals(method) && (isRcdType)) {
-			extendedFieldRender.setNewRecord(true);
+			efr.setNewRecord(true);
 		}
 
 		if (!tranType.equals(PennantConstants.TRAN_WF)) {
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-					|| extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+					|| efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				tranType = PennantConstants.TRAN_DEL;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -340,33 +345,32 @@ public class ExtendedFieldDetailsService {
 		}
 
 		// Audit Details Preparation
-		Map<String, Object> auditMapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
-		auditMapValues.put("Reference", extendedFieldRender.getReference());
-		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-		auditMapValues.put("Version", extendedFieldRender.getVersion());
-		auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-		auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-		auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-		auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-		auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-		auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
-		auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-		auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
-		auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+		Map<String, Object> auditMapValues = efr.getMapValues();
+		auditMapValues.put("Reference", efr.getReference());
+		auditMapValues.put("SeqNo", efr.getSeqNo());
+		auditMapValues.put("Version", efr.getVersion());
+		auditMapValues.put("LastMntOn", efr.getLastMntOn());
+		auditMapValues.put("LastMntBy", efr.getLastMntBy());
+		auditMapValues.put("RecordStatus", efr.getRecordStatus());
+		auditMapValues.put("RoleCode", efr.getRoleCode());
+		auditMapValues.put("NextRoleCode", efr.getNextRoleCode());
+		auditMapValues.put("TaskId", efr.getTaskId());
+		auditMapValues.put("NextTaskId", efr.getNextTaskId());
+		auditMapValues.put("RecordType", efr.getRecordType());
+		auditMapValues.put("WorkflowId", efr.getWorkflowId());
 
 		// FIXME:Need to rechecks for which case InstructioinUid Required.
 		if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
-			String tableName = StringUtils.trimToEmpty(extendedFieldRender.getTableName()).toUpperCase();
+			String tableName = StringUtils.trimToEmpty(efr.getTableName()).toUpperCase();
 			if (tableName.startsWith("LOAN_") && tableName.endsWith("_ED")) {
-				auditMapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+				auditMapValues.put("InstructionUID", efr.getInstructionUID());
 			}
 		}
 
-		extendedFieldRender.setAuditMapValues(auditMapValues);
+		efr.setAuditMapValues(auditMapValues);
 
-		String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-		AuditDetail auditDetail = new AuditDetail(tranType, auditSeq, fields[0], fields[1],
-				extendedFieldRender.getBefImage(), extendedFieldRender);
+		String[] fields = PennantJavaUtil.getExtendedFieldDetails(efr);
+		AuditDetail auditDetail = new AuditDetail(tranType, auditSeq, fields[0], fields[1], efr.getBefImage(), efr);
 		auditDetail.setExtended(true);
 
 		logger.debug(Literal.LEAVING);
@@ -381,12 +385,11 @@ public class ExtendedFieldDetailsService {
 	 * @param type
 	 * @return
 	 */
-	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils,
-			ExtendedFieldHeader extFldHeader, String type, long instructionUID) {
+	public List<AuditDetail> processingExtendedFieldDetailList(List<AuditDetail> deatils, ExtendedFieldHeader efh,
+			String type, long instructionUID) {
 		logger.debug(Literal.ENTERING);
 
-		String tableName = getTableName(extFldHeader.getModuleName(), extFldHeader.getSubModuleName(),
-				extFldHeader.getEvent());
+		String tableName = getTableName(efh.getModuleName(), efh.getSubModuleName(), efh.getEvent());
 
 		boolean saveRecord = false;
 		boolean updateRecord = false;
@@ -394,19 +397,18 @@ public class ExtendedFieldDetailsService {
 		boolean approveRec = false;
 
 		for (int i = 0; i < deatils.size(); i++) {
-			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
-			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
+			ExtendedFieldRender efr = (ExtendedFieldRender) deatils.get(i).getModelData();
+			if (StringUtils.isEmpty(efr.getRecordType())) {
 				continue;
 			}
-			boolean exists = extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
-					extendedFieldRender.getSeqNo(), tableName + type);
+			boolean exists = extendedFieldRenderDAO.isExists(efr.getReference(), efr.getSeqNo(), tableName + type);
 
-			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(extendedFieldRender.getRecordStatus())
-					&& PennantConstants.RECORD_TYPE_UPD.equals(extendedFieldRender.getRecordType())) {
+			if (PennantConstants.RCD_STATUS_SUBMITTED.equals(efr.getRecordStatus())
+					&& PennantConstants.RECORD_TYPE_UPD.equals(efr.getRecordType())) {
 				if (!exists) {
-					extendedFieldRender.setNewRecord(true);
+					efr.setNewRecord(true);
 				} else {
-					extendedFieldRender.setNewRecord(false);
+					efr.setNewRecord(false);
 				}
 			}
 			saveRecord = false;
@@ -417,97 +419,96 @@ public class ExtendedFieldDetailsService {
 			String recordStatus = "";
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
-				extendedFieldRender.setRoleCode("");
-				extendedFieldRender.setNextRoleCode("");
-				extendedFieldRender.setTaskId("");
-				extendedFieldRender.setNextTaskId("");
+				efr.setRoleCode("");
+				efr.setNextRoleCode("");
+				efr.setTaskId("");
+				efr.setNextTaskId("");
+				efr.setWorkflowId(0);
 			}
 
 			// Table Name addition for Audit
-			extendedFieldRender.setTableName(tableName);
-			extendedFieldRender.setWorkflowId(0);
+			efr.setTableName(tableName);
+			efr.setWorkflowId(0);
 
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (extendedFieldRender.isNewRecord()) {
+			} else if (efr.isNewRecord()) {
 				saveRecord = true;
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())
-						&& exists) {
+				if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(efr.getRecordType()) && exists) {
 					// If saved record has been updated then it should be updated in the table.
 					updateRecord = true;
 					saveRecord = false;
 				}
 
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNewRecord()) {
+				} else if (efr.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
 			}
 			if (approveRec) {
-				rcdType = extendedFieldRender.getRecordType();
-				recordStatus = extendedFieldRender.getRecordStatus();
-				extendedFieldRender.setRecordType("");
-				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				rcdType = efr.getRecordType();
+				recordStatus = efr.getRecordStatus();
+				efr.setRecordType("");
+				efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 
 			// Add Common Fields
-			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = efr.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
-					mapValues.put("Reference", extendedFieldRender.getReference());
-					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+					mapValues.put("Reference", efr.getReference());
+					mapValues.put("SeqNo", efr.getSeqNo());
 				}
 
-				mapValues.put("Version", extendedFieldRender.getVersion());
-				mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-				mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-				mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-				mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-				mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-				mapValues.put("TaskId", extendedFieldRender.getTaskId());
-				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-				mapValues.put("RecordType", extendedFieldRender.getRecordType());
-				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-				if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, extFldHeader.getModuleName())) {
-					extendedFieldRender.setInstructionUID(instructionUID);
-					mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+				mapValues.put("Version", efr.getVersion());
+				mapValues.put("LastMntOn", efr.getLastMntOn());
+				mapValues.put("LastMntBy", efr.getLastMntBy());
+				mapValues.put("RecordStatus", efr.getRecordStatus());
+				mapValues.put("RoleCode", efr.getRoleCode());
+				mapValues.put("NextRoleCode", efr.getNextRoleCode());
+				mapValues.put("TaskId", efr.getTaskId());
+				mapValues.put("NextTaskId", efr.getNextTaskId());
+				mapValues.put("RecordType", efr.getRecordType());
+				mapValues.put("WorkflowId", efr.getWorkflowId());
+				if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, efh.getModuleName())) {
+					efr.setInstructionUID(instructionUID);
+					mapValues.put("InstructionUID", efr.getInstructionUID());
 				}
 			}
 
 			if (saveRecord) {
-				extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type, tableName.toString());
+				extendedFieldRenderDAO.save(efr.getMapValues(), type, tableName.toString());
 			}
 
 			if (updateRecord) {
-				extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						extendedFieldRender.getMapValues(), type, tableName.toString());
+				extendedFieldRenderDAO.update(efr.getReference(), efr.getSeqNo(), efr.getMapValues(), type,
+						tableName.toString());
 			}
 
 			if (deleteRecord) {
-				extendedFieldRenderDAO.delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(), type,
-						tableName.toString());
+				extendedFieldRenderDAO.delete(efr.getReference(), efr.getSeqNo(), type, tableName.toString());
 			}
 			if (approveRec) {
-				extendedFieldRender.setRecordType(rcdType);
-				extendedFieldRender.setRecordStatus(recordStatus);
+				efr.setRecordType(rcdType);
+				efr.setRecordStatus(recordStatus);
 			}
 
 			// Setting Extended field is to identify record related to Extended
@@ -516,9 +517,10 @@ public class ExtendedFieldDetailsService {
 				ExtendedFieldRender befImage = (ExtendedFieldRender) deatils.get(i).getBefImage();
 				befImage.setTableName(tableName);
 			}
-			extendedFieldRender.setBefImage(extendedFieldRender);
+
+			efr.setBefImage(efr);
 			deatils.get(i).setExtended(true);
-			deatils.get(i).setModelData(extendedFieldRender);
+			deatils.get(i).setModelData(efr);
 		}
 		logger.debug(Literal.LEAVING);
 		return deatils;
@@ -543,119 +545,124 @@ public class ExtendedFieldDetailsService {
 		boolean approveRec = false;
 
 		for (int i = 0; i < deatils.size(); i++) {
-			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
-			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
+			ExtendedFieldRender efr = (ExtendedFieldRender) deatils.get(i).getModelData();
+			String recordType = efr.getRecordType();
+
+			if (StringUtils.isEmpty(recordType)) {
 				continue;
 			}
-			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_APPROVED)
-					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						tableName + type)) {
-					extendedFieldRender.setNewRecord(true);
+
+			if (PennantConstants.RCD_STATUS_APPROVED.equals(efr.getRecordStatus())
+					&& PennantConstants.RECORD_TYPE_UPD.equals(recordType)) {
+				if (!extendedFieldRenderDAO.isExists(efr.getReference(), efr.getSeqNo(), tableName + type)) {
+					efr.setNewRecord(true);
 				}
 			}
+
 			saveRecord = false;
 			updateRecord = false;
 			deleteRecord = false;
 			approveRec = false;
 			String rcdType = "";
 			String recordStatus = "";
+
 			if (StringUtils.isEmpty(type)) {
 				approveRec = true;
-				extendedFieldRender.setRoleCode("");
-				extendedFieldRender.setNextRoleCode("");
-				extendedFieldRender.setTaskId("");
-				extendedFieldRender.setNextTaskId("");
+				efr.setRoleCode("");
+				efr.setNextRoleCode("");
+				efr.setTaskId("");
+				efr.setNextTaskId("");
 			}
 
 			// Table Name addition for Audit
-			extendedFieldRender.setTableName(tableName);
-			extendedFieldRender.setWorkflowId(0);
+			efr.setTableName(tableName);
+			efr.setWorkflowId(0);
 
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (PennantConstants.RECORD_TYPE_CAN.equalsIgnoreCase(recordType)) {
 				deleteRecord = true;
-			} else if (extendedFieldRender.isNewRecord()) {
+			} else if (efr.isNewRecord()) {
 				saveRecord = true;
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+				if (PennantConstants.RCD_ADD.equalsIgnoreCase(recordType)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (PennantConstants.RCD_DEL.equalsIgnoreCase(recordType)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (PennantConstants.RCD_UPD.equalsIgnoreCase(recordType)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(recordType)) {
 					// If saved record has been updated then it should be updated in the table.
 					updateRecord = true;
 					saveRecord = false;
 				}
 
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (PennantConstants.RECORD_TYPE_NEW.equalsIgnoreCase(recordType)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(recordType)) {
 				updateRecord = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (PennantConstants.RECORD_TYPE_DEL.equalsIgnoreCase(recordType)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNewRecord()) {
+				} else if (efr.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
 			}
 			if (approveRec) {
-				rcdType = extendedFieldRender.getRecordType();
-				recordStatus = extendedFieldRender.getRecordStatus();
-				extendedFieldRender.setRecordType("");
-				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				rcdType = recordType;
+				recordStatus = efr.getRecordStatus();
+				efr.setRecordType("");
+				efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 
 			// Add Common Fields
-			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = efr.getMapValues();
+
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
-					mapValues.put("Reference", extendedFieldRender.getReference());
-					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+					mapValues.put("Reference", efr.getReference());
+					mapValues.put("SeqNo", efr.getSeqNo());
 				}
 
-				mapValues.put("Version", extendedFieldRender.getVersion());
-				mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-				mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-				mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-				mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-				mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-				mapValues.put("TaskId", extendedFieldRender.getTaskId());
-				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-				mapValues.put("RecordType", extendedFieldRender.getRecordType());
-				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+				mapValues.put("Version", efr.getVersion());
+				mapValues.put("LastMntOn", efr.getLastMntOn());
+				mapValues.put("LastMntBy", efr.getLastMntBy());
+				mapValues.put("RecordStatus", efr.getRecordStatus());
+				mapValues.put("RoleCode", efr.getRoleCode());
+				mapValues.put("NextRoleCode", efr.getNextRoleCode());
+				mapValues.put("TaskId", efr.getTaskId());
+				mapValues.put("NextTaskId", efr.getNextTaskId());
+				mapValues.put("RecordType", recordType);
+				mapValues.put("WorkflowId", efr.getWorkflowId());
 			}
 
 			if (saveRecord) {
-				extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type, tableName.toString());
+				extendedFieldRenderDAO.save(efr.getMapValues(), type, tableName.toString());
 			}
 
 			if (updateRecord) {
-				extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-						extendedFieldRender.getMapValues(), type, tableName.toString());
+				extendedFieldRenderDAO.update(efr.getReference(), efr.getSeqNo(), efr.getMapValues(), type,
+						tableName.toString());
 			}
 
 			if (deleteRecord) {
-				extendedFieldRenderDAO.delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(), type,
-						tableName.toString());
+				extendedFieldRenderDAO.delete(efr.getReference(), efr.getSeqNo(), type, tableName.toString());
 			}
 			if (approveRec) {
-				extendedFieldRender.setRecordType(rcdType);
-				extendedFieldRender.setRecordStatus(recordStatus);
+				efr.setRecordType(rcdType);
+				efr.setRecordStatus(recordStatus);
 			}
 
 			// Setting Extended field is to identify record related to Extended
 			// fields
-			extendedFieldRender.setBefImage(extendedFieldRender);
+			efr.setBefImage(efr);
 			deatils.get(i).setExtended(true);
-			deatils.get(i).setModelData(extendedFieldRender);
+			deatils.get(i).setModelData(efr);
 		}
+
 		logger.debug(Literal.LEAVING);
 		return deatils;
 	}
@@ -670,18 +677,22 @@ public class ExtendedFieldDetailsService {
 
 		for (int i = 0; i < details.size(); i++) {
 			if (details.get(i) != null) {
-				ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) details.get(i).getModelData();
-				if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
+				ExtendedFieldRender efr = (ExtendedFieldRender) details.get(i).getModelData();
+
+				if (StringUtils.isEmpty(efr.getRecordType())) {
 					continue;
 				}
-				String tableName = getTableName(module, extendedFieldRender.getTypeCode(), event);
 
-				if ((StringUtils.equals(FinServiceEvent.ADDDISB, event)) || (StringUtils
-						.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
-						&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD))) {
-					if (!extendedFieldRenderDAO.isExists(extendedFieldRender.getReference(),
-							extendedFieldRender.getSeqNo(), tableName + type)) {
-						extendedFieldRender.setNewRecord(true);
+				String tableName = getTableName(module, efr.getTypeCode(), event);
+				int maxSeqNo = extendedFieldRenderDAO.getMaxSeqNoByRef(efr.getReference(), tableName);
+
+				if (!FinServiceEvent.REALIZATION.equals(event)) {
+					if ((FinServiceEvent.ADDDISB.equals(event))
+							|| (PennantConstants.RCD_STATUS_SUBMITTED.equals(efr.getRecordStatus())
+									&& PennantConstants.RECORD_TYPE_UPD.equals(efr.getRecordType()))) {
+						if (!extendedFieldRenderDAO.isExists(efr.getReference(), maxSeqNo + 1, tableName + type)) {
+							efr.setNewRecord(true);
+						}
 					}
 				}
 
@@ -693,103 +704,103 @@ public class ExtendedFieldDetailsService {
 				String recordStatus = "";
 				if (StringUtils.isEmpty(type)) {
 					approveRec = true;
-					extendedFieldRender.setRoleCode("");
-					extendedFieldRender.setNextRoleCode("");
-					extendedFieldRender.setTaskId("");
-					extendedFieldRender.setNextTaskId("");
+					efr.setRoleCode("");
+					efr.setNextRoleCode("");
+					efr.setTaskId("");
+					efr.setNextTaskId("");
 				}
 
 				// Table Name addition for Audit
-				extendedFieldRender.setTableName(tableName);
+				efr.setTableName(tableName);
 				// extendedFieldRender.setWorkflowId(0);
 
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+				if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNewRecord()) {
+				} else if (efr.isNewRecord()) {
 					saveRecord = true;
-					if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-					} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-						extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(extendedFieldRender.getRecordType())) {
+					if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+						efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+						efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+						efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					} else if (PennantConstants.RECORD_TYPE_UPD.equalsIgnoreCase(efr.getRecordType())) {
 						// If saved record has been updated then it should be updated in the table.
 						updateRecord = true;
 						saveRecord = false;
 					}
 
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 					if (approveRec) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
 					}
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 					updateRecord = true;
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 					if (approveRec) {
 						deleteRecord = true;
-					} else if (extendedFieldRender.isNewRecord()) {
+					} else if (efr.isNewRecord()) {
 						saveRecord = true;
 					} else {
 						updateRecord = true;
 					}
 				}
 				if (approveRec) {
-					rcdType = extendedFieldRender.getRecordType();
-					recordStatus = extendedFieldRender.getRecordStatus();
-					extendedFieldRender.setRecordType("");
-					extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					rcdType = efr.getRecordType();
+					recordStatus = efr.getRecordStatus();
+					efr.setRecordType("");
+					efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				}
 
 				// Add Common Fields
-				Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
-				if (saveRecord || updateRecord) {
+				Map<String, Object> mapValues = efr.getMapValues();
+				if (saveRecord || updateRecord || approveRec) {
 					if (saveRecord) {
-						mapValues.put("Reference", extendedFieldRender.getReference());
-						mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+						mapValues.put("Reference", efr.getReference());
+						mapValues.put("SeqNo", efr.getSeqNo());
 					}
 
-					mapValues.put("Version", extendedFieldRender.getVersion());
-					mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-					mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-					mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-					mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-					mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-					mapValues.put("TaskId", extendedFieldRender.getTaskId());
-					mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-					mapValues.put("RecordType", extendedFieldRender.getRecordType());
-					mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+					mapValues.put("SeqNo", efr.getSeqNo());
+					mapValues.put("Version", efr.getVersion());
+					mapValues.put("LastMntOn", efr.getLastMntOn());
+					mapValues.put("LastMntBy", efr.getLastMntBy());
+					mapValues.put("RecordStatus", efr.getRecordStatus());
+					mapValues.put("RoleCode", efr.getRoleCode());
+					mapValues.put("NextRoleCode", efr.getNextRoleCode());
+					mapValues.put("TaskId", efr.getTaskId());
+					mapValues.put("NextTaskId", efr.getNextTaskId());
+					mapValues.put("RecordType", efr.getRecordType());
+					mapValues.put("WorkflowId", efr.getWorkflowId());
 					if (StringUtils.equals(ExtendedFieldConstants.MODULE_LOAN, module)) {
-						extendedFieldRender.setInstructionUID(instructionUID);
-						mapValues.put("InstructionUID", extendedFieldRender.getInstructionUID());
+						efr.setInstructionUID(instructionUID);
+						mapValues.put("InstructionUID", efr.getInstructionUID());
 					}
 				}
 
 				if (saveRecord) {
-					extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type, tableName.toString());
+					extendedFieldRenderDAO.save(efr.getMapValues(), type, tableName.toString());
 				}
 
 				if (updateRecord) {
-					extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-							extendedFieldRender.getMapValues(), type, tableName.toString());
+					extendedFieldRenderDAO.update(efr.getReference(), efr.getSeqNo(), efr.getMapValues(), type,
+							tableName.toString());
 				}
 
 				if (deleteRecord) {
-					extendedFieldRenderDAO.delete(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
-							type, tableName.toString());
+					extendedFieldRenderDAO.delete(efr.getReference(), efr.getSeqNo(), type, tableName.toString());
 				}
 				if (approveRec) {
-					extendedFieldRender.setRecordType(rcdType);
-					extendedFieldRender.setRecordStatus(recordStatus);
+					efr.setRecordType(rcdType);
+					efr.setRecordStatus(recordStatus);
 				}
 
 				// Setting Extended field is to identify record related to
 				// Extended fields
-				extendedFieldRender.setBefImage(extendedFieldRender);
+				efr.setBefImage(efr);
 				details.get(i).setExtended(true);
-				details.get(i).setModelData(extendedFieldRender);
+				details.get(i).setModelData(efr);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -808,9 +819,9 @@ public class ExtendedFieldDetailsService {
 
 		Map<String, ExtendedFieldHeader> extHeaderMap = sampling.getExtFieldHeaderList();
 		for (int i = 0; i < deatils.size(); i++) {
-			ExtendedFieldRender extendedFieldRender = (ExtendedFieldRender) deatils.get(i).getModelData();
-			String reference = extendedFieldRender.getReference();
-			if (StringUtils.isEmpty(extendedFieldRender.getRecordType())) {
+			ExtendedFieldRender efr = (ExtendedFieldRender) deatils.get(i).getModelData();
+			String reference = efr.getReference();
+			if (StringUtils.isEmpty(efr.getRecordType())) {
 				continue;
 			}
 
@@ -826,11 +837,11 @@ public class ExtendedFieldDetailsService {
 			tableName.append(extHeader.getSubModuleName());
 			tableName.append("_tv");
 
-			if (StringUtils.equals(extendedFieldRender.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
-					&& StringUtils.equals(extendedFieldRender.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
-				if (!extendedFieldRenderDAO.isExists(reference, extendedFieldRender.getSeqNo(),
+			if (StringUtils.equals(efr.getRecordStatus(), PennantConstants.RCD_STATUS_SUBMITTED)
+					&& StringUtils.equals(efr.getRecordType(), PennantConstants.RECORD_TYPE_UPD)) {
+				if (!extendedFieldRenderDAO.isExists(reference, efr.getSeqNo(),
 						tableName.toString() + type.getSuffix())) {
-					extendedFieldRender.setNewRecord(true);
+					efr.setNewRecord(true);
 				}
 			}
 
@@ -842,54 +853,54 @@ public class ExtendedFieldDetailsService {
 			String recordStatus = "";
 			if (StringUtils.isEmpty(type.getSuffix())) {
 				approveRec = true;
-				extendedFieldRender.setRoleCode("");
-				extendedFieldRender.setNextRoleCode("");
-				extendedFieldRender.setTaskId("");
-				extendedFieldRender.setNextTaskId("");
+				efr.setRoleCode("");
+				efr.setNextRoleCode("");
+				efr.setTaskId("");
+				efr.setNextTaskId("");
 			}
 
 			// Table Name addition for Audit
-			extendedFieldRender.setTableName(tableName.toString());
-			extendedFieldRender.setWorkflowId(0);
+			efr.setTableName(tableName.toString());
+			efr.setWorkflowId(0);
 
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				deleteRecord = true;
-			} else if (extendedFieldRender.isNewRecord()) {
+			} else if (efr.isNewRecord()) {
 				saveRecord = true;
-				if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+				if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+				} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+					efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 				}
 
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				if (approveRec) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
 				updateRecord = true;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
 				if (approveRec) {
 					deleteRecord = true;
-				} else if (extendedFieldRender.isNewRecord()) {
+				} else if (efr.isNewRecord()) {
 					saveRecord = true;
 				} else {
 					updateRecord = true;
 				}
 			}
 			if (approveRec) {
-				rcdType = extendedFieldRender.getRecordType();
-				recordStatus = extendedFieldRender.getRecordStatus();
-				extendedFieldRender.setRecordType("");
-				extendedFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				rcdType = efr.getRecordType();
+				recordStatus = efr.getRecordStatus();
+				efr.setRecordType("");
+				efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 			}
 
 			// Add Common Fields
-			Map<String, Object> mapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
+			Map<String, Object> mapValues = efr.getMapValues();
 			if (saveRecord || updateRecord) {
 				if (saveRecord) {
 					if (!StringUtils.startsWith(reference, "S")) {
@@ -897,63 +908,123 @@ public class ExtendedFieldDetailsService {
 					} else {
 						mapValues.put("Reference", reference);
 					}
-					mapValues.put("SeqNo", extendedFieldRender.getSeqNo());
+					mapValues.put("SeqNo", efr.getSeqNo());
 				}
 
-				mapValues.put("Version", extendedFieldRender.getVersion());
-				mapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-				mapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-				mapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-				mapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-				mapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-				mapValues.put("TaskId", extendedFieldRender.getTaskId());
-				mapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-				mapValues.put("RecordType", extendedFieldRender.getRecordType());
-				mapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
+				mapValues.put("Version", efr.getVersion());
+				mapValues.put("LastMntOn", efr.getLastMntOn());
+				mapValues.put("LastMntBy", efr.getLastMntBy());
+				mapValues.put("RecordStatus", efr.getRecordStatus());
+				mapValues.put("RoleCode", efr.getRoleCode());
+				mapValues.put("NextRoleCode", efr.getNextRoleCode());
+				mapValues.put("TaskId", efr.getTaskId());
+				mapValues.put("NextTaskId", efr.getNextTaskId());
+				mapValues.put("RecordType", efr.getRecordType());
+				mapValues.put("WorkflowId", efr.getWorkflowId());
 			}
 
 			if (saveRecord) {
-				extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
+				extendedFieldRenderDAO.save(efr.getMapValues(), type.getSuffix(), tableName.toString());
 			}
 
 			if (updateRecord) {
 				if (approveRec) {
-
 					// Handle on approve after resubmit(for got to add
 					// collaterals on initial approve)
-					if (extendedFieldRenderDAO.isExists(reference, extendedFieldRender.getSeqNo(),
-							tableName + type.getSuffix())) {
-						extendedFieldRenderDAO.update(reference, extendedFieldRender.getSeqNo(),
-								extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
-					} else {
-						extendedFieldRenderDAO.save(extendedFieldRender.getMapValues(), type.getSuffix(),
+					if (extendedFieldRenderDAO.isExists(reference, efr.getSeqNo(), tableName + type.getSuffix())) {
+						extendedFieldRenderDAO.update(reference, efr.getSeqNo(), efr.getMapValues(), type.getSuffix(),
 								tableName.toString());
+					} else {
+						extendedFieldRenderDAO.save(efr.getMapValues(), type.getSuffix(), tableName.toString());
 					}
 				}
 
-				extendedFieldRenderDAO.update(reference, extendedFieldRender.getSeqNo(),
-						extendedFieldRender.getMapValues(), type.getSuffix(), tableName.toString());
+				extendedFieldRenderDAO.update(reference, efr.getSeqNo(), efr.getMapValues(), type.getSuffix(),
+						tableName.toString());
 			}
 
 			if (deleteRecord) {
-				extendedFieldRenderDAO.delete(reference, extendedFieldRender.getSeqNo(), type.getSuffix(),
-						tableName.toString());
+				extendedFieldRenderDAO.delete(reference, efr.getSeqNo(), type.getSuffix(), tableName.toString());
 			}
 			if (approveRec) {
-				extendedFieldRender.setRecordType(rcdType);
-				extendedFieldRender.setRecordStatus(recordStatus);
+				efr.setRecordType(rcdType);
+				efr.setRecordStatus(recordStatus);
 			}
 
 			// Setting Extended field is to identify record related to Extended
 			// fields
-			extendedFieldRender.setBefImage(extendedFieldRender);
+			efr.setBefImage(efr);
 			deatils.get(i).setExtended(true);
-			deatils.get(i).setModelData(extendedFieldRender);
+			deatils.get(i).setModelData(efr);
 
 			System.out.println("");
 		}
 		logger.debug(Literal.LEAVING);
 		return deatils;
+	}
+
+	public List<AuditDetail> delete(ExtendedFieldHeader efh, String reference, int seqNo, String tableType,
+			String tranType, List<AuditDetail> deatils) {
+
+		StringBuilder tableName = new StringBuilder();
+		tableName.append(efh.getModuleName());
+		tableName.append("_");
+		tableName.append(efh.getSubModuleName());
+		if (efh.getEvent() != null) {
+			tableName.append("_");
+			tableName.append(PennantStaticListUtil.getFinEventCode(efh.getEvent()));
+		}
+		tableName.append("_ED");
+
+		return deleteDetails(reference, seqNo, tableType, tranType, deatils, tableName.toString());
+	}
+
+	private List<AuditDetail> deleteDetails(String reference, int seqNo, String tableType, String tranType,
+			List<AuditDetail> deatils, String tableName) {
+		logger.debug(Literal.ENTERING);
+
+		ExtendedFieldRender efr;
+		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
+
+		for (int i = 0; i < deatils.size(); i++) {
+			efr = (ExtendedFieldRender) deatils.get(i).getModelData();
+			efr.setTableName(tableName.toString());
+
+			if (StringUtils.isEmpty(tableType)) {
+				efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else {
+				efr.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+			}
+
+			// Audit Details Preparation
+			Map<String, Object> auditMapValues = efr.getMapValues();
+			auditMapValues.put("Reference", reference);
+			auditMapValues.put("SeqNo", efr.getSeqNo());
+			auditMapValues.put("Version", efr.getVersion());
+			auditMapValues.put("LastMntOn", efr.getLastMntOn());
+			auditMapValues.put("LastMntBy", efr.getLastMntBy());
+			auditMapValues.put("RecordStatus", efr.getRecordStatus());
+			auditMapValues.put("RoleCode", efr.getRoleCode());
+			auditMapValues.put("NextRoleCode", efr.getNextRoleCode());
+			auditMapValues.put("TaskId", efr.getTaskId());
+			auditMapValues.put("NextTaskId", efr.getNextTaskId());
+			auditMapValues.put("RecordType", efr.getRecordType());
+			auditMapValues.put("WorkflowId", efr.getWorkflowId());
+
+			// Audit Saving Purpose
+			efr.setAuditMapValues(auditMapValues);
+			efr.setBefImage(efr);
+
+			String[] fields = PennantJavaUtil.getExtendedFieldDetails(efr);
+			AuditDetail auditDetail = new AuditDetail(tranType, i + 1, fields[0], fields[1], efr.getBefImage(), efr);
+			auditDetail.setExtended(true);
+
+			auditList.add(auditDetail);
+		}
+		extendedFieldRenderDAO.deleteList(reference, seqNo, tableName.toString(), tableType);
+
+		logger.debug(Literal.LEAVING);
+		return auditList;
 	}
 
 	public List<AuditDetail> delete(ExtendedFieldHeader extFldHeader, String reference, String tableType,
@@ -1002,7 +1073,7 @@ public class ExtendedFieldDetailsService {
 			}
 
 			// Audit Details Preparation
-			Map<String, Object> auditMapValues = (Map<String, Object>) fieldRender.getMapValues();
+			Map<String, Object> auditMapValues = fieldRender.getMapValues();
 			auditMapValues.put("Reference", reference);
 			auditMapValues.put("SeqNo", fieldRender.getSeqNo());
 			auditMapValues.put("Version", fieldRender.getVersion());
@@ -1307,6 +1378,16 @@ public class ExtendedFieldDetailsService {
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 			}
+		}
+
+		if (tempRender != null && befExtRender == null) {
+			render.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		}
+
+		String roleCode = render.getRoleCode();
+		if (tempRender == null && befExtRender != null && (FinanceConstants.KNOCKOFFCAN_MAKER.equals(roleCode)
+				|| (FinanceConstants.KNOCKOFFCAN_APPROVER.equals(roleCode)))) {
+			render.setNewRecord(false);
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));
@@ -1804,8 +1885,8 @@ public class ExtendedFieldDetailsService {
 		return sb.toString();
 	}
 
-	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> extendedFieldData, String module,
-			String subModule, String event) {
+	public List<ErrorDetail> validateExtendedFieldDetails(List<ExtendedField> ef, String module, String subModule,
+			String event) {
 		logger.debug(Literal.ENTERING);
 
 		String extEvent = null;
@@ -1814,25 +1895,24 @@ public class ExtendedFieldDetailsService {
 			extEvent = event;
 		}
 		// get the ExtendedFieldHeader for given module and subModule
-		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module,
-				subModule, extEvent, "");
+		ExtendedFieldHeader efh = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(module, subModule, extEvent,
+				"");
 		List<ExtendedFieldDetail> extendedFieldDetails = null;
 
 		// based on ExtendedFieldHeader moduleId get the ExtendedFieldDetails
 		// List
-		if (VerificationType.TV.getValue().equals(event) && extendedFieldHeader != null) {
-			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(),
+		if (VerificationType.TV.getValue().equals(event) && efh != null) {
+			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(efh.getModuleId(),
 					ExtendedFieldConstants.EXTENDEDTYPE_TECHVALUATION, "");
-			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
-		} else if (extendedFieldHeader != null) {
-			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(extendedFieldHeader.getModuleId(),
-					"");
-			extendedFieldHeader.setExtendedFieldDetails(extendedFieldDetails);
+			efh.setExtendedFieldDetails(extendedFieldDetails);
+		} else if (efh != null) {
+			extendedFieldDetails = extendedFieldDetailDAO.getExtendedFieldDetailById(efh.getModuleId(), "");
+			efh.setExtendedFieldDetails(extendedFieldDetails);
 		}
 		// if configuration is not available and end user gives extDetails
 		// through API
 		// Extended fields is not applicable for Current Module
-		else if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
+		else if (CollectionUtils.isNotEmpty(ef)) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "Extended fields";
 			valueParm[1] = module;
@@ -1849,7 +1929,7 @@ public class ExtendedFieldDetailsService {
 				}
 			}
 		}
-		if (extendedFieldData == null || extendedFieldData.isEmpty()) {
+		if (CollectionUtils.isEmpty(ef)) {
 			if (extendedDetailsCount > 0) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "ExtendedDetails";
@@ -1859,9 +1939,9 @@ public class ExtendedFieldDetailsService {
 		}
 		// iterates the loop and check the each fieldName and fieldValue,
 		// because both are required
-		if (extendedFieldData != null && !extendedFieldData.isEmpty()) {
+		if (CollectionUtils.isNotEmpty(ef)) {
 			List<String> fieldList = new ArrayList<String>();
-			for (ExtendedField details : extendedFieldData) {
+			for (ExtendedField details : ef) {
 				int exdMandConfigCount = 0;
 				if (details.getExtendedFieldDataList() != null) {
 					if (details.getExtendedFieldDataList().isEmpty()) {
@@ -1943,9 +2023,9 @@ public class ExtendedFieldDetailsService {
 		}
 
 		Map<String, Object> mapValues = new HashMap<String, Object>();
-		if (extendedFieldData != null) {
+		if (ef != null) {
 			// get the ExtendedField--List from JSON
-			for (ExtendedField details : extendedFieldData) {
+			for (ExtendedField details : ef) {
 				// get the ExtendedFieldData--List from ExtendedField
 				if (details.getExtendedFieldDataList() != null) {
 					for (ExtendedFieldData extFieldData : details.getExtendedFieldDataList()) {
@@ -1968,6 +2048,23 @@ public class ExtendedFieldDetailsService {
 				}
 			}
 		}
+
+		if (efh != null && efh.isPostValidationReq()) {
+			for (ExtendedFieldDetail extendedFieldDetail : extendedFieldDetails) {
+				if (!mapValues.containsKey(extendedFieldDetail.getFieldName())) {
+					mapValues.put(extendedFieldDetail.getFieldName(), "");
+				}
+			}
+
+			ScriptErrors scriptErrors = getPostValidationErrors(efh.getPostValidation(), mapValues);
+			if (scriptErrors != null) {
+				List<ScriptError> errorsList = scriptErrors.getAll();
+				for (ScriptError error : errorsList) {
+					errorDetails.add(new ErrorDetail("", "90909", "", error.getValue(), null, null));
+				}
+			}
+		}
+
 		logger.debug(Literal.LEAVING);
 		return errorDetails;
 	}
@@ -1988,125 +2085,127 @@ public class ExtendedFieldDetailsService {
 
 		Map<String, Object> extFieldMap = extendedFieldRenderDAO.getExtendedField(reference, tableName.toString(),
 				"_View");
-		ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+		ExtendedFieldRender efr = new ExtendedFieldRender();
 		if (extFieldMap != null) {
-			extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+			efr.setReference(String.valueOf(extFieldMap.get("Reference")));
 			extFieldMap.remove("Reference");
-			extendedFieldRender.setSeqNo(Integer.valueOf(String.valueOf(extFieldMap.get("SeqNo"))));
+			efr.setSeqNo(Integer.valueOf(String.valueOf(extFieldMap.get("SeqNo"))));
 			extFieldMap.remove("SeqNo");
-			extendedFieldRender.setVersion(Integer.valueOf(String.valueOf(extFieldMap.get("Version"))));
+			efr.setVersion(Integer.valueOf(String.valueOf(extFieldMap.get("Version"))));
 			extFieldMap.remove("Version");
-			extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+			efr.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
 			extFieldMap.remove("LastMntOn");
-			extendedFieldRender.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
+			efr.setLastMntBy(Long.valueOf(String.valueOf(extFieldMap.get("LastMntBy"))));
 			extFieldMap.remove("LastMntBy");
-			extendedFieldRender
-					.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
-							: String.valueOf(extFieldMap.get("RecordStatus")));
+			efr.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+					: String.valueOf(extFieldMap.get("RecordStatus")));
 			extFieldMap.remove("RecordStatus");
-			extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+			efr.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
 					: String.valueOf(extFieldMap.get("RoleCode")));
 			extFieldMap.remove("RoleCode");
-			extendedFieldRender
-					.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-							: String.valueOf(extFieldMap.get("NextRoleCode")));
+			efr.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+					: String.valueOf(extFieldMap.get("NextRoleCode")));
 			extFieldMap.remove("NextRoleCode");
-			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+			efr.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
 					: String.valueOf(extFieldMap.get("TaskId")));
 			extFieldMap.remove("TaskId");
-			extendedFieldRender
-					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-							: String.valueOf(extFieldMap.get("NextTaskId")));
+			efr.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+					: String.valueOf(extFieldMap.get("NextTaskId")));
 			extFieldMap.remove("NextTaskId");
-			extendedFieldRender
-					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-							: String.valueOf(extFieldMap.get("RecordType")));
+			efr.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+					: String.valueOf(extFieldMap.get("RecordType")));
 			extFieldMap.remove("RecordType");
-			extendedFieldRender.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
+			efr.setWorkflowId(Long.valueOf(String.valueOf(extFieldMap.get("WorkflowId"))));
 			extFieldMap.remove("WorkflowId");
-			extendedFieldRender.setMapValues(extFieldMap);
+			efr.setMapValues(extFieldMap);
 		}
 
-		return extendedFieldRender;
+		return efr;
 	}
 
 	/**
 	 * Method for Updating extended field details
 	 * 
-	 * @param financeDetail
+	 * @param fd
 	 * @param suffix
 	 */
-	public void updateFinExtendedDetails(FinanceDetail financeDetail, String suffix) {
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
-		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	public void updateFinExtendedDetails(FinanceDetail fd, String suffix) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 		String auditTranType = PennantConstants.TRAN_WF;
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
+		long userId = fm.getUserDetails().getUserId();
+		String finReference = fm.getFinReference();
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		// process Extended field details
 		// Get the ExtendedFieldHeader for given module and subModule
 		String event = null;
-		if (financeDetail.getExtendedFieldHeader() != null) {
-			event = financeDetail.getExtendedFieldHeader().getEvent();
+		if (fd.getExtendedFieldHeader() != null) {
+			event = fd.getExtendedFieldHeader().getEvent();
 		}
-		ExtendedFieldHeader extendedFieldHeader = extendedFieldHeaderDAO.getExtendedFieldHeaderByModuleName(
-				ExtendedFieldConstants.MODULE_LOAN, finMain.getFinCategory(), event, "");
-		financeDetail.setExtendedFieldHeader(extendedFieldHeader);
+		String finCategory = fm.getFinCategory();
+		ExtendedFieldHeader efh = extendedFieldHeaderDAO
+				.getExtendedFieldHeaderByModuleName(ExtendedFieldConstants.MODULE_LOAN, finCategory, event, "");
+		fd.setExtendedFieldHeader(efh);
 
-		List<ExtendedField> extendedFields = financeDetail.getExtendedDetails();
+		List<ExtendedField> extendedFields = fd.getExtendedDetails();
+
 		long instructionUID = Long.MIN_VALUE;
-		if (extendedFieldHeader != null) {
+		if (efh != null) {
 			int seqNo = 0;
-			ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
-			exdFieldRender.setReference(finMain.getFinReference());
-			exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			exdFieldRender.setLastMntBy(finMain.getUserDetails().getUserId());
-			exdFieldRender.setSeqNo(++seqNo);
-			exdFieldRender.setNewRecord(false);
-			exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			exdFieldRender.setVersion(1);
-			exdFieldRender.setTypeCode(financeDetail.getExtendedFieldHeader().getSubModuleName());
-			exdFieldRender.setTableName(getTableName(extendedFieldHeader.getModuleName(),
-					extendedFieldHeader.getSubModuleName(), ExtendedFieldConstants.MODULE_ORGANIZATION));
-			for (FinServiceInstruction finServiceInstruction : financeDetail.getFinScheduleData()
-					.getFinServiceInstructions()) {
-				instructionUID = finServiceInstruction.getInstructionUID();
-				exdFieldRender.setInstructionUID(instructionUID);
-			}
+			ExtendedFieldRender efr = new ExtendedFieldRender();
+			efr.setReference(finReference);
+			efr.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+			efr.setLastMntBy(userId);
+			efr.setSeqNo(++seqNo);
+			efr.setNewRecord(false);
+			efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			efr.setVersion(1);
+			efr.setTypeCode(fd.getExtendedFieldHeader().getSubModuleName());
+			efr.setTableName(getTableName(efh.getModuleName(), efh.getSubModuleName(),
+					ExtendedFieldConstants.MODULE_ORGANIZATION));
+
+			schdData.getFinServiceInstructions().forEach(l1 -> efr.setInstructionUID(l1.getInstructionUID()));
 
 			if (extendedFields != null) {
 				for (ExtendedField extendedField : extendedFields) {
-					Map<String, Object> mapValues = new HashMap<String, Object>();
+					Map<String, Object> mapValues = new HashMap<>();
 					for (ExtendedFieldData extFieldData : extendedField.getExtendedFieldDataList()) {
 						mapValues.put(extFieldData.getFieldName(), extFieldData.getFieldValue());
-						exdFieldRender.setMapValues(mapValues);
+						efr.setMapValues(mapValues);
 					}
 				}
+
 				if (extendedFields.isEmpty()) {
 					Map<String, Object> mapValues = new HashMap<String, Object>();
-					exdFieldRender.setMapValues(mapValues);
+					efr.setMapValues(mapValues);
 				}
 			} else {
 				Map<String, Object> mapValues = new HashMap<String, Object>();
-				exdFieldRender.setMapValues(mapValues);
+				efr.setMapValues(mapValues);
 			}
-			financeDetail.setExtendedFieldRender(exdFieldRender);
+
+			fd.setExtendedFieldRender(efr);
 		}
 
-		if (financeDetail.getExtendedFieldRender() != null) {
-			auditDetailMap.put("LoanExtendedFieldDetails",
-					setExtendedFieldsAuditData(financeDetail.getExtendedFieldRender(), auditTranType, "saveOrUpdate",
-							ExtendedFieldConstants.MODULE_LOAN));
+		if (fd.getExtendedFieldRender() != null) {
+			auditDetailMap.put("LoanExtendedFieldDetails", setExtendedFieldsAuditData(fd.getExtendedFieldRender(),
+					auditTranType, "saveOrUpdate", ExtendedFieldConstants.MODULE_LOAN));
 		}
 
-		if (financeDetail.getExtendedFieldRender() != null) {
+		if (fd.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = auditDetailMap.get("LoanExtendedFieldDetails");
 			details = processingExtendedFieldDetailList(details, ExtendedFieldConstants.MODULE_LOAN,
-					financeDetail.getExtendedFieldHeader().getEvent(), suffix, instructionUID);
+					fd.getExtendedFieldHeader().getEvent(), suffix, instructionUID);
 			auditDetails.addAll(details);
 		}
-		AuditHeader auditHeader = getAuditHeader(financeDetail.getFinScheduleData().getFinanceMain(),
-				PennantConstants.TRAN_WF);
+
+		AuditHeader auditHeader = getAuditHeader(schdData.getFinanceMain(), PennantConstants.TRAN_WF);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 	}
@@ -2223,39 +2322,39 @@ public class ExtendedFieldDetailsService {
 		return auditDetails;
 	}
 
-	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender extendedFieldRender, String tranType,
-			String method, int auditSeq) {
+	public AuditDetail setExtendedFieldAuditData(ExtendedFieldRender efr, String tranType, String method,
+			int auditSeq) {
 		logger.debug(Literal.ENTERING);
 
-		if (extendedFieldRender == null) {
+		if (efr == null) {
 			return null;
 		}
-		if (StringUtils.isEmpty(StringUtils.trimToEmpty(extendedFieldRender.getRecordType()))) {
+		if (StringUtils.isEmpty(StringUtils.trimToEmpty(efr.getRecordType()))) {
 			return null;
 		}
 
 		boolean isRcdType = false;
-		if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+		if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+			efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			isRcdType = true;
-		} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-			if (extendedFieldRender.isWorkflow()) {
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+			efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			if (efr.isWorkflow()) {
 				isRcdType = true;
 			}
-		} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-			extendedFieldRender.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+			efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 		}
 
 		if ("saveOrUpdate".equals(method) && (isRcdType)) {
-			extendedFieldRender.setNewRecord(true);
+			efr.setNewRecord(true);
 		}
 
 		if (!tranType.equals(PennantConstants.TRAN_WF)) {
-			if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
 				tranType = PennantConstants.TRAN_ADD;
-			} else if (extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-					|| extendedFieldRender.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
+					|| efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
 				tranType = PennantConstants.TRAN_DEL;
 			} else {
 				tranType = PennantConstants.TRAN_UPD;
@@ -2263,28 +2362,171 @@ public class ExtendedFieldDetailsService {
 		}
 
 		// Audit Details Preparation
-		Map<String, Object> auditMapValues = (Map<String, Object>) extendedFieldRender.getMapValues();
-		auditMapValues.put("Reference", extendedFieldRender.getReference());
-		auditMapValues.put("SeqNo", extendedFieldRender.getSeqNo());
-		auditMapValues.put("Version", extendedFieldRender.getVersion());
-		auditMapValues.put("LastMntOn", extendedFieldRender.getLastMntOn());
-		auditMapValues.put("LastMntBy", extendedFieldRender.getLastMntBy());
-		auditMapValues.put("RecordStatus", extendedFieldRender.getRecordStatus());
-		auditMapValues.put("RoleCode", extendedFieldRender.getRoleCode());
-		auditMapValues.put("NextRoleCode", extendedFieldRender.getNextRoleCode());
-		auditMapValues.put("TaskId", extendedFieldRender.getTaskId());
-		auditMapValues.put("NextTaskId", extendedFieldRender.getNextTaskId());
-		auditMapValues.put("RecordType", extendedFieldRender.getRecordType());
-		auditMapValues.put("WorkflowId", extendedFieldRender.getWorkflowId());
-		extendedFieldRender.setAuditMapValues(auditMapValues);
+		Map<String, Object> auditMapValues = efr.getMapValues();
+		auditMapValues.put("Reference", efr.getReference());
+		auditMapValues.put("SeqNo", efr.getSeqNo());
+		auditMapValues.put("Version", efr.getVersion());
+		auditMapValues.put("LastMntOn", efr.getLastMntOn());
+		auditMapValues.put("LastMntBy", efr.getLastMntBy());
+		auditMapValues.put("RecordStatus", efr.getRecordStatus());
+		auditMapValues.put("RoleCode", efr.getRoleCode());
+		auditMapValues.put("NextRoleCode", efr.getNextRoleCode());
+		auditMapValues.put("TaskId", efr.getTaskId());
+		auditMapValues.put("NextTaskId", efr.getNextTaskId());
+		auditMapValues.put("RecordType", efr.getRecordType());
+		auditMapValues.put("WorkflowId", efr.getWorkflowId());
+		efr.setAuditMapValues(auditMapValues);
 
-		String[] fields = PennantJavaUtil.getExtendedFieldDetails(extendedFieldRender);
-		AuditDetail auditDetail = new AuditDetail(tranType, auditSeq, fields[0], fields[1],
-				extendedFieldRender.getBefImage(), extendedFieldRender);
+		String[] fields = PennantJavaUtil.getExtendedFieldDetails(efr);
+		AuditDetail auditDetail = new AuditDetail(tranType, auditSeq, fields[0], fields[1], efr.getBefImage(), efr);
 		auditDetail.setExtended(true);
 
 		logger.debug(Literal.LEAVING);
 		return auditDetail;
+	}
+
+	public void processingExtendedFieldDetailList(ExtendedFieldRender efr, String tableName, String event,
+			String type) {
+		logger.debug(Literal.ENTERING);
+		boolean saveRecord = false;
+		boolean updateRecord = false;
+		boolean deleteRecord = false;
+		boolean approveRec = false;
+
+		if (StringUtils.isEmpty(efr.getRecordType())) {
+			return;
+		}
+		if ((FinServiceEvent.ADDDISB.equals(event))
+				|| (PennantConstants.RCD_STATUS_SUBMITTED.equals(efr.getRecordStatus())
+						&& PennantConstants.RECORD_TYPE_UPD.equals(efr.getRecordType()))) {
+			if (!extendedFieldRenderDAO.isExists(efr.getReference(), efr.getSeqNo(), tableName + type)) {
+				efr.setNewRecord(true);
+			}
+		}
+
+		saveRecord = false;
+		updateRecord = false;
+		deleteRecord = false;
+		approveRec = false;
+		String rcdType = "";
+		String recordStatus = "";
+		if (StringUtils.isEmpty(type)) {
+			approveRec = true;
+			efr.setRoleCode("");
+			efr.setNextRoleCode("");
+			efr.setTaskId("");
+			efr.setNextTaskId("");
+		}
+
+		// Table Name addition for Audit
+		efr.setTableName(tableName);
+
+		if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
+			deleteRecord = true;
+		} else if (efr.isNewRecord()) {
+			saveRecord = true;
+			if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
+				efr.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
+				efr.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
+				efr.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			}
+
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
+			if (approveRec) {
+				saveRecord = true;
+			} else {
+				updateRecord = true;
+			}
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
+			updateRecord = true;
+		} else if (efr.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
+			if (approveRec) {
+				deleteRecord = true;
+			} else if (efr.isNew()) {
+				saveRecord = true;
+			} else {
+				updateRecord = true;
+			}
+		}
+		if (approveRec) {
+			rcdType = efr.getRecordType();
+			recordStatus = efr.getRecordStatus();
+			efr.setRecordType("");
+			efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+		}
+
+		// Add Common Fields
+		Map<String, Object> mapValues = efr.getMapValues();
+		if (saveRecord || updateRecord) {
+			mapValues.put("Reference", efr.getReference());
+			mapValues.put("SeqNo", efr.getSeqNo());
+			mapValues.put("LastMntBy", efr.getLastMntBy());
+			mapValues.put("LastMntOn", new Timestamp(System.currentTimeMillis()));
+			mapValues.put("RoleCode", efr.getRoleCode());
+			mapValues.put("NextRoleCode", efr.getNextRoleCode());
+			mapValues.put("TaskId", efr.getTaskId());
+			mapValues.put("NextTaskId", efr.getNextTaskId());
+			mapValues.put("RecordStatus", efr.getRecordStatus());
+			mapValues.put("RecordType", efr.getRecordType());
+			mapValues.put("WorkflowId", efr.getWorkflowId());
+			mapValues.put("InstructionUID", efr.getInstructionUID());
+		}
+
+		if (saveRecord) {
+			mapValues.put("Version", efr.getVersion() + 1);
+			extendedFieldRenderDAO.save(efr.getMapValues(), type, tableName.toString());
+		}
+
+		if (updateRecord) {
+			extendedFieldRenderDAO.update(efr.getReference(), efr.getSeqNo(), efr.getMapValues(), type,
+					tableName.toString());
+		}
+
+		if (deleteRecord) {
+			extendedFieldRenderDAO.delete(efr.getReference(), efr.getSeqNo(), type, tableName.toString());
+		}
+		if (approveRec) {
+			efr.setRecordType(rcdType);
+			efr.setRecordStatus(recordStatus);
+		}
+
+		efr.setBefImage(efr);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public long getInstructionUID(ExtendedFieldRender efr) {
+
+		long instructionUID = efr.getInstructionUID();
+
+		if (instructionUID != Long.MIN_VALUE) {
+			return instructionUID;
+		}
+
+		instructionUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+
+		efr.setInstructionUID(instructionUID);
+
+		return instructionUID;
+	}
+
+	public long getInstructionUID(ExtendedFieldRender efr, ExtendedFieldExtension efe) {
+
+		long instructionUID = efr.getInstructionUID();
+
+		if (instructionUID == Long.MIN_VALUE) {
+			instructionUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
+		}
+
+		efr.setInstructionUID(instructionUID);
+
+		if (efe.getInstructionUID() == Long.MIN_VALUE) {
+			efe.setInstructionUID(instructionUID);
+		}
+
+		return instructionUID;
 	}
 
 	/**
@@ -2335,8 +2577,21 @@ public class ExtendedFieldDetailsService {
 
 	}
 
-	public List<Map<String, Object>> getExtendedFieldMap(String string, String valueOf, String string2) {
+	public List<Map<String, Object>> getExtendedFieldMap(String reference, String tableName, String type) {
+		return extendedFieldRenderDAO.getExtendedFieldMap(reference, tableName, type);
+	}
 
-		return extendedFieldRenderDAO.getExtendedFieldMap(string, valueOf, string2);
+	public ExtendedFieldExtension getExtendedFieldExtension(String externalRef, String modeStatus, String finEvent) {
+		return extendedFieldExtensionService.getExtendedFieldExtension(externalRef, modeStatus, finEvent,
+				TableType.VIEW);
+	}
+
+	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
+		this.extendedFieldExtensionService = extendedFieldExtensionService;
+	}
+
+	public void saveCollateralExtendedFields(ExtendedFieldRender extendedFieldRender) {
+		extendedFieldRenderDAO.update(extendedFieldRender.getReference(), extendedFieldRender.getSeqNo(),
+				extendedFieldRender.getMapValues(), "", extendedFieldRender.getTableName());
 	}
 }

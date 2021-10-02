@@ -9,9 +9,10 @@ import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
-import com.pennant.backend.model.finance.RepayInstruction;
+import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennanttech.pennapps.core.model.ErrorDetail;
 
 public interface RestructureService {
 
@@ -19,19 +20,15 @@ public interface RestructureService {
 
 	AuditDetail doValidations(FinServiceInstruction finServiceInstruction);
 
-	FinScheduleData doResetOverdraftSchd(FinScheduleData schdData);
-
 	RestructureDetail getRestructureDetailByRef(long finID, String type);
 
 	FinanceProfitDetail getFinProfitDetailsById(long finID);
 
-	List<RepayInstruction> getRepayInstructions(long finID, String type, boolean isWIF);
-
-	AuditDetail deleteRestructureDetail(FinanceDetail fd, String type, String transType);
+	AuditDetail deleteRestructureDetail(RestructureDetail rd, String type, String transType);
 
 	List<AuditDetail> doApproveRestructureDetail(FinanceDetail fd, String type, String transType);
 
-	AuditDetail saveOrUpdateRestructureDetail(FinanceDetail fd, String type, String transType);
+	List<AuditDetail> saveOrUpdateRestructureDetail(FinanceDetail fd, String type, String transType);
 
 	AuditDetail validationRestructureDetail(FinanceDetail fd, String method, String usrLanguage);
 
@@ -42,4 +39,12 @@ public interface RestructureService {
 	void computeLPPandUpdateOD(FinanceDetail fd);
 
 	void processRestructureAccounting(AEEvent aeEvent, FinanceDetail fd);
+
+	List<RestructureCharge> getRestructureChargeList(FinScheduleData schdData, Date restructureDate);
+
+	Date getMaxValueDateOfRcv(long finID);
+
+	List<ErrorDetail> doValidations(RestructureDetail rd);
+
+	boolean checkLoanDues(List<RestructureCharge> charges);
 }

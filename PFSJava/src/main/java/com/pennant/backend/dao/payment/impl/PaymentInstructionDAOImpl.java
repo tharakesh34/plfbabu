@@ -97,7 +97,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		sql.append(" (PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
 		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
 		sql.append(", BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode, PhoneNumber, ClearingDate");
-		sql.append(", Status, Active, PaymentCCy, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", Status, Active, PaymentCCy, Lei, Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(") values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
@@ -136,6 +136,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 				ps.setString(index++, pi.getStatus());
 				ps.setBoolean(index++, pi.getActive());
 				ps.setString(index++, pi.getPaymentCCy());
+				ps.setString(index++, pi.getLei());
 				ps.setInt(index++, pi.getVersion());
 				ps.setLong(index++, pi.getLastMntBy());
 				ps.setTimestamp(index++, pi.getLastMntOn());
@@ -162,8 +163,8 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		sql.append(", Remarks = ?, PartnerBankId = ?, FavourName = ?, FavourNumber = ?");
 		sql.append(", PayableLoc = ?, PrintingLoc = ?, ValueDate = ?, PostDate = ?, BankBranchId = ?");
 		sql.append(", AcctHolderName = ?, AccountNo = ?, PhoneCountryCode = ?, PhoneNumber = ?, ClearingDate = ?");
-		sql.append(", Active = ?, PaymentCCy = ?, Status = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
-		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(", Active = ?, PaymentCCy = ?, Lei = ?, Status = ?, LastMntOn = ?, RecordStatus = ?");
+		sql.append(", RoleCode = ?, NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where PaymentInstructionId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -191,6 +192,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			ps.setDate(index++, JdbcUtil.getDate(pi.getClearingDate()));
 			ps.setBoolean(index++, pi.getActive());
 			ps.setString(index++, pi.getPaymentCCy());
+			ps.setString(index++, pi.getLei());
 			ps.setString(index++, pi.getStatus());
 			ps.setTimestamp(index++, pi.getLastMntOn());
 			ps.setString(index++, pi.getRecordStatus());
@@ -311,7 +313,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		sql.append(" PaymentInstructionId, PaymentId, PaymentType, PaymentAmount, Remarks, PartnerBankId");
 		sql.append(", IssuingBank, FavourName, FavourNumber, PayableLoc, PrintingLoc, ValueDate, PostDate");
 		sql.append(", Status, RejectReason, TransactionRef, BankBranchId, AcctHolderName, AccountNo, PhoneCountryCode");
-		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy, RejectReason");
+		sql.append(", PhoneNumber, ClearingDate, Active, PaymentCCy, Lei");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus");
 		sql.append(", RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 
@@ -362,6 +364,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 			fpd.setClearingDate(rs.getTimestamp("ClearingDate"));
 			fpd.setActive(rs.getBoolean("Active"));
 			fpd.setPaymentCCy(rs.getString("PaymentCCy"));
+			fpd.setLei(rs.getString("Lei"));
 			fpd.setVersion(rs.getInt("Version"));
 			fpd.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			fpd.setLastMntBy(rs.getLong("LastMntBy"));

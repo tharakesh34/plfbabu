@@ -1744,6 +1744,7 @@
 		<property name="receiptUploadDetailDAO" ref="receiptUploadDetailDAO" />
 		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 		<property name="linkedFinancesService" ref="linkedFinancesService"/>
+		<property name="extendedFieldMaintenanceService" ref = "extendedFieldMaintenanceService" />
 	</bean>
 
 	<!--============ Finance Contributor Detail ============== -->
@@ -2389,6 +2390,7 @@
 	<bean id="feeReceiptListCtrl" class="com.pennant.webui.financemanagement.receipts.FeeReceiptListCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="feeReceiptService" ref="feeReceiptService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean id="selectFeeReceiptListCtrl" class="com.pennant.webui.financemanagement.receipts.SelectFeeReceiptListCtrl"
@@ -2400,6 +2402,7 @@
 		<property name="feeReceiptService" ref="feeReceiptService" />
 		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="engineExecution" ref="engineExecution" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<!--============ Receipt Cancellation Process Details ============== -->
@@ -2408,6 +2411,7 @@
 	<bean id="receiptCancellationListCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptCancellationListCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="receiptCancellationService" ref="receiptCancellationService" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean id="receiptCancellationDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptCancellationDialogCtrl"
@@ -3358,6 +3362,7 @@
 	<bean id="mandateDataImportCtrl" class="com.pennanttech.interfacebajaj.MandateDataImportCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="partnerBankModeConfigService" ref="partnerBankModeConfigService"/>
 	</bean>
 
 	<bean id="fileDownloadListCtrl" class="com.pennanttech.interfacebajaj.FileDownloadListCtrl" parent="basisListCtrl"
@@ -4438,7 +4443,10 @@
 
 
 	<bean id="finalValuationDialogCtrl" class="com.pennanttech.webui.verification.FinalValuationDialogCtrl" parent="basisCtrl"
-		scope="prototype" />
+		scope="prototype" >
+		<property name="collateralSetupService" ref="collateralSetupService" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+	</bean>
 
 	<!--============ Authorization Limit ============== -->
 
@@ -5010,7 +5018,7 @@
 		<property name="presentmentExtractService" ref="presentmentExtractService" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
 		<property name="eventPropertiesService" ref="eventPropertiesService" />
-		
+		<property name="partnerBankModeConfigService" ref="partnerBankModeConfigService"/>
 	</bean>
 
 	<!-- Presentment File Download -->
@@ -5548,10 +5556,9 @@
 	<!-- Restructure -->
 	<bean id="selectRestructureDialogCtrl" class="com.pennant.webui.finance.financemain.SelectRestructureDialogCtrl"
 		parent="basisCtrl" scope="prototype">
+		<property name="receiptService" ref="receiptService" />
 		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
-		<property name="receiptService" ref="receiptService" />
-		<property name="finReceiptHeaderDAO" ref="finReceiptHeaderDAO" />
 	</bean>
 
 	<bean id="restructureDialogCtrl" class="com.pennant.webui.finance.additional.RestructureDialogCtrl" parent="basisCtrl"
@@ -5633,5 +5640,26 @@
 	<!-- Account-Updater -->
 	<bean id="accountUpdaterCtrl" class="com.pennanttech.pff.core.account.page.AccountUpdaterCtrl" scope="prototype">
 		<property name="accountUpdater" ref="accountUpdater" />
+	</bean>
+	
+	<!--============ District Details ============== -->
+	
+	<bean id="districtListCtrl" class="com.pennant.webui.systemmasters.district.DistrictListCtrl" parent="basisListCtrl" scope="prototype">
+		<property name="districtService" ref= "districtService" />
+	</bean>
+	<bean id="districtDialogCtrl" class="com.pennant.webui.systemmasters.district.DistrictDialogCtrl" parent="basisCtrl" scope="prototype">
+		<property name="districtService" ref= "districtService" />
+   </bean>
+   
+   	<bean id="extendedFieldMaintenanceDialogCtrl" class="com.pennant.webui.finance.financemain.ExtendedFieldMaintenanceDialogCtrl" parent="basisCtrl"
+		scope="prototype">
+		<property name="extendedFieldMaintenanceService" ref="extendedFieldMaintenanceService" />
+	</bean>
+		
+	<!-- ExtendedFieldActivityLog -->
+
+	<bean id="extendedFieldActivityLog" class="com.pennant.component.extendedfields.ExtendedFieldActivityLog"
+		parent="basisCtrl">
+		<property name="activityLogService" ref="activityLogService" />
 	</bean>
 </beans> 

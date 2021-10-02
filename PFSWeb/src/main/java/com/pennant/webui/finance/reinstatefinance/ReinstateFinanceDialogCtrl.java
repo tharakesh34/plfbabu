@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,8 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -72,10 +75,12 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.WorkFlowUtil;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.core.EventManager.Notify;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
@@ -143,6 +148,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	int finFormatter = 2;
 	private FinanceWorkFlowService financeWorkFlowService;
 	private FinanceMain financeMain;
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
+	private String moduleDefiner = null;
 
 	/**
 	 * default constructor.<br>
@@ -228,6 +235,10 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 				this.setFinanceEnquiryListCtrl((FinanceEnquiryListCtrl) arguments.get("financeEnquiryListCtrl"));
 			}
 
+			if (arguments.containsKey("eventCode")) {
+				moduleDefiner = (String) arguments.get("eventCode");
+			}
+
 			/* set components visible dependent of the users rights */
 			doCheckRights();
 			// set Field Properties
@@ -310,7 +321,8 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * @throws XMLStreamException
 	 * @throws FileNotFoundException
 	 */
-	public void onClick$btnSave(Event event) throws InterruptedException, FileNotFoundException, XMLStreamException {
+	public void onClick$btnSave(Event event)
+			throws InterruptedException, FileNotFoundException, XMLStreamException, ParseException {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -374,6 +386,9 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
+		if (extendedFieldCtrl != null && reinstateFinance.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
 	}
 
 	/**
@@ -400,6 +415,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		logger.debug("Entering");
 		doSetFinanceData(aReinstateFinance.getFinID());
 		appendPostingDetailsTab();
+		appendExtendedFieldDetails(this.moduleDefiner);
 		this.recordStatus.setValue(aReinstateFinance.getRecordStatus());
 		logger.debug("Leaving");
 	}
@@ -489,6 +505,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+		aReinstateFinance.setFinEvent(this.moduleDefiner);
 
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -712,7 +729,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 	 * @throws XMLStreamException
 	 * @throws FileNotFoundException
 	 */
-	public void doSave() throws InterruptedException, FileNotFoundException, XMLStreamException {
+	public void doSave() throws InterruptedException, FileNotFoundException, XMLStreamException, ParseException {
 		logger.debug("Entering");
 
 		final ReinstateFinance aReinstateFinance = new ReinstateFinance();
@@ -727,6 +744,10 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		// Write the additional validations as per below example
 		// get the selected branch object from the list box
 		// Do data level validations here
+
+		if (aReinstateFinance.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
+			aReinstateFinance.setExtendedFieldRender(extendedFieldCtrl.save(true));
+		}
 
 		isNew = aReinstateFinance.isNewRecord();
 		String tranType = "";
@@ -756,7 +777,6 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 
 			if (doProcess(aReinstateFinance, tranType)) {
 				refreshList();
-				closeDialog();
 				// Customer Notification for Role Identification
 				if (StringUtils.isBlank(aReinstateFinance.getNextTaskId())) {
 					aReinstateFinance.setNextRoleCode("");
@@ -778,6 +798,12 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 							aReinstateFinance.getRecordStatus());
 					Clients.showNotification(msg, "info", null, null, -1);
 				}
+
+				if (extendedFieldCtrl != null && aReinstateFinance.getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
+				}
+
+				closeDialog();
 			}
 		} catch (Exception e) {
 			MessageUtil.showError(e);
@@ -998,6 +1024,28 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 		ReinstateFinance aReinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
+		if (aReinstateFinance.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = aReinstateFinance.getExtendedFieldRender();
+			details.setReference(aReinstateFinance.getFinReference());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(aReinstateFinance.getRecordStatus());
+			details.setRecordType(aReinstateFinance.getRecordType());
+			details.setVersion(aReinstateFinance.getVersion());
+			details.setWorkflowId(aReinstateFinance.getWorkflowId());
+			details.setTaskId(aReinstateFinance.getTaskId());
+			details.setNextTaskId(aReinstateFinance.getNextTaskId());
+			details.setRoleCode(aReinstateFinance.getRoleCode());
+			details.setNextRoleCode(aReinstateFinance.getNextRoleCode());
+			details.setNewRecord(aReinstateFinance.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(aReinstateFinance.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(aReinstateFinance.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
+
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
@@ -1147,9 +1195,11 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			this.finReference.setDescription("");
 			doSetFinanceData(details.getFinID());
 			getReinstateFinance().setFinPreApprovedRef(details.getFinPreApprovedRef());
+			getReinstateFinance().setFinCategory(details.getFinCategory());
 			// Workflow Details
 			setWorkflowDetails(details.getFinType());
 			getReinstateFinance().setWorkflowId(getWorkFlowId());
+			appendExtendedFieldDetails(this.moduleDefiner);
 			doLoadWorkFlow(this.reinstateFinance.isWorkflow(), this.reinstateFinance.getWorkflowId(),
 					this.reinstateFinance.getNextTaskId());
 			if (isWorkFlowEnabled()) {
@@ -1193,6 +1243,94 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving");
+	}
+
+	private void appendExtendedFieldDetails(String finEvent) {
+		logger.debug(Literal.ENTERING);
+
+		ExtendedFieldRender extendedFieldRender = null;
+
+		try {
+
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
+					ExtendedFieldConstants.MODULE_LOAN, reinstateFinance.getFinCategory(), finEvent);
+			if (extendedFieldHeader == null) {
+				return;
+			}
+
+			extendedFieldCtrl.setAppendActivityLog(true);
+			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
+			extendedFieldCtrl
+					.setDataLoadReq((PennantConstants.RCD_STATUS_APPROVED.equals(reinstateFinance.getRecordStatus())
+							|| reinstateFinance.getRecordStatus() == null) ? true : false);
+			long instructionUID = Long.MIN_VALUE;
+
+			if (CollectionUtils.isNotEmpty(reinstateFinance.getFinServiceInstructions())) {
+				if (reinstateFinance.getFinServiceInstruction().getInstructionUID() != Long.MIN_VALUE) {
+					instructionUID = reinstateFinance.getFinServiceInstruction().getInstructionUID();
+				}
+			}
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(reinstateFinance.getFinReference(),
+					instructionUID);
+
+			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			reinstateFinance.setExtendedFieldHeader(extendedFieldHeader);
+			reinstateFinance.setExtendedFieldRender(extendedFieldRender);
+
+			if (reinstateFinance.getBefImage() != null) {
+				reinstateFinance.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				reinstateFinance.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(reinstateFinance.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(false);
+			extendedFieldCtrl.setWindow(window_ReinstateFinanceDialog);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private ArrayList<Object> getFinBasicDetails() {
+		ArrayList<Object> arrayList = new ArrayList<>();
+		arrayList.add(0, reinstateFinance.getFinType());
+		arrayList.add(1, reinstateFinance.getFinCcy());
+
+		if (StringUtils.isNotEmpty(reinstateFinance.getScheduleMethod())) {
+			arrayList.add(2, reinstateFinance.getScheduleMethod());
+		} else {
+			arrayList.add(2, "");
+		}
+
+		arrayList.add(3, reinstateFinance.getFinReference());
+		arrayList.add(4, reinstateFinance.getProfitDaysBasis());
+		arrayList.add(5, reinstateFinance.getGrcPeriodEndDate());
+		arrayList.add(6, reinstateFinance.isAllowGrcPeriod());
+
+		if (StringUtils.isNotEmpty(reinstateFinance.getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+
+		arrayList.add(8, reinstateFinance.getFinCategory());
+		arrayList.add(9, reinstateFinance.getCustShrtName());
+		arrayList.add(10, reinstateFinance.isNewRecord());
+		arrayList.add(11, moduleDefiner);
+		return arrayList;
 	}
 
 	/**

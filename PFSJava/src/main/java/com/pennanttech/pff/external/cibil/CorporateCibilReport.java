@@ -20,9 +20,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.northconcepts.datapipeline.core.Record;
 import com.northconcepts.datapipeline.csv.CSVWriter;
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.MasterDefUtil;
 import com.pennant.app.util.MasterDefUtil.DocType;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerAddres;
@@ -32,7 +35,9 @@ import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.service.cibil.CIBILService;
+import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.Event;
 import com.pennanttech.dataengine.model.DataEngineStatus;
@@ -41,13 +46,13 @@ import com.pennanttech.dataengine.util.DataEngineUtil;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.eod.step.StepUtil;
 import com.pennanttech.pff.model.cibil.CibilFileInfo;
 import com.pennanttech.pff.model.cibil.CibilMemberDetail;
 
 public class CorporateCibilReport extends BasicDao<Object> {
 	protected static final Logger logger = LoggerFactory.getLogger(CorporateCibilReport.class);
-	public static DataEngineStatus EXTRACT_STATUS = StepUtil.CIBIL_EXTRACT_CORPORATE;
+	public static DataEngineStatus EXTRACT_STATUS = new DataEngineStatus("CIBIL_CORPORATE_EXTRACT_STATUS");
+
 	private static final String DATE_FORMAT = "ddMMyyyy";
 	private CibilFileInfo fileInfo;
 	private CibilMemberDetail memberDetails;
@@ -59,15 +64,40 @@ public class CorporateCibilReport extends BasicDao<Object> {
 	private long failedCount;
 	private long borrowerCount;
 	private long creditfacilityCount;
+	public static boolean executing;
 
 	@Autowired
 	private CIBILService cibilService;
+	private FinODDetailsDAO finODDetailsDAO;
 
 	public CorporateCibilReport() {
 		super();
 	}
 
 	public void generateReport() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		extractCibilData("");
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void generateReportBasedOnEntity() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		List<String> entities = cibilService.getEntities();
+		if (CollectionUtils.isEmpty(entities)) {
+			return;
+		}
+
+		for (String entity : entities) {
+			extractCibilData(entity);
+		}
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void extractCibilData(String entity) throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		initlize();
@@ -96,7 +126,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			cibilService.deleteDetails();
 
 			/* Prepare the data and store in CIBIL_CUSTOMER_EXTRACT table */
-			cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_CORP);
+			cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_CORP, entity);
 
 			totalRecords = cibilService.getotalRecords(PennantConstants.PFF_CUSTCTG_CORP);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
@@ -108,15 +138,24 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				new HeaderSegment(writer).write();
 			}
 
-			String sql = "select distinct custid, FinID, finreference from cibil_customer_extract where segment_type = :segment_type";
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
 			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_CORP);
-			jdbcTemplate.query(sql, parameterSource, new RowCallbackHandler() {
+
+			StringBuilder sql = new StringBuilder("Select");
+			sql.append(" distinct custid, FinID, finreference from cibil_customer_extract");
+			sql.append(" where segment_type = :segment_type");
+
+			if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+				sql.append(" and entity = :entity");
+				parameterSource.addValue("entity", entity);
+			}
+
+			jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					EXTRACT_STATUS.setProcessedRecords(processedRecords++);
-					long finID = rs.getLong("FinID");
 					long customerId = rs.getLong("custid");
+					long finID = rs.getLong("FinID");
 					String finreference = rs.getString("finreference");
 
 					CustomerDetails customer;
@@ -130,8 +169,8 @@ public class CorporateCibilReport extends BasicDao<Object> {
 									"Unable to fetch the details.");
 							return;
 						}
-
 						new BorrowerSegment(writer, customer, finreference).write();
+
 						borrowerCount++;
 
 						EXTRACT_STATUS.setSuccessRecords(successCount++);
@@ -393,7 +432,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 			}
 
 			new AddressSegment(writer, customerDetails).write();
-			new RelationshipSegment(writer, customerDetails).write();
+			new RelationshipSegment(writer, customerDetails, finReference).write();
 			new CreditFacilitySegment(writer, customerDetails, finReference).write();
 		}
 
@@ -445,243 +484,238 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		private CSVWriter writer;
 		CustomerDetails customerDetails;
 		Customer customer;
-		CustomerDocument custDocument;
+		List<CustomerDocument> custDocument;
 		List<CustomerAddres> customerAddr;
 		List<CustomerPhoneNumber> customerPhoneNumber;
+		private String finReference;
 
-		public RelationshipSegment(CSVWriter writer, CustomerDetails customerDetails) {
+		public RelationshipSegment(CSVWriter writer, CustomerDetails customerDetails, String finReference) {
 			super();
 			this.writer = writer;
 			this.customerDetails = customerDetails;
+			this.finReference = finReference;
 		}
 
 		public void write() throws Exception {
-			customer = customerDetails.getCustomer();
-			custDocument = customerDetails.getCustomerDocument();
-			customerAddr = customerDetails.getAddressList();
-			customerPhoneNumber = customerDetails.getCustomerPhoneNumList();
+			List<FinanceEnquiry> customerFinances = customerDetails.getCustomerFinances();
+			for (FinanceEnquiry financeEnquiry : customerFinances) {
+				if (StringUtils.equals(financeEnquiry.getFinReference(), finReference)) {
+					List<CustomerDetails> coApplicants = financeEnquiry.getFinCoApplicants();
+					for (CustomerDetails customerDetails : coApplicants) {
+						customer = customerDetails.getCustomer();
+						custDocument = customerDetails.getCustomerDocumentsList();
+						customerAddr = customerDetails.getAddressList();
+						customerPhoneNumber = customerDetails.getCustomerPhoneNumList();
 
-			Record record = new Record();
+						Record record = new Record();
 
-			/* Segment Identifier */
-			addField(record, "RS");
+						/* Segment Identifier */
+						addField(record, "RS");
 
-			/* Relationship DUNS Number */
-			addField(record, "999999999");
+						/* Relationship DUNS Number */
+						addField(record, "999999999");
 
-			/* Related Type */
-			int relatedType = 0;
+						/* Related Type */
+						int relatedType = 0;
 
-			if ("IN".equals(customer.getCustCOB())) {
-				relatedType = 1;
-			} else {
-				relatedType = 3;
+						if (!StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customer.getCustCtgCode())) {
+							relatedType = 1;
+						} else {
+							relatedType = 2;
+						}
+
+						addField(record, String.valueOf(relatedType));
+
+						/* Relationship */
+						String relationShip = cibilService.getCoAppRelation(customer.getCustCIF(),
+								financeEnquiry.getFinID());
+
+						addField(record, setCoAppRelationShip(relationShip));
+
+						/* Business Entity Name */
+						if (relatedType == 1 || relatedType == 3) {
+							addField(record, customer.getCustShrtName());
+						} else {
+							addField(record, "");
+						}
+
+						/* Business Category */
+						if (relatedType == 1 || relatedType == 3) {
+							addField(record, customer.getBusinesscategory());
+						} else {
+							addField(record, "07");
+						}
+
+						/* Business / Industry Type */
+						if (relatedType == 1 || relatedType == 3) {
+							if (customer.getCustIndustry() != null) {
+								addField(record, customer.getCustIndustry());
+							} else {
+								addField(record, "11");
+							}
+
+						} else {
+							addField(record, "11");
+						}
+
+						/* Individual Name prefix */
+						if (relatedType == 2 || relatedType == 4
+								|| customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
+							addField(record, customer.getCustSalutationCode());
+						} else {
+							addField(record, "");
+						}
+
+						/* Full Name */
+						StringBuffer name = new StringBuffer();
+
+						String firstName = StringUtils.trimToNull(customer.getCustFName());
+						String middleName = StringUtils.trimToNull(customer.getCustFName());
+						String lastName = StringUtils.trimToNull(customer.getCustFName());
+
+						if (firstName != null) {
+							name.append(firstName);
+						} else if (middleName != null) {
+							name.append(" ");
+							name.append(middleName);
+						} else if (lastName != null) {
+							name.append(" ");
+							name.append(lastName);
+						}
+
+						if (relatedType == 2 || relatedType == 4
+								|| customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
+							addField(record, name.toString());
+						} else {
+							addField(record, "");
+						}
+
+						/* Gender */
+
+						if (relatedType == 2 || relatedType == 4
+								|| customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
+							if ("M".equals(customer.getCustGenderCode())) {
+								addField(record, "01");
+							} else if ("F".equals(customer.getCustGenderCode())) {
+								addField(record, "02");
+							} else {
+								addField(record, "");
+
+							}
+						} else {
+							addField(record, "");
+
+						}
+
+						/* Company Registration Number */
+						if (relatedType == 1 || relatedType == 3) {
+							addField(record, customer.getCustTradeLicenceNum());
+
+						} else {
+							addField(record, "");
+
+						}
+
+						/* Date of Incorporation */
+
+						if (relatedType == 1 || relatedType == 3) {
+							addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
+						} else {
+							addField(record, "");
+
+						}
+
+						/* Date of Birth */
+						if (relatedType == 2 || relatedType == 4) {
+							addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
+						} else {
+							addField(record, "");
+
+						}
+
+						/* PAN */
+						addField(record, customer.getCustCRCPR());
+						for (CustomerDocument custDocument : custDocument) {
+
+							if (customer.getCustCtgCode().equals(PennantConstants.PFF_CUSTCTG_INDIV)) {
+								/* Voter ID */
+								if (custDocument.getCustDocCategory().equals("VOTERID")) {
+									addField(record, custDocument.getCustDocCategory());
+								}
+
+								/* Passport Number */
+								if (custDocument.getCustDocCategory().equals("02")) {
+									addField(record, custDocument.getCustDocCategory());
+								}
+
+								/* Driving Licence ID */
+								if (custDocument.getCustDocCategory().equals("DL")) {
+									addField(record, custDocument.getCustDocCategory());
+								}
+							} else {
+								/* Voter ID */
+								addField(record, "");
+								/* Passport Number */
+								addField(record, "");
+								/* Driving Licence ID */
+								addField(record, "");
+							}
+						}
+
+						/* UID */
+						addField(record, "");
+
+						/* Ration Card No */
+						addField(record, "");
+
+						/* CIN */
+						addField(record, "");
+
+						/* DIN */
+						addField(record, "");
+
+						/* TIN */
+						addField(record, "");
+
+						/* Service Tax */
+						addField(record, "");
+
+						/* Other ID */
+						addField(record, "");
+
+						/* Percentage of Control */
+						addField(record, "");
+
+						if (customerAddr == null || customerAddr.isEmpty()) {
+							throw new Exception("Address details are not available.");
+						}
+
+						for (CustomerAddres address : customerAddr) {
+							setAddressDetails(address, customerPhoneNumber, record, false);
+							writer.write(record);
+						}
+					}
+				}
 			}
+		}
 
-			addField(record, String.valueOf(relatedType));
-
-			/* Relationship */
-			String relationShip = customer.getCustRelation();
-			if (relationShip == null) {
+		private String setCoAppRelationShip(String relationShip) {
+			if (StringUtils.equalsIgnoreCase(relationShip, "DIRECTOR")) {
+				relationShip = "56";
+			} else if (StringUtils.equalsIgnoreCase(relationShip, "PROPRIETOR")) {
+				relationShip = "20";
+			} else if (StringUtils.equalsIgnoreCase(relationShip, "PARTNER")) {
+				relationShip = "30";
+			} else if (StringUtils.equalsIgnoreCase(relationShip, "TRUSTEE")) {
+				relationShip = "40";
+			} else if (StringUtils.equalsIgnoreCase(relationShip, "SHAREHOLDER")) {
+				relationShip = "10";
+			} else if (StringUtils.equalsIgnoreCase(relationShip, "SOCIETY MEMBER")) {
+				relationShip = "55";
+			} else {
 				relationShip = "60";
 			}
-			addField(record, relationShip);
-
-			/* Business Entity Name */
-			if (relatedType == 1 || relatedType == 3) {
-				addField(record, customer.getCustShrtName());
-			} else {
-				addField(record, "");
-			}
-
-			/* Business Category */
-			if (relatedType == 1 || relatedType == 3) {
-				addField(record, customer.getBusinesscategory());
-			} else {
-				addField(record, "07");
-			}
-
-			/* Business / Industry Type */
-			if (relatedType == 1 || relatedType == 3) {
-				if (customer.getCustIndustry() != null) {
-					addField(record, customer.getCustIndustry());
-				} else {
-					addField(record, "11");
-				}
-
-			} else {
-				addField(record, "11");
-			}
-
-			/* Individual Name prefix */
-			if (relatedType == 2 || relatedType == 4) {
-				addField(record, customer.getCustSalutationCode());
-			} else {
-				addField(record, "");
-			}
-
-			/* Full Name */
-			StringBuffer name = new StringBuffer();
-
-			String firstName = StringUtils.trimToNull(customer.getCustFName());
-			String middleName = StringUtils.trimToNull(customer.getCustFName());
-			String lastName = StringUtils.trimToNull(customer.getCustFName());
-
-			if (firstName != null) {
-				name.append(firstName);
-			} else if (middleName != null) {
-				name.append(" ");
-				name.append(middleName);
-			} else if (lastName != null) {
-				name.append(" ");
-				name.append(lastName);
-			}
-
-			if (relatedType == 2 || relatedType == 4) {
-				addField(record, name.toString());
-			} else {
-				addField(record, "");
-			}
-
-			/* Gender */
-
-			if (relatedType == 2 || relatedType == 4) {
-				if ("M".equals(customer.getCustGenderCode())) {
-					addField(record, "01");
-				}
-				if ("F".equals(customer.getCustGenderCode())) {
-					addField(record, "02");
-				} else {
-					addField(record, "");
-
-				}
-			} else {
-				addField(record, "");
-
-			}
-
-			/* Company Registration Number */
-			if (relatedType == 1 || relatedType == 3) {
-				addField(record, customer.getCustTradeLicenceNum());
-
-			} else {
-				addField(record, "");
-
-			}
-
-			/* Date of Incorporation */
-
-			if (relatedType == 1 || relatedType == 3) {
-				addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
-			} else {
-				addField(record, "");
-
-			}
-
-			/* Date of Birth */
-			if (relatedType == 2 || relatedType == 4) {
-				addField(record, DateUtil.format(customer.getCustDOB(), DATE_FORMAT));
-			} else {
-				addField(record, "");
-
-			}
-
-			/* PAN */
-			addField(record, customer.getCustCRCPR());
-
-			/* Voter ID */
-			addField(record, "");
-
-			/* Passport Number */
-			addField(record, "");
-
-			/* Driving Licence ID */
-			addField(record, "");
-			/* UID */
-			addField(record, "");
-
-			/* Ration Card No */
-			addField(record, "");
-
-			/* CIN */
-			addField(record, "");
-
-			/* DIN */
-			addField(record, "");
-
-			/* TIN */
-			addField(record, "");
-
-			/* Service Tax */
-			addField(record, "");
-
-			/* Other ID */
-			addField(record, "");
-
-			/* Percentage of Control */
-			addField(record, "");
-
-			if (customerAddr == null || customerAddr.isEmpty()) {
-				throw new Exception("Address details are not available.");
-			}
-
-			for (CustomerAddres address : customerAddr) {
-				/* Address Line 1 */
-				addField(record, address.getCustAddrHNbr());
-
-				/* Address Line 2 */
-				addField(record, address.getCustFlatNbr());
-
-				/* Address Line 3 */
-				addField(record, address.getCustAddrStreet());
-
-				/* City/Town When */
-				addField(record, address.getCustAddrCity());
-
-				/* District */
-				addField(record, address.getCustDistrict());
-
-				/* State/Union Territory */
-				addField(record, address.getCustAddrProvince());
-
-				/* pincode */
-				addField(record, address.getCustAddrZIP());
-
-				/* Country */
-				addField(record, "079");
-
-				CustomerPhoneNumber phoneNumber = null;
-				for (CustomerPhoneNumber custPhNo : customerPhoneNumber) {
-					if (address.getCustAddrPriority() == custPhNo.getPhoneTypePriority()) {
-						phoneNumber = custPhNo;
-						break;
-					}
-				}
-
-				if (phoneNumber != null) {
-					if (PennantConstants.PHONETYPE_MOBILE.equals(phoneNumber.getPhoneTypeCode())) {
-						/* Mobile Number(s) */
-						addField(record, phoneNumber.getPhoneNumber());
-
-						/* Telephone Area Code */
-						addField(record, phoneNumber.getPhoneNumber());
-					} else if ("FAX".equals(phoneNumber.getPhoneTypeCode())) {
-						/* Fax Area Code Fax Number(s) */
-						addField(record, phoneNumber.getPhoneNumber());
-
-						/* Fax Number(s) */
-						addField(record, phoneNumber.getPhoneNumber());
-					}
-				} else {
-					addField(record, "");
-					addField(record, "");
-					addField(record, "");
-					addField(record, "");
-					addField(record, "");
-					addField(record, "");
-				}
-				writer.write(record);
-			}
+			return relationShip;
 		}
 	}
 
@@ -847,35 +881,9 @@ public class CorporateCibilReport extends BasicDao<Object> {
 					addField(record, "");
 				}
 
-				BigDecimal amountOverdue = BigDecimal.ZERO;
-
-				if (odDays > 0) {
-					BigDecimal installmentDue = getAmount(loan.getInstalmentDue());
-					BigDecimal installmentPaid = getAmount(loan.getInstalmentPaid());
-					BigDecimal bounceDue = getAmount(loan.getBounceDue());
-					BigDecimal bouncePaid = getAmount(loan.getBouncePaid());
-					BigDecimal penaltyDue = getAmount(loan.getLatePaymentPenaltyDue());
-					BigDecimal penaltyPaid = getAmount(loan.getLatePaymentPenaltyPaid());
-					BigDecimal ExcessAmount = getAmount(loan.getExcessAmount());
-					BigDecimal ExcessAmountPaid = getAmount(loan.getExcessAmtPaid());
-
-					amountOverdue = (installmentDue.subtract(installmentPaid)).add(bounceDue.subtract(bouncePaid)
-							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid))));
-				} else {
-					amountOverdue = BigDecimal.ZERO;
-				}
-
-				if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
-					amountOverdue = BigDecimal.ZERO;
-				}
-
-				if (StringUtils.equals("C", closingstatus)) {
-					amountOverdue = BigDecimal.ZERO;
-				}
-
 				/* Amount Overdue / Limit Overdue */
-				if (amountOverdue.compareTo(BigDecimal.ZERO) > 0) {
-					addField(record, amountOverdue);
+				if (amountOverdue(loan).compareTo(BigDecimal.ZERO) > 0) {
+					addField(record, amountOverdue(loan));
 				} else {
 					addField(record, "0");
 				}
@@ -951,10 +959,11 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, "");
 
 				/* Installment Amount */
-				addField(record, "");
+				addField(record, getAmount(loan.getInstalmentPaid()));
 
 				/* Last Repaid Amount */
-				addField(record, "");
+				BigDecimal lastRepaidAmount = cibilService.getLastRepaidAmount(loan.getFinReference());
+				addField(record, PennantApplicationUtil.formateAmount(lastRepaidAmount, 2));
 
 				/* Account Status */
 				if (StringUtils.isEmpty(closingstatus)) {
@@ -995,10 +1004,21 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, "");
 
 				/* Asset based Security coverage */
-				addField(record, "");
+				if (CollectionUtils.isNotEmpty(loan.getCollateralSetupDetails())) {
+					addField(record, "01");
+				} else {
+					addField(record, "03");
+				}
 
 				/* Guarantee Coverage */
-				addField(record, "");
+				BigDecimal guarantorPercentage = cibilService.getGuarantorPercentage(loan.getFinID());
+				if (guarantorPercentage.compareTo(new BigDecimal(100)) == 0) {
+					addField(record, "01");
+				} else if (guarantorPercentage.compareTo(new BigDecimal(100)) < 0) {
+					addField(record, "02");
+				} else {
+					addField(record, "03");
+				}
 
 				/* Bank Remark Code */
 				addField(record, "");
@@ -1035,7 +1055,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				creditfacilityCount++;
 				try {
 					new GuarantorSegment(writer, loan.getFinGuarenters()).write();
-					// new SecuritySegment(writer, loan.getCollateralSetupDetails()).write();
+					new SecuritySegment(writer, loan.getCollateralSetupDetails()).write();
 					new DishonourOfChequeSegment(writer, loan.getChequeDetail()).write();
 				} catch (Exception e) {
 					logger.error(Literal.EXCEPTION, e);
@@ -1043,6 +1063,31 @@ public class CorporateCibilReport extends BasicDao<Object> {
 
 			}
 
+		}
+
+		private BigDecimal amountOverdue(FinanceEnquiry loan) {
+			BigDecimal amountOverdue = BigDecimal.ZERO;
+			FinanceSummary finSummary = new FinanceSummary();
+			FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(loan.getFinID());
+			if (finODDetails != null) {
+				finSummary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
+				finSummary.setFinODTotWaived(finODDetails.getTotWaived());
+				finSummary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
+				finSummary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
+			}
+			FinanceSummary summary = cibilService.getFinanceProfitDetails(loan.getFinID());
+			int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
+			amountOverdue = PennantApplicationUtil
+					.formateAmount(summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal()), formatter);
+
+			if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
+				amountOverdue = BigDecimal.ZERO;
+			}
+
+			if (StringUtils.equals("C", loan.getClosingStatus())) {
+				amountOverdue = BigDecimal.ZERO;
+			}
+			return amountOverdue;
 		}
 
 	}
@@ -1220,6 +1265,12 @@ public class CorporateCibilReport extends BasicDao<Object> {
 						taxIdNumber = document.getCustDocTitle();
 					} else if (StringUtils.equals(docCategory, MasterDefUtil.getDocCode(DocType.SERVICE_TAX_REG_NO))) {
 						serviceTax = document.getCustDocTitle();
+					} else if (StringUtils.equals(docCategory, "VOTERID")) {
+						voterId = document.getCustDocCategory();
+					} else if (StringUtils.equals(docCategory, "02")) {
+						passPortNumber = document.getCustDocCategory();
+					} else if (StringUtils.equals(docCategory, "DL")) {
+						drivingLicenceId = document.getCustDocCategory();
 					}
 				}
 
@@ -1350,10 +1401,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, securityType);
 
 				/* Security Classification */
-				addField(record, "01");
+				addField(record, "21");
 
 				/* Date of Valuation */
-				addField(record, "");
+				addField(record, "21");
 
 				/* Filler */
 				addField(record, "");
@@ -1397,10 +1448,10 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				addField(record, "1");
 
 				/* Cheque Issue Date */
-				addField(record, DateUtil.format(bounce.getChequeDate(), DATE_FORMAT));
+				addField(record, DateUtil.format(bounce.getChequeBounceDate(), DATE_FORMAT));
 
 				/* Reason for Dishonour */
-				addField(record, bounce.getChequeBounceReason());
+				addField(record, "01");
 
 				/* filler */
 				addField(record, "");
@@ -1445,7 +1496,7 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		successCount = 0;
 		failedCount = 0;
 
-		// EXTRACT_STATUS.reset();
+		EXTRACT_STATUS.reset();
 	}
 
 	private String updateRemarks() {
@@ -1544,18 +1595,21 @@ public class CorporateCibilReport extends BasicDao<Object> {
 				if (phoneType.startsWith("MOB") || phoneType.endsWith("MOB")) {
 					if (mob.length() > 0) {
 						mob.append(",");
+						mob.append(phone.getPhoneNumber());
 					} else {
 						mob.append(phone.getPhoneNumber());
 					}
 				} else if ("FAX".equals(phoneType) || "OFFFAX".equals(phoneType)) {
 					if (fax.length() > 0) {
 						fax.append(",");
+						fax.append(phone.getPhoneNumber());
 					} else {
 						fax.append(phone.getPhoneNumber());
 					}
 				} else if ("OFFICE".equals(phoneType) || "HOME".equals(phoneType)) {
 					if (telephone.length() > 0) {
 						telephone.append(",");
+						telephone.append(phone.getPhoneNumber());
 					} else {
 						telephone.append(phone.getPhoneNumber());
 					}
@@ -1602,26 +1656,23 @@ public class CorporateCibilReport extends BasicDao<Object> {
 	}
 
 	private BigDecimal currentBalance(FinanceEnquiry customerFinance) {
-		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
 		BigDecimal currentBalance = BigDecimal.ZERO;
 		String closingstatus = StringUtils.trimToEmpty(customerFinance.getClosingStatus());
-		if (odDays > 0) {
-			BigDecimal futureSchedulePrincipal = getAmount(customerFinance.getFutureSchedulePrin());
-			BigDecimal installmentDue = getAmount(customerFinance.getInstalmentDue());
-			BigDecimal installmentPaid = getAmount(customerFinance.getInstalmentPaid());
-			BigDecimal bounceDue = getAmount(customerFinance.getBounceDue());
-			BigDecimal bouncePaid = getAmount(customerFinance.getBouncePaid());
-			BigDecimal penaltyDue = getAmount(customerFinance.getLatePaymentPenaltyDue());
-			BigDecimal penaltyPaid = getAmount(customerFinance.getLatePaymentPenaltyPaid());
-			BigDecimal ExcessAmount = getAmount(customerFinance.getExcessAmount());
-			BigDecimal ExcessAmountPaid = getAmount(customerFinance.getExcessAmtPaid());
-			currentBalance = futureSchedulePrincipal
-					.add(installmentDue.subtract(installmentPaid).add(bounceDue.subtract(bouncePaid)
-							.add(penaltyDue.subtract(penaltyPaid).subtract(ExcessAmount.subtract(ExcessAmountPaid)))));
-
-		} else {
-			currentBalance = getAmount(customerFinance.getFutureSchedulePrin());
+		FinanceSummary finSummary = new FinanceSummary();
+		FinODDetails finODDetails = getFinODDetailsDAO().getFinODSummary(customerFinance.getFinID());
+		if (finODDetails != null) {
+			finSummary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
+			finSummary.setFinODTotWaived(finODDetails.getTotWaived());
+			finSummary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
+			finSummary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
 		}
+		FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinID());
+		int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
+
+		BigDecimal principalOutstanding = summary.getOutStandPrincipal().subtract(summary.getTotalCpz());
+		currentBalance = PennantApplicationUtil.formateAmount(
+				principalOutstanding.add(summary.getTotalOverDue()).add(finSummary.getFinODTotPenaltyBal()), formatter);
+
 		if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
 			currentBalance = BigDecimal.ZERO;
 		}
@@ -1631,4 +1682,14 @@ public class CorporateCibilReport extends BasicDao<Object> {
 		}
 		return currentBalance;
 	}
+
+	public FinODDetailsDAO getFinODDetailsDAO() {
+		return finODDetailsDAO;
+	}
+
+	@Autowired
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
 }

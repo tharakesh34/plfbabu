@@ -824,17 +824,14 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 	}
 
 	@Override
-	public Long getLinkedTranIdByReceipt(long receiptId, String type) {
-		String sql = "Select LinkedTranId From FinRepayDetails Where ReceiptID = ?";
+	public List<Long> getLinkedTranIdByReceipt(long receiptId, String type) {
+		String sql = "Select LinkedTranId from FinRepayDetails Where ReceiptID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			return this.jdbcOperations.queryForObject(sql, Long.class, receiptId);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
-		return null;
+		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, receiptId), (rs, i) -> {
+			return rs.getLong(1);
+		});
 	}
 
 	@Override
@@ -844,6 +841,20 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		logger.debug(Literal.SQL + sql);
 
 		return jdbcOperations.queryForObject(sql, Date.class, finID);
+	}
+
+	@Override
+	public Date getFinSchdDateByReceiptId(long receiptid, String type) {
+		String sql = "Select Min(FinSchdDate) from FinRepayDetails Where ReceiptId = ? and FinTotSchdPaid > ?";
+
+		logger.debug(Literal.SQL + sql);
+		try {
+			return jdbcOperations.queryForObject(sql, Date.class, receiptid, 0);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
 	private StringBuilder getRepayListQuery(boolean isRpyCancelProc, String type) {

@@ -21,6 +21,8 @@ import com.pennant.backend.dao.rulefactory.RuleDAO;
 import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.rmtmasters.GSTRate;
@@ -771,9 +773,9 @@ public class GSTCalculator {
 		BigDecimal taxableAmt = detail.getAdviseAmount().add(detail.getWaivedAmount());
 
 		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-			tas = GSTCalculator.getExclusiveGST(taxableAmt, gstPercentages);
+			tas = getExclusiveGST(taxableAmt, gstPercentages);
 		} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-			tas = GSTCalculator.getInclusiveGST(taxableAmt, gstPercentages);
+			tas = getInclusiveGST(taxableAmt, gstPercentages);
 		}
 
 		BigDecimal diffGST = BigDecimal.ZERO;
@@ -791,7 +793,7 @@ public class GSTCalculator {
 		}
 
 		BigDecimal waivedTaxableAmt = detail.getWaivedAmount().add(detail.getWaiverGST());
-		TaxAmountSplit paidGSTSplit = GSTCalculator.getInclusiveGST(waivedTaxableAmt, gstPercentages);
+		TaxAmountSplit paidGSTSplit = getInclusiveGST(waivedTaxableAmt, gstPercentages);
 
 		BigDecimal prvCGst = paidGSTSplit.getcGST();
 		BigDecimal prvSGst = paidGSTSplit.getsGST();
@@ -810,5 +812,111 @@ public class GSTCalculator {
 		taxSplit.setiGST(taxSplit.getiGST().subtract(diffIGST));
 		taxSplit.setuGST(taxSplit.getuGST().subtract(diffUGST));
 		taxSplit.setCess(taxSplit.getCess().subtract(diffCESS));
+	}
+
+	public static TaxAmountSplit calculateGST(FinanceDetail fd, String taxType, BigDecimal paidAmount) {
+		return calculateGST(fd, taxType, paidAmount, BigDecimal.ZERO);
+	}
+
+	public static TaxAmountSplit calculateGST(FinanceDetail fd, String taxType, BigDecimal paidAmount,
+			BigDecimal waivedAmount) {
+
+		if (StringUtils.isBlank(taxType)) {
+			return new TaxAmountSplit();
+		}
+
+		Map<String, BigDecimal> gstPercentages = fd.getGstPercentages();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
+		if (gstPercentages.isEmpty()) {
+			Map<String, Object> dataMap = getGSTDataMap(fm.getFinID());
+			gstPercentages = getTaxPercentages(dataMap, fm.getFinReference());
+			fd.setGstPercentages(gstPercentages);
+		}
+
+		return calculateGST(gstPercentages, taxType, paidAmount, waivedAmount);
+	}
+
+	public static TaxAmountSplit calculateGST(long finID, String finCcy, String taxType, BigDecimal paidAmount) {
+		return calculateGST(finID, finCcy, taxType, paidAmount, BigDecimal.ZERO);
+	}
+
+	public static TaxAmountSplit calculateGST(long finID, String finCcy, String taxType, BigDecimal paidAmount,
+			BigDecimal waivedAmount) {
+
+		if (StringUtils.isBlank(taxType)) {
+			return new TaxAmountSplit();
+		}
+
+		Map<String, Object> dataMap = getGSTDataMap(finID);
+		Map<String, BigDecimal> gstPercentages = getTaxPercentages(dataMap, finCcy);
+
+		return calculateGST(gstPercentages, taxType, paidAmount, waivedAmount);
+	}
+
+	private static TaxAmountSplit calculateGST(Map<String, BigDecimal> gstPercentages, String taxType,
+			BigDecimal paidAmount, BigDecimal waivedAmount) {
+
+		if (paidAmount.compareTo(BigDecimal.ZERO) == 0) {
+			return new TaxAmountSplit();
+		}
+
+		if (gstPercentages.get(RuleConstants.CODE_TOTAL_GST) == BigDecimal.ZERO) {
+			return new TaxAmountSplit();
+		}
+
+		if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
+			return getInclusiveGST(gstPercentages, paidAmount, waivedAmount);
+		} else if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+			return getExclusiveGST(gstPercentages, paidAmount, waivedAmount);
+		}
+
+		return new TaxAmountSplit();
+	}
+
+	private static TaxAmountSplit getExclusiveGST(Map<String, BigDecimal> taxPercMap, BigDecimal paidAmount,
+			BigDecimal waivedAmount) {
+		BigDecimal taxableAmount = paidAmount.subtract(waivedAmount);
+
+		TaxAmountSplit taxSplit = new TaxAmountSplit();
+
+		taxSplit.setAmount(paidAmount);
+		taxSplit.setWaivedAmount(waivedAmount);
+		taxSplit.setcGST(getExclusiveTax(taxableAmount, taxPercMap.get(RuleConstants.CODE_CGST)));
+		taxSplit.setsGST(getExclusiveTax(taxableAmount, taxPercMap.get(RuleConstants.CODE_SGST)));
+		taxSplit.setuGST(getExclusiveTax(taxableAmount, taxPercMap.get(RuleConstants.CODE_UGST)));
+		taxSplit.setiGST(getExclusiveTax(taxableAmount, taxPercMap.get(RuleConstants.CODE_IGST)));
+		taxSplit.setCess(getExclusiveTax(taxableAmount, taxPercMap.get(RuleConstants.CODE_CESS)));
+		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST())
+				.add(taxSplit.getCess()));
+		taxSplit.setNetAmount(taxSplit.getAmount().add(taxSplit.gettGST()));
+
+		return taxSplit;
+	}
+
+	private static TaxAmountSplit getInclusiveGST(Map<String, BigDecimal> taxPercMap, BigDecimal paidAmount,
+			BigDecimal waivedAmount) {
+		BigDecimal taxableAmount = paidAmount.subtract(waivedAmount);
+		BigDecimal netAmount = getInclusiveAmount(taxableAmount, taxPercMap.get(RuleConstants.CODE_TOTAL_GST));
+
+		TaxAmountSplit taxSplit = new TaxAmountSplit();
+
+		taxSplit.setAmount(paidAmount);
+		taxSplit.setWaivedAmount(waivedAmount);
+		taxSplit.setcGST(getExclusiveTax(netAmount, taxPercMap.get(RuleConstants.CODE_CGST)));
+		taxSplit.setsGST(getExclusiveTax(netAmount, taxPercMap.get(RuleConstants.CODE_SGST)));
+		taxSplit.setuGST(getExclusiveTax(netAmount, taxPercMap.get(RuleConstants.CODE_UGST)));
+		taxSplit.setiGST(getExclusiveTax(netAmount, taxPercMap.get(RuleConstants.CODE_IGST)));
+		taxSplit.setCess(getExclusiveTax(netAmount, taxPercMap.get(RuleConstants.CODE_CESS)));
+		taxSplit.settGST(taxSplit.getcGST().add(taxSplit.getsGST()).add(taxSplit.getuGST()).add(taxSplit.getiGST())
+				.add(taxSplit.getCess()));
+		taxSplit.setNetAmount(netAmount.add(taxSplit.gettGST()));
+
+		if (netAmount.add(taxSplit.gettGST()).compareTo(taxableAmount) != 0) {
+			BigDecimal diff = taxableAmount.subtract(netAmount.add(taxSplit.gettGST()));
+			taxSplit.setNetAmount(taxSplit.getNetAmount().add(diff));
+		}
+
+		return taxSplit;
 	}
 }

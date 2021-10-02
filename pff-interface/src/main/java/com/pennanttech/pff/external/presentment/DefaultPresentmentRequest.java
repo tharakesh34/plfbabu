@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.pennant.app.constants.DataEngineConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -124,18 +125,22 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			Map<String, String> map = getRequiredPresentmentHeaderDetails(presentmentId);
 			String paymentMode = map.get("MANDATETYPE");
 			String partnerBankCode = map.get("PARTNERBANKCODE");
-			String paymentModeConfigName = "PRESENTMENT_REQUEST_";
+			String partnerBankId = map.get("PARTNERBANKID");
+			String smtPaymentModeConfig = getConfigName(paymentMode, Long.valueOf(partnerBankId));
 
-			if (map.containsKey("MANDATETYPE")) {
-				paymentModeConfigName = paymentModeConfigName.concat(map.get("MANDATETYPE"));
-				if (map.containsKey("EMANDATESOURCE")) {
-					if (StringUtils.trimToNull(map.get("EMANDATESOURCE")) != null) {
-						paymentModeConfigName = paymentModeConfigName.concat("_" + map.get("EMANDATESOURCE"));
+			if (smtPaymentModeConfig == null) {
+				String paymentModeConfigName = "PRESENTMENT_REQUEST_";
+				if (map.containsKey("MANDATETYPE")) {
+					paymentModeConfigName = paymentModeConfigName.concat(map.get("MANDATETYPE"));
+					if (map.containsKey("EMANDATESOURCE")) {
+						if (StringUtils.trimToNull(map.get("EMANDATESOURCE")) != null) {
+							paymentModeConfigName = paymentModeConfigName.concat("_" + map.get("EMANDATESOURCE"));
+						}
 					}
 				}
-			}
 
-			String smtPaymentModeConfig = SysParamUtil.getValueAsString(paymentModeConfigName);
+				smtPaymentModeConfig = SysParamUtil.getValueAsString(paymentModeConfigName);
+			}
 
 			DataEngineExport dataEngine = null;
 			dataEngine = new DataEngineExport(dataSource, 1000, App.DATABASE.name(), true,
@@ -144,11 +149,13 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 			filterMap.put("JOB_ID", presentmentId);
 			dataEngine.setFilterMap(filterMap);
 
-			Map<String, Object> parameterMap = new HashMap<>();
 			if (ImplementationConstants.GROUP_BATCH_BY_PARTNERBANK) {
+				Map<String, Object> parameterMap = new HashMap<>();
 				parameterMap.put("SEQ_FILE", partnerBankCode);
+				dataEngine.setParameterMap(parameterMap);
 			}
 
+			Map<String, Object> parameterMap = new HashMap<>();
 			parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 			parameterMap.put("DepositeDate", DateUtil.format(getScheduleDate(presentmentId), "dd-MMM-yy"));
 			parameterMap.put("despositslipid", presentmentRef);
@@ -584,35 +591,39 @@ public class DefaultPresentmentRequest extends AbstractInterface implements Pres
 
 		Map<String, String> map = new HashMap<>();
 		StringBuilder sql = new StringBuilder();
-		MapSqlParameterSource source = new MapSqlParameterSource();
-		source.addValue("ID", presentmentId);
 
-		sql.append(" SELECT MANDATETYPE, PARTNERBANKCODE, EMANDATESOURCE");
+		sql.append(" SELECT MANDATETYPE, PARTNERBANKCODE, EMANDATESOURCE, PH.PARTNERBANKID");
 		sql.append(" FROM PRESENTMENTHEADER ");
 		sql.append(" PH LEFT JOIN PARTNERBANKS PB ON PH.PARTNERBANKID = PB.PARTNERBANKID");
-		sql.append(" WHERE ID = :ID");
+		sql.append(" WHERE ID = ?");
 
-		logger.trace("selectSql: " + sql.toString());
+		logger.trace(Literal.SQL + sql.toString());
 
-		try {
-			this.namedJdbcTemplate.query(sql.toString(), source, new RowMapper<Map<String, String>>() {
+		this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 
-				@Override
-				public Map<String, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
-					map.put("MANDATETYPE", rs.getString("MANDATETYPE"));
-					map.put("PARTNERBANKCODE", rs.getString("PARTNERBANKCODE"));
-					map.put("EMANDATESOURCE", rs.getString("EMANDATESOURCE"));
+			map.put("MANDATETYPE", rs.getString("MANDATETYPE"));
+			map.put("PARTNERBANKCODE", rs.getString("PARTNERBANKCODE"));
+			map.put("EMANDATESOURCE", rs.getString("EMANDATESOURCE"));
+			map.put("PARTNERBANKID", rs.getString("PARTNERBANKID"));
 
-					return map;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
+			return map;
+		}, presentmentId);
 
 		return map;
+	}
+
+	public String getConfigName(String mode, long partnerBank) {
+		String sql = "Select Config_Name from Partnerbanks_Data_Engine Where PayMode = ? and PartnerBankId= ? and Type = ? and RequestType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql, String.class, mode, partnerBank,
+					DataEngineConstants.PRESENTMENT, DataEngineConstants.EXPORT);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+		return null;
 	}
 
 	// For Presentment PDC total amount

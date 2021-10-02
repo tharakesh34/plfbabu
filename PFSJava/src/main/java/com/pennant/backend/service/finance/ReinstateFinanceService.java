@@ -28,6 +28,7 @@ package com.pennant.backend.service.finance;
 import java.util.List;
 
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 
@@ -59,4 +60,5 @@ public interface ReinstateFinanceService {
 
 	public List<ReasonDetailsLog> getResonDetailsLog(String reference);
 
+	List<FinServiceInstruction> getFinServiceInstructions(long finID, String type, String finEvent);
 }

@@ -117,7 +117,10 @@ public class ReceiptUploadThreadProcess implements Runnable {
 			logger.error(Literal.EXCEPTION, e);
 			transactionManager.rollback(transactionStatus);
 
-			String error = StringUtils.trimToEmpty(e.getMessage());
+			String error = e.getMessage();
+
+			if (e.getMessage() == null)
+				error = "Unable to Process Request, Reason:" + e;
 
 			if (error.length() > 1999) {
 				error = error.substring(0, 1999);

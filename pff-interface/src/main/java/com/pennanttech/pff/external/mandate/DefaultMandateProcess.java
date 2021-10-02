@@ -60,6 +60,8 @@ import com.jcraft.jsch.ChannelSftp.LsEntry;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.pennant.app.constants.DataEngineConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -122,12 +124,18 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		String userName = mandateData.getUserName();
 		String selectedBranchs = mandateData.getSelectedBranchs();
 		String entity = mandateData.getEntity();
+		String type = mandateData.getType();
+		long partnerBankId = mandateData.getPartnerBankId();
 
 		Map<String, Object> filterMap = new HashMap<>();
 		Map<String, Object> parameterMap = new HashMap<>();
 		filterMap.put("PROCESS_ID", processId);
 		filterMap.put("FROMDATE", fromDate);
 		filterMap.put("TODATE", toDate);
+		filterMap.put("MANDATETYPE", type);
+		if (partnerBankId > 0) {
+			filterMap.put("PARTNERBANKID", partnerBankId);
+		}
 
 		if (StringUtils.isNotBlank(selectedBranchs)) {
 			filterMap.put("BRANCHCODE", Arrays.asList(selectedBranchs.split(",")));
@@ -137,6 +145,8 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		parameterMap.put("ENTITY_CODE", entity);
 		parameterMap.put("ddMMyy", DateUtil.getSysDate("ddMMyy"));
 		parameterMap.put("MMddyyyy", DateUtil.getSysDate("MMddyyyyHHmmss"));
+		parameterMap.put("Remarks", mandateData.getRemarks());
+		parameterMap.put("ROW_NUM", 0);
 
 		addCustomParameter(parameterMap);
 
@@ -161,11 +171,35 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		dataEngine.setUserName(userName);
 		dataEngine.setValueDate(SysParamUtil.getAppValueDate());
 		try {
-			return dataEngine.exportData("MANDATES_EXPORT");
+			String configName = null;
+
+			if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+				configName = getConfigName(filterMap.get("MANDATETYPE").toString(),
+						Long.valueOf(filterMap.get("PARTNERBANKID").toString()));
+			}
+			if (configName == null) {
+				configName = "MANDATES_EXPORT";
+			}
+
+			return dataEngine.exportData(configName);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new AppException("MANDATES_EXPORT", e);
 		}
+	}
+
+	public String getConfigName(String mode, long partnerBank) {
+		String sql = "Select Config_Name from Partnerbanks_Data_Engine Where PayMode = ? and PartnerBankId= ? and Type = ? and RequestType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return namedJdbcTemplate.getJdbcOperations().queryForObject(sql, String.class, mode, partnerBank,
+					DataEngineConstants.MANDATE, DataEngineConstants.EXPORT);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
 	public void processAutoResponseFiles(String job) {

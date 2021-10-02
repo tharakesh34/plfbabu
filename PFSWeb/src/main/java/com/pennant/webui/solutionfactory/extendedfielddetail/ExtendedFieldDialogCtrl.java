@@ -2,45 +2,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldDialogCtrl.java											*                           
- *																							* 	
- * Author      		:  PENNANT TECHONOLOGIES              									*	
- *                                                                  						*
- * Creation Date    :  28-12-2011    														*
- *                                                                  						*
- * Modified Date    :  28-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-12-2011 * *
+ * Modified Date : 28-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-03-2011       PENNANT TECHONOLOGIES	 0.1                            				* 
- *                                                                                          * 
- *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-03-2011 PENNANT TECHONOLOGIES 0.1 * * * 08-05-2019 Srinivasa Varma 0.2 Development Iteam 81 * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.solutionfactory.extendedfielddetail;
 
 import java.io.Serializable;
@@ -189,7 +171,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				} catch (Exception e) {
 					logger.error("Exception: ", e);
 				}
-				//this.extendedFieldHeader.setWorkflowId(0);
+				// this.extendedFieldHeader.setWorkflowId(0);
 				if (arguments.containsKey("newRecord")) {
 					setNewRecord(true);
 				} else {
@@ -299,8 +281,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -323,8 +304,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aExtendedFieldDetail
-	 *            ExtendedFieldDetail
+	 * @param aExtendedFieldDetail ExtendedFieldDetail
 	 */
 	public void doWriteBeanToComponents(ExtendedFieldHeader aExtendedFieldHeader) {
 		logger.debug("Entering");
@@ -359,7 +339,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 				if (StringUtils.equals(aExtendedFieldHeader.getModuleName(), CollateralConstants.MODULE_NAME)
 						|| StringUtils.equals(aExtendedFieldHeader.getModuleName(),
 								AssetConstants.EXTENDEDFIELDS_MODULE)) {
-					//TODO: Modify dynamic from static
+					// TODO: Modify dynamic from static
 
 					ExtendedFieldDetail unitCount = new ExtendedFieldDetail();
 					unitCount.setFieldName("NOOFUNITS");
@@ -433,7 +413,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			wve.add(we);
 		}
 
-		//adding the list to bean
+		// adding the list to bean
 		aExtendedFieldHeader.setExtendedFieldDetails(this.extendedFieldDetailsList);
 		doRemoveValidation();
 		doRemoveLOVValidation();
@@ -542,7 +522,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		}
 
 		this.tabHeading.setReadonly(isReadOnly("ExtendedFieldDialog_tabHeading"));
-		//TODO
+		// TODO
 		/*
 		 * this.radio_column1.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
 		 * this.radio_column2.setDisabled(isReadOnly("ExtendedFieldDialog_tabHeading"));
@@ -650,10 +630,11 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		map.put("newRecord", true);
 		map.put("maxSeqNo", maxSeqNo);
 		map.put("roleCode", getRole());
-		//### 08-05-2018 Start Development Iteam 81
+		// ### 08-05-2018 Start Development Iteam 81
 		map.put("moduleDesc", getExtendedFieldHeader().getModuleName());
+		map.put("module", moduleDesc.getValue());
 		map.put("subModuleDesc", getExtendedFieldHeader().getSubModuleName());
-		//### 08-05-2018 End Development Iteam 81
+		// ### 08-05-2018 End Development Iteam 81
 		try {
 			Executions.createComponents(
 					"/WEB-INF/pages/SolutionFactory/ExtendedFieldDetail/ExtendedFieldDetailDialog.zul",
@@ -680,10 +661,11 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			map.put("roleCode", getRole());
 			map.put("firstTaskRole", this.firstTaskRole);
 			map.put("layoutDesign", numberOfColumns.getSelectedItem().getValue());
-			//### 08-05-2018 Start Development Iteam 81
+			// ### 08-05-2018 Start Development Iteam 81
 			map.put("moduleDesc", getExtendedFieldHeader().getModuleName());
+			map.put("module", moduleDesc.getValue());
 			map.put("subModuleDesc", getExtendedFieldHeader().getSubModuleName());
-			//### 08-05-2018 End Development Iteam 81
+			// ### 08-05-2018 End Development Iteam 81
 			// call the zul-file with the parameters packed in a map
 
 			if (!extendedFieldDetail.isVisible()) {
@@ -703,7 +685,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 	}
 
 	// ******************************************************//
-	// *********        Field Detail List		   **********//
+	// ********* Field Detail List **********//
 	// ******************************************************//
 
 	/**
@@ -751,7 +733,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 		logger.debug("Leaving");
 	}
 
-	//Getting the table name from map
+	// Getting the table name from map
 	private void setTableName(List<ExtendedFieldDetail> extendedFieldDetails) {
 		for (ExtendedFieldDetail efd : extendedFieldDetails) {
 			if (efd.getLovDescModuleName() == null) {
@@ -774,7 +756,7 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 						.concat(PennantStaticListUtil.getFinEventCode(getExtendedFieldHeader().getEvent()));
 			}
 			tableName = tableName.concat("_ED");
-			efd.setLovDescTableName(tableName);//PennantStaticListUtil.getModuleName(efd)
+			efd.setLovDescTableName(tableName);// PennantStaticListUtil.getModuleName(efd)
 		}
 	}
 
@@ -871,6 +853,13 @@ public class ExtendedFieldDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetail> {
 			lc = new Listcell(detail.getRecordStatus());
 			lc.setParent(item);
 			lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));
+			lc.setParent(item);
+
+			lc = new Listcell();
+			Checkbox maintAlwd = new Checkbox();
+			maintAlwd.setChecked(detail.isMaintAlwd());
+			maintAlwd.setDisabled(true);
+			lc.appendChild(maintAlwd);
 			lc.setParent(item);
 
 			item.setAttribute("data", detail);

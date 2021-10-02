@@ -16,12 +16,12 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RescheduleLog;
+import com.pennant.backend.model.finance.RescheduleLogHeader;
 import com.pennant.backend.service.reports.RescheduleReportGenerationService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
-import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class RescheduleReportGenerationServiceImpl implements RescheduleReportGenerationService {
 	private static final Logger logger = LogManager.getLogger(RescheduleReportGenerationServiceImpl.class);
@@ -47,10 +47,6 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 			FinServiceInstruction instruction = getServiceInstruction(rescheduleLog, finLogEntryDetail.getLogKey());
 
 			if (instruction.getLogKey() == null) {
-				continue;
-			}
-
-			if (!FinServiceEvent.RESCHD.equals(instruction.getFinEvent())) {
 				continue;
 			}
 
@@ -211,6 +207,18 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 		RescheduleLog reschedulement = this.rescheduleReportGenerationDAO.getFinBasicDetails(finreference);
 		reschedulementLog.setFinBranch(reschedulement.getFinBranch());
 		reschedulementLog.setCustName(reschedulement.getCustName());
+	}
+
+	@Override
+	public List<RescheduleLogHeader> getReschedulementList(Date fromDate, Date toDate) {
+		List<RescheduleLogHeader> logHeaderList = rescheduleReportGenerationDAO.getFinBasicDetails();
+
+		for (RescheduleLogHeader reSchdLog : logHeaderList) {
+			String finReference = reSchdLog.getFinReference();
+			reSchdLog.setRescheduleLogList(getReschedulementList(finReference, fromDate, toDate));
+		}
+
+		return logHeaderList;
 	}
 
 	public void setRescheduleReportGenerationDAO(ReschedulReportGenerationDAO rescheduleReportGenerationDAO) {

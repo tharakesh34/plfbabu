@@ -6326,14 +6326,6 @@ public class RetailWIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
 							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") }, new String[] {}));
 				}
-
-				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-						FinanceConstants.STEPTYPE_PRIBAL)
-						&& StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-					errorList.add(new ErrorDetail("StepFinance", "30555",
-							new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
-				}
-
 			}
 
 			// FinanceMain Details Tab ---> 2. Grace Period Details

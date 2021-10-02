@@ -48,6 +48,7 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -518,7 +519,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	// Extended fields
 	protected ExtendedFieldCtrl extendedFieldCtrl = null;
-	private String pdfExtTabPanelId;
 
 	// Bean Setters by application Context
 	protected FinanceDetailService financeDetailService;
@@ -1756,8 +1756,9 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * This method is for append extended field details
 	 */
 	protected void appendExtendedFieldDetails(FinanceDetail aFinanceDetail, String finEvent) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
+		ExtendedFieldRender extendedFieldRender = null;
 		try {
 			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
 			if (aFinanceMain == null) {
@@ -1773,10 +1774,25 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			if (extendedFieldHeader == null) {
 				return;
 			}
-			ExtendedFieldRender extendedFieldRender = extendedFieldCtrl
-					.getExtendedFieldRender(aFinanceMain.getFinReference());
+
+			extendedFieldCtrl.setAppendActivityLog(true);
+			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
+			extendedFieldCtrl
+					.setDataLoadReq((PennantConstants.RCD_STATUS_APPROVED.equals(aFinanceMain.getRecordStatus())
+							|| aFinanceMain.getRecordStatus() == null) ? true : false);
+
+			long instructionUID = Long.MIN_VALUE;
+			if (CollectionUtils.isNotEmpty(aFinanceDetail.getFinScheduleData().getFinServiceInstructions())) {
+				if (aFinanceDetail.getFinScheduleData().getFinServiceInstruction()
+						.getInstructionUID() != Long.MIN_VALUE) {
+					instructionUID = aFinanceDetail.getFinScheduleData().getFinServiceInstruction().getInstructionUID();
+				}
+			}
+
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(aFinanceMain.getFinReference(),
+					instructionUID);
 			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
-			setPdfExtTabPanelId("TabPanel" + ExtendedFieldConstants.MODULE_LOAN + aFinanceMain.getFinCategory());
+
 			aFinanceDetail.setExtendedFieldHeader(extendedFieldHeader);
 			aFinanceDetail.setExtendedFieldRender(extendedFieldRender);
 
@@ -1786,18 +1802,18 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
-			extendedFieldCtrl.setReadOnly(/* isReadOnly("CustomerDialog_custFirstName") */false);
+			extendedFieldCtrl.setReadOnly(false);
 			extendedFieldCtrl.setWindow(getMainWindow());
 			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
-			// for getting rights in ExtendeFieldGenerator these two fields required.
-			/*
-			 * extendedFieldCtrl.setUserWorkspace(getUserWorkspace()); extendedFieldCtrl.setUserRole(getRole());
-			 */
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
 			extendedFieldCtrl.render();
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
 		}
-		logger.debug("Leaving");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void onSelectCollateralTab(ForwardEvent event)
@@ -3793,15 +3809,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 					errorList.add(new ErrorDetail("StepFinance", "30552",
 							new String[] { Labels.getLabel("label_ScheduleMethod_InterestOnly") }, new String[] {}));
 				}
-
-				if (StringUtils.equals(this.stepType.getSelectedItem().getValue().toString(),
-						FinanceConstants.STEPTYPE_PRIBAL)
-						&& StringUtils.equals(this.cbScheduleMethod.getSelectedItem().getValue().toString(),
-								CalculationConstants.SCHMTHD_EQUAL)) {
-					errorList.add(new ErrorDetail("StepFinance", "30555",
-							new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
-				}
-
 			}
 
 			// Setting Step Policy Details Installments & Validations
@@ -6097,12 +6104,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 				.equals(finScheduleData.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW)) {
 			isAllowGrace = finScheduleData.getFinanceType().isFInIsAlwGrace();
 		}
-		// FIXME (KS) TO be fixed for record type empty.logic needs to be relooked in case of orgination and servicing
-		// are different
-		// if (!StringUtils.equals(finScheduleData.getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW)
-		// || (finScheduleData.getFinanceMain().isNewRecord() && StringUtils.equals(finScheduleData
-		// .getFinanceMain().getRecordType(), PennantConstants.RECORD_TYPE_NEW))) {
-		// isAllowGrace = finScheduleData.getFinanceMain().isAllowGrcPeriod(); }
 
 		if (isAllowGrace) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_allowGrace"), this.allowGrace);
@@ -7413,14 +7414,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceProfitDetailDAO(FinanceProfitDetailDAO financeProfitDetailDAO) {
 		this.financeProfitDetailDAO = financeProfitDetailDAO;
-	}
-
-	public String getPdfExtTabPanelId() {
-		return pdfExtTabPanelId;
-	}
-
-	public void setPdfExtTabPanelId(String pdfExtTabPanelId) {
-		this.pdfExtTabPanelId = pdfExtTabPanelId;
 	}
 
 }

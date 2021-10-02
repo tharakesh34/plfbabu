@@ -3,7 +3,9 @@ package com.pennant.backend.service.finance.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -23,14 +25,22 @@ import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.dao.receipts.ReceiptAllocationDetailDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.extendedfieldsExtension.ExtendedFieldExtensionService;
 import com.pennant.backend.service.finance.ReceiptRealizationService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -56,6 +66,8 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 	private ReceiptAllocationDetailDAO allocationDetailDAO;
 	private FinExcessAmountDAO finExcessAmountDAO;
 	private AuditHeaderDAO auditHeaderDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ExtendedFieldExtensionService extendedFieldExtensionService;
 
 	public ReceiptRealizationServiceImpl() {
 		super();
@@ -186,8 +198,18 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		FinReceiptData orgReceiptData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		FinReceiptData finReceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-		FinReceiptHeader rch = finReceiptData.getReceiptHeader();
+		FinReceiptData rd = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinReceiptHeader rch = rd.getReceiptHeader();
+
+		FinanceDetail fd = rd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		long serviceUID = Long.MIN_VALUE;
+		if (fd.getExtendedFieldRender() != null) {
+			serviceUID = extendedFieldDetailsService.getInstructionUID(fd.getExtendedFieldRender(),
+					fd.getExtendedFieldExtension());
+		}
 
 		// Receipt Header Updation
 		// =======================================
@@ -215,7 +237,6 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 
 		// Making Finance Inactive Incase of Schedule Payment
 		long finID = rch.getFinID();
-		String reference = rch.getReference();
 		if (StringUtils.equals(rch.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
 			List<FinanceScheduleDetail> schdList = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false);
 			if (isSchdFullyPaid(finID, schdList)) {
@@ -258,15 +279,15 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		List<AuditDetail> tempAuditDetailList = new ArrayList<>();
 		// FinReceiptDetail Audit Details Preparation
 		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
-				finReceiptData.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
-		for (int i = 0; i < finReceiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+				rd.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
+		for (int i = 0; i < rd.getReceiptHeader().getReceiptDetails().size(); i++) {
 			tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rFields[0], rFields[1], null,
 					orgReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
 		}
 
 		// Receipt Header Audit Details Preparation
 		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(),
-				finReceiptData.getReceiptHeader().getExcludeFields());
+				rd.getReceiptHeader().getExcludeFields());
 		aAuditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], null,
 				orgReceiptData.getReceiptHeader()));
 
@@ -286,20 +307,37 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		// FinReceiptDetail Audit Details Preparation
 		if (befFinReceiptDetail.isEmpty()) {
-			for (int i = 0; i < finReceiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+			for (int i = 0; i < rd.getReceiptHeader().getReceiptDetails().size(); i++) {
 				auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], null,
-						finReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
+						rd.getReceiptHeader().getReceiptDetails().get(i)));
 			}
 		} else {
-			for (int i = 0; i < finReceiptData.getReceiptHeader().getReceiptDetails().size(); i++) {
+			for (int i = 0; i < rd.getReceiptHeader().getReceiptDetails().size(); i++) {
 				auditDetails.add(new AuditDetail(tranType, 1, rFields[0], rFields[1], befFinReceiptDetail.get(i),
-						finReceiptData.getReceiptHeader().getReceiptDetails().get(i)));
+						rd.getReceiptHeader().getReceiptDetails().get(i)));
 			}
 		}
 
+		// Extended Field Details
+		List<AuditDetail> extendedDetails = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			extendedDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(extendedDetails,
+					ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), "", serviceUID);
+			auditDetails.addAll(extendedDetails);
+		}
+
+		// Extended field Extensions Details
+		List<AuditDetail> extensionDetails = fd.getAuditDetailMap().get("ExtendedFieldExtension");
+		if (extensionDetails != null && extensionDetails.size() > 0) {
+			extensionDetails = extendedFieldExtensionService.processingExtendedFieldExtList(extensionDetails, rd,
+					serviceUID, TableType.MAIN_TAB);
+
+			auditDetails.addAll(extensionDetails);
+		}
+
 		// FinReceiptHeader Audit
-		auditHeader.setAuditDetail(new AuditDetail(tranType, 1, rhFields[0], rhFields[1], befRctHeader,
-				finReceiptData.getReceiptHeader()));
+		auditHeader.setAuditDetail(
+				new AuditDetail(tranType, 1, rhFields[0], rhFields[1], befRctHeader, rd.getReceiptHeader()));
 
 		// Adding audit as Insert/Update/deleted into main table
 		auditHeader.setAuditTranType(tranType);
@@ -309,6 +347,18 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		auditHeaderDAO.addAudit(auditHeader);
 		// Reset Finance Detail Object for Service Task Verifications
 		// receiptData.getFinanceDetail().getFinScheduleData().setFinanceMain(financeMain);
+
+		// Extended field Render Details Delete from temp.
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			extendedDetails = extendedFieldDetailsService.delete(fd.getExtendedFieldHeader(), fm.getFinReference(),
+					fd.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails);
+			auditDetails.addAll(extendedDetails);
+		}
+
+		if (extensionDetails != null && extensionDetails.size() > 0) {
+			extensionDetails = extendedFieldExtensionService.delete(extensionDetails, tranType, TableType.TEMP_TAB);
+			auditDetails.addAll(extensionDetails);
+		}
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -363,23 +413,85 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		return fullyPaid;
 	}
 
-	/**
-	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
-	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation. 5)
-	 * for any mismatch conditions Fetch the error details from finReceiptHeaderDAO.getErrorDetail with Error ID and
-	 * language as parameters. 6) if any error/Warnings then assign the to auditHeader
-	 * 
-	 * @param AuditHeader (auditHeader)
-	 * @return auditHeader
-	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		auditHeader = getAuditDetails(auditHeader, method);
+
+		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail financeDetail = repayData.getFinanceDetail();
+
+		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
+
+		// Extended field details Validation
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		if (financeDetail.getExtendedFieldExtension() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldExtension");
+			details = extendedFieldExtensionService.vaildateDetails(details, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
 		auditHeader = nextProcess(auditHeader);
 		logger.debug(Literal.LEAVING);
+		return auditHeader;
+	}
+
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug("Entering ");
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+
+		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail financeDetail = repayData.getFinanceDetail();
+		FinReceiptHeader financeMain = repayData.getReceiptHeader();
+
+		String auditTranType = "";
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (financeMain.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		// Extended Field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
+							financeDetail.getExtendedFieldRender(), auditTranType, method,
+							ExtendedFieldConstants.MODULE_LOAN));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
+
+		ExtendedFieldExtension extendedFieldExtension = financeDetail.getExtendedFieldExtension();
+		if (extendedFieldExtension != null) {
+			auditDetailMap.put("ExtendedFieldExtension", extendedFieldExtensionService
+					.setExtendedFieldExtAuditData(extendedFieldExtension, auditTranType, method));
+			financeDetail.setAuditDetailMap(auditDetailMap);
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldExtension"));
+		}
+
+		financeDetail.setAuditDetailMap(auditDetailMap);
+		repayData.setFinanceDetail(financeDetail);
+		auditHeader.getAuditDetail().setModelData(repayData);
+		auditHeader.setAuditDetails(auditDetails);
+
+		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
@@ -525,4 +637,11 @@ public class ReceiptRealizationServiceImpl extends GenericService<FinReceiptHead
 		this.auditHeaderDAO = auditHeaderDAO;
 	}
 
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
+		this.extendedFieldExtensionService = extendedFieldExtensionService;
+	}
 }

@@ -297,7 +297,8 @@ public class CollateralController extends ExtendedTestClass {
 		collateralSetup.setLastMntBy(userDetails.getUserId());
 		CollateralSetup collateralDetail = null;
 		// generate collateral reference in case of empty
-		if (StringUtils.isBlank(collateralSetup.getCollateralRef())) {
+		String collateralRef = collateralSetup.getCollateralRef();
+		if (StringUtils.isBlank(collateralRef)) {
 			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
 		}
 
@@ -314,8 +315,7 @@ public class CollateralController extends ExtendedTestClass {
 			collateralSetup.setNewRecord(false);
 			collateralSetup.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 
-			collateralDetail = collateralSetupService.getCollateralSetupByRef(collateralSetup.getCollateralRef(), "",
-					false);
+			collateralDetail = collateralSetupService.getCollateralSetupByRef(collateralRef, "", false);
 			collateralSetup.setCollateralType(collateralDetail.getCollateralType());
 			collateralSetup.setCollateralCcy(collateralDetail.getCollateralCcy());
 			collateralSetup.setDepositorId(collateralDetail.getDepositorId());
@@ -341,17 +341,16 @@ public class CollateralController extends ExtendedTestClass {
 				}
 
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
-					thirdPartyColl.setCollateralRef(collateralSetup.getCollateralRef());
+					thirdPartyColl.setCollateralRef(collateralRef);
 					thirdPartyColl.setNewRecord(true);
 					thirdPartyColl.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else if (StringUtils.equals(procType, PROCESS_TYPE_UPDATE)) {
 					thirdPartyColl.setNewRecord(false);
-					thirdPartyColl.setCollateralRef(collateralSetup.getCollateralRef());
+					thirdPartyColl.setCollateralRef(collateralRef);
 					thirdPartyColl.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 					thirdPartyColl.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
 					// fetch collateral third party details
-					String collateralRef = collateralSetup.getCollateralRef();
 					long customerId = thirdPartyColl.getCustomerId();
 					CollateralThirdParty collateralThirdParty = collateralThirdPartyDAO
 							.getCollThirdPartyDetails(collateralRef, customerId, "");
@@ -374,7 +373,7 @@ public class CollateralController extends ExtendedTestClass {
 		if (coOwnerDetails != null) {
 			int seqNo = 0;
 			for (CoOwnerDetail detail : coOwnerDetails) {
-				detail.setCollateralRef(collateralSetup.getCollateralRef());
+				detail.setCollateralRef(collateralRef);
 				detail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				detail.setUserDetails(userDetails);
@@ -405,7 +404,7 @@ public class CollateralController extends ExtendedTestClass {
 					}
 				}
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
-					detail.setCollateralRef(collateralSetup.getCollateralRef());
+					detail.setCollateralRef(collateralRef);
 					detail.setNewRecord(true);
 					detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					detail.setCoOwnerId(++seqNo);
@@ -415,7 +414,6 @@ public class CollateralController extends ExtendedTestClass {
 					detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 
 					// fetch collateral third party details
-					String collateralRef = collateralSetup.getCollateralRef();
 					int coOwnerId = detail.getCoOwnerId();
 					CoOwnerDetail coOwnerDetail = coOwnerDetailDAO.getCoOwnerDetailByRef(collateralRef, coOwnerId, "");
 					if (coOwnerDetail == null) {
@@ -444,9 +442,8 @@ public class CollateralController extends ExtendedTestClass {
 		String collateralType = collateralSetup.getCollateralType();
 		if (StringUtils.isNotBlank(collateralType)) {
 			collateralStructure = collateralStructureService.getApprovedCollateralStructureByType(collateralType);
-		} else if (StringUtils.isNotBlank(collateralSetup.getCollateralRef())) {
-			CollateralSetup setup = collateralSetupService
-					.getApprovedCollateralSetupById(collateralSetup.getCollateralRef());
+		} else if (StringUtils.isNotBlank(collateralRef)) {
+			CollateralSetup setup = collateralSetupService.getApprovedCollateralSetupById(collateralRef);
 			if (setup != null) {
 				collateralStructure = collateralStructureService
 						.getApprovedCollateralStructureByType(setup.getCollateralType());
@@ -462,7 +459,7 @@ public class CollateralController extends ExtendedTestClass {
 			if (collateralSetup.getExtendedFieldRenderList() != null
 					&& !collateralSetup.getExtendedFieldRenderList().isEmpty()) {
 				for (ExtendedFieldRender exdFieldRender : collateralSetup.getExtendedFieldRenderList()) {
-					exdFieldRender.setReference(collateralSetup.getCollateralRef());
+					exdFieldRender.setReference(collateralRef);
 					exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 					exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					exdFieldRender.setLastMntBy(userDetails.getUserId());
@@ -475,7 +472,7 @@ public class CollateralController extends ExtendedTestClass {
 			int seqNo = 0;
 			for (ExtendedField extendedField : extendedFields) {
 				ExtendedFieldRender exdFieldRender = new ExtendedFieldRender();
-				exdFieldRender.setReference(collateralSetup.getCollateralRef());
+				exdFieldRender.setReference(collateralRef);
 				exdFieldRender.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				exdFieldRender.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 				exdFieldRender.setLastMntBy(userDetails.getUserId());
@@ -537,14 +534,12 @@ public class CollateralController extends ExtendedTestClass {
 						tableName.append(extendedFieldHeader.getSubModuleName());
 						tableName.append("_ED");
 
-						exdFieldRender
-								.setSeqNo(extendedFieldRenderDAO.getMaxSeqNoByRef(collateralSetup.getCollateralRef(),
-										tableName.toString()) + (++seqNo));
+						exdFieldRender.setSeqNo(
+								extendedFieldRenderDAO.getMaxSeq(collateralRef, tableName.toString(), "") + (++seqNo));
 						exdFieldRender.setNewRecord(true);
 						exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 
-						int no = extendedFieldRenderDAO.getMaxSeqNoByRef(collateralSetup.getCollateralRef(),
-								tableName.toString());
+						int no = extendedFieldRenderDAO.getMaxSeq(collateralRef, tableName.toString(), "");
 						if (no != 0) {
 							exdFieldRender.setSeqNo(no);
 							exdFieldRender.setNewRecord(false);
@@ -651,18 +646,17 @@ public class CollateralController extends ExtendedTestClass {
 			for (DocumentDetails detail : documentDetails) {
 				detail.setDocModule(CollateralConstants.MODULE_NAME);
 				detail.setUserDetails(collateralSetup.getUserDetails());
-				detail.setReferenceId(collateralSetup.getCollateralRef());
+				detail.setReferenceId(collateralRef);
 
 				if (StringUtils.equals(procType, PROCESS_TYPE_SAVE)) {
 					detail.setNewRecord(true);
 					detail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					detail.setDocRefId(Long.MIN_VALUE);
 				} else if (StringUtils.equals(procType, PROCESS_TYPE_UPDATE)) {
-					String collateraRef = collateralSetup.getCollateralRef();
 					String category = detail.getDocCategory();
 					String module = CollateralConstants.MODULE_NAME;
 
-					DocumentDetails docDetails = documentDetailsDAO.getDocumentDetails(collateraRef, category, module,
+					DocumentDetails docDetails = documentDetailsDAO.getDocumentDetails(collateralRef, category, module,
 							"");
 					if (docDetails != null) {
 						detail.setDocId(docDetails.getDocId());

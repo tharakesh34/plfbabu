@@ -47,6 +47,7 @@ import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.AccountingEvent;
 
 public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 	private static final Logger logger = LogManager.getLogger(GSTInvoiceTxnServiceImpl.class);
@@ -202,7 +203,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 			} else {
 
 				BigDecimal gstAmount = BigDecimal.ZERO;
-				if (origination || RepayConstants.ALLOCATION_ODC.equals(fee.getFeeTypeCode())) {
+				if (origination || RepayConstants.ALLOCATION_ODC.equals(fee.getFeeTypeCode())
+						|| AccountingEvent.RESTRUCTURE.equals(fee.getFinEvent())) {
 					if (fee.isPaidFromLoanApproval()) {
 						BigDecimal netGstAmt = cgstTax.getNetTax().add(sgstTax.getNetTax()).add(igstTax.getNetTax())
 								.add(ugstTax.getNetTax()).add(cessTax.getNetTax());
@@ -772,6 +774,8 @@ public class GSTInvoiceTxnServiceImpl implements GSTInvoiceTxnService {
 						address = ca;
 						break;
 					}
+				} else {
+					address = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");
 				}
 			} else {
 				address = customerAddresDAO.getHighPriorityCustAddr(fm.getCustID(), "_AView");

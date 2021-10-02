@@ -39,11 +39,11 @@ public class DisbursementRequestsQueries {
 		sql.append(", BENFICIRY_CITY, BENFICIARY_ADDRESS1, BENFICIARY_ADDRESS2, BENFICIARY_ADDRESS3");
 		sql.append(", BENFICIARY_ADDRESS4, BENFICIARY_ADDRESS5, PAYMENT_DETAIL1, PAYMENT_DETAIL2, PAYMENT_DETAIL3");
 		sql.append(", PAYMENT_DETAIL4, PAYMENT_DETAIL5, PAYMENT_DETAIL6, PAYMENT_DETAIL7, STATUS, REMARKS");
-		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID");
+		sql.append(", CHANNEL, BATCH_ID, AUTO_DOWNLOAD, HEADER_ID, LEI, CITY_NAME, PROVINCE_NAME");
 		sql.append(", PARTNERBANK_ID, PARTNERBANK_CODE, PARTNERBANK_ACCOUNT, CHEQUE_NUMBER, DOWNLOADED_ON)");
 		sql.append(" Values (");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		insertQuery = sql.toString();
 

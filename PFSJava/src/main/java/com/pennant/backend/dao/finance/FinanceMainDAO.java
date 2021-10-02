@@ -34,6 +34,7 @@ import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
+import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennanttech.pennapps.dms.model.DMSQueue;
@@ -373,4 +374,9 @@ public interface FinanceMainDAO {
 
 	FinanceMain getFMForVAS(String finReference);
 
+	FinanceStatusEnquiry getLoanStatusDetailsByFinReference(long finID);
+
+	String getFinCategoryByFinType(String finType);
+
+	int getCustomerBankCountById(Long BankId, long custId);
 }

@@ -150,6 +150,10 @@ public class DisbursementRequest implements Serializable {
 	private Date downloadedOn;
 	private String downloadType;
 	private BigDecimal loanAmount;
+	@XmlElement
+	private String lei;
+	private String cityName;
+	private String provinceName;
 
 	public DisbursementRequest() {
 		super();
@@ -937,5 +941,29 @@ public class DisbursementRequest implements Serializable {
 
 	public void setLoanAmount(BigDecimal loanAmount) {
 		this.loanAmount = loanAmount;
+	}
+
+	public String getLei() {
+		return lei;
+	}
+
+	public void setLei(String lei) {
+		this.lei = lei;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getProvinceName() {
+		return provinceName;
+	}
+
+	public void setProvinceName(String provinceName) {
+		this.provinceName = provinceName;
 	}
 }

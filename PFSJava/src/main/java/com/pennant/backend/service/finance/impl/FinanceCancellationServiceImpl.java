@@ -91,6 +91,7 @@ import com.pennant.backend.service.finance.FinanceCancellationService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -557,7 +558,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		if (fd.getExtendedFieldRender() != null) {
 			List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
 			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
-					fd.getExtendedFieldHeader(), "", serviceUID);
+					ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), "", serviceUID);
 			auditDetails.addAll(details);
 		}
 

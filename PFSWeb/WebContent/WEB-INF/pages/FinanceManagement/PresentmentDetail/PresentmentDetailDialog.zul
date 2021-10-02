@@ -129,7 +129,10 @@
 									<groupbox width="100%" height="100%">
 										<div sclass="z-toolbar" style="padding:0">
 											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
-												<toolbar align="start" style="border:none;" />
+												<toolbar align="start" style="border:none;" >
+													<button id="btn_ExcludeAll" label="${c:l('label_SelectAll')}" tooltiptext="${c:l('btn_SelectAll.tooltiptext')}"
+														autodisable="btn_ExcludeAll" />
+												</toolbar>
 												<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
 													<button id="btn_AddExlude" label="${c:l('label_AddExclude')}" tooltiptext="${c:l('btn_AddExclude.tooltiptext')}"
 														autodisable="btn_AddExlude" />
@@ -160,7 +163,10 @@
 									<groupbox width="100%" height="100%">
 										<div sclass="z-toolbar" style="padding:0">
 											<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" style=" padding:0px;" height="100%" width="100%">
-												<toolbar align="start" style="border:none;" />
+												<toolbar align="start" style="border:none;" >
+													<button id="btn_IncludeAll" label="${c:l('label_SelectAll')}" tooltiptext="${c:l('btn_SelectAll.tooltiptext')}"
+														autodisable="btn_IncludeAll" />
+												</toolbar>
 												<toolbar align="end" style="float:right; border-style: none; padding:0px;" height="100%">
 													<button id="btn_AddInclude" label="${c:l('label_AddInclude')}" tooltiptext="${c:l('btn_AddInclude.tooltiptext')}"
 														autodisable="btn_AddInclude" />

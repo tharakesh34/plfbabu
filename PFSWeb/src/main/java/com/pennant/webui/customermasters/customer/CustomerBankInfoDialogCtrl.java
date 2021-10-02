@@ -73,7 +73,6 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Rows;
 import org.zkoss.zul.Space;
@@ -3085,20 +3084,13 @@ public class CustomerBankInfoDialogCtrl extends GFCBaseCtrl<CustomerBankInfo> {
 			this.accountNumber.setValue("");
 		} else {
 			BankDetail details = (BankDetail) dataObject;
-			if (details != null) {
-				this.bankName.setValue(details.getBankCode(), details.getBankName());
-				if (StringUtils.isNotBlank(details.getBankCode())) {
-					maxAccNoLength = details.getAccNoLength();
-					minAccNoLength = details.getMinAccNoLength();
-					this.accountNumber.setMaxlength(maxAccNoLength);
-				} else {
-					this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
-				}
-
+			this.bankName.setValue(details.getBankCode(), details.getBankName());
+			if (StringUtils.isNotBlank(details.getBankCode())) {
+				maxAccNoLength = details.getAccNoLength();
+				minAccNoLength = details.getMinAccNoLength();
+				this.accountNumber.setMaxlength(maxAccNoLength);
 			} else {
-				this.bankName.setButtonDisabled(true);
-				this.bankBranch.setValue("");
-				this.bankBranchID.setValue("", "");
+				this.accountNumber.setMaxlength(LengthConstants.LEN_ACCOUNT);
 			}
 		}
 		logger.debug("Leaving " + event.toString());

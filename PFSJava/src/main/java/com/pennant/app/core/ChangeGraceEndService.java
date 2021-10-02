@@ -25,12 +25,16 @@
 package com.pennant.app.core;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,17 +52,19 @@ import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ChangeGraceEndService extends ServiceHelper {
-	private static final long serialVersionUID = -6254138886117514225L;
 	private static Logger logger = LogManager.getLogger(ChangeGraceEndService.class);
 
 	private AccrualService accrualService;
@@ -212,11 +218,11 @@ public class ChangeGraceEndService extends ServiceHelper {
 
 		// GraceEndDate AND GraceTerms
 		if (isFullDisb) {
-
 			fm.setGrcPeriodEndDate(formatDate(newGrcEndDate));
-
+			int prvGrcTerms = fm.getGraceTerms();
 			fm.setGraceTerms(FrequencyUtil
 					.getTerms(fm.getGrcPftFrq(), nextGrcPftDate, newGrcEndDate, includeStartDate, false).getTerms());
+			changeStpDetails(finScheduleData, prvGrcTerms);
 		} else {
 
 			int graceTerms = fm.getGraceTerms() + financeType.getGrcAutoIncrMonths();
@@ -345,6 +351,92 @@ public class ChangeGraceEndService extends ServiceHelper {
 			fm.setScheduleRegenerated(true);
 			finScheduleData.setSchduleGenerated(true);
 		}
+	}
+
+	// Modifying the Step policy details based on grace terms.
+	private void changeStpDetails(FinScheduleData finScheduleData, int prvGrcTerms) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain fm = finScheduleData.getFinanceMain();
+
+		List<FinanceStepPolicyDetail> spdList = finScheduleData.getStepPolicyDetails();
+
+		if (fm.isStepFinance() && PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())
+				&& CollectionUtils.isNotEmpty(spdList)) {
+			List<FinanceStepPolicyDetail> newSpdList = new ArrayList<>();
+			int stpGrcTerms = 0;
+			int curGrcTerms = 0;
+			boolean isGrcTenorIncr = false;
+			List<FinanceScheduleDetail> fsdList = finScheduleData.getFinanceScheduleDetails();
+
+			for (FinanceScheduleDetail fsd : fsdList) {
+				if (fsd.isFrqDate() && DateUtil.compare(fsd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0
+						&& !fsd.isDisbOnSchDate()) {
+					curGrcTerms = curGrcTerms + 1;
+				} else if (DateUtil.compare(fsd.getSchDate(), fm.getGrcPeriodEndDate()) > 0) {
+					break;
+				}
+			}
+
+			for (FinanceStepPolicyDetail spd : spdList) {
+				if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+					fm.setGrcStps(true);
+					BigDecimal tenorSplitPerc = BigDecimal.ZERO;
+					tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+							.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+					spd.setTenorSplitPerc(tenorSplitPerc);
+					stpGrcTerms = stpGrcTerms + spd.getInstallments();
+					if (curGrcTerms > prvGrcTerms && fm.getNoOfGrcSteps() == spd.getStepNo()) {
+						isGrcTenorIncr = true;
+						int remgrcTerms = curGrcTerms - prvGrcTerms;
+						spd.setInstallments(spd.getInstallments() + remgrcTerms);
+						tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+								.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+						spd.setTenorSplitPerc(tenorSplitPerc);
+						break;
+					}
+				}
+			}
+
+			if (!isGrcTenorIncr && curGrcTerms < prvGrcTerms) {
+				int noOfGrcStps = 0;
+				int redGrcStps = prvGrcTerms - curGrcTerms;
+				spdList = spdList.stream()
+						.sorted(Comparator.comparing(FinanceStepPolicyDetail::getStepSpecifier)
+								.thenComparingInt(FinanceStepPolicyDetail::getStepNo).reversed())
+						.collect(Collectors.toList());
+				for (FinanceStepPolicyDetail spd : spdList) {
+					if (PennantConstants.STEP_SPECIFIER_GRACE.equals(spd.getStepSpecifier())) {
+						BigDecimal tenorSplitPerc = BigDecimal.ZERO;
+
+						if (redGrcStps > 0) {
+							int remStps = spd.getInstallments() - redGrcStps;
+							redGrcStps = redGrcStps - spd.getInstallments();
+							if (remStps > 0) {
+								spd.setInstallments(remStps);
+								tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+										.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+								spd.setTenorSplitPerc(tenorSplitPerc);
+								newSpdList.add(spd);
+								noOfGrcStps = noOfGrcStps + 1;
+							}
+						} else {
+							tenorSplitPerc = (new BigDecimal(spd.getInstallments()).multiply(new BigDecimal(100)))
+									.divide(new BigDecimal(curGrcTerms), 2, RoundingMode.HALF_DOWN);
+							spd.setTenorSplitPerc(tenorSplitPerc);
+							newSpdList.add(spd);
+							noOfGrcStps = noOfGrcStps + 1;
+						}
+					} else {
+						newSpdList.add(spd);
+					}
+				}
+				finScheduleData.setStepPolicyDetails(newSpdList, true);
+				finScheduleData.getFinanceMain().setNoOfGrcSteps(noOfGrcStps);
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) throws Exception {

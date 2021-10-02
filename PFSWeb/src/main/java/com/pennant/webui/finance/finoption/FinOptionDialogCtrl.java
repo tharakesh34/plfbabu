@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,16 +37,21 @@ import org.zkoss.zul.Rows;
 import org.zkoss.zul.South;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -53,11 +59,13 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
@@ -74,6 +82,7 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.staticlist.AppStaticList;
 import com.rits.cloning.Cloner;
 
@@ -105,6 +114,13 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	private boolean newCustomer;
 	private boolean fromLoan;
 	private FinOption finOption;
+	private String moduleDefiner;
+
+	protected Tabs finOptionTabs;
+	protected Tab finOptionTab;
+	protected Tabpanels finOptionTabPanels;
+
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
 
 	public FinOptionDialogCtrl() {
 		super();
@@ -145,6 +161,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		if (arguments.get("module") != null) {
 			module = (String) arguments.get("module");
+		}
+
+		if (arguments.get("moduleDefiner") != null) {
+			moduleDefiner = (String) arguments.get("moduleDefiner");
 		}
 
 		if (module.equals("Maintanance")) {
@@ -213,6 +233,9 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 		if (!enqiryModule) {
 			appendFinBasicDetails();
+			if (StringUtils.equals(moduleDefiner, FinServiceEvent.FINOPTION)) {
+				appendExtendedFieldDetails(financeDetail, moduleDefiner);
+			}
 		}
 
 		if (module.equals("Maintanance")) {
@@ -221,6 +244,107 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail, String finEvent) {
+		logger.debug(Literal.ENTERING);
+
+		ExtendedFieldRender extendedFieldRender = null;
+
+		try {
+			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+
+			if (aFinanceMain == null) {
+				return;
+			}
+
+			if (finEvent.isEmpty()) {
+				finEvent = FinServiceEvent.ORG;
+			}
+
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
+					ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory(), finEvent);
+			if (extendedFieldHeader == null) {
+				return;
+			}
+
+			extendedFieldCtrl.setAppendActivityLog(true);
+			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
+			extendedFieldCtrl.setDataLoadReq(
+					(PennantConstants.RCD_STATUS_APPROVED.equals(finMaintainInstruction.getRecordStatus())
+							|| finMaintainInstruction.getRecordStatus() == null) ? true : false);
+
+			long instructionUID = Long.MIN_VALUE;
+
+			if (CollectionUtils.isNotEmpty(finMaintainInstruction.getFinServiceInstructions())) {
+				if (finMaintainInstruction.getFinServiceInstruction().getInstructionUID() != Long.MIN_VALUE) {
+					instructionUID = finMaintainInstruction.getFinServiceInstruction().getInstructionUID();
+				}
+			}
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(aFinanceMain.getFinReference(),
+					instructionUID);
+
+			extendedFieldCtrl.createTab(finOptionTabs, finOptionTabPanels);
+			finMaintainInstruction.setExtendedFieldHeader(extendedFieldHeader);
+			finMaintainInstruction.setExtendedFieldRender(extendedFieldRender);
+
+			if (finMaintainInstruction.getBefImage() != null) {
+				finMaintainInstruction.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				finMaintainInstruction.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(false);
+			extendedFieldCtrl.setWindow(finOptionListWindow);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private ArrayList<Object> getFinBasicDetails() {
+
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		ArrayList<Object> arrayList = new ArrayList<Object>();
+		arrayList.add(0, financeMain.getFinType());
+		arrayList.add(1, financeMain.getFinCcy());
+		if (StringUtils.isNotEmpty(financeMain.getScheduleMethod())) {
+			arrayList.add(2, financeMain.getScheduleMethod());
+		} else {
+			arrayList.add(2, "");
+		}
+		arrayList.add(3, financeMain.getFinReference());
+		arrayList.add(4, financeMain.getProfitDaysBasis());
+		arrayList.add(5, financeMain.getGrcPeriodEndDate());
+		arrayList.add(6, financeMain.isAllowGrcPeriod());
+		if (StringUtils.isNotEmpty(financeMain.getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, financeMain.getFinCategory());
+		String custShrtName = "";
+		if (financeDetail.getCustomerDetails() != null && financeDetail.getCustomerDetails().getCustomer() != null) {
+			custShrtName = financeDetail.getCustomerDetails().getCustomer().getCustShrtName();
+		}
+		arrayList.add(9, custShrtName);
+		arrayList.add(10, financeDetail.getFinScheduleData().getFinanceMain().isNewRecord());
+		arrayList.add(11, moduleDefiner);
+		return arrayList;
 	}
 
 	List<FinOption> finOptions = new ArrayList<>();
@@ -890,7 +1014,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		return (Map<String, Object>) object;
 	}
 
-	public boolean doSave(FinanceDetail aFinanceDetail, Tab tab) {
+	public boolean doSave(FinanceDetail aFinanceDetail, Tab tab) throws Exception {
 		logger.debug(Literal.ENTERING);
 		doClearMessage();
 
@@ -1162,11 +1286,11 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
 
-	public void onClick$btnSave(Event event) {
+	public void onClick$btnSave(Event event) throws Exception {
 		doSave();
 	}
 
-	protected void doSave() {
+	protected void doSave() throws Exception {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();
@@ -1191,6 +1315,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		finMaintainInstruction.setRecordStatus(this.recordStatus.getValue());
 
 		setFinInsturctionDetails(aFinMaintainInstruction);
+
+		if (aFinMaintainInstruction.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
+			aFinMaintainInstruction.setExtendedFieldRender(extendedFieldCtrl.save(true));
+		}
 
 		boolean isNew;
 		isNew = aFinMaintainInstruction.isNewRecord();
@@ -1251,6 +1379,10 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 							+ " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
+
+				if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
+				}
 
 				closeDialog();
 			}
@@ -1365,6 +1497,28 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 				.getModelData();
 		boolean deleteNotes = false;
 
+		if (aFinMaintainInstruction.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = aFinMaintainInstruction.getExtendedFieldRender();
+			details.setReference(aFinMaintainInstruction.getFinReference());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(aFinMaintainInstruction.getRecordStatus());
+			details.setRecordType(aFinMaintainInstruction.getRecordType());
+			details.setVersion(aFinMaintainInstruction.getVersion());
+			details.setWorkflowId(aFinMaintainInstruction.getWorkflowId());
+			details.setTaskId(aFinMaintainInstruction.getTaskId());
+			details.setNextTaskId(aFinMaintainInstruction.getNextTaskId());
+			details.setRoleCode(aFinMaintainInstruction.getRoleCode());
+			details.setNextRoleCode(aFinMaintainInstruction.getNextRoleCode());
+			details.setNewRecord(aFinMaintainInstruction.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(aFinMaintainInstruction.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(aFinMaintainInstruction.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
+
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
 				if (StringUtils.isBlank(method)) {
@@ -1451,6 +1605,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
+		if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
 	}
 
+	public void setExtendedFieldCtrl(ExtendedFieldCtrl extendedFieldCtrl) {
+		this.extendedFieldCtrl = extendedFieldCtrl;
+	}
 }

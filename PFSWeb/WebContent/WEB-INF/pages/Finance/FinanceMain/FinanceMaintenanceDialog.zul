@@ -151,6 +151,15 @@
 													<label id="label_MandateRef" value="${c:l('label_MandateDialog_MandateRef.value')}" />
 													<extendedcombobox id="mandateRef" />
 												</row>
+												<row id="row_Escrow" visible="false">
+													<label id="label_FinanceMainDialog_Escrow" value="${c:l('label_FinanceMainDialog_Escrow.value')}"/>
+													<hbox>
+														<space spacing="2px" />
+														<checkbox id="escrow" checked="false"/>
+													</hbox>
+													<label id="label_FinanceMainDialog_CustomerBankAcctNumbert" value="${c:l('label_FinanceMainDialog_CustomerBankAcctNumber.value')}"/>
+													<extendedcombobox id="customerBankAcct"/>
+												</row>
 												<row>
 													<label id="label_FinanceMainDialog_TDSApplicable" value="${c:l('label_FinanceMainDialog_TDSApplicable.value')}" />
 													<hbox id="hbox_tdsApplicable">

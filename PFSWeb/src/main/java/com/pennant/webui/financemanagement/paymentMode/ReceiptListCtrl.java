@@ -332,7 +332,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 			} else if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)) {
 				searchObject.addWhereClause(
-						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' AND RECEIPTMODE NOT IN ('PRESENT') and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
+						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
 								+ module + "')");
 
 			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {

@@ -347,9 +347,10 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" (MovementID, AdviseID, MovementDate, MovementAmount, PaidAmount, WaivedAmount, Status");
 		sql.append(", ReceiptID, ReceiptSeqID, WaiverID, TaxHeaderId, TdsPaid");
-		sql.append(", PaidCGST, PaidSGST, PaidIGST, PaidCESS, WaivedCGST, WaivedSGST, WaivedIGST, WaivedCESS");
+		sql.append(", PaidCGST, PaidSGST, PaidIGST, PaidUGST, PaidCESS");
+		sql.append(", WaivedCGST, WaivedSGST, WaivedIGST, WaivedUGST, WaivedCESS");
 		sql.append(") Values(");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		jdbcOperations.update(sql.toString(), ps -> {
@@ -370,10 +371,12 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, mam.getPaidCGST());
 			ps.setBigDecimal(index++, mam.getPaidSGST());
 			ps.setBigDecimal(index++, mam.getPaidIGST());
+			ps.setBigDecimal(index++, mam.getPaidUGST());
 			ps.setBigDecimal(index++, mam.getPaidCESS());
 			ps.setBigDecimal(index++, mam.getWaivedCGST());
 			ps.setBigDecimal(index++, mam.getWaivedSGST());
 			ps.setBigDecimal(index++, mam.getWaivedIGST());
+			ps.setBigDecimal(index++, mam.getWaivedUGST());
 			ps.setBigDecimal(index++, mam.getWaivedCESS());
 		});
 	}
@@ -1669,6 +1672,21 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 
 	private String commaJoin(List<Long> headerIdList) {
 		return headerIdList.stream().map(e -> "?").collect(Collectors.joining(", "));
+	}
+
+	@Override
+	public Date getMaxValueDateOfRcv(long finID) {
+		String sql = "Select max(ValueDate) from ManualAdvise Where FinID = ? and AdviseType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, Date.class, finID, 1);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 
 }

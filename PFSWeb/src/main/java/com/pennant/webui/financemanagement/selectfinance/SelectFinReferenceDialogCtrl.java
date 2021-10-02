@@ -412,6 +412,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			map.put("reinstateFinance", getReinstateFinance());
 			map.put("reinstateFinanceListCtrl", getReinstateFinanceListCtrl());
 			map.put("financeMain", financeMain);
+			map.put("eventCode", eventCode);
 			// call the ZUL-file with the parameters packed in a map
 			try {
 

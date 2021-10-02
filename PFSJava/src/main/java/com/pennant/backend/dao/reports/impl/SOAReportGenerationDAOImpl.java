@@ -1,44 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SOAReportGenerationDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SOAReportGenerationDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- * 24-05-2018       Srikanth                 0.2           Merge the Code From Bajaj To Core                                                   * 
-                                                                                         * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * 24-05-2018 Srikanth 0.2 Merge the Code From Bajaj To Core *
+ * 
+ * * * * * * * *
  ********************************************************************************************
  */
 
@@ -87,6 +70,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
@@ -342,7 +326,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select * from (");
-		sql.append("Select MA.FinReference,MA.Adviseid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
+		sql.append(
+				"Select MA.FinReference,MA.Adviseid, FW.waiverid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
 		sql.append(
 				", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
 		sql.append(" from ManualAdvise MA ");
@@ -354,7 +339,8 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(" FW.FinReference = MA.FinReference and FW.Adviseid = MA.Adviseid and FW.WaiverID = MAM.WaiverID");
 		sql.append(" where FW.Adviseid  not in  (-1, -2, -3) and F.FeeTypeCode is not null ");
 		sql.append(" union all ");
-		sql.append(" Select MA.FinReference,MA.Adviseid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
+		sql.append(
+				" Select MA.FinReference,MA.Adviseid,FW.waiverid,MAM.MovementId, Movementdate, movementamount, F.TaxComponent");
 		sql.append(
 				", MAM.WaivedAmount, MAM.TaxHeaderId, F.FEETYPEDESC, MA.ValueDate, FW.currwaivergst, FW.curractualwaiver, F.FeeTypeCode");
 		sql.append(" from ManualAdvise MA ");
@@ -852,7 +838,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		sql.append(
 				" SELECT Distinct PRD.ReceiptId,PRD.SchDate,BR.REASON BounceReason, PRD.Status, PRH.MandateType, M.MandateRef, ");
 		sql.append(
-				" EMIno, PresentmentType FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
+				" EMIno, PRH.PresentmentType FROM PRESENTMENTDETAILS PRD Left Join Mandates M ON M.MandateId = PRD.MandateId ");
 		sql.append(" Left join BOUNCEREASONS BR ON PRD.BOUNCEID  = BR.BOUNCEID ");
 		sql.append(" inner join PRESENTMENTHEADER PRH on PRH.id = PRD.Presentmentid");
 		sql.append(" Where PRD.RECEIPTID != 0 and FinReference = :FinReference");
@@ -1125,6 +1111,7 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 
 		StringBuilder sql = new StringBuilder();
 		sql.append(" select finreference, fwh.valuedate,fwd.CURRWAIVERAMOUNT, fwd.FeetypeCode ");
+		sql.append(", fwd.waiverId, fwd.feetypedesc, fwh,postingdate, fwh.valuedate ");
 		sql.append(" From FEEWAIVERHEADER fwh ");
 		sql.append(" inner join  FEEWAIVERdetails fwd on fwh.WAIVERID=fwd.WAIVERID  ");
 		sql.append(" where   fwh.FinReference =:FinReference");
@@ -1477,4 +1464,29 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		return new HashMap<>();
 	}
 
+	@Override
+	public List<RestructureCharge> getRestructureChargeList(String finReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" RC.AlocType, RC.Capitalized, RC.ActualAmount, RC.TotalAmount, RC.FeeCode");
+		sql.append(" From RESTRUCTURE_CHARGES RC");
+		sql.append(" INNER JOIN Restructure_Details RD on RD.Id = RC.RestructureId");
+		sql.append(" Where RD.FinReference = ? and RC.Capitalized = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, finReference);
+			ps.setInt(2, 1);
+		}, (rs, i) -> {
+			RestructureCharge rc = new RestructureCharge();
+
+			rc.setAlocType(rs.getString("AlocType"));
+			rc.setCapitalized(rs.getBoolean("Capitalized"));
+			rc.setActualAmount(rs.getBigDecimal("ActualAmount"));
+			rc.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+			rc.setFeeCode(rs.getString("FeeCode"));
+
+			return rc;
+		});
+	}
 }

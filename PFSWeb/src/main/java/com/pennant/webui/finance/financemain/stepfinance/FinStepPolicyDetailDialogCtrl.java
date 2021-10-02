@@ -100,6 +100,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	private FinanceDetail financeDetail = null;
 	private FinScheduleData finScheduleData = null;
 	private FinanceMain financeMain = null;
+	private boolean isEnquiry = false;
 
 	/**
 	 * default constructor.<br>
@@ -146,6 +147,10 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 			this.financeDetail = (FinanceDetail) arguments.get("financeDetail");
 		}
 
+		if (arguments.containsKey("enquiryModule")) {
+			isEnquiry = (Boolean) arguments.get("enquiryModule");
+		}
+
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (Integer) arguments.get("ccyFormatter");
 		}
@@ -181,7 +186,7 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 				setNewRecord(getFinanceStepPolicyDetail().isNewRecord());
 			}
 			this.financeStepPolicyDetail.setWorkflowId(0);
-			if (arguments.containsKey("roleCode")) {
+			if (arguments.containsKey("roleCode") && !isEnquiry) {
 				userRole = arguments.get("roleCode").toString();
 				getUserWorkspace().allocateRoleAuthorities(userRole, "FinStepPolicyDetailDialog");
 			}
@@ -485,12 +490,13 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	}
 
 	private void doCheckEnquiry() {
-		if ("ENQ".equals(this.moduleType)) {
+		if ("ENQ".equals(this.moduleType) || isEnquiry) {
 			this.tenorSplitPerc.setDisabled(true);
 			this.installments.setReadonly(true);
 			this.eMIStepPerc.setDisabled(true);
 			this.steppedEMI.setReadonly(true);
 			this.rateMargin.setDisabled(true);
+			this.autoCal.setDisabled(true);
 		}
 	}
 

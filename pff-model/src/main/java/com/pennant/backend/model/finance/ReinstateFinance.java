@@ -26,10 +26,17 @@
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -81,6 +88,11 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 	private String lovValue;
 	private ReinstateFinance befImage;
 	private LoggedInUser userDetails;
+	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
+	private ExtendedFieldRender extendedFieldRender = null;
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+	private String finEvent = null;
 
 	public ReinstateFinance() {
 		super();
@@ -124,6 +136,11 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 		excludeFields.add("grcPeriodEndDate");
 		excludeFields.add("scheduleMethod");
 		excludeFields.add("product");
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
+		excludeFields.add("finServiceInstructions");
+		excludeFields.add("auditDetailMap");
+		excludeFields.add("finEvent");
 
 		return excludeFields;
 	}
@@ -444,4 +461,61 @@ public class ReinstateFinance extends AbstractWorkflowEntity {
 		this.product = product;
 	}
 
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public List<FinServiceInstruction> getFinServiceInstructions() {
+		return finServiceInstructions;
+	}
+
+	public void setFinServiceInstructions(List<FinServiceInstruction> finServiceInstructions) {
+		this.finServiceInstructions = finServiceInstructions;
+	}
+
+	public FinServiceInstruction getFinServiceInstruction() {
+		FinServiceInstruction finServiceInstruction = null;
+		if (finServiceInstructions != null && !finServiceInstructions.isEmpty()) {
+			finServiceInstruction = finServiceInstructions.get(0);
+		}
+		return finServiceInstruction;
+	}
+
+	public void setFinServiceInstruction(FinServiceInstruction finServiceInstruction) {
+
+		if (finServiceInstruction != null) {
+			if (finServiceInstructions == null) {
+				finServiceInstructions = new ArrayList<FinServiceInstruction>();
+			}
+			this.finServiceInstructions.add(finServiceInstruction);
+		}
+	}
+
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
+		return auditDetailMap;
+	}
+
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
+		this.auditDetailMap = auditDetailMap;
+	}
+
+	public String getFinEvent() {
+		return finEvent;
+	}
+
+	public void setFinEvent(String finEvent) {
+		this.finEvent = finEvent;
+	}
 }

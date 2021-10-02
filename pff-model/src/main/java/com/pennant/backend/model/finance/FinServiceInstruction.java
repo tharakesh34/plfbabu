@@ -204,6 +204,11 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 	private Long earlySettlementReason;
 	private long adviseId;
 	private BigDecimal adviseAmount;
+	private boolean excldTdsCal = false;
+	private BigDecimal bpiAmount = BigDecimal.ZERO; // Restructure Purpose
+
+	private Date initiatedDate;
+	private Date approvedDate;
 
 	public String getRestructuringType() {
 		return restructuringType;
@@ -328,6 +333,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		entity.setSchdMethod(this.schdMethod);
 		entity.setAllocationType(this.allocationType);
 		entity.setFundingAc(this.fundingAc);
+		entity.setInitiatedDate(this.initiatedDate);
+		entity.setApprovedDate(this.approvedDate);
 		if (uploadAllocationDetails != null) {
 			entity.setUploadAllocationDetails(new ArrayList<UploadAlloctionDetail>());
 			this.uploadAllocationDetails.stream()
@@ -435,6 +442,8 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		entity.setReference(this.reference);
 		entity.setMaker(this.maker);
 		entity.setChecker(this.checker);
+		entity.setExcldTdsCal(this.excldTdsCal);
+		entity.setBpiAmount(this.bpiAmount);
 		if (extendedDetails != null) {
 			entity.setExtendedDetails(new ArrayList<ExtendedField>());
 			this.extendedDetails.stream()
@@ -1540,4 +1549,35 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 		this.logKey = logKey;
 	}
 
+	public boolean isExcldTdsCal() {
+		return excldTdsCal;
+	}
+
+	public void setExcldTdsCal(boolean excldTdsCal) {
+		this.excldTdsCal = excldTdsCal;
+	}
+
+	public BigDecimal getBpiAmount() {
+		return bpiAmount;
+	}
+
+	public void setBpiAmount(BigDecimal bpiAmount) {
+		this.bpiAmount = bpiAmount;
+	}
+
+	public Date getInitiatedDate() {
+		return initiatedDate;
+	}
+
+	public void setInitiatedDate(Date initiatedDate) {
+		this.initiatedDate = initiatedDate;
+	}
+
+	public Date getApprovedDate() {
+		return approvedDate;
+	}
+
+	public void setApprovedDate(Date approvedDate) {
+		this.approvedDate = approvedDate;
+	}
 }

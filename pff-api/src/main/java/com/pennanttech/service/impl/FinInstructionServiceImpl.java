@@ -49,6 +49,7 @@ import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.financeservice.ReScheduleService;
 import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
+import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.agreement.CovenantAggrement;
@@ -74,6 +75,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
@@ -94,6 +96,7 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.UploadConstants;
@@ -200,6 +203,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private AgreementGeneration agreementGeneration;
 	private FinanceDetailService financeDetailService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
+	private RestructureService restructureService;
 
 	/**
 	 * Method for perform addRateChange operation
@@ -1631,32 +1635,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	private List<ErrorDetail> doProcessServiceFees(FinServiceInstruction fsi, String eventCode) {
-		logger.debug(Literal.ENTERING);
-
-		List<ErrorDetail> errors = new ArrayList<ErrorDetail>();
-		if (APIConstants.REQTYPE_INQUIRY.equals(fsi.getReqType())) {
-			if (fsi.getFinFeeDetails() != null && !fsi.getFinFeeDetails().isEmpty()) {
-				errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, fsi, eventCode);
-			}
-		} else {
-			if (fsi.isReceiptUpload()) {// FIXME
-				FinanceDetail fd = new FinanceDetail();
-				fd = receiptService.getFinanceDetail(fsi, eventCode, fd);
-				try {
-					BigDecimal dueAmount = getDueAmount(fsi, fd, eventCode);
-					BigDecimal extraAmount = fsi.getAmount().subtract(dueAmount);
-					fd.getFinScheduleData().getFinanceMain().setRepayAmount(extraAmount);
-					feeDetailService.doProcessFeesForInquiryForUpload(fd, eventCode, fsi, true);
-					buildFinFeeForUpload(fsi);
-
-				} catch (Exception e) {
-					logger.error("Exception: " + e);
-				}
-			}
-			errors = financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, fsi, eventCode);
-		}
-		logger.debug(Literal.LEAVING);
-		return errors;
+		return financeDataValidation.doFeeValidations(PennantConstants.VLD_SRV_LOAN, fsi, eventCode);
 	}
 
 	/**
@@ -1871,7 +1850,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		returnStatus = isWriteoffLoan(finID);
+		if (StringUtils.isNotBlank(isWriteoffLoan(finID).getReturnCode())) {
+			return returnStatus;
+		}
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
@@ -2085,6 +2066,132 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Override
+	public FinanceDetail restructuring(RestructureDetail rd) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+		FinanceDetail fd = null;
+
+		long finID = rd.getFinID();
+		String finReference = rd.getFinReference();
+		APIErrorHandlerService.logReference(finReference);
+
+		returnStatus = validateReqType(rd.getReqType());
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+
+			return fd;
+		}
+
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinReference(finReference);
+		returnStatus = validateFinReference(fsi);
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+
+			return fd;
+		}
+
+		List<ErrorDetail> errors = restructureService.doValidations(rd);
+
+		for (ErrorDetail ed : errors) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getError()));
+			return fd;
+		}
+
+		returnStatus = isWriteoffLoan(finID);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+
+			return fd;
+		}
+
+		returnStatus = isReceiptPending(finID);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+
+			return fd;
+		}
+
+		returnStatus = checkPresentmentsInQueue(finID);
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			fd = new FinanceDetail();
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+
+			return fd;
+		}
+
+		return finServiceInstController.doRestructuring(rd, fsi, AccountingEvent.RESTRUCTURE);
+	}
+
+	private WSReturnStatus validateFinReference(FinServiceInstruction serviceInst) {
+		logger.debug(Literal.ENTERING);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		// check records in origination and WIF
+		long finID = serviceInst.getFinID();
+		String finReference = serviceInst.getFinReference();
+		int count = financeMainDAO.getFinanceCountById(finID, "", false);
+		if (count > 0) {
+			serviceInst.setWif(false);
+		} else {
+			count = financeMainDAO.getFinanceCountById(finID, "", true);
+			if (count > 0) {
+				serviceInst.setWif(true);
+			} else {
+				String[] valueParm = new String[1];
+				valueParm[0] = finReference;
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+		}
+
+		// Validate Loan is INPROGRESS in any Other Servicing Event or NOT ?
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
+		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
+			String[] valueParm = new String[1];
+			valueParm[0] = rcdMaintainSts;
+			return returnStatus = APIErrorHandlerService.getFailedStatus("LMS001", valueParm);
+		}
+
+		logger.debug(Literal.LEAVING);
+		return returnStatus;
+	}
+
+	private WSReturnStatus isReceiptPending(long finID) {
+		if (receiptService.isReceiptsPending(finID, Long.MIN_VALUE)) {
+			String[] valueParam = new String[1];
+			valueParam[0] = PennantJavaUtil.getLabel("label_Receipts_Inprogress");
+			return APIErrorHandlerService.getFailedStatus("92021", valueParam);
+		}
+
+		return new WSReturnStatus();
+	}
+
+	private WSReturnStatus checkPresentmentsInQueue(long finID) {
+		if (receiptService.checkPresentmentsInQueue(finID)) {
+			String[] valueParam = new String[1];
+			valueParam[0] = PennantJavaUtil.getLabel("label_Receipts_Inprogress");
+			return APIErrorHandlerService.getFailedStatus("92021", valueParam);
+		}
+
+		return new WSReturnStatus();
+	}
+
+	@Override
 	public WSReturnStatus updateCovenants(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 		List<ErrorDetail> errorDetails;
@@ -2209,7 +2316,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	private void validateChequeDetails(FinanceDetail financeDetail) {
 		boolean date = true;
-		boolean amount = true;
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
@@ -2222,7 +2328,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 						date = true;
 						chequeDetail.seteMIRefNo(fsd.getInstNumber());
 						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
-							amount = false;
 							// {0} Should be equal To {1}
 							String[] valueParm = new String[2];
 							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
@@ -2386,7 +2491,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		List<ErrorDetail> errorDetails;
 		String tableType = "_Temp";
 		try {
-			FinanceMain financeMain = null;
 			String finReference = financeDetail.getFinReference();
 			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
@@ -2605,7 +2709,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		receiptData.getReceiptHeader().setValueDate(finSerInst.getValueDate());
 		receiptData.getReceiptHeader().setReceiptPurpose(finSerInst.getReceiptPurpose());
 
-		receiptData = receiptCalculator.recalAutoAllocation(receiptData, finSerInst.getValueDate(), false);
+		receiptData = receiptCalculator.recalAutoAllocation(receiptData, false);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
 
 		for (int i = 0; i < allocationList.size(); i++) {
@@ -2859,12 +2963,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 		logger.debug(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
-	}
-
-	private void buildFinFeeForUpload(FinServiceInstruction finSrvcInst) {
-		for (FinFeeDetail feeDtl : finSrvcInst.getFinFeeDetails()) {
-			feeDtl.setFeeScheduleMethod("");
-		}
 	}
 
 	@Override
@@ -3451,5 +3549,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setFeeWaiverHeaderService(FeeWaiverHeaderService feeWaiverHeaderService) {
 		this.feeWaiverHeaderService = feeWaiverHeaderService;
+	}
+
+	@Autowired
+	public void setRestructureService(RestructureService restructureService) {
+		this.restructureService = restructureService;
 	}
 }

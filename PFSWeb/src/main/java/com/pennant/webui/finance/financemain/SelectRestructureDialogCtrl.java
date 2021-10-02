@@ -42,13 +42,11 @@ import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
-import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -70,7 +68,7 @@ import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
 /**
- * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectFinanceTypeDialog.zul file.
+ * This is the controller class for the /WEB-INF/pages/Finance/FinanceMain/SelectRestructureDialog.zul file.
  */
 public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private static final long serialVersionUID = 8556168885363682933L;
@@ -83,19 +81,21 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Window window_SelectRestructureDialog; // autoWired
 	protected ExtendedCombobox finReference; // autoWired
 	protected Button btnProceed; // autoWired
-	protected Tabbox tabbox; // autoWired
+
 	private FinanceSelectCtrl financeSelectCtrl;
+
 	private String moduleDefiner;
 	private String workflowCode;
 	private String eventCode;
 	private String menuItemRightName;
 	private List<String> roleList = new ArrayList<String>();
+
 	private FinanceMain finMain;
+
 	private transient FinanceDetailService financeDetailService;
 	private transient FinanceWorkFlowService financeWorkFlowService;
 	private transient ReceiptService receiptService;
 	private transient WorkFlowDetails workFlowDetails = null;
-	private FinReceiptHeaderDAO finReceiptHeaderDAO;
 
 	/**
 	 * default constructor.<br>
@@ -150,12 +150,12 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			doSetFieldProperties();
+			showSelectPaymentHeaderDialog();
 
 		} catch (Exception e) {
 			closeDialog();
 			MessageUtil.showError(e);
 		}
-		showSelectPaymentHeaderDialog();
 
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -185,8 +185,11 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.finReference.setModuleName("FinanceMain");
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		Filter[] filters = new Filter[1];
+
+		Filter[] filters = new Filter[3];
 		filters[0] = new Filter("FinIsActive", 1, Filter.OP_EQUAL);
+		filters[1] = new Filter("RepayFrq", "D0000", Filter.OP_NOT_EQUAL);
+		filters[2] = new Filter("StepFinance", 1, Filter.OP_NOT_EQUAL);
 		this.finReference.setFilters(filters);
 
 		logger.debug(Literal.LEAVING);
@@ -234,10 +237,9 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Validate Loan is MATURED or INPROGRESS in any Other Servicing option or NOT ?
 		FinanceMain financeMain = financeDetailService.getFinanceMain(finID, TableType.VIEW);
-		String rcdMaintainSts = financeMain.getRcdMaintainSts();
+
 		Date maturityDate = financeMain.getMaturityDate();
 		Date appDate = SysParamUtil.getAppDate();
-
 		if (DateUtil.compare(maturityDate, appDate) < 0) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("Finance_Matured_Restructure"));
 			return;
@@ -248,6 +250,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			return;
 		}
 
+		String rcdMaintainSts = financeMain.getRcdMaintainSts();
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
 			return;
@@ -255,8 +258,12 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// Validation for not allowing Restructure when Presentment/Receipt's are in process.
 		boolean isPending = receiptService.isReceiptsPending(finID, Long.MIN_VALUE);
-		boolean presentmentsInQueue = finReceiptHeaderDAO.checkPresentmentsInQueue(finID);
-		if (isPending || presentmentsInQueue) {
+		if (isPending) {
+			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
+			return;
+		}
+		boolean presentmentsInQueue = receiptService.checkPresentmentsInQueue(finID);
+		if (presentmentsInQueue) {
 			MessageUtil.showError(PennantJavaUtil.getLabel("label_Receipts_Inprogress"));
 			return;
 		}
@@ -267,8 +274,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		// Getting FinanceDetail Data
-		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finMain.getFinID(), eventCode,
-				null, userRole);
+		final FinanceDetail financeDetail = financeDetailService.getServicingFinance(finID, eventCode, null, userRole);
 		financeDetail.setModuleDefiner(moduleDefiner);
 
 		// TODO:Removing feed in Restructure event
@@ -358,16 +364,6 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	public void onClick$btnClose(Event event) {
-		doClose(false);
-	}
-
-	protected void doPostClose() {
-		if (tabbox != null) {
-			tabbox.getSelectedTab().close();
-		}
-	}
-
 	/**
 	 * Method for checking /validating fields before proceed.
 	 * 
@@ -377,7 +373,6 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
-		doRemoveValidation();
 
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		try {
@@ -388,6 +383,8 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (WrongValueException e) {
 			wve.add(e);
 		}
+
+		doRemoveValidation();
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
 			for (int i = 0; i < wve.size(); i++) {
@@ -395,7 +392,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			throw new WrongValuesException(wvea);
 		}
-		logger.debug(Literal.ENTERING);
+		logger.debug(Literal.LEAVING);
 		return true;
 	}
 
@@ -405,9 +402,7 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	private void doRemoveValidation() {
-		logger.debug(Literal.ENTERING);
 		this.finReference.setConstraint("");
-		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//
@@ -426,7 +421,12 @@ public class SelectRestructureDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.receiptService = receiptService;
 	}
 
-	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
-		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
+	public FinanceMain getFinMain() {
+		return finMain;
 	}
+
+	public void setFinMain(FinanceMain finMain) {
+		this.finMain = finMain;
+	}
+
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +42,8 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.CustomerDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinAssetAmtMovement;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -50,10 +53,12 @@ import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.finance.LoanDownSizingService;
 import com.pennant.backend.util.AssetConstants;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.cache.util.AccountingConfigCache;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.AccountingDetailDialogCtrl;
@@ -132,7 +137,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 	// Sanctioned Amount Movements
 	private List<FinAssetAmtMovement> assetAmtMvntList = null;
-
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	FinScheduleData newFinSchdData = null;
 
 	/**
@@ -344,6 +349,7 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		// Filling Child Window Details Tabs
 		doFillTabs(getFinanceDetail(), true, true);
+		appendExtendedFieldDetails(this.moduleDefiner);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -435,6 +441,9 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
+		if (extendedFieldCtrl != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
 	}
 
 	/**
@@ -643,6 +652,10 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doSetValidation();
 		doWriteComponentsToBean(aFinanceDetail.getFinScheduleData());
 
+		if (aFinanceDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
+			aFinanceDetail.setExtendedFieldRender(extendedFieldCtrl.save(true));
+		}
+
 		if (isDownsizeError) {
 			return;
 		}
@@ -688,6 +701,10 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 		} catch (Exception e) {
 			MessageUtil.showError(e);
+		}
+
+		if (extendedFieldCtrl != null && aFinanceDetail.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
 		}
 
 		logger.debug("Leaving");
@@ -1443,7 +1460,61 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 	}
 
-	// setters / getters
+	private void appendExtendedFieldDetails(String finEvent) {
+		logger.debug(Literal.ENTERING);
+
+		ExtendedFieldRender extendedFieldRender = null;
+
+		try {
+			FinScheduleData schdData = financeDetail.getFinScheduleData();
+			FinanceMain fm = schdData.getFinanceMain();
+
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
+					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), finEvent);
+			if (extendedFieldHeader == null) {
+				return;
+			}
+
+			extendedFieldCtrl.setAppendActivityLog(true);
+			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
+			extendedFieldCtrl.setDataLoadReq(
+					(PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus()) || fm.getRecordStatus() == null)
+							? true
+							: false);
+			long instructionUID = Long.MIN_VALUE;
+
+			if (CollectionUtils.isNotEmpty(schdData.getFinServiceInstructions())) {
+				if (schdData.getFinServiceInstruction().getInstructionUID() != Long.MIN_VALUE) {
+					instructionUID = schdData.getFinServiceInstruction().getInstructionUID();
+				}
+			}
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(fm.getFinReference(), instructionUID);
+
+			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			financeDetail.setExtendedFieldHeader(extendedFieldHeader);
+			financeDetail.setExtendedFieldRender(extendedFieldRender);
+
+			if (financeDetail.getBefImage() != null) {
+				financeDetail.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				financeDetail.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(fm.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(false);
+			extendedFieldCtrl.setWindow(window_LoanDownSizing);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
+		}
+
+		logger.debug(Literal.LEAVING);
+
+	}
 
 	public FinanceMain getFinanceMain() {
 		return financeMain;

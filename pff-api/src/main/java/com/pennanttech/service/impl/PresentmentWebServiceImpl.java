@@ -242,6 +242,7 @@ public class PresentmentWebServiceImpl extends ExtendedTestClass
 
 		// calling controller to approve Presentment Details
 		presentHeader.setPartnerBankId(presentmentHeader.getPartnerBankId());
+		presentHeader.setPresentmentDetailsList(presentmentHeader.getPresentmentDetailsList());
 		response = presentmentServiceController.approvePresentments(presentHeader);
 
 		logger.debug(Literal.LEAVING);

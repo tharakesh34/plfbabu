@@ -75,6 +75,7 @@ import com.pennant.app.constants.LengthConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
@@ -85,6 +86,7 @@ import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.pagging.PagedListWrapper;
 import com.pennanttech.pennapps.core.DocType;
@@ -92,6 +94,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
+import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 /**
@@ -113,6 +116,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 	protected Button btn_AddExlude;
 	protected Button btn_AddInclude;
+	protected Button btn_ExcludeAll;
+	protected Button btn_IncludeAll;
 	protected Listbox listBox_Include;
 	protected Listbox listBox_ManualExclude;
 	protected Listbox listBox_AutoExclude;
@@ -159,6 +164,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 
 	List<Long> includeList = new ArrayList<>();
 	List<Long> excludeList = new ArrayList<>();
+	List<Long> allIncludeIds = new ArrayList<>();
+	List<Long> allExcludeIds = new ArrayList<>();
 
 	/**
 	 * default constructor.<br>
@@ -260,6 +267,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnExclude"));
 			this.btn_AddInclude.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnInclude"));
+			this.btn_ExcludeAll.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnExclude"));
+			this.btn_IncludeAll.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnInclude"));
 			readOnlyComponent(isReadOnly("PresentmentDetailDialog_partnerBank"), this.partnerBank);
 			this.partnerBank.setReadonly(!getUserWorkspace().isAllowed("PresentmentDetailDialog_partnerBank"));
 		} else if ("A".equalsIgnoreCase(moduleType)) {
@@ -267,6 +276,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.btnSave.setVisible(getUserWorkspace().isAllowed("button_PresentmentDetailDialog_btnSave"));
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
+			this.btn_ExcludeAll.setVisible(false);
+			this.btn_IncludeAll.setVisible(false);
 			this.PresentmentIncludeExcludeChanges.setVisible(false);
 			readOnlyComponent(true, this.partnerBank);
 		} else if ("E".equalsIgnoreCase(moduleType)) {
@@ -274,6 +285,8 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.btnSave.setVisible(false);
 			this.btn_AddExlude.setVisible(false);
 			this.btn_AddInclude.setVisible(false);
+			this.btn_ExcludeAll.setVisible(false);
+			this.btn_IncludeAll.setVisible(false);
 			this.PresentmentIncludeExcludeChanges.setVisible(false);
 			readOnlyComponent(true, this.partnerBank);
 		}
@@ -358,6 +371,9 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		if (presentmentHeader.getPartnerBankId() != 0) {
 			this.partnerBank.setValue(String.valueOf(presentmentHeader.getPartnerBankId()));
 			this.partnerBank.setDescription(presentmentHeader.getPartnerBankName());
+			if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
+				this.partnerBank.setReadonly(true);
+			}
 		}
 
 		this.label_PresentmentReference.setValue(presentmentHeader.getReference());
@@ -417,7 +433,23 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		listBox.setPageSize(10);
 		paggingList.setDetailed(true);
 
-		getPresentmentDetailPagedListWrapper().init(parameterSearchObject, listBox, paggingList);
+		SearchResult<PresentmentDetail> searchResult = pagedListService.getSRBySearchObject(parameterSearchObject);
+
+		if (RepayConstants.PRESENTMENT_MANUALEXCLUDE.equals(listType)) {
+			allExcludeIds = new ArrayList<>();
+			for (PresentmentDetail pd : searchResult.getResult()) {
+				allExcludeIds.add(pd.getId());
+			}
+		}
+
+		if (RepayConstants.PRESENTMENT_INCLUDE.equals(listType)) {
+			allIncludeIds = new ArrayList<>();
+			for (PresentmentDetail pd : searchResult.getResult()) {
+				allIncludeIds.add(pd.getId());
+			}
+		}
+
+		getPresentmentDetailPagedListWrapper().initList(searchResult.getResult(), listBox, paggingList);
 		listBox.setItemRenderer(new PresentmentDetailListModelItemRenderer());
 		logger.debug(Literal.LEAVING);
 	}
@@ -439,10 +471,10 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			if (RepayConstants.PEXC_EMIINCLUDE == presentmentDetail.getExcludeReason()) {
 				if (excludeList.contains(id)) {
 					excludeList.remove(id);
-				} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
-					if (includeList.contains(id)) {
-						includeList.remove(id);
-					}
+				}
+			} else if (RepayConstants.PEXC_MANUAL_EXCLUDE == presentmentDetail.getExcludeReason()) {
+				if (includeList.contains(id)) {
+					includeList.remove(id);
 				}
 			}
 
@@ -500,6 +532,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 				}
 			}
 			item.setAttribute("Id", presentmentDetail.getId());
+			item.setAttribute("Action", cbActive);
 		}
 	}
 
@@ -541,6 +574,51 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			saveModifiedList(includeList, empltyExcludeList);
 			includeList = new ArrayList<>();
 		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onClick$btn_ExcludeAll(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		for (Listitem listitem : this.listBox_Include.getItems()) {
+			Checkbox checkBox = (Checkbox) listitem.getAttribute("Action");
+			checkBox.setChecked(true);
+			PresentmentDetail presentmentDetail = (PresentmentDetail) checkBox.getAttribute("Data");
+			long id = presentmentDetail.getId();
+
+			if (!excludeList.contains(id)) {
+				excludeList.add(id);
+			}
+
+		}
+
+		for (Long id : allIncludeIds) {
+			if (!excludeList.contains(id)) {
+				excludeList.add(id);
+			}
+		}
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onClick$btn_IncludeAll(Event event) throws InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+		for (Listitem listitem : this.listBox_ManualExclude.getItems()) {
+			Checkbox checkBox = (Checkbox) listitem.getAttribute("Action");
+			checkBox.setChecked(true);
+			PresentmentDetail presentmentDetail = (PresentmentDetail) checkBox.getAttribute("Data");
+			long id = presentmentDetail.getId();
+
+			if (!includeList.contains(id)) {
+				includeList.add(id);
+			}
+
+		}
+
+		for (Long id : allExcludeIds) {
+			if (!includeList.contains(id)) {
+				includeList.add(id);
+			}
+		}
+
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 

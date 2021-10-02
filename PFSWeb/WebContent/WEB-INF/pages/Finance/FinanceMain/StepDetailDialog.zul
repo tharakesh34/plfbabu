@@ -25,6 +25,18 @@
 							</columns>
 							<rows>
 								<row>
+									<label id="label_FinanceTypeDialog_CalcOfSteps" value="${c:l('label_FinanceTypeDialog_CalcOfSteps.value')}" />
+									<hbox id= "hbox_calcOfSteps">
+										<space spacing="2px" id="space_calcOfSteps" />
+										<combobox id="calcOfSteps" width="135px" />
+									</hbox>
+									<label id="label_FinanceTypeDialog_StepsAppliedFor" value="${c:l('label_FinanceTypeDialog_StepsAppliedFor.value')}" />
+									<hbox id="hbox_stepsAppliedFor">
+										<space spacing="2px" id="space_stepsAppliedFor" />
+										<combobox id="stepsAppliedFor" width="155px" />
+									</hbox>
+							    </row>	
+								<row>
 									<label id="label_FinanceMainDialog_StepPolicy" value="${c:l('label_FinanceMainDialog_StepPolicy.value')}" />
 									<hbox id="hbox_stepPolicy">
 										<extendedcombobox id="stepPolicy" />

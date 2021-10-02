@@ -64,7 +64,7 @@
 				</groups>
 				<element name="max">50</element>
 			</constraint>
-			<constraint annotation="javax.validation.constraints.Pattern">
+			<!-- <constraint annotation="javax.validation.constraints.Pattern">
 				<message>lastName invalid.Allowed Characters are [a-z A-Z 0-9 Space and special characters are &amp; ( ) - .] and must starts with [a-z A-Z].
 			</message>
 				<groups>
@@ -73,7 +73,7 @@
 					<value>com.pennant.validation.PersionalInfoGroup</value>
 				</groups>
 				<element name="regexp">^$|^[A-Za-z]+[A-Za-z0-9.\\&amp;\\(\\)\-\s]*</element>
-			</constraint>
+			</constraint> -->
 
 		</field>
 

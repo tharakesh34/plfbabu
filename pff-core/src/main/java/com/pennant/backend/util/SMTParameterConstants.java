@@ -382,4 +382,5 @@ public class SMTParameterConstants {
 	public static final String CIBIL_DEFAULT_AMOUNT = "CIBIL_DEFAULT_AMOUNT";
 	public static final String FEE_LOS_PROCESSING = "FEE_LOS_PROCESSING";
 	public static final String PRESENTMENT_RESP_PROCESS_THREAD_COUNT = "PRESENTMENT_RESP_PROCESS_THREAD_COUNT";
+	public static final String PRESENTMENT_EXTRACTION_TYPE = "PRESENTMENT_EXTRACTION_TYPE";
 }

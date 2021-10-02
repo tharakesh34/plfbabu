@@ -445,6 +445,8 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		if (StringUtils.equals(aFinTypeFees.getFinEvent(), AccountingEvent.CMTDISB)) {
 			excluedeFields = getExcludeFields();
+		} else if (AccountingEvent.RESTRUCTURE.equals(aFinTypeFees.getFinEvent())) {
+			excluedeFields = getRestructureExcludeFields();
 		}
 
 		if (!ImplementationConstants.ALLOW_PAID_FEE_SCHEDULE_METHOD) { // Paid by customer and waived by bank has been
@@ -478,6 +480,13 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		// CR : Deduct fee at the time of additional disbursal
 		doSetFeeSchdMethod(aFinTypeFees.getFinEvent());
 		doSetPercTypeProp();
+		if (AccountingEvent.RESTRUCTURE.equals(aFinTypeFees.getFinEvent())) {
+			this.alwModifyFee.setChecked(false);
+			this.alwDeviation.setDisabled(true);
+			this.maxWaiver.setValue(BigDecimal.ZERO);
+			readOnlyComponent(true, this.maxWaiver);
+		}
+
 		logger.debug("Leaving");
 	}
 
@@ -485,6 +494,14 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 		return "," + CalculationConstants.REMFEE_PART_OF_DISBURSE + "," + CalculationConstants.REMFEE_PART_OF_SALE_PRICE
 				+ "," + CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
+				+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + ","
+				+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
+	}
+
+	private String getRestructureExcludeFields() {
+
+		return "," + CalculationConstants.REMFEE_PART_OF_DISBURSE + ","
+				+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + ","
 				+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + ","
 				+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
 	}
@@ -1178,8 +1195,19 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 				calOnExcludeFields = "";
 			}
 		}
-		if (StringUtils.equals(finEventValue, AccountingEvent.CMTDISB)) {
+
+		this.alwModifyFee.setDisabled(isReadOnly("FinTypeFeesDialog_alwModifyFee"));
+		readOnlyComponent(isReadOnly("FinTypeFeesDialog_maxWaiver"), this.maxWaiver);
+
+		if (AccountingEvent.CMTDISB.equals(finEventValue)) {
 			excluedeFields = getExcludeFields();
+		} else if (AccountingEvent.RESTRUCTURE.equals(finEventValue)) {
+			excluedeFields = getRestructureExcludeFields();
+			this.alwModifyFee.setChecked(false);
+			this.alwDeviation.setChecked(false);
+			this.alwDeviation.setDisabled(true);
+			this.maxWaiver.setValue(BigDecimal.ZERO);
+			readOnlyComponent(true, this.maxWaiver);
 		}
 
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALLOW_FEE_CALC_ADJU_PRINCIPAL)) {

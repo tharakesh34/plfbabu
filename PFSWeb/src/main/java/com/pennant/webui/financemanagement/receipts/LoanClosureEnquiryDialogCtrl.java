@@ -76,6 +76,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ReportsUtil;
@@ -117,6 +118,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayMain;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.XcessPayables;
@@ -783,7 +785,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		 * getReceiptCalculator().recalAutoAllocation(receiptData, valueDate, false); }
 		 */
 
-		receiptData = getReceiptCalculator().recalAutoAllocation(receiptData, valueDate, false);
+		receiptData = getReceiptCalculator().recalAutoAllocation(receiptData, false);
 
 		doFillAllocationDetail();
 		setBalances();
@@ -3510,7 +3512,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		// String reportName = "Foreclosure Letter";
 		ForeClosureReport closureReport = new ForeClosureReport();
 
-		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+		FinanceMain fm = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		closureReport.setProductDesc(getFinanceDetail().getFinScheduleData().getFinanceType().getFinTypeDesc());
 
 		// Setting Actual Percentage in Fore closure Letter Report.
@@ -3520,10 +3522,10 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 			closureReport.setActPercentage(finFeeDetail.getActPercentage());
 		}
 
-		if (financeMain != null) {
+		if (fm != null) {
 			Date applDate = SysParamUtil.getAppDate();
 			String appDate = DateFormatUtils.format(applDate, "MMM  dd,yyyy");
-			String disDate = DateUtility.formatToLongDate(financeMain.getFinStartDate());
+			String disDate = DateUtility.formatToLongDate(fm.getFinStartDate());
 
 			Date chrgTillDate;
 
@@ -3539,19 +3541,21 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			closureReport.setReceiptDate(DateFormatUtils.format(receiptDate, "dd-MMM-yyyy"));
 			closureReport.setCalDate(appDate);
-			closureReport.setFinReference(financeMain.getFinReference());
-			closureReport.setVanNumber(financeMain.getVanCode() == null ? "" : financeMain.getVanCode());
-			closureReport.setFinAmount(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), formatter));
-			closureReport
-					.setFinAssetValue(PennantApplicationUtil.formateAmount(financeMain.getFinAssetValue(), formatter));
+			long finID = fm.getFinID();
+			String finReference = fm.getFinReference();
+
+			closureReport.setFinID(finID);
+			closureReport.setFinReference(finReference);
+			closureReport.setVanNumber(fm.getVanCode() == null ? "" : fm.getVanCode());
+			closureReport.setFinAmount(PennantApplicationUtil.formateAmount(fm.getFinAmount(), formatter));
+			closureReport.setFinAssetValue(PennantApplicationUtil.formateAmount(fm.getFinAssetValue(), formatter));
 			closureReport.setDisbursalDate(disDate);
 			closureReport.setChrgTillDate(DateFormatUtils.format(chrgTillDate, "MMM  dd,yyyy"));
 
 			// Fetch Collateral Details
 			// Collateral setup details and assignment details
 			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
-					.getCollateralAssignmentByFinRef(financeMain.getFinReference(), FinanceConstants.MODULE_NAME,
-							"_AView");
+					.getCollateralAssignmentByFinRef(fm.getFinReference(), FinanceConstants.MODULE_NAME, "_AView");
 			String collateralAddress = "";
 			if (CollectionUtils.isNotEmpty(collateralAssignmentList)) {
 				CollateralAssignment collateralAssignment = collateralAssignmentList.get(0);
@@ -3763,8 +3767,16 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// Issue Fixed 141142
 				List<ManualAdvise> payableList = receiptData.getReceiptHeader().getPayableAdvises();
 				BigDecimal payableAmt = BigDecimal.ZERO;
-				for (ManualAdvise manualAdvise : payableList) {
-					payableAmt = payableAmt.add(manualAdvise.getBalanceAmt());
+				String ccy = fm.getFinCcy();
+				for (ManualAdvise ma : payableList) {
+					String taxType = null;
+
+					if (ma.getTaxComponent().equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+						taxType = FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE;
+					}
+
+					TaxAmountSplit taxSplit = GSTCalculator.calculateGST(finID, ccy, taxType, ma.getBalanceAmt());
+					payableAmt = payableAmt.add(ma.getBalanceAmt().add(taxSplit.gettGST()));
 				}
 
 				// Other Refunds (All payable Advise)
@@ -3788,7 +3800,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				Map<Date, BigDecimal> next7DayMap = new LinkedHashMap<Date, BigDecimal>();
 
 				int defaultDays = 7;
-				int noOfdays = DateUtility.getDaysBetween(chrgTillDate, financeMain.getMaturityDate());
+				int noOfdays = DateUtility.getDaysBetween(chrgTillDate, fm.getMaturityDate());
 				if (defaultDays >= noOfdays) {
 					defaultDays = noOfdays;
 				}
@@ -3796,7 +3808,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				// calculate net recievable amount for next 7 days
 				for (int i = 1; i <= defaultDays; i++) {
 					Date valueDate = DateUtils.addDays(chrgTillDate, i);
-					FinReceiptData localReceiptData = doFillData(financeMain.getFinReference(), valueDate);
+					FinReceiptData localReceiptData = doFillData(finReference, valueDate);
 					BigDecimal amount = BigDecimal.ZERO;
 
 					/*
@@ -3855,8 +3867,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					}
 				}
 
-				List<FinanceMain> financeMainList = financeDetailService
-						.getFinanceMainForLinkedLoans(financeMain.getFinReference());
+				List<FinanceMain> financeMainList = financeDetailService.getFinanceMainForLinkedLoans(finReference);
 				StringBuilder linkedFinRef = new StringBuilder(" ");
 				if (financeMainList != null) {
 					for (FinanceMain finance : financeMainList) {
@@ -3872,16 +3883,15 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				closureReport.setLinkedFinRef(linkedFinRef.toString());
 				closureReport.setValueDate(DateFormatUtils.format(chrgTillDate, "dd-MMM-yyyy"));
 				BigDecimal calcIntrstPerDay = getCalcIntrstPerDay(closureReport.getOutstandingPri(),
-						financeMain.getRepayProfitRate(), financeMain.getCalRoundingMode());
+						fm.getRepayProfitRate(), fm.getCalRoundingMode());
 				closureReport.setOneDayInterest(calcIntrstPerDay);
 
-				closureReport.setEntityDesc(financeMain.getEntityDesc());
+				closureReport.setEntityDesc(fm.getEntityDesc());
 			}
 		}
 
 		String templatePath = App.getResourcePath(PathUtil.FINANCE_LOANCLOSURE);
-		String loanTypeTemplate = templatePath + File.separator
-				+ financeMain.getFinType().concat("_Foreclosure Letter.docx");
+		String loanTypeTemplate = templatePath + File.separator + fm.getFinType().concat("_Foreclosure Letter.docx");
 		String commonTemplate = templatePath + File.separator.concat("Foreclosure Letter.docx");
 
 		File loanTypeWiseFile = new File(loanTypeTemplate);

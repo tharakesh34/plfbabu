@@ -137,7 +137,7 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 		generator.setCcyFormat(ccyFormat);
 
 		if (getExtendedFieldRender().getMapValues() != null) {
-			generator.setFieldValueMap((Map<String, Object>) getExtendedFieldRender().getMapValues());
+			generator.setFieldValueMap(getExtendedFieldRender().getMapValues());
 		}
 
 		doCheckRights();

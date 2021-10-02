@@ -73,6 +73,7 @@ public class AccountingEvent {
 	public static final String PROVCHG = "PROVCHG";
 	public static final String RATCHG = "RATCHG";
 	public static final String REPAY = "REPAY";
+	public static final String RESTRUCTURE = "RESTRUCT";
 	public static final String SCDCHG = "SCDCHG";
 	public static final String STAGE = "STAGE";
 	public static final String WRITEBK = "WRITEBK";

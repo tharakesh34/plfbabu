@@ -168,11 +168,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerPhoneNumber.setLastMntBy(userDetails.getUserId());
 			customerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerPhoneNumber.setVersion(1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerPhoneNumber, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerPhoneNumberService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -218,11 +218,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerPhoneNumber.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerPhoneNumber.setVersion((customerPhoneNumberService.getVersion(customerPhoneNumber.getPhoneCustID(),
 					customerPhoneNumber.getPhoneTypeCode())) + 1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerPhoneNumber, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerPhoneNumberService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -264,11 +264,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			curPhoneNumber.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			curPhoneNumber.setNewRecord(false);
 			curPhoneNumber.setSourceId(APIConstants.FINSOURCE_ID_API);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(curPhoneNumber, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerPhoneNumberService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -353,11 +353,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerAddress.setLastMntBy(userDetails.getUserId());
 			customerAddress.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerAddress.setVersion(1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerAddress, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerAddresService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -405,11 +405,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerAddres.setVersion(
 					(customerAddresService.getVersion(customerAddres.getCustID(), customerAddres.getCustAddrType()))
 							+ 1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerAddres, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerAddresService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -451,11 +451,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			curCustomerAddres.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			curCustomerAddres.setNewRecord(false);
 			curCustomerAddres.setSourceId(APIConstants.FINSOURCE_ID_API);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(curCustomerAddres, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerAddresService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -538,11 +538,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerEMail.setLastMntBy(userDetails.getUserId());
 			customerEMail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerEMail.setVersion(1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerEMail, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerEMailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -588,11 +588,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerEMail.setVersion(
 					(customerEMailService.getVersion(customerEMail.getCustID(), customerEMail.getCustEMailTypeCode()))
 							+ 1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerEMail, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerEMailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -633,11 +633,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			curCustomerEMail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			curCustomerEMail.setNewRecord(false);
 			curCustomerEMail.setSourceId(APIConstants.FINSOURCE_ID_API);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(curCustomerEMail, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerEMailService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -713,7 +713,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 			customerIncome.setUserDetails(userDetails);
 			customerIncome.setCustId(prvCustomer.getCustID());
-			//customerIncome.setMargin(new BigDecimal(0));
+			// customerIncome.setMargin(new BigDecimal(0));
 			customerIncome.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			customerIncome.setSourceId(APIConstants.FINSOURCE_ID_API);
 			customerIncome.setCustCif(cif);
@@ -722,11 +722,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerIncome.setLastMntBy(userDetails.getUserId());
 			customerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerIncome.setVersion(1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerIncome, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerIncomeService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -769,11 +769,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerIncome.setLastMntBy(userDetails.getUserId());
 			customerIncome.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerIncome.setVersion(customerIncomeService.getVersion(customerIncome) + 1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerIncome, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerIncomeService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -812,11 +812,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			curCustomerIncom.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			curCustomerIncom.setNewRecord(false);
 			curCustomerIncom.setSourceId(APIConstants.FINSOURCE_ID_API);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(curCustomerIncom, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerIncomeService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -947,10 +947,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				auditHeader = customerBankInfoService.doApprove(auditHeader);
 				response = new CustomerBankInfoDetail();
@@ -1023,10 +1023,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				customerBankInfoService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -1083,10 +1083,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				customerBankInfoService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -1299,8 +1299,8 @@ public class CustomerDetailsController extends GenericService<Object> {
 			CustomerGstInfoValidation validation = new CustomerGstInfoValidation(customerGstDetailDAO);
 			AuditHeader auditHeader = getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF);
 
-			//AuditHeader auditHeader = validation
-			//.gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
+			// AuditHeader auditHeader = validation
+			// .gstInfoValidation(getAuditHeader(curCustomerGST, PennantConstants.TRAN_WF), "doApprove");
 			response = new WSReturnStatus();
 			if (auditHeader.getErrorMessage() != null) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
@@ -1601,10 +1601,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 							APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				auditHeader = customerChequeInfoService.doApprove(auditHeader);
 				response = new CustomerChequeInfoDetail();
@@ -1658,10 +1658,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				customerChequeInfoService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -1704,10 +1704,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				customerChequeInfoService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -1751,7 +1751,7 @@ public class CustomerDetailsController extends GenericService<Object> {
 					extLiabilityPaymentdetails.setVersion(1);
 					extLiabilityPaymentdetails.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					extLiabilityPaymentdetails.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					//extLiabilityPaymentdetails.setSourceId(APIConstants.FINSOURCE_ID_API);
+					// extLiabilityPaymentdetails.setSourceId(APIConstants.FINSOURCE_ID_API);
 					extLiabilityPaymentdetails.setLastMntBy(userDetails.getUserId());
 					extLiabilityPaymentdetails.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 				}
@@ -1861,10 +1861,10 @@ public class CustomerDetailsController extends GenericService<Object> {
 					response = (APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError()));
 				}
 			} else {
-				//get the header details from the request
+				// get the header details from the request
 				APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 						.get(APIHeader.API_HEADER_KEY);
-				//set the headerDetails to AuditHeader
+				// set the headerDetails to AuditHeader
 				auditHeader.setApiHeader(reqHeaderDetails);
 				customerExtLiabilityService.doApprove(auditHeader);
 				response = APIErrorHandlerService.getSuccessStatus();
@@ -2046,11 +2046,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 					|| StringUtils.equalsIgnoreCase(customerDocument.getCustDocType(), "JFIF")) {
 				customerDocument.setCustDocType(PennantConstants.DOC_TYPE_IMAGE);
 			}
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDocument, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDocumentService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -2095,11 +2095,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			customerDocument.setVersion((customerDocumentService.getVersion(customerDocument.getCustID(),
 					customerDocument.getCustDocCategory())) + 1);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(customerDocument, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDocumentService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -2144,11 +2144,11 @@ public class CustomerDetailsController extends GenericService<Object> {
 			curCustomerDocument.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			curCustomerDocument.setNewRecord(false);
 			curCustomerDocument.setSourceId(APIConstants.FINSOURCE_ID_API);
-			//get the header details from the request
+			// get the header details from the request
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
 			AuditHeader auditHeader = getAuditHeader(curCustomerDocument, PennantConstants.TRAN_WF);
-			//set the headerDetails to AuditHeader
+			// set the headerDetails to AuditHeader
 			auditHeader.setApiHeader(reqHeaderDetails);
 			auditHeader = customerDocumentService.doApprove(auditHeader);
 			response = new WSReturnStatus();
@@ -2191,9 +2191,9 @@ public class CustomerDetailsController extends GenericService<Object> {
 			customerExtendedFieldDetails.setExtendedFieldHeader(extendedFieldHeader);
 			List<ExtendedField> extendedFields = customerExtendedFieldDetails.getExtendedDetails();
 			if (extendedFieldHeader != null) {
+				String custCIF = customerDetails.getCustCIF();
 				try {
-					maxSeqNo = extendedFieldRenderDAO.getMaxSeqNoByRef(customerDetails.getCustCIF(),
-							tableName.toString());
+					maxSeqNo = extendedFieldRenderDAO.getMaxSeq(custCIF, tableName.toString(), "");
 				} catch (Exception e) {
 					maxSeqNo = 0;
 				}
@@ -2211,8 +2211,8 @@ public class CustomerDetailsController extends GenericService<Object> {
 					exdFieldRender.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 					exdFieldRender.setVersion(1);
 				} else {
-					ExtendedFieldRender fieldRender = extendedFieldRenderDAO.getExtendedFieldDetails(
-							customerDetails.getCustCIF(), maxSeqNo, tableName, TableType.MAIN_TAB.getSuffix());
+					ExtendedFieldRender fieldRender = extendedFieldRenderDAO.getExtendedFieldDetails(custCIF, maxSeqNo,
+							tableName, TableType.MAIN_TAB.getSuffix());
 					exdFieldRender.setSeqNo(fieldRender.getSeqNo());
 					exdFieldRender
 							.setTypeCode(customerExtendedFieldDetails.getExtendedFieldHeader().getSubModuleName());

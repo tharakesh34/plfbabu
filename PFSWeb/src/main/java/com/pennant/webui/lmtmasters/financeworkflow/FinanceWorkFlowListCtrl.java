@@ -196,6 +196,8 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 			events = PennantStaticListUtil.getFinServiceEvents(false);
 		} else {
 			events = PennantStaticListUtil.getFinServiceEvents(true);
+			events.add(new FinServicingEvent(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN,
+					Labels.getLabel("label_FinSerEvent_MaintainExtendedFields"), "EDM"));
 		}
 
 		List<ValueLabel> list = PennantStaticListUtil.getValueLabels(events);
@@ -213,8 +215,7 @@ public class FinanceWorkFlowListCtrl extends GFCBaseListCtrl<FinanceWorkFlow> {
 
 		registerField("finEvent", listheader_FinEvent, SortOrder.ASC, finEvent, sortOperator_finEvent,
 				Operators.STRING);
-		fillComboBox(finEvent, null,
-				PennantStaticListUtil.getValueLabels(PennantStaticListUtil.getFinServiceEvents(true)), "");
+		fillComboBox(finEvent, null, PennantStaticListUtil.getValueLabels(events), "");
 
 		registerField("workFlowType", listheader_WorkFlowType, SortOrder.NONE, workFlowType, sortOperator_workFlowType,
 				Operators.STRING);

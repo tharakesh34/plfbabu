@@ -320,10 +320,10 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", RepayPftFrq, RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq");
 		sql.append(", NextGrcRepayDate, RepayFrq, NextRepayDate, Amount, RecalType, RecalFromDate");
 		sql.append(", RecalToDate, PftIntact, Terms, ServiceReqNo, Remarks, PftChg");
-		sql.append(", InstructionUID, LinkedTranID, LogKey)");
+		sql.append(", InstructionUID, LinkedTranID, LogKey, InitiatedDate, ApprovedDate)");
 		sql.append(" values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		return sql.toString();
@@ -366,6 +366,9 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		ps.setLong(index++, fsd.getInstructionUID());
 		ps.setLong(index++, fsd.getLinkedTranID());
 		ps.setObject(index++, fsd.getLogKey());
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getInitiatedDate()));
+		ps.setDate(index++, JdbcUtil.getDate(fsd.getApprovedDate()));
+
 	}
 
 	private StringBuilder sqlSelectQuery() {
@@ -374,7 +377,7 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
 		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
-		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID");
+		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, InitiatedDate, ApprovedDate");
 		sql.append(" From FinServiceInstruction");
 
 		return sql;
@@ -422,6 +425,8 @@ public class FinServiceInstrutionDAOImpl extends SequenceDao<FinServiceInstructi
 			fsi.setPftChg(rs.getBigDecimal("PftChg"));
 			fsi.setInstructionUID(rs.getLong("InstructionUID"));
 			fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
+			fsi.setInitiatedDate(rs.getTimestamp("InitiatedDate"));
+			fsi.setApprovedDate(rs.getTimestamp("ApprovedDate"));
 
 			return fsi;
 		}

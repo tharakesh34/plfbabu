@@ -67,6 +67,7 @@ import com.pennant.app.util.RuleExecutionUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.dao.finance.TaxHeaderDetailsDAO;
@@ -84,6 +85,9 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
@@ -123,10 +127,13 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.extendedfieldsExtension.ExtendedFieldExtensionService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -171,6 +178,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private FeeReceiptService feeReceiptService;
 	private AuditHeaderDAO auditHeaderDAO;
 	private GSTInvoiceTxnDAO gstInvoiceTxnDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ExtendedFieldExtensionService extendedFieldExtensionService;
+	private FinanceMainDAO financeMainDAO;
 
 	public ReceiptCancellationServiceImpl() {
 		super();
@@ -261,6 +271,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		FinReceiptData frd = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+		FinReceiptHeader rch = frd.getReceiptHeader();
+
+		long serviceUID = Long.MIN_VALUE;
+		if (rch.getExtendedFieldRender() != null) {
+			serviceUID = extendedFieldDetailsService.getInstructionUID(rch.getExtendedFieldRender(),
+					rch.getExtendedFieldExtension());
+		}
+
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
@@ -303,12 +322,32 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			auditDetails.addAll(details);
 		}
 
+		// Extended field Details
+		if (receiptHeader.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = receiptData.getFinanceDetail().getAuditDetailMap().get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN,
+					receiptData.getFinanceDetail().getExtendedFieldHeader().getEvent(), tableType.getSuffix(),
+					serviceUID);
+			auditDetails.addAll(details);
+		}
+
+		// Extended field Extensions Details
+		if (receiptHeader.getExtendedFieldExtension() != null) {
+			List<AuditDetail> details = receiptData.getFinanceDetail().getAuditDetailMap()
+					.get("ExtendedFieldExtension");
+			details = extendedFieldExtensionService.processingExtendedFieldExtList(details, receiptData, serviceUID,
+					tableType);
+
+			auditDetails.addAll(details);
+		}
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 				receiptHeader.getBefImage(), receiptHeader));
 
 		auditHeader.setAuditDetails(auditDetails);
-		// auditHeaderDAO.addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -325,30 +364,51 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			return auditHeader;
 		}
 
-		FinReceiptHeader receiptHeader = null;
+		FinReceiptHeader rch = null;
+		FinReceiptData rd = null;
 		// Bug fix
 		if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptData) {
-			FinReceiptData receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-			receiptHeader = receiptData.getReceiptHeader();
+			rd = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+			rch = rd.getReceiptHeader();
 		} else if (auditHeader.getAuditDetail().getModelData() instanceof FinReceiptHeader) {
-			receiptHeader = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+			rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 		}
 
 		// Bounce Reason Code
-		if (receiptHeader.getManualAdvise() != null) {
-			manualAdviseDAO.delete(receiptHeader.getManualAdvise(), TableType.TEMP_TAB);
+		if (rch.getManualAdvise() != null) {
+			manualAdviseDAO.delete(rch.getManualAdvise(), TableType.TEMP_TAB);
 		}
 
 		// Deleting Receipt Documents
-		auditDetails
-				.addAll(listDeletion(receiptHeader, TableType.TEMP_TAB.getSuffix(), auditHeader.getAuditTranType()));
+		String auditTranType = auditHeader.getAuditTranType();
+		auditDetails.addAll(listDeletion(rch, TableType.TEMP_TAB.getSuffix(), auditTranType));
 		// Delete Receipt Header
-		finReceiptHeaderDAO.deleteByReceiptID(receiptHeader.getReceiptID(), TableType.TEMP_TAB);
+		finReceiptHeaderDAO.deleteByReceiptID(rch.getReceiptID(), TableType.TEMP_TAB);
+
+		// Delete Extended field Render Details.
+		if (rd != null) {
+			FinanceDetail fd = rd.getFinanceDetail();
+			List<AuditDetail> extendedDetails = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+
+			if (CollectionUtils.isNotEmpty(extendedDetails)) {
+				ExtendedFieldRender render = fd.getExtendedFieldRender();
+				auditDetails.addAll(extendedFieldDetailsService.delete(fd.getExtendedFieldHeader(), rch.getReference(),
+						render.getSeqNo(), "_Temp", auditTranType, extendedDetails));
+			}
+
+			if (rch.getExtendedFieldExtension() != null) {
+				List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldExtension");
+				details = extendedFieldExtensionService.delete(details, auditTranType, TableType.TEMP_TAB);
+				auditDetails.addAll(details);
+			}
+
+			auditHeader.setAuditDetails(auditDetails);
+		}
+
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), receiptHeader.getExcludeFields());
-		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
-				receiptHeader.getBefImage(), receiptHeader));
+		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
+		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fields[0], fields[1], rch.getBefImage(), rch));
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -360,6 +420,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
 		if (!aAuditHeader.isNextProcess()) {
 			return aAuditHeader;
@@ -375,9 +436,10 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		FinReceiptHeader finReceiptHeader = finReceiptHeaderDAO.getReceiptHeaderByID(receiptID,
 				TableType.MAIN_TAB.getSuffix());
 
+		FinanceDetail fd = rd.getFinanceDetail();
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)
 				&& finReceiptHeader == null) {
-			FinanceDetail fd = rd.getFinanceDetail();
+			fd = rd.getFinanceDetail();
 			FinScheduleData schdData = fd.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
 			processSuccessPostings(rch, "", fm);
@@ -524,6 +586,29 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		}
 
+		long serviceUID = Long.MIN_VALUE;
+		if (fd.getExtendedFieldRender() != null) {
+			serviceUID = extendedFieldDetailsService.getInstructionUID(fd.getExtendedFieldRender(),
+					fd.getExtendedFieldExtension());
+		}
+
+		// Extended Field Details
+		List<AuditDetail> extendedDetails = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (fd.getExtendedFieldRender() != null) {
+			extendedDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(extendedDetails,
+					ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), "", serviceUID);
+			auditDetails.addAll(extendedDetails);
+		}
+
+		// Extended field Extensions Details
+		List<AuditDetail> extensionDetails = fd.getAuditDetailMap().get("ExtendedFieldExtension");
+		if (extensionDetails != null && extensionDetails.size() > 0) {
+			extensionDetails = extendedFieldExtensionService.processingExtendedFieldExtList(extensionDetails, rd,
+					serviceUID, TableType.MAIN_TAB);
+
+			auditDetails.addAll(extensionDetails);
+		}
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
 		auditHeader.setAuditDetail(
 				new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1], rch.getBefImage(), rch));
@@ -536,7 +621,19 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], rch.getBefImage(), rch));
 
 		// Adding audit as Insert/Update/deleted into main table
-		// auditHeaderDAO.addAudit(auditHeader);
+		auditHeaderDAO.addAudit(auditHeader);
+		// Delete Extended Details from Temp Table
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			extendedDetails = extendedFieldDetailsService.delete(fd.getExtendedFieldHeader(), rch.getReference(),
+					fd.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails);
+
+			auditDetails.addAll(extendedDetails);
+		}
+
+		if (extensionDetails != null && extensionDetails.size() > 0) {
+			extensionDetails = extendedFieldExtensionService.delete(extensionDetails, tranType, TableType.TEMP_TAB);
+			auditDetails.addAll(extensionDetails);
+		}
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -615,10 +712,35 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+		auditHeader = getAuditDetails(auditHeader, method);
+
+		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail financeDetail = repayData.getFinanceDetail();
+
+		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
+
+		if (financeDetail.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		if (financeDetail.getExtendedFieldExtension() != null) {
+			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldExtension");
+			details = extendedFieldExtensionService.vaildateDetails(details, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 		auditHeader = nextProcess(auditHeader);
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -879,6 +1001,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 			}
 			fieldsAndValues.put("br_finType", rch.getFinType());
+			fieldsAndValues.put("br_dpdcount", DateUtil.getDaysBetween(rch.getReceiptDate(), appDate));
+
 			fieldsAndValues.put("br_presentmentType", presentmentType);
 			if (eventMapping != null && eventMapping.size() > 0) {
 				fieldsAndValues.put("emptype", eventMapping.get("EMPTYPE"));
@@ -918,7 +1042,6 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		logger.debug(Literal.ENTERING);
 
 		boolean alwSchdReversalByLog = false;
-		long postingId = postingsDAO.getPostingId();
 		long receiptID = rch.getReceiptID();
 		String curStatus = finReceiptHeaderDAO.getReceiptModeStatus(receiptID);
 		Date appDate = null;
@@ -956,8 +1079,9 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		// Posting Reversal Case Program Calling in Equation
 		// ============================================
-		long linkedTranID = 0;
 		FeeType penalityFeeType = null;
+		long linkedTranID = postReversalTransactions(rch, appDate);
+		long postingId = postingsDAO.getPostingId();
 
 		if (!ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
 			List<ReturnDataSet> returnDataSets = null;
@@ -1910,6 +2034,37 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return null;
 	}
 
+	private long postReversalTransactions(FinReceiptHeader rh, Date appDate) {
+		String receiptID = String.valueOf(rh.getReceiptID());
+		String receiptPurpose = rh.getReceiptPurpose();
+		String receiptMode = rh.getReceiptMode();
+		List<ReturnDataSet> rdSet = null;
+
+		if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
+			return 0;
+		}
+
+		if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
+			return 0;
+		}
+
+		long postingId = postingsDAO.getPostingId();
+
+		if (ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
+			if (!RepayConstants.RECEIPTMODE_PRESENTMENT.equals(receiptMode)) {
+				rdSet = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId, appDate);
+			}
+		} else {
+			rdSet = postingsPreparationUtil.postReversalsByPostRef(receiptID, postingId, appDate);
+		}
+
+		if (CollectionUtils.isNotEmpty(rdSet)) {
+			return rdSet.get(0).getLinkedTranId();
+		}
+
+		return 0;
+	}
+
 	private Taxes getTaxDetail(String taxType, BigDecimal taxPerc) {
 		Taxes taxes = new Taxes();
 		taxes.setTaxType(taxType);
@@ -2450,12 +2605,13 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 			BeanUtils.copyProperties(finFeeDetail, tempfinFee);
 			excessAmt = excessAmt.add(finFeeDetail.getFinFeeReceipts().get(0).getPaidAmount());
 			calculateGST(tempfinFee, taxPercentages);
+			finFeeDetail.setTaxHeader(tempfinFee.getTaxHeader());
 			tempfinFee.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			finFeeDetailService.updateFeesFromUpfront(tempfinFee, "_Temp");
 		}
 
 		for (FinFeeDetail finFeeDetail : rch.getPaidFeeList()) {
-			if (finFeeDetail.isTaxApplicable()) {
+			if (finFeeDetail.isTaxApplicable() && finFeeDetail.getTaxHeader() != null) {
 				List<Taxes> taxDetails = finFeeDetail.getTaxHeader().getTaxDetails();
 				for (Taxes taxes : taxDetails) {
 					taxHeaderDetailsDAO.update(taxes, "_Temp");
@@ -2808,30 +2964,45 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
-		logger.debug(Literal.ENTERING);
+		logger.debug("Entering ");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
 
-		FinReceiptData rd = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-		FinReceiptHeader rch = rd.getReceiptHeader();
-		String auditTranType = "";
+		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
+		FinanceDetail financeDetail = repayData.getFinanceDetail();
+		FinReceiptHeader finReceiptHeader = repayData.getReceiptHeader();
 
+		String auditTranType = "";
 		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
-			if (rch.isWorkflow()) {
+			if (finReceiptHeader.isWorkflow()) {
 				auditTranType = PennantConstants.TRAN_WF;
 			}
 		}
-		// Document Details
-		if (CollectionUtils.isNotEmpty(rch.getDocumentDetails())) {
-			auditDetailMap.put("DocumentDetails", setDocumentDetailsAuditData(rch, auditTranType, method));
-			auditDetails.addAll(auditDetailMap.get("DocumentDetails"));
+
+		// Extended Field Details
+		if (financeDetail.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
+							financeDetail.getExtendedFieldRender(), auditTranType, method,
+							ExtendedFieldConstants.MODULE_LOAN));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
-		rch.setAuditDetailMap(auditDetailMap);
-		auditHeader.getAuditDetail().setModelData(rd);
+		ExtendedFieldExtension extendedFieldExtension = financeDetail.getExtendedFieldExtension();
+		if (extendedFieldExtension != null) {
+			auditDetailMap.put("ExtendedFieldExtension", extendedFieldExtensionService
+					.setExtendedFieldExtAuditData(extendedFieldExtension, auditTranType, method));
+			financeDetail.setAuditDetailMap(auditDetailMap);
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldExtension"));
+		}
+
+		financeDetail.setAuditDetailMap(auditDetailMap);
+		repayData.setFinanceDetail(financeDetail);
+		auditHeader.getAuditDetail().setModelData(repayData);
 		auditHeader.setAuditDetails(auditDetails);
-		logger.debug(Literal.LEAVING);
+		logger.debug("Leaving ");
+
 		return auditHeader;
 	}
 
@@ -3066,6 +3237,11 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return null;
 	}
 
+	@Override
+	public FinanceMain getFinBasicDetails(String reference) {
+		return this.financeMainDAO.getFinanceMainByRef(reference, TableType.VIEW.getSuffix(), false);
+	}
+
 	public void setFinReceiptHeaderDAO(FinReceiptHeaderDAO finReceiptHeaderDAO) {
 		this.finReceiptHeaderDAO = finReceiptHeaderDAO;
 	}
@@ -3130,4 +3306,15 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		this.gstInvoiceTxnDAO = gstInvoiceTxnDAO;
 	}
 
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
+		this.extendedFieldExtensionService = extendedFieldExtensionService;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
 }

@@ -198,6 +198,7 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.eod.EODConfig;
 import com.pennant.backend.model.expenses.LegalExpenses;
 import com.pennant.backend.model.expenses.UploadHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.externalinterface.InterfaceConfiguration;
@@ -214,6 +215,7 @@ import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.DepositCheques;
 import com.pennant.backend.model.finance.DepositDetails;
 import com.pennant.backend.model.finance.DepositMovements;
+import com.pennant.backend.model.finance.ExtendedFieldMaintenance;
 import com.pennant.backend.model.finance.FacilityType;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
@@ -260,6 +262,7 @@ import com.pennant.backend.model.finance.PMAY;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.PaymentTransaction;
 import com.pennant.backend.model.finance.ReinstateFinance;
+import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.TATNotificationCode;
 import com.pennant.backend.model.finance.UploadManualAdvise;
@@ -351,6 +354,7 @@ import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.GSTRate;
+import com.pennant.backend.model.rmtmasters.PartnerBankDataEngine;
 import com.pennant.backend.model.rmtmasters.ProductAsset;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rmtmasters.ScoringGroup;
@@ -392,6 +396,7 @@ import com.pennant.backend.model.systemmasters.DealerGroup;
 import com.pennant.backend.model.systemmasters.Department;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.model.systemmasters.DispatchMode;
+import com.pennant.backend.model.systemmasters.District;
 import com.pennant.backend.model.systemmasters.DivisionDetail;
 import com.pennant.backend.model.systemmasters.DocumentType;
 import com.pennant.backend.model.systemmasters.EMailType;
@@ -528,6 +533,7 @@ public class PennantJavaUtil {
 	// private static String WF_HOLDDISBURSEMENT = "HOLDDISBURSEMENT";
 	private static String WF_EXPENSEUPLOAD = "EXPENSEUPLOAD";
 	private static String WF_OCRMAINTENANCE = "OCRMAINTENANCE";
+	private final static String EXT_FIELDS_MAINT = "EXT_FIELDS_MAINT";
 
 	public static String getLabel(String label) {
 		if (StringUtils.isEmpty(StringUtils.trimToEmpty(label))) {
@@ -609,6 +615,10 @@ public class PennantJavaUtil {
 				new ModuleMapping("City", City.class, new String[] { "RMTProvinceVsCity", "RMTProvinceVsCity_AView" },
 						masterWF, new String[] { "PCCity", "PCCityName" },
 						new Object[][] { { "CityIsActive", "0", 1 } }, 350));
+
+		ModuleUtil.register("District",
+				new ModuleMapping("District", District.class, new String[] { "RMTDistricts", "RMTDistricts_AView" },
+						masterWF, new String[] { "Code", "Name" }, new Object[][] { { "Active", "0", 1 } }, 350));
 
 		ModuleUtil.register("PCCityCLASSIFICATION",
 				new ModuleMapping("PCCityCLASSIFICATION", City.class,
@@ -3572,6 +3582,11 @@ public class PennantJavaUtil {
 						new String[] { "Restructure_Details", "Restructure_Details_AView" }, finMaintainWF,
 						new String[] { "FinReference", "Id" }, null, 300));
 
+		ModuleUtil.register("RestructureCharge",
+				new ModuleMapping("RestructureCharge", RestructureCharge.class,
+						new String[] { "RESTRUCTURE_CHARGES", "RESTRUCTURE_CHARGES" }, finMaintainWF,
+						new String[] { "Id", "RestructureId", "ChargeSeq" }, null, 300));
+
 		ModuleUtil.register("ClosureType",
 				new ModuleMapping("ClosureType", ClosureType.class, new String[] { "Closure_Types", "Closure_Types" },
 						masterWF, new String[] { "Id", "Code", "Description" }, new Object[][] { { "Active", "0", 1 } },
@@ -3586,6 +3601,28 @@ public class PennantJavaUtil {
 				new ModuleMapping("GSTInvoiceTxn", GSTInvoiceTxn.class,
 						new String[] { "GST_Invoice_Txn", "GST_Invoice_Txn_View" }, null,
 						new String[] { "InvoiceNo", "LoanAccountNo" }, null, 600));
+
+		ModuleUtil.register("PartnerBankDataEngine",
+				new ModuleMapping("PartnerBankDataEngine", PartnerBankDataEngine.class,
+						new String[] { "PartnerBanks_Data_Engine", "PartnerBanks_Data_Engine" }, null,
+						new String[] { "Config_Name", "Type" }, null, 600));
+
+		ModuleUtil.register("ExtendedFieldExtension",
+				new ModuleMapping("ExtendedFieldExtension", ExtendedFieldExtension.class,
+						new String[] { "Extended_Field_Ext", "Extended_Field_Ext" }, masterWF,
+						new String[] { "ReceiptID", "ReceiptPurpose", "ReceiptModeStatus", "InstructionUID", "Event" },
+						null, 600));
+
+		ModuleUtil.register("ExtendedFieldMaintenance",
+				new ModuleMapping("ExtendedFieldMaintenance", ExtendedFieldMaintenance.class,
+						new String[] { "Extended_Field_Mnt", "Extended_Field_Mnt_TEMP" }, EXT_FIELDS_MAINT,
+						new String[] { "Reference" }, null, 300));
+
+		ModuleUtil.register("CustomerBankInfoAccntNum",
+				new ModuleMapping("CustomerBankInfo", CustomerBankInfo.class,
+						new String[] { "CustomerBankInfo", "CustomerBankInfo_AView" }, null,
+						new String[] { "AccountHolderName", "LovDescBankName", "AccountNumber", "LovDescAccountType" },
+						null, 600));
 
 		registerCustomModules();
 	}

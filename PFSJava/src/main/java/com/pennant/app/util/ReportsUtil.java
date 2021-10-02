@@ -478,7 +478,7 @@ public class ReportsUtil {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public static void print(List listData, String reportName, String userName, Window dialogWindow)
+	public static void print(List<Object> listData, String reportName, String userName, Window dialogWindow)
 			throws JRException, FileNotFoundException {
 		logger.debug("Entering");
 
@@ -491,9 +491,9 @@ public class ReportsUtil {
 
 				Object obj = listData.get(i);
 				if (obj instanceof List) {
-					subListDS = new JRBeanCollectionDataSource((List) obj);
+					subListDS = new JRBeanCollectionDataSource((List<Object>) obj);
 				} else {
-					List subList = new ArrayList();
+					List<Object> subList = new ArrayList<>();
 					subList.add(obj);
 					subListDS = new JRBeanCollectionDataSource(subList);
 				}

@@ -1692,6 +1692,7 @@ public class CustomerAddresDialogCtrl extends GFCBaseCtrl<CustomerAddres> {
 
 				this.custAddrProvince.setValue(city.getPCProvince());
 				this.custAddrProvince.setDescription(city.getLovDescPCProvinceName());
+				this.custDistrict.setValue(city.getDistrictName());
 				cityValue = this.custAddrCity.getValue();
 			} else {
 				fillCitydetails(custAddrProvince.getValue());

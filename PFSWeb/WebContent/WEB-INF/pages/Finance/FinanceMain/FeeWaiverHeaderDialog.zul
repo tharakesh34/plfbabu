@@ -45,81 +45,95 @@
 			</north>
 			<center border="none" autoscroll="false">
 				<div>
-					<groupbox style="border:none;">
-						<groupbox style="border:none;" id="finBasicdetails">
-						</groupbox>
-						<separator />
-						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-							<columns>
-								<column width="20%" />
-								<column width="30%" />
-								<column width="20%" />
-								<column width="30%" />
-							</columns>
-							<rows>
-								<row id="row_valueDate">
-									<label id="label_ValueDate" value="${c:l('label_feeWaiverHeaderDialog_ValueDate.value')}" />
-									<hbox>
-										<space id="space_ValueDate" spacing="2px" sclass="mandatory" />
-										<datebox id="valueDate" width="100px" />
-									</hbox>
-								</row>
-								<row id="row_remarks">
-									<label id="label_FeeWaiverHeaderDialog_Remarks" value="${c:l('label_FeeWaiverHeaderDialog_Remarks.value')}" />
+					<tabbox width="100%" height="100%">
+						<tabs id="feeWaiverTabs">
+							<tab label="${c:l('label_FeeWaiverHeaderDialog_FeeWaiver.label')}" id="feeWaiverTab" />
+						</tabs>
+						<tabpanels id="feeWaiverTabPanels">
+							<tabpanel style="overflow:auto">
+								<groupbox style="border:none;">
+									<groupbox style="border:none;" id="finBasicdetails"></groupbox>
+									<separator />
+									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
+										<columns>
+											<column width="20%" />
+											<column width="30%" />
+											<column width="20%" />
+											<column width="30%" />
+										</columns>
+										<rows>
+											<row id="row_valueDate">
+												<label id="label_ValueDate"
+													value="${c:l('label_feeWaiverHeaderDialog_ValueDate.value')}" />
+												<hbox>
+													<space id="space_ValueDate" spacing="2px" sclass="mandatory" />
+													<datebox id="valueDate" width="100px" />
+												</hbox>
+											</row>
+											<row id="row_remarks">
+												<label id="label_FeeWaiverHeaderDialog_Remarks"
+													value="${c:l('label_FeeWaiverHeaderDialog_Remarks.value')}" />
 
-									<hbox>
-										<textbox id="remarks" width="300px" multiline="true" rows="4" />
-									</hbox>
-								</row>
-							</rows>
-						</grid>
-					</groupbox>
-					<groupbox height="100%">
-						<listbox id="listFeeWaiverDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}"
-							width="100%" height="100%" multiple="false" sizedByContent="true" span="true">
-							<listhead sizable="true">
-								<listheader id="listheader_Select" hflex="min" align="center" visible="false">
-								</listheader>
-								<listheader id="listheader_Type" label="${c:l('listheader_Type.label')}" sort="none" hflex="min" />
-								<listheader id="listheader_ReceivableAmount" label="${c:l('listheader_Amount.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
+												<hbox>
+													<textbox id="remarks" width="300px" multiline="true" rows="4" />
+												</hbox>
+											</row>
+										</rows>
+									</grid>
+								</groupbox>
+								<groupbox height="100%">
+									<listbox id="listFeeWaiverDetails" emptyMessage="${c:l('listbox.emptyMessage')}"
+										tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%" multiple="false" sizedByContent="true"
+										span="true">
+										<listhead sizable="true">
+											<listheader id="listheader_Select" hflex="min" align="center"
+												visible="false">
+											</listheader>
+											<listheader id="listheader_Type" label="${c:l('listheader_Type.label')}"
+												sort="none" hflex="min" />
+											<listheader id="listheader_ReceivableAmount"
+												label="${c:l('listheader_Amount.label')}" sort="none" hflex="min" style="text-align:right;" />
 
-								<listheader id="listheader_AmountGST" label="${c:l('listheader_AmountGST.label')}" sort="none" hflex="min"
-									style="text-align:right;" />
-								<listheader id="listheader_TotDueAmount" label="${c:l('listheader_TotDueAmount.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
+											<listheader id="listheader_AmountGST"
+												label="${c:l('listheader_AmountGST.label')}" sort="none" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_TotDueAmount"
+												label="${c:l('listheader_TotDueAmount.label')}" sort="none" hflex="min" style="text-align:right;" />
 
-								<listheader id="listheader_RecivedAmount" label="${c:l('listheader_Recived.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
-								<listheader id="listheader_WaivedAmount" label="${c:l('listheader_Waived.label')}" sort="none" hflex="min"
-									style="text-align:right;" visible="false" />
-								<listheader id="listheader_BalanceAmount" label="${c:l('listheader_BalanceAmount.label')}" sort="none"
-									hflex="min" style="text-align:right;" visible="false" />
-								<listheader id="listheader_CurrentWaivedAmount" label="${c:l('listheader_CurrentWaived.label')}"
-									sort="none" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_RecivedAmount"
+												label="${c:l('listheader_Recived.label')}" sort="none" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_WaivedAmount"
+												label="${c:l('listheader_Waived.label')}" sort="none" hflex="min" style="text-align:right;" visible="false" />
+											<listheader id="listheader_BalanceAmount"
+												label="${c:l('listheader_BalanceAmount.label')}" sort="none" hflex="min" style="text-align:right;"
+												visible="false" />
+											<listheader id="listheader_CurrentWaivedAmount"
+												label="${c:l('listheader_CurrentWaived.label')}" sort="none" hflex="min" style="text-align:right;" />
 
-								<listheader id="listheader_DueWaivedAmount" label="${c:l('listheader_DueWaived.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
-								<listheader id="listheader_GSTWaivedAmount" label="${c:l('listheader_GSTWaived.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
+											<listheader id="listheader_DueWaivedAmount"
+												label="${c:l('listheader_DueWaived.label')}" sort="none" hflex="min" style="text-align:right;" />
+											<listheader id="listheader_GSTWaivedAmount"
+												label="${c:l('listheader_GSTWaived.label')}" sort="none" hflex="min" style="text-align:right;" />
 
 
-								<listheader id="listheader_NetBalance" label="${c:l('listheader_NetBalance.label')}" sort="none"
-									hflex="min" style="text-align:right;" />
-							</listhead>
-						</listbox>
-						<!-- <listbox id="listFeeWaiverEnqDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" 
-							width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="false"> <listhead sizable="true"> 
-							<listheader id="listheader_enq_FeeType" label="${c:l('listheader_Type.label')}" sort="none" hflex="min" /> <listheader id="listheader_enq_ValueDate" 
-							label="${c:l('listheader_ValueDate.label')}" sort="none" hflex="min" style="text-align:right;" /> <listheader id="listheader_enq_ReceivableAmount" 
-							label="${c:l('listheader_enq_ReceivableAmount.label')}" sort="none" hflex="min" style="text-align:right;" /> <listheader 
-							id="listheader_enq_WaivedAmount" visible="false" label="${c:l('listheader_Waived.label')}" sort="none" hflex="min" style="text-align:right;" 
-							/> <listheader id="listheader_enq_BalanceAmount" label="${c:l('listheader_BalanceAmount.label')}" sort="none" hflex="min" 
-							style="text-align:right;" /> <listheader id="listheader_enq_CurrentWaivedAmount" label="${c:l('listheader_CurrentWaived.label')}" 
-							sort="none" hflex="min" style="text-align:right;" /> <listheader id="listheader_enq_NetBalance" label="${c:l('listheader_NetBalance.label')}" 
-							sort="none" hflex="min" style="text-align:right;" /> <listheader id="listheader_enq_WaivedBy" label="${c:l('listheader_WaivedBy.label')}" 
-							sort="none" hflex="min" style="text-align:right;" /> </listhead> </listbox> -->
-					</groupbox>
+											<listheader id="listheader_NetBalance"
+												label="${c:l('listheader_NetBalance.label')}" sort="none" hflex="min" style="text-align:right;" />
+										</listhead>
+									</listbox>
+									<!-- <listbox id="listFeeWaiverEnqDetails" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" 
+										width="100%" height="100%" multiple="false" sizedByContent="true" span="true" visible="false"> <listhead sizable="true"> 
+										<listheader id="listheader_enq_FeeType" label="${c:l('listheader_Type.label')}" sort="none" hflex="min" /> <listheader id="listheader_enq_ValueDate" 
+										label="${c:l('listheader_ValueDate.label')}" sort="none" hflex="min" style="text-align:right;" /> <listheader id="listheader_enq_ReceivableAmount" 
+										label="${c:l('listheader_enq_ReceivableAmount.label')}" sort="none" hflex="min" style="text-align:right;" /> <listheader 
+										id="listheader_enq_WaivedAmount" visible="false" label="${c:l('listheader_Waived.label')}" sort="none" hflex="min" style="text-align:right;" 
+										/> <listheader id="listheader_enq_BalanceAmount" label="${c:l('listheader_BalanceAmount.label')}" sort="none" hflex="min" 
+										style="text-align:right;" /> <listheader id="listheader_enq_CurrentWaivedAmount" label="${c:l('listheader_CurrentWaived.label')}" 
+										sort="none" hflex="min" style="text-align:right;" /> <listheader id="listheader_enq_NetBalance" label="${c:l('listheader_NetBalance.label')}" 
+										sort="none" hflex="min" style="text-align:right;" /> <listheader id="listheader_enq_WaivedBy" label="${c:l('listheader_WaivedBy.label')}" 
+										sort="none" hflex="min" style="text-align:right;" /> </listhead> </listbox> -->
+								</groupbox>
+							</tabpanel>
+						</tabpanels>
+					</tabbox>
 				</div>
 			</center>
 			<south id="south" sclass="south-dialog">

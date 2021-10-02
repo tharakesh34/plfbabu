@@ -131,8 +131,45 @@ public class PresentmentServiceController extends ExtendedTestClass {
 			return response;
 		}
 
-		List<Long> excludeList = presentmentDetailService.getExcludePresentmentDetailIdList(ph.getId(), true);
+		List<Long> includeList = presentmentDetailService.getIncludeList(ph.getId());
+		ph.setIncludeList(includeList);
+
+		List<Long> excludeList = presentmentDetailService.getManualExcludeList(ph.getId());
 		ph.setExcludeList(excludeList);
+
+		List<PresentmentDetail> presentments = ph.getPresentmentDetailsList();
+		if (CollectionUtils.isNotEmpty(presentments)) {
+			for (PresentmentDetail pd : presentments) {
+				if (includeList.contains(pd.getId())) {
+					excludeList.add(pd.getId());
+					includeList.remove(pd.getId());
+				} else {
+					String[] valueParm = new String[4];
+					valueParm[0] = "Presentment Id: ";
+					valueParm[1] = String.valueOf(pd.getId());
+					valueParm[2] = "is not present in";
+					valueParm[3] = "IncludeList";
+					response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30550", valueParm));
+					return response;
+				}
+			}
+
+			ph.setExcludeList(excludeList);
+			ph.setIncludeList(includeList);
+
+			presentmentDetailService.saveModifiedPresentments(excludeList, includeList, ph.getId(),
+					ph.getPartnerBankId());
+		}
+
+		// checking include List exists or not in Presentment Batch
+		includeExists = this.presentmentDetailService.searchIncludeList(ph.getId(), 0);
+		if (!includeExists) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "Include List";
+			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("41002", valueParm));
+			return response;
+		}
+
 		ph.setUserAction("Submit");
 
 		try {

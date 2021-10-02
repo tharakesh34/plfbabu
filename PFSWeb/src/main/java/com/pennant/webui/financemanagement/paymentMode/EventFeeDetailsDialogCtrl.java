@@ -178,7 +178,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 	public void onClick$btnClose(Event event) throws InterruptedException, ParseException {
 		logger.debug("Entering" + event.toString());
 		receiptCalculator.setXcessPayables(receiptData);
-		receiptCalculator.recalAutoAllocation(receiptData, receiptData.getReceiptHeader().getValueDate(), false);
+		receiptCalculator.recalAutoAllocation(receiptData, false);
 
 		if (isLoanClosure) {
 			loanClosureEnquiryDialogCtrl.doFillAllocationDetail();
@@ -239,10 +239,8 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 		feeDetail.setActualAmount(calculatedAmt);
 		paidAmount = summary.getPaidAmount();
 		if (!StringUtils.isEmpty(detail.getTaxType())) {
-			TaxAmountSplit taxSplit = new TaxAmountSplit();
-			taxSplit.setAmount(calculatedAmt);
-			taxSplit.setTaxType(detail.getTaxType());
-			taxSplit = receiptCalculator.getGST(receiptData.getFinanceDetail(), taxSplit);
+			TaxAmountSplit taxSplit = GSTCalculator.calculateGST(receiptData.getFinanceDetail(), detail.getTaxType(),
+					calculatedAmt, BigDecimal.ZERO);
 			// fee percentage add two times
 			if (StringUtils.equals(detail.getTaxType(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
 				calculatedAmt = calculatedAmt.add(taxSplit.gettGST());

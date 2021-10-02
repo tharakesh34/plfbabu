@@ -84,24 +84,28 @@ public class FeeCalculator {
 		List<FinTypeFees> finTypeFeesList = fd.getFinTypeFeesList();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		List<FinFeeDetail> feeList = new ArrayList<FinFeeDetail>();
+		List<FinFeeDetail> feeList = new ArrayList<>();
 
 		List<FinFeeConfig> feeConfigList = fd.getFinFeeConfigList();
 
 		if (CollectionUtils.isNotEmpty(feeConfigList)) {
 			feeList.addAll(calculateFeeOnRule(rd));
 			schdData.setFinFeeDetailList(feeList);
+
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
-		if (finTypeFeesList == null || finTypeFeesList.isEmpty()) {
+		if (CollectionUtils.isEmpty(finTypeFeesList)) {
 			schdData.setFinFeeDetailList(feeList);
+
 			logger.debug(Literal.LEAVING);
 			return;
 		}
 
 		String calRoundingMode = fm.getCalRoundingMode();
 		int roundingTarget = fm.getRoundingTarget();
+		Date appDate = SysParamUtil.getAppDate();
 
 		for (FinTypeFees feeType : finTypeFeesList) {
 			String feeScheduleMethod = feeType.getFeeScheduleMethod();
@@ -119,6 +123,12 @@ public class FeeCalculator {
 			fee.setCalculationType(feeType.getCalculationType());
 			fee.setRuleCode(feeType.getRuleCode());
 			fee.setTdsReq(feeType.isTdsReq());
+
+			if (fee.isOriginationFee()) {
+				fd.setValueDate(fm.getFinStartDate());
+			} else {
+				fd.setValueDate(appDate);
+			}
 
 			BigDecimal finAmount = CalculationUtil.roundAmount(feeType.getAmount(), calRoundingMode, roundingTarget);
 			feeType.setAmount(finAmount);

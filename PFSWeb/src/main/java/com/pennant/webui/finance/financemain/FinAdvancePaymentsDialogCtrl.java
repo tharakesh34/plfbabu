@@ -229,6 +229,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 
 	protected Row row_HoldDisbursement;
 	protected Checkbox holdDisbursement;
+	protected Textbox leiNumber;
 
 	// not auto wired vars
 	private FinAdvancePayments finAdvancePayments; // over handed per param
@@ -692,11 +693,9 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.llDate.setDisabled(isReadOnly("FinAdvancePaymentsDialog_llDate"));
 		this.paymentType.setDisabled(isReadOnly("FinAdvancePaymentsDialog_paymentType"));
 		this.remarks.setReadonly(isReadOnly("FinAdvancePaymentsDialog_remarks"));
-		readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement); // TODO
-																											// create
-																											// right
-																											// name
+		readOnlyComponent(isReadOnly("FinAdvancePaymentsDialog_holdDisbIsActive"), this.holdDisbursement);
 		this.transactionRef.setReadonly(true);
+		this.leiNumber.setReadonly(isReadOnly("FinAdvancePaymentsDialog_leiNumber"));
 		// 2
 		this.bankBranchID.setReadonly(isReadOnly("FinAdvancePaymentsDialog_bankBranchID"));
 		this.beneficiaryAccNo.setReadonly(isReadOnly("FinAdvancePaymentsDialog_beneficiaryAccNo"));
@@ -775,6 +774,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.phoneNumber.setReadonly(true);
 		this.partnerBankID.setReadonly(true);
 		this.transactionRef.setReadonly(true);
+		this.leiNumber.setReadonly(true);
 		readOnlyComponent(true, holdDisbursement);
 		this.vasReference.setDisabled(true);
 		if (enqModule) {
@@ -1035,6 +1035,7 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		this.disbSeq.setValue(aFinAdvnancePayments.getDisbSeq());
 
 		this.holdDisbursement.setChecked(aFinAdvnancePayments.isHoldDisbursement());
+		this.leiNumber.setValue(aFinAdvnancePayments.getLei());
 
 		fillComboBox(this.paymentDetail, aFinAdvnancePayments.getPaymentDetail(),
 				PennantStaticListUtil.getPaymentDetails(), list);
@@ -1522,6 +1523,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 		}
 
 		try {
+			aFinAdvancePayments.setLei(this.leiNumber.getValue());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			this.bankCode.getValidatedValue();
 			Object obj = this.bankCode.getAttribute("bankCode");
 			if (obj != null) {
@@ -1844,6 +1851,12 @@ public class FinAdvancePaymentsDialogCtrl extends GFCBaseCtrl<FinAdvancePayments
 			this.reEnterBeneficiaryAccNo.setConstraint(new PTStringValidator(
 					Labels.getLabel("label_FinAdvancePaymentsDialog_ReEnterBeneficiaryAccNo.value"),
 					PennantRegularExpressions.REGEX_ACCOUNTNUMBER, true));
+		}
+
+		if (this.leiNumber.isVisible()) {
+			this.leiNumber
+					.setConstraint(new PTStringValidator(Labels.getLabel("label_FinAdvancePaymentsDialog_LEI.value"),
+							PennantRegularExpressions.REGEX_ALPHANUM, false));
 		}
 
 		logger.debug("Leaving");

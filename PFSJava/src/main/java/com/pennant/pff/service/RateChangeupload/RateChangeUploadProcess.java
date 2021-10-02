@@ -28,6 +28,7 @@ import com.pennant.backend.financeservice.RateChangeService;
 import com.pennant.backend.model.applicationmaster.BaseRate;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerDetails;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -149,7 +150,11 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 			// fetch finance data
 			String eventCode = AccountingEvent.RATCHG;
-			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailByRef(finReference, "_AView", false);
+			FinanceDetail financeDetail = financeDetailService.getServicingFinance(rcu.getFinID(), eventCode,
+					FinServiceEvent.RATECHG, "");
+
+			financeDetail.getFinScheduleData().setFinFeeDetailList(new ArrayList<>());
+			financeDetail.setCovenantTypeList(new ArrayList<>());
 
 			financeDetail.setAccountingEventCode(eventCode);
 			AuditHeader auditHeader = null;
@@ -159,7 +164,11 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 				txStatus = transactionManager.getTransaction(txDef);
 				rcu.setStatus("F");
 				if (StringUtils.isNotBlank(e.getMessage())) {
-					rcu.setUploadStatusRemarks(e.getMessage().substring(0, 1999));
+					if (e.getMessage().length() > 2000) {
+						rcu.setUploadStatusRemarks(e.getMessage().substring(0, 1999));
+					} else {
+						rcu.setUploadStatusRemarks(e.getMessage());
+					}
 				} else {
 					rcu.setUploadStatusRemarks("Un-Handled Exception");
 				}
@@ -241,6 +250,9 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		}
 
 		fd.setUserDetails(user);
+		fd.setModuleDefiner(FinServiceEvent.RATECHG);
+		fd.setCustomerDetails(new CustomerDetails());
+		fd.getCustomerDetails().setCustID(finMain.getCustID());
 		finMain.setUserDetails(user);
 		BigDecimal pftChg = fsd.getPftChg();
 		fsi.setPftChg(pftChg);
@@ -280,6 +292,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		fsi.setRecalToDate(parseDate(rcu.getRecalToDate()));
 		fsi.setFromDate(parseDate(rcu.getFromDate()));
 		fsi.setToDate(parseDate(rcu.getToDate()));
+		fsi.setModuleDefiner(FinServiceEvent.RATECHG);
 
 		return fsi;
 	}

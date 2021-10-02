@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PennantAppUtil.java													*                           
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  						*
- * Creation Date    :  26-04-2011															*
- *                                                                  						*
- * Modified Date    :  26-04-2011															*
- *                                                                  						*
- * Description 		:												 						*                                 
- *                                                                                          *
+ * * FileName : PennantAppUtil.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-04-2011 * * Modified Date
+ * : 26-04-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 08-05-2019		Srinivasa Varma			 0.2		  Development Iteam 81              * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * 08-05-2019 Srinivasa Varma 0.2 Development Iteam 81 * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.util;
@@ -106,6 +88,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.limit.LimitStructureDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.model.rmtmasters.PartnerBankDataEngine;
 import com.pennant.backend.model.rulefactory.BMTRBFldCriterias;
 import com.pennant.backend.model.rulefactory.BMTRBFldDetails;
 import com.pennant.backend.model.rulefactory.Rule;
@@ -395,7 +378,7 @@ public class PennantAppUtil {
 		excludeModules.add("PurposeDetail");
 		excludeModules.add("ProductAssetWithID");
 		excludeModules.add("PFSParameter");
-		//excludeModules.add("MailTemplate");
+		// excludeModules.add("MailTemplate");
 		excludeModules.add("LovFieldCode");
 		excludeModules.add("HolidayMaster");
 		excludeModules.add("FinanceStepPolicyDetail");
@@ -795,7 +778,7 @@ public class PennantAppUtil {
 		return rbFieldDetailsList;
 	}
 
-	//### 08-05-2018 Start Development Iteam 81
+	// ### 08-05-2018 Start Development Iteam 81
 
 	/*
 	 * This Method for getting the Extended Fields Which are marked as Allow in Rule as true.
@@ -835,7 +818,7 @@ public class PennantAppUtil {
 		return rbFieldDetailsList;
 	}
 
-	//### 08-05-2018 End Development Iteam 81
+	// ### 08-05-2018 End Development Iteam 81
 
 	public static List<ExtendedFieldDetail> getCollateralExtendedFieldForRules() {
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
@@ -1604,7 +1587,7 @@ public class PennantAppUtil {
 
 		JdbcSearchObject<LimitHeader> searchObject = new JdbcSearchObject<LimitHeader>(LimitHeader.class);
 
-		//searchObject.addFilterEqual("CustomerId", customerId);
+		// searchObject.addFilterEqual("CustomerId", customerId);
 		searchObject.addTabelName("LimitHeader_View");
 		if (rule) {
 			searchObject.addField("RuleCode");
@@ -1618,7 +1601,7 @@ public class PennantAppUtil {
 		if (limitexisitingList != null) {
 			for (LimitHeader limitCustomer : limitexisitingList) {
 				if (rule) {
-					//limitHeader.add(String.valueOf(limitCustomer.getRuleCode()));
+					// limitHeader.add(String.valueOf(limitCustomer.getRuleCode()));
 				} else if (customer) {
 					limitHeader.add(limitCustomer.getCustomerId());
 				} else {
@@ -2050,7 +2033,7 @@ public class PennantAppUtil {
 		JdbcSearchObject<DynamicCollateralType> searchObject = new JdbcSearchObject<DynamicCollateralType>(
 				DynamicCollateralType.class);
 
-		//BFLW2 it is working for oracle only, should be write code for remaining databases.
+		// BFLW2 it is working for oracle only, should be write code for remaining databases.
 		if (App.DATABASE == Database.POSTGRES || App.DATABASE == Database.SQL_SERVER) {
 			searchObject.addTabelName("information_schema.columns");
 			searchObject.addFilterEqual("table_name", tableName.toLowerCase());
@@ -2196,7 +2179,7 @@ public class PennantAppUtil {
 			property = new Property(role.getName(), role.getName());
 			configNames.add(property);
 		}
-		
+
 		configNames.add(new Property("DISB_EXPORT_CUSTOM", "DISB_EXPORT_CUSTOM"));
 
 		return configNames;
@@ -2314,7 +2297,10 @@ public class PennantAppUtil {
 		try {
 			if (verificationDate != null && systemParam != null) {
 				String validityDays = SysParamUtil.getValueAsString(systemParam);
-				if (StringUtils.isNotBlank(validityDays) && Integer.parseInt(validityDays) != 0) {//if system param is not available in back end it will skip
+				if (StringUtils.isNotBlank(validityDays) && Integer.parseInt(validityDays) != 0) {// if system param is
+																									// not available in
+																									// back end it will
+																									// skip
 					Date appDate = SysParamUtil.getAppDate();
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 					Date verificationDt = format.parse(verificationDate.toString());
@@ -2421,4 +2407,24 @@ public class PennantAppUtil {
 			reason.setFilters(reasonFilter);
 		}
 	}
+
+	public static List<String> getConfigNames(Filter[] filters) {
+		List<String> configList = new ArrayList<>();
+
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+		JdbcSearchObject<PartnerBankDataEngine> searchObject = new JdbcSearchObject<>(PartnerBankDataEngine.class);
+		searchObject.addTabelName("PartnerBanks_Data_Engine");
+		searchObject.addField("Config_Name");
+
+		if (filters != null && filters.length > 0) {
+			searchObject.addFilters(filters);
+		}
+
+		List<PartnerBankDataEngine> pbde = pagedListService.getBySearchObject(searchObject);
+
+		pbde.forEach(l1 -> configList.add(String.valueOf(l1.getConfigName())));
+
+		return configList;
+	}
+
 }

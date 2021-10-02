@@ -2287,8 +2287,15 @@ public class PennantStaticListUtil {
 				events.add(new FinServicingEvent(FinServiceEvent.RESTRUCTURE,
 						Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
 			}
+
 			events.add(new FinServicingEvent(FinServiceEvent.LINKDELINK,
 					Labels.getLabel("label_FinSerEvent_LinkDelink"), "LDFIN"));
+			events.add(new FinServicingEvent(FinServiceEvent.REALIZATION,
+					Labels.getLabel("label_FinSerEvent_RealizationBounce"), "RBMK"));
+			events.add(new FinServicingEvent(FinServiceEvent.UPFRONT_FEE,
+					Labels.getLabel("label_FinSerEvent_Upfront_Fee"), "UFMK"));
+			events.add(new FinServicingEvent(FinServiceEvent.UPFRONT_FEE_CAN,
+					Labels.getLabel("label_FinSerEvent_Upfront_Fee_Cancel"), "UFCM"));
 		}
 		return events;
 	}
@@ -3876,11 +3883,11 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> allPaymentTypes = new ArrayList<>();
 	private static List<ValueLabel> paymentTypesWithIST = new ArrayList<>();
 	private static List<ValueLabel> paymentTypesWithOnlyIST = new ArrayList<>();
-	private static ArrayList<ValueLabel> disbRegistrationTypes = new ArrayList<>();
+	private static List<ValueLabel> disbRegistrationTypes = new ArrayList<>();
 	// This Should be Similar to the Schedule Calculation Codes.
 	private static Map<String, ValueLabel> disbCalculationCodes = new HashMap<>();
 
-	private static ArrayList<ValueLabel> dmsDocumentStatus = new ArrayList<>();
+	private static List<ValueLabel> dmsDocumentStatus = new ArrayList<>();
 
 	public static List<ValueLabel> getSchCalCodes() {
 		return new ArrayList<>(schdCalcCodes.values());
@@ -4015,11 +4022,11 @@ public class PennantStaticListUtil {
 		return payments;
 	}
 
-	public static ArrayList<ValueLabel> getDmsDocumentStatusTypes() {
+	public static List<ValueLabel> getDmsDocumentStatusTypes() {
 		return dmsDocumentStatus;
 	}
 
-	public static ArrayList<ValueLabel> getDisbRegistrationTypes() {
+	public static List<ValueLabel> getDisbRegistrationTypes() {
 		return disbRegistrationTypes;
 	}
 

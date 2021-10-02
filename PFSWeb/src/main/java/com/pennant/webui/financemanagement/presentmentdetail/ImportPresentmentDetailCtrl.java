@@ -27,6 +27,8 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
+import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.DataEngineConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.ReceiptPaymentService;
 import com.pennant.app.util.PostingsPreparationUtil;
@@ -45,9 +47,12 @@ import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
 import com.pennant.backend.eventproperties.service.EventPropertiesService;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.finance.ReceiptCancellationService;
+import com.pennant.backend.service.financemanagement.PartnerBankModeConfigService;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.DisbursementConstants;
+import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
@@ -62,6 +67,7 @@ import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.interfacebajaj.fileextract.service.FileExtractService;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.PresentmentImportProcess;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -81,6 +87,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	protected Row rowInstrumentType;
 	protected Combobox instrumentType;
+	protected Row rowPartnerBank;
+	protected ExtendedCombobox partnerBank;
 	protected Grid grid_Default;
 	protected Grid grid_DataEngine;
 	protected Row defaultPanelRow;
@@ -112,13 +120,15 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private ReceiptCalculator receiptCalculator;
 	private PresentmentImportProcess presentmentImportProcess;
 	private EventPropertiesService eventPropertiesService;
+	private PartnerBankModeConfigService partnerBankModeConfigService;
 
 	private DataEngineConfig dataEngineConfig;
 	private Configuration config = null;
 	private DataEngineStatus PRSENTMENT_FILE_IMPORT_STATUS = null;
 	private ProcessExecution processExecution = null;
 	private String errorMsg = null;
-	private boolean allowInstrumentType;
+	// private boolean allowInstrumentType;
+	private String type;
 	private Media media = null;
 
 	private List<ValueLabel> defaultPaymentType;
@@ -143,12 +153,19 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 		setPageComponents(window_ImportPresentmentDetails);
 
-		allowInstrumentType = "Y".equals(
-				SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_RESPONSE_ALLOW_INSTRUMENT_TYPE)) ? true
-						: false;
+		type = SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_EXTRACTION_TYPE);
 
-		if (allowInstrumentType) {
+		if (type.equals(PennantConstants.INSTRUMENT_TYPE)) {
 			this.rowInstrumentType.setVisible(true);
+			this.rowPartnerBank.setVisible(false);
+			doSetFieldProperties();
+			grid_Default.setVisible(false);
+			grid_DataEngine.setVisible(true);
+			this.defaultPanelRow.setVisible(false);
+			this.panelRows.setVisible(true);
+		} else if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)) {
+			this.rowInstrumentType.setVisible(true);
+			this.rowPartnerBank.setVisible(true);
 			doSetFieldProperties();
 			grid_Default.setVisible(false);
 			grid_DataEngine.setVisible(true);
@@ -156,6 +173,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			this.panelRows.setVisible(true);
 		} else {
 			this.rowInstrumentType.setVisible(false);
+			this.rowPartnerBank.setVisible(false);
 			grid_Default.setVisible(true);
 			grid_DataEngine.setVisible(false);
 			this.defaultPanelRow.setVisible(true);
@@ -165,7 +183,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		if (PRSENTMENT_FILE_IMPORT_STATUS == null)
 			setDEStatus("");
 
-		if (!allowInstrumentType) {
+		if (!(type.equals(PennantConstants.INSTRUMENT_TYPE)
+				|| type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK))) {
 			if (processExecution == null) {
 				processExecution = new ProcessExecution();
 				createPanel(processExecution, PRSENTMENT_FILE_IMPORT_STATUS);
@@ -209,13 +228,44 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	private void setDEStatus(String instType) {
 		String configName = null;
 
-		if (instType != null) {
+		if (instType != null && type.equals(PennantConstants.INSTRUMENT_TYPE)) {
 			String instrumentTypeConfigName = "PRESENTMENT_RESPONSE_";
 			instrumentTypeConfigName = instrumentTypeConfigName.concat(instType);
 
 			configName = SysParamUtil.getValueAsString(instrumentTypeConfigName);
+		} else if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)) {
+			configName = getConfigByPartnerBank(getComboboxValue(this.instrumentType), this.partnerBank.getValue());
+		}
+		if (configName == null) {
+			configName = "PRESENTMENT_RESPONSE";
 		}
 
+		try {
+			config = dataEngineConfig.getConfigurationByName(configName);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+			return;
+		}
+		PRSENTMENT_FILE_IMPORT_STATUS = dataEngineConfig.getLatestExecution(configName);
+
+		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
+	}
+
+	public void onFulfill$partnerBank(Event event) {
+		Object dataObject = partnerBank.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+			this.partnerBank.setAttribute("PartnerBankId", null);
+		} else {
+			PartnerBank details = (PartnerBank) dataObject;
+			this.partnerBank.setValue(String.valueOf(details.getId()));
+			this.partnerBank.setAttribute("PartnerBankId", details.getId());
+		}
+		String configName = null;
+		if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)) {
+			configName = getConfigByPartnerBank(getComboboxValue(this.instrumentType), this.partnerBank.getValue());
+		}
 		if (configName == null) {
 			configName = "PRESENTMENT_RESPONSE";
 		}
@@ -232,14 +282,51 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		doFillPanel(config, PRSENTMENT_FILE_IMPORT_STATUS);
 	}
 
+	private String getConfigByPartnerBank(String instType, String partnerBank) {
+		Boolean isPDC = false;
+		if (PennantConstants.List_Select.equals(instType)) {
+			return null;
+		}
+		if (StringUtils.isEmpty(partnerBank)) {
+			return null;
+		}
+		if (StringUtils.equals(instType, MandateConstants.TYPE_PDC)) {
+			isPDC = true;
+		}
+
+		long partnerBankId = Long.valueOf(partnerBank);
+
+		return partnerBankModeConfigService.getConfigName(instType, partnerBankId, DataEngineConstants.PRESENTMENT,
+				DataEngineConstants.IMPORT, isPDC);
+	}
+
 	/**
 	 * Set the component level properties.
 	 */
 	private void doSetFieldProperties() {
 		logger.debug(Literal.ENTERING);
-		if (allowInstrumentType) {
+		if (type.equals(PennantConstants.INSTRUMENT_TYPE)) {
 			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
 			logger.debug(Literal.LEAVING);
+
+			if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
+					&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
+							|| SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_PDC_AUTO_UPLOAD_JOB_ENABLED))) {
+				this.btnSave.setDisabled(true);
+			}
+		} else if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)) {
+			fillComboBox(this.instrumentType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			this.partnerBank.setMaxlength(21);
+			this.partnerBank.setModuleName("PresentMents_PartnerBank");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+			this.partnerBank.setMandatoryStyle(true);
+
+			Filter[] filters = null;
+			filters = new Filter[1];
+			filters[0] = new Filter("AlwReceipt", 1, Filter.OP_EQUAL);
+			this.partnerBank.setFilters(filters);
 
 			if (ImplementationConstants.PRESENTMENT_AUTO_UPLOAD
 					&& (SysParamUtil.isAllowed(SMTParameterConstants.PRESENTMENT_NACH_AUTO_UPLOAD_JOB_ENABLED)
@@ -260,7 +347,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 
 	public void setConfigData() {
 		String instrumentTypeConfigName = "";
-		if (allowInstrumentType) {
+		if ((type.equals(PennantConstants.INSTRUMENT_TYPE)
+				|| type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK))) {
 			String instType = "";
 
 			if (PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
@@ -312,6 +400,21 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			return;
 		}
 		txtFileName.setText(media.getName());
+
+		if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)
+				|| type.equals(PennantConstants.INSTRUMENT_TYPE)) {
+			if (PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
+				MessageUtil.showError("Instrument Type is Mandatory");
+				txtFileName.setText("");
+				return;
+			}
+			if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)
+					&& StringUtils.isEmpty(this.partnerBank.getValue())) {
+				MessageUtil.showError("PartnerBank is Mandatory");
+				txtFileName.setText("");
+				return;
+			}
+		}
 
 		String mediaName = media.getName();
 		String prefix = config.getFilePrefixName();
@@ -366,9 +469,17 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 			throw new WrongValueException(this.txtFileName, Labels.getLabel("empty_file"));
 		}
 
-		if (allowInstrumentType && PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
+		if ((type.equals(PennantConstants.INSTRUMENT_TYPE)
+				|| type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK))
+				&& PennantConstants.List_Select.equals(getComboboxValue(this.instrumentType))) {
 			throw new WrongValueException(this.instrumentType, Labels.getLabel("FIELD_IS_MAND",
 					new String[] { Labels.getLabel("label_PresentmentDetailList_MandateType.value") }));
+		}
+
+		if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)
+				&& StringUtils.isEmpty(this.partnerBank.getValue())) {
+			throw new WrongValueException(this.partnerBank, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_PresentmentDetailList_PartnerBank.value") }));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -395,8 +506,11 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		pde.setMediaOnly(getMedia());
 		presentmentDetailService.setProperties(pde);
 
-		if (processExecution.getChildren() != null) {
-			processExecution.getChildren().clear();
+		if (!type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)
+				&& !type.equals(PennantConstants.INSTRUMENT_TYPE)) {
+			if (processExecution.getChildren() != null) {
+				processExecution.getChildren().clear();
+			}
 		}
 
 		Thread thread = new Thread(pde);
@@ -446,7 +560,8 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	public void onTimer$timer(Event event) {
-		if (allowInstrumentType) {
+		if (type.equals(PennantConstants.INSTRUMENT_TYPE_PARTNER_BANK)
+				|| type.equals(PennantConstants.INSTRUMENT_TYPE)) {
 			List<Row> rows = this.panelRows.getChildren();
 			for (Row row : rows) {
 				List<Hbox> hboxs = row.getChildren();
@@ -669,4 +784,7 @@ public class ImportPresentmentDetailCtrl extends GFCBaseCtrl<Object> {
 		this.eventPropertiesService = eventPropertiesService;
 	}
 
+	public void setPartnerBankModeConfigService(PartnerBankModeConfigService partnerBankModeConfigService) {
+		this.partnerBankModeConfigService = partnerBankModeConfigService;
+	}
 }

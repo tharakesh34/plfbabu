@@ -341,6 +341,7 @@ public class FinanceDetailController extends SummaryDetailService {
 
 		// Step Policy Details
 		if (fm.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
+			fm.setRpyStps(true);
 			String stepPolicyCode = fm.getStepPolicy();
 			if (StringUtils.isNotBlank(stepPolicyCode)) {
 				List<StepPolicyDetail> stepPolicyList = stepPolicyDetailDAO.getStepPolicyDetailListByID(stepPolicyCode,

@@ -106,6 +106,7 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 	private String defValue;
 	// Used to map the data in Agreement generation
 	private String agrField;
+	private boolean maintAlwd;
 
 	public ExtendedFieldDetail() {
 		super();
@@ -392,4 +393,11 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 		this.agrField = agrField;
 	}
 
+	public boolean isMaintAlwd() {
+		return maintAlwd;
+	}
+
+	public void setMaintAlwd(boolean maintAlwd) {
+		this.maintAlwd = maintAlwd;
+	}
 }

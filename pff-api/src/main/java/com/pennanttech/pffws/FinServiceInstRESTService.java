@@ -14,6 +14,7 @@ import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.pff.model.subvention.SubventionHeader;
 import com.pennant.ws.exception.ServiceException;
@@ -159,6 +160,10 @@ public interface FinServiceInstRESTService {
 	@Path("/loanInstructionService/cancelDisbursementInstructions")
 	public WSReturnStatus cancelDisbursementInstructions(FinServiceInstruction finServiceInstRequest)
 			throws ServiceException;
+
+	@POST
+	@Path("/loanInstructionService/restructuring")
+	public FinanceDetail restructuring(RestructureDetail restructureDetail) throws ServiceException;
 
 	@POST
 	@Path("/loanInstructionService/partCancellation")

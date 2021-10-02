@@ -38,6 +38,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -81,6 +83,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -191,6 +194,8 @@ public class FeeDetailService {
 		}
 
 		if (AccountingEvent.EARLYSTL.equals(fm.getFinSourceID())) {
+			schdData.setFinFeeDetailList(feeList);
+		} else if (AccountingEvent.RESTRUCTURE.equals(fd.getAccountingEventCode())) {
 			schdData.setFinFeeDetailList(feeList);
 		}
 
@@ -737,12 +742,14 @@ public class FeeDetailService {
 			return;
 		}
 
+		Date valueDate = SysParamUtil.getAppDate();
+
 		for (FinFeeDetail fee : feeList) {
-			if (StringUtils.equals(fee.getCalculationType(), PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE)) {
-				BigDecimal calPercentageFee = getCalculatedPercentageFee(fee, schdData);
+			if (PennantConstants.FEE_CALCULATION_TYPE_PERCENTAGE.equals(fee.getCalculationType())) {
+				BigDecimal calPercentageFee = getCalculatedPercentageFee(fee, schdData, valueDate);
 				fee.setCalculatedAmount(calPercentageFee);
 
-				if (StringUtils.equals(fee.getFeeScheduleMethod(), CalculationConstants.REMFEE_WAIVED_BY_BANK)) {
+				if (CalculationConstants.REMFEE_WAIVED_BY_BANK.equals(fee.getFeeScheduleMethod())) {
 					fee.setWaivedAmount(calPercentageFee);
 				}
 
@@ -768,7 +775,7 @@ public class FeeDetailService {
 
 	}
 
-	private BigDecimal getCalculatedPercentageFee(FinFeeDetail fee, FinScheduleData schdData) {
+	private BigDecimal getCalculatedPercentageFee(FinFeeDetail fee, FinScheduleData schdData, Date valueDate) {
 		BigDecimal calculatedAmt = BigDecimal.ZERO;
 		FinanceMain fm = schdData.getFinanceMain();
 		switch (fee.getCalculateOn()) {
@@ -781,11 +788,42 @@ public class FeeDetailService {
 		case PennantConstants.FEE_CALCULATEDON_OUTSTANDINGPRCINCIPAL:
 			calculatedAmt = fm.getFinCurrAssetValue().add(fm.getFeeChargeAmt()).subtract(fm.getFinRepaymentAmount());
 			break;
+		case PennantConstants.FEE_CALCULATEDON_OUTSTANDPRINCIFUTURE:
+			List<FinanceScheduleDetail> schdList = schdData.getFinanceScheduleDetails();
+
+			for (FinanceScheduleDetail schd : schdList) {
+				if (DateUtil.compare(valueDate, schd.getSchDate()) == 0) {
+					calculatedAmt = schd.getClosingBalance();
+
+					if (calculatedAmt.compareTo(BigDecimal.ZERO) == 0) {
+						List<FinanceScheduleDetail> apdSchdList = financeDetailService
+								.getFinScheduleList(fm.getFinID());
+						for (FinanceScheduleDetail curSchd : apdSchdList) {
+							if (DateUtil.compare(valueDate, curSchd.getSchDate()) == 0) {
+								calculatedAmt = curSchd.getClosingBalance();
+							}
+							if (DateUtil.compare(valueDate, curSchd.getSchDate()) <= 0) {
+								break;
+							}
+							calculatedAmt = curSchd.getClosingBalance();
+						}
+						break;
+					}
+				}
+
+				if (DateUtil.compare(valueDate, schd.getSchDate()) <= 0) {
+					break;
+				}
+
+				calculatedAmt = schd.getClosingBalance();
+			}
 		default:
 			break;
 		}
 		calculatedAmt = calculatedAmt.multiply(fee.getPercentage()).divide(BigDecimal.valueOf(100), 0,
 				RoundingMode.HALF_DOWN);
+
+		calculatedAmt = CalculationUtil.roundAmount(calculatedAmt, fm.getCalRoundingMode(), fm.getRoundingTarget());
 		return calculatedAmt;
 	}
 

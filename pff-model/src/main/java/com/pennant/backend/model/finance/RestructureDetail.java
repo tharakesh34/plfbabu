@@ -2,9 +2,13 @@ package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+
+import javax.xml.bind.annotation.XmlElement;
 
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -14,17 +18,25 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 
 	private long id;
 	private long finID;
+	@XmlElement
 	private String finReference;
+	@XmlElement
 	private Date restructureDate;
 	private Date appDate;
+	@XmlElement
 	private int emiHldPeriod = 0;
+	@XmlElement
 	private int priHldPeriod = 0;
+	@XmlElement
 	private int emiPeriods = 0;
+	@XmlElement
 	private String restructureType;
+	@XmlElement
 	private String restructureReason;
 	private boolean tenorChange;
 	private boolean emiRecal;
 	private int totNoOfRestructure = 0;
+	@XmlElement
 	private String recalculationType;
 	private String serviceRequestNo;
 	private String remark;
@@ -74,13 +86,25 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 	private BigDecimal finCurrAssetValue = BigDecimal.ZERO;
 	private int oldExtOdDays = 0;
 	private int newExtOdDays = 0;
+	@XmlElement
 	private BigDecimal repayProfitRate = BigDecimal.ZERO;
 	private BigDecimal grcMaxAmount = BigDecimal.ZERO;
+	@XmlElement
+	private String baseRate;
+	private String splRate;
+	@XmlElement
+	private BigDecimal margin = BigDecimal.ZERO;
+	private long receiptID = 0;
+	@XmlElement
+	private List<RestructureCharge> chargeList = new ArrayList<>();
+	@XmlElement
+	private String reqType;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("rstTypeCode");
 		excludeFields.add("rstTypeDesc");
+		excludeFields.add("reqType");
 		return excludeFields;
 	}
 
@@ -602,5 +626,53 @@ public class RestructureDetail extends AbstractWorkflowEntity {
 
 	public void setGrcMaxAmount(BigDecimal grcMaxAmount) {
 		this.grcMaxAmount = grcMaxAmount;
+	}
+
+	public String getBaseRate() {
+		return baseRate;
+	}
+
+	public void setBaseRate(String baseRate) {
+		this.baseRate = baseRate;
+	}
+
+	public String getSplRate() {
+		return splRate;
+	}
+
+	public void setSplRate(String splRate) {
+		this.splRate = splRate;
+	}
+
+	public BigDecimal getMargin() {
+		return margin;
+	}
+
+	public void setMargin(BigDecimal margin) {
+		this.margin = margin;
+	}
+
+	public List<RestructureCharge> getChargeList() {
+		return chargeList;
+	}
+
+	public void setChargeList(List<RestructureCharge> chargeList) {
+		this.chargeList = chargeList;
+	}
+
+	public long getReceiptID() {
+		return receiptID;
+	}
+
+	public void setReceiptID(long receiptID) {
+		this.receiptID = receiptID;
+	}
+
+	public String getReqType() {
+		return reqType;
+	}
+
+	public void setReqType(String reqType) {
+		this.reqType = reqType;
 	}
 }

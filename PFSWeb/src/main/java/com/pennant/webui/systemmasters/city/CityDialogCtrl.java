@@ -45,6 +45,7 @@ import com.pennant.ExtendedCombobox;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.systemmasters.City;
+import com.pennant.backend.model.systemmasters.District;
 import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.CityService;
 import com.pennant.backend.util.PennantConstants;
@@ -81,7 +82,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 	protected Combobox pCCityClass;
 	protected Textbox bankRefNo;
 	protected Checkbox cityIsActive; // autoWired
-
+	protected ExtendedCombobox pCDistrict;
 	// not autoWired Var's
 	private City city; // overHanded per parameter
 	private transient CityListCtrl cityListCtrl; // overHanded per parameter
@@ -188,6 +189,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCProvince.setDescColumn("CPProvinceName");
 		this.pCProvince.setValidateColumns(new String[] { "CPProvince" });
 
+		this.pCDistrict.setProperties("District", "Code", "Name", false, 8);
 		if (isWorkFlowEnabled()) {
 			this.groupboxWf.setVisible(true);
 		} else {
@@ -302,6 +304,20 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCProvince.setFilters(filtersProvince);
 	}
 
+	public void onFulfill$pCDistrict(Event event) {
+		logger.debug("Entering" + event.toString());
+		Object dataObject = pCDistrict.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.pCDistrict.setValue("");
+			this.pCDistrict.setDescription("");
+			this.pCDistrict.setAttribute("DistrictId", null);
+		} else {
+			District details = (District) dataObject;
+			this.pCDistrict.setAttribute("DistrictId", details.getId());
+		}
+		logger.debug("Leaving" + event.toString());
+	}
+
 	/**
 	 * Cancel the actual operation. <br>
 	 * <br>
@@ -354,6 +370,13 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 			this.cityIsActive.setDisabled(true);
 		}
 		cityCountryTemp = this.pCCountry.getValue();
+		this.pCDistrict.setValue(aCity.getDistrictCode());
+		this.pCDistrict.setDescription(aCity.getDistrictName());
+		if (aCity.getDistrictId() != null && aCity.getDistrictId() > 0) {
+			this.pCDistrict.setAttribute("DistrictId", aCity.getDistrictId());
+		} else {
+			this.pCDistrict.setAttribute("DistrictId", 0);
+		}
 		doSetProvProp();
 		logger.debug("Leaving ");
 	}
@@ -407,6 +430,20 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		try {
+			aCity.setDistrictCode(this.pCDistrict.getValue());
+			aCity.setDistrictName(this.pCDistrict.getDescription());
+			Object object = this.pCDistrict.getAttribute("DistrictId");
+			if (object != null) {
+				aCity.setDistrictId(Long.parseLong(object.toString()));
+			} else {
+				aCity.setDistrictId(0L);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 
 		if (wve.size() > 0) {
@@ -577,6 +614,7 @@ public class CityDialogCtrl extends GFCBaseCtrl<City> {
 		this.pCCityClass.setDisabled(isReadOnly("CityDialog_pCCitylassification"));
 		this.bankRefNo.setDisabled(isReadOnly("CityDialog_BankRefNo"));
 		this.cityIsActive.setDisabled(isReadOnly("CityDialog_CityIsActive"));
+		this.pCDistrict.setReadonly(isReadOnly("CityDialog_pCDistrict"));
 		if (isWorkFlowEnabled()) {
 
 			for (int i = 0; i < userAction.getItemCount(); i++) {

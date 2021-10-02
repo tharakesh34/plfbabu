@@ -9,6 +9,7 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.util.PennantConstants;
 
 public class TDSCalculator {
@@ -26,8 +27,7 @@ public class TDSCalculator {
 
 		return tdsAmount;
 	}
-	
-	
+
 	public static boolean isTDSApplicable(FinanceMain fm) {
 		return fm.isTDSApplicable() && PennantConstants.TDS_AUTO.equals(fm.getTdsType());
 	}
@@ -43,8 +43,10 @@ public class TDSCalculator {
 	public static boolean isTDSApplicable(FinanceMain fm, FinFeeDetail fee) {
 		return isTDSApplicable(fm, fee.isTdsReq());
 	}
-	
-	
+
+	public static boolean isTDSApplicable(FinanceMain fm, FinanceScheduleDetail schd) {
+		return schd.isTDSApplicable() && PennantConstants.TDS_AUTO.equals(fm.getTdsType());
+	}
 
 	private static String getRoundingMode() {
 		if (TDS_ROUNDING_MODE == null) {
@@ -77,6 +79,5 @@ public class TDSCalculator {
 			TDS_PERCENTAGE = new BigDecimal(SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
 		}
 	}
-	
-	
+
 }

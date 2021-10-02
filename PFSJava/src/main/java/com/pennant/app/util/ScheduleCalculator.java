@@ -1120,15 +1120,9 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		}
 
-		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, finMain.getProductCategory())) {
+		if (FinanceConstants.PRODUCT_ODFACILITY.equals(finMain.getProductCategory())) {
 			finScheduleData.setErrorDetail(
 					new ErrorDetail("SCH37", "Product Category not allow Planned EMI's", new String[] { " " }));
-			return finScheduleData;
-		}
-
-		if (finMain.isStepFinance()) {
-			finScheduleData.setErrorDetail(
-					new ErrorDetail("SCH37", "Step Loans does not allow Planned EMI's", new String[] { " " }));
 			return finScheduleData;
 		}
 
@@ -1209,6 +1203,13 @@ public class ScheduleCalculator {
 		// Setting EventFromDate and EventToDate
 		finMain.setEventToDate(finMain.getMaturityDate());
 		finScheduleData = setRecalAttributes(finScheduleData, PROC_CHANGEGRACEEND, BigDecimal.ZERO, BigDecimal.ZERO);
+
+		if (finMain.isStepFinance() && finMain.isAlwManualSteps()) {
+			if (PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps())
+					&& CollectionUtils.isNotEmpty(finScheduleData.getStepPolicyDetails())) {
+				prepareManualRepayRI(finScheduleData);
+			}
+		}
 
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 		finMain.setScheduleMaintained(true);
@@ -3389,7 +3390,9 @@ public class ScheduleCalculator {
 			// Repay on Schedule Date
 			if (scheduleFlag == CalculationConstants.SCHDFLAG_RPY) {
 				sd.setRepayOnSchDate(true);
-				sd.setFrqDate(true);
+				if (FrequencyUtil.isFrqDate(fm.getRepayFrq(), nextSchdDate)) {
+					sd.setFrqDate(true);
+				}
 			} else {
 				if (FrequencyUtil.isFrqDate(fm.getRepayFrq(), nextSchdDate)) {
 					sd.setRepayOnSchDate(true);
@@ -4186,6 +4189,15 @@ public class ScheduleCalculator {
 				finScheduleData.getFinanceMain().setAdjustClosingBal(true);
 				finScheduleData = graceSchdCal(finScheduleData);
 			}
+		} else {
+			if (finMain.isStepFinance() && PennantConstants.STEPPING_CALC_PERC.equals(finMain.getCalcOfSteps())) {
+				finScheduleData = calStepSchd(finScheduleData);
+				finScheduleData = adjustBPISchd(finScheduleData);
+				finScheduleData = setFinanceTotals(finScheduleData);
+				logger.debug(Literal.LEAVING);
+
+				return finScheduleData;
+			}
 		}
 
 		if (finMain.isRecalSteps()) {
@@ -4883,6 +4895,7 @@ public class ScheduleCalculator {
 			curSchd = schdDetails.get(i);
 
 			if (i < recalIdx) {
+				calIntFraction = schdDetails.get(i).getProfitFraction();
 				if (curSchd.isRepayOnSchDate()) {
 					finScheduleData.getFinanceMain().setCalTerms(finScheduleData.getFinanceMain().getCalTerms() + 1);
 				}
@@ -6815,6 +6828,9 @@ public class ScheduleCalculator {
 			}
 
 			stepAmount = stepAmount.add(adjAmount);
+			stepAmount = CalculationUtil.roundAmount(stepAmount, finMain.getCalRoundingMode(),
+					finMain.getRoundingTarget());
+
 			setRpyInstructDetails(finScheduleData, fromDate, toDate, stepAmount, schdMethod);
 
 			finScheduleData = getRpyInstructDetails(finScheduleData);
@@ -8620,7 +8636,7 @@ public class ScheduleCalculator {
 			curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
 			schdDate = curSchd.getSchDate();
 
-			if (TDSCalculator.isTDSApplicable(finMain) && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
+			if (TDSCalculator.isTDSApplicable(finMain, curSchd) && tdsPerc.compareTo(BigDecimal.ZERO) != 0) {
 
 				/*
 				 * if (i < recalIdx) { continue; }
@@ -9494,9 +9510,7 @@ public class ScheduleCalculator {
 				}
 
 				// iFsd == riEnd
-				if (spd.getInstallments() == instCount
-						|| (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
-								&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier))) {
+				if (spd.getInstallments() == instCount) {
 					if (CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)
 							&& CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(specifier)) {
 						grcEnd = true;
@@ -9510,12 +9524,7 @@ public class ScheduleCalculator {
 			if (!spd.isAutoCal()) {
 				setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), spd.getSteppedEMI(), schdMethod);
 			} else {
-				fm.setRecalFromDate(spd.getStepStart());
-				fm.setRecalType(CalculationConstants.RPYCHG_TILLDATE);
-				fm.setCalculateRepay(true);
-				fm.setEqualRepay(true);
-				fm.setRecalSchdMethod(grcSchdMethod);
-				setRpyInstructDetails(fsData, fm.getRecalFromDate(), spd.getStepEnd(), BigDecimal.ZERO, grcSchdMethod);
+				setRpyInstructDetails(fsData, spd.getStepStart(), spd.getStepEnd(), BigDecimal.ZERO, grcSchdMethod);
 			}
 		}
 		FinanceStepPolicyDetail spd = spdList.get(spdList.size() - 1);
@@ -9642,6 +9651,10 @@ public class ScheduleCalculator {
 			}
 
 			if (fsd.getSchDate().compareTo(rstDate) < 0) {
+				continue;
+			}
+
+			if (!fsd.isFrqDate()) {
 				continue;
 			}
 
@@ -9801,11 +9814,17 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			// Mark Capitalize
-			fsd.setCpzOnSchDate(true);
-			fsd.setBpiOrHoliday(FinanceConstants.FLAG_RESTRUCTURE);
+			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
+				if (fsd.getSchDate().compareTo(rstDetail.getRestructureDate()) == 0) {
+					continue;
+				}
+			}
 
+			// Mark Capitalize
 			if (fsd.isFrqDate() && (fsd.isRepayOnSchDate() || fsd.isPftOnSchDate())) {
+				fsd.setCpzOnSchDate(true);
+				fsd.setBpiOrHoliday(FinanceConstants.FLAG_RESTRUCTURE);
+
 				hldPeriods = hldPeriods + 1;
 
 				if (idxHldStart < 0) {
@@ -9828,8 +9847,8 @@ public class ScheduleCalculator {
 
 		setRpyInstructDetails(fsData, evtFromDate, evtToDate, BigDecimal.ZERO, CalculationConstants.SCHMTHD_NOPAY);
 
-		fsData.getFinanceMain().setRecalIdx(idxHldStart);
-		fsData.getFinanceMain().setEventFromDate(evtFromDate);
+		// fsData.getFinanceMain().setRecalIdx(idxHldStart);
+		fsData.getFinanceMain().setEventFromDate(rstDetail.getRestructureDate());
 
 		for (int iFsd = (idxHldEnd + 1); iFsd < fsdSize; iFsd++) {
 			FinanceScheduleDetail fsd = fsdList.get(iFsd);
@@ -9864,11 +9883,17 @@ public class ScheduleCalculator {
 				continue;
 			}
 
-			// Mark Capitalize
-			fsd.setCpzOnSchDate(true);
-			fsd.setBpiOrHoliday(FinanceConstants.FLAG_RESTRUCTURE);
+			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
+				if (fsd.getSchDate().compareTo(rstDetail.getRestructureDate()) == 0) {
+					continue;
+				}
+			}
 
+			// Mark Capitalize
 			if (fsd.isFrqDate() && (fsd.isRepayOnSchDate() || fsd.isPftOnSchDate())) {
+				fsd.setCpzOnSchDate(true);
+				fsd.setBpiOrHoliday(FinanceConstants.FLAG_RESTRUCTURE);
+
 				hldPeriods = hldPeriods + 1;
 
 				if (idxHldStart < 0) {
@@ -9897,8 +9922,8 @@ public class ScheduleCalculator {
 		}
 
 		if (rstDetail.getEmiHldPeriod() <= 0) {
-			fsData.getFinanceMain().setRecalIdx(idxHldStart);
-			fsData.getFinanceMain().setEventFromDate(evtFromDate);
+			// fsData.getFinanceMain().setRecalIdx(idxHldStart);
+			fsData.getFinanceMain().setEventFromDate(rstDetail.getRestructureDate());
 		}
 
 		for (int iFsd = (idxHldEnd + 1); iFsd < fsdSize; iFsd++) {

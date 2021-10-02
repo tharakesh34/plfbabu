@@ -25,6 +25,7 @@ import com.pennanttech.ws.model.deviation.DeviationList;
 import com.pennanttech.ws.model.eligibility.AgreementDetails;
 import com.pennanttech.ws.model.finance.FinanceDedupDetails;
 import com.pennanttech.ws.model.finance.FinanceDedupResponse;
+import com.pennanttech.ws.model.finance.FinanceStatusEnquiryDetail;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -126,5 +127,10 @@ public interface CreateFinanceRestService {
 	@POST
 	@Path("/finance/financeDedup")
 	FinanceDedupResponse loanDedup(FinanceDedupDetails financeDedupDetails) throws ServiceException;
+
+	@POST
+	@Path("/finance/getLoansStatusEnquiry")
+	FinanceStatusEnquiryDetail getLoansStatusEnquiry(FinanceStatusEnquiryDetail financeStatusEnquiryDetail)
+			throws ServiceException;
 
 }

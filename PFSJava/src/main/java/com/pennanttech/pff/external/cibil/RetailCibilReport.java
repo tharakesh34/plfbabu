@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -31,7 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowCallbackHandler;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.constants.AccountConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.amtmasters.VehicleDealerDAO;
@@ -119,6 +121,27 @@ public class RetailCibilReport extends BasicDao<Object> {
 	public void generateReport() throws Exception {
 		logger.debug(Literal.ENTERING);
 
+		extractCibilData("");
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	public void generateReportBasedOnEntity() throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		List<String> entities = cibilService.getEntities();
+		if (CollectionUtils.isEmpty(entities)) {
+			return;
+		}
+
+		for (String entity : entities) {
+			extractCibilData(entity);
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void extractCibilData(String entity) throws Exception {
+		logger.debug(Literal.ENTERING);
 		initlize();
 
 		File cibilFile = null;
@@ -143,13 +166,13 @@ public class RetailCibilReport extends BasicDao<Object> {
 			/* Clear CIBIL_CUSTOMER_EXTRACT table */
 			cibilService.deleteDetails();
 			/* Prepare the data and store in CIBIL_CUSTOMER_EXTRACT table */
-			totalRecords = cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_INDIV);
+			totalRecords = cibilService.extractCustomers(PennantConstants.PFF_CUSTCTG_INDIV, entity);
 			EXTRACT_STATUS.setTotalRecords(totalRecords);
 
 			if ("TUFF".equals(memberDetails.getFileFormate())) {
-				tuffFormat(cibilFile);
+				tuffFormat(cibilFile, entity);
 			} else {
-				xlsxFormat(cibilFile);
+				xlsxFormat(cibilFile, entity);
 			}
 
 			if ("F".equals(EXTRACT_STATUS.getStatus())) {
@@ -197,15 +220,14 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 	}
 
-	private void tuffFormat(File cibilFile) throws Exception, IOException {
+	private void tuffFormat(File cibilFile, String entity) throws Exception, IOException {
 		try (final BufferedWriter writer = new BufferedWriter(new FileWriter(cibilFile))) {
 			new HeaderSegment(writer).write();
-			StringBuilder sql = new StringBuilder();
-			sql.append("select CUSTID, FinID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
-			sql.append(" where segment_type = :segment_type ");
 			MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-			parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
-			jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
+
+			String sql = getSqlQuery(entity, parameterSource);
+
+			jdbcTemplate.query(sql, parameterSource, new RowCallbackHandler() {
 				@Override
 				public void processRow(ResultSet rs) throws SQLException {
 					processedRecords++;
@@ -234,7 +256,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 						new AccountSegment(builder, customer.getCustomerFinance()).write();
 						List<FinanceEnquiry> list = new ArrayList<>();
 						list.add(customer.getCustomerFinance());
-
+						new AccountSegmentHistory(builder, list).write();
 						new EndofSubjectSegment(builder).write();
 
 						writer.write(builder.toString());
@@ -252,7 +274,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		}
 	}
 
-	private void xlsxFormat(File cibilFile) throws Exception, IOException {
+	private void xlsxFormat(File cibilFile, String entity) throws Exception, IOException {
 		try (FileOutputStream outputStream = new FileOutputStream(cibilFile)) {
 			try (BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
 				try (Workbook workbook = new XSSFWorkbook()) {
@@ -268,12 +290,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 					createFields(sheet, rowIndex++, HEADER_FIELDS);
 
-					StringBuilder sql = new StringBuilder();
-					sql.append("select CUSTID, FinID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
-					sql.append(" where segment_type = :segment_type");
 					MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-					parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
-					jdbcTemplate.query(sql.toString(), parameterSource, new RowCallbackHandler() {
+					String sql = getSqlQuery(entity, parameterSource);
+
+					jdbcTemplate.query(sql, parameterSource, new RowCallbackHandler() {
 						@Override
 						public void processRow(ResultSet rs) throws SQLException {
 							EXTRACT_STATUS.setProcessedRecords(processedRecords++);
@@ -304,6 +324,20 @@ public class RetailCibilReport extends BasicDao<Object> {
 				}
 			}
 		}
+	}
+
+	private String getSqlQuery(String entity, MapSqlParameterSource parameterSource) {
+		parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
+
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
+		sql.append(" where segment_type = :segment_type");
+
+		if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+			sql.append(" and entity = :entity");
+			parameterSource.addValue("entity", entity);
+		}
+		return sql.toString();
 	}
 
 	private void appendRow(CustomerDetails customerDetal, int rowIndex, Sheet sheet) {
@@ -525,7 +559,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			cell = row.createCell(39);
 			cell.setCellValue(DateUtil.format(finance.getLatestRpyDate(), DATE_FORMAT));
 
-			BigDecimal currBal = currentBalance(finance);
+			BigDecimal currBal = getCurrentBalance(finance);
 			/* Date Closed */
 			cell = row.createCell(40);
 			if (currBal.compareTo(BigDecimal.ZERO) == 0) {
@@ -553,7 +587,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 			/* Amount Overdue */
 			cell = row.createCell(44);
-			cell.setCellValue(String.valueOf(amountOverDue(finance)));
+			cell.setCellValue(String.valueOf(getAmountOverDue(finance)));
 
 			/* Number Of Days PastDue */
 			cell = row.createCell(45);
@@ -769,60 +803,61 @@ public class RetailCibilReport extends BasicDao<Object> {
 		return writtenOffPrincipal;
 	}
 
-	private BigDecimal amountOverDue(FinanceEnquiry customerFinance) {
-		logger.info(Literal.ENTERING);
-
+	private BigDecimal getAmountOverDue(FinanceEnquiry fm) {
 		BigDecimal amountOverdue = BigDecimal.ZERO;
-		int odDays = Integer.parseInt(getOdDays(customerFinance.getCurODDays()));
-		if (odDays > 0) {
-			// finScheduleData = financeDetailService.getFinSchDataById(customerFinance.getFinReference(), "_AView",
-			// true);
-			finScheduleData = getFinSchDataById(customerFinance.getFinID(), "_AView", true);
-			FinanceSummary finSummary = finScheduleData.getFinanceSummary();
-			FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinID());
-			int formatter = CurrencyUtil.getFormat(summary.getFinCcy());
-			amountOverdue = PennantApplicationUtil
-					.formateAmount(summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal()), formatter);
-		} else {
-			amountOverdue = BigDecimal.ZERO;
+		FinanceSummary finSummary = new FinanceSummary();
+		FinODDetails finODDetails = finODDetailsDAO.getFinODSummary(fm.getFinID());
+
+		if (finODDetails != null) {
+			finSummary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
+			finSummary.setFinODTotWaived(finODDetails.getTotWaived());
+			finSummary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
+			finSummary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
 		}
+
+		FinanceSummary summary = cibilService.getFinanceProfitDetails(fm.getFinID());
+		amountOverdue = summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal());
+		amountOverdue = PennantApplicationUtil.formateAmount(amountOverdue, AccountConstants.CURRENCY_USD_FORMATTER);
+
 		if (amountOverdue.compareTo(BigDecimal.ZERO) < 0) {
 			amountOverdue = BigDecimal.ZERO;
 		}
 
-		logger.info(Literal.LEAVING);
+		if (StringUtils.equals("C", fm.getClosingStatus())) {
+			amountOverdue = BigDecimal.ZERO;
+		}
 		return amountOverdue;
 	}
 
-	private BigDecimal currentBalance(FinanceEnquiry fm) {
-		int odDays = Integer.parseInt(getOdDays(fm.getCurODDays()));
-		BigDecimal currentBalance;
-		String closingstatus = StringUtils.trimToEmpty(fm.getClosingStatus());
-		if (odDays > 0) {
-			BigDecimal futureSchedulePrincipal = getAmount(fm.getFutureSchedulePrin());
-			BigDecimal installmentDue = getAmount(fm.getInstalmentDue());
-			BigDecimal installmentPaid = getAmount(fm.getInstalmentPaid());
-			BigDecimal bounceDue = getAmount(fm.getBounceDue());
-			BigDecimal bouncePaid = getAmount(fm.getBouncePaid());
-			BigDecimal penaltyDue = getAmount(fm.getLatePaymentPenaltyDue());
-			BigDecimal penaltyPaid = getAmount(fm.getLatePaymentPenaltyPaid());
-			BigDecimal excessAmount = getAmount(fm.getExcessAmount());
-			BigDecimal excessAmountPaid = getAmount(fm.getExcessAmtPaid());
-			currentBalance = futureSchedulePrincipal
-					.add(bounceDue.subtract(bouncePaid).subtract(excessAmount.subtract(excessAmountPaid)));
+	private BigDecimal getCurrentBalance(FinanceEnquiry customerFinance) {
+		BigDecimal currentBalance = BigDecimal.ZERO;
+		String closingstatus = StringUtils.trimToEmpty(customerFinance.getClosingStatus());
+		FinanceSummary finSummary = new FinanceSummary();
+		FinODDetails finODDetails = finODDetailsDAO.getFinODSummary(customerFinance.getFinID());
 
-		} else {
-			currentBalance = getAmount(fm.getFutureSchedulePrin());
+		if (finODDetails != null) {
+			finSummary.setFinODTotPenaltyAmt(finODDetails.getTotPenaltyAmt());
+			finSummary.setFinODTotWaived(finODDetails.getTotWaived());
+			finSummary.setFinODTotPenaltyPaid(finODDetails.getTotPenaltyPaid());
+			finSummary.setFinODTotPenaltyBal(finODDetails.getTotPenaltyBal());
 		}
+
+		FinanceSummary summary = cibilService.getFinanceProfitDetails(customerFinance.getFinID());
+
+		BigDecimal principalOutstanding = summary.getOutStandPrincipal().subtract(summary.getTotalCpz());
+
+		currentBalance = summary.getTotalOverDue().add(finSummary.getFinODTotPenaltyBal());
+		currentBalance = currentBalance.add(principalOutstanding);
+		currentBalance = PennantApplicationUtil.formateAmount(currentBalance, AccountConstants.CURRENCY_USD_FORMATTER);
+
 		if (currentBalance.compareTo(BigDecimal.ZERO) < 0) {
 			currentBalance = BigDecimal.ZERO;
 		}
-		// and overdue amount should be 0
-		if (StringUtils.equals("C", closingstatus)) {
+
+		if ("C".equals(closingstatus)) {
 			currentBalance = BigDecimal.ZERO;
 		}
 
-		logger.info(Literal.LEAVING);
 		return currentBalance;
 	}
 
@@ -1289,7 +1324,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 			writeValue(builder, "11", SysParamUtil.getAppDate(DATE_FORMAT), "08");
 			writeValue(builder, "12", loan.getFinAssetValue(), 9, "TL");
-			writeValue(builder, "13", currentBalance, 9, "TL");
+			writeValue(builder, "13", getCurrentBalance(loan), 9, "TL");
 
 			BigDecimal amountOverdue = BigDecimal.ZERO;
 
@@ -1321,12 +1356,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 			}
 			// ### PSD --127340 20-06-2018
 
-			writeValue(builder, "14", amountOverdue, 9, "TL");
+			writeValue(builder, "14", getAmountOverDue(loan), 9, "TL");
 
 			if (amountOverdue.compareTo(BigDecimal.ZERO) <= 0) {
 				writeValue(builder, "15", "0", 3, "TL");
 			} else {
-				writeValue(builder, "15", getOdDays(loan.getCurODDays()), 3, "TL");
+				writeValue(builder, "15", getOdDays(finODDetailsDAO.getFinODDays(loan.getFinID())), 3, "TL");
 			}
 
 			if (closingstatus.equals("W")) {
@@ -1334,6 +1369,10 @@ public class RetailCibilReport extends BasicDao<Object> {
 				closingstatus = "02";
 				writeValue(builder, "22", closingstatus, 2, "TL");
 			}
+
+			writeValue(builder, "38", loan.getRepayProfitRate(), 9, "TL");
+			writeValue(builder, "39", String.valueOf(loan.getNumberOfTerms()), 9, "TL");
+			writeValue(builder, "40", PennantApplicationUtil.formateAmount(loan.getFirstRepay(), 2), 9, "TL");
 
 			if (StringUtils.equals("02", closingstatus) || (StringUtils.equals("03", closingstatus))) {
 
@@ -1356,6 +1395,29 @@ public class RetailCibilReport extends BasicDao<Object> {
 
 				writeValue(builder, "42", writtenOffPrincipal, 9, "TL");
 			}
+
+			String rePayfrq = StringUtils.trimToEmpty(loan.getRepayFrq());
+			String frequecncy = null;
+
+			if (rePayfrq.length() > 0) {
+				frequecncy = rePayfrq.substring(0, 1);
+			}
+
+			if ("M".equals(frequecncy)) {
+				rePayfrq = "03";
+			} else if ("Q".equals(frequecncy)) {
+				rePayfrq = "04";
+			} else if ("D".equals(frequecncy)) {
+				rePayfrq = "01";
+			} else if ("F".equals(frequecncy)) {
+				rePayfrq = "02";
+			}
+
+			if (StringUtils.isEmpty(rePayfrq)) {
+				rePayfrq = "03";
+			}
+
+			writeValue(builder, "44", rePayfrq, 9, "TL");
 		}
 	}
 
@@ -1378,11 +1440,12 @@ public class RetailCibilReport extends BasicDao<Object> {
 				writeValue(builder, "TH", "H".concat(StringUtils.leftPad(String.valueOf(i), 2, "0")), "03");
 
 				writeValue(builder, "01", SysParamUtil.getAppDate(DATE_FORMAT), "08");
-				writeValue(builder, "02", getOdDays(loan.getCurODDays()), "03");
-				writeValue(builder, "03", loan.getAmountOverdue(), 9, "TH");
+				writeValue(builder, "02", getOdDays(finODDetailsDAO.getFinODDays(loan.getFinID())), "03");
+				writeValue(builder, "03", getAmountOverDue(loan), 9, "TH");
 				writeValue(builder, "04", loan.getFinAssetValue(), 9, "TH");
-				writeValue(builder, "07", loan.getCurrentBalance(), 9, "TH");
+				writeValue(builder, "07", getCurrentBalance(loan), 9, "TH");
 				writeValue(builder, "08", DateUtil.format(loan.getLatestRpyDate(), DATE_FORMAT), "08");
+				writeValue(builder, "09", PennantApplicationUtil.formateAmount(loan.getFirstRepay(), 2), 9, "TH");
 			}
 		}
 	}

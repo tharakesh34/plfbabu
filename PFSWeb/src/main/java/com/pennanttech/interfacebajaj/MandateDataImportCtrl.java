@@ -24,10 +24,14 @@ import org.zkoss.zul.Timer;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.constants.DataEngineConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.partnerbank.PartnerBank;
+import com.pennant.backend.service.financemanagement.PartnerBankModeConfigService;
 import com.pennant.backend.util.PennantConstants;
+import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -53,9 +57,14 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	protected Textbox fileName;
 	protected Combobox fileConfiguration;
 	protected Combobox serverFileName;
+	protected Combobox mandateType;
+	protected ExtendedCombobox partnerBank;
+	protected Row rowfileConfig;
 
 	protected Row row1;
 	protected Rows panelRows;
+	protected Row rowMandateType;
+	protected Row rowPartnerBank;
 
 	protected Timer timer;
 	private Media media = null;
@@ -73,6 +82,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	private MandateProcesses mandateProcesses;
 	private MandateProcesses defaultMandateProcess;
+	private PartnerBankModeConfigService partnerBankModeConfigService;
 	private DataEngineStatus MANDATES_IMPORT = new DataEngineStatus("MANDATES_IMPORT");
 	private DataEngineStatus MANDATES_ACK = new DataEngineStatus("MANDATES_ACK");
 
@@ -92,8 +102,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws Exception
 	 */
 	public void onCreate$window_MandateDataImportCtrl(Event event) throws Exception {
@@ -128,6 +137,10 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		}
 
 		fillComboBox(fileConfiguration, "", menuList, "");
+		if (!ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			this.rowMandateType.setVisible(false);
+			this.rowPartnerBank.setVisible(false);
+		}
 		doSetFieldProperties();
 
 		logger.debug(Literal.LEAVING);
@@ -143,6 +156,104 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 			this.btnImport.setVisible(false);
 		}
+		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
+			this.partnerBank.setMaxlength(8);
+			this.partnerBank.setTextBoxWidth(135);
+			this.partnerBank.setMandatoryStyle(false);
+			this.partnerBank.setModuleName("PartnerBank");
+			this.partnerBank.setValueColumn("PartnerBankCode");
+			this.partnerBank.setDescColumn("PartnerBankName");
+			this.partnerBank.setValidateColumns(new String[] { "PartnerBankCode" });
+		}
+	}
+
+	public void onChange$mandateType(Event event) throws Exception {
+		logger.debug(Literal.ENTERING);
+
+		if (PennantConstants.List_Select.equals(getComboboxValue(this.mandateType))) {
+			return;
+		}
+
+		String instType = this.mandateType.getSelectedItem().getValue();
+		this.fileName.setValue("");
+
+		String configName = getConfigByPartnerBank(instType, this.partnerBank.getValue());
+		setDEStatus(configName);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private void setDEStatus(String configName) throws Exception {
+		if (configName != null) {
+			fileName.setValue("");
+			serverFileName.setValue("");
+			row1.setVisible(false);
+			this.btnImport.setDisabled(false);
+			MANDATES_IMPORT = dataEngineConfig.getLatestExecution(configName);
+			config = dataEngineConfig.getConfigurationByName(configName);
+			try {
+				fileConfigurationSetup();
+				this.rowfileConfig.setVisible(false);
+				media = null;
+				doFillPanel(config, MANDATES_IMPORT);
+			} catch (Exception e) {
+				exceptionTrace(e);
+			}
+		} else {
+			fileName.setValue("");
+			serverFileName.setValue("");
+			row1.setVisible(true);
+			this.rowfileConfig.setVisible(true);
+			String fileConfig = this.fileConfiguration.getSelectedItem().getValue();
+			if (!StringUtils.equals("#", fileConfig)) {
+				this.btnImport.setDisabled(false);
+				config = dataEngineConfig.getConfigurationByName(fileConfig);
+			} else {
+				this.btnImport.setDisabled(true);
+				this.row1.setVisible(false);
+				media = null;
+				return;
+			}
+			this.fileConfiguration.setSelectedIndex(0);
+			try {
+				fileConfigurationSetup();
+				doFillPanel(config, dataEngineConfig.getLatestExecution(fileConfig));
+			} catch (Exception e) {
+				exceptionTrace(e);
+			}
+		}
+
+	}
+
+	public void onFulfill$partnerBank(Event event) throws Exception {
+		Object dataObject = partnerBank.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+			this.partnerBank.setAttribute("PartnerBankId", null);
+		} else {
+			PartnerBank details = (PartnerBank) dataObject;
+			this.partnerBank.setValue(String.valueOf(details.getId()));
+			this.partnerBank.setAttribute("PartnerBankId", details.getId());
+		}
+
+		String configName = getConfigByPartnerBank(getComboboxValue(this.mandateType), this.partnerBank.getValue());
+		setDEStatus(configName);
+	}
+
+	private String getConfigByPartnerBank(String instType, String partnerBank) {
+		if (PennantConstants.List_Select.equals(instType)) {
+			return null;
+		}
+		if (StringUtils.isEmpty(partnerBank)) {
+			return null;
+		}
+
+		long partnerBankId = Long.valueOf(partnerBank);
+
+		return partnerBankModeConfigService.getConfigName(instType, partnerBankId, DataEngineConstants.MANDATE,
+				DataEngineConstants.IMPORT, false);
 	}
 
 	/**
@@ -164,6 +275,7 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 				config = dataEngineConfig.getConfigurationByName(fileConfig);
 			} else {
 				this.btnImport.setDisabled(true);
+				media = null;
 				return;
 			}
 			try {
@@ -228,6 +340,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 	}
 
 	private void doFillPanel(Configuration config, DataEngineStatus ds) {
+		// Clear the existing rows.
+		panelRows.getChildren().clear();
 		ProcessExecution pannel = new ProcessExecution();
 		pannel.setId(config.getName());
 		pannel.setBorder("normal");
@@ -298,8 +412,13 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 			}
 		}
 
-		if (this.fileConfiguration.getSelectedIndex() == 0) {
+		if (this.fileConfiguration.getSelectedIndex() == 0 && this.rowfileConfig.isVisible()) {
 			MessageUtil.showError("Please select file configuration.");
+			return;
+		}
+
+		if (this.mandateType.getSelectedIndex() == 0 && ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			MessageUtil.showError("Please select Mandate Type.");
 			return;
 		}
 
@@ -317,7 +436,8 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 		try {
 			Thread thread;
 
-			if (fileConfiguration.getSelectedItem().getValue().equals("MANDATES_IMPORT")) {
+			if (fileConfiguration.getSelectedItem().getValue().equals("MANDATES_IMPORT")
+					|| ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
 				thread = new Thread(new ProcessData(userId, MANDATES_IMPORT));
 			} else {
 				thread = new Thread(new ProcessData(userId, MANDATES_ACK));
@@ -448,5 +568,9 @@ public class MandateDataImportCtrl extends GFCBaseCtrl<Configuration> {
 
 	private MandateProcesses getMandateProcess() {
 		return mandateProcesses == null ? defaultMandateProcess : mandateProcesses;
+	}
+
+	public void setPartnerBankModeConfigService(PartnerBankModeConfigService partnerBankModeConfigService) {
+		this.partnerBankModeConfigService = partnerBankModeConfigService;
 	}
 }

@@ -62,6 +62,7 @@ import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Tabpanels;
@@ -77,6 +78,7 @@ import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
+import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.service.mandate.MandateService;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.MandateConstants;
@@ -144,6 +146,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 	protected Longbox mandateID;
 	protected Combobox mandateType;
+	protected Space space_MandateType;
 	protected Textbox custCIF;
 	protected Textbox bankName;
 	protected Combobox status;
@@ -172,9 +175,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Row row_partnerBank;
 	private transient MandateService mandateService;
 	private transient boolean validationOn;
-	private Map<Long, String> mandateIdMap = new HashMap<Long, String>();
+	private Map<Long, String> mandateIdMap = new HashMap<>();
 	protected JdbcSearchObject<Customer> custCIFSearchObject;
 	private ExternalInterfaceService externalInterfaceService;
+	private String extractionType = null;
 
 	/**
 	 * default constructor.<br>
@@ -238,6 +242,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		// Render the page and display the data.
 		doRenderPage();
 		this.mandateIdMap.clear();
+		extractionType = SysParamUtil.getValueAsString(SMTParameterConstants.PRESENTMENT_EXTRACTION_TYPE);
 		doSetFieldProperties();
 
 		if (listBoxMandateRegistration.getItems().size() > 0) {
@@ -269,6 +274,12 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		this.entityCode.setValueColumn("EntityCode");
 		this.entityCode.setDescColumn("EntityDesc");
 		this.entityCode.setValidateColumns(new String[] { "EntityCode" });
+
+		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			this.space_MandateType.setSclass(PennantConstants.mandateSclass);
+		} else {
+			this.space_MandateType.setSclass("");
+		}
 
 		if (ImplementationConstants.MANDATE_PTNRBNK_IN_DWNLD) {
 			this.row_partnerBank.setVisible(true);
@@ -323,6 +334,18 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		}
 		logger.debug("Leaving");
+	}
+
+	public void onFulfill$partnerBank(Event event) {
+		Object dataObject = partnerBank.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.partnerBank.setValue("");
+			this.partnerBank.setDescription("");
+			this.partnerBank.setAttribute("PartnerBankId", null);
+		} else {
+			PartnerBank details = (PartnerBank) dataObject;
+			this.partnerBank.setAttribute("PartnerBankId", details.getId());
+		}
 	}
 
 	/**
@@ -450,10 +473,16 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		String fromDate = PennantAppUtil.formateDate(this.fromDate.getValue(), PennantConstants.DBDateFormat);
 		String toDate = PennantAppUtil.formateDate(this.toDate.getValue(), PennantConstants.DBDateFormat);
+		String manadateType = getComboboxValue(this.mandateType);
+		String partnerBankCode = this.partnerBank.getValue();
 
 		StringBuilder whereClause = new StringBuilder();
 		whereClause.append("(INPUTDATE >= ").append("'").append(fromDate).append("'").append(" AND INPUTDATE <= ")
 				.append("'").append(toDate).append("'").append(")");
+		if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+			whereClause.append(" AND MandateType =").append("'").append(manadateType).append("'")
+					.append(" AND PartnerBankCode = ").append("'").append(partnerBankCode).append("'");
+		}
 		searchObject.addWhereClause(whereClause.toString());
 
 		List<Map<String, Long>> list = getPagedListWrapper().getPagedListService().getBySearchObject(searchObject);
@@ -599,6 +628,16 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 									PennantRegularExpressions.REGEX_DESCRIPTION, true));
 					this.partnerBank.getValue();
 				}
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK
+					&& getComboboxValue(this.mandateType).equals(PennantConstants.List_Select)) {
+				throw new WrongValueException(this.mandateType, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_MandateList_MandateType.value") }));
 			}
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -783,6 +822,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			mandateData.setUserName(loggedInUser.getUserName());
 			mandateData.setEntity(this.entityCode.getValue());
 			mandateData.setSelectedBranchs(this.branchDetails.getValue());
+			mandateData.setType(getComboboxValue(this.mandateType));
+			Object object = this.partnerBank.getAttribute("PartnerBankId");
+			if (object != null) {
+				mandateData.setPartnerBankId(Long.parseLong(object.toString()));
+			}
+			String toDate = PennantAppUtil.formateDate(SysParamUtil.getAppDate(), "dd-MM-yyyy");
+			mandateData.setRemarks(toDate.concat("_" + String.valueOf(mandateIdList.size())));
 
 			MandateProcessThread process = new MandateProcessThread(mandateData);
 			Thread thread = new Thread(process);

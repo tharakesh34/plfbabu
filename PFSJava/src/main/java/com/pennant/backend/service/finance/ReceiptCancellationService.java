@@ -6,6 +6,7 @@ import java.util.Map;
 import com.pennant.app.core.CustEODEvent;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 
@@ -32,4 +33,6 @@ public interface ReceiptCancellationService {
 	AuditHeader doApproveNonLanReceipt(AuditHeader auditHeader) throws Exception;
 
 	PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) throws Exception;
+
+	FinanceMain getFinBasicDetails(String reference);
 }

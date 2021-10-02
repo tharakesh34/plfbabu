@@ -80,9 +80,6 @@ public interface ReceiptService {
 	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);
 
 	// ### 29-10-2018, Ticket id:124998
-	FinanceDetail getFinanceDetail(FinServiceInstruction fsi, String eventCode, FinanceDetail fd);
-
-	// ### 29-10-2018, Ticket id:124998
 	long CheckDedupSP(FinReceiptHeader receiptHeader, String purpose);
 
 	BigDecimal getClosingBalance(long finID, Date valueDate);// ## PSD
@@ -173,4 +170,8 @@ public interface ReceiptService {
 	ErrorDetail receiptCancelValidation(long finID, Date lastReceivedDate);
 
 	List<ErrorDetail> dedupCheck(FinServiceInstruction fsi);
+
+	boolean checkPresentmentsInQueue(long finID);
+
+	Date getFinSchdDate(FinReceiptHeader rh);
 }

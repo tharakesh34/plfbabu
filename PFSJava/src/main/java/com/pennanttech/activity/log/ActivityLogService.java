@@ -11,10 +11,8 @@ public interface ActivityLogService {
 	/**
 	 * Get the list of activities performed on the specified record.
 	 * 
-	 * @param moduleCode
-	 *            Code of the Module.
-	 * @param keyValue
-	 *            Value of the key column.
+	 * @param moduleCode Code of the Module.
+	 * @param keyValue   Value of the key column.
 	 * 
 	 * @return The list of activities performed on the specified record.
 	 */
@@ -23,14 +21,10 @@ public interface ActivityLogService {
 	/**
 	 * Get the list of activities performed on the specified record.
 	 * 
-	 * @param moduleCode
-	 *            Code of the Module.
-	 * @param keyValue
-	 *            Value of the key column.
-	 * @param fromAuditId
-	 *            Starting activity id of the specified record.
-	 * @param toAuditId
-	 *            ending activity id of the specified record.
+	 * @param moduleCode  Code of the Module.
+	 * @param keyValue    Value of the key column.
+	 * @param fromAuditId Starting activity id of the specified record.
+	 * @param toAuditId   ending activity id of the specified record.
 	 * 
 	 * @return The list of activities performed on the specified record.
 	 */
@@ -39,12 +33,12 @@ public interface ActivityLogService {
 	/**
 	 * Get the list of Remarks on the specified record.
 	 * 
-	 * @param reference
-	 *            Reference of the the specified record.
-	 * @param moduleNames
-	 *            Name of the Module.
+	 * @param reference   Reference of the the specified record.
+	 * @param moduleNames Name of the Module.
 	 * 
 	 * @return The list of Remarks.
 	 */
 	List<Notes> getNotesList(Object reference, List<String> moduleNames);
+
+	List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo, long instructionUID);
 }

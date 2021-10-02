@@ -108,6 +108,8 @@ public class PresentmentHeader extends AbstractWorkflowEntity {
 	private boolean groupByPartnerBank;
 	private Map<String, Long> groups = new HashMap<>();
 	private List<PresentmentDetail> presentments = new ArrayList<>();
+	@XmlElement(name = "excludeDetails")
+	private List<PresentmentDetail> presentmentDetailsList;
 
 	public PresentmentHeader(long id) {
 		super();
@@ -445,4 +447,11 @@ public class PresentmentHeader extends AbstractWorkflowEntity {
 		this.groupByPartnerBank = groupByPartnerBank;
 	}
 
+	public List<PresentmentDetail> getPresentmentDetailsList() {
+		return presentmentDetailsList;
+	}
+
+	public void setPresentmentDetailsList(List<PresentmentDetail> presentmentDetailsList) {
+		this.presentmentDetailsList = presentmentDetailsList;
+	}
 }

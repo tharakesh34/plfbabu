@@ -74,7 +74,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"fixedTenorRate", "eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor",
 		"offerProduct", "offerAmount", "custSegmentation", "baseProduct", "processType", "bureauTimeSeries",
 		"campaignName", "existingLanRefNo", "leadSource", "poSource", "rsa", "verification", "sourChannelCategory",
-		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps" })
+		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps", "calcOfSteps", "stepsAppliedFor" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -753,6 +753,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Map<String, Object> extendedFields = new HashMap<>();
 	private String hunterStatus;
 	private int autoRejectionDays;
+	private long instructionUID = Long.MIN_VALUE;
 
 	// QDP AutoApprove Changes.
 	private boolean autoApprove = false;
@@ -792,12 +793,19 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private EventProperties eventProperties = new EventProperties();
 	@XmlElement
 	private String tdsType;
-
+	@XmlElement
 	private String calcOfSteps;
+	@XmlElement
 	private String stepsAppliedFor;
 	private boolean isRpyStps;
 	private boolean isGrcStps;
 	private int noOfGrcSteps = 0;
+	@XmlElement
+	private boolean escrow = false;
+	@XmlElement
+	private Long custBankId;
+	private String custAcctNumber;
+	private String custAcctHolderName;
 
 	private boolean cpzPosIntact = false;
 
@@ -1020,6 +1028,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("cpzPosIntact");
 		excludeFields.add("manufacturerDealerName");
 		excludeFields.add("manufacturerDealerCode");
+		excludeFields.add("recalSteps");
+		excludeFields.add("instructionUID");
+		excludeFields.add("custAcctNumber");
+		excludeFields.add("custAcctHolderName");
 		return excludeFields;
 	}
 	// ******************************************************//
@@ -1492,6 +1504,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setManufacturerDealerId(this.manufacturerDealerId);
 		entity.setManufacturerDealerName(this.manufacturerDealerName);
 		entity.setManufacturerDealerCode(this.manufacturerDealerCode);
+		entity.setEscrow(this.escrow);
+		entity.setCustBankId(this.custBankId);
+		entity.setCustAcctNumber(this.custAcctNumber);
+		entity.setCustAcctHolderName(this.custAcctHolderName);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5229,6 +5245,46 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setManufacturerDealerCode(String manufacturerDealerCode) {
 		this.manufacturerDealerCode = manufacturerDealerCode;
+	}
+
+	public long getInstructionUID() {
+		return instructionUID;
+	}
+
+	public void setInstructionUID(long instructionUID) {
+		this.instructionUID = instructionUID;
+	}
+
+	public boolean isEscrow() {
+		return escrow;
+	}
+
+	public void setEscrow(boolean escrow) {
+		this.escrow = escrow;
+	}
+
+	public Long getCustBankId() {
+		return custBankId;
+	}
+
+	public void setCustBankId(Long custBankId) {
+		this.custBankId = custBankId;
+	}
+
+	public String getCustAcctNumber() {
+		return custAcctNumber;
+	}
+
+	public void setCustAcctNumber(String custAcctNumber) {
+		this.custAcctNumber = custAcctNumber;
+	}
+
+	public String getCustAcctHolderName() {
+		return custAcctHolderName;
+	}
+
+	public void setCustAcctHolderName(String custAcctHolderName) {
+		this.custAcctHolderName = custAcctHolderName;
 	}
 
 }

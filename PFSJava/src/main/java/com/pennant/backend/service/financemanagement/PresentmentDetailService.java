@@ -48,8 +48,6 @@ public interface PresentmentDetailService {
 
 	String getPaymenyMode(String presentmentRef);
 
-	void processReceipts(PresentmentDetail presentmentDetail) throws Exception;
-
 	void updatePresentmentIdAsZero(List<Long> presentmentIds);
 
 	FinanceDetail getFinanceDetailsByRef(long finID);
@@ -71,6 +69,8 @@ public interface PresentmentDetailService {
 
 	List<Long> getExcludeList(long id);
 
+	List<Long> getManualExcludeList(long id);
+
 	void updatePresentmentDetails(PresentmentHeader presentmentHeader);
 
 	void processSuccessPresentments(long receiptId);
@@ -85,4 +85,6 @@ public interface PresentmentDetailService {
 	void setProperties(PresentmentDetailExtract pde);
 
 	long getFinID(String finreference);
+
+	PresentmentDetail getRePresentmentDetails(String presentmentRef);
 }

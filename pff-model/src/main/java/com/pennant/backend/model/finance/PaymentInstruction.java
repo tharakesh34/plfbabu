@@ -103,6 +103,7 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 	private boolean apiRequest = false; // for Refund Upload
 	private boolean paymentProcReq = false;
 	private String branchBankCode;
+	private String lei;
 
 	public long getPartnerBankId() {
 		return partnerBankId;
@@ -498,4 +499,11 @@ public class PaymentInstruction extends AbstractWorkflowEntity {
 		this.branchBankCode = branchBankCode;
 	}
 
+	public String getLei() {
+		return lei;
+	}
+
+	public void setLei(String lei) {
+		this.lei = lei;
+	}
 }

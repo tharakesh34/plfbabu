@@ -27,6 +27,7 @@ package com.pennant.webui.finance.reinstatefinance;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,6 +44,7 @@ import org.zkoss.zul.Paging;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
@@ -274,9 +276,14 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 
 		// Get the selected entity.
 		long finID = (Long) selectedItem.getAttribute("finID");
-		String id = (String) selectedItem.getAttribute("id");
-		ReinstateFinance aReinstateFinance = reinstateFinanceService.getReinstateFinanceById(finID);
+		ReinstateFinance aReinstateFinance = reinstateFinanceService.getFinanceDetailsById(finID);
 
+		List<FinServiceInstruction> serviceInstructions = reinstateFinanceService.getFinServiceInstructions(finID,
+				"_Temp", FinServiceEvent.REINSTATE);
+
+		if (CollectionUtils.isNotEmpty(serviceInstructions)) {
+			aReinstateFinance.setFinServiceInstructions(serviceInstructions);
+		}
 		if (aReinstateFinance == null) {
 			MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
 			return;

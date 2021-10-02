@@ -67,6 +67,13 @@
 								</hbox>
 							</row>
 							<row visible="true">
+								<label id="label_CityDialog_PCDistrict"
+									value="${c:l('label_CityDialog_PCDistrict.value')}" />
+								<hbox>
+									<extendedcombobox id="pCDistrict" />
+								</hbox>
+							</row>
+							<row visible="true">
 								<label id="label_CityDialog_PCCityName" value="${c:l('label_CityDialog_PCCityName.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />

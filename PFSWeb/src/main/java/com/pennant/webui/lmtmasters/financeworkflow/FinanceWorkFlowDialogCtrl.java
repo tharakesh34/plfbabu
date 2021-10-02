@@ -443,10 +443,12 @@ public class FinanceWorkFlowDialogCtrl extends GFCBaseCtrl<FinanceWorkFlow> {
 		// Get the finance servicing events.
 		List<FinServicingEvent> events = new ArrayList<>();
 
-		if (StringUtils.equals(eventAction, FinServiceEvent.ORG)) {
+		if (FinServiceEvent.ORG.equals(eventAction)) {
 			events = PennantStaticListUtil.getFinServiceEvents(false);
 		} else {
 			events = PennantStaticListUtil.getFinServiceEvents(true);
+			events.add(new FinServicingEvent(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN,
+					Labels.getLabel("label_FinSerEvent_MaintainExtendedFields"), "EDM"));
 		}
 
 		List<ValueLabel> list = PennantStaticListUtil.getValueLabels(events);

@@ -100,6 +100,7 @@ public class RepayConstants {
 	public static final String RECEIPTMODE_ONLINE = "ONLINE";
 	public static final String RECEIPTMODE_BILLDESK = "BILLDESK";
 	public static final String RECEIPTMODE_MOBILE = "MOBILE";
+	public static final String RECEIPTMODE_RESTRUCT = "RESTRUCT";
 	public static final String RECEIPTMODE_DIGITAL = "DIGITAL";
 	public static final String RECEIPTMODE_BANKDEPOSIT = "BANKDEPT";
 	// 2. Back-end Process Receipt Modes
@@ -137,7 +138,7 @@ public class RepayConstants {
 	public static final String ALLOCATION_LPFT = "LPFT";
 	public static final String ALLOCATION_ODC = "ODC";
 	public static final String ALLOCATION_FEE = "FEE";
-	//public static final String ALLOCATION_INS = "INS";
+	// public static final String ALLOCATION_INS = "INS";
 	public static final String ALLOCATION_MANADV = "MANADV";
 	public static final String ALLOCATION_BOUNCE = "BOUNCE";
 
@@ -164,6 +165,7 @@ public class RepayConstants {
 	public static final String PAYTYPE_EXCESS = "EXCESS";
 	public static final String PAYTYPE_EMIINADV = "EMIINADV";
 	public static final String PAYTYPE_PAYABLE = "PAYABLE";
+	public static final String PAYTYPE_RESTRUCT = "RESTRUCT";
 	public static final String PAYTYPE_PRESENTMENT = "PRESENT";
 	public static final String PAYTYPE_WRITEOFF = "WRITEOFF";
 
@@ -240,7 +242,7 @@ public class RepayConstants {
 	public static final String RELEASETYPE_THIRD_PARTY = "T";
 	public static final String RELEASETYPE_SELF = "S";
 
-	//Received from
+	// Received from
 	public static final String RECEIVED_CUSTOMER = "Customer";
 	public static final String RECEIVED_GOVT = "GOVERMENT";
 	public static final String RECEIVED_NONLOAN = "NON LOAN";

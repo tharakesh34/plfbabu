@@ -249,7 +249,7 @@
 											<button label="" id="btnSearchRvsTransactionCode" image="/images/icons/LOVSearch.png" />
 										</hbox>
 									</row>
-									<row visible="false">
+									<row id="row_ShadowPosting">
 										<label id="label_TransactionEntryDialog_ShadowPosting" value="${c:l('label_TransactionEntryDialog_ShadowPosting.value')}" />
 										<hbox>
 											<space spacing="2px" />

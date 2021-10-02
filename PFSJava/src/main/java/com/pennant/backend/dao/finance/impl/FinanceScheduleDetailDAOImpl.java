@@ -1270,4 +1270,36 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		return null;
 
 	}
+
+	@Override
+	public Date getSchdDateForDPD(long finID, Date appDate) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select Min(Schdate) From FinScheduleDetails");
+		sql.append(" Where FinID = ? and SchDate <= ?");
+		sql.append(" and RepayAmount > ? and SchdPriPaid = ? and SchdPftPaid = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, appDate, 0, 0, 0);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Override
+	public List<Date> getScheduleDates(long finID, Date valueDate) {
+		String sql = "Select SchDate From FinScheduleDetails Where FinID = ? and PftOnSchDate = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<Date> list = this.jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, finID);
+			ps.setDate(2, JdbcUtil.getDate(valueDate));
+		}, (rs, i) -> {
+			return rs.getDate(1);
+		});
+
+		return list.stream().sorted((l1, l2) -> l1.compareTo(l2)).collect(Collectors.toList());
+	}
 }

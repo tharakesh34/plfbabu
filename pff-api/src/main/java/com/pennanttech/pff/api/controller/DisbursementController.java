@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import com.pennant.app.constants.ImplementationConstants;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.WSReturnStatus;
@@ -18,8 +20,10 @@ import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.controller.ExtendedTestClass;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.core.disbursement.PaymentType;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pff.core.process.DisbursementProcess;
 import com.pennanttech.pff.core.process.PaymentProcess;
@@ -86,6 +90,7 @@ public class DisbursementController extends ExtendedTestClass {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		DisbursementRequest request = new DisbursementRequest();
 		List<DisbursementRequest> disbRequests = new ArrayList<>();
+		boolean disbTypReq = ImplementationConstants.DISB_REQ_RES_FILE_GEN_MODE;
 
 		DisbursementRequestDetail disbDetail = new DisbursementRequestDetail();
 
@@ -94,15 +99,20 @@ public class DisbursementController extends ExtendedTestClass {
 			String channel = fap.getChannel();
 			String disbParty = fap.getPaymentDetail();
 			String finReference = fap.getFinReference();
+			String disbType = fap.getPaymentType();
 
-			FinAdvancePayments disb = disbursementDAO.getDisbursementInstruction(paymentId, channel);
+			FinAdvancePayments disb = disbursementDAO.getDisbursementInstruction(paymentId, channel, disbType);
 
 			if (disb == null) {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Disbursement instruction with disbinstId ID :" + paymentId;
 				valueParm[1] = "and channel :" + channel;
-				valueParm[2] = "not exists or Already ";
-				valueParm[3] = "Processed";
+				if (disbTypReq) {
+					valueParm[2] = "and disbType :" + disbType;
+				} else {
+					valueParm[2] = "";
+				}
+				valueParm[3] = " not exists or Already Processed";
 				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				disbDetail.setReturnStatus(returnStatus);
 				return disbDetail;
@@ -113,11 +123,29 @@ public class DisbursementController extends ExtendedTestClass {
 				String valueParm[] = new String[4];
 				valueParm[0] = "Disbursement instruction with disbinstId ID :" + paymentId;
 				valueParm[1] = "and channel :" + channel;
-				valueParm[2] = "already processed";
-				valueParm[3] = "";
+				if (disbTypReq) {
+					valueParm[2] = "and disbType :" + disbType;
+				} else {
+					valueParm[2] = "";
+				}
+				valueParm[3] = "already processed";
 				returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				disbDetail.setReturnStatus(returnStatus);
 				return disbDetail;
+			}
+
+			if (disbTypReq) {
+				String dbDisbType = PaymentType.valueOf(disb.getPaymentType()).getValue();
+				if (!(dbDisbType.equals(fap.getPaymentType()))) {
+					String valueParm[] = new String[4];
+					valueParm[0] = "Current DisbType is Not Matched :" + disbType;
+					valueParm[1] = "";
+					valueParm[2] = "with Finreference:" + fap.getFinReference();
+					valueParm[3] = "";
+					returnStatus = APIErrorHandlerService.getFailedStatus("30550", valueParm);
+					disbDetail.setReturnStatus(returnStatus);
+					return disbDetail;
+				}
 			}
 
 			if (!finReference.equals(disb.getFinReference())) {
@@ -135,6 +163,8 @@ public class DisbursementController extends ExtendedTestClass {
 			request.getFinAdvancePayments().add(disb);
 			request.setRequestSource(PennantConstants.FINSOURCE_ID_API);
 			request.setAppValueDate(SysParamUtil.getAppValueDate());
+			LoggedInUser user = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			request.setUserId(user.getUserId());
 		}
 
 		try {

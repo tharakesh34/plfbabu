@@ -565,6 +565,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		String pftInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PFT_EXEMPTED);
 		String priInvFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_PRI_EXEMPTED);
+		String restructFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_RESTRUCT_CPZ);
 
 		if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
 				|| StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
@@ -572,24 +573,36 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 				|| (StringUtils.isNotBlank(pftInvFeeCode)
 						&& StringUtils.equals(aFeeType.getFeeTypeCode(), pftInvFeeCode))
 				|| (StringUtils.isNotBlank(priInvFeeCode)
-						&& StringUtils.equals(aFeeType.getFeeTypeCode(), priInvFeeCode))) {
+						&& StringUtils.equals(aFeeType.getFeeTypeCode(), priInvFeeCode))
+				|| (StringUtils.isNotBlank(restructFeeCode) && restructFeeCode.equals(aFeeType.getFeeTypeCode()))) {
 
 			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
 				this.row1.setVisible(false);
 			}
 			this.row2.setVisible(false);
 			if (!StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_ODC)
-					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)) {
+					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_BOUNCE)
+					&& !StringUtils.equals(aFeeType.getFeeTypeCode(), restructFeeCode)) {
 				this.row3.setVisible(false);
 			}
-			if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)) {
+
+			if ((StringUtils.isNotBlank(restructFeeCode)
+					&& StringUtils.equals(aFeeType.getFeeTypeCode(), restructFeeCode))) {
+				this.refundableFee.setChecked(false);
+				this.refundableFee.setDisabled(true);
+			}
+
+			if (StringUtils.equals(aFeeType.getFeeTypeCode(), RepayConstants.ALLOCATION_LPFT)
+					|| StringUtils.equals(aFeeType.getFeeTypeCode(), restructFeeCode)) {
 				this.taxApplicable.setDisabled(true);
 			}
 			this.active.setDisabled(true);
 			this.btnDelete.setVisible(false);
 		}
 
-		if (CalculationConstants.FEE_SUBVENTION.equals(aFeeType.getFeeTypeCode())) {
+		if (CalculationConstants.FEE_SUBVENTION.equals(aFeeType.getFeeTypeCode()))
+
+		{
 			this.taxApplicable.setDisabled(false);
 			readOnlyComponent(false, this.taxComponent);
 			this.refundableFee.setDisabled(true);

@@ -1710,25 +1710,26 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.ENTERING);
 
 		createTab(AssetConstants.UNIQUE_ID_STEPDETAILS, true);
-		Tab tab = getTab(AssetConstants.UNIQUE_ID_STEPDETAILS);
 
-		FinanceMain aFinanceMain = getFinScheduleData().getFinanceMain();
-		List<FinanceStepPolicyDetail> financeStepPolicyDetailList = new ArrayList<FinanceStepPolicyDetail>();
+		FinanceMain fm = getFinScheduleData().getFinanceMain();
 
+		long finID = fm.getFinID();
+
+		String tableType = "";
 		if (fromApproved) {
-			financeStepPolicyDetailList = getFinanceDetailService().getFinStepPolicyDetails(aFinanceMain.getFinID(),
-					"_AView", false);
+			tableType = "_AView";
 		} else {
-			financeStepPolicyDetailList = getFinanceDetailService().getFinStepPolicyDetails(aFinanceMain.getFinID(),
-					"_View", false);
+			tableType = "_View";
 		}
 
-		getFinanceDetail().getFinScheduleData().setStepPolicyDetails(financeStepPolicyDetailList);
+		List<FinanceStepPolicyDetail> list = financeDetailService.getFinStepPolicyDetails(finID, tableType, false);
+		getFinanceDetail().getFinScheduleData().setStepPolicyDetails(list);
 
 		final Map<String, Object> map = getDefaultArguments();
 		map.put("financeDetail", this.financeDetail);
 		map.put("enquiryModule", true);
 		map.put("isWIF", false);
+		map.put("finHeaderList", getFinBasicDetails(getFinScheduleData().getFinanceMain()));
 		map.put("isAlwNewStep", isReadOnly("FinanceMainDialog_btnFinStepPolicy"));
 		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/StepDetailDialog.zul",
 				getTabpanel(AssetConstants.UNIQUE_ID_STEPDETAILS), map);

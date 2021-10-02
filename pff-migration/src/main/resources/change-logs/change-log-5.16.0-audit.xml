@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+		
+	<changeSet id="2.1" author="saisandeep.b">
+		<dropDefaultValue columnDataType="boolean" columnName="actypeISActive" tableName="AdtRMTAccountTypes" />
+	</changeSet>
+
+	<changeSet id="2.2_pre" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'adtrmtaccounttypes');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.2" author="saisandeep.b">
+		<modifyDataType tableName="AdtRMTAccountTypes" columnName="actypeISActive" newDataType="smallint" />
+	</changeSet>
+
+	<changeSet id="2.2_post" author="saisandeep.b" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'adtrmtaccounttypes');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="2.3" author="saisandeep.b">
+		<addDefaultValue columnDataType="smallint" columnName="actypeISActive" defaultValueNumeric="1"
+			tableName="AdtRMTAccountTypes" />
+	</changeSet>
+
+	<changeSet id="ST#556.1" author="Siva.M">
+		<addColumn tableName="ADTRESTRUCTURE_DETAILS ">
+			<column name="BaseRate" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#556.2" author="Siva.M">
+		<addColumn tableName="ADTRESTRUCTURE_DETAILS ">
+			<column name="SplRate" type="varchar(8)" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#556.3" author="Siva.M">
+		<addColumn tableName="ADTRESTRUCTURE_DETAILS">
+			<column name="Margin" type="decimal(13,9)" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#556.4" author="Siva.M">
+		<addColumn tableName="ADTRESTRUCTURE_DETAILS ">
+			<column name="ReceiptId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="ST#556.100.1" author="Gopal.p">
+		<createTable tableName="ADTRESTRUCTURE_CHARGES">
+			<column name="AuditId" type="bigint">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints primaryKey="true" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="RestructureId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ChargeSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Aloctype" type="varchar(8)" />
+			<column name="Capitalized" type="smallint" />
+			<column name="FeeCode" type="varchar(8)" />
+			<column name="ActualAmount" type="decimal(18,0)" />
+			<column name="TaxType" type="char(1)" />
+			<column name="cgst" type="decimal(18,0)" />
+			<column name="sgst" type="decimal(18,0)" />
+			<column name="ugst" type="decimal(18,0)" />
+			<column name="igst" type="decimal(18,0)" />
+			<column name="cess" type="decimal(18,0)" />
+			<column name="Tdsamount" type="decimal(18,0))" />
+			<column name="TotalAmount" type="decimal(18,0)" />
+			<column name="Version" type="int" />
+			<column name="LastmntBy" type="bigint" />
+			<column name="LastmntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+
+	<changeSet id="ST#556.100.2" author="Gopal.p">
+		<addNotNullConstraint columnName="ActualAmount" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="cgst" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="sgst" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="ugst" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="igst" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="cess" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="Tdsamount" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+		<addNotNullConstraint columnName="TotalAmount" tableName="ADTRESTRUCTURE_CHARGES"
+			columnDataType="decimal(18,0)" />
+	</changeSet>
+
+	<changeSet id="ST#556.100.3" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_ActualAmount DEFAULT 0 FOR ActualAmount;
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_cgst DEFAULT 0 FOR cgst;
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_sgst DEFAULT 0 FOR sgst;
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_ugst DEFAULT 0 FOR ugst;
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_igst DEFAULT 0 FOR igst;
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_cess DEFAULT 0 FOR cess;
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_Tdsamount DEFAULT 0 FOR Tdsamount; 
+				ALTER TABLE ADTRESTRUCTURE_CHARGES ADD CONSTRAINT df_arscr_TotalAmount DEFAULT 0 FOR TotalAmount; 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#556.100.3" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ActualAmount" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="cgst" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="sgst" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="ugst" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="igst" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="cess" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="Tdsamount" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+		<addDefaultValue columnName="TotalAmount" tableName="ADTRESTRUCTURE_CHARGES" defaultValue="0" />
+	</changeSet>
+	
+	<changeSet id="ST#9.1" author="saisandeep.b">
+		<createTable tableName="adtrmtdistricts">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false"/>
+			</column>
+			<column name="Code" type="varchar(8)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="HostReferenceNo" type="varchar(20)" />
+			<column name="Active" type="smallint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastmntBy" type="bigint" />
+			<column name="LastmntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#9.2" author="saisandeep.b">
+		<addColumn tableName="ADTRMTProvinceVsCity">
+			<column name="DistrictId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#13.1" author="sampath.d">
+		<addColumn tableName="AdtExtendedFieldDetail">
+			<column name="MaintAlwd" type="smallint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#13.2" author="sampath.d">
+		<sql>
+			<![CDATA[
+				UPDATE ADTEXTENDEDFIELDDETAIL SET MAINTALWD = 0;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#13.3" author="sampath.d" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTEXTENDEDFIELDDETAIL ADD CONSTRAINT DF_AEFD_MALD DEFAULT 0 FOR MAINTALWD;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#13.3" author="sampath.d" dbms="postgresql, oracle">
+		<addDefaultValue columnName="MaintAlwd" tableName="ADTEXTENDEDFIELDDETAIL" defaultValue="0" />
+	</changeSet>
+	
+	
+	<changeSet id="ST#13.4" author="sampath.d">
+		<createTable tableName="ADTEXTENDEDFIELDEXTENSION">
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ID" type="bigint" />
+			<column name="ExtenrnalRef" type="varchar(50)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Purpose" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ModeStatus" type="char(1)">
+				<constraints nullable="false" />
+			</column>
+			<column name="InstructionUID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Sequence" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Event" type="char(5)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#13.5" author="sampath.d">
+		<addPrimaryKey tableName="ADTEXTENDEDFIELDEXTENSION" columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTEXTED_FIELD_EXTENSION" />
+	</changeSet>
+	
+	<changeSet id="ST#13.6" author="sampath.d">
+		<createTable tableName="ADTEXTENDEDFIELDMAINTENANCE">
+		
+			<column name="AuditID" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="char(2)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint" />
+			<column name="Reference" type="varchar(20)"/>
+			<column name="Type" type="varchar(15)"/>
+			<column name="Event" type="char(50)"/>
+			<column name="Version" type="int" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkFlowId" type="bigint"/>
+		</createTable>
+	</changeSet>
+	
+	<changeSet id="ST#13.7" author="sampath.d">
+		<addPrimaryKey tableName="ADTEXTENDEDFIELDMAINTENANCE" columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADT_EXT_FLD_MNT" />
+	</changeSet>
+	
+	<changeSet id="ST#24.1" author="saisandeep.b">
+		<addColumn tableName="AdtFinanceMain">
+			<column name="Escrow" type="smallint"/>
+			<column name="CustBankId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#24.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				UPDATE AdtFinanceMain Set Escrow = 0  where Escrow is null;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#24.3" author="saisandeep.b" dbms="postgresql, oracle">
+		<addDefaultValue columnName="Escrow" tableName="AdtFinanceMain" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="ST#24.3" author="saisandeep.b" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtFinanceMain ADD CONSTRAINT DF_AFM_ESCROW DEFAULT 0 FOR Escrow;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#38.1" author="saisandeep.b">
+		<addColumn tableName="AdtFinAdvancePayments">
+			<column name="LEI" type="varchar(100)"/>
+		</addColumn>
+    </changeSet>
+    
+    <changeSet id="ST#38.2" author="saisandeep.b">
+		<addColumn tableName="AdtPaymentInstructions">
+			<column name="LEI" type="varchar(100)"/>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet id="ST#13.8" author="saisandeep.b">
+		<dropPrimaryKey constraintName="PK_ADTEXTED_FIELD_EXTENSION"  tableName="ADTEXTENDEDFIELDEXTENSION" />
+	</changeSet>
+	
+	<changeSet id="ST#13.9" author="saisandeep.b">
+		<dropPrimaryKey constraintName="PK_ADT_EXT_FLD_MNT" tableName="ADTEXTENDEDFIELDMAINTENANCE" />
+	</changeSet>
+
+	<changeSet id="ST#13.10" author="saisandeep.b">
+		<renameTable newTableName="ADTEXTENDED_FIELD_EXT" oldTableName="ADTEXTENDEDFIELDEXTENSION"/>
+	</changeSet>
+	
+	<changeSet id="ST#13.11" author="saisandeep.b">
+		<addPrimaryKey tableName="ADTEXTENDED_FIELD_EXT" columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTEXTENDED_FIELD_EXT" />
+	</changeSet>
+	
+	<changeSet id="ST#13.12" author="saisandeep.b">
+		<renameTable newTableName="ADTEXTENDED_FIELD_MNT" oldTableName="ADTEXTENDEDFIELDMAINTENANCE"/>
+	</changeSet>
+
+	<changeSet id="ST#13.13" author="saisandeep.b">
+		<addPrimaryKey tableName="ADTEXTENDED_FIELD_MNT" columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ADTEXTENDED_FIELD_MNT" />
+	</changeSet>
+
+</databaseChangeLog>

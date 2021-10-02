@@ -51,7 +51,7 @@ public interface DisbursementDAO {
 
 	List<DisbursementRequest> getDisbursementInstructions(DisbursementRequest disbursementRequest);
 
-	FinAdvancePayments getDisbursementInstruction(long paymentId, String channel);
+	FinAdvancePayments getDisbursementInstruction(long paymentId, String channel, String disbType);
 
 	List<DisbursementRequest> getDetailsByHeaderID(long headerID);
 

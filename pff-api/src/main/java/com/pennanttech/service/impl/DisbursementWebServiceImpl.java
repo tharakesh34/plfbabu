@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
@@ -274,6 +275,32 @@ public class DisbursementWebServiceImpl implements DisbursementRESTService, Disb
 					return drd;
 				}
 			}
+
+			String disbType = fap.getPaymentType();
+			if (ImplementationConstants.DISB_REQ_RES_FILE_GEN_MODE) {
+				if (StringUtils.isBlank(disbType)) {
+					String valueParm[] = new String[2];
+					valueParm[0] = "DisbType";
+					returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+					drd.setReturnStatus(returnStatus);
+					return drd;
+				}
+
+				List<ValueLabel> disbsList = PennantStaticListUtil.getDisbRegistrationTypes();
+				List<String> disbTypeList = new ArrayList<>();
+				for (ValueLabel disbList : disbsList) {
+					disbTypeList.add(disbList.getValue());
+				}
+
+				if (!(disbTypeList.contains(disbType))) {
+					String valueParm[] = new String[1];
+					valueParm[0] = "DisbType";
+					returnStatus = APIErrorHandlerService.getFailedStatus("RU0040", valueParm);
+					drd.setReturnStatus(returnStatus);
+					return drd;
+				}
+			}
+
 		}
 
 		try {

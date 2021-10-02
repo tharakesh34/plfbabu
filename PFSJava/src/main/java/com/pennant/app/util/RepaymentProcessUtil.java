@@ -159,6 +159,9 @@ public class RepaymentProcessUtil {
 
 		List<FinReceiptDetail> rcdList = sortReceiptDetails(rch.getReceiptDetails());
 
+		final List<XcessPayables> xcsPaybles = new ArrayList<>();
+		xcsPaybles.addAll(rch.getXcessPayables());
+
 		schdData.getFinanceMain().setRecordType("");
 		schdData.getFinanceMain().setVersion(schdData.getFinanceMain().getVersion() + 1);
 
@@ -178,7 +181,7 @@ public class RepaymentProcessUtil {
 			recdtl.setDueAmount(totDues);
 		}
 
-		rd = receiptCalculator.recalAutoAllocation(rd, valuedate, true);
+		rd = receiptCalculator.recalAutoAllocation(rd, true);
 
 		rd.setBuildProcess("R");
 		rd.getRepayMain().setRepayAmountNow(BigDecimal.ZERO);
@@ -208,10 +211,10 @@ public class RepaymentProcessUtil {
 
 		rd = receiptCalculator.initiateReceipt(rd, true);
 		rd.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(schdDtls);
-		/*
-		 * finReceiptData.getReceiptHeader().getXcessPayables().clear();
-		 * finReceiptData.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);
-		 */
+
+		rd.getReceiptHeader().getXcessPayables().clear();
+		rd.getReceiptHeader().getXcessPayables().addAll(xcsPaybles);
+
 		rch.setValueDate(valuedate);
 		List<Object> returnList = doProcessReceipts(fm, schdDtls, profitDetail, rch, finFeeDetailList, schdData,
 				valuedate, postDate, fd);
@@ -220,7 +223,7 @@ public class RepaymentProcessUtil {
 		BigDecimal priPaynow = BigDecimal.ZERO;
 
 		for (ReceiptAllocationDetail allocate : rch.getAllocations()) {
-			if (StringUtils.equals(RepayConstants.ALLOCATION_PRI, allocate.getAllocationType())) {
+			if (RepayConstants.ALLOCATION_PRI.equals(allocate.getAllocationType())) {
 				priPaynow = allocate.getPaidAmount();
 				break;
 			}
@@ -395,6 +398,7 @@ public class RepaymentProcessUtil {
 		extDataMap.put("CACLT_ReceiptAmount", BigDecimal.ZERO);
 		extDataMap.put("DSF_ReceiptAmount", BigDecimal.ZERO);
 		extDataMap.put("PB_ReceiptAmount", BigDecimal.ZERO);
+		extDataMap.put("Restruct_Bpi", rch.getBpiAmount());
 
 		List<ManualAdviseMovements> payableAdvMovements = new ArrayList<>();
 
@@ -468,6 +472,7 @@ public class RepaymentProcessUtil {
 		addZeroifNotContains(extDataMap, "EX_ReceiptAmount");
 		addZeroifNotContains(extDataMap, "EA_ReceiptAmount");
 		addZeroifNotContains(extDataMap, "PB_ReceiptAmount");
+		addZeroifNotContains(extDataMap, "Restruct_Bpi");
 
 		// Branch Cash Update
 		/*
@@ -930,9 +935,15 @@ public class RepaymentProcessUtil {
 
 	private void createDebitInvoice(long linkedTranId, FinanceDetail financeDetail) {
 		List<FinFeeDetail> finFeeDetails = new ArrayList<>();
+		String restructFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_RESTRUCT_CPZ);
 
 		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
 		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+			if (AccountingEvent.RESTRUCTURE.equals(finFeeDetail.getFinEvent())
+					&& StringUtils.equals(finFeeDetail.getFeeTypeCode(), restructFeeCode)) {
+				continue;
+			}
+
 			if (!finFeeDetail.isOriginationFee()) {
 				finFeeDetails.add(finFeeDetail);
 			}
@@ -1293,9 +1304,6 @@ public class RepaymentProcessUtil {
 			BigDecimal waivedAmt = movement.getWaivedAmount();
 			BigDecimal tdsPaid = movement.getTdsPaid();
 
-			BigDecimal totPaidGST = cgstPaid.add(sgstPaid).add(igstPaid).add(ugstPaid).add(cessPaid);
-			BigDecimal totWaivedGST = cgstWaived.add(sgstWaived).add(igstWaived).add(ugstWaived).add(cessWaived);
-
 			String feeTypeCode = movement.getFeeTypeCode();
 			String taxComponent = feeTypeDAO.getTaxComponent(feeTypeCode);
 
@@ -1308,21 +1316,11 @@ public class RepaymentProcessUtil {
 					continue;
 				}
 
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-					addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
-					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
-				} else {
-					addAmountToMap(movementMap, "bounceChargePaid", paidAmt.add(totPaidGST));
-					addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt.add(totWaivedGST));
-				}
+				addAmountToMap(movementMap, "bounceChargePaid", paidAmt);
+				addAmountToMap(movementMap, "bounceChargeWaived", waivedAmt);
 			} else {
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxComponent)) {
-					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
-					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
-				} else {
-					addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt.add(totPaidGST));
-					addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt.add(totWaivedGST));
-				}
+				addAmountToMap(movementMap, feeTypeCode + "_P", paidAmt);
+				addAmountToMap(movementMap, feeTypeCode + "_W", waivedAmt);
 			}
 
 			addAmountToMap(movementMap, feeTypeCode + "_CGST_P", cgstPaid);
@@ -1338,6 +1336,20 @@ public class RepaymentProcessUtil {
 			addAmountToMap(movementMap, feeTypeCode + "_CESS_W", cessWaived);
 
 			addAmountToMap(movementMap, feeTypeCode + "_TDS_P", tdsPaid);
+
+			addAmountToMap(movementMap, "bounceCharge" + "_CGST_P", cgstPaid);
+			addAmountToMap(movementMap, "bounceCharge" + "_SGST_P", sgstPaid);
+			addAmountToMap(movementMap, "bounceCharge" + "_IGST_P", igstPaid);
+			addAmountToMap(movementMap, "bounceCharge" + "_UGST_P", ugstPaid);
+			addAmountToMap(movementMap, "bounceCharge" + "_CESS_P", cessPaid);
+
+			addAmountToMap(movementMap, "bounceCharge" + "_TDS_P", tdsPaid);
+
+			addAmountToMap(movementMap, "bounceCharge" + "_CGST_W", cgstWaived);
+			addAmountToMap(movementMap, "bounceCharge" + "_SGST_W", sgstWaived);
+			addAmountToMap(movementMap, "bounceCharge" + "_IGST_W", igstWaived);
+			addAmountToMap(movementMap, "bounceCharge" + "_UGST_W", ugstWaived);
+			addAmountToMap(movementMap, "bounceCharge" + "_CESS_W", cessWaived);
 		}
 
 		return movementMap;
@@ -1353,12 +1365,19 @@ public class RepaymentProcessUtil {
 			List<FinFeeDetail> finFeeDetailList, String payType) {
 		logger.debug(Literal.ENTERING);
 
-		for (FinFeeDetail finFeeDetail : finFeeDetailList) {
-			if (!finFeeDetail.isRcdVisible()) {
+		String restructFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_RESTRUCT_CPZ);
+
+		for (FinFeeDetail fee : finFeeDetailList) {
+			if (!fee.isRcdVisible()) {
 				continue;
 			}
 
-			dataMap.putAll(FeeCalculator.getFeeRuleMap(finFeeDetail, payType));
+			if (AccountingEvent.RESTRUCTURE.equals(fee.getFinEvent())
+					&& StringUtils.equals(fee.getFeeTypeCode(), restructFeeCode)) {
+				continue;
+			}
+
+			dataMap.putAll(FeeCalculator.getFeeRuleMap(fee, payType));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1678,22 +1697,7 @@ public class RepaymentProcessUtil {
 
 			// Manual Advise Movements
 			if (isApproval) {
-				for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
-					if (movement.getTaxHeader() != null
-							&& CollectionUtils.isNotEmpty(movement.getTaxHeader().getTaxDetails())) {
-						List<Taxes> taxDetails = movement.getTaxHeader().getTaxDetails();
-						Long headerId = taxHeaderDetailsDAO.save(movement.getTaxHeader(),
-								TableType.MAIN_TAB.getSuffix());
-						for (Taxes taxes : taxDetails) {
-							taxes.setReferenceId(headerId);
-						}
-						taxHeaderDetailsDAO.saveTaxes(taxDetails, TableType.MAIN_TAB.getSuffix());
-						movement.setTaxHeaderId(headerId);
-					}
-					movement.setReceiptID(receiptID);
-					movement.setReceiptSeqID(receiptSeqID);
-					manualAdviseDAO.saveMovement(movement, TableType.MAIN_TAB.getSuffix());
-				}
+				createMAMovements(receiptID, rcd, receiptSeqID);
 			}
 
 			FinRepayHeader rph = rcd.getRepayHeader();
@@ -1771,6 +1775,61 @@ public class RepaymentProcessUtil {
 		allocationPaidMap = null;
 		allocationWaivedMap = null;
 		logger.debug(Literal.LEAVING);
+	}
+
+	private void createMAMovements(long receiptID, FinReceiptDetail rcd, long receiptSeqID) {
+		for (ManualAdviseMovements movement : rcd.getAdvMovements()) {
+			movement.setReceiptID(receiptID);
+			movement.setReceiptSeqID(receiptSeqID);
+
+			TaxHeader taxHeader = movement.getTaxHeader();
+			if (taxHeader == null) {
+				manualAdviseDAO.saveMovement(movement, "");
+				continue;
+			}
+
+			List<Taxes> taxDetails = taxHeader.getTaxDetails();
+			if (taxDetails == null) {
+				manualAdviseDAO.saveMovement(movement, "");
+				continue;
+			}
+
+			Long headerId = taxHeaderDetailsDAO.save(taxHeader, "");
+
+			for (Taxes taxes : taxDetails) {
+				taxes.setReferenceId(headerId);
+				String taxType = taxes.getTaxType();
+
+				switch (taxType) {
+				case RuleConstants.CODE_CGST:
+					movement.setPaidCGST(taxes.getPaidTax());
+					movement.setWaivedCGST(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_SGST:
+					movement.setPaidSGST(taxes.getPaidTax());
+					movement.setWaivedSGST(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_IGST:
+					movement.setPaidIGST(taxes.getPaidTax());
+					movement.setWaivedIGST(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_UGST:
+					movement.setPaidUGST(taxes.getPaidTax());
+					movement.setWaivedUGST(taxes.getWaivedTax());
+					break;
+				case RuleConstants.CODE_CESS:
+					movement.setPaidCESS(taxes.getPaidTax());
+					movement.setWaivedCESS(taxes.getWaivedTax());
+					break;
+				default:
+					break;
+				}
+			}
+			taxHeaderDetailsDAO.saveTaxes(taxDetails, "");
+			movement.setTaxHeaderId(headerId);
+
+			manualAdviseDAO.saveMovement(movement, "");
+		}
 	}
 
 	/**
@@ -2103,7 +2162,7 @@ public class RepaymentProcessUtil {
 
 					rpyQueueHeader.setFutTds(rad.getTdsPaid());
 					rpyQueueHeader.setFutProfit(paidNow);
-					rpyQueueHeader.setFutPftWaived(rpyQueueHeader.getFutPftWaived().add(waivedNow));
+					rpyQueueHeader.setFutPftWaived(waivedNow);
 					break;
 				case RepayConstants.ALLOCATION_LPFT:
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(paidNow));
@@ -2168,7 +2227,7 @@ public class RepaymentProcessUtil {
 			String eventCode = getEventCode(rch.getReceiptPurpose(), rch.getReceiptMode());
 
 			returnList = repayPostingUtil.postingProcess(fm, scheduleDetails, finFeeDetailList, profitDetail,
-					rpyQueueHeader, eventCode, rch.getValueDate(), postDate);
+					rpyQueueHeader, eventCode, rch.getValueDate(), postDate, rch.getPresentmentType());
 
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
@@ -2411,6 +2470,8 @@ public class RepaymentProcessUtil {
 			return AccountingEvent.EARLYPAY;
 		case FinServiceEvent.EARLYSETTLE:
 			return AccountingEvent.EARLYSTL;
+		case FinServiceEvent.RESTRUCTURE:
+			return AccountingEvent.RESTRUCTURE;
 		default:
 			return "";
 		}

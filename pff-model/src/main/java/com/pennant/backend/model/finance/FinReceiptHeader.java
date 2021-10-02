@@ -7,12 +7,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -170,7 +174,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private String custBaseCcy;
 	private Long reasonCode;
 	private List<DocumentDetails> documentDetails = new ArrayList<>(1);;
-	private HashMap<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
 	private String prvReceiptPurpose;
 	private Long partnerBankId;
 	private String receiptSource;
@@ -186,8 +190,15 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	private BigDecimal tdsAmount = BigDecimal.ZERO;
 	private Long closureTypeId;
 	private String closureTypeDesc;
-	private boolean dedupCheckRequied = true;
 	private boolean writeoffLoan;
+	private boolean dedupCheckRequired = true;
+	private String presentmentType;
+	private boolean excldTdsCal = false;
+	private BigDecimal bpiAmount = BigDecimal.ZERO; // Restructuring Purpose
+	private ExtendedFieldExtension extendedFieldExtension = null;
+	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
+	private ExtendedFieldRender extendedFieldRender;
+	private String finCategory;
 
 	// ******************************************************//
 	// ****************** getter / setter *******************//
@@ -316,8 +327,16 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		excludeFields.add("receiptSourceAcType");
 		excludeFields.add("receiptSourceAcDesc");
 		excludeFields.add("sourceId");
-		excludeFields.add("dedupCheckRequied");
+		excludeFields.add("dedupCheckRequired");
 		excludeFields.add("writeoffLoan");
+		excludeFields.add("excldTdsCal");
+		excludeFields.add("bpiAmount");
+		excludeFields.add("presentmentType");
+		excludeFields.add("auditDetailMap");
+		excludeFields.add("extendedFieldExtension");
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
+		excludeFields.add("finCategory");
 
 		return excludeFields;
 	}
@@ -419,6 +438,15 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setEntityCode(this.entityCode);
 		entity.setCancelRemarks(this.cancelRemarks);
 		entity.setKnockOffType(this.knockOffType);
+		entity.setDepositProcess(this.depositProcess);
+		entity.setDepositBranch(this.depositBranch);
+		entity.setExcldTdsCal(this.excldTdsCal);
+		entity.setBpiAmount(this.bpiAmount);
+		entity.setPresentmentType(this.presentmentType);
+		entity.setExtendedFieldExtension(this.extendedFieldExtension);
+		entity.setExtendedFieldHeader(this.extendedFieldHeader);
+		entity.setExtendedFieldRender(this.extendedFieldRender);
+		entity.setFinCategory(this.finCategory);
 		this.receiptDetails.stream().forEach(e -> entity.getReceiptDetails().add(e == null ? null : e.copyEntity()));
 		this.excessAmounts.stream().forEach(e -> entity.getExcessAmounts().add(e == null ? null : e.copyEntity()));
 		this.excessReserves.stream().forEach(e -> entity.getExcessReserves().add(e == null ? null : e.copyEntity()));
@@ -484,7 +512,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		entity.setTdsAmount(this.tdsAmount);
 		entity.setClosureTypeId(this.closureTypeId);
 		entity.setClosureTypeDesc(this.closureTypeDesc);
-		entity.setDedupCheckRequied(this.dedupCheckRequied);
+		entity.setDedupCheckRequired(this.dedupCheckRequired);
 		entity.setWriteoffLoan(this.writeoffLoan);
 		entity.setReceiptSourceAcType(this.receiptSourceAcType);
 		entity.setReceiptSourceAcDesc(this.receiptSourceAcDesc);
@@ -1622,11 +1650,11 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		this.documentDetails = documentDetails;
 	}
 
-	public HashMap<String, List<AuditDetail>> getAuditDetailMap() {
+	public Map<String, List<AuditDetail>> getAuditDetailMap() {
 		return auditDetailMap;
 	}
 
-	public void setAuditDetailMap(HashMap<String, List<AuditDetail>> auditDetailMap) {
+	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
 	}
 
@@ -1798,12 +1826,12 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 		this.sourceId = sourceId;
 	}
 
-	public boolean isDedupCheckRequied() {
-		return dedupCheckRequied;
+	public boolean isDedupCheckRequired() {
+		return dedupCheckRequired;
 	}
 
-	public void setDedupCheckRequied(boolean dedupCheckRequied) {
-		this.dedupCheckRequied = dedupCheckRequied;
+	public void setDedupCheckRequired(boolean dedupCheckRequired) {
+		this.dedupCheckRequired = dedupCheckRequired;
 	}
 
 	public boolean isWriteoffLoan() {
@@ -1812,6 +1840,62 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 
 	public void setWriteoffLoan(boolean writeoffLoan) {
 		this.writeoffLoan = writeoffLoan;
+	}
+
+	public boolean isExcldTdsCal() {
+		return excldTdsCal;
+	}
+
+	public void setExcldTdsCal(boolean excldTdsCal) {
+		this.excldTdsCal = excldTdsCal;
+	}
+
+	public BigDecimal getBpiAmount() {
+		return bpiAmount;
+	}
+
+	public void setBpiAmount(BigDecimal bpiAmount) {
+		this.bpiAmount = bpiAmount;
+	}
+
+	public String getPresentmentType() {
+		return presentmentType;
+	}
+
+	public void setPresentmentType(String presentmentType) {
+		this.presentmentType = presentmentType;
+	}
+
+	public ExtendedFieldExtension getExtendedFieldExtension() {
+		return extendedFieldExtension;
+	}
+
+	public void setExtendedFieldExtension(ExtendedFieldExtension extendedFieldExtension) {
+		this.extendedFieldExtension = extendedFieldExtension;
+	}
+
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public String getFinCategory() {
+		return finCategory;
+	}
+
+	public void setFinCategory(String finCategory) {
+		this.finCategory = finCategory;
 	}
 
 }

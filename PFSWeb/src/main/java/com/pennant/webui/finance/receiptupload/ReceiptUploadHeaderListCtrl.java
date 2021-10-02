@@ -794,8 +794,9 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	}
 
 	public void onClick$btnApprove(Event event) {
-
 		logger.debug(Literal.ENTERING);
+
+		listHeader_CheckBox_Comp.setDisabled(true);
 
 		List<Long> headerIdList = getListofReceiptUpload();
 		receiptIdMap.clear();
@@ -827,7 +828,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		listHeader_CheckBox_Comp.setChecked(false);
 		search();
 		Clients.showNotification("Receipt Process initialized.", "info", null, null, -1);
-
+		listHeader_CheckBox_Comp.setDisabled(false);
 		logger.debug(Literal.LEAVING);
 	}
 

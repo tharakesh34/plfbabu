@@ -1,29 +1,38 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinMaintainInstructionDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.putcall.FinOptionDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinOptionMaintanceService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -41,6 +50,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	private FinMaintainInstructionDAO finMaintainInstructionDAO;
 	private FinOptionService finOptionService;
 	private FinanceMainDAO financeMainDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
 	@Override
 	public FinMaintainInstruction getFinMaintainInstructionByFinRef(long finID, String event) {
@@ -51,6 +62,25 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fmi);
+
+		long serviceUID = Long.MIN_VALUE;
+		Date appDate = SysParamUtil.getAppDate();
+
+		if (fmi.getExtendedFieldRender() != null
+				&& fmi.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fmi.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
+			serviceUID = finServInst.getInstructionUID();
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(appDate);
+			}
+		}
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
@@ -58,8 +88,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 			return auditHeader;
 		}
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FinMaintainInstruction fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		fmi = (FinMaintainInstruction) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (fmi.isWorkflow()) {
@@ -83,6 +113,21 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		String rcdMaintainSts = FinServiceEvent.PUTCALL;
 		financeMainDAO.updateMaintainceStatus(fmi.getFinID(), rcdMaintainSts);
 
+		// FinServiceInstrution
+		if (CollectionUtils.isNotEmpty(fmi.getFinServiceInstructions()) && fmi.isNewRecord()) {
+			finServiceInstrutionDAO.saveList(fmi.getFinServiceInstructions(), tableType.getSuffix());
+		}
+
+		// Extended field Details
+		if (fmi.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("ExtendedFieldDetails");
+
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, fmi.getExtendedFieldHeader().getEvent(), tableType.getSuffix(),
+					serviceUID);
+			auditDetails.addAll(details);
+		}
+
 		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -90,6 +135,37 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
+	}
+
+	private List<FinServiceInstruction> getServiceInstructions(FinMaintainInstruction fmi) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinServiceInstruction> serviceInstructions = fmi.getFinServiceInstructions();
+
+		String event = fmi.getEvent();
+		if (CollectionUtils.isEmpty(serviceInstructions)) {
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(fmi.getFinReference());
+			finServInst.setFinEvent(event);
+
+			fmi.setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction fsi : fmi.getFinServiceInstructions()) {
+			if (fsi.getInstructionUID() == Long.MIN_VALUE) {
+				fsi.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
+			}
+
+			if (StringUtils.isEmpty(event) || FinServiceEvent.ORG.equals(event)) {
+				String finEvent = fsi.getFinEvent();
+				if (!FinServiceEvent.ORG.equals(finEvent) && !StringUtils.contains(finEvent, "_O")) {
+					fsi.setFinEvent(finEvent.concat("_O"));
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return fmi.getFinServiceInstructions();
 	}
 
 	private List<AuditDetail> processingFinOptionList(List<AuditDetail> auditDetails, long finID, String finReference,
@@ -190,6 +266,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
@@ -201,6 +279,16 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		finMaintainInstructionDAO.delete(fmi, TableType.MAIN_TAB);
 
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "", auditHeader.getAuditTranType())));
+
+		finServiceInstrutionDAO.deleteList(fmi.getFinID(), fmi.getEvent(), "_Temp");
+
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = fmi.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(fmi.getExtendedFieldHeader(), fmi.getFinReference(),
+					fmi.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
+		auditHeader.setAuditDetails(auditDetails);
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -286,10 +374,26 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		}
 
 		String tranType = "";
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		FinMaintainInstruction fmi = new FinMaintainInstruction();
 		BeanUtils.copyProperties((FinMaintainInstruction) auditHeader.getAuditDetail().getModelData(), fmi);
+
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fmi);
+
+		long serviceUID = Long.MIN_VALUE;
+
+		if (fmi.getExtendedFieldRender() != null
+				&& fmi.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fmi.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
+			serviceUID = finServInst.getInstructionUID();
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
+			}
+		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(fmi.getRecordType())) {
 			auditHeader.getAuditDetail()
@@ -344,6 +448,23 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1,
 				auditHeader.getAuditDetail().getBefImage(), auditHeader.getAuditDetail().getModelData()));
 
+		if (CollectionUtils.isNotEmpty(fmi.getFinServiceInstructions())) {
+			finServiceInstrutionDAO.saveList(fmi.getFinServiceInstructions(), "");
+		}
+
+		// Extended field Render Details.
+		List<AuditDetail> details = fmi.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (fmi.getExtendedFieldRender() != null) {
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, fmi.getExtendedFieldHeader().getEvent(), "", serviceUID);
+
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
 		auditHeaderDAO.addAudit(auditHeader);
 
 		// Audit for Before And After Images
@@ -352,6 +473,13 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(fmi);
 		auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fmi.getBefImage(), fmi));
+
+		finServiceInstrutionDAO.deleteList(fmi.getFinID(), fmi.getEvent(), "_Temp");
+
+		if (details != null && details.size() > 0) {
+			extendedFieldDetailsService.delete(fmi.getExtendedFieldHeader(), fmi.getFinReference(),
+					fmi.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), details);
+		}
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -362,6 +490,8 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 
@@ -379,6 +509,18 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		String auditTranType = auditHeader.getAuditTranType();
 		auditHeader.setAuditDetail(new AuditDetail(auditTranType, 1, fmi.getBefImage(), fmi));
 		auditHeader.setAuditDetails(getListAuditDetails(listDeletion(fmi, "_Temp", auditTranType)));
+
+		finServiceInstrutionDAO.deleteList(fmi.getFinID(), fmi.getEvent(), "_Temp");
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = fmi.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(fmi.getExtendedFieldHeader(), fmi.getFinReference(),
+					fmi.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -403,6 +545,15 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		if (CollectionUtils.isNotEmpty(finOptions)) {
 			List<AuditDetail> details = fmi.getAuditDetailMap().get("FinOptions");
 			auditDetails.addAll(finOptionService.validateFinOptions(details, usrLanguage, method));
+		}
+
+		// Extended field details Validation
+		if (fmi.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fmi.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = fmi.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method,
+					auditHeader.getUsrLanguage());
+			auditDetails.addAll(details);
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
@@ -458,6 +609,14 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		if (finMaintainInstruction.getFinOptions() != null && finMaintainInstruction.getFinOptions().size() > 0) {
 			auditDetailMap.put("FinOptions", setFinOptionAuditData(finMaintainInstruction, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FinOptions"));
+		}
+
+		// Extended Field Details
+		if (finMaintainInstruction.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails", extendedFieldDetailsService.setExtendedFieldsAuditData(
+					finMaintainInstruction.getExtendedFieldHeader(), finMaintainInstruction.getExtendedFieldRender(),
+					auditTranType, method, finMaintainInstruction.getExtendedFieldHeader().getModuleName()));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
 		finMaintainInstruction.setAuditDetailMap(auditDetailMap);
@@ -549,4 +708,11 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 		this.financeMainDAO = financeMainDAO;
 	}
 
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
+	}
 }

@@ -12,8 +12,12 @@ import java.util.Set;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.collateral.CollateralAssignment;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
@@ -45,6 +49,9 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 	private List<Covenant> covenants = new ArrayList<>();
 	private List<FinOption> finOptions = new ArrayList<>();
 	private List<CollateralAssignment> collateralAssignments = new ArrayList<>();
+	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
+	private ExtendedFieldRender extendedFieldRender = null;
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 
 	// Is TDS Applicable
 	private boolean tDSApplicable = false;// Clix added new TDS Applicable Flag
@@ -71,6 +78,9 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 		excludeFields.add("covenants");
 		excludeFields.add("finOptions");
 		excludeFields.add("collateralAssignments");
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
+		excludeFields.add("finServiceInstructions");
 		return excludeFields;
 	}
 
@@ -212,6 +222,47 @@ public class FinMaintainInstruction extends AbstractWorkflowEntity {
 
 	public void setCollateralAssignments(List<CollateralAssignment> collateralAssignments) {
 		this.collateralAssignments = collateralAssignments;
+	}
+
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public List<FinServiceInstruction> getFinServiceInstructions() {
+		return finServiceInstructions;
+	}
+
+	public void setFinServiceInstructions(List<FinServiceInstruction> finServiceInstructions) {
+		this.finServiceInstructions = finServiceInstructions;
+	}
+
+	public FinServiceInstruction getFinServiceInstruction() {
+		FinServiceInstruction finServiceInstruction = null;
+		if (CollectionUtils.isNotEmpty(finServiceInstructions)) {
+			finServiceInstruction = finServiceInstructions.get(0);
+		}
+		return finServiceInstruction;
+	}
+
+	public void setFinServiceInstruction(FinServiceInstruction finServiceInstruction) {
+		if (finServiceInstruction != null) {
+			if (finServiceInstructions == null) {
+				finServiceInstructions = new ArrayList<FinServiceInstruction>();
+			}
+			this.finServiceInstructions.add(finServiceInstruction);
+		}
 	}
 
 }

@@ -1121,15 +1121,15 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(finScheduleData);
 				list.add(subList1);
 
-				List<FinFeeDetail> ffdl = finScheduleData.getFinFeeDetailList();
-				for (FinFeeDetail finFeeDetail : ffdl) {
-					if (finFeeDetail.getFinEvent().equals(AccountingEvent.VAS_FEE)) {
-						String productCode = vASRecordingDAO.getProductCodeByReference(finFeeDetail.getFinReference(),
-								finFeeDetail.getVasReference());
-						finFeeDetail.setFeeTypeDesc(productCode);
+				List<FinFeeDetail> feeList = finScheduleData.getFinFeeDetailList();
+
+				for (FinFeeDetail fee : feeList) {
+					if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
+						String productCode = vASRecordingDAO.getProductCodeByReference(fee.getFinReference(),
+								fee.getVasReference());
+						fee.setFeeTypeDesc(productCode);
 					}
 				}
-
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
 						penaltyDetailsMap, true, false, false);
 				list.add(subList);

@@ -15,6 +15,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 
@@ -44,9 +46,12 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 	@XmlElement
 	private List<FeeWaiverDetail> feeWaiverDetails = new ArrayList<FeeWaiverDetail>();
 	private List<FinanceRepayments> rpyList = new ArrayList<FinanceRepayments>();
+	private List<FinServiceInstruction> finServiceInstructions = new ArrayList<>();
 
 	private String finSourceID = null;
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
+	private ExtendedFieldHeader extendedFieldHeader = new ExtendedFieldHeader();
+	private ExtendedFieldRender extendedFieldRender = null;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -55,6 +60,10 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 		excludeFields.add("isAlwtoProceed");
 		excludeFields.add("rpyList");
 		excludeFields.add("finSourceID");
+		excludeFields.add("extendedFieldHeader");
+		excludeFields.add("extendedFieldRender");
+		excludeFields.add("finServiceInstructions");
+
 		return excludeFields;
 	}
 
@@ -188,5 +197,47 @@ public class FeeWaiverHeader extends AbstractWorkflowEntity {
 
 	public void setFinSourceID(String finSourceID) {
 		this.finSourceID = finSourceID;
+	}
+
+	public ExtendedFieldHeader getExtendedFieldHeader() {
+		return extendedFieldHeader;
+	}
+
+	public void setExtendedFieldHeader(ExtendedFieldHeader extendedFieldHeader) {
+		this.extendedFieldHeader = extendedFieldHeader;
+	}
+
+	public ExtendedFieldRender getExtendedFieldRender() {
+		return extendedFieldRender;
+	}
+
+	public void setExtendedFieldRender(ExtendedFieldRender extendedFieldRender) {
+		this.extendedFieldRender = extendedFieldRender;
+	}
+
+	public List<FinServiceInstruction> getFinServiceInstructions() {
+		return finServiceInstructions;
+	}
+
+	public void setFinServiceInstructions(List<FinServiceInstruction> finServiceInstructions) {
+		this.finServiceInstructions = finServiceInstructions;
+	}
+
+	public FinServiceInstruction getFinServiceInstruction() {
+		FinServiceInstruction finServiceInstruction = null;
+		if (finServiceInstructions != null && !finServiceInstructions.isEmpty()) {
+			finServiceInstruction = finServiceInstructions.get(0);
+		}
+		return finServiceInstruction;
+	}
+
+	public void setFinServiceInstruction(FinServiceInstruction finServiceInstruction) {
+
+		if (finServiceInstruction != null) {
+			if (finServiceInstructions == null) {
+				finServiceInstructions = new ArrayList<FinServiceInstruction>();
+			}
+			this.finServiceInstructions.add(finServiceInstruction);
+		}
 	}
 }

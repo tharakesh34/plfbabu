@@ -128,11 +128,13 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 	@Override
 	public ReinstateFinance getFinanceDetailsById(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" t1.FinID, t1.FinReference, t2.CustCIF, t2.CustShrtName, t1.FinType");
+		sql.append(" t1.FinID, t1.FinReference, t2.CustCIF, t2.CustShrtName, t1.FinType, t1.FinCategory");
 		sql.append(", t3.FinTypeDesc LovDescFinTypeName, t1.FinBranch, t4.BranchDesc LovDescFinBranchName, t1.FinCcy");
 		sql.append(", FinAmount, DownPayment, FinStartDate, MaturityDate, TotalProfit, t7.UsrLogin RejectedBy");
 		sql.append(", t1.LastMntOn RejectedOn, t9.Activity RejectStatus, t9.Remarks RejectRemarks");
 		sql.append(", t1.ScheduleMethod, t1.GrcPeriodEndDate, t1.AllowGrcPeriod, t1.ProfitDaysBasis, t3.Product");
+		sql.append(", t1.Version, t1.LastMntOn, t1.LastMntBy, t1.RecordStatus, t1.RoleCode, t1.NextRoleCode");
+		sql.append(", t1.TaskId, t1.NextTaskId, t1.RecordType, t1.WorkflowId");
 		sql.append(" From RejectFinanceMain t1");
 		sql.append(" Left Outer Join Customers t2 on t1.CustID = t2.CustID");
 		sql.append(" Left Outer Join RMTFinanceTypes t3 on t1.FinType = t3.FinType");
@@ -153,6 +155,7 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 				rf.setCustCIF(rs.getString("CustCIF"));
 				rf.setCustShrtName(rs.getString("CustShrtName"));
 				rf.setFinType(rs.getString("FinType"));
+				rf.setFinCategory(rs.getString("FinCategory"));
 				rf.setLovDescFinTypeName(rs.getString("LovDescFinTypeName"));
 				rf.setFinBranch(rs.getString("FinBranch"));
 				rf.setLovDescFinBranchName(rs.getString("LovDescFinBranchName"));
@@ -171,6 +174,16 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 				rf.setAllowGrcPeriod(rs.getBoolean("AllowGrcPeriod"));
 				rf.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
 				rf.setProduct(rs.getString("Product"));
+				rf.setVersion(rs.getInt("Version"));
+				rf.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				rf.setLastMntBy(rs.getLong("LastMntBy"));
+				rf.setRecordStatus(rs.getString("RecordStatus"));
+				rf.setRoleCode(rs.getString("RoleCode"));
+				rf.setNextRoleCode(rs.getString("NextRoleCode"));
+				rf.setTaskId(rs.getString("TaskId"));
+				rf.setNextTaskId(rs.getString("NextTaskId"));
+				rf.setRecordType(rs.getString("RecordType"));
+				rf.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return rf;
 			}, finID);

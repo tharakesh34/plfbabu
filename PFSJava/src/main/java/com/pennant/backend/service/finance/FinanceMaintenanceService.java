@@ -1,6 +1,9 @@
 package com.pennant.backend.service.finance;
 
+import java.util.List;
+
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 
 public interface FinanceMaintenanceService {
@@ -16,5 +19,7 @@ public interface FinanceMaintenanceService {
 	boolean isFinActive(long finID);
 
 	int getSchdVersion(long finID);
+
+	List<FinServiceInstruction> getFinServiceInstructions(long finID, String finEvent);
 
 }

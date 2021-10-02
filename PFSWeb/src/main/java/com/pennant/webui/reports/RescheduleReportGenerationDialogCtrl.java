@@ -4,7 +4,6 @@ package com.pennant.webui.reports;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -12,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.Path;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
@@ -24,24 +22,18 @@ import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
 import com.pennant.app.constants.LengthConstants;
-import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReportsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.RescheduleLog;
+import com.pennant.backend.model.finance.RescheduleLogHeader;
 import com.pennant.backend.service.reports.RescheduleReportGenerationService;
-import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTDateValidator;
-import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-
-import net.sf.jasperreports.engine.JRException;
 
 /**
  * This is the controller class for the /WEB-INF/pages/Reports/RescheduleGenerationDialog.zul file.
@@ -55,7 +47,8 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 	protected Datebox fromDate;
 	protected Datebox toDate;
 
-	private List<RescheduleLog> reschedulementList = new ArrayList<RescheduleLog>();
+	private List<RescheduleLog> reschedulementList = new ArrayList<>();
+	private List<RescheduleLogHeader> rescheduleLogHeaderList = new ArrayList<>();
 	private transient RescheduleReportGenerationService rescheduleReportGenerationService;
 
 	public RescheduleReportGenerationDialogCtrl() {
@@ -97,7 +90,7 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setDisplayStyle(2);
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-		this.finReference.setMandatoryStyle(true);
+		this.finReference.setMandatoryStyle(false);
 		this.finReference.setMaxlength(LengthConstants.LEN_REF);
 		this.finReference.setTextBoxWidth(140);
 
@@ -141,8 +134,8 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		String reportName = "RescheduleMentReport";
 
 		if (CollectionUtils.isEmpty(reschedulementList)
-				&& MessageUtil.confirm("Reschedule service event is not occured between these dates for Loan Reference:"
-						+ this.finReference.getValue(), MessageUtil.OK) == MessageUtil.OK) {
+				&& MessageUtil.confirm("Reschedule service event is not occured between these dates",
+						MessageUtil.OK) == MessageUtil.OK) {
 			return;
 		}
 
@@ -218,8 +211,17 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 
 			java.sql.Date fromDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date toDate = new java.sql.Date(endDate.getTime());
-			setReschedulementList(
-					this.rescheduleReportGenerationService.getReschedulementList(finReference, fromDate, toDate));
+			if (StringUtils.isNotBlank(finReference)) {
+				setReschedulementList(
+						this.rescheduleReportGenerationService.getReschedulementList(finReference, fromDate, toDate));
+			} else {
+				setRescheduleLogHeaderList(
+						this.rescheduleReportGenerationService.getReschedulementList(fromDate, toDate));
+				for (RescheduleLogHeader rescheduleLogHeader : this.rescheduleLogHeaderList) {
+
+					this.reschedulementList.addAll(rescheduleLogHeader.getRescheduleLogList());
+				}
+			}
 
 		} else {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
@@ -268,53 +270,12 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		doClearMessage();
 		doRemoveValidation();
 
-		// Finance Type
-		this.finReference.setConstraint(new PTStringValidator(
-				Labels.getLabel("label_RescheduleMentReportDialog_FinReference.value"), null, true, true));
-
-		// Date appStartDate = DateUtility.getAppDate();
-		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
-
 		if (!this.fromDate.isDisabled()) {
 
 			this.fromDate.setConstraint(
 					new PTDateValidator(Labels.getLabel("label_RescheduleMentReportDialog_FromDate.value"), true));
 		}
-		if (!this.toDate.isDisabled()) {
-			try {
-				this.fromDate.getValue();
-				this.toDate.setConstraint(
-						new PTDateValidator(Labels.getLabel("label_RescheduleMentReportDialog_ToDate.value"), true,
-								this.fromDate.getValue(), appEndDate, false));
-			} catch (WrongValueException we) {
-				this.toDate.setConstraint(new PTDateValidator(
-						Labels.getLabel("label_RescheduleMentReportDialog_ToDate.value"), true, true, null, false));
-			}
-		}
 
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void createReport(String reportName, Object object, List<Object> listData, String reportSrc,
-			String userName, Window dialogWindow, boolean createExcel) throws JRException, InterruptedException {
-		logger.debug(Literal.ENTERING);
-		try {
-			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
-
-			final HashMap<String, Object> auditMap = new HashMap<String, Object>();
-			auditMap.put("reportBuffer", buf);
-			String genReportName = Labels.getLabel(reportName);
-			auditMap.put("reportName", StringUtils.isBlank(genReportName) ? reportName : genReportName);
-			if (dialogWindow != null) {
-				auditMap.put("dialogWindow", dialogWindow);
-			}
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
-
-		} catch (AppException e) {
-			logger.error(Literal.EXCEPTION, e);
-			MessageUtil.showError("Template does not exist.");
-			ErrorUtil.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41006", null, null), "EN");
-		}
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -335,4 +296,7 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		this.reschedulementList = reschedulementList;
 	}
 
+	public void setRescheduleLogHeaderList(List<RescheduleLogHeader> rescheduleLogHeaderList) {
+		this.rescheduleLogHeaderList = rescheduleLogHeaderList;
+	}
 }

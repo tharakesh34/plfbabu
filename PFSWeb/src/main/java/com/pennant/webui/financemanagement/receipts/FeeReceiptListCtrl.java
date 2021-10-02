@@ -36,6 +36,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.FeeReceiptService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
@@ -107,6 +108,7 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	protected Listheader listheader_FeeReceipt_PromotionCode;
 	protected Listheader listheader_FeeReceipt_ReceiptRef;
 	protected Listheader listheader_FeeReceipt_ReceiptDate;
+	protected FinanceDetailService financeDetailService;
 
 	/**
 	 * The default constructor.
@@ -272,6 +274,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			if (isWorkFlowEnabled() && header.getWorkflowId() == 0) {
 				header.setWorkflowId(getWorkFlowId());
 			}
+
+			header.setFinCategory(financeDetailService.getFinCategory(header.getFinType()));
+
 			doShowDialogPage(header);
 		} else {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
@@ -467,5 +472,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 	public void setFeeReceiptService(FeeReceiptService feeReceiptService) {
 		this.feeReceiptService = feeReceiptService;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 }

@@ -38,6 +38,12 @@ public class ActivityLogServiceImpl implements ActivityLogService {
 	}
 
 	@Override
+	public List<Activity> getExtendedFieldActivitiyLog(String tableName, String reference, int seqNo,
+			long instructionUID) {
+		return activityLogDAO.getExtendedFieldActivitiyLog(tableName, reference, seqNo, instructionUID);
+	}
+
+	@Override
 	public List<Notes> getNotesList(Object reference, List<String> moduleNames) {
 		return notesDAO.getNotesListAsc(String.valueOf(reference), moduleNames);
 	}

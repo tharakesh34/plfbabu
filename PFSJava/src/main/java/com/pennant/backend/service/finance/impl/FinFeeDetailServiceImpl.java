@@ -1489,6 +1489,10 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 		BigDecimal netAmountOriginal = fee.getActualAmountOriginal().subtract(waivedAmount);
 		BigDecimal paidAmountOriginal = fee.getPaidAmountOriginal();
 
+		if ((fee.getPaidAmount().add(fee.getWaivedAmount())).compareTo(BigDecimal.ZERO) > 0) {
+			fee.setPaidCalcReq(true);
+		}
+
 		// GST Calculations
 		TaxHeader taxHeader = fee.getTaxHeader();
 		Taxes cgstTax = null;

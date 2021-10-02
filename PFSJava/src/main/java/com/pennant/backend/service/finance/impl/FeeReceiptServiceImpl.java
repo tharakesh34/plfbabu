@@ -6,7 +6,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.GSTCalculator;
@@ -46,10 +44,14 @@ import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.configuration.VASRecording;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
+import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinRepayHeader;
@@ -63,9 +65,12 @@ import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
+import com.pennant.backend.service.extendedfieldsExtension.ExtendedFieldExtensionService;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -104,6 +109,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private FinFeeDetailService finFeeDetailService;
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private VASRecordingDAO vASRecordingDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private ExtendedFieldExtensionService extendedFieldExtensionService;
 
 	public FeeReceiptServiceImpl() {
 		super();
@@ -222,6 +229,14 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
+		FinReceiptHeader rch = (FinReceiptHeader) aAuditHeader.getAuditDetail().getModelData();
+		long serviceUID = Long.MIN_VALUE;
+
+		ExtendedFieldRender efr = rch.getExtendedFieldRender();
+		if (efr != null) {
+			serviceUID = extendedFieldDetailsService.getInstructionUID(efr, rch.getExtendedFieldExtension());
+		}
+
 		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 		if (!aAuditHeader.isNextProcess()) {
@@ -231,7 +246,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		FinReceiptHeader rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (rch.isWorkflow()) {
@@ -257,20 +271,6 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			financeRepaymentsDAO.deleteByRef(rch.getFinID(), tableType);
 		}
 
-		Date appDate = SysParamUtil.getAppDate();
-		FinServiceInstruction fsi = new FinServiceInstruction();
-		fsi.setFinID(rch.getFinID());
-		fsi.setFinReference(rch.getReference());
-		fsi.setFinEvent(AccountingEvent.FEEPAY);
-		fsi.setAppDate(appDate);
-		fsi.setAmount(rch.getReceiptAmount());
-		fsi.setSystemDate(DateUtility.getSysDate());
-		fsi.setMaker(auditHeader.getAuditUsrId());
-		fsi.setMakerAppDate(appDate);
-		fsi.setMakerSysDate(DateUtility.getSysDate());
-		fsi.setReference(String.valueOf(rch.getReceiptID()));
-		finServiceInstructionDAO.save(fsi, tableType.getSuffix());
-
 		for (FinReceiptDetail receiptDetail : rch.getReceiptDetails()) {
 			receiptDetail.setReceiptID(receiptID);
 			long receiptSeqID = finReceiptDetailDAO.save(receiptDetail, tableType);
@@ -288,6 +288,32 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		List<AuditDetail> auditdetails = processFinFeeReceipt(rch, tableType.getSuffix(),
 				auditHeader.getAuditTranType());
 		auditDetails.addAll(auditdetails);
+
+		// Extended field Details
+		ExtendedFieldRender exdFldRender = rch.getExtendedFieldRender();
+		ExtendedFieldExtension exdFldExt = rch.getExtendedFieldExtension();
+		Map<String, List<AuditDetail>> auditDetailMap = rch.getAuditDetailMap();
+		ExtendedFieldHeader exdHeader = rch.getExtendedFieldHeader();
+		String event = exdHeader.getEvent();
+
+		if (exdFldRender != null) {
+			List<AuditDetail> details = auditDetailMap.get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, event, tableType.getSuffix(), serviceUID);
+
+			auditDetails.addAll(details);
+		}
+
+		// Extended field Extensions Details
+		if (exdFldExt != null) {
+			List<AuditDetail> details = auditDetailMap.get("ExtendedFieldExtension");
+			FinReceiptData rd = new FinReceiptData();
+			rd.setReceiptHeader(rch);
+
+			details = extendedFieldExtensionService.processingExtendedFieldExtList(details, rd, serviceUID, tableType);
+
+			auditDetails.addAll(details);
+		}
 
 		// Audit
 		String[] recHeaderFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
@@ -319,6 +345,8 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	@Override
 	public AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException {
 		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		auditHeader = businessValidation(auditHeader, "doReject");
 		if (!auditHeader.isNextProcess()) {
@@ -353,6 +381,20 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		// finServiceInstructionDAO.deleteFinServInstList(receiptHeader.getReference(), TableType.TEMP_TAB.getSuffix(),
 		// String.valueOf(receiptHeader.getReceiptID()));
 
+		// Delete Extended field Render Details.
+		List<AuditDetail> extendedDetails = rch.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(rch.getExtendedFieldHeader(), rch.getReference(),
+					rch.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		if (rch.getExtendedFieldExtension() != null) {
+			List<AuditDetail> details = rch.getAuditDetailMap().get("ExtendedFieldExtension");
+			details = extendedFieldExtensionService.delete(details, auditHeader.getAuditTranType(), TableType.TEMP_TAB);
+			auditDetails.addAll(details);
+		}
+
+		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(), rch.getExcludeFields());
 		auditHeader.setAuditDetail(
@@ -384,16 +426,24 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		FinReceiptHeader rch = (FinReceiptHeader) aAuditHeader.getAuditDetail().getModelData();
+
+		long serviceUID = Long.MIN_VALUE;
+		ExtendedFieldRender exdFldRender = rch.getExtendedFieldRender();
+		if (exdFldRender != null) {
+			serviceUID = extendedFieldDetailsService.getInstructionUID(exdFldRender, rch.getExtendedFieldExtension());
+		}
+
 		String tranType = "";
 		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
-		List<AuditDetail> auditDetails = new ArrayList<>();
 		if (!aAuditHeader.isNextProcess()) {
 			return aAuditHeader;
 		}
 
 		Cloner cloner = new Cloner();
 		AuditHeader auditHeader = cloner.deepClone(aAuditHeader);
-		FinReceiptHeader rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+		rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
 
 		// Accounting Process Execution
 		AEEvent aeEvent = new AEEvent();
@@ -529,6 +579,24 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 			}
 		}
 
+		List<AuditDetail> extendedDetails = rch.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			extendedDetails = extendedFieldDetailsService.processingExtendedFieldDetailList(extendedDetails,
+					ExtendedFieldConstants.MODULE_LOAN, rch.getExtendedFieldHeader().getEvent(), "", serviceUID);
+			auditDetails.addAll(extendedDetails);
+		}
+
+		// Extended field Extensions Details
+		List<AuditDetail> extensionDetails = rch.getAuditDetailMap().get("ExtendedFieldExtension");
+		if (extensionDetails != null && extensionDetails.size() > 0) {
+			FinReceiptData receiptData = new FinReceiptData();
+			receiptData.setReceiptHeader(rch);
+			extensionDetails = extendedFieldExtensionService.processingExtendedFieldExtList(extensionDetails,
+					receiptData, serviceUID, TableType.MAIN_TAB);
+
+			auditDetails.addAll(extensionDetails);
+		}
+
 		if (RepayConstants.RECEIPTTO_FINANCE.equals(recAgainst) || (RepayConstants.RECEIPTTO_CUSTOMER.equals(recAgainst)
 				&& StringUtils.isNotBlank(rch.getExtReference()))) {
 			Map<String, BigDecimal> taxPercentages = null;
@@ -605,6 +673,16 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
 
+		// Extended field Render Details Delete from temp.
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			extendedDetails = extendedFieldDetailsService.delete(rch.getExtendedFieldHeader(), rch.getReference(),
+					exdFldRender.getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails);
+		}
+
+		if (extensionDetails != null && extensionDetails.size() > 0) {
+			extensionDetails = extendedFieldExtensionService.delete(extensionDetails, tranType, TableType.TEMP_TAB);
+		}
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -621,11 +699,77 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		auditHeader = getAuditDetails(auditHeader, method);
+
+		FinReceiptHeader rch = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+		String usrLanguage = rch.getUserDetails().getLanguage();
+
+		if (rch.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = rch.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = rch.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		if (rch.getExtendedFieldExtension() != null) {
+			List<AuditDetail> details = rch.getAuditDetailMap().get("ExtendedFieldExtension");
+			details = extendedFieldExtensionService.vaildateDetails(details, usrLanguage);
+			auditDetails.addAll(details);
+		}
+
+		auditHeader.setAuditDetails(auditDetails);
+
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	/**
+	 * Method for prepare AuditHeader
+	 * 
+	 */
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug("Entering");
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+
+		FinReceiptHeader frh = (FinReceiptHeader) auditHeader.getAuditDetail().getModelData();
+
+		String auditTranType = "";
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (frh.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		// Extended Field Details
+		if (frh.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(frh.getExtendedFieldHeader(),
+							frh.getExtendedFieldRender(), auditTranType, method, ExtendedFieldConstants.MODULE_LOAN));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
+
+		ExtendedFieldExtension extendedFieldExtension = frh.getExtendedFieldExtension();
+		if (extendedFieldExtension != null) {
+			auditDetailMap.put("ExtendedFieldExtension", extendedFieldExtensionService
+					.setExtendedFieldExtAuditData(extendedFieldExtension, auditTranType, method));
+			frh.setAuditDetailMap(auditDetailMap);
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldExtension"));
+		}
+
+		frh.setAuditDetailMap(auditDetailMap);
+		auditHeader.getAuditDetail().setModelData(frh);
+		auditHeader.setAuditDetails(auditDetails);
+
+		logger.debug("Leaving ");
 		return auditHeader;
 	}
 
@@ -1602,5 +1746,13 @@ public class FeeReceiptServiceImpl extends GenericService<FinReceiptHeader> impl
 
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setExtendedFieldExtensionService(ExtendedFieldExtensionService extendedFieldExtensionService) {
+		this.extendedFieldExtensionService = extendedFieldExtensionService;
 	}
 }

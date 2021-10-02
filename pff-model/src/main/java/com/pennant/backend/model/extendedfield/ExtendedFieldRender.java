@@ -7,7 +7,6 @@ import java.util.Set;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 
 public class ExtendedFieldRender extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = -3393253877805479673L;
 
 	private String reference;
@@ -24,6 +23,10 @@ public class ExtendedFieldRender extends AbstractWorkflowEntity {
 		Set<String> excludeFields = new HashSet<String>();
 
 		return excludeFields;
+	}
+
+	public boolean isNew() {
+		return isNewRecord();
 	}
 
 	public int getSeqNo() {

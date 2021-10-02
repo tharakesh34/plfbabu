@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - naltinnant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinScheduleListItemRenderer.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  13-01-2011    														*
- *                                                                  						*
- * Modified Date    :  13-01-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinScheduleListItemRenderer.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-01-2011 * *
+ * Modified Date : 13-01-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 13-01-2011       Pennant	                 0.1                                            * 
- * 13-05-2018       Satish                                   Accrual value display removed                                               * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 13-01-2011 Pennant 0.1 * 13-05-2018 Satish Accrual value display removed * * * * * * * *
  ********************************************************************************************
  */
 
@@ -101,6 +83,7 @@ import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.PennantAppUtil;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -146,8 +129,7 @@ public class FinScheduleListItemRenderer implements Serializable {
 	/**
 	 * Method to render the list items
 	 * 
-	 * @param FinanceScheduleDetail
-	 *            (financeScheduleDetail)
+	 * @param FinanceScheduleDetail (financeScheduleDetail)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void render(Map map, FinanceScheduleDetail prvSchDetail, boolean lastRecord, boolean allowRvwRateEdit,
@@ -598,8 +580,11 @@ public class FinScheduleListItemRenderer implements Serializable {
 						BigDecimal.ZERO.add(getFinanceScheduleDetail().getFeeSchd()),
 						getFinanceScheduleDetail().getRepayAmount().add(getFinanceScheduleDetail().getFeeSchd())
 								.add(BigDecimal.ZERO).add(BigDecimal.ZERO),
-						getFinanceScheduleDetail().getClosingBalance(), isEditable, isRate, showZeroEndBal,
-						isGrcBaseRate, isRpyBaseRate, "", "", 0, null, false, false);
+						getFinanceScheduleDetail().getClosingBalance()
+								.subtract(getFinanceScheduleDetail().getFeeChargeAmt())
+								.subtract(getFinanceScheduleDetail().getCpzAmount()),
+						isEditable, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "", "", 0, null, false,
+						false);
 				count = 2;
 				// As confirmed with pradeep this can be removed
 				/*
@@ -618,11 +603,15 @@ public class FinScheduleListItemRenderer implements Serializable {
 							getFinanceScheduleDetail().getProfitCalc(), BigDecimal.ZERO, BigDecimal.ZERO,
 							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
 							BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
-							getFinanceScheduleDetail().getClosingBalance(), false, false, false, false, false, "", "",
-							0, null, false, false);
+							getFinanceScheduleDetail().getClosingBalance()
+									.subtract(getFinanceScheduleDetail().getFeeChargeAmt())
+									.subtract(getFinanceScheduleDetail().getCpzAmount()),
+							false, false, false, false, false, "", "", 0, null, false, false);
 					count = 2;
 				}
 			}
+
+			List<Long> serviceInstIdList = new ArrayList<>();
 
 			if (getFinanceScheduleDetail().isDisbOnSchDate()) {
 				isEditable = true;
@@ -648,7 +637,8 @@ public class FinScheduleListItemRenderer implements Serializable {
 					if (getFinanceScheduleDetail().getSchDate().compareTo(aFinanceMain.getFinStartDate()) == 0) {
 						advEMi = aFinanceMain.getAdvanceEMI();
 					}
-					if (DateUtility.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
+					if (DateUtil.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
+						serviceInstIdList.add(curDisb.getInstructionUID());
 						curTotDisbAmt = curTotDisbAmt.add(curDisb.getDisbAmount());
 
 						BigDecimal endBal = BigDecimal.ZERO;
@@ -731,6 +721,17 @@ public class FinScheduleListItemRenderer implements Serializable {
 							continue;
 						}
 
+						if (finFeeDetail.getInstructionUID() != null && finFeeDetail.getInstructionUID() > 0) {
+							if (!serviceInstIdList.contains(finFeeDetail.getInstructionUID())) {
+								continue;
+							}
+						} else {
+							if (DateUtil.compare(getFinanceScheduleDetail().getSchDate(),
+									finFeeDetail.getValueDate()) != 0) {
+								continue;
+							}
+						}
+
 						if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
 								CalculationConstants.REMFEE_PART_OF_SALE_PRICE)) {
 
@@ -772,6 +773,67 @@ public class FinScheduleListItemRenderer implements Serializable {
 						count = 2;
 					}
 				}
+			} else {
+				if (finFeeDetailList != null && getFinanceScheduleDetail().getFeeChargeAmt() != null
+						&& getFinanceScheduleDetail().getFeeChargeAmt().compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal feeChargeAmt = getFinanceScheduleDetail().getFeeChargeAmt();
+
+					List<FinanceDisbursement> disbList = sortDisbursements(
+							getFinScheduleData().getDisbursementDetails());
+					for (int i = 0; i < disbList.size(); i++) {
+						FinanceDisbursement curDisb = disbList.get(i);
+						if (FinanceConstants.DISB_STATUS_CANCEL.equals(curDisb.getDisbStatus())) {
+							continue;
+						}
+
+						if (DateUtil.compare(curDisb.getDisbDate(), getFinanceScheduleDetail().getSchDate()) == 0) {
+							serviceInstIdList.add(curDisb.getInstructionUID());
+						}
+					}
+
+					for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+
+						if (finFeeDetail.getRemainingFee().compareTo(BigDecimal.ZERO) <= 0) {
+							continue;
+						}
+
+						if (finFeeDetail.getInstructionUID() != null && finFeeDetail.getInstructionUID() > 0) {
+							if (!serviceInstIdList.contains(finFeeDetail.getInstructionUID())) {
+								continue;
+							}
+						} else {
+							if (DateUtil.compare(getFinanceScheduleDetail().getSchDate(),
+									finFeeDetail.getValueDate()) != 0) {
+								continue;
+							}
+						}
+
+						if (CalculationConstants.REMFEE_PART_OF_SALE_PRICE
+								.equals(finFeeDetail.getFeeScheduleMethod())) {
+
+							BigDecimal actFeeCharge = finFeeDetail.getRemainingFee();
+							if (actFeeCharge.compareTo(BigDecimal.ZERO) >= 0) {
+
+								doFillListBox(getFinanceScheduleDetail(), count,
+										StringUtils.isEmpty(finFeeDetail.getFeeTypeDesc())
+												? finFeeDetail.getVasReference()
+												: finFeeDetail.getFeeTypeDesc(),
+										BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+										BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+										BigDecimal.ZERO, actFeeCharge, actFeeCharge,
+										getFinanceScheduleDetail().getClosingBalance().subtract(feeChargeAmt)
+												.add(actFeeCharge).subtract(getFinanceScheduleDetail().getCpzAmount()),
+										false, isRate, showZeroEndBal, isGrcBaseRate, isRpyBaseRate, "#F87217",
+										"color_Disbursement", 0, null, true, false);
+
+								feeChargeAmt = feeChargeAmt.subtract(actFeeCharge);
+								count = 2;
+							}
+						}
+					}
+
+				}
+
 			}
 
 			if (getFinanceScheduleDetail().isRepayOnSchDate() || (getFinanceScheduleDetail().isPftOnSchDate()

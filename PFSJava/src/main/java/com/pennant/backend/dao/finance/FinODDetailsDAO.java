@@ -95,4 +95,6 @@ public interface FinODDetailsDAO {
 
 	FinODDetails getFinODByFinRef(long finID, Date schDate);
 
+	List<FinODDetails> getFinODDetailsByFinRef(long finID);
+
 }

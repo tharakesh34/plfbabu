@@ -205,6 +205,8 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 	private Long disbResponseBatchId;
 	private long userId;
 	private String downloadType;
+	@XmlElement
+	private String lei;
 
 	public String getFileNamePrefix() {
 		return fileNamePrefix;
@@ -302,6 +304,7 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		entity.setOnlineProcReq(this.onlineProcReq);
 		entity.setHoldDisbursement(this.holdDisbursement);
 		entity.setDownloadType(this.downloadType);
+		entity.setLei(this.lei);
 		entity.setPostDate(this.postDate);
 		entity.setDealerShortCode(this.dealerShortCode);
 		entity.setProductShortCode(this.productShortCode);
@@ -389,6 +392,14 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 
 	public void setServiceReqNo(String serviceReqNo) {
 		this.serviceReqNo = serviceReqNo;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
@@ -1079,12 +1090,12 @@ public class FinAdvancePayments extends AbstractWorkflowEntity {
 		this.downloadType = downloadType;
 	}
 
-	public long getFinID() {
-		return finID;
+	public String getLei() {
+		return lei;
 	}
 
-	public void setFinID(long finID) {
-		this.finID = finID;
+	public void setLei(String lei) {
+		this.lei = lei;
 	}
 
 }

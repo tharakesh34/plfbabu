@@ -50,12 +50,14 @@ public class ManualAdviseMovements implements Serializable {
 	private Date schDate;
 	private boolean lppAmzReqonME;
 	private BigDecimal currWaiverGst = BigDecimal.ZERO;
+	private BigDecimal currActualWaiver = BigDecimal.ZERO;
 	private boolean tdsReq;
 	private Long insReceiptID;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("tdsReq");
+		excludeFields.add("currActualWaiver");
 
 		return excludeFields;
 	}
@@ -98,6 +100,7 @@ public class ManualAdviseMovements implements Serializable {
 		entity.setCurrWaiverGst(this.currWaiverGst);
 		entity.setTdsReq(this.tdsReq);
 		entity.setInsReceiptID(this.insReceiptID);
+		entity.setCurrActualWaiver(this.currActualWaiver);
 		return entity;
 	}
 
@@ -389,4 +392,11 @@ public class ManualAdviseMovements implements Serializable {
 		this.insReceiptID = insReceiptID;
 	}
 
+	public BigDecimal getCurrActualWaiver() {
+		return currActualWaiver;
+	}
+
+	public void setCurrActualWaiver(BigDecimal currActualWaiver) {
+		this.currActualWaiver = currActualWaiver;
+	}
 }

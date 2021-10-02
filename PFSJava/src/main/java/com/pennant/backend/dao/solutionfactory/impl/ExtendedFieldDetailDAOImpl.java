@@ -1,43 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldDetailDAOImpl.java                                      * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  28-12-2011    														*
- *                                                                  						*
- * Modified Date    :  28-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-12-2011 * *
+ * Modified Date : 28-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 28-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 19-06-2018       Sai Krishna              0.2          story #413 Allow scriptlet for    * 
- *                                                        extended fields without UI.       * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-12-2011 Pennant 0.1 * * 19-06-2018 Sai Krishna 0.2 story #413 Allow scriptlet for * extended fields without UI. *
+ * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.solutionfactory.impl;
@@ -88,30 +71,9 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	private NamedParameterJdbcTemplate auditJdbcTemplate;
 
 	private enum FieldType {
-		TEXT,
-		UPPERTEXT,
-		STATICCOMBO,
-		MULTISTATICCOMBO,
-		EXTENDEDCOMBO,
-		MULTIEXTENDEDCOMBO,
-		DATE,
-		DATETIME,
-		TIME,
-		INT,
-		LONG,
-		ACTRATE,
-		DECIMAL,
-		CURRENCY,
-		RADIO,
-		PERCENTAGE,
-		BOOLEAN,
-		MULTILINETEXT,
-		ACCOUNT,
-		FREQUENCY,
-		BASERATE,
-		ADDRESS,
-		PHONE,
-		LISTFIELD
+		TEXT, UPPERTEXT, STATICCOMBO, MULTISTATICCOMBO, EXTENDEDCOMBO, MULTIEXTENDEDCOMBO, DATE, DATETIME, TIME, INT,
+		LONG, ACTRATE, DECIMAL, CURRENCY, RADIO, PERCENTAGE, BOOLEAN, MULTILINETEXT, ACCOUNT, FREQUENCY, BASERATE,
+		ADDRESS, PHONE, LISTFIELD
 	}
 
 	public ExtendedFieldDetailDAOImpl() {
@@ -121,10 +83,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	/**
 	 * Fetch the Record Extended Field Detail details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ExtendedFieldDetail
 	 */
 	@Override
@@ -156,7 +116,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		sql.append(", Filters, FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, Editable");
 		sql.append(", Visible, AllowInRule, ValFromScript, Scriptlet, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		sql.append(", DefValue, AgrField"); //HL
+		sql.append(", DefValue, AgrField, MaintAlwd"); // HL
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescModuleName, LovDescSubModuleName");
@@ -171,10 +131,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	 * This method Deletes the Record from the ExtendedFieldDetail or ExtendedFieldDetail_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Extended Field Detail by key ModuleId
 	 * 
-	 * @param Extended
-	 *            Field Detail (extendedFieldDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Detail (extendedFieldDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -227,10 +185,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	 *
 	 * save Extended Field Detail
 	 * 
-	 * @param Extended
-	 *            Field Detail (extendedFieldDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Detail (extendedFieldDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -246,14 +202,15 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		insertSql.append(" FieldDefaultValue, FieldMinValue, FieldMaxValue, FieldUnique, MultiLine,ParentTag,");
 		insertSql.append(
 				" InputElement,Editable, ExtendedType,AllowInRule ,ValFromScript, Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, Visible,  Scriptlet,");
-		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, MaintAlwd)");
 		insertSql.append(" Values(:ModuleId, :FieldName, :FieldType, :FieldLength, :FieldPrec, ");
 		insertSql.append(" :FieldLabel, :FieldMandatory, :FieldConstraint, :FieldSeqOrder, ");
 		insertSql.append(" :FieldList, :Filters, :FieldDefaultValue, :FieldMinValue, ");
 		insertSql.append(
 				" :FieldMaxValue, :FieldUnique, :MultiLine,:ParentTag,:InputElement,:Editable,:ExtendedType, :AllowInRule, :ValFromScript, ");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, ");
-		insertSql.append(" :NextRoleCode, :Visible, :Scriptlet, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
+		insertSql.append(
+				" :NextRoleCode, :Visible, :Scriptlet, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :MaintAlwd)");
 
 		logger.debug("insertSql: " + insertSql.toString());
 
@@ -273,10 +230,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	 * This method updates the Record ExtendedFieldDetail or ExtendedFieldDetail_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Extended Field Detail by key ModuleId and Version
 	 * 
-	 * @param Extended
-	 *            Field Detail (extendedFieldDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Detail (extendedFieldDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -300,7 +255,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
 		updateSql.append(" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, ");
 		updateSql.append(
-				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+				" TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId, MaintAlwd = :MaintAlwd");
 		updateSql.append(" Where ModuleId =:ModuleId AND FieldName =:FieldName AND ExtendedType = :ExtendedType");
 
 		if (!type.endsWith("_Temp")) {
@@ -366,7 +321,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			selectSql.append(" lovDescModuleName,lovDescSubModuleName , ");
 		}
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, ");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId ");
+		selectSql.append(" NextTaskId, RecordType, WorkflowId, MaintAlwd ");
 		selectSql.append(" From ExtendedFieldDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where lovDescSubModuleName =:lovDescSubModuleName order by FieldSeqOrder ASC");
@@ -391,7 +346,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(
 				" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement, AllowInRule, Visible, ValFromScript, Scriptlet, DefValue, ");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		selectSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, MaintAlwd");
 		selectSql.append(" From ExtendedFieldDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
 		selectSql.append(" Where ModuleId =:ModuleId");
@@ -409,7 +364,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	public void alter(ExtendedFieldDetail fieldDetail, String type, boolean drop, boolean recreate, boolean isAudit) {
 		logger.debug(Literal.ENTERING);
 
-		//fieldDetail.setLovDescErroDesc(null);
+		// fieldDetail.setLovDescErroDesc(null);
 		StringBuilder syntax = new StringBuilder();
 
 		syntax.append("alter table ");
@@ -649,7 +604,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 				datatype.append("_MR decimal(13,9) ");
 			}
 			break;
-		case ADDRESS://TODO : Divide columns into multiple based on component definition
+		case ADDRESS:// TODO : Divide columns into multiple based on component definition
 			if (App.DATABASE == Database.ORACLE) {
 				datatype.append(" varchar2(100) ");
 			} else {
@@ -935,10 +890,8 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 	 * This method Deletes the Record from the ExtendedFieldDetail or ExtendedFieldDetail_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Extended Field Detail by key ModuleId
 	 * 
-	 * @param Extended
-	 *            Field Detail (extendedFieldDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Detail (extendedFieldDetail)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -1020,7 +973,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		selectSql.append(" FieldMaxValue, FieldUnique, MultiLine, ParentTag, InputElement,AllowInRule, ValFromScript,");
 		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, ");
 		selectSql.append(" NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" ,lovDescModuleName,lovDescSubModuleName ");
+		selectSql.append(" ,lovDescModuleName,lovDescSubModuleName, MaintAlwd ");
 		selectSql.append(" From ExtendedFieldDetail_AView");
 		selectSql.append(
 				" Where AllowInRule=:AllowInRule order by lovDescModuleName ASC,lovDescSubModuleName ASC, ParentTag DESC ,FieldSeqOrder ASC");
@@ -1178,6 +1131,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 			efd.setWorkflowId(rs.getLong("WorkflowId"));
 			efd.setDefValue(rs.getString("DefValue"));
 			efd.setAgrField(rs.getString("AgrField"));
+			efd.setMaintAlwd(rs.getBoolean("MaintAlwd"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				efd.setLovDescModuleName(rs.getString("LovDescModuleName"));

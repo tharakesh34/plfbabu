@@ -1082,4 +1082,64 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 
 		return odDetails;
 	}
+
+	@Override
+	public List<FinODDetails> getFinODDetailsByFinRef(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate");
+		sql.append(", FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft");
+		sql.append(", GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid");
+		sql.append(", TotPenaltyBal, LPIAmt, LPIPaid, LPIBal, LPIWaived, ApplyODPenalty, ODIncGrcDays");
+		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
+		sql.append(", LpCpz, LpCpzAmount, LpCurCpzBal, FinLMdfDate, ODRuleCode");
+		sql.append(" from FinODDetails");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return sort(this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			FinODDetails od = new FinODDetails();
+
+			od.setFinReference(rs.getString("FinReference"));
+			od.setFinODSchdDate(rs.getTimestamp("FinODSchdDate"));
+			od.setFinODFor(rs.getString("FinODFor"));
+			od.setFinBranch(rs.getString("FinBranch"));
+			od.setFinType(rs.getString("FinType"));
+			od.setCustID(rs.getLong("CustID"));
+			od.setFinODTillDate(rs.getTimestamp("FinODTillDate"));
+			od.setFinCurODAmt(rs.getBigDecimal("FinCurODAmt"));
+			od.setFinCurODPri(rs.getBigDecimal("FinCurODPri"));
+			od.setFinCurODPft(rs.getBigDecimal("FinCurODPft"));
+			od.setFinMaxODAmt(rs.getBigDecimal("FinMaxODAmt"));
+			od.setFinMaxODPri(rs.getBigDecimal("FinMaxODPri"));
+			od.setFinMaxODPft(rs.getBigDecimal("FinMaxODPft"));
+			od.setGraceDays(rs.getInt("GraceDays"));
+			od.setIncGraceDays(rs.getBoolean("IncGraceDays"));
+			od.setFinCurODDays(rs.getInt("FinCurODDays"));
+			od.setTotPenaltyAmt(rs.getBigDecimal("TotPenaltyAmt"));
+			od.setTotWaived(rs.getBigDecimal("TotWaived"));
+			od.setTotPenaltyPaid(rs.getBigDecimal("TotPenaltyPaid"));
+			od.setTotPenaltyBal(rs.getBigDecimal("TotPenaltyBal"));
+			od.setLPIAmt(rs.getBigDecimal("LPIAmt"));
+			od.setLPIPaid(rs.getBigDecimal("LPIPaid"));
+			od.setLPIBal(rs.getBigDecimal("LPIBal"));
+			od.setLPIWaived(rs.getBigDecimal("LPIWaived"));
+			od.setApplyODPenalty(rs.getBoolean("ApplyODPenalty"));
+			od.setODIncGrcDays(rs.getBoolean("ODIncGrcDays"));
+			od.setODChargeType(rs.getString("ODChargeType"));
+			od.setODGraceDays(rs.getInt("ODGraceDays"));
+			od.setODChargeCalOn(rs.getString("ODChargeCalOn"));
+			od.setODChargeAmtOrPerc(rs.getBigDecimal("ODChargeAmtOrPerc"));
+			od.setODAllowWaiver(rs.getBoolean("ODAllowWaiver"));
+			od.setODMaxWaiverPerc(rs.getBigDecimal("ODMaxWaiverPerc"));
+			od.setLpCpz(rs.getBoolean("LpCpz"));
+			od.setLpCpzAmount(rs.getBigDecimal("LpCpzAmount"));
+			od.setLpCurCpzBal(rs.getBigDecimal("LpCurCpzBal"));
+			od.setFinLMdfDate(rs.getTimestamp("FinLMdfDate"));
+			od.setODRuleCode(rs.getString("ODRuleCode"));
+
+			return od;
+		}));
+	}
+
 }

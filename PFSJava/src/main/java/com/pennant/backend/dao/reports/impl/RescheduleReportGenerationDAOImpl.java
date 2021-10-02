@@ -17,6 +17,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RescheduleLog;
+import com.pennant.backend.model.finance.RescheduleLogHeader;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -29,7 +30,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		FinLogEntryRowMapper rowMapper = new FinLogEntryRowMapper();
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" FinReference, LogKey, EventAction, PostDate From FinLogEntryDetail");
-		sql.append(" Where FinReference = ? and PostDate >= ? and PostDate <= ? and EventAction = ?");
+		sql.append(" Where FinReference = ? and PostDate >= ? and PostDate <= ? and EventAction in (?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -38,7 +39,8 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 			ps.setString(index++, finReference);
 			ps.setDate(index++, fromDate);
 			ps.setDate(index++, toDate);
-			ps.setString(index, AccountingEvent.SCDCHG);
+			ps.setString(index++, AccountingEvent.SCDCHG);
+			ps.setString(index++, AccountingEvent.RATCHG);
 		}, rowMapper);
 	}
 
@@ -318,5 +320,29 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<RescheduleLogHeader> getFinBasicDetails() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" c.CustFName, c.CustShrtName, fm.FinReference");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join Customers c on fm.custid = c.custid ");
+		sql.append(" Where fm.FinReference In");
+		sql.append(" (Select distinct FinReference From FinServiceInstruction");
+		sql.append(" Where FinEvent = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setString(1, "ReSchedule");
+		}, (rs, i) -> {
+			RescheduleLogHeader rlh = new RescheduleLogHeader();
+
+			rlh.setFinReference(rs.getString("FinReference"));
+			rlh.setCustName(rs.getString("CustFName") + "_" + rs.getString("CustShrtName"));
+
+			return rlh;
+		});
 	}
 }

@@ -133,6 +133,19 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	protected Listheader listheader_StepFinance_EMIDiff;
 	private boolean dataChanged = false;
 	private boolean stepReadonly = false;
+	protected Combobox stepsAppliedFor;
+	protected Space space_stepsAppliedFor;
+	protected Label label_FinanceTypeDialog_StepsAppliedFor;
+	protected Combobox calcOfSteps;
+	protected Space space_calcOfSteps;
+	protected Label label_FinanceTypeDialog_CalcOfSteps;
+	protected transient String oldVar_calcOfSteps;
+	protected transient String oldVar_stepsAppliedFor;
+	private boolean alwGrace = false;
+	private boolean allowGrace = false;
+
+	private boolean isEnquiry = false;
+	private List<Object> finHeaderList = null;
 
 	/**
 	 * default constructor.<br>
@@ -174,6 +187,10 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 			isWIF = (Boolean) arguments.get("isWIF");
 		}
 
+		if (arguments.containsKey("enquiryModule")) {
+			isEnquiry = (Boolean) arguments.get("enquiryModule");
+		}
+
 		if (arguments.containsKey("roleCode")) {
 			roleCode = (String) arguments.get("roleCode");
 			setRole((String) arguments.get("roleCode"));
@@ -189,6 +206,10 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		}
 		if (arguments.containsKey("ccyFormatter")) {
 			this.ccyFormatter = (Integer) arguments.get("ccyFormatter");
+		}
+
+		if (arguments.containsKey("finHeaderList")) {
+			finHeaderList = (List<Object>) arguments.get("finHeaderList");
 		}
 
 		doShowDialog(this.financeDetail);
@@ -258,6 +279,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.oldVar_alwManualSteps = this.alwManualSteps.isChecked();
 		this.oldVar_noOfSteps = this.noOfSteps.intValue();
 		this.oldVar_stepType = this.stepType.getSelectedIndex();
+		this.oldVar_calcOfSteps = this.calcOfSteps.getValue();
+		this.oldVar_stepsAppliedFor = this.stepsAppliedFor.getValue();
 	}
 
 	/**
@@ -301,7 +324,9 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	}
 
 	protected void doCheckRights() {
-		if (stepReadonly) {
+		if (stepReadonly || isEnquiry) {
+			this.stepsAppliedFor.setDisabled(true);
+			this.calcOfSteps.setDisabled(true);
 			this.stepPolicy.setReadonly(true);
 			this.stepType.setDisabled(true);
 			this.alwManualSteps.setDisabled(true);
@@ -315,14 +340,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	public ArrayList<ErrorDetail> ValidatePaymentMethod(ArrayList<ErrorDetail> errorList, String cbScheduleMethod,
 			String repayRateBasis) {
 		String stepTypeVal = this.stepType.getSelectedItem().getValue().toString();
-		if (StringUtils.equals(stepTypeVal, FinanceConstants.STEPTYPE_PRIBAL)
-				&& StringUtils.equals(cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-			errorList.add(new ErrorDetail("StepFinance", "30555",
-					new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
-		}
-
-		if (StringUtils.equals(stepTypeVal, FinanceConstants.STEPTYPE_EMI)
-				&& !StringUtils.equals(cbScheduleMethod, CalculationConstants.SCHMTHD_EQUAL)) {
+		if (FinanceConstants.STEPTYPE_EMI.equals(stepTypeVal)
+				&& !CalculationConstants.SCHMTHD_EQUAL.equals(cbScheduleMethod)) {
 			errorList.add(new ErrorDetail("StepFinance", "30703",
 					new String[] { Labels.getLabel("label_ScheduleMethod_Equal") }, new String[] {}));
 		}
@@ -341,6 +360,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.oldVar_noOfSteps = this.noOfSteps.intValue();
 		this.oldVar_stepType = this.stepType.getSelectedIndex();
 		this.oldVar_noOfGrcSteps = this.grcSteps.intValue();
+		this.oldVar_calcOfSteps = this.calcOfSteps.getSelectedItem().getValue();
+		this.oldVar_stepsAppliedFor = this.stepsAppliedFor.getSelectedItem().getValue();
 
 	}
 
@@ -366,6 +387,14 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 			this.oldVar_noOfGrcSteps = this.grcSteps.intValue();
 			return true;
 		}
+		if (!this.oldVar_calcOfSteps.equals(this.calcOfSteps.getSelectedItem().getValue())) {
+			this.oldVar_calcOfSteps = this.calcOfSteps.getSelectedItem().getValue();
+			return true;
+		}
+		if (!this.oldVar_stepsAppliedFor.equals(this.stepsAppliedFor.getSelectedItem().getValue())) {
+			this.oldVar_stepsAppliedFor = this.calcOfSteps.getSelectedItem().getValue();
+			return true;
+		}
 		if (isDataChanged()) {
 			return true;
 		}
@@ -375,8 +404,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	/**
 	 * Writes the components values to the bean.<br>
 	 * 
-	 * @param aFinanceSchData
-	 *            (FinScheduleData)
+	 * @param aFinanceSchData (FinScheduleData)
 	 * @param tab
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
@@ -384,9 +412,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 */
 	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, Tab tab, String method)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
-
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
-		FinanceType financeType = finScheduleData.getFinanceType();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		doClearMessage();
 		doSetValidation();
@@ -411,12 +437,16 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 			wve.add(we);
 		}
 
-		if (StringUtils.isEmpty(aFinanceMain.getStepsAppliedFor())) {
-			aFinanceMain.setStepsAppliedFor(financeType.getStepsAppliedFor());
+		try {
+			aFinanceMain.setStepsAppliedFor(this.stepsAppliedFor.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
-		if (StringUtils.isEmpty(aFinanceMain.getCalcOfSteps())) {
-			aFinanceMain.setCalcOfSteps(financeType.getCalcOfSteps());
+		try {
+			aFinanceMain.setCalcOfSteps(this.calcOfSteps.getSelectedItem().getValue().toString());
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		try {
@@ -537,6 +567,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 
 			this.stepPolicy.setReadonly(false);
 			this.stepType.setDisabled(false);
+			this.alwManualSteps.setChecked(false);
+			this.alwManualSteps.setDisabled(false);
 			if (financeMain.isAlwManualSteps()) {
 				this.stepPolicy.setReadonly(true);
 			} else {
@@ -580,6 +612,180 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.label_FinanceMainDialog_numberOfSteps.setVisible(true);
 		this.hbox_numberOfSteps.setVisible(true);
 		this.btnNew_FinStepPolicy.setVisible(true);
+	}
+
+	public void onChange$calcOfSteps(Event event) {
+		logger.debug(Literal.ENTERING + event.toString());
+		visibilityFieldsForCalcOfSteps();
+		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void visibilityFieldsForCalcOfSteps() {
+
+		this.gb_grace.setVisible(false);
+		this.gb_emi.setVisible(false);
+		this.grcSteps.setReadonly(true);
+		this.noOfSteps.setReadonly(false);
+		this.listBoxStepdetails.getItems().clear();
+		this.listBoxStepdetailsforGrace.getItems().clear();
+		if (CollectionUtils.isNotEmpty(finStepPolicyList)) {
+			this.finStepPolicyList.clear();
+		}
+
+		String stepAppliedFor = getComboboxValue(this.stepsAppliedFor);
+		setStepAppliedForRights(stepAppliedFor);
+
+		if (!stepAppliedFor.equals(PennantConstants.STEPPING_APPLIED_EMI)) {
+			allowGrace = setAlwGraceChanges(false, false);
+			if (allowGrace) {
+				this.btnNew_FinStepPolicyGrace.setVisible(true);
+				this.grcSteps.setReadonly(false);
+			}
+		}
+
+		String calcOfSteps = getComboboxValue(this.calcOfSteps);
+		setCalcOfStepsRights(calcOfSteps, true);
+
+		visibiltyForPerc(true);
+
+		if (calcOfSteps.equals(PennantConstants.STEPPING_CALC_AMT)) {
+			this.stepsAppliedFor.setDisabled(false);
+			this.stepType.setDisabled(true);
+		}
+		financeMain.setCalcOfSteps(this.calcOfSteps.getSelectedItem().getValue().toString());
+	}
+
+	private void visibiltyForPerc(boolean isChange) {
+		FinScheduleData schData = getFinanceDetail().getFinScheduleData();
+
+		String calcOfSteps = getComboboxValue(this.calcOfSteps);
+		this.stepPolicy.setConstraint("");
+		this.stepPolicy.setErrorMessage("");
+
+		this.noOfSteps.setConstraint("");
+		this.noOfSteps.setErrorMessage("");
+
+		if (this.alwManualSteps.isChecked()) {
+			this.label_FinanceMainDialog_numberOfSteps.setVisible(true);
+			this.hbox_numberOfSteps.setVisible(true);
+			this.space_noOfSteps.setSclass(PennantConstants.mandateSclass);
+			this.noOfSteps.setSclass(PennantConstants.mandateSclass);
+			this.noOfSteps.setValue(0);
+			this.stepType.setVisible(true);
+			this.stepType.setSclass(PennantConstants.mandateSclass);
+			this.btnNew_FinStepPolicy.setVisible(true);
+			this.stepPolicy.setValue("", "");
+			this.stepPolicy.setReadonly(true);
+			this.space_stepType.setSclass(PennantConstants.mandateSclass);
+			this.stepType.setDisabled(false);
+			if (isChange && calcOfSteps.equals(PennantConstants.STEPPING_CALC_PERC)) {
+				List<StepPolicyDetail> policyList = new ArrayList<StepPolicyDetail>();
+				if (StringUtils.isNotEmpty(this.stepPolicy.getValue())) {
+					policyList = getStepPolicyService().getStepPolicyDetailsById(this.stepPolicy.getValue());
+				}
+				schData.resetStepPolicyDetails(policyList);
+				doFillStepDetais(schData.getStepPolicyDetails());
+				fillComboBox(this.stepType, FinanceConstants.STEPTYPE_EMI, PennantStaticListUtil.getStepType(), "");
+			} else {
+				fillComboBox(this.stepType, schData.getFinanceMain().getStepType(), PennantStaticListUtil.getStepType(),
+						"");
+			}
+			if (StringUtils.equals(calcOfSteps, PennantConstants.STEPPING_CALC_AMT)) {
+				fillComboBox(this.stepType, PennantConstants.List_Select, PennantStaticListUtil.getStepType(), "");
+				this.stepType.setDisabled(true);
+			}
+		} else {
+
+			if (this.financeDetail.isNewRecord()) {
+				this.stepPolicy.setValue(schData.getFinanceType().getDftStepPolicy());
+				this.stepPolicy.setDescription(schData.getFinanceType().getLovDescDftStepPolicyName());
+				this.stepType.setValue(schData.getFinanceType().getDftStepPolicyType());
+				fillComboBox(this.stepType, schData.getFinanceType().getDftStepPolicyType(),
+						PennantStaticListUtil.getStepType(), "");
+			} else {
+				this.stepPolicy.setValue(schData.getFinanceMain().getStepPolicy());
+				this.stepPolicy.setDescription(schData.getFinanceMain().getLovDescStepPolicyName());
+				fillComboBox(this.stepType, schData.getFinanceMain().getStepType(), PennantStaticListUtil.getStepType(),
+						"");
+			}
+			this.stepPolicy.setMandatoryStyle(true);
+			this.label_FinanceMainDialog_numberOfSteps.setVisible(false);
+			this.hbox_numberOfSteps.setVisible(false);
+			this.space_noOfSteps.setSclass("");
+			this.stepPolicy.setReadonly(isReadOnly("FinanceMainDialog_stepPolicy"));
+			this.stepType.setReadonly(isReadOnly("FinanceMainDialog_stepType"));
+			this.space_stepType.setSclass("");
+			this.stepType.setDisabled(true);
+			this.alwManualSteps.setVisible(true);
+			if (StringUtils.isEmpty(this.stepPolicy.getValue())) {
+				this.stepPolicy.setProperties("StepPolicyHeader", "PolicyCode", "PolicyDesc", true, 8);
+				this.stepPolicy.setFilters(null);
+			}
+
+		}
+
+		setAllowedManualSteps(this.alwManualSteps.isChecked());
+
+		// Filling Step Policy Details List
+		if ((isChange || financeMain.isStepFinance()) && calcOfSteps.equals(PennantConstants.STEPPING_CALC_PERC)) {
+			if (financeMain.isStepFinance() && this.alwManualSteps.isChecked() && this.financeDetail.isNewRecord()) {
+				fillComboBox(this.stepType, FinanceConstants.STEPTYPE_EMI, PennantStaticListUtil.getStepType(), "");
+			}
+			List<StepPolicyDetail> policyList = new ArrayList<>();
+
+			if (StringUtils.isNotEmpty(this.stepPolicy.getValue())) {
+				policyList = stepPolicyService.getStepPolicyDetailsById(this.stepPolicy.getValue());
+			}
+
+			List<FinanceStepPolicyDetail> tfspd = schData.getStepPolicyDetails();
+
+			if (CollectionUtils.isNotEmpty(policyList)) {
+				schData.resetStepPolicyDetails(policyList);
+			}
+
+			schData.getStepPolicyDetails().forEach(l1 -> {
+				l1.setStepSpecifier(PennantConstants.STEP_SPECIFIER_REG_EMI);
+				for (FinanceStepPolicyDetail fspd : tfspd) {
+					if (l1.getStepNo() == fspd.getStepNo()) {
+						l1.setInstallments(fspd.getInstallments());
+					}
+				}
+			});
+
+			doFillStepDetais(schData.getStepPolicyDetails());
+		}
+
+	}
+
+	public void onChange$stepsAppliedFor(Event event) {
+		logger.debug("Entering : " + event.toString());
+		String stepsAppliedFor = getComboboxValue(this.stepsAppliedFor);
+		visibilityFieldsForStepApplied(stepsAppliedFor, PennantConstants.List_Select, false);
+		logger.debug("Leaving : " + event.toString());
+	}
+
+	private void visibilityFieldsForStepApplied(String stepsAppliedFor, String calcOfStep, boolean alwManualStep) {
+
+		this.grcSteps.setValue(0);
+		visibilityFieldsForCalcOfSteps();
+		this.stepPolicy.setValue("", "");
+		if ((PennantConstants.STEPPING_APPLIED_GRC.equals(stepsAppliedFor))
+				|| PennantConstants.STEPPING_APPLIED_BOTH.equals(stepsAppliedFor)) {
+			this.calcOfSteps.setDisabled(true);
+			fillComboBox(this.calcOfSteps, PennantConstants.STEPPING_CALC_AMT,
+					PennantStaticListUtil.getCalcOfStepsList(), "");
+			this.alwManualSteps.setChecked(true);
+			this.alwManualSteps.setDisabled(true);
+			this.stepPolicy.setReadonly(true);
+			this.stepType.setDisabled(true);
+		} else {
+			this.calcOfSteps.setDisabled(false);
+			this.space_calcOfSteps.setSclass(PennantConstants.mandateSclass);
+			fillComboBox(this.calcOfSteps, calcOfStep, PennantStaticListUtil.getCalcOfStepsList(), "");
+			this.alwManualSteps.setChecked(alwManualStep);
+			this.alwManualSteps.setDisabled(false);
+		}
+		financeMain.setCalcOfSteps(this.calcOfSteps.getSelectedItem().getValue().toString());
 	}
 
 	/**
@@ -716,9 +922,13 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 						"");
 			}
 			if (StringUtils.equals(calOfSteps, PennantConstants.STEPPING_CALC_AMT)) {
-				fillComboBox(this.stepType, PennantConstants.List_Select, PennantStaticListUtil.getStepType(), "");
-				this.stepType.setDisabled(true);
+				if (getComboboxValue(this.calcOfSteps).equals(PennantConstants.STEPPING_CALC_AMT)) {
+					fillComboBox(this.stepType, PennantConstants.List_Select, PennantStaticListUtil.getStepType(), "");
+					this.stepType.setDisabled(true);
+				}
 			}
+			this.stepsAppliedFor.setDisabled(true);
+			this.calcOfSteps.setDisabled(false);
 		} else {
 
 			if (this.financeDetail.isNewRecord()) {
@@ -741,6 +951,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 			this.stepType.setReadonly(isReadOnly("FinanceMainDialog_stepType"));
 			this.space_stepType.setSclass("");
 			this.stepType.setDisabled(true);
+			this.stepsAppliedFor.setDisabled(true);
+			this.calcOfSteps.setDisabled(true);
 			if (isReadOnly("FinanceMainDialog_alwManualSteps")) {
 				this.alwManualSteps.setVisible(false);
 			}
@@ -793,8 +1005,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aFinanceMain
-	 *            financeMain
+	 * @param aFinanceMain financeMain
 	 * @throws ParseException
 	 * @throws InterruptedException
 	 * @throws InvocationTargetException
@@ -811,9 +1022,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		calOfSteps = financeMain.isStepFinance() ? financeMain.getCalcOfSteps() : financeType.getCalcOfSteps();
 		if (aFinanceMain.isStepFinance()) {
 			this.alwManualSteps.setChecked(aFinanceMain.isAlwManualSteps());
-			if (PennantConstants.STEPPING_CALC_PERC.equals(calOfSteps)) {
-				this.alwManualSteps.setChecked(false);
-			}
 		} else {
 			if (PennantConstants.STEPPING_CALC_AMT.equals(calOfSteps)) {
 				this.alwManualSteps.setChecked(true);
@@ -836,9 +1044,43 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.stepPolicy.setValue(aFinanceMain.getStepPolicy());
 		this.stepPolicy.setDescription(aFinanceMain.getLovDescStepPolicyName());
 		this.grcSteps.setValue(aFinanceMain.getNoOfGrcSteps());
+		doSetStepFieldsData(financeType, aFinanceMain);
 		doStoreDftValues();
 		if (!aFinanceMain.isStepFinance()) {
 			doStepPolicyCheck();
+		}
+	}
+
+	public void doSetStepFieldsData(FinanceType financeType, FinanceMain financeMain) {
+		boolean isNewFinance;
+		isNewFinance = this.financeDetail.isNewRecord();
+		String calcOfSteps = "";
+		calcOfSteps = isNewFinance ? financeType.getCalcOfSteps() : financeMain.getCalcOfSteps();
+		String stepsAppliedFor = "";
+		stepsAppliedFor = isNewFinance ? financeType.getStepsAppliedFor() : financeMain.getStepsAppliedFor();
+		boolean alwManualSteps = false;
+		alwManualSteps = isNewFinance ? financeType.isAlwManualSteps() : financeMain.isAlwManualSteps();
+		String stepsApplFor = "";
+		String calofSteps = "";
+		fillComboBox(this.calcOfSteps, calcOfSteps, PennantStaticListUtil.getCalcOfStepsList(), "");
+		fillComboBox(this.stepsAppliedFor, stepsAppliedFor, PennantStaticListUtil.getStepsAppliedFor(), "");
+		stepsApplFor = getComboboxValue(this.stepsAppliedFor);
+		calofSteps = getComboboxValue(this.calcOfSteps);
+		if (!stepsApplFor.equals(PennantConstants.STEPPING_APPLIED_EMI)) {
+			this.calcOfSteps.setDisabled(true);
+		}
+		if (calofSteps.equals(PennantConstants.STEPPING_CALC_AMT)) {
+			this.stepsAppliedFor.setDisabled(false);
+			this.calcOfSteps.setDisabled(true);
+		}
+		if (!isNewFinance) {
+			this.alwManualSteps.setChecked(financeMain.isAlwManualSteps());
+		}
+		if (!alwManualSteps) {
+			this.calcOfSteps.setDisabled(true);
+			this.stepsAppliedFor.setDisabled(true);
+			this.alwManualSteps.setDisabled(true);
+
 		}
 	}
 
@@ -1537,14 +1779,20 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		logger.debug(Literal.ENTERING);
 
 		int stepValue = this.noOfSteps.intValue();
+		String calcOfsteps = getComboboxValue(this.calcOfSteps);
 		if (stepValue == 0) {
 			throw new WrongValueException(this.noOfSteps, Labels.getLabel("FIELD_IS_MAND",
 					new String[] { Labels.getLabel("label_FinanceMainDialog_RepaySteps.value") }));
 		}
-		
+
 		if (stepValue < 0) {
 			throw new WrongValueException(this.noOfSteps, Labels.getLabel("NUMBER_NOT_NEGATIVE",
 					new String[] { Labels.getLabel("label_FinanceMainDialog_RepaySteps.value") }));
+		}
+
+		if (calcOfsteps.equals("#")) {
+			throw new WrongValueException(this.calcOfSteps, Labels.getLabel("FIELD_IS_MAND",
+					new String[] { Labels.getLabel("label_FinanceTypeDialog_CalcOfSteps.value") }));
 		}
 
 		FinanceStepPolicyDetail financeStepPolicyDetail = new FinanceStepPolicyDetail();
@@ -1589,6 +1837,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 			map.put("alwManualStep", this.alwManualSteps.isChecked());
 			map.put("ccyFormatter", this.ccyFormatter);
 			map.put("financeDetail", financeDetail);
+			map.put("enquiryModule", isEnquiry);
 			map.put("rpySteps", this.noOfSteps.intValue());
 			map.put("grcSteps", this.grcSteps.intValue());
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinStepPolicyDetailDialog.zul",
@@ -1605,6 +1854,9 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		try {
 			final Map<String, Object> map = new HashMap<>();
 			map.put("parentCtrl", this);
+			if (finHeaderList != null) {
+				map.put("finHeaderList", finHeaderList);
+			}
 			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/FinBasicDetails.zul", this.finBasicdetails,
 					map);
 		} catch (Exception e) {
@@ -1747,12 +1999,18 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.stepPolicyService = stepPolicyService;
 	}
 
-	public void setAlwGraceChanges(boolean isVisible) {
-		FinanceType type = getFinanceDetail().getFinScheduleData().getFinanceType();
-		if (!StringUtils.equals(type.getStepsAppliedFor(), PennantConstants.STEPPING_APPLIED_EMI)) {
-			this.btnNew_FinStepPolicyGrace.setVisible(isVisible);
-			this.grcSteps.setReadonly(!isVisible);
-			this.grcSteps.setValue(0);
+	public boolean setAlwGraceChanges(boolean isVisible, boolean fromBasicDetails) {
+		this.btnNew_FinStepPolicyGrace.setVisible(isVisible);
+		this.grcSteps.setReadonly(!isVisible);
+		this.grcSteps.setValue(0);
+		if (fromBasicDetails) {
+			if (isVisible) {
+				alwGrace = isVisible;
+			} else {
+				alwGrace = false;
+			}
 		}
+
+		return alwGrace;
 	}
 }

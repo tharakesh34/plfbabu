@@ -25,4 +25,57 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="2" author="vijaya.a">
+		<sql>
+			<![CDATA[
+				ALTER TABLE AdtRMTAccountTypes ALTER COLUMN actypeISActive DROP DEFAULT;   
+				Alter table AdtRMTAccountTypes  alter column  actypeISActive  type smallint USING actypeisactive::smallint;
+				ALTER TABLE AdtRMTAccountTypes ALTER COLUMN actypeISActive SET DEFAULT 1;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#286.1" author="saisandeep.b">
+		<createTable tableName="AdtLinkedFinances">
+			<column name="AuditId" type="bigint">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="AuditDate" type="datetime">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="AuditSeq" type="int">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="AuditImage" type="varchar(2)">
+			<constraints primaryKey="true"/>
+			</column>
+			<column name="LinkedFinancesSeq" type="bigint" />
+			<column name="FinReference" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="LinkedReference" type="varchar(20)">
+			<constraints nullable="false"/>
+			</column>
+			<column name="Status" type="Varchar(8)"/>
+			<column name="Version" type="number(10,0)" defaultValue="0" >
+			<constraints nullable="false"/>
+			</column>
+			<column name="Lastmntby" type="number(19,0)" defaultValue="0" />
+			<column name="Lastmnton" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="ROLECODE" type="varchar(100)" />
+			<column name="NEXTROLECODE" type="varchar(200)"/>
+			<column name="TASKID" type="varchar(50)"/>
+			<column name="NEXTTASKID" type="varchar(200)"/>
+			<column name="RECORDTYPE" type="varchar(50)"/>
+			<column name="WORKFLOWID" type="number(19,0)" defaultValue="0" />
+		</createTable>
+	</changeSet> 
+	 
+	<changeSet id="DE#309.1" author="sampath.d">
+		<addColumn tableName="ADTFINANCEMAIN">
+			<column name="MIGRDATE" type="datetime" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

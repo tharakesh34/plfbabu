@@ -52,6 +52,9 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
+import org.zkoss.zul.Tab;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -61,6 +64,8 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -68,11 +73,13 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -83,6 +90,7 @@ import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 /**
@@ -127,6 +135,11 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 	protected Listbox listFeeWaiverEnqDetails;
 	private Map<String, BigDecimal> taxPercentages;
+	protected Tabs feeWaiverTabs;
+	protected Tab feeWaiverTab;
+	protected Tabpanels feeWaiverTabPanels;
+
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
 
 	/**
 	 * listheader_Select default constructor.<br>
@@ -266,7 +279,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onClick$btnSave(Event event) {
+	public void onClick$btnSave(Event event) throws Exception {
 		doSave();
 	}
 
@@ -304,6 +317,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
+		if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
 	}
 
 	/**
@@ -349,7 +365,110 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		}
 		this.recordStatus.setValue(aFeeWaiverHeader.getRecordStatus());
 
+		appendExtendedFieldDetails(financeDetail, moduleDefiner);
+
 		logger.debug("Leaving");
+	}
+
+	private void appendExtendedFieldDetails(FinanceDetail aFinanceDetail, String finEvent) {
+		logger.debug(Literal.ENTERING);
+		ExtendedFieldRender extendedFieldRender = null;
+
+		try {
+			FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+
+			if (aFinanceMain == null || feeWaiverHeader == null) {
+				return;
+			}
+
+			if (finEvent.isEmpty()) {
+				finEvent = FinServiceEvent.ORG;
+			}
+
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl.getExtendedFieldHeader(
+					ExtendedFieldConstants.MODULE_LOAN, aFinanceMain.getFinCategory(), finEvent);
+			if (extendedFieldHeader == null) {
+				return;
+			}
+
+			extendedFieldCtrl.setAppendActivityLog(true);
+			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
+			extendedFieldCtrl
+					.setDataLoadReq((PennantConstants.RCD_STATUS_APPROVED.equals(feeWaiverHeader.getRecordStatus())
+							|| feeWaiverHeader.getRecordStatus() == null) ? true : false);
+
+			long instructionUID = Long.MIN_VALUE;
+
+			if (CollectionUtils.isNotEmpty(feeWaiverHeader.getFinServiceInstructions())) {
+				if (feeWaiverHeader.getFinServiceInstruction().getInstructionUID() != Long.MIN_VALUE) {
+					instructionUID = feeWaiverHeader.getFinServiceInstruction().getInstructionUID();
+				}
+			}
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(aFinanceMain.getFinReference(),
+					instructionUID);
+			extendedFieldCtrl.createTab(feeWaiverTabs, feeWaiverTabPanels);
+			feeWaiverHeader.setExtendedFieldHeader(extendedFieldHeader);
+			feeWaiverHeader.setExtendedFieldRender(extendedFieldRender);
+
+			if (feeWaiverHeader.getBefImage() != null) {
+				feeWaiverHeader.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				feeWaiverHeader.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(aFinanceMain.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(false);
+			extendedFieldCtrl.setWindow(window_feeWaiverHeaderDialog);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
+			extendedFieldCtrl.render();
+
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private ArrayList<Object> getFinBasicDetails() {
+		logger.debug(Literal.ENTERING);
+		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+
+		ArrayList<Object> arrayList = new ArrayList<>();
+		arrayList.add(0, financeMain.getFinType());
+		arrayList.add(1, financeMain.getFinCcy());
+		if (StringUtils.isNotEmpty(financeMain.getScheduleMethod())) {
+			arrayList.add(2, financeMain.getScheduleMethod());
+		} else {
+			arrayList.add(2, "");
+		}
+		arrayList.add(3, financeMain.getFinReference());
+		arrayList.add(4, financeMain.getProfitDaysBasis());
+		arrayList.add(5, financeMain.getGrcPeriodEndDate());
+		arrayList.add(6, financeMain.isAllowGrcPeriod());
+		if (StringUtils.isNotEmpty(financeMain.getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, financeMain.getFinCategory());
+		String custShrtName = "";
+		if (financeDetail.getCustomerDetails() != null && financeDetail.getCustomerDetails().getCustomer() != null) {
+			custShrtName = financeDetail.getCustomerDetails().getCustomer().getCustShrtName();
+		}
+		arrayList.add(9, custShrtName);
+		arrayList.add(10, financeDetail.getFinScheduleData().getFinanceMain().isNewRecord());
+		arrayList.add(11, moduleDefiner);
+
+		logger.debug(Literal.LEAVING);
+		return arrayList;
 	}
 
 	/**
@@ -566,7 +685,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * Saves the components to table. <br>
 	 * 
 	 */
-	public void doSave() {
+	public void doSave() throws Exception {
 		logger.debug("Entering");
 
 		FeeWaiverHeader aFeeWaiverHeader = new FeeWaiverHeader();
@@ -599,6 +718,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			}
 		}
 
+		if (aFeeWaiverHeader.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
+			aFeeWaiverHeader.setExtendedFieldRender(extendedFieldCtrl.save(true));
+		}
+
 		// save it to database
 		try {
 			if (doProcess(aFeeWaiverHeader, tranType)) {
@@ -614,6 +737,10 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 							+ " Approved Succesfully.";
 				}
 				Clients.showNotification(msg, "info", null, null, -1);
+
+				if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
+				}
 
 				closeDialog();
 			}
@@ -727,6 +854,28 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 		AuditHeader aAuditHeader = auditHeader;
 		FeeWaiverHeader aFeeWaiverHeader = (FeeWaiverHeader) aAuditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
+
+		if (aFeeWaiverHeader.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = aFeeWaiverHeader.getExtendedFieldRender();
+			details.setReference(aFeeWaiverHeader.getFinReference());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(aFeeWaiverHeader.getRecordStatus());
+			details.setRecordType(aFeeWaiverHeader.getRecordType());
+			details.setVersion(aFeeWaiverHeader.getVersion());
+			details.setWorkflowId(aFeeWaiverHeader.getWorkflowId());
+			details.setTaskId(aFeeWaiverHeader.getTaskId());
+			details.setNextTaskId(aFeeWaiverHeader.getNextTaskId());
+			details.setRoleCode(aFeeWaiverHeader.getRoleCode());
+			details.setNextRoleCode(aFeeWaiverHeader.getNextRoleCode());
+			details.setNewRecord(aFeeWaiverHeader.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(aFeeWaiverHeader.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(aFeeWaiverHeader.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {

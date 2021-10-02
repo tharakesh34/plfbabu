@@ -1,5 +1,155 @@
+PLF-Release-5.15.0-AXIS_R12.1 2021-08-10
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#60: Getting 900 blocker in upfront fee screen while clearing the Loan Reference component, if upfront fees extended fields not configured against the loan product.
+
+PLF-Release-5.15.0-AXIS_R12.0 2021-08-10
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#38: LEI number capturing through Disbursement and Payment instructions screen, same will be available disbursement download file.
+
+PLF-Release-5.15.0-AXIS_R11.0 2021-08-09
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#54: In our application,  we are unable to create/plot the  schedule with different frequencies of different dates, now we do the changes to create/plot the schedule with different frequencies of different dates.
+
+PLF-Release-5.15.0-AXIS_R10.5 2021-08-06
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#53 - Internal Issues moved from core to AXIS version -5.15.0.
+
+PLF-Release-5.15.0-AXIS_R10.4 2021-08-05
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#51: Getting 900 error while creating OD loan.
+2. DE#62: Getting 900 blocker while opening record in the Loan Purpose Screen.
+
+PLF-Release-5.15.0-AXIS_R10.3 2021-08-02
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#50: Added "SECUSEROPERATIONS" and  "SEQWORKFLOWDETAILS" in to sequence reseed change log file. And modified the Ã¢â‚¬Å“change-log-security-seq-reseed.xmlÃ¢â‚¬ï¿½ file execution order in Ã¢â‚¬Å“change-log-master.xml" file to avoid the sequence issues.
+
+PLF-Release-5.15.0-AXIS_R10.2 2021-07-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#49 - Maker cannot be checker functionality not working in district master.
+
+PLF-Release-5.15.0-AXIS_R10.1 2021-07-28
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#49 - Maker cannot be checker functionality not working in district master.
+
+PLF-Release-5.15.0-AXIS_R10.0 2021-07-27
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#24: Escrow Presentation data capturing and Report generation.
+
+PLF-Release-5.15.0-AXIS_R9.0 2021-07-22
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#40: In Loan Queue  Ã¢â‚¬Å“Interest Days BasisÃ¢â‚¬ï¿½ component is disabled, now we enabled the Ã¢â‚¬Å“Interest Days BasisÃ¢â‚¬ï¿½, for selection while booking the loan.
+
+2. ST#41: Corporate and Retail CIBIL configuration created for CIBIL files generations.
+
+PLF-Release-5.15.0-AXIS_R8.0 2021-07-19
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#37: Enabling maker cannot be a checker functionality, Ã¢â‚¬Å“CHECK_USER_ACCESS_AUTHORITYÃ¢â‚¬ï¿½ is the system parameter for the same.
+
+PLF-Release-5.15.0-AXIS_R7.1 2021-07-16
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#34 - Disbursements requests and response files generations based on disbursement types(IMPS, NEFT, RTGS,CHEQUE,DD,IFT) using data engine configurations.  
+2. ST#20 - Mandates and Presentments request and response files generation based on Payment-Mode with Partner-Banks data engine configurations.
+
+PLF-Release-5.15.0-AXIS_R7.0 2021-07-14
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#34 : Disbursements requests and response creation based Disbursement type(IMPS, NEFT, RTGS,CHEQUE,DD,IFT) data engine configurations.
+
+PLF-Release-5.15.0-AXIS_R6.1 2021-07-13
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#32: Few mandates and  presentments, request and response files are not generated due data engine parsers.
+
+PLF-Release-5.15.0-AXIS_R6.0 2021-07-12
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#20: Mandates and Presentments request and response files generation based on PaymentMode with PartnerBanks configurations.
+
+PLF-Release-5.15.0-AXIS_R5.0 2021-07-08
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#29: Enable the AMZ Reversals(Interest income reversal) functionality.
+
+2. ST#31: Core Functionality  disabled in code level. Do some changes to enable this functionality  in code level using implementation constant. Need to merge same to core.
+
+PLF-Release-5.15.0-AXIS_R4.2 2021-07-05
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. Internal Issues moved from core(PLF-Release-5.15.0) to Axis
+
+PLF-Release-5.15.0-AXIS_R4.1 2021-07-01
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#27 - While opening the record in city master getting 900 blocker.
+
+PLF-Release-5.15.0-AXIS_R4.0 2021-07-01
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#28: Manual Due creation is at the time receipt creation or due creation functionality enabled.
+Bug Fixes
+---------
+2. DE#27 - While opening the record in city master getting 900 blocker.
+
+PLF-Release-5.15.0-AXIS_R3.0 2021-06-24
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1. ST#13: Extended fields for LMS events and Extended fields maintenance module merging from other source to axis finance source.
+
+PLF-Release-5.15.0-AXIS_R2.2 2021-06-23
+----------------------------------------------------------------------------------------------------------------------
+Bug Fixes
+---------
+1. DE#15: Getting 900 blocker while opening Asset Classification Details, Manual Provisioning Details menus.
+2. DE#16: Getting 900 blocker while saving Asset Classification Details, NPA Provision Details.
+
+PLF-Release-5.15.0-AXIS_R2.1 2021-06-22
+---------------------------------------------------------------------------------------------------------------------
+1. Change-logs Moved from core to axis/trunk 
+
+PLF-Release-5.15.0-AXIS_R2.0 2021-06-22
+----------------------------------------------------------------------------------------------------------------------
+Enhancements
+------------
+1.ST#9 : District master module added.
+
+PLF-Release-5.15.0-AXIS_R1.0 2021-06-17
+----------------------------------------------------------------------------------------------------------------------
+1.AXIS Finance QC environment Initial setup
+
 PLF-Release-5.15.0 2021-06-14
---------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
 Enhancements: 
 ------------
 1. ST#2511 - New screen for fore-closure simulation report for mature loans.
@@ -574,426 +724,10 @@ Bugs:
 -----------------------------------------------------------------------------------------------------------------------
 ----------------------------------------Core is upgraded to 5.3.0------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------
-PLF-Release-5.1.14 2020-04-21
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#408: Add Rate Change: When we does the back dated rate change - previous instalments are also getting updated. If  "rate review applied for" value is  "ALL  FUTURE PERIODS"  in loan type.
-2. DE#407:Repayment schedule notification alert, change the attachment to jasper report (PDF) as for schedule report.(Kotak).
-
-
-PLF-Release-5.1.13 2020-04-20
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. 153066: CET : DSCR : Updated formula for Gross Receipts/Turnover in Basic GST turnover.
-2. 153065: CET : DSCR : Extended field for NCM Deviation is not present.
-3. 153040: CET : Banking Tab : Incorrect Cell format for below banking fields.
-4. 153059: Auto Deviations configured at product level are not raising.
-5. 153088: IC4:Agreement: OD Amount is displaying as Date.
-6. DE#404 Closing the Loan through excess amount and using Closure screens, even Excess amount is less than due amount for settlement application is allowing.
-
-PLF-Release-5.1.12 2020-04-18
------------------------------------------------------------------------------------------------------------------------
-Enhancements:
-----------------------------------------------
-1. Commented  the Benchmark rate change in Add rate change.( 3M Benchmark to 6M Benchmark change).
-2. EOD Failed: Changes related to process presentments.
-
-PLF-Release-5.1.11 2020-04-18
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#400 : Removed the system parameter DISPLAY_COMPOUND_SCHD_REQ, and use the system parameter CPZ_POS_INTACT 
-   for the same. Both are representing same functionality.
-
-
-PLF-Release-5.1.10 2020-04-18
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	TK#745 Malicious File Upload.
-
-PLF-Release-5.1.9 2020-04-17
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	PSD #152968 - CET : Customer Details Tab : Industry Margin should be in % format.(CLIX)
-2.	PSD #153044 - CET : Banking tab : Getting 900 error while changing the banking input values in PLF.(CLIX)
-3.	DE # 393: Disable the Total Gross Interest amount in schedule for Kotak, because in total 
-    gross profit we are adding schedule profit + capitalized amount. For Kotak it's not required.(KOTAK)
-
-PLF-Release-5.1.8 2020-04-16
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. PSD #151821 - CET : Customer Details Tab : DOI or DOB is hard coded for blank rows.(CLIX)
-
-PLF-Release-5.1.7 2020-04-16
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. Manual Payment API issue Fixes.(MMFL)
-
-PLF-Release-5.1.6 2020-04-15
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	KOTAK :  Payoff Deals report filter fields scripts.(KOTAK)
-2.	DE#374 :User Creation : After approving the user, work-flow before and after image values not coming properly in audit table.(KOTAK)
-3.	DE#375:In payoff Deals report payoff date filter is not working.(KOTAK).
-4.	DE#370 Validation for Part Payment/ Early settlement on the date of EMI Holiday.
-5.	PSD #149478: waiver amount mismatch.
-
-PLF-Release-5.1.5 2020-04-15
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	DE#368 Installment due date posting are not happening during the EOD for Capitalization cases.
-2.	DE#366: After moratorium applied schedule are not shown as installment dues in SOA.
-3.	PSD #152650 Not able to mark query resolved from SME portal(CLIX).
-4.  QC Observations(PSD# 152641):- In Advise Upload Approver unable to download the file.(CLIX)
-5.  PSD# 151899 Loan enquiry  Provision details  Clicking on any loan it is showing  (Unable to process request).(MMFL)
-
-PLF-Release-5.1.4 2020-04-14
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#361: ZK script error in LMS screens, Had a discussion with ZK team, this is an issue in ZK , as of now they gave partial fix, coming 9.x version  they provide the fix.
-2. DE#362:Empty amount installment rows  in schedules details screen:  Added the condition if paid amount greater than zero in financerepayments then only rendering the schedule.
-
-
-PLF-Release-5.1.3 2020-04-13
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.  EP#83 Vulnerability Assessment
-	1. Cross-site Scripting (Stored)
-	2. HTML Injection
-	3. Cross Origin Resource Sharing
-	4. Concurrent Session
-	5. Malicious File Upload
-2.  EP#83 Vulnerability Assessment
-	1. Cross-site Scripting (Stored)
-	2. HTML Injection
-	3. Cross Origin Resource Sharing
-3.	Miscellaneous posting Upload issue.
-
-PLF-Release-5.1.2 2020-04-11
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	DE#347 : Fee Waiver : Penalty amount adjusting correctly with GST, there is an issue with without GST both inclusive and exclusive.(KOTAK)
-2.	DE#348 :  Loan Cancellation :While canceling the loan we are not checking disbursement status. Now we added the validation if any disbursement status is AC(Awaiting confirmation) or PAID against the loan,  We are not allowing to cancel the loan.(KOTAK) 
-3.	PSD# 152641:- Manual Advise Upload : Inactive or closed loans are not processing through Upload functionality.(CLIX).
-4.  PSD# 152304:- HFS:In SOA POS charges Payable entries are displaying wrong,while doing partial payment in knockoff maker.(CLIX).
-5.	wrong date validation remains same, even after entering correct date in  presentment extract details screen.(CORE)
-6.	DE#341 - Miscellaneous Posting – We upload the case in QC at maker stage but on checker stage unable to approve.(CORE)
-7.	ST#303 System considering the Principal outstanding for canceled loans also in limit utilization screen.(CORE)
-8.	Issue in receipt creation in EOD for Presentment & EMI In advance cases.(CORE)
-
-PLF-Release-5.1.1 2020-04-09
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#322 Removed validation "Paid amount should be less than or equal to receipt amount" in fore-closure inquiry screen.
-2. PSD 151813 Extended Fields are not getting saved/updated when Customer(Co-Applicant) is edited from Loan Origination.
-3. PSD 152157-While Perform Early settlement online payment through the Receipt upload getting failed.(AXILO)
-4. PSD 152607-After receipt upload Cheque of the Partial settlement and Earl settlement loans are populated in the Realization Bounce Maker screen records are not saved.(AXILO)
-5. 152489 -We have uploaded receipt file and receipt mode is early settlement with Cheque. File Status is failed and reason is RU0007 - Value date should be less than or equal to application Date : 06-May-2023.(GS)
-6. 152115-PL:Receipt Upload: When user make a Early Settlement payment through Cheque, two records are displaying in Realization Approver.(CLIX)
-7. NPA report issue Fixes.(MMFL)
-8. DE#331 onclick of validate button knock off maker screen getting blocker.
-
-PLF-Release-5.1.0 2020-04-07
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#316 Fields under GST details tab in loan origination screen getting editable in approve queue.
-2. DE#315 Sending email's while failing the Interface , did the changes in that email template 
-3. DE#304 In fore-closure inquiry screen feature date  amount is not calculated and fore-closure charges after change the percentage amount is getting wrong
-4. PSD 152641 Manual Advise Upload inactive or closed loans are not processing through upload functionality
-5. PSD 152304 In SOA POS charges Payable entries are displaying wrong,while doing partial payment through knock-off maker.
-6. PSD 152260 Overdue Balance as on the date of Cash-back & Cash-back adjusted against the Overdue balance is not reflected in SOA.
-9. DE#313 Handling Double Disbursement issue.
-
-Enhancements:
-----------------------------------------------
-1. ST#254 Disbursement download Automation.
-2. ST#311 Disbursement Uploads Automation.
-3. ST#312 Mandate Downloads Automation.
-4. ST#313 Mandate Uploads Automation
-
-PLF-Release-5.0.67 2020-04-06
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#309: GST reversal entry’s while doing the Loan cancellation.(KOTAK)
-2. DE#304 : In foreclosure inquiry screen feature date  amount is not calculated and foreclosure charges after change the percentage amount is getting wrong.(KOTAK)
-3. updateCollateral API - SPL LTV is reset to zero automatically along with review frequency.(GS)
-4. 900 error in upfront fee receipt enquiry screen.(GS)
-5. ST#303 System considering the Principal outstanding for canceled loans also in limit utilization screen. 
-
-PLF-Release-5.0.66 2020-04-05
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	PSD #150412 Loan Cancellation date is showing wrong
-2.	PSD #150797 Tax percentage is null while creating loan.
-3.	PSD #149623 Loan status has not changed LAMLTVR0001344
-4.	PFT DAYS adjustment during the re-schedule from Grace to Next EMI
-5.	PSD #149902-receipt status is not properly marked in Presentment Details table for cancelled receipts.
-6.	PSD #142218:Knock Off cancel Approved Screen 
-7.	PSD #149478:Waiver amount mismatch
-8.	PSD #149621 Case missing in Closure report
-9.	PSD #148125 Fees tab is blank
-10.	PSD #146366 Issue While Loan Creation in LMS
-11.	PSD #145865 Grace Terms Need To Increase
-12.	Closing status updating in FinPftDetails while cancel the loan.
-13.	PSD #148005 NOC document is not downloading
-14.	New menu for "Regenerated Agreement" to regenerate approved loan agreements.
-15.	PSD #147457 Need to remove DELETE option in Document stage tab.
-16.	PSD #148053 Removed manual Advice charges from cheque bounce charges and displaying separately.
-17.	Displaying manual advice payable amount has advance available in fore closure enquiry print screen.
-18.	PSD #147448 Loan Amount is inappropriate in SOA
-19.	Pagination and manual include excluding & vice versa changes file import in presentment batch creation.
-20.	Presentment Upload Facility for Manually Include and Exclude.
-21.	PSD #145642 Required Delete option in VAS.
-	a.	Mandate screen to enable the status flag
-	b.	Fore Closure Accrual postings changes before due date 
-22.	Presentment upload Realization  date update
-23.	Fore Closure cases where the validation for presentments in progress and receipts in process
-24.	During the Change Gestation period schedule going for toss
-25.	Profit Accrued not getting posted during the early settlement before the due date
-26.	PSD #145642 Required Delete option in VAS.
-27.	PSD # 140003 require java beans for Interest and principal OD for foreclosure enquiry.
-28.	PSD #143703 900 error in NOC Issuance
-29.	PSD #142882 Issue in users after branch creation.
-30.	PSD #145029(0.01 issue) Receipts has been failed on 30112019 Receipt Pull
-31.	PSD #143888 Unable to print in Fore Closure Enquiry Screen
-
-
-PLF-Release-5.0.65 2020-04-04
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	KMILLMS-854: Loan basic details-loan O/S amount is not getting 0.
-
-Enhancements:
-----------------------------------------------
-1.	DE#231: Loan origination Z-script changes.
-2.	Changes is revert in cancel loans.
-
-
-PLF-Release-5.0.64 2020-04-03
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	After Saving the Co-Owner details with out check the Existing bank customer, Co-owner details are missing while editing the record in Collateral.(GS)
-
-Enhancements:
-----------------------------------------------
-1.	DE#230: Disbursement advice email template changes.(KOTAK)
-
-PLF-Release-5.0.63 2020-04-02
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-
-  1. DE#215: In Fee Waiver Option LPP and interest waiver movements and accounting preparation issue.(KOTAK)
-  2. DE#215: LPP : Penalty updating in Fifoddetails table and movements preparation.(KOTAK)
-     Interest waiver : Accounting preparation.
-  3. API issue i.e in feePayment service getting response "Unable to process request".(GS)
-  
-Enhancements:
-----------------------------------------------
-1.	Cash Back CR:  Receipt Knock off changes
-
-PLF-Release-5.0.62 2020-04-01
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. DE#201:  Removed the validation when we are trying to move this receipt amount to 'EMI in Advance' from 'Excess amount', application is showing "No dues to knock off.".
-
-PLF-Release-5.0.61 2020-03-31
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. Accrual postings and its reversal after Loan maturity.
-
-PLF-Release-5.0.60 2020-03-30
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. Cash back issue fixes.(MMFL)
-   a. In settlement upload disbusment posting entries not coming. Due to custid detais empty while getting finance details 
-      by hostreference. we added the custid.(MMFL)
-   b. OEM subvention upload  process remove the due account required.
-2. PSD# 145212-Issue:Value Date should not be greater than the application date and greater than finance start date.
-3. API issue i.e in feePayment service bankCode not validating.(GS)
-4. While clicking record in Eligibility rule getting 900 blocker.(GS)
-
-PLF-Release-5.0.59 2020-03-29
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. In Disbursement instructions DBD amount is not deducting only for Subvention retained schemes. 
-2. In settlement download file transaction amount is showing with DBD amount(It should show after debited the DBD amount).
-3. In Disbursement download loans are not filtering after payment instructions are created loan through Job only.
-4. Multiple files are downloading in settlement download screen if we give different MID and TID values in upload file.
-5. OEM  Subvention Upload posting issue fixes.
-6. Payment instruction enquiry issue fixes.
-7. Scheme level issue fixes.
-8. GST TaxExempted Flag checked existing data not cleared issue fixed(Auxilo).
-
-Enhancements:
-----------------------------------------------
-1. Non Select all branch changes(Auxilo).
-
-
-PLF-Release-5.0.58 2020-03-28
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. Add rate change not picking up new rate in fixed rate.
-2. Added Fee type based accounting in fee waiver accounting  
-3. Issue in net due amount displayed in Waiver screen and Waiver Enquiry screen (after part amount received and waived)
-4. Removed Validation - Knock off amount cannot be more than due amount.
-5. Added Validation on Next Payment date in Reschedule screen – Next Payment date should be more than current sys date. 
-6. After save the record in the Knock off cancel maker screen records are disappear(Auxilo)
-7. After Submit the record in Knock off cancel maker screen with  Cancel Remark .In the Knock off cancel Approver screen remarks are not populated(Auxilo)
-8. while uploading the presentmentfile sms due alert not triggered because customer mobile details having but customer email details not there.(MMFL)
-
-Enhancements:
-----------------------------------------------
-1.	cancel remarks column added in FinreceiptHeader.
-
-PLF-Release-5.0.57 2020-03-27
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. Cash back issue fixes.(MMFL)
-  a. Unable to filter the loans (for which dues are created through OEM upload) in Disbursement download screen.
-  b. While doing Settlement file upload for the scheme(only for Subvention retained), showing wrong validation.
-  c. In settlement downloaded file, for all 4 schemes transaction amount is showing different for old scheme and new scheme because of without deducting DBD(as sasritha mentioned in below trail mail)
-  d. Create Loan Approval time DBD accounting Entry.
-2.  In Upfront Fee Receipt enquiry screen, for Receipt ID field search operators are missing.(GS)
-3.  While creating the int box Extended field with non-mandatory, and saving the data with 0 then asking min and max value validation(GS).
-4.  While submitting the lan in from closure maker getting validation 'invalid receipt mode '#''(core)
-5.  document button enable if the document tab is not visible in Loan Queue(Core).
-
-PLF-Release-5.0.56.3 2020-03-27
------------------------------------------------------------------------------------------------------------------------
-Enhancements:
-----------------------------------------------
-1.	Update the system parameter name USER_NOTIFICATION_PUBLISH.(CORE)
-2.	Interface failure mails format changes.(Kotak).
-
-PLF-Release-5.0.56 2020-03-26
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1.	EOD and Cache issue fixes
-2.	In SOA Report Promtionsequenceid empty getting 900 error.(MMFL)
-3.	SOA Report getting 900 error due  due to duplicate promotions codes some loan references. (MMFL)
-4.	In Finance details  list  screen getting 900 error due to duplicate promotions codes.(MMFL)
-5.	Issue Fixed-Error: 900 after clicking on “Activity Log” in Waiver screen.
-6. In Upfront Fee Receipt enquiry screen, for Receipt ID field search operators are missing.(GS)
-7. In QDE loan queue screen, for Passport field search operator are missing.(GS)
-8. In Upfront Fee Receipt screen, for Receipt ID field search operators are missing.(GS)
-9. After mandate download,records are not moved to mandate file control menu and records are still exist in mandate download screen.(GS)
-
-Enhancements:
-----------------------------------------------
-1.	Cash Back Changes.(MMFL).
-2.	Extended fields have to be made non-mandatory for Retail Customer. (1.NETWORTH,2.TURNOVER,3.CRIFSCORE,4.CRIFVINTAGE)(GS)
-3.	updating the System parameter code HOLD_DISB_INST_POST to Y.(GS)
-
-PLF-Release-5.0.55 2020-03-25
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. 900- error while approving the Write-off loan .
-2. Create Loan Schedule Issue Fixes as reported.(mmfl)
-
-Enhancements:
-----------------------------------------------
-1. Cash Back CR:(MMFL)
-   a. Scheme module level changes.
-   b. Loan Approval - Due creation.
-   c. OEM upload Screen.
-   d. Auto Payment Instruction Creation.
-   e. Reports : Data Saving on Loan approval process for Reports.
-   f. Auto creation of Refunds Job.
-   g. Disbursement Download - Bank level formats.
-
-PLF-Release-5.0.54 2020-03-23
------------------------------------------------------------------------------------------------------------------------
-Bugs:
-----------------------------------------------
-1. In Upfront Fee Receipt enquiry screen, for Receipt ID field search operators are missing.(core)
-2. In QDE loan queue screen, for Passport field search operator are missing.(core)
-3. In Upfront Fee Receipt screen, for Receipt ID field search operators are missing.(core)
-
-Enhancements:
-----------------------------------------------
-1.	Added the Cash Back job parameters.(MMFL)
-2.	add commients for drawing power check.(KOTAK)
-3.	Comments related TDS calculations.KOTAK)
-
-
-PLF-Release-5.0.53 2020-03-21
------------------------------------------------------------------------------------------------------------------------
-Enhancements:
-----------------------------------------------
-1. KOTAK :  Remove the un used accountings in loan type accounting tab.
-2. Error handling for GST Invoice Generation.
-3. For temporary purpose we enabiling the fee codes logger.
-4. ST#212 - Row Mapper Changes.
-5. 1.New SMT Parameter  DISB_POSTNGS_REVERSAL_REQ_IN_LOAN_CANCEL for Disbursement postngs reversal required in loan cancel.
-    2.KOTAK: Notification corrections.
-6. pennApps Core version upgraded
-
-
-PLF-Release-5.0.52 2020-03-20
------------------------------------------------------------------------------------------------------------------------
-
-Bugs:
-----------------------------------------------
-1.	In FI Initiation screen while click on initiate getting 900 blocker(core)
-2.	While click on QDE loan queue and it is displaying 900 blocker.(core)
-3.	Issue resolved in TaskOwnerDAOImpl (getUserRoleCodeByRefernce).
-
-
-PLF-Release-5.0.51 2020-03-19
------------------------------------------------------------------------------------------------------------------------
-
-Bugs:
-----------------------------------------------
-1. Cash back From Dealer' and 'Cash back To Customer' fields are not required at scheme level
-2. DBD Percentage Calculation On' field should be enabled only after inputting 'DBD%' field.
-3. Knock off Over Due Amount with cash back amount' field should be enabled by default for existing schemes and new schemes but
-   currently this is working for newly created schemes only.
-4. When we are creating fee type in the scheme it is displaying properly upto submitting the scheme but once the scheme is approved it is not displaying.
-5. While trying to edit any record on Deposit Maker screen getting 900 blocker.
-6. PSD# 151695:-IN Enquiry-> IN WIFI Loan details screen When click on New Button then fill the mandatory values click on PROCEED Button Getting 900 Error.
-7. EOD ISSUE FIXED.
-
-Enhancements:
-----------------------------------------------
-1. MMFL Cashback DBD CR OEMSubvention upload changes. 
-
-PLF-Release-5.0.50 2020-03-18
------------------------------------------------------------------------------------------------------------------------
-
-Enhancements:
-----------------------------------------------
-1. File based DMS support.
-
 PLF-Release-5.0.49 2020-03-18
 -----------------------------------------------------------------------------------------------------------------------
 
-Bugs:
+Enhancements:
 ----------------------------------------------
 1. Disbursement  instruction  Partner Banks are not coming issue is fixed.
 
@@ -1546,7 +1280,7 @@ Bugs:
 1.	While creating new mandate, Post selection of Branch code we select Account number after that the selected branch code disappears and we need to reselect it.(MMFL)
 2.	In branch code field, if we search using initial 3 or 4 letters of IFSC code we are not able to retrieve any data related to it. (It requires exact IFSC code which is difficult and time consuming.)
 3.	While we log in to the SME customer, we are not able to view any data in the Restricted Profile lookup(Extended Fields)(GS).
-4.	In collaterals, while the co-owners are added, co-owner’s CIF ID and Name are not displayed in the list view issue resolved.(GS).
+4.	In collaterals, while the co-owners are added, co-ownerâ€™s CIF ID and Name are not displayed in the list view issue resolved.(GS).
 
 Enhancements:
 -----------------------------
@@ -1998,7 +1732,7 @@ Bugs:
 
 Enhancements:
 -----------------------------
-1. while autodownloading welcome letter name format was changed. 
+1. while autodownloading welcome letter name format was changed.Â 
 2. Amount format in Insurance premium (IIFL).
 
 PLF-Release-5.0.10.37 2020-01-23
@@ -2007,7 +1741,7 @@ PLF-Release-5.0.10.37 2020-01-23
 Bugs:
 ------------------------
 1. Interface exception error.
-2. Bug: System is considering total limit exposure at “gross/total loan disbursed” amount , irrespective of few tranches / loans repaid by the customer and is not able to distinguish between Revolving and Non-Revolving flags.
+2. Bug: System is considering total limit exposure at â€œgross/total loan disbursedâ€� amount , irrespective of few tranches / loans repaid by the customer and is not able to distinguish between Revolving and Non-Revolving flags.
 3. wrong mapping issue addressed.
 4. PSD #147579 - Issue in SOA & ForeClosure Report.
 5. PSD# 146208-Receipt upload is getting Success for Early Settlement though the Receipt amount is less than Receipt Dues.
@@ -2406,7 +2140,7 @@ Bugs:
 14. Bug Fix: Type conversion issue in postgress database for Long fields(ExtendedComboBox).
 15. Bug Fix: On presentment realization date is not getting update.
 16. Bug Fix: Accrual posting not happening during early settlement before due date.
-17. Bug Fix: Unable to do early settlement if there is any receipt created with advance EMI(since receipt status for EMI is ‘I’)
+17. Bug Fix: Unable to do early settlement if there is any receipt created with advance EMI(since receipt status for EMI is â€˜Iâ€™)
 18. Bug Fix: During grace period if any disbursement is happened schedule is missing.
 19. In SOA Report  Transaction Details entries list not showing down payment details (MMFL)
 20. OGL Reversal Entries Changes added (MMFL)
@@ -2651,9 +2385,9 @@ Bugs:
 9.	While crating loan getting 900 blocker due to invalid extended fields configuration (show proper error message) (GS)
 10.	While moving the loan to next stage along with RCU initiate not working. (GS)
 11.	EOD getting failed in all SS environments.
-12.	LPP Rate% is automatically getting converted to ‘0’ or ‘Blank’ in Loan Basic details after the Loan Payment Method is changed from Manual to NACH (raised in MMFL)
+12.	LPP Rate% is automatically getting converted to â€˜0â€™ or â€˜Blankâ€™ in Loan Basic details after the Loan Payment Method is changed from Manual to NACH (raised in MMFL)
 13.	In Mandate, NACH as payment mode is not allowed.
-14.	PSD# 144209 – in Recording screen showing customer details only in Co-applicant & Guarantors tab in Loan Queue(GS)
+14.	PSD# 144209 â€“ in Recording screen showing customer details only in Co-applicant & Guarantors tab in Loan Queue(GS)
 15. PSD#143881 - PDC Amount in oprmaker stage is displaying wrong and when we resubmit the case from oprmaker also amount is displaying wrong
 
 
@@ -2804,10 +2538,10 @@ Bug Fixes:
 Enhancements:
 -------------------
 1.Include assets also in corporate financial upload.
-2.New field “BANK_BRANCH_NAME” added in mandate request and response tables.
-3.New field “PARTNER_BANK_ACCOUNT” added in disbursement request table
-4.New API “customer details” for SRM (HL)
-5.New fields added in Customer Bank Info screen and API to capture “Sanction Limit” and “Average Bank Balance” in month wise.
+2.New field â€œBANK_BRANCH_NAMEâ€� added in mandate request and response tables.
+3.New field â€œPARTNER_BANK_ACCOUNTâ€� added in disbursement request table
+4.New API â€œcustomer detailsâ€� for SRM (HL)
+5.New fields added in Customer Bank Info screen and API to capture â€œSanction Limitâ€� and â€œAverage Bank Balanceâ€� in month wise.
 6.Insurance Premium calculation interface changes (CLIX)
 7.Hunter service related changes (CLIX)
 

@@ -47,7 +47,10 @@
 								<row>
 									<label id="label_MandateList_MandateType" value="${c:l('label_MandateList_MandateType.value')}" />
 									<listbox id="sortOperator_MandateType" width="43px" mold="select" rows="1" />
+									<hbox>
+									<space id="space_MandateType" spacing="2px" />
 									<combobox id="mandateType" width="171px" />
+									</hbox>
 									<label id="label_MandateList_CustCIF" value="${c:l('label_MandateList_CustCIF.value')}" />
 									<listbox id="sortOperator_CustCIF" width="43px" mold="select" rows="1" />
 									<hbox>

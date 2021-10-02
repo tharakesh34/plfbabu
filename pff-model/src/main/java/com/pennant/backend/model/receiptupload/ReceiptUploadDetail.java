@@ -15,6 +15,7 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 	private long uploadheaderId = Long.MIN_VALUE;
 	private long uploadDetailId = Long.MIN_VALUE;
 	private String rootId = "";
+	private Long finID;
 	private String reference = "";
 	private String receiptPurpose = "";
 	private String excessAdjustTo = "";
@@ -89,6 +90,14 @@ public class ReceiptUploadDetail extends AbstractWorkflowEntity {
 
 	public void setRootId(String rootId) {
 		this.rootId = rootId;
+	}
+
+	public Long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(Long finID) {
+		this.finID = finID;
 	}
 
 	public String getReference() {

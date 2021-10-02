@@ -89,6 +89,22 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
 		customConstants.put("POPULATE_DFT_INCOME_DETAILS", true);
 
+		customConstants.put("RESTRUCTURE_DFT_APP_DATE", true);
+
+		customConstants.put("RESTRUCTURE_DATE_ALW_EDIT", true);
+
+		customConstants.put("RESTRUCTURE_RATE_CHG_ALW", true);
+
+		customConstants.put("RESTRUCTURE_ALW_CHARGES", true);
+
+		customConstants.put("PENALTY_CALC_ON_REPRESENTATION", true);
+
+		customConstants.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", true);
+
+		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
+
+		customConstants.put("ALLOW_ESCROW_MODE", true);
+
 	}
 
 	@Override

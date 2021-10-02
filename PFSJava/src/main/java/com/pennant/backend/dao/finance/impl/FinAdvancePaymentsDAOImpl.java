@@ -139,12 +139,12 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", PaymentType, LlReferenceNo, LlDate, CustContribution, SellerContribution, Remarks");
 		sql.append(", BankCode, PayableLoc, PrintingLoc, ValueDate, BankBranchID, PhoneCountryCode, PhoneAreaCode");
 		sql.append(", PhoneNumber, ClearingDate, Status, Active, InputDate, DisbCCy, POIssued, PartnerBankID");
-		sql.append(", LinkedTranId, TransactionRef, RealizationDate, VasReference, HoldDisbursement");
+		sql.append(", LinkedTranId, TransactionRef, RealizationDate, VasReference, HoldDisbursement, LEI");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -189,6 +189,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			ps.setDate(index++, JdbcUtil.getDate(fap.getRealizationDate()));
 			ps.setString(index++, fap.getVasReference());
 			ps.setBoolean(index++, fap.isHoldDisbursement());
+			ps.setString(index++, fap.getLei());
 			ps.setInt(index++, fap.getVersion());
 			ps.setLong(index++, fap.getLastMntBy());
 			ps.setTimestamp(index++, fap.getLastMntOn());
@@ -217,7 +218,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", DisbCCy = ?, POIssued = ?, PartnerBankID = ?, TransactionRef = ?, RealizationDate = ?");
 		sql.append(", VasReference = ?, Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(", HoldDisbursement = ?, LinkedTranId = ?");
+		sql.append(", HoldDisbursement = ?, LinkedTranId = ?, LEI = ?");
 		sql.append("  Where PaymentId = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -269,6 +270,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			ps.setLong(index++, fap.getWorkflowId());
 			ps.setBoolean(index++, fap.isHoldDisbursement());
 			ps.setLong(index++, fap.getLinkedTranId());
+			ps.setString(index++, fap.getLei());
 			ps.setLong(index++, fap.getPaymentId());
 		});
 
@@ -597,7 +599,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(", VasReference");
 		sql.append(", POIssued, PartnerBankID, TransactionRef, RealizationDate, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", LinkedTranId, RecordType, WorkflowId, HoldDisbursement");
+		sql.append(", LinkedTranId, RecordType, WorkflowId, HoldDisbursement, LEI");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", BranchCode, BranchBankCode, BranchBankName, BranchDesc");
@@ -670,6 +672,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 			fad.setRecordType(rs.getString("RecordType"));
 			fad.setWorkflowId(rs.getLong("WorkflowId"));
 			fad.setHoldDisbursement(rs.getBoolean("HoldDisbursement"));
+			fad.setLei(rs.getString("LEI"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
 				fad.setBranchCode(rs.getString("BranchCode"));

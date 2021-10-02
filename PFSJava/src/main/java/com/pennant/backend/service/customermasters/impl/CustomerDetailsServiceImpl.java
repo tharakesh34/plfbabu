@@ -147,7 +147,6 @@ import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinanceDetail;
-import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.perfios.PerfiosHeader;
 import com.pennant.backend.model.perfios.PerfiosTransaction;
@@ -413,7 +412,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	 */
 	private CustomerDetails getCustomerById(long id, String type) {
 		logger.debug(Literal.ENTERING);
-		List<FinanceEnquiry> financeEnquiryList = null;
 		CustomerDetails customerDetails = new CustomerDetails();
 		customerDetails.setCustomer(customerDAO.getCustomerByID(id, type));
 		customerDetails.setCustID(id);
@@ -3128,6 +3126,19 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 					String[] valueParm = new String[1];
 					valueParm[0] = "lastName";
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				}
+
+				if (StringUtils.isNotBlank(customer.getCustLName())) {
+					String regExp = PennantRegularExpressions.REGEX_CUST_NAME;
+					Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regExp));
+					Matcher matcher = pattern.matcher(customer.getCustLName());
+
+					if (!matcher.matches()) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "LastName";
+						auditDetail.setErrorDetail(
+								ErrorUtil.getErrorDetail(new ErrorDetail("90237", "", valueParm), "EN"));
+					}
 				}
 			}
 			if (StringUtils.isBlank(customer.getCustSalutationCode())) {

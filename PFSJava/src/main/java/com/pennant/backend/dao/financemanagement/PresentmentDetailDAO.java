@@ -57,6 +57,8 @@ public interface PresentmentDetailDAO {
 
 	PresentmentDetail getPresentmentDetail(String presentmentRef, String type);
 
+	PresentmentDetail getRePresentmentDetails(String presentmentRef);
+
 	void updateReceptId(long id, long receiptID);
 
 	List<PresentmentDetail> getPresentmenToPost(long custId, Date schData);
@@ -166,4 +168,5 @@ public interface PresentmentDetailDAO {
 
 	String getPresentmentType(long id);
 
+	List<Long> getManualExcludeList(long id);
 }

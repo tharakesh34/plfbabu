@@ -85,8 +85,12 @@
 											<space spacing="2px" />
 											<textbox id="rejectReason" width="250px" readonly="true" />
 										</hbox>
+										<label value="${c:l('label_DisbInstructionsDialog_LEI.value')}" />
+										<hbox>
+											<space spacing="2px"/>
+											<textbox id="leiNumber" maxlength ="100"/>
+										</hbox>
 									</row>
-
 								</rows>
 							</grid>
 						</groupbox>

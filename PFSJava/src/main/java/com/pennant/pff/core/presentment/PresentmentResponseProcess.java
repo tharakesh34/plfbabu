@@ -25,7 +25,6 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.RepaymentPostingsUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
@@ -136,7 +135,7 @@ public class PresentmentResponseProcess implements Runnable {
 		String presentmentReference = pd.getPresentmentRef();
 
 		long finID = pd.getFinID();
-		String finReference = pd.getFinReference();
+		String finReference = StringUtils.trimToEmpty(pd.getFinReference());
 		String finType = pd.getFinType();
 		String mandateType = pd.getMandateType();
 		Long mandateID = pd.getMandateId();
@@ -416,7 +415,7 @@ public class PresentmentResponseProcess implements Runnable {
 
 	private AEEvent doPresentmentStageAccounting(PresentmentDetail pd) {
 		long finID = pd.getFinID();
-		String finReference = pd.getFinReference();
+		String finReference = StringUtils.trimToEmpty(pd.getFinReference());
 		Date schDate = pd.getSchDate();
 
 		FinanceMain fm = presentmentDetailService.getDefualtPostingDetails(finID, schDate);
@@ -433,10 +432,15 @@ public class PresentmentResponseProcess implements Runnable {
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setPostingUserBranch(finType);
 		aeEvent.setValueDate(pd.getSchDate());
-		aeEvent.setPostDate(SysParamUtil.getAppDate());
+		aeEvent.setPostDate(pd.getAppDate());
 		aeEvent.setEntityCode(fm.getEntityCode());
 		aeEvent.setAccountingEvent(AccountingEvent.PRSNTRSP);
-		aeEvent.setPostRefId(pd.getHeaderId());
+		aeEvent.setPostRefId(pd.getReceiptID());
+
+		if (PennantConstants.PROCESS_REPRESENTMENT.equals(pd.getPresentmentType())
+				&& ImplementationConstants.PENALTY_CALC_ON_REPRESENTATION) {
+			aeEvent.setValueDate(pd.getRepresentmentDate());
+		}
 
 		AEAmountCodes amountCodes = aeEvent.getAeAmountCodes();
 		amountCodes = aeEvent.getAeAmountCodes();

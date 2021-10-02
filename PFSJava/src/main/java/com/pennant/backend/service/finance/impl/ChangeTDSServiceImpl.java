@@ -438,6 +438,10 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 
 		fm.setEventFromDate(appDate);
 
+		if (fmi.istDSApplicable()) {
+			fm.settDSApplicable(fmi.istDSApplicable());
+		}
+
 		schdData.setFinanceMain(fm);
 		schdData.setFinanceScheduleDetails(schedules);
 

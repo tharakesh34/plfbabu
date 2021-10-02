@@ -530,17 +530,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 			advMovement.setMovementAmount(advise.getAdviseAmount());
 			advMovement.setTaxApplicable(taxApplicable);
 			advMovement.setTaxComponent(taxType);
-
-			if (BigDecimal.ZERO.compareTo(totalGstAmount) == 0) {
-				advMovement.setPaidAmount(adviseAmount);
-			} else {
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
-					advMovement.setPaidAmount(adviseAmount.subtract(totalGstAmount));
-				} else {
-					advMovement.setPaidAmount(adviseAmount);
-				}
-			}
-
+			advMovement.setPaidAmount(adviseAmount);
 			advMovement.setTaxHeader(taxHeader);
 			aeEvent.setMovement(advMovement);
 		}

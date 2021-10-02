@@ -26,31 +26,43 @@
 package com.pennant.backend.service.finance.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.TaskOwnersDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.ReinstateFinanceDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
 import com.pennant.backend.model.TaskOwners;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ReinstateFinance;
 import com.pennant.backend.model.reason.details.ReasonDetailsLog;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.ReinstateFinanceService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 
 /**
@@ -66,6 +78,8 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	private FinanceMainDAO financeMainDAO;
 	private TaskOwnersDAO taskOwnersDAO;
 	protected ReasonDetailDAO reasonDetailDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private FinServiceInstrutionDAO finServiceInstructionDAO;
 
 	public ReinstateFinanceServiceImpl() {
 		super();
@@ -134,6 +148,26 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
+		ReinstateFinance rif = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
+
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(rif);
+
+		long serviceUID = Long.MIN_VALUE;
+
+		if (rif.getExtendedFieldRender() != null
+				&& rif.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = rif.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
+			serviceUID = finServInst.getInstructionUID();
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
+			}
+		}
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
@@ -153,13 +187,60 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 			auditHeader.getAuditDetail().setModelData(reinstateFinance);
 			auditHeader.setAuditReference(reinstateFinance.getFinReference());
 		} else {
-			getReinstateFinanceDAO().update(reinstateFinance, tableType);
+			reinstateFinanceDAO.update(reinstateFinance, tableType);
 		}
 
+		// FinServiceInstrution
+		if (CollectionUtils.isNotEmpty(reinstateFinance.getFinServiceInstructions())
+				&& reinstateFinance.isNewRecord()) {
+			finServiceInstructionDAO.saveList(reinstateFinance.getFinServiceInstructions(), tableType);
+		}
+
+		// Extended field Details
+		if (reinstateFinance.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = reinstateFinance.getAuditDetailMap().get("ExtendedFieldDetails");
+
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, reinstateFinance.getExtendedFieldHeader().getEvent(), tableType,
+					serviceUID);
+			auditDetails.addAll(details);
+		}
+
+		auditHeader.setAuditDetails(auditDetails);
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
 		return auditHeader;
 
+	}
+
+	private List<FinServiceInstruction> getServiceInstructions(ReinstateFinance rif) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinServiceInstruction> serviceInstructions = rif.getFinServiceInstructions();
+
+		if (CollectionUtils.isEmpty(serviceInstructions)) {
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(rif.getFinReference());
+			finServInst.setFinEvent(rif.getFinEvent());
+
+			rif.setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction serviceInstruction : rif.getFinServiceInstructions()) {
+			if (serviceInstruction.getInstructionUID() == Long.MIN_VALUE) {
+				serviceInstruction.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
+			}
+
+			if (StringUtils.isEmpty(rif.getFinEvent()) || FinServiceEvent.ORG.equals(rif.getFinEvent())) {
+				if (!FinServiceEvent.ORG.equals(serviceInstruction.getFinEvent())
+						&& !StringUtils.contains(serviceInstruction.getFinEvent(), "_O")) {
+					serviceInstruction.setFinEvent(serviceInstruction.getFinEvent().concat("_O"));
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return rif.getFinServiceInstructions();
 	}
 
 	/**
@@ -175,6 +256,8 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
@@ -183,9 +266,21 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		}
 
 		ReinstateFinance reinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
-		getReinstateFinanceDAO().delete(reinstateFinance, "");
+		reinstateFinanceDAO.delete(reinstateFinance, "");
 
-		getAuditHeaderDAO().addAudit(auditHeader);
+		finServiceInstructionDAO.deleteList(reinstateFinance.getFinID(), reinstateFinance.getFinEvent(), "_Temp");
+
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = reinstateFinance.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(reinstateFinance.getExtendedFieldHeader(),
+					reinstateFinance.getFinReference(), reinstateFinance.getExtendedFieldRender().getSeqNo(), "_Temp",
+					auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		auditHeader.setAuditDetails(auditDetails);
+		auditHeaderDAO.addAudit(auditHeader);
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -246,7 +341,24 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		ReinstateFinance reinstateFinance = new ReinstateFinance();
 		BeanUtils.copyProperties((ReinstateFinance) auditHeader.getAuditDetail().getModelData(), reinstateFinance);
 
-		FinanceMain financeMain = getFinanceMainDAO().getFinanceMainByRef(reinstateFinance.getFinReference(), "", true);
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(reinstateFinance);
+
+		long serviceUID = Long.MIN_VALUE;
+
+		if (reinstateFinance.getExtendedFieldRender() != null
+				&& reinstateFinance.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = reinstateFinance.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
+			serviceUID = finServInst.getInstructionUID();
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
+			}
+		}
+
+		FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(reinstateFinance.getFinReference(), "", true);
 		financeMain.setApproved(null);
 		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 		// Workflow fields
@@ -260,7 +372,25 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		financeMain.setNextTaskId(nextTaskId == null ? null : nextTaskId.concat(";"));
 
 		if (financeMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-			getFinanceMainDAO().updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, false);
+			financeMainDAO.updateRejectFinanceMain(financeMain, TableType.TEMP_TAB, false);
+		}
+
+		if (CollectionUtils.isNotEmpty(reinstateFinance.getFinServiceInstructions())) {
+			finServiceInstructionDAO.saveList(reinstateFinance.getFinServiceInstructions(), "");
+		}
+
+		// Extended field Render Details.
+		List<AuditDetail> details = reinstateFinance.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (reinstateFinance.getExtendedFieldRender() != null) {
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, reinstateFinance.getExtendedFieldHeader().getEvent(), "",
+					serviceUID);
+
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
 		}
 
 		// getFinanceMainDAO().save(financeMain, TableType.TEMP_TAB, false);
@@ -292,6 +422,15 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.getAuditDetail().setModelData(reinstateFinance);
 		getAuditHeaderDAO().addAudit(auditHeader);
+
+		finServiceInstructionDAO.deleteList(reinstateFinance.getFinID(), reinstateFinance.getFinEvent(), "_Temp");
+
+		if (details != null && details.size() > 0) {
+			extendedFieldDetailsService.delete(reinstateFinance.getExtendedFieldHeader(),
+					reinstateFinance.getFinReference(), reinstateFinance.getExtendedFieldRender().getSeqNo(), "_Temp",
+					auditHeader.getAuditTranType(), details);
+		}
+
 		logger.debug("Leaving");
 		return auditHeader;
 	}
@@ -308,6 +447,8 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "doReject");
 
 		if (!auditHeader.isNextProcess()) {
@@ -318,6 +459,19 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		ReinstateFinance reinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		getReinstateFinanceDAO().delete(reinstateFinance, "_Temp");
+
+		finServiceInstructionDAO.deleteList(reinstateFinance.getFinID(), reinstateFinance.getFinEvent(), "_Temp");
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = reinstateFinance.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(reinstateFinance.getExtendedFieldHeader(),
+					reinstateFinance.getFinReference(), reinstateFinance.getExtendedFieldRender().getSeqNo(), "_Temp",
+					auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		getAuditHeaderDAO().addAudit(auditHeader);
 		logger.debug("Leaving");
@@ -336,8 +490,56 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
+
+		auditHeader = getAuditDetails(auditHeader, method);
+
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		ReinstateFinance reinstateFinance = (ReinstateFinance) auditDetail.getModelData();
+
+		// Extended field details Validation
+		if (reinstateFinance.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = reinstateFinance.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = reinstateFinance.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method,
+					auditHeader.getUsrLanguage());
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
 		auditHeader = nextProcess(auditHeader);
 		logger.debug("Leaving");
+		return auditHeader;
+	}
+
+	private AuditHeader getAuditDetails(AuditHeader auditHeader, String method) {
+		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
+		Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>();
+
+		ReinstateFinance reinstateFinance = (ReinstateFinance) auditHeader.getAuditDetail().getModelData();
+
+		String auditTranType = "";
+
+		if ("saveOrUpdate".equals(method) || "doApprove".equals(method) || "doReject".equals(method)) {
+			if (reinstateFinance.isWorkflow()) {
+				auditTranType = PennantConstants.TRAN_WF;
+			}
+		}
+
+		// Extended Field Details
+		if (reinstateFinance.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(reinstateFinance.getExtendedFieldHeader(),
+							reinstateFinance.getExtendedFieldRender(), auditTranType, method,
+							reinstateFinance.getExtendedFieldHeader().getModuleName()));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+		}
+		reinstateFinance.setAuditDetailMap(auditDetailMap);
+		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
@@ -430,4 +632,16 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 		return reasonDetailDAO.getReasonDetailsLog(reference);
 	}
 
+	@Override
+	public List<FinServiceInstruction> getFinServiceInstructions(long finID, String type, String finEvent) {
+		return this.finServiceInstructionDAO.getFinServiceInstructions(finID, type, finEvent);
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setFinServiceInstructionDAO(FinServiceInstrutionDAO finServiceInstructionDAO) {
+		this.finServiceInstructionDAO = finServiceInstructionDAO;
+	}
 }

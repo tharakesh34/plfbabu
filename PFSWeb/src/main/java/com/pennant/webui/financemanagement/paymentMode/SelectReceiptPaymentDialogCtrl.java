@@ -69,7 +69,6 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -398,10 +397,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.finReference.setValueColumn("FinReference");
 		this.finReference.setDescColumn("FinType");
 		this.finReference.setValidateColumns(new String[] { "FinReference" });
-
-		if (isForeClosure) {
-			this.finReference.setFilters((new Filter[] { new Filter("FinIsActive", 1, Filter.OP_EQUAL) }));
-		}
 
 	}
 
@@ -904,6 +899,11 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		final Map<String, Object> map = new HashMap<String, Object>();
 
+		boolean isPartPayment = false;
+		if (FinServiceEvent.EARLYRPY.equalsIgnoreCase(rch.getReceiptPurpose())) {
+			isPartPayment = true;
+		}
+
 		// set new record true
 		setWorkflowDetails(rch.getFinType(), false);
 		if (workFlowDetails == null) {
@@ -920,6 +920,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		map.put("receiptData", this.receiptData);
 		map.put("isKnockOff", isKnockOff);
 		map.put("isForeClosure", isForeClosure);
+		map.put("isPartPayment", isPartPayment);
 		Executions.createComponents("/WEB-INF/pages/FinanceManagement/Receipts/ReceiptDialog.zul", null, map);
 
 		this.window_SelectReceiptPaymentDialog.onClose();
@@ -999,6 +1000,9 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 					this.finReference.setDescription(financeMain.getFinType() + " - " + finIsActive);
 				}
 				this.custCIF.setValue(String.valueOf(financeMain.getCustCIF()));
+				if (financeMain.getMaturityDate().compareTo(appDate) <= 0) {
+					this.receiptDate.setDisabled(true);
+				}
 				resetDefaults(financeMain);
 				if (FinanceConstants.RECEIPT_MAKER.equals(this.module)
 						&& PennantConstants.TDS_MANUAL.equalsIgnoreCase(financeMain.getTdsType())) {
@@ -1152,15 +1156,6 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		} catch (WrongValueException we) {
 			wve.add(we);
-		}
-
-		long finID = ComponentUtil.getFinID(this.finReference);
-
-		Date maxValueDate = financeRepaymentsDAO.getMaxValueDate(finID);
-
-		if (DateUtil.compare(maxValueDate, this.receiptDate.getValue()) > 0) {
-			throw new WrongValueException(this.receiptDate, Labels.getLabel("DATE_ALLOWED_ON_AFTER", new String[] {
-					Labels.getLabel("label_SchedulePayment_ReceiptDate.value"), maxValueDate.toString() }));
 		}
 	}
 

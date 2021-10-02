@@ -72,4 +72,5 @@ public interface VASRecordingDAO {
 	void updateVasInsStatus(long id);
 
 	String getProductCodeByReference(String primaryLinkRef, String vasReference);
+
 }

@@ -121,7 +121,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	protected Combobox parentTag;
 	protected Label label_ExtendedFieldDetailDialog_FieldSeqOrder;
 	protected Checkbox fieldEditable;
-
+	protected Checkbox fieldIsMaintAlwd;
 	protected Listbox listBoxFieldDet;
 	protected Paging pagingFieldDetList;
 	protected Textbox fieldList;
@@ -154,7 +154,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	// ### 08-05-2018 Start Development Iteam 81
 	protected Checkbox allowInRule;
 	protected Row rowfieldAllowInRule;
-
+	protected Row rowfieldIsMaintenanceAllowed;
 	// story #699 Allow Additional filters for extended combobox.
 	protected Row rowExtAddtionalFilters;
 	protected Listbox listBoxAddtionalFilters;
@@ -181,6 +181,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 	private List<ValueLabel> moduleList = PennantStaticListUtil.getExtendedFieldMasters();
 	private String moduleDesc;
 	private String subModuleDesc;
+	private String module;
 
 	/**
 	 * default constructor.<br>
@@ -236,6 +237,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 
 			if (arguments.containsKey("subModuleDesc")) {
 				subModuleDesc = (String) arguments.get("subModuleDesc");
+			}
+
+			if (arguments.containsKey("module")) {
+				module = (String) arguments.get("module");
 			}
 			// ### 08-05-2018 End Development Iteam 81
 			setNewFieldDetail(true);
@@ -491,7 +496,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.parentTag.setValue(aExtendedFieldDetail.getParentTag());
 		this.allowInRule.setChecked(aExtendedFieldDetail.isAllowInRule());
 		this.valFromScript.setChecked(aExtendedFieldDetail.isValFromScript());
-
+		if (module.equalsIgnoreCase(Labels.getLabel("label_Module_Loan"))) {
+			this.rowfieldIsMaintenanceAllowed.setVisible(true);
+			this.fieldIsMaintAlwd.setChecked(aExtendedFieldDetail.isMaintAlwd());
+		}
 		logger.debug("Leaving");
 	}
 
@@ -1074,6 +1082,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 							aExtendedFieldDetail.getFieldType())) {
 				aExtendedFieldDetail.setInputElement(false);
 				this.fieldEditable.setValue(false);
+				if (module.equalsIgnoreCase(Labels.getLabel("label_Module_Loan"))) {
+					this.fieldIsMaintAlwd.setValue(false);
+				}
 			} else {
 				aExtendedFieldDetail.setInputElement(true);
 			}
@@ -1082,6 +1093,16 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		}
 		try {
 			aExtendedFieldDetail.setEditable(this.fieldEditable.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (module.equalsIgnoreCase(Labels.getLabel("label_Module_Loan"))) {
+				aExtendedFieldDetail.setMaintAlwd(this.fieldIsMaintAlwd.isChecked());
+			} else {
+				aExtendedFieldDetail.setMaintAlwd(false);
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -1424,6 +1445,10 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 			this.parentTag.setDisabled((isReadOnly("ExtendedFieldDetailDialog_parentTag")));
 			this.fieldEditable.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldEditable"));
 
+			if (module.equalsIgnoreCase(Labels.getLabel("label_Module_Loan"))) {
+				this.fieldIsMaintAlwd.setDisabled(isReadOnly("ExtendedFieldDetailDialog_fieldIsMaintAlwd"));
+			}
+
 			// ### 08-05-2018 Start Development Iteam 81
 			boolean validate = true;
 			StringBuffer uniqueField = new StringBuffer();
@@ -1578,6 +1603,9 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 		this.fieldMaxValue.setText("");
 		this.fieldUnique.setChecked(false);
 		this.fieldMultilinetxt.setText("");
+		if (module.equalsIgnoreCase(Labels.getLabel("label_Module_Loan"))) {
+			this.fieldIsMaintAlwd.setChecked(false);
+		}
 		logger.debug("Leaving");
 	}
 
@@ -2212,6 +2240,7 @@ public class ExtendedFieldDetailDialogCtrl extends GFCBaseCtrl<ExtendedFieldDeta
 				this.rowfieldDefaultValue.setVisible(false);
 				this.rowMandatory.setVisible(false);
 				this.rowfieldIsEditable.setVisible(false);
+				this.rowfieldIsMaintenanceAllowed.setVisible(false);
 			} else {
 				this.rowfieldIsEditable.setVisible(true);
 			}

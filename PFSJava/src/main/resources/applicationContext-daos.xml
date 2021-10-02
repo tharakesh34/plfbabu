@@ -3416,6 +3416,7 @@
 		<property name="irrScheduleDetailDAO" ref="irrScheduleDetailDAO" />
 		<property name="pmayService" ref="pmayService" />
 		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
+		<property name="extendedFieldMaintenanceDAO" ref="extendedFieldMaintenanceDAO" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
@@ -3711,6 +3712,8 @@
 		<!-- Stage Accounting -->
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!--============ Finance Schedule Details ============== -->
@@ -4476,7 +4479,6 @@
 		<property name="customerDetailsService" ref="customerDetailsService" />
 		<property name="checkListDetailService" ref="finCheckListDetailService" />
 		<property name="limitCheckDetails" ref="limitCheckDetails" />
-		<property name="financeDetailService" ref="financeDetailService" />
 		<property name="limitManagement" ref="limitManagement" />
 		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
 		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
@@ -4531,6 +4533,8 @@
 		<property name="feeReceiptService" ref="feeReceiptService" />
 		<property name="finFeeConfigService" ref="finFeeConfigService" />
 		<property name="feeWaiverHeaderDAO" ref="feeWaiverHeaderDAO" />
+		<property name="finTypeFeesDAO" ref="finTypeFeesDAO" />
+		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
 	</bean>
 
 	<!--============ Finance Excess Amounts Details ============== -->
@@ -4584,6 +4588,8 @@
 		<property name="finFeeDetailService" ref="finFeeDetailService" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="vASRecordingDAO" ref="vASRecordingDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
 	</bean>
 
 	<!--============ Receipt Realization Process Details ============== -->
@@ -4617,6 +4623,8 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finExcessAmountDAO" ref="finExcessAmountDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
 	</bean>
 
 	<!--============ Receipt Cancellation Process Details ============== -->
@@ -4663,6 +4671,9 @@
 		<property name="gstInvoiceTxnDAO" ref="gstInvoiceTxnDAO" />
 		<property name="accrualService" ref="accrualService" />
 		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<!--============ Overdue Charge Recovery Details ============== -->
@@ -4953,6 +4964,7 @@
 		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
 		<!-- Stage Accounting -->
 		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!--============ Finance Liability Letter Request Details ============== -->
@@ -5811,6 +5823,8 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="taskOwnersDAO" ref="taskOwnersDAO" />
 		<property name="reasonDetailDAO" ref="reasonDetailDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<bean id="customerDedupDAO" class="com.pennant.backend.dao.custdedup.impl.CustomerDedupDAOImpl" parent="basicDao" />
@@ -8453,6 +8467,7 @@
 		<property name="extendedFieldHeaderDAO" ref="extendedFieldHeaderDAO" />
 		<property name="extendedFieldDetailDAO" ref="extendedFieldDetailDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="extendedFieldExtensionService" ref="extendedFieldExtensionService" />
 	</bean>
 
 	<!-- custom service tasks -->
@@ -9111,7 +9126,9 @@
 	</bean>
 
 	<!--============ ActivityLog Details ============== -->
-	<bean id="activityLogDAO" class="com.pennanttech.activity.log.ActivityLogDAOImpl" parent="auditBasicDao" />
+	<bean id="activityLogDAO" class="com.pennanttech.activity.log.ActivityLogDAOImpl" parent="auditBasicDao">
+		<property name="basicDataSource" ref="dataSource" />
+	</bean>
 
 	<bean id="activityLogService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
@@ -9769,6 +9786,8 @@
 		<property name="finODAmzTaxDetailDAO" ref="finODAmzTaxDetailDAO" />
 		<property name="taxHeaderDetailsDAO" ref="taxHeaderDetailsDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!-- Organization -->
@@ -10388,6 +10407,8 @@
 		<property name="finOptionDAO" ref="finOptionDAO" />
 		<property name="finOptionService" ref="finOptionService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="finServiceInstrutionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!-- New Receipts Module Changes -->
@@ -12211,13 +12232,16 @@
 	<bean name="restructureServiceTarget" class="com.pennant.backend.financeservice.impl.RestructureServiceImpl">
 		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
-		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
 		<property name="restructureDAO" ref="restructureDAO" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
 		<property name="latePayMarkingService" ref="latePayMarkingService" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="baseRateDAO" ref="baseRateDAO" />
 	</bean>
 
 	<bean id="restructureDAO" class="com.pennant.backend.dao.finance.impl.RestructureDAOImpl" parent="sequenceDao">
@@ -12484,6 +12508,7 @@
 		parent="abstractAccountUpdater">
 		<constructor-arg ref="dataSource" />
 	</bean>
+
 	<bean id="accountByFinReferrenceDAOImpl"
 		class="com.pennanttech.pff.core.account.dao.AccountByFinReferrenceDAOImpl" parent="abstractAccountUpdaterDAO" />
 	<bean id="accountDAOImpl" class="com.pennanttech.pff.core.account.dao.AccountDAOImpl"
@@ -12494,5 +12519,113 @@
 		parent="abstractAccountUpdaterDAO" />
 	<bean id="postingDAOImpl" class="com.pennanttech.pff.core.account.dao.PostingDAOImpl"
 		parent="abstractAccountUpdaterDAO" />
-</beans>
 
+	<!--============ District Details ============== -->
+	<bean id="districtDAO" class="com.pennant.backend.dao.systemmasters.impl.DistrictDAOImpl" parent="sequenceDao" />
+
+	<bean id="districtService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="districtServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="save*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="districtServiceTarget" class="com.pennant.backend.service.systemmasters.impl.DistrictServiceImpl">
+		<property name="districtDAO" ref="districtDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+	</bean>
+
+	<!-- Extended Field Extension -->
+	<bean id="extendedFieldExtensionDAO" class="com.pennant.backend.dao.collateral.impl.ExtendedFieldExtensionDAOImpl"
+		parent="sequenceDao" />
+
+	<bean id="extendedFieldExtensionService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="extendedFieldExtensionServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="processingTDSReceivablesTxn*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="extendedFieldExtensionServiceTarget"
+		class="com.pennant.backend.service.extendedfieldsExtension.impl.ExtendedFieldExtensionServiceImpl">
+		<property name="extendedFieldExtensionDAO" ref="extendedFieldExtensionDAO" />
+	</bean>
+
+	<!-- ExtendedFieldMaintenanceService -->
+	<bean id="extendedFieldMaintenanceService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="extendedFieldMaintenanceServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="extendedFieldMaintenanceServiceTarget"
+		class="com.pennant.backend.service.extendedfieldmaintenance.impl.ExtendedFieldMaintenanceServiceImpl">
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="extendedFieldMaintenanceDAO" ref="extendedFieldMaintenanceDAO" />
+		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+	</bean>
+
+	<bean id="extendedFieldMaintenanceDAO"
+		class="com.pennant.backend.dao.finance.impl.ExtendedFieldMaintenanceDAOImpl" parent="sequenceDao" />
+
+	<bean id="partnerBankModeConfigService"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref bean="partnerBankModeConfigServiceTarget" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
+				<prop key="delete*">PROPAGATION_REQUIRED</prop>
+				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
+				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean>
+	<bean id="partnerBankModeConfigServiceTarget"
+		class="com.pennant.backend.service.financemanagement.impl.PartnerBankModeConfigServiceImpl">
+		<property name="partnerBankModeConfigDAO" ref="partnerBankModeConfigDAO" />
+	</bean>
+
+	<bean id="partnerBankModeConfigDAO"
+		class="com.pennant.backend.dao.financemanagement.impl.PartnerBankModeConfigDAOImpl" parent="sequenceDao" />
+
+</beans>

@@ -37,7 +37,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.SysParamUtil;
@@ -84,6 +87,7 @@ import com.pennant.cache.util.AccountingConfigCache;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.pff.service.hook.PostValidationHook;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -108,6 +112,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	private FinanceMainDAO financeMainDAO;
+	@Autowired(required = false)
+	@Qualifier("paymentInstructionPostValidationHook")
+	private PostValidationHook postValidationHook;
 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.info(Literal.ENTERING);
@@ -524,6 +531,9 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 
 		List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
 		PaymentHeader ph = (PaymentHeader) auditHeader.getAuditDetail().getModelData();
+
+		doPostHookValidation(auditHeader);
+
 		List<AuditDetail> auditDetails = null;
 
 		// PaymentDetails
@@ -539,7 +549,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 
 		// PaymentInstruction
-		if (ph.getAuditDetailMap().get("PaymentInstruction") != null) {
+		if (ph.getAuditDetailMap().get("PaymentInstructions") != null) {
 			auditDetails = ph.getAuditDetailMap().get("PaymentInstructions");
 			for (AuditDetail auditDetail : auditDetails) {
 				List<ErrorDetail> details = this.paymentInstructionService.validation(auditDetail, usrLanguage, method)
@@ -551,6 +561,16 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		}
 		logger.debug("Leaving");
 		return errorDetails;
+	}
+
+	public void doPostHookValidation(AuditHeader auditHeader) {
+		if (postValidationHook != null) {
+			List<ErrorDetail> errorDetails = postValidationHook.validation(auditHeader);
+			if (errorDetails != null) {
+				errorDetails = ErrorUtil.getErrorDetails(errorDetails, auditHeader.getUsrLanguage());
+				auditHeader.setErrorList(errorDetails);
+			}
+		}
 	}
 
 	public List<AuditDetail> deleteChilds(PaymentHeader ph, TableType tableType, String auditTranType) {

@@ -15,12 +15,14 @@ import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.core.AccrualService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinanceDisbursementDAO;
+import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.receipts.FinExcessAmountDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.finance.FinExcessAmount;
@@ -34,6 +36,8 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
+import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -48,18 +52,20 @@ public class SummaryDetailService extends ExtendedTestClass {
 	protected FinExcessAmountDAO finExcessAmountDAO;
 	protected FinFeeDetailDAO finFeeDetailDAO;
 	protected ReceiptCalculator receiptCalculator;
+	protected ManualAdviseDAO manualAdviseDAO;
 
 	public FinanceSummary getFinanceSummary(FinanceDetail fd) {
 		logger.debug("Entering");
 
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
-		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
-		FinanceSummary summary = new FinanceSummary();
 
 		if (fm == null) {
 			return null;
 		}
+
+		long finID = fm.getFinID();
+		String finReference = fm.getFinReference();
+		FinanceSummary summary = new FinanceSummary();
 
 		fd.setFinID(finID);
 		fd.setFinReference(finReference);
@@ -349,20 +355,34 @@ public class SummaryDetailService extends ExtendedTestClass {
 		return actualFees;
 	}
 
-	/**
-	 * Method for calculating total Advance payment amount(Excess+EMI in Adv)
-	 * 
-	 * @param finReference
-	 * @return
-	 */
-	public BigDecimal getTotalAdvAmount(long finID) {
+	public BigDecimal getTotalAdvAmount(FinanceMain fm) {
+		long finID = fm.getFinID();
+
 		BigDecimal totAdvAmount = BigDecimal.ZERO;
-		List<FinExcessAmount> finExcessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
-		if (finExcessAmounts != null && !finExcessAmounts.isEmpty()) {
-			for (FinExcessAmount excessAmount : finExcessAmounts) {
-				totAdvAmount = totAdvAmount.add(excessAmount.getBalanceAmt());
-			}
+
+		List<FinExcessAmount> excessAmounts = finExcessAmountDAO.getExcessAmountsByRef(finID);
+		for (FinExcessAmount excessAmount : excessAmounts) {
+			totAdvAmount = totAdvAmount.add(excessAmount.getBalanceAmt());
 		}
+
+		List<ManualAdvise> payables = manualAdviseDAO.getManualAdviseByRef(finID,
+				FinanceConstants.MANUAL_ADVISE_PAYABLE, "_View");
+
+		for (ManualAdvise manualAdvise : payables) {
+			String taxType = "";
+
+			BigDecimal adviseAmount = manualAdvise.getAdviseAmount();
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(manualAdvise.getTaxComponent())) {
+				taxType = FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE;
+			}
+
+			TaxAmountSplit taxSplit = GSTCalculator.calculateGST(finID, fm.getFinCcy(), taxType,
+					manualAdvise.getAdviseAmount());
+
+			totAdvAmount = totAdvAmount.add(adviseAmount.add(taxSplit.gettGST()));
+		}
+
 		return totAdvAmount;
 	}
 
@@ -413,4 +433,7 @@ public class SummaryDetailService extends ExtendedTestClass {
 		this.receiptCalculator = receiptCalculator;
 	}
 
+	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
+		this.manualAdviseDAO = manualAdviseDAO;
+	}
 }

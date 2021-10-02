@@ -282,11 +282,6 @@ public class ReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<ReceiptUploadHead
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * Writes the bean data to the components.<br>
-	 * 
-	 * @param ruh ReceiptDialog
-	 */
 	public void doWriteBeanToComponents(ReceiptUploadHeader ruh) {
 		logger.debug("Entering");
 

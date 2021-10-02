@@ -1,5 +1,6 @@
 package com.pennant.backend.service.cibil;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,9 +35,6 @@ public class CIBILServiceImpl implements CIBILService {
 
 	@Override
 	public CustomerDetails getCustomerDetails(long customerId, long finID, String segmentType) {
-		logger.debug(Literal.ENTERING);
-		logger.trace(Literal.ENTERING);
-
 		CustomerDetails customer = new CustomerDetails();
 
 		try {
@@ -61,7 +59,7 @@ public class CIBILServiceImpl implements CIBILService {
 				finReference = finance.getFinReference();
 				finance.setFinOdDetails(cibildao.getFinODDetails(finID, finance.getFinCcy()));
 				finance.setCollateralSetupDetails(cibildao.getCollateralDetails(finID, segmentType));
-				finance.setChequeDetail(cibildao.getChequeBounceStatus(finID));
+				finance.setChequeDetail(cibildao.getChequeBounceStatus(finReference));
 
 				List<CustomerDetails> guarenterList = new ArrayList<>();
 				// Bank Customers
@@ -77,27 +75,38 @@ public class CIBILServiceImpl implements CIBILService {
 
 				// Non Banking Customers needs to prepared
 				// guarenters = cibildao.getGuarantorsDetails(finReference, false);
-				for (Long custId : guarenters) {
-					// CustomerDetails guarenter = new CustomerDetails();
-					// guarenter.setCustomer(cibildao.getExternalCustomer(custId));
-					// guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
-					// guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
-					// guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
-					// guarenterList.add(guarenter);
-				}
+				// for (Long custId : guarenters) {
+				// CustomerDetails guarenter = new CustomerDetails();
+				// guarenter.setCustomer(cibildao.getExternalCustomer(custId));
+				// guarenter.setAddressList(cibildao.getExternalCustomerAddres(custId));
+				// guarenter.setCustomerPhoneNumList(cibildao.getExternalCustomerPhoneNumbers(custId));
+				// guarenter.setCustomerDocumentsList(cibildao.getExternalCustomerDocuments(custId));
+				// guarenterList.add(guarenter);
+				// }
 
 				finance.setFinGuarenters(guarenterList);
+
+				List<CustomerDetails> coApplicantList = new ArrayList<>();
+
+				List<Long> coApplicants = cibildao.getJointAccountDetails(finID);
+
+				for (Long custId : coApplicants) {
+					CustomerDetails coApplicant = new CustomerDetails();
+					coApplicant.setCustomer(cibildao.getCustomer(custId, segmentType));
+					coApplicant.setAddressList(cibildao.getCustomerAddres(custId, segmentType));
+					coApplicant.setCustomerPhoneNumList(cibildao.getCustomerPhoneNumbers(custId, segmentType));
+					coApplicant.setCustomerDocumentsList(cibildao.getCustomerDocuments(custId, segmentType));
+					coApplicantList.add(coApplicant);
+				}
+
+				finance.setFinCoApplicants(coApplicantList);
 			}
 
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			logger.trace(Literal.EXCEPTION, e);
-			logger.debug(Literal.EXCEPTION, e);
-			e.printStackTrace();
 			customer = null;
 		}
-		logger.debug(Literal.LEAVING);
-		logger.trace(Literal.LEAVING);
+
 		return customer;
 	}
 
@@ -110,7 +119,6 @@ public class CIBILServiceImpl implements CIBILService {
 	@Override
 	public FinanceSummary getFinanceProfitDetails(long finID) {
 		return financeMainDAO.getFinanceProfitDetails(finID);
-
 	}
 
 	@Override
@@ -146,8 +154,8 @@ public class CIBILServiceImpl implements CIBILService {
 	}
 
 	@Override
-	public long extractCustomers(String segmentType) throws Exception {
-		return new Long(cibildao.extractCustomers(segmentType));
+	public long extractCustomers(String segmentType, String entityType) throws Exception {
+		return cibildao.extractCustomers(segmentType, entityType);
 	}
 
 	@Override
@@ -181,4 +189,23 @@ public class CIBILServiceImpl implements CIBILService {
 		this.cibildao = cibildao;
 	}
 
+	@Override
+	public BigDecimal getLastRepaidAmount(String finReference) {
+		return cibildao.getLastRepaidAmount(finReference);
+	}
+
+	@Override
+	public BigDecimal getGuarantorPercentage(long finID) {
+		return cibildao.getGuarantorPercentage(finID);
+	}
+
+	@Override
+	public List<String> getEntities() {
+		return cibildao.getEntityCodes();
+	}
+
+	@Override
+	public String getCoAppRelation(String custCIF, long finID) {
+		return cibildao.getCoAppRelation(custCIF, finID);
+	}
 }

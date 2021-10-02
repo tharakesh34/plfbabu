@@ -32,8 +32,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 
 	@Override
 	public ExtendedFieldRender getExtendedFieldDetails(String reference, int seqNo, String tableName, String type) {
-		logger.debug("Entering");
-
 		ExtendedFieldRender fieldRender = null;
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -57,7 +55,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			fieldRender = null;
 		}
 
-		logger.debug("Leaving");
 		return fieldRender;
 	}
 
@@ -80,7 +77,21 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			sql.append(" t1  where not exists (select 1 from ");
 			sql.append(tableName);
 			sql.append("_temp");
-			sql.append(" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference ");
+			sql.append(
+					" where reference = t1.reference and seqno = t1.seqno)) t where t.reference = :reference order by seqno");
+		} else if (StringUtils.startsWith(type, "_mview")) {
+			sql.append("Select * from (select * from ");
+			sql.append(tableName);
+			sql.append(" t1 Where Not Exists (Select 1 From ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" Where reference = t1.reference And seqno = t1.seqno) Union All select * from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" t1  Where Exists (Select 1 from ");
+			sql.append(tableName);
+			sql.append(" Where reference = t1.reference And seqno = t1.seqno)) t");
+			sql.append(" Where t.reference = :reference Order By seqno");
 		} else {
 			sql.append("select * from ");
 			sql.append(tableName);
@@ -88,7 +99,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 			sql.append(" where reference = :reference order by seqno");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("reference", reference);
@@ -107,7 +118,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public List<Map<String, Object>> getExtendedFieldMapByVerificationId(long verificationId, String tableName) {
-		logger.debug("Entering");
 
 		List<Map<String, Object>> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
@@ -301,7 +311,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 
-		StringBuilder selectSql = new StringBuilder("Select  Max(SeqNo) from ");
+		StringBuilder selectSql = new StringBuilder("Select  COALESCE(Max(SeqNo), 0) from ");
 		selectSql.append(tableName);
 		selectSql.append(" where  Reference =:Reference ");
 
@@ -324,8 +334,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 * 
 	 * @param collateralRef
 	 * @param tableNmae
-	 * @param tableType
-	 *            (String) ""/_Temp/
+	 * @param tableType     (String) ""/_Temp/
 	 * @return void
 	 * 
 	 */
@@ -364,7 +373,7 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		source.addValue("Filter", filterColumn);
 		source.addValue("Value", fieldValue);
 		source.addValue("active", true);
-		//FIXME: Need to change the method implementation
+		// FIXME: Need to change the method implementation
 		if (column.equals("CustGrpID") || column.equals("EmpName")) {
 			source.addValue("Value", fieldValue);
 			column = "EmployerId";
@@ -701,4 +710,103 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		return renderMap;
 	}
 
+	@Override
+	public int getMaxSeq(String reference, String tableName, String tableType) {
+
+		StringBuilder sql = new StringBuilder();
+		if (StringUtils.startsWithIgnoreCase(tableType, "_View")) {
+			sql.append("select COALESCE(max(seqno),0) from (select seqno,reference from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" t1  union all select seqno,reference from ");
+			sql.append(tableName);
+			sql.append(" t1  where not exists (select 1 from ");
+			sql.append(tableName);
+			sql.append("_temp");
+			sql.append(" where reference = t1.reference AND SeqNo = t1.SeqNo)) t where t.reference = :reference ");
+		} else {
+			sql.append("select COALESCE(max(seqno),0) from ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(tableType));
+			sql.append(" where reference = :reference order by seqno");
+		}
+		logger.debug(Literal.SQL + sql.toString());
+
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("reference", reference);
+		try {
+			return this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			return 1;
+		}
+	}
+
+	/**
+	 * Get Extended field details Maps by Reference
+	 */
+	@Override
+	public Map<String, Object> getExtendedField(String reference, long instructionUID, String tableName, String type) {
+
+		Map<String, Object> renderMap = null;
+		MapSqlParameterSource source = new MapSqlParameterSource();
+		source.addValue("Reference", reference);
+		source.addValue("InstructionUID", instructionUID);
+
+		StringBuilder selectSql = null;
+		if (StringUtils.startsWithIgnoreCase(type, "_View")) {
+			selectSql = new StringBuilder("Select * from (Select * from ");
+			selectSql.append(tableName);
+			selectSql.append("_Temp");
+			selectSql.append(" T1  UNION ALL  Select * from ");
+			selectSql.append(tableName);
+			selectSql.append(" T1  WHERE NOT EXISTS (SELECT 1 FROM ");
+			selectSql.append(tableName);
+			selectSql.append("_Temp");
+			selectSql.append(" Where  Reference =T1.Reference And SeqNo = T1.SeqNo)) T");
+			selectSql.append(" WHERE T.Reference = :Reference and T.InstructionUID = :InstructionUID");
+		} else {
+			selectSql = new StringBuilder("Select * from ");
+			selectSql.append(tableName);
+			selectSql.append(StringUtils.trimToEmpty(type));
+			selectSql.append(" where  Reference = :Reference and InstructionUID = :InstructionUID");
+		}
+
+		logger.debug(Literal.SQL + selectSql.toString());
+		try {
+			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+		} catch (EmptyResultDataAccessException e) {
+			logger.error(Literal.EXCEPTION, e);
+			renderMap = null;
+		}
+
+		return renderMap;
+	}
+
+	@Override
+	public void deleteList(String reference, int seqNo, String tableName, String tableType) {
+
+		MapSqlParameterSource source = null;
+		StringBuilder sql = null;
+		try {
+			sql = new StringBuilder();
+			sql.append(" Delete From  ");
+			sql.append(tableName);
+			sql.append(StringUtils.trimToEmpty(tableType));
+			sql.append(" Where Reference = :Reference And SeqNo = :SeqNo");
+			logger.debug("deleteSql: " + sql.toString());
+
+			source = new MapSqlParameterSource();
+			source.addValue("Reference", reference);
+			source.addValue("SeqNo", seqNo);
+
+			this.jdbcTemplate.update(sql.toString(), source);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+		} finally {
+			source = null;
+			sql = null;
+		}
+
+	}
 }

@@ -81,6 +81,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.applicationmaster.BaseRateCode;
 import com.pennant.backend.model.applicationmaster.SplRateCode;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -158,7 +159,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	private List<FinFlagsDetail> finFlagsDetailList = null;
 	protected Map<String, Object> flagTypeDataMap = new HashMap<String, Object>();
 	protected ExtendedCombobox mandateRef;
-
+	// Escrow row
+	protected Row row_Escrow;
+	protected Checkbox escrow;
+	protected ExtendedCombobox customerBankAcct;
 	protected Datebox odStartDate;
 	protected CurrencyBox odFinAssetValue;
 	protected Row row_ODTenor;
@@ -337,6 +341,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			readOnlyComponent(true, this.finRepayMethod);
 			readOnlyComponent(true, this.mandateRef);
 		}
+
+		this.customerBankAcct.setProperties("CustomerBankInfoAccntNum", "AccountNumber", "AccountHolderName", false, 8);
+		this.customerBankAcct.getTextbox().setMaxlength(50);
 
 		this.finAssetValue.setProperties(false, format);
 		this.finCurrentAssetValue.setProperties(false, format);
@@ -522,6 +529,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
+		if (extendedFieldCtrl != null && getFinanceDetail().getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
 	}
 
 	/**
@@ -535,20 +545,40 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	private void doCheckMandate(String val, long CustID, boolean onChange) {
-		if (MandateConstants.TYPE_ECS.equals(val) || MandateConstants.TYPE_DDM.equals(val)
-				|| MandateConstants.TYPE_NACH.equals(val) || MandateConstants.TYPE_EMANDATE.equals(val)) {
+	private void doCheckMandate(String finRepayMethod, long CustID, boolean onChange) {
+		if (MandateConstants.TYPE_ECS.equals(finRepayMethod) || MandateConstants.TYPE_DDM.equals(finRepayMethod)
+				|| MandateConstants.TYPE_NACH.equals(finRepayMethod)
+				|| MandateConstants.TYPE_EMANDATE.equals(finRepayMethod)) {
 			readOnlyComponent(isReadOnly("FinanceMainDialog_mandateId"), this.mandateRef);
 			if (onChange) {
+				this.row_Escrow.setVisible(false);
+				this.escrow.setChecked(false);
+				this.customerBankAcct.setReadonly(true);
+				this.customerBankAcct.setValue("");
+				this.customerBankAcct.setAttribute("CustBankId", null);
 				this.mandateRef.setValue("");
 			}
 
-		} else {
+		} else if (FinanceConstants.REPAYMTH_MANUAL.equals(finRepayMethod)
+				&& ImplementationConstants.ALLOW_ESCROW_MODE) {
 			readOnlyComponent(true, this.mandateRef);
 			this.mandateRef.setValue("");
 			this.mandateRef.setAttribute("mandateID", new Long(0));
+			this.row_Escrow.setVisible(true);
+			if (!this.escrow.isChecked()) {
+				this.customerBankAcct.setReadonly(true);
+			}
+		} else {
+			readOnlyComponent(true, this.mandateRef);
+			this.row_Escrow.setVisible(false);
+			this.escrow.setChecked(false);
+			this.customerBankAcct.setReadonly(true);
+			this.customerBankAcct.setValue("");
+			this.customerBankAcct.setAttribute("CustBankId", null);
+			this.mandateRef.setValue("");
+			this.mandateRef.setAttribute("mandateID", new Long(0));
 		}
-		addMandateFiletrs(val, CustID);
+		addMandateFiletrs(finRepayMethod, CustID);
 
 	}
 
@@ -609,6 +639,25 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.mandateRef.setValue(String.valueOf(mandate.getMandateID()),
 					StringUtils.trimToEmpty(mandate.getMandateRef()));
 		}
+
+		/* Escrow Mode */
+		if (ImplementationConstants.ALLOW_ESCROW_MODE) {
+			this.escrow.setChecked(aFinanceMain.isEscrow());
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("custID", this.custID.longValue(), Filter.OP_EQUAL);
+			this.customerBankAcct.setFilters(filters);
+
+			if (!aFinanceMain.isNewRecord()) {
+				this.customerBankAcct.setValue(StringUtils.trimToEmpty(aFinanceMain.getCustAcctNumber()),
+						StringUtils.trimToEmpty(aFinanceMain.getCustAcctHolderName()));
+				if (aFinanceMain.getCustBankId() != null && aFinanceMain.getCustBankId() > 0) {
+					this.customerBankAcct.setAttribute("CustBankId", aFinanceMain.getCustBankId());
+				} else {
+					this.customerBankAcct.setAttribute("CustBankId", null);
+				}
+			}
+		}
+
 		doCheckMandate(aFinanceMain.getFinRepayMethod(), aFinanceMain.getCustID(), false);
 
 		if (aFinanceDetail.getFinScheduleData().getFinanceType().isFinIsDwPayRequired()
@@ -880,6 +929,25 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				wve.add(we);
 			}
 
+		}
+
+		try {
+			aFinanceMain.setEscrow(this.escrow.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceMain.setCustAcctNumber(this.customerBankAcct.getValue());
+			aFinanceMain.setCustAcctHolderName(this.customerBankAcct.getDescription());
+			Object object = this.customerBankAcct.getAttribute("CustBankId");
+			if (object != null) {
+				aFinanceMain.setCustBankId(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setCustBankId(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
 		}
 
 		try {
@@ -1725,6 +1793,11 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					new PTStringValidator(Labels.getLabel("label_FinanceMainDialog_FinPurpose.value"), null, true));
 		}
 
+		if (this.escrow.isChecked() && StringUtils.isEmpty(this.customerBankAcct.getValue())) {
+			this.customerBankAcct.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceMainDialog_CustomerBankAcctNumber.value"), null, true, true));
+		}
+
 		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if (!this.graceRate.isBaseReadonly()) {
@@ -1758,6 +1831,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		this.commitmentRef.setConstraint("");
 		this.finLimitRef.setConstraint("");
 		this.finPurpose.setConstraint("");
+		this.customerBankAcct.setConstraint("");
 
 		// FinanceMain Details Tab ---> 2. Grace Period Details
 
@@ -1877,6 +1951,9 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			this.downPayBank.setReadonly(isReadOnly("FinanceMainDialog_downPayment"));
 			this.downPaySupl.setReadonly(isReadOnly("FinanceMainDialog_downPaySupl"));
 		}
+
+		readOnlyComponent(isReadOnly("FinanceMainDialog_escrow"), this.escrow);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_CustomerBankAcctNumber"), this.customerBankAcct);
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finStartDate"), this.odStartDate);
 		readOnlyComponent(true, this.underConstruction);
@@ -2262,6 +2339,10 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 					publishNotification(Notify.ROLE, fm.getFinReference(), fm);
 				}
 
+				if (extendedFieldCtrl != null && getFinanceDetail().getExtendedFieldHeader() != null) {
+					extendedFieldCtrl.deAllocateAuthorities();
+				}
+
 				closeDialog();
 				if (listWindowTab != null) {
 					listWindowTab.setSelected(true);
@@ -2410,31 +2491,6 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			}
 		}
 
-		// Extended Field details
-		if (aFinanceDetail.getExtendedFieldRender() != null) {
-			int seqNo = 0;
-			ExtendedFieldRender details = aFinanceDetail.getExtendedFieldRender();
-			details.setReference(afinanceMain.getFinReference());
-			details.setSeqNo(++seqNo);
-			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
-			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			details.setRecordStatus(afinanceMain.getRecordStatus());
-			details.setRecordType(afinanceMain.getRecordType());
-			details.setVersion(afinanceMain.getVersion());
-			details.setWorkflowId(afinanceMain.getWorkflowId());
-			details.setTaskId(taskId);
-			details.setNextTaskId(nextTaskId);
-			details.setRoleCode(getRole());
-			details.setNextRoleCode(nextRoleCode);
-			details.setNewRecord(afinanceMain.isNewRecord());
-			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
-				if (StringUtils.trimToNull(details.getRecordType()) == null) {
-					details.setRecordType(afinanceMain.getRecordType());
-					details.setNewRecord(true);
-				}
-			}
-		}
-
 		if (isWorkFlowEnabled()) {
 			String taskId = getTaskId(getRole());
 			afinanceMain.setRecordStatus(userAction.getSelectedItem().getValue().toString());
@@ -2530,6 +2586,29 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
+
+		// Extended Field details
+		if (afinanceDetail.getExtendedFieldRender() != null) {
+			ExtendedFieldRender details = afinanceDetail.getExtendedFieldRender();
+			details.setReference(afinanceMain.getFinReference());
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(afinanceMain.getRecordStatus());
+			details.setRecordType(afinanceMain.getRecordType());
+			details.setVersion(afinanceMain.getVersion());
+			details.setWorkflowId(afinanceMain.getWorkflowId());
+			details.setTaskId(taskId);
+			details.setNextTaskId(nextTaskId);
+			details.setRoleCode(getRole());
+			details.setNextRoleCode(nextRoleCode);
+			details.setNewRecord(afinanceMain.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(afinanceMain.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(afinanceMain.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
 
 		try {
 
@@ -2974,6 +3053,34 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		logger.debug("Entering" + event.toString());
 		setRepayAccMandatory();
 		logger.debug("Leaving" + event.toString());
+	}
+
+	public void onCheck$escrow(Event event) {
+		if (this.escrow.isChecked()) {
+			this.customerBankAcct.setReadonly(false);
+			this.customerBankAcct.setMandatoryStyle(true);
+		} else {
+			this.customerBankAcct.setReadonly(true);
+			this.customerBankAcct.setValue("");
+			this.customerBankAcct.setMandatoryStyle(false);
+			this.customerBankAcct.setAttribute("CustBankId", null);
+		}
+	}
+
+	public void onFulfill$customerBankAcct(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = customerBankAcct.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.customerBankAcct.setValue("");
+			this.customerBankAcct.setDescription("");
+			this.customerBankAcct.setAttribute("CustBankId", null);
+		} else {
+			CustomerBankInfo details = (CustomerBankInfo) dataObject;
+			if (details != null) {
+				this.customerBankAcct.setAttribute("CustBankId", details.getBankId());
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

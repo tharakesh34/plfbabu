@@ -601,6 +601,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Hbox hbox_ScheduleMethod;
 	protected Row noOfTermsRow;
 
+	// Escrow row
+	protected Row row_Escrow;
+	protected Checkbox escrow;
+	protected ExtendedCombobox customerBankAcct;
+
 	// Planned Emi Holidays
 	protected Row row_BpiTreatment;
 	protected Checkbox alwBpiTreatment;
@@ -1376,6 +1381,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPayBank.setProperties(true, finFormatter);
 		this.downPaySupl.setProperties(false, finFormatter);
 
+		this.customerBankAcct.setProperties("CustomerBankInfoAccntNum", "AccountNumber", "AccountHolderName", false, 8);
+		this.customerBankAcct.getTextbox().setMaxlength(50);
+
 		this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
 		this.accountsOfficer.getTextbox().setMaxlength(50);
@@ -1901,6 +1909,29 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		}
 		if (isReadOnly("FinanceMainDialog_NoScheduleGeneration")) {
+			if (!FinServiceEvent.ORG.equals(financeDetail.getModuleDefiner())) {
+				FinScheduleData schdData = getFinanceDetail().getFinScheduleData();
+				FinanceMain fm = schdData.getFinanceMain();
+
+				long finID = fm.getFinID();
+				String type = "";
+				if (FinServiceEvent.CHGGRCEND.equals(financeDetail.getModuleDefiner())
+						|| FinServiceEvent.RESCHD.equals(financeDetail.getModuleDefiner())
+						|| FinServiceEvent.ADDDISB.equals(financeDetail.getModuleDefiner())) {
+					if (PennantConstants.RCD_STATUS_APPROVED.equalsIgnoreCase(fm.getRecordStatus())) {
+						type = "_AView";
+					} else {
+						type = "_TView";
+					}
+				} else {
+					type = "_AView";
+				}
+
+				List<FinanceStepPolicyDetail> spdList = financeDetailService.getFinStepPolicyDetails(finID, type,
+						false);
+				schdData.setStepPolicyDetails(spdList, true);
+			}
+
 			if (FinServiceEvent.ADDDISB.equals(financeDetail.getModuleDefiner())
 					|| FinServiceEvent.RATECHG.equals(financeDetail.getModuleDefiner())) {
 				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -2055,7 +2086,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			appendCreditReviewDetailTab(false);
 		} else if (PennantConstants.NEW_CREDITREVIEWTAB
 				.equals(SysParamUtil.getValueAsString(SMTParameterConstants.CREDITREVIEW_TAB))
-				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)) {
+				&& isTabVisible(StageTabConstants.CreditReviewDetails) && StringUtils.isEmpty(moduleDefiner)
+				&& !FinServiceEvent.RESTRUCTURE.equalsIgnoreCase(moduleDefiner)) {
 			appendCreditReviewDetailSummaryTab(false);
 		}
 
@@ -4396,6 +4428,33 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.row_underConstruction.setVisible(true);
 		}
 
+		/* Escrow Mode */
+		if (ImplementationConstants.ALLOW_ESCROW_MODE) {
+			if (aFinanceMain.getFinRepayMethod().equals(FinanceConstants.REPAYMTH_MANUAL)) {
+				this.row_Escrow.setVisible(true);
+			}
+
+			this.escrow.setChecked(aFinanceMain.isEscrow());
+
+			if (!aFinanceMain.isEscrow()) {
+				this.customerBankAcct.setReadonly(true);
+			}
+
+			Filter[] filters = new Filter[1];
+			filters[0] = new Filter("custID", this.custID.longValue(), Filter.OP_EQUAL);
+			this.customerBankAcct.setFilters(filters);
+
+			if (!aFinanceMain.isNewRecord()) {
+				this.customerBankAcct.setValue(StringUtils.trimToEmpty(aFinanceMain.getCustAcctNumber()),
+						StringUtils.trimToEmpty(aFinanceMain.getCustAcctHolderName()));
+				if (aFinanceMain.getCustBankId() != null && aFinanceMain.getCustBankId() > 0) {
+					this.customerBankAcct.setAttribute("CustBankId", aFinanceMain.getCustBankId());
+				} else {
+					this.customerBankAcct.setAttribute("CustBankId", null);
+				}
+			}
+		}
+
 		if (financeType.isAlwLoanSplit()) {
 			this.alwLoanSplit.setVisible(true);
 			this.label_FinanceMainDialog_AllowLoanSplit.setVisible(true);
@@ -6358,6 +6417,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
+		if (this.escrow.isChecked() && StringUtils.isEmpty(this.customerBankAcct.getValue())) {
+			this.customerBankAcct.setConstraint(new PTStringValidator(
+					Labels.getLabel("label_FinanceMainDialog_CustomerBankAcctNumber.value"), null, true, true));
+		}
+
 		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if (!this.graceRate.isBaseReadonly()) {
@@ -6402,6 +6466,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dmaCode.setConstraint("");
 		this.connector.setConstraint("");
 		this.salesDepartment.setConstraint("");
+		this.customerBankAcct.setConstraint("");
 		this.employeeName.setConstraint("");
 
 		// FinanceMain Details Tab ---> 2. Grace Period Details
@@ -10990,9 +11055,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		if (stepDetailDialogCtrl != null) {
 			if (stepFinance.isChecked() && allowGrace.isChecked()) {
-				stepDetailDialogCtrl.setAlwGraceChanges(true);
+				stepDetailDialogCtrl.setAlwGraceChanges(true, true);
 			} else {
-				stepDetailDialogCtrl.setAlwGraceChanges(false);
+				stepDetailDialogCtrl.setAlwGraceChanges(false, true);
 			}
 		}
 		logger.debug(Literal.LEAVING + event.toString());
@@ -11732,11 +11797,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						errorList.addAll(stepDetailDialogCtrl.doValidateStepDetails(schdData.getFinanceMain(),
 								this.graceTerms_Two.intValue(), PennantConstants.STEP_SPECIFIER_GRACE, stepAppliedOn));
 					}
-				}
-
-				// both step and EMI holiday not allowed
-				if (schdData.getFinanceMain().isPlanEMIHAlw()) {
-					errorList.add(new ErrorDetail("30573", null));
 				}
 			}
 
@@ -13840,6 +13900,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		try {
+			aFinanceMain.setEscrow(this.escrow.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			aFinanceMain.setCustAcctNumber(this.customerBankAcct.getValue());
+			aFinanceMain.setCustAcctHolderName(this.customerBankAcct.getDescription());
+			Object object = this.customerBankAcct.getAttribute("CustBankId");
+			if (object != null) {
+				aFinanceMain.setCustBankId(Long.parseLong(object.toString()));
+			} else {
+				aFinanceMain.setCustBankId(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
 			if (isOverDraft) {
 				// validate Overdraft Limit with configured finmin and fin max
 				// amounts
@@ -14919,12 +14998,15 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	private void setVASAcctCodes(Map<String, Object> dataMap) {
 		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
+		String finType = financeDetail.getFinScheduleData().getFinanceMain().getFinType();
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			VASRecording vasRecording = vasRecordingList.get(0);
 			if (vasRecording != null) {
 				// For GL Code
 				VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vasRecording.getProductCode());
-				dataMap.put("ae_productCode", vehicleDealer.getProductShortCode());
+				String productCode = financeDetailService.getFinCategory(finType);
+				dataMap.put("ae_vasProductShrtCode", vehicleDealer.getProductShortCode());
+				dataMap.put("ae_productCode", productCode);
 				dataMap.put("ae_dealerCode", vehicleDealer.getDealerShortCode());
 				dataMap.put("ae_vasProdCategory", vasRecording.getProductCode());
 			}
@@ -15080,7 +15162,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				dataMap.put("VAS_" + vasProductCode + "_W", fee.getWaivedAmount());
-				dataMap.put("VAS_" + vasProductCode + "_P", fee.getPaidAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fee.getActualAmount());
 			}
 		}
 
@@ -16123,6 +16205,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_maturityDate"), this.maturityDate);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_finRepayMethod"), this.finRepayMethod);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_escrow"), this.escrow);
+		readOnlyComponent(isReadOnly("FinanceMainDialog_CustomerBankAcctNumber"), this.customerBankAcct);
 
 		readOnlyComponent(isReadOnly("FinanceMainDialog_AlwBpiTreatment"), this.alwBpiTreatment);
 		readOnlyComponent(isReadOnly("FinanceMainDialog_DftBpiTreatment"), this.dftBpiTreatment);
@@ -17320,6 +17404,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			repymethod = this.finRepayMethod.getSelectedItem().getValue().toString();
 		}
 
+		if (FinanceConstants.REPAYMTH_MANUAL.equals(repymethod) && ImplementationConstants.ALLOW_ESCROW_MODE) {
+			this.row_Escrow.setVisible(true);
+			if (!this.escrow.isChecked()) {
+				this.customerBankAcct.setReadonly(true);
+			}
+		} else {
+			this.row_Escrow.setVisible(false);
+			this.escrow.setChecked(false);
+			this.customerBankAcct.setReadonly(true);
+			this.customerBankAcct.setMandatoryStyle(false);
+			this.customerBankAcct.setValue("");
+			this.customerBankAcct.setAttribute("CustBankId", null);
+		}
+
 		if (getMandateDialogCtrl() != null) {
 			getMandateDialogCtrl().checkTabDisplay(repymethod, true);
 		}
@@ -17329,6 +17427,34 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		logger.debug(Literal.LEAVING + event.toString());
+	}
+
+	public void onCheck$escrow(Event event) {
+		if (this.escrow.isChecked()) {
+			this.customerBankAcct.setReadonly(false);
+			this.customerBankAcct.setMandatoryStyle(true);
+		} else {
+			this.customerBankAcct.setReadonly(true);
+			this.customerBankAcct.setValue("");
+			this.customerBankAcct.setMandatoryStyle(false);
+			this.customerBankAcct.setAttribute("CustBankId", null);
+		}
+	}
+
+	public void onFulfill$customerBankAcct(Event event) {
+		logger.debug(Literal.ENTERING);
+		Object dataObject = customerBankAcct.getObject();
+		if (dataObject == null || dataObject instanceof String) {
+			this.customerBankAcct.setValue("");
+			this.customerBankAcct.setDescription("");
+			this.customerBankAcct.setAttribute("CustBankId", null);
+		} else {
+			CustomerBankInfo details = (CustomerBankInfo) dataObject;
+			if (details != null) {
+				this.customerBankAcct.setAttribute("CustBankId", details.getBankId());
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**

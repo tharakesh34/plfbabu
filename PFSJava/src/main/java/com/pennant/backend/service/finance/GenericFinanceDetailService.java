@@ -1450,7 +1450,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 				}
 
 				dataMap.put("VAS_" + vasProductCode + "_W", fee.getWaivedAmount());
-				dataMap.put("VAS_" + vasProductCode + "_P", fee.getPaidAmount());
+				dataMap.put("VAS_" + vasProductCode + "_P", fee.getActualAmount());
 			}
 		}
 
@@ -1812,14 +1812,18 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		return subventionExists;
 	}
 
-	private void setVASAcctCodes(FinanceDetail financeDetail, Map<String, Object> dataMap) {
-		List<VASRecording> vasRecordingList = financeDetail.getFinScheduleData().getVasRecordingList();
+	private void setVASAcctCodes(FinanceDetail fd, Map<String, Object> dataMap) {
+		List<VASRecording> vasRecordingList = fd.getFinScheduleData().getVasRecordingList();
+		String ft = fd.getFinScheduleData().getFinanceMain().getFinType();
+
 		if (CollectionUtils.isNotEmpty(vasRecordingList)) {
 			VASRecording vasRecording = vasRecordingList.get(0);
 			if (vasRecording != null) {
 				// For GL Code
 				VehicleDealer vehicleDealer = vehicleDealerService.getDealerShortCodes(vasRecording.getProductCode());
-				dataMap.put("ae_productCode", vehicleDealer.getProductShortCode());
+				String productCode = financeMainDAO.getFinCategory(ft);
+				dataMap.put("ae_vasProductShrtCode", vehicleDealer.getProductShortCode());
+				dataMap.put("ae_productCode", productCode);
 				dataMap.put("ae_dealerCode", vehicleDealer.getDealerShortCode());
 				dataMap.put("ae_vasProdCategory", vasRecording.getProductCode());
 			}

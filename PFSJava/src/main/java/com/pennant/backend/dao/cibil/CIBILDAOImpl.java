@@ -1,5 +1,6 @@
 package com.pennant.backend.dao.cibil;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.collateral.CollateralSetup;
 import com.pennant.backend.model.customermasters.Customer;
@@ -63,14 +65,14 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(bureauType)) {
 			sql.append("Select");
-			sql.append(" CustShrtName, CustFName, CustMName, CustLName");
+			sql.append(" CustShrtName, CustFName, CustMName, CustLName, CustCIF");
 			sql.append(", CustSalutationCode, CustDOB, CustGenderCode, CustCRCPR");
 			sql.append(" From Customers Where CustID = ?");
 
 			obj = new Object[] { customerId };
 		} else {
 			sql.append("Select distinct c.CustID");
-			sql.append(", c.CustDftBranch");
+			sql.append(", c.CustDftBranch, c.CustCtgCode, CustCIF");
 			sql.append(", c.CustFName, c.CustMName, c.CustLName, c.CustShrtName");
 			sql.append(", c.CustTradeLicenceNum, c.CustDOB, CustCOB, CustGenderCode");
 			sql.append(", c.CustCRCPR, c.CustSalutationCode");
@@ -105,9 +107,12 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				customer.setCustDOB(rs.getDate("CustDOB"));
 				customer.setCustGenderCode(rs.getString("CustGenderCode"));
 				customer.setCustCRCPR(rs.getString("CustCRCPR"));
+				customer.setCustCIF(rs.getString("CustCIF"));
 			} else {
 				customer.setCustID(rs.getLong("CustID"));
 				customer.setCustDftBranch(rs.getString("CustDftBranch"));
+				customer.setCustCtgCode(rs.getString("CustCtgCode"));
+				customer.setCustCIF(rs.getString("CustCIF"));
 				customer.setCustFName(rs.getString("CustFName"));
 				customer.setCustMName(rs.getString("CustMName"));
 				customer.setCustLName(rs.getString("CustLName"));
@@ -208,7 +213,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	public List<CustomerAddres> getCustomerAddres(long customerId, String segmentType) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" cat.code CustAddrType, CustAddrHNbr, CustFlatNbr, CustAddrStreet");
-		sql.append(", CustDistrict, pvc.PcCityName, CustAddrLine1, CustAddrLine2");
+		sql.append(", CustDistrict, pvc.PcCityName, CustAddrLine1, CustAddrLine2, CustAddrPriority");
 		sql.append(", sm.code CustAddrProvince, sm.Description, CustAddrZIP, CustAddrCountry");
 		sql.append(" From CustomerAddresses ca");
 		sql.append(" Left Join Cibil_Address_Types_Mapping am on am.Address_Type = ca.CustAddrType");
@@ -239,6 +244,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			ca.setCustAddrCity(rs.getString("PcCityName"));
 			ca.setCustAddrLine1(rs.getString("CustAddrLine1"));
 			ca.setCustAddrLine2(rs.getString("CustAddrLine2"));
+			ca.setCustAddrPriority(rs.getInt("CustAddrPriority"));
 			ca.setCustAddrProvince(rs.getString("CustAddrProvince"));
 			// customerAddres.setLovDescCustAddrProvinceName(rs.getString("Description"));
 			ca.setCustAddrZIP(rs.getString("CustAddrZIP"));
@@ -256,7 +262,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 		sql.append(", Bounce_Due, Bounce_Paid, Late_Payment_Penalty_Due, Late_Payment_Penalty_Paid");
 		sql.append(", Total_Pri_Schd, Total_Pri_Paid, Total_Pft_Schd, Total_Pft_Paid");
 		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
-		sql.append(", OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate");
+		sql.append(", OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate, FirstRepay");
 		sql.append(" From Cibil_Customer_Loans_View cs");
 		sql.append(" Where cs.FinID = ? and CustID = ? and cs.Segment_Type = ?");
 
@@ -294,6 +300,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 				finEnqy.setSvAmount(rs.getBigDecimal("CustIncome"));
 				finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
 				finEnqy.setRepayProfitRate(rs.getBigDecimal("CurReducingRate"));
+				finEnqy.setFirstRepay(rs.getBigDecimal("FirstRepay"));
 
 				return finEnqy;
 			}, finID, customerId, segmentType);
@@ -580,33 +587,45 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	}
 
 	@Override
-	public long extractCustomers(String segmentType) throws Exception {
+	public long extractCustomers(String segmentType, String entity) throws Exception {
 		StringBuilder sql = new StringBuilder("INSERT INTO CIBIL_CUSTOMER_EXTRACT");
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
 			sql.append(" Select CustID, FinID, FinReference, OwnerShip, LatestRpyDate, ?");
+			if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+				sql.append(", ?");
+			}
 			sql.append(" From Cibil_Customer_Extarct_View");
-			sql.append(" Where LatestRpyDate >= ?");
 		} else {
 			sql.append(" Select c.CustID, fm.FinID, fm.FinReference, 0, LatestRpyDate, ?");
+			if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+				sql.append(", ?");
+			}
 			sql.append(" From FinanceMain fm");
 			sql.append(" Inner Join FinPftDetails fp on fp.FinID = fm.FinID");
 			sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
 			sql.append(" Inner Join RmtCustTypes ct on ct.CustTypeCode = c.CustTypeCode and ct.CustTypeCtg <> ?");
-			sql.append(" Where LatestRpyDate >= ?");
+			sql.append(" Inner Join RMTFinanceTypes rmt on rmt.FinType = fm.FinType");
+			sql.append(" Inner Join SMTDivisionDetail smt ON smt.DivisionCode = rmt.FinDivision");
 		}
+
+		sql.append(" Where LatestRpyDate >= ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			return jdbcOperations.update(sql.toString(), ps -> {
-				if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-					ps.setString(1, segmentType);
-					ps.setDate(2, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
-				} else {
-					ps.setString(1, segmentType);
-					ps.setString(2, PennantConstants.PFF_CUSTCTG_INDIV);
-					ps.setDate(3, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
+				int index = 1;
+
+				ps.setString(index++, segmentType);
+				if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+					ps.setString(index++, entity);
 				}
+
+				if (!PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
+					ps.setString(index++, PennantConstants.PFF_CUSTCTG_INDIV);
+				}
+
+				ps.setDate(index++, JdbcUtil.getDate(DateUtil.addMonths(SysParamUtil.getAppDate(), -36)));
 			});
 		} catch (Exception e) {
 			throw new Exception(String.format("Unable Extarct %s CIBIL Data", segmentType));
@@ -660,7 +679,7 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	@Override
 	public List<CollateralSetup> getCollateralDetails(long finID, String segmentType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" cs.BankValuation, ccy.CcyNumber, Collateral_Type");
+		sql.append(" cs.BankValuation, ccy.CcyCode, cct.Code");
 		sql.append(" From collateralassignment ca");
 		/* FIXME : change to FinID */
 		sql.append(" Inner Join Cibil_Customer_Extract cce on cce.FinReference = ca.Reference");
@@ -678,8 +697,8 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 			CollateralSetup colltflStp = new CollateralSetup();
 
 			colltflStp.setBankValuation(rs.getBigDecimal("BankValuation"));
-			colltflStp.setCollateralCcy(rs.getString("CcyNumber"));
-			colltflStp.setCollateralType(rs.getString("Collateral_Type"));
+			colltflStp.setCollateralCcy(rs.getString("CcyCode"));
+			colltflStp.setCollateralType(rs.getString("Codes"));
 
 			return colltflStp;
 		}, segmentType, segmentType, finID, segmentType);
@@ -687,14 +706,14 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	}
 
 	@Override
-	public List<ChequeDetail> getChequeBounceStatus(long finID) {
+	public List<ChequeDetail> getChequeBounceStatus(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" BounceDate, ReceiptAmount, rd.ChequeAcNo, br.Reason");
+		sql.append(" BounceDate, ReceiptAmount, rd.FavourNumber, br.Reason");
 		sql.append(" From finreceiptheader rh");
 		sql.append(" Inner Join FinReceiptDetail rd on rd.ReceiptId = rh.ReceiptId");
 		sql.append(" Inner Join ManualAdvise ma on ma.ReceiptId = rh.ReceiptId");
 		sql.append(" Inner Join bouncereasons br on br.BounceID = ma.BounceID");
-		sql.append(" where Receiptmode = ? and receiptmodestatus = ? and br.bouncecode in (?, ?)");
+		sql.append(" where Receiptmode = ? and receiptmodestatus = ? and rh.Reference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -703,11 +722,11 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 			chqueDtl.setChequeBounceDate(rs.getDate("BounceDate"));
 			chqueDtl.setAmount(rs.getBigDecimal("ReceiptAmount"));
-			chqueDtl.setChequeNumber(rs.getString("ChequeAcNo"));
-			chqueDtl.setAmount(rs.getBigDecimal("Reason"));
+			chqueDtl.setChequeNumber(rs.getString("FavourNumber"));
+			chqueDtl.setChequeBounceReason(rs.getString("Reason"));
 
 			return chqueDtl;
-		}, "CHEQUE", "B", "41", "403");
+		}, "CHEQUE", "B", finReference);
 	}
 
 	@Override
@@ -800,4 +819,78 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 
 		return null;
 	}
+
+	@Override
+	public List<Long> getJointAccountDetails(long finID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select Distinct c.CustID");
+		sql.append(" From FinJointAccountDetails jd");
+		sql.append(" Inner Join FinanceMain fm on fm.FinID = jd.FinID");
+		sql.append(" Inner Join Customers c on c.CustCIF = jd.CustCIF");
+		sql.append(" Where fm.FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return rs.getLong("CustID");
+		}, finID);
+	}
+
+	@Override
+	public BigDecimal getLastRepaidAmount(String finReference) {
+		String sql = "Select Amount From FinReceiptDetail Where ReceiptId = (Select max(ReceiptId) from FinReceiptHeader where Reference = ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public BigDecimal getGuarantorPercentage(long finID) {
+		String sql = "Select sum(GuranteePercentage) From FinGuarantorsDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, BigDecimal.class, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	@Override
+	public List<String> getEntityCodes() {
+		String sql = "Select EntityCode From Entity where Active = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		return jdbcOperations.query(sql, (rs, rowNum) -> {
+			return rs.getString(1);
+		}, 1);
+
+	}
+
+	@Override
+	public String getCoAppRelation(String custCIF, long finID) {
+		String sql = "Select CatOfCoApplicant from  FinJointAccountDetails Where FinID = ? and CustCif = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, finID, custCIF);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
 }

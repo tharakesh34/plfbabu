@@ -1354,6 +1354,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		sql.append("Select Id, Reference, EntityCode, Schdate, BankCode, BankName, PartnerBankName");
 		sql.append(", FromDate, ToDate, PresentmentDate, Status, MandateType");
 		sql.append(", RecordStatus, RecordType");
+		sql.append(", LoanType, PartnerAcctNumber, PartnerBankId");
 		sql.append(" From PresentmentHeader_view");
 		sql.append(" Where FromDate = ? and ToDate = ? and Status = ?");
 
@@ -1385,6 +1386,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			ph.setMandateType(rs.getString("MandateType"));
 			ph.setRecordStatus(rs.getString("RecordStatus"));
 			ph.setRecordType(rs.getString("RecordType"));
+			ph.setLoanType(rs.getString("LoanType"));
+			ph.setPartnerAcctNumber(rs.getString("PartnerAcctNumber"));
+			ph.setPartnerBankId(rs.getLong("PartnerBankId"));
 
 			return ph;
 		});
@@ -1590,7 +1594,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public List<PresentmentDetail> getPresentmentDetails(long headerId, int threadId) {
 		StringBuilder sql = new StringBuilder("SELECT");
-		sql.append(" PRD.BRANCH_CODE, PRD.FINID, PRD.FINREFERENCE, PRD.HOST_REFERENCE,  PRD.INSTALMENT_NO");
+		sql.append(" PRD.BRANCH_CODE, FM.FINID, FM.FINREFERENCE, PRD.HOST_REFERENCE,  PRD.INSTALMENT_NO");
 		sql.append(", PRD.AMOUNT_CLEARED, PRD.CLEARING_DATE, PRD.CLEARING_STATUS, PRD.BOUNCE_CODE, BOUNCE_REMARKS");
 		sql.append(", PD.ID, PD.PRESENTMENTID, PD.MANDATEID, PH.MANDATETYPE");
 		sql.append(", PD.SCHDATE, PD.SCHAMTDUE, PD.SCHPRIDUE, PD.SCHPFTDUE");
@@ -1996,11 +2000,11 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	public void logRequest(long headerId, Presentment presentment) {
 		StringBuilder sql = new StringBuilder("INSERT INTO Presentment_FileImport");
 		sql.append("(HEADER_ID, BRANCHCODE, AGREEMENTNO, INSTALMENTNO, BFLREFERENCENO, BATCHID, AMOUNTCLEARED");
-		sql.append(", CLEARINGDATE, STATUS, REASONCODE, UMR_NO");
+		sql.append(", CLEARINGDATE, STATUS, REASONCODE, UMRN_NO");
 		sql.append(" VALUES (");
-		sql.append("?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?");
-		sql.append(")");
+		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -2063,7 +2067,9 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public PresentmentDetail getPresentmentById(long presentmentId) {
-		String sql = "Select FinID, FinReference, Status, ErrorCode, ErrorDesc from PresentmentDetails Where ID = ?";
+		String sql = "Select FinID, FinReference, Status, ErrorCode, ErrorDesc, PresentmentRef from PresentmentDetails Where ID = ?";
+
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
@@ -2074,6 +2080,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				pd.setStatus(rs.getString("Status"));
 				pd.setErrorCode(rs.getString("ErrorCode"));
 				pd.setErrorDesc(rs.getString("ErrorDesc"));
+				pd.setPresentmentRef(rs.getString("PresentmentRef"));
 
 				return pd;
 			}, presentmentId);
@@ -2110,4 +2117,44 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 		return null;
 
 	}
+
+	@Override
+	public List<Long> getManualExcludeList(long id) {
+		String sql = "Select ID From PresentmentDetails Where PresentmentId = ? and ExcludeReason  = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		return jdbcOperations.query(sql, ps -> {
+			ps.setLong(1, id);
+			ps.setInt(2, RepayConstants.PEXC_MANUAL_EXCLUDE);
+		}, (rs, i) -> {
+			return JdbcUtil.getLong(rs.getObject(1));
+		});
+	}
+
+	@Override
+	public PresentmentDetail getRePresentmentDetails(String presentmentRef) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ph.PresentmentType, fh.ReceiptDate");
+		sql.append(" From PresentmentDetails pd");
+		sql.append(" Inner Join PresentmentHeader ph on ph.ID = pd.PresentmentID");
+		sql.append(" Inner Join FinReceiptHeader fh on fh.ReceiptID = pd.ReceiptID");
+		sql.append(" Where pd.PresentmentRef = ? and ph.PresentmentType = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				PresentmentDetail pd = new PresentmentDetail();
+				pd.setPresentmentType(rs.getString("PresentmentType"));
+				pd.setRepresentmentDate(rs.getDate("ReceiptDate"));
+				return pd;
+			}, presentmentRef, PennantConstants.PROCESS_REPRESENTMENT);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
 }

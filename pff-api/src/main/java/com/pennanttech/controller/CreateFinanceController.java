@@ -52,7 +52,6 @@ import com.pennant.backend.dao.finance.FinFeeReceiptDAO;
 import com.pennant.backend.dao.finance.FinPlanEmiHolidayDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
-import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantTypeDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.reason.deatil.ReasonDetailDAO;
@@ -209,7 +208,6 @@ public class CreateFinanceController extends SummaryDetailService {
 	private JointAccountDetailService jointAccountDetailService;
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private CustomerAddresService customerAddresService;
-	private ManualAdviseDAO manualAdviseDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceWorkFlowService financeWorkFlowService;
 	private FinPlanEmiHolidayDAO finPlanEmiHolidayDAO;
@@ -1442,8 +1440,9 @@ public class CreateFinanceController extends SummaryDetailService {
 							curAssignValue = curAssignValue.add(collsetup.getBankValuation()
 									.multiply(detail.getAssignPerc() == null ? BigDecimal.ZERO : detail.getAssignPerc())
 									.divide(new BigDecimal(100), 0, RoundingMode.HALF_DOWN));
-							totalAvailAssignValue = totalAvailAssignValue
-									.add(collsetup.getBankValuation().subtract(curAssignValue));
+							// TODO:FIXME: Check with Srikanth regarding totalAvailAssignValue when 100 percent
+							// assignment is given
+							totalAvailAssignValue = totalAvailAssignValue.add(collsetup.getBankValuation());
 						}
 					}
 				}
@@ -2434,9 +2433,9 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public FinanceDetail getFinanceDetails(long finID) {
 		logger.debug(Literal.ENTERING);
-		
+
 		FinanceDetail fd = null;
-		
+
 		try {
 			fd = financeDetailService.getFinanceDetailById(finID, false, "", false, FinServiceEvent.ORG, "");
 
@@ -3113,7 +3112,6 @@ public class CreateFinanceController extends SummaryDetailService {
 		fd.setFinFeeDetails(getUpdatedFees(finFeeDetail));
 
 		// Bounce and manual advice fees if applicable
-		String finReference = fm.getFinReference();
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
 		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
@@ -3174,7 +3172,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		summary.setOverDueAmount(totalDue.add(summary.getOverDueAmount()));
 		summary.setTotalOverDueIncCharges(summary.getOverDueAmount());
 		summary.setDueCharges(totalDue.add(summary.getDueCharges()));
-		summary.setAdvPaymentAmount(getTotalAdvAmount(finID));
+		summary.setAdvPaymentAmount(getTotalAdvAmount(fm));
 		schdData.setFinanceSummary(summary);
 
 		// customer details
@@ -4451,10 +4449,6 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	public void setCustomerAddresService(CustomerAddresService customerAddresService) {
 		this.customerAddresService = customerAddresService;
-	}
-
-	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
-		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
 	public void setFinanceReferenceDetailDAO(FinanceReferenceDetailDAO financeReferenceDetailDAO) {

@@ -125,6 +125,7 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 	protected Listheader listheader_Disbursement_Entity;
 
 	protected Combobox disbTypes;
+	protected Space space_disbTypes;
 	protected ExtendedCombobox partnerBank;
 	protected Datebox fromDate;
 	protected Datebox toDate;
@@ -350,6 +351,9 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 		this.space_finType.setSclass(PennantConstants.mandateSclass);
 
 		fillComboBox(this.disbTypes, "", PennantStaticListUtil.getDisbRegistrationTypes(), "");
+		if (ImplementationConstants.DISB_REQ_RES_FILE_GEN_MODE) {
+			this.space_disbTypes.setSclass(PennantConstants.mandateSclass);
+		}
 		fillComboBox(this.channelTypes, "", channelTypesList, "");
 		fillComboBox(this.disbParty, "", paymentDetails, "");
 
@@ -632,6 +636,16 @@ public class DisbursementRegistrationListCtrl extends GFCBaseListCtrl<FinAdvance
 						new String[] { "To Date", DateUtility.formatToShortDate(date) }));
 			}
 
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			if (getComboboxValue(this.disbTypes).equals(PennantConstants.List_Select)
+					&& ImplementationConstants.DISB_REQ_RES_FILE_GEN_MODE) {
+				throw new WrongValueException(this.disbTypes, Labels.getLabel("FIELD_IS_MAND",
+						new String[] { Labels.getLabel("label_DisbursementList_disbInstrctuionType.value") }));
+			}
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

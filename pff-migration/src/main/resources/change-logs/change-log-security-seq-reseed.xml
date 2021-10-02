@@ -489,5 +489,66 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="10" author="Murthy.y" dbms="oracle" runAlways="true">
+		<sql splitStatements="false">
+		<![CDATA[
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.USRID),0)+1 into v_maxval from
+			(select
+			USRID from SECUSERS union all select USRID from SECUSERS_Temp) T;
+			EXECUTE IMMEDIATE 'alter sequence SEQSECUSERS restart start with ' || v_maxval;
+			end;
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10" author="Murthy.y" dbms="postgresql" runAlways="true">
+		<sql splitStatements="false">
+		<![CDATA[
+			do $$
+			declare
+			v_maxval INTEGER;
+			begin
+			select COALESCE(max(T.USRID),0)+1 into v_maxval from
+			(select USRID from SECUSERS union all select USRID from SECUSERS_Temp) T;
+			EXECUTE 'alter
+			sequence SEQSECUSERS restart start with ' || v_maxval;
+			end;
+			$$;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="10" author="Murthy.y" dbms="mssql" runAlways="true">
+		<sql splitStatements="false">
+			<![CDATA[
+			DECLARE @SQLCmd NVARCHAR(MAX);
+			DECLARE @MAXNO BIGINT;
+			SELECT @MAXNO=COALESCE(max(T.USRID),0)+1
+			from
+			(select USRID from SECUSERS union all select USRID from SECUSERS_Temp) T;
+
+			SET @SQLCmd = '
+			CREATE
+			SEQUENCE [dbo].[SEQSECUSERS]
+			AS [bigint]
+			START WITH '
+			+ CAST( @MAXNO AS VARCHAR(30)) +
+			'INCREMENT BY 1
+			MINVALUE
+			-9223372036854775808
+			MAXVALUE 9223372036854775807
+			CACHE ';
+
+
+			EXEC
+			SP_EXECUTESQL @SQLCmd;
+			]]>
+		</sql>
+	</changeSet>
+	
 
 </databaseChangeLog>

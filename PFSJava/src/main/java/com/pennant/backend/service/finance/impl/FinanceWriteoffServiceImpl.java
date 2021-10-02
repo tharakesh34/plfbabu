@@ -44,7 +44,9 @@ import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -61,6 +63,7 @@ import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -75,8 +78,10 @@ import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FinanceWriteoffService;
 import com.pennant.backend.service.finance.GenericFinanceDetailService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -99,6 +104,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinTypeFeesDAO finTypeFeesDAO;
 	private ManualAdviseDAO manualAdviseDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public FinanceWriteoffServiceImpl() {
 		super();
@@ -161,6 +167,10 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		// Finance Fee Details
 		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
 
+		// FinServiceInstruction
+
+		schdData.setFinServiceInstructions(
+				finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp", procEdtEvent));
 		// Finance Check List Details
 		// =======================================
 		checkListDetailService.setFinanceCheckListDetails(fd, finType, procEdtEvent, userRole);
@@ -241,26 +251,21 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 		Date sysData = SysParamUtil.getAppDate();
 
 		long serviceUID = Long.MIN_VALUE;
-		if (schdData.getFinServiceInstructions().isEmpty()) {
-			FinServiceInstruction finServInst = new FinServiceInstruction();
-			finServInst.setFinID(finID);
-			finServInst.setFinReference(finReference);
-			finServInst.setFinEvent(fd.getModuleDefiner());
-			schdData.setFinServiceInstruction(finServInst);
+
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fd);
+
+		if (fd.getExtendedFieldRender() != null && fd.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fd.getExtendedFieldRender().getInstructionUID();
 		}
 
-		for (FinServiceInstruction finSerList : schdData.getFinServiceInstructions()) {
-			if (finSerList.getInstructionUID() == Long.MIN_VALUE) {
-				if (serviceUID == Long.MIN_VALUE) {
-					serviceUID = Long.valueOf(ReferenceGenerator.generateNewServiceUID());
-				}
-				finSerList.setInstructionUID(serviceUID);
-			} else {
-				serviceUID = finSerList.getInstructionUID();
+		for (FinServiceInstruction finServInst : serviceInstructions) {
+			serviceUID = finServInst.getInstructionUID();
+			fm.setInstructionUID(serviceUID);
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
 			}
 		}
 
@@ -347,6 +352,21 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 			auditDetails.addAll(checkListDetailService.saveOrUpdate(fd, tableType.getSuffix(), serviceUID));
 		}
 
+		List<FinServiceInstruction> finServiceInstructions = fd.getFinScheduleData().getFinServiceInstructions();
+		if (CollectionUtils.isNotEmpty(finServiceInstructions) && fm.isNewRecord()) {
+			finServiceInstructionDAO.saveList(finServiceInstructions, tableType.getSuffix());
+		}
+
+		// Extended field Details
+		if (header.getFinanceDetail().getExtendedFieldRender() != null) {
+			List<AuditDetail> details = header.getFinanceDetail().getAuditDetailMap().get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, header.getFinanceDetail().getExtendedFieldHeader().getEvent(),
+					tableType.getSuffix(), serviceUID);
+
+			auditDetails.addAll(details);
+		}
+
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
 		auditHeader.setAuditDetail(
 				new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1], fm.getBefImage(), fm));
@@ -357,6 +377,40 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
+	}
+
+	private List<FinServiceInstruction> getServiceInstructions(FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
+
+		FinScheduleData finScheduleData = fd.getFinScheduleData();
+		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		List<FinServiceInstruction> serviceInstructions = finScheduleData.getFinServiceInstructions();
+
+		String moduleDefiner = fd.getModuleDefiner();
+		if (CollectionUtils.isEmpty(serviceInstructions)) {
+			FinServiceInstruction finServInst = new FinServiceInstruction();
+			finServInst.setFinReference(financeMain.getFinReference());
+			finServInst.setFinEvent(moduleDefiner);
+
+			finScheduleData.setFinServiceInstruction(finServInst);
+		}
+
+		for (FinServiceInstruction fsi : serviceInstructions) {
+			String finEvent = fsi.getFinEvent();
+
+			if (fsi.getInstructionUID() == Long.MIN_VALUE) {
+				fsi.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
+			}
+
+			if (StringUtils.isEmpty(moduleDefiner) || FinServiceEvent.ORG.equals(moduleDefiner)) {
+				if (!FinServiceEvent.ORG.equals(finEvent) && !StringUtils.contains(finEvent, "_O")) {
+					fsi.setFinEvent(finEvent.concat("_O"));
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return finScheduleData.getFinServiceInstructions();
 	}
 
 	public void listDeletion(long finID, String tableType) {
@@ -372,6 +426,8 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "doReject");
 
 		if (!auditHeader.isNextProcess()) {
@@ -381,17 +437,27 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		String tranType = PennantConstants.TRAN_DEL;
 
+		Date appDate = SysParamUtil.getAppDate();
+
 		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail fd = header.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(header.getFinanceDetail());
 
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		long serviceUID = Long.MIN_VALUE;
-		for (FinServiceInstruction finServInst : schdData.getFinServiceInstructions()) {
+		if (fd.getExtendedFieldRender() != null && fd.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fd.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
 			serviceUID = finServInst.getInstructionUID();
+			fm.setInstructionUID(serviceUID);
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(appDate);
+			}
 		}
 
 		// Cancel All Transactions done by Finance Reference
@@ -418,9 +484,23 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		// =======================================
 		auditHeader.getAuditDetails().addAll(checkListDetailService.delete(fd, "_Temp", tranType));
 
+		finServiceInstructionDAO.deleteList(finID, fd.getModuleDefiner(), "_Temp");
+
 		// ScheduleDetails deletion
 		listDeletion(finID, "_Temp");
 		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, false);
+
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(fd.getExtendedFieldHeader(),
+					fd.getExtendedFieldRender().getReference(), fd.getExtendedFieldRender().getSeqNo(), "_Temp",
+					auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
@@ -461,10 +541,20 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 
 		long finID = fm.getFinID();
 
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fd);
+
 		long serviceUID = Long.MIN_VALUE;
 
-		for (FinServiceInstruction finServInst : schdData.getFinServiceInstructions()) {
+		if (fd.getExtendedFieldRender() != null && fd.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fd.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
 			serviceUID = finServInst.getInstructionUID();
+			fm.setInstructionUID(serviceUID);
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(appDate);
+			}
 		}
 
 		// Fetch Next Payment Details from Finance for Salaried Postings Verification
@@ -539,6 +629,31 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		String[] fields = PennantJavaUtil.getFieldDetails(new FinanceMain(), fm.getExcludeFields());
 		financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
 
+		if (CollectionUtils.isNotEmpty(schdData.getFinServiceInstructions())) {
+			finServiceInstructionDAO.saveList(schdData.getFinServiceInstructions(), "");
+		}
+
+		// Extended field Render Details.
+		List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (fd.getExtendedFieldRender() != null) {
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, fd.getExtendedFieldHeader().getEvent(), "", serviceUID);
+			auditDetails.addAll(details);
+		}
+
+		finServiceInstructionDAO.deleteList(finID, fd.getModuleDefiner(), "_Temp");
+
+		if (details != null && details.size() > 0) {
+			extendedFieldDetailsService.delete(header.getFinanceDetail().getExtendedFieldHeader(),
+					header.getFinanceDetail().getExtendedFieldRender().getReference(),
+					header.getFinanceDetail().getExtendedFieldRender().getSeqNo(), "_Temp",
+					auditHeader.getAuditTranType(), details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
 		// Adding audit as deleted from TEMP table
 		String auditTranType = aAuditHeader.getAuditTranType();
 
@@ -575,7 +690,6 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		FinScheduleData schdData = fd.getFinScheduleData();
 
 		FinanceMain fm = schdData.getFinanceMain();
-		String finReference = fm.getFinReference();
 		long finID = fm.getFinID();
 
 		AEEvent aeEvent = new AEEvent();
@@ -724,10 +838,28 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = getAuditDetails(auditHeader, method);
+
+		FinanceWriteoffHeader header = (FinanceWriteoffHeader) auditHeader.getAuditDetail().getModelData();
+
+		// Extended field details Validation
+		FinanceDetail fd = header.getFinanceDetail();
+		if (fd.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fd.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = fd.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method,
+					auditHeader.getUsrLanguage());
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		auditHeader = nextProcess(auditHeader);
 		logger.debug(Literal.LEAVING);
@@ -887,13 +1019,21 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 				tableType = "";
 			}
 
-			String finReference = schdData.getFinReference();
 			financeCheckList = checkListDetailService.getCheckListByFinRef(fm.getFinID(), tableType);
 			fd.setFinanceCheckList(financeCheckList);
 
 			if (financeCheckList != null && !financeCheckList.isEmpty()) {
 				auditDetails.addAll(checkListDetailService.getAuditDetail(auditDetailMap, fd, auditTranType, method));
 			}
+		}
+
+		// Extended Field Details
+		if (fd.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(fd.getExtendedFieldHeader(),
+							fd.getExtendedFieldRender(), auditTranType, method,
+							fd.getExtendedFieldHeader().getModuleName()));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
 		fd.setAuditDetailMap(auditDetailMap);
@@ -936,4 +1076,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 		this.manualAdviseDAO = manualAdviseDAO;
 	}
 
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
 }

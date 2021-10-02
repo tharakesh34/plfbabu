@@ -3254,6 +3254,19 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return collateralSetup;
 	}
 
+	@Override
+	public List<CollateralSetup> getCollateralExtendedFields(String finReference, long custId) {
+		logger.debug(Literal.ENTERING);
+
+		List<CollateralSetup> list = new ArrayList<>();
+
+		List<CollateralSetup> csList = collateralSetupDAO.getCollateralByRef(finReference, custId, "_View");
+		csList.forEach(c1 -> list.add(getCollateralSetupDetails(c1.getCollateralRef(), "_View")));
+
+		logger.debug(Literal.LEAVING);
+		return list;
+	}
+
 	private CustomerDetails getCustomerDetailsbyID(long id, boolean reqChildDetails, String type) {
 		logger.debug(Literal.ENTERING);
 

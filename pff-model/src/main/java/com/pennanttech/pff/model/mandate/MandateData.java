@@ -7,13 +7,16 @@ import java.util.List;
 public class MandateData implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private List<Long> mandateIdList;
-	long process_Id;
-	Date fromDate;
-	Date toDate;
-	long userId;
-	String userName;
-	String selectedBranchs;
-	String entity;
+	private long process_Id;
+	private Date fromDate;
+	private Date toDate;
+	private long userId;
+	private String userName;
+	private String selectedBranchs;
+	private String entity;
+	private String type;
+	private long partnerBankId = Long.MIN_VALUE;
+	private String remarks;
 
 	public MandateData() {
 		super();
@@ -81,6 +84,30 @@ public class MandateData implements Serializable {
 
 	public void setMandateIdList(List<Long> mandateIdList) {
 		this.mandateIdList = mandateIdList;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public long getPartnerBankId() {
+		return partnerBankId;
+	}
+
+	public void setPartnerBankId(long partnerBankId) {
+		this.partnerBankId = partnerBankId;
+	}
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 }

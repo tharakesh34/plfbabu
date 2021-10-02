@@ -25,7 +25,6 @@
 								sclass="z-toolbarbutton" />
 							<button id="btnCancel" tooltiptext="${c:l('btnCancel.tooltiptext')}" autodisable="btnNew,btnEdit,btnDelete,btnSave,btnCancel,btnNotes,btnHelp,btnClose"
 								sclass="z-toolbarbutton" />
-							<button id="btnNotes" tooltiptext="${c:l('btnNotes.tooltiptext')}" visible="false" sclass="z-toolbarbutton" />
 						</toolbar>
 						<toolbar align="end" sclass="toolbar-end">
 							<button id="btnHelp" visible="false" label="${c:l('label_Help')}" tooltiptext="${c:l('btnHelp.tooltiptext')}"
@@ -37,39 +36,55 @@
 				</div>
 			</north>
 			<center>
-				<groupbox>
-					<!-- <toolbar align="start" sclass="toolbar-start"> <hbox align="center" style="padding: 0px"> <label id="window_FinOptionList_title" 
-						value="${c:l('window_FinOptionList_title')}" style="font-weight:bold; font-size: 11px;" /> </hbox> </toolbar> -->
-					<groupbox style="border:none;" id="finBasicdetails" />
+			<div>
+				<tabbox width="100%" height="100%">
+					<tabs id="finOptionTabs">
+						<tab label="${c:l('label_FinOption_FinOption.label')}" id="finOptionTab" />
+					</tabs>
+					<tabpanels id="finOptionTabPanels">
+						<tabpanel style="overflow:auto">
+							<groupbox>
+								<!-- <toolbar align="start" sclass="toolbar-start"> <hbox align="center" style="padding: 0px"> <label id="window_FinOptionList_title" 
+									value="${c:l('window_FinOptionList_title')}" style="font-weight:bold; font-size: 11px;" /> </hbox> </toolbar> -->
+								<groupbox style="border:none;" id="finBasicdetails" />
 
-					<div sclass="z-toolbar" height="28px">
-						<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
-							<toolbar align="center" sclass="toolbar-center" />
-							<toolbar align="end" sclass="toolbar-end">
-								<button id="btnNew_NewFinOption" label="${c:l('label_New')}" tooltiptext="${c:l('button_FinOptionList_NewFinOption.tooltiptext')}"
-									sclass="z-toolbarbutton" />
-							</toolbar>
-						</hbox>
-					</div>
-					<grid>
-						<columns sizable="true" zclass="z-listheader">
-							<column label="${c:l('listheader_FinOption_Option.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_CurrentOption.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_Frequency.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_NoticePeriod.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_AlertDays.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_OptionExercise.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_NextOptionDate.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_AlertType.label')}" width="120px" />
-							<column label="${c:l('listheader_FinOption_AlertRoles.label')}" width="250px" />
-							<column label="${c:l('listheader_FinOption_CustomerTemplate.label')}" width="250px" />
-							<column label="${c:l('listheader_FinOption_UserTemplate.label')}" width="250px" />
-							<column label="${c:l('listheader_FinOption_Remarks.label')}" width="250px" />
-							<column label="${c:l('listheader_FinOption_Delete.label')}" width="120px" />
-						</columns>
-						<rows id="finOptionRows" />
-					</grid>
-				</groupbox>
+								<div sclass="z-toolbar" height="28px">
+									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%"
+										widths="30%,40%,30%">
+										<toolbar align="center" sclass="toolbar-center" />
+										<toolbar align="end" sclass="toolbar-end">
+											<button id="btnNew_NewFinOption" label="${c:l('label_New')}"
+												tooltiptext="${c:l('button_FinOptionList_NewFinOption.tooltiptext')}" sclass="z-toolbarbutton" />
+										</toolbar>
+									</hbox>
+								</div>
+								<grid>
+									<columns sizable="true" zclass="z-listheader">
+										<column label="${c:l('listheader_FinOption_Option.label')}" width="120px" />
+										<column label="${c:l('listheader_FinOption_CurrentOption.label')}"
+											width="120px" />
+										<column label="${c:l('listheader_FinOption_Frequency.label')}" width="120px" />
+										<column label="${c:l('listheader_FinOption_NoticePeriod.label')}" width="120px" />
+										<column label="${c:l('listheader_FinOption_AlertDays.label')}" width="120px" />
+										<column label="${c:l('listheader_FinOption_OptionExercise.label')}"
+											width="120px" />
+										<column label="${c:l('listheader_FinOption_NextOptionDate.label')}"
+											width="120px" />
+										<column label="${c:l('listheader_FinOption_AlertType.label')}" width="120px" />
+										<column label="${c:l('listheader_FinOption_AlertRoles.label')}" width="250px" />
+										<column label="${c:l('listheader_FinOption_CustomerTemplate.label')}"
+											width="250px" />
+										<column label="${c:l('listheader_FinOption_UserTemplate.label')}" width="250px" />
+										<column label="${c:l('listheader_FinOption_Remarks.label')}" width="250px" />
+										<column label="${c:l('listheader_FinOption_Delete.label')}" width="120px" />
+									</columns>
+									<rows id="finOptionRows" />
+								</grid>
+							</groupbox>
+								</tabpanel>
+						</tabpanels>
+					</tabbox>
+				</div>
 			</center>
 			<south id="south1" visible="false">
 				<groupbox width="99%">

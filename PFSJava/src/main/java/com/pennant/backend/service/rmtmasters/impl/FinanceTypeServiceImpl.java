@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTypeServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTypeServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * *
+ * Modified Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -57,6 +39,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.IRRFinanceTypeDAO;
@@ -591,7 +574,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		int servFeeOrder = 0;
 		int moduleId = FinanceConstants.MODULEID_FINTYPE;
 
-		Long feeTypeId;
+		Long feeTypeId = null;
 
 		String finType = financeType.getFinType();
 
@@ -804,47 +787,85 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(subventionFeeCode);
 
-		boolean feeTypeOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
-		boolean feeTypeNonOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
-		if (financeType.isSubventionReq()) {
-			if (!feeTypeOrg) {
-				finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, orgFinEvent, true);
-				finTypeFee.setFeeOrder(++orgFeeOrder);
-				finTypeFee.setFeeScheduleMethod(CalculationConstants.FEE_SUBVENTION);
-				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-				finTypeFee.setAlwModifyFee(true);
-				finTypeFee.setAlwDeviation(false);
-				finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
-				finTypeFee.setActive(true);
-				finTypeFee.setAlwModifyFeeSchdMthd(false);
-				finTypeFee.setNextRoleCode("");
-				fees.add(finTypeFee);
-			}
-
-			if (!feeTypeNonOrg) {
-				finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, serFinEvent, false);
-				finTypeFee.setFeeOrder(++servFeeOrder);
-				finTypeFee.setFeeScheduleMethod(CalculationConstants.FEE_SUBVENTION);
-				finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
-				finTypeFee.setAlwModifyFee(true);
-				finTypeFee.setAlwDeviation(false);
-				finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
-				finTypeFee.setActive(true);
-				finTypeFee.setAlwModifyFeeSchdMthd(false);
-				finTypeFee.setNextRoleCode("");
-				fees.add(finTypeFee);
-			}
-		} else {
-			for (FinTypeFees fee : fees) {
-				if (!(fee.getFeeTypeID().equals(feeTypeId))) {
-					continue;
+		if (feeTypeId != null) {
+			boolean feeTypeOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, true);
+			boolean feeTypeNonOrg = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+			if (financeType.isSubventionReq()) {
+				if (!feeTypeOrg) {
+					finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, orgFinEvent, true);
+					finTypeFee.setFeeOrder(++orgFeeOrder);
+					finTypeFee.setFeeScheduleMethod(CalculationConstants.FEE_SUBVENTION);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					finTypeFee.setAlwModifyFee(true);
+					finTypeFee.setAlwDeviation(false);
+					finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
 				}
 
-				boolean feeTypeCode = subventionFeeCode.equals(fee.getFeeTypeCode());
-				boolean orgFee = fee.isOriginationFee() && fee.getModuleId() == moduleId;
+				if (!feeTypeNonOrg) {
+					finTypeFee = getFinTypeFee(feeTypeId, subventionFeeCode, serFinEvent, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					finTypeFee.setFeeScheduleMethod(CalculationConstants.FEE_SUBVENTION);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					finTypeFee.setAlwModifyFee(true);
+					finTypeFee.setAlwDeviation(false);
+					finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
+				}
+			} else {
+				for (FinTypeFees fee : fees) {
+					if (!(fee.getFeeTypeID().equals(feeTypeId))) {
+						continue;
+					}
 
-				if ((feeTypeOrg || feeTypeNonOrg) && feeTypeCode && orgFee) {
-					fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					boolean feeTypeCode = subventionFeeCode.equals(fee.getFeeTypeCode());
+					boolean orgFee = fee.isOriginationFee() && fee.getModuleId() == moduleId;
+
+					if ((feeTypeOrg || feeTypeNonOrg) && feeTypeCode && orgFee) {
+						fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+					}
+				}
+			}
+		}
+
+		// ************************** Restructure Fee Code
+		String restructFeeCode = SysParamUtil.getValueAsString(PennantConstants.FEETYPE_RESTRUCT_CPZ);
+		feeTypeId = feeTypeService.getFinFeeTypeIdByFeeType(restructFeeCode);
+
+		if (feeTypeId != null) {
+			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
+				exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+				if (!exist) {
+					finTypeFee = getFinTypeFee(feeTypeId, restructFeeCode, AccountingEvent.RESTRUCTURE, false);
+					finTypeFee.setFeeOrder(++servFeeOrder);
+					finTypeFee.setCalculationType(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT);
+					finTypeFee.setAlwModifyFee(false);
+					finTypeFee.setAlwDeviation(false);
+					finTypeFee.setMaxWaiverPerc(BigDecimal.ZERO);
+					finTypeFee.setActive(true);
+					finTypeFee.setAlwModifyFeeSchdMthd(false);
+					finTypeFee.setFeeScheduleMethod(CalculationConstants.REMFEE_PART_OF_SALE_PRICE);
+					finTypeFee.setNextRoleCode("");
+					fees.add(finTypeFee);
+				}
+			} else {
+				for (FinTypeFees fee : fees) {
+					if (fee.getFeeTypeID() != feeTypeId) {
+						continue;
+					}
+					exist = finFeeDetailService.getFeeTypeId(feeTypeId, finType, moduleId, false);
+
+					if (exist && StringUtils.equals(restructFeeCode, fee.getFeeTypeCode())) {
+						if (fee.isOriginationFee() && fee.getModuleId() == moduleId) {
+							fee.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+						}
+					}
 				}
 			}
 		}
@@ -985,7 +1006,7 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		errParm[0] = PennantJavaUtil.getLabel("label_FinType") + ":" + valueParm[0];
 
 		if (financeType.isNewRecord()) { // for New record or new record into work
-									// flow
+			// flow
 			if (!financeType.isWorkflow()) {// With out Work flow only new
 											// records
 				if (befFinanceType != null) { // Record Already Exists in the

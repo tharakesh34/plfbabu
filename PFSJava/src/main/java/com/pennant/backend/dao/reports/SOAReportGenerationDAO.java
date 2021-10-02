@@ -1,46 +1,29 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReportConfigurationDAO.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  03-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReportConfigurationDAO.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * *
+ * Modified Date : 03-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 03-05-2011       Pennant	                 0.1                                            * 
- * 24-05-2018       Srikanth                 0.2           Merge the Code From Bajaj To Core                                                   * 
- * 															
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 03-05-2011 Pennant 0.1 * 24-05-2018 Srikanth 0.2 Merge the Code From Bajaj To Core *
+ * 
+ * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.reports;
 
@@ -69,6 +52,7 @@ import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.PaymentInstruction;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayScheduleDetail;
+import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.systemmasters.ApplicantDetail;
 import com.pennant.backend.model.systemmasters.OtherFinanceDetail;
@@ -155,4 +139,6 @@ public interface SOAReportGenerationDAO {
 	StatementOfAccount getCustGSTINDetails(String finReference);
 
 	Map<Long, Integer> getInstNumber(String finReference);
+
+	List<RestructureCharge> getRestructureChargeList(String finReference);
 }

@@ -879,6 +879,7 @@ public class ProjectedAmortizationService {
 
 			for (FeeType feeType : feeTypes) {
 				dataMap.put(feeType.getFeeTypeCode() + "_AMZ", BigDecimal.ZERO);
+				dataMap.put(feeType.getFeeTypeCode() + "_AMZ_N", BigDecimal.ZERO);
 			}
 
 			aeEvent.setBranch(amz.getFinBranch());
@@ -888,7 +889,9 @@ public class ProjectedAmortizationService {
 			aeEvent.setFinReference(amz.getFinReference());
 			aeEvent.setEntityCode(amz.getEntityCode());
 			aeEvent.setFinType(amz.getFinType());
-			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());
+			dataMap.put(amz.getFeeTypeCode() + "_AMZ", amz.getCurMonthAmz());// Current Month Amortized Amount
+			dataMap.put(amz.getFeeTypeCode() + "_AMZ_N", amz.getAmortizedAmount());// Till Date Amortized Amount
+
 			aeEvent.setDataMap(dataMap);
 
 			try {
@@ -1154,9 +1157,9 @@ public class ProjectedAmortizationService {
 					}
 					incomeAMZ.setMonthEndDate(curMonthEnd);
 
-					incomeAMZ.setCurMonthAmz(curProjIncomeAMZ.getAmortizedAmount());
-					incomeAMZ.setAmortizedAmount(curProjIncomeAMZ.getCumulativeAmount());
-					incomeAMZ.setUnAmortizedAmount(curProjIncomeAMZ.getUnAmortizedAmount());
+					incomeAMZ.setCurMonthAmz(curProjIncomeAMZ.getAmortizedAmount());// Current Month Amortized Amount
+					incomeAMZ.setAmortizedAmount(curProjIncomeAMZ.getCumulativeAmount());// Till Date Amortized Amount
+					incomeAMZ.setUnAmortizedAmount(curProjIncomeAMZ.getUnAmortizedAmount());//
 
 					break;
 				}

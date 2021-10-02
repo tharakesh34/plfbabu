@@ -8,6 +8,7 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RescheduleLog;
+import com.pennant.backend.model.finance.RescheduleLogHeader;
 
 public interface ReschedulReportGenerationDAO {
 
@@ -22,5 +23,7 @@ public interface ReschedulReportGenerationDAO {
 	List<FinanceScheduleDetail> getScheduleDetails(String finreference, String type, long logkey);
 
 	FinanceProfitDetail getProfitDetail(String finreference);
+
+	List<RescheduleLogHeader> getFinBasicDetails();
 
 }

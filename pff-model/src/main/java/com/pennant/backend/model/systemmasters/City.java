@@ -55,6 +55,9 @@ public class City extends AbstractWorkflowEntity {
 	private String pinCode;
 	private String areaName;
 	private String taxStateCode; // Added for GSTIN
+	private String districtCode;
+	private String districtName;
+	private Long districtId = Long.MIN_VALUE;
 
 	public City() {
 		super();
@@ -65,15 +68,14 @@ public class City extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
-
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("pinCode");
 		excludeFields.add("areaName");
 		excludeFields.add("taxStateCode");
+		excludeFields.add("districtCode");
+		excludeFields.add("districtName");
+
 		return excludeFields;
 	}
 
@@ -207,5 +209,29 @@ public class City extends AbstractWorkflowEntity {
 
 	public void setTaxStateCode(String taxStateCode) {
 		this.taxStateCode = taxStateCode;
+	}
+
+	public String getDistrictCode() {
+		return districtCode;
+	}
+
+	public void setDistrictCode(String districtCode) {
+		this.districtCode = districtCode;
+	}
+
+	public String getDistrictName() {
+		return districtName;
+	}
+
+	public void setDistrictName(String districtName) {
+		this.districtName = districtName;
+	}
+
+	public Long getDistrictId() {
+		return districtId;
+	}
+
+	public void setDistrictId(Long districtId) {
+		this.districtId = districtId;
 	}
 }

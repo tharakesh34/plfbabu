@@ -203,6 +203,19 @@ public class ImplementationConstants {
 		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean(extensions, "SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
 		// this constant should be true for goderaj
 		CHEQUE_AMOUNT_ZERO_UDC = getValueAsBoolean(extensions, "CHEQUE_AMOUNT_ZERO_UDC", false);
+		VALIDATION_ON_CHECKER_APPROVER_ALLOWED = getValueAsBoolean(extensions, "VALIDATION_ON_CHECKER_APPROVER_ALLOWED",
+				false);
+		CIBIL_BASED_ON_ENTITY = getValueAsBoolean(extensions, "CIBIL_BASED_ON_ENTITY", false);
+		RESTRUCTURE_DFT_APP_DATE = getValueAsBoolean(extensions, "RESTRUCTURE_DFT_APP_DATE", false);
+		RESTRUCTURE_DATE_ALW_EDIT = getValueAsBoolean(extensions, "RESTRUCTURE_DATE_ALW_EDIT", false);
+		RESTRUCTURE_RATE_CHG_ALW = getValueAsBoolean(extensions, "RESTRUCTURE_RATE_CHG_ALW", false);
+		RESTRUCTURE_ALW_CHARGES = getValueAsBoolean(extensions, "RESTRUCTURE_ALW_CHARGES", false);
+		PENALTY_CALC_ON_REPRESENTATION = getValueAsBoolean(extensions, "PENALTY_CALC_ON_REPRESENTATION", false);
+		MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK = getValueAsBoolean(extensions, "MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK",
+				false);
+		DISB_REQ_RES_FILE_GEN_MODE = getValueAsBoolean(extensions, "DISB_REQ_RES_FILE_GEN_MODE", false);
+		ALLOW_SHADOW_POSTINGS = getValueAsBoolean(extensions, "ALLOW_SHADOW_POSTINGS", false);
+		ALLOW_ESCROW_MODE = getValueAsBoolean(extensions, "ALLOW_ESCROW_MODE", false);
 		/*
 		 * ALLOW_FI_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_FI_INITIATION_LOS", true);
 		 * ALLOW_TV_INITIATION_LOS = getValueAsBoolean(extensions, "ALLOW_TV_INITIATION_LOS", true);
@@ -426,6 +439,8 @@ public class ImplementationConstants {
 	public static String BASE_CCY;
 	public static int BASE_CCY_EDT_FIELD;
 	public static boolean SUSP_CHECK_REQ;
+	/* Flag to validate schedule date in range of maker & checker dates */
+	public static boolean VALIDATION_ON_CHECKER_APPROVER_ALLOWED;
 	/*
 	 * public static boolean ALLOW_FI_INITIATION_LOS; public static boolean ALLOW_TV_INITIATION_LOS; public static
 	 * boolean ALLOW_LV_INITIATION_LOS; public static boolean ALLOW_RCU_INITIATION_LOS;
@@ -455,6 +470,23 @@ public class ImplementationConstants {
 	public static int PRESENTMENT_EXPORT_STATUS_MAX_LENGTH;
 	public static boolean AGGR_EMI_AMOUNT_ON_SANCTIONED_AMT;
 	public static boolean RECEIPTS_SHOW_ACCOUNTING_TAB;
+	/* Cibil report must generate based on entity code */
+	public static boolean CIBIL_BASED_ON_ENTITY;
+	public static boolean PENALTY_CALC_ON_REPRESENTATION;
+
+	// Restructuring Parameters
+	// In case of restructure Date is allowed to enter from User / By default Setting application date
+	public static boolean RESTRUCTURE_DFT_APP_DATE;
+	// In case Defaulted Application Date to restructure Date is user Editable
+	public static boolean RESTRUCTURE_DATE_ALW_EDIT;
+	// Rate Change allow in Restructuring process
+	public static boolean RESTRUCTURE_RATE_CHG_ALW;
+	// Allow Charges for User Selection for POS calculation
+	public static boolean RESTRUCTURE_ALW_CHARGES;
+	public static boolean MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK;
+	public static boolean ALLOW_SHADOW_POSTINGS;
+	public static boolean DISB_REQ_RES_FILE_GEN_MODE;
+	public static boolean ALLOW_ESCROW_MODE;
 
 	/**
 	 * GST Invoice Due basis/Receipt Basis

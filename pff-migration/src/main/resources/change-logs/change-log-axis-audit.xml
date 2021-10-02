@@ -1,0 +1,606 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,public,pg_catalog;
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#16.1" author="saisandeep.b">
+		<modifyDataType tableName="AdtASSET_CLSSFICATN_HEADER" columnName="LastmntOn" newDataType="datetime" />
+		<modifyDataType tableName="AdtASSET_CLSSFICATN_HEADER" columnName="AuditDate" newDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="DE#16.2" author="saisandeep.b">
+		<modifyDataType tableName="AdtASSET_CLSSFICATN_DETAILS" columnName="LastmntOn" newDataType="datetime" />
+		<modifyDataType tableName="AdtASSET_CLSSFICATN_DETAILS" columnName="AuditDate" newDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="DE#16.3" author="saisandeep.b">
+		<modifyDataType tableName="AdtNPA_PROVISION_HEADER" columnName="LastmntOn" newDataType="datetime" />
+		<modifyDataType tableName="AdtNPA_PROVISION_HEADER" columnName="AuditDate" newDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="DE#16.4" author="saisandeep.b">
+		<modifyDataType tableName="AdtNPA_PROVISION_DETAILS" columnName="LastmntOn" newDataType="datetime" />
+		<modifyDataType tableName="AdtNPA_PROVISION_DETAILS" columnName="AuditDate" newDataType="datetime" />
+	</changeSet>
+	
+	<changeSet id="DE#30.1" author="saisandeep.b">
+		<dropNotNullConstraint tableName="AdtBUILDERGROUP" columnName="SEGMENTATION" columnDataType="varchar(50)" />
+    </changeSet>
+	
+	<changeSet id="DE#71.1" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTSYNOPSISDETAILS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.2" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTSYNOPSISDETAILS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.3" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTSANCTION_CONDITIONS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.4" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTSANCTION_CONDITIONS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.5" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTSANCTIONCONDITIONS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.6" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTSANCTIONCONDITIONS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.7" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRISKS_MITIGANTS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.8" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRISKS_MITIGANTS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.9" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRISKSANDMITIGANTS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.10" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRISKSANDMITIGANTS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.11" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify LASTBILLEDDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.12" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify RESTRUCTUREDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.13" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify EMIHLDSTARTDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.14" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify EMIHLDENDDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.15" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify PRIHLDSTARTDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.16" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify PRIHLDENDDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.17" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify APPDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.18" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.19" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.20" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify OLDMATURITY date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.21" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRESTRUCTURE_DETAILS modify NEWMATURITY date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.22" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRECOMMENDATION_NOTES modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.23" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRECOMMENDATION_NOTES modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.24" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRECOMMENDATIONNOTES modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.25" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTRECOMMENDATIONNOTES modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.26" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTPROVISION_AMOUNTS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.27" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTPROVISIONS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.28" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTPROVISIONS modify DUEFROMDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.29" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTPROVISIONS modify LASTFULLYPAIDDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.30" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTPROVISIONS modify PROVISIONDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.31" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTPROVISIONS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.32" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTMANDATE_SOURCES modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.33" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTMANDATE_SOURCES modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.34" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTINTERFACECONFIGURATION modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.35" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTINTERFACECONFIGURATION modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.36" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINSTEPPOLICYDETAIL modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.37" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINSTEPPOLICYDETAIL modify STEPSTART date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.38" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINSTEPPOLICYDETAIL modify STEPEND date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.39" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINSTEPPOLICYDETAIL modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.40" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINRECEIPTHEADER modify VALUEDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.41" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINRECEIPTHEADER modify DEPOSITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.42" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINRECEIPTHEADER modify RECAPPDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.43" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINRECEIPTHEADER modify RECEIVEDDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.44" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINFEEREFUNDHEADER modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.45" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINFEEREFUNDHEADER modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.46" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINFEEREFUNDDETAILS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.47" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINFEEREFUNDDETAILS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.48" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINCHANGECUSTOMER modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.49" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINCHANGECUSTOMER modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.50" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTFINADVANCEPAYMENTS modify REALIZATIONDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.51" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUE_DILIGENCE_CHECKLIST modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.52" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUE_DILIGENCE_CHECKLIST modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.53" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUE_DILIGENCES modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.54" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUE_DILIGENCES modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.55" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUEDILIGENCESDETAILS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.56" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUEDILIGENCESDETAILS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.57" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUEDILIGENCECHECKLIST modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.58" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDUEDILIGENCECHECKLIST modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.59" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDEALRECOMMENDATIONMERITS modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.60" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTDEALRECOMMENDATIONMERITS modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.61" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTBUILDERCOMPANY modify DATEOFINCOP date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.62" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTAUTO_KNOCKOFF_LOANTYPES modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.63" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTAUTO_KNOCKOFF_LOANTYPES modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.64" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTAUTO_KNOCKOFF_FEE_TYPES modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.65" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTAUTO_KNOCKOFF_FEE_TYPES modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.66" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTAUTO_KNOCKOFF modify AUDITDATE date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#71.67" author="saisandeep.b">
+		<sql>
+			<![CDATA[
+				alter table ADTAUTO_KNOCKOFF modify LASTMNTON date ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#75.1" author="saisandeep.b">
+		<dropNotNullConstraint tableName="AdtCOVENANTS" columnName="REMARKS" columnDataType="varchar(500)" />
+    </changeSet>
+</databaseChangeLog>

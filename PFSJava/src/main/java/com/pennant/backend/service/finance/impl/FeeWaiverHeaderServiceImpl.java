@@ -36,6 +36,7 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -49,6 +50,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.PostingsPreparationUtil;
 import com.pennant.app.util.ReceiptCalculator;
+import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RepaymentPostingsUtil;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.Repayments.FinanceRepaymentsDAO;
@@ -58,6 +60,7 @@ import com.pennant.backend.dao.finance.FeeWaiverDetailDAO;
 import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
 import com.pennant.backend.dao.finance.FinODAmzTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceProfitDetailDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
@@ -69,6 +72,7 @@ import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FeeWaiverDetail;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
@@ -76,6 +80,7 @@ import com.pennant.backend.model.finance.FinODAmzTaxDetail;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
+import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
@@ -92,9 +97,11 @@ import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.service.finance.TaxHeaderDetailsService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -137,6 +144,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private RepaymentPostingsUtil repayPostingUtil;
 	private FinanceProfitDetailDAO profitDetailsDAO;
 	private PresentmentDetailDAO presentmentDetailDAO;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
+	private FinServiceInstrutionDAO finServiceInstrutionDAO;
 
 	List<ManualAdvise> manualAdviseList; // TODO remove this
 
@@ -504,6 +513,24 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		FeeWaiverHeader fwh = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
+
+		List<FinServiceInstruction> fsiList = getServiceInstructions(fwh);
+
+		long serviceUID = Long.MIN_VALUE;
+
+		if (fwh.getExtendedFieldRender() != null
+				&& fwh.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fwh.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : fsiList) {
+			serviceUID = finServInst.getInstructionUID();
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
+			}
+		}
+
 		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		if (!auditHeader.isNextProcess()) {
@@ -512,7 +539,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		FeeWaiverHeader fwh = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
+		fwh = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
 		if (fwh.isWorkflow()) {
@@ -527,7 +554,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			feeWaiverHeaderDAO.update(fwh, tableType);
 		}
 
-		if (fwh.getFeeWaiverDetails() != null && !fwh.getFeeWaiverDetails().isEmpty()) {
+		if (CollectionUtils.isNotEmpty(fwh.getFeeWaiverDetails())) {
 			List<AuditDetail> details = fwh.getAuditDetailMap().get("FeeWaiverDetails");
 			for (FeeWaiverDetail feewaiver : fwh.getFeeWaiverDetails()) {
 				feewaiver.setWaiverId(fwh.getWaiverId());
@@ -545,6 +572,20 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		String rcdMaintainSts = FinServiceEvent.FEEWAIVERS;
 		financeMainDAO.updateMaintainceStatus(fwh.getFinID(), rcdMaintainSts);
 
+		// FinServiceInstrution
+		if (CollectionUtils.isNotEmpty(fwh.getFinServiceInstructions()) && fwh.isNewRecord()) {
+			finServiceInstrutionDAO.saveList(fwh.getFinServiceInstructions(), tableType.getSuffix());
+		}
+
+		// Extended field Details
+		if (fwh.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fwh.getAuditDetailMap().get("ExtendedFieldDetails");
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, fwh.getExtendedFieldHeader().getEvent(), tableType.getSuffix(),
+					serviceUID);
+			auditDetails.addAll(details);
+		}
+
 		// Add Audit
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeaderDAO.addAudit(auditHeader);
@@ -552,6 +593,35 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 
+	}
+
+	private List<FinServiceInstruction> getServiceInstructions(FeeWaiverHeader fwh) {
+		logger.debug(Literal.ENTERING);
+
+		List<FinServiceInstruction> siList = fwh.getFinServiceInstructions();
+
+		if (CollectionUtils.isEmpty(siList)) {
+			FinServiceInstruction fsi = new FinServiceInstruction();
+			fsi.setFinReference(fwh.getFinReference());
+			fsi.setFinEvent(fwh.getEvent());
+
+			fwh.setFinServiceInstruction(fsi);
+		}
+
+		for (FinServiceInstruction fsi : fwh.getFinServiceInstructions()) {
+			if (fsi.getInstructionUID() == Long.MIN_VALUE) {
+				fsi.setInstructionUID(Long.valueOf(ReferenceGenerator.generateNewServiceUID()));
+			}
+
+			if (StringUtils.isEmpty(fwh.getEvent()) || FinServiceEvent.ORG.equals(fwh.getEvent())) {
+				if (!FinServiceEvent.ORG.equals(fsi.getFinEvent()) && !StringUtils.contains(fsi.getFinEvent(), "_O")) {
+					fsi.setFinEvent(fsi.getFinEvent().concat("_O"));
+				}
+			}
+		}
+
+		logger.debug(Literal.LEAVING);
+		return fwh.getFinServiceInstructions();
 	}
 
 	private List<AuditDetail> processingFeeWaiverdetails(List<AuditDetail> auditDetails, TableType type) {
@@ -642,6 +712,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public AuditHeader delete(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "delete");
 
 		if (!auditHeader.isNextProcess()) {
@@ -652,6 +724,18 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		FeeWaiverHeader feeWaiverHeader = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
 		feeWaiverHeaderDAO.delete(feeWaiverHeader, TableType.MAIN_TAB);
 
+		finServiceInstrutionDAO.deleteList(feeWaiverHeader.getFinID(), feeWaiverHeader.getEvent(), "_Temp");
+		// Extended field Render Details.
+
+		List<AuditDetail> extendedDetails = feeWaiverHeader.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(feeWaiverHeader.getExtendedFieldHeader(),
+					feeWaiverHeader.getFinReference(), feeWaiverHeader.getExtendedFieldRender().getSeqNo(), "_Temp",
+					auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		auditHeader.setAuditDetails(auditDetails);
+
 		auditHeaderDAO.addAudit(auditHeader);
 
 		logger.debug(Literal.LEAVING);
@@ -660,6 +744,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
+
+		List<AuditDetail> auditDetails = new ArrayList<>();
 
 		auditHeader = businessValidation(auditHeader, "doApprove");
 
@@ -672,6 +758,22 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		FeeWaiverHeader fwh = new FeeWaiverHeader();
 		BeanUtils.copyProperties((FeeWaiverHeader) auditHeader.getAuditDetail().getModelData(), fwh);
+
+		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fwh);
+
+		long serviceUID = Long.MIN_VALUE;
+
+		if (fwh.getExtendedFieldRender() != null
+				&& fwh.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
+			serviceUID = fwh.getExtendedFieldRender().getInstructionUID();
+		}
+
+		for (FinServiceInstruction finServInst : serviceInstructions) {
+			serviceUID = finServInst.getInstructionUID();
+			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
+				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
+			}
+		}
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(fwh.getRecordType())) {
 			auditHeader.getAuditDetail().setBefImage(feeWaiverHeaderDAO.getFeeWaiverHeaderById(fwh.getWaiverId(), ""));
@@ -733,6 +835,22 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		financeMainDAO.updateMaintainceStatus(fwh.getFinID(), "");
 
+		if (CollectionUtils.isNotEmpty(fwh.getFinServiceInstructions())) {
+			finServiceInstrutionDAO.saveList(fwh.getFinServiceInstructions(), "");
+		}
+
+		// Extended field Render Details.
+		List<AuditDetail> details = fwh.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (fwh.getExtendedFieldRender() != null) {
+			details = extendedFieldDetailsService.processingExtendedFieldDetailList(details,
+					ExtendedFieldConstants.MODULE_LOAN, fwh.getExtendedFieldHeader().getEvent(), "", serviceUID);
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
+
 		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -741,13 +859,19 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		auditHeader.getAuditDetail().setModelData(fwh);
 		auditHeaderDAO.addAudit(auditHeader);
 
+		finServiceInstrutionDAO.deleteList(fwh.getFinID(), fwh.getEvent(), "_Temp");
+
+		if (details != null && details.size() > 0) {
+			extendedFieldDetailsService.delete(fwh.getExtendedFieldHeader(), fwh.getFinReference(),
+					fwh.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), details);
+		}
+
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
 	}
 
 	private void allocateWaiverAmounts(FeeWaiverHeader fwh) throws Exception {
 		long finID = fwh.getFinID();
-		String finReference = fwh.getFinReference();
 
 		List<FinODDetails> odList = finODDetailsDAO.getFinODPenalityByFinRef(finID, true, false);
 		List<FinODDetails> lppList = finODDetailsDAO.getFinODPenalityByFinRef(finID, false, false);
@@ -1737,7 +1861,6 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					curActualwaivedAmt = BigDecimal.ZERO;
 				}
 
-				// waiverdetail.setCurrActualWaiver(waiverdetail.getCurrActualWaiver().subtract(amountWaived));
 				taxSplit = GSTCalculator.getExclusiveGST(amountWaived, gstPercentages);
 				waiverdetail.setCurrWaiverAmount(amountWaived.add(taxSplit.gettGST()));
 			} else {
@@ -1756,7 +1879,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					amountWaived = advise.getBalanceAmt();
 					advise.setBalanceAmt(BigDecimal.ZERO);
 				}
-				waiverdetail.setCurrWaiverAmount(waiverdetail.getCurrWaiverAmount().subtract(amountWaived));
+
 				taxSplit = GSTCalculator.getInclusiveGST(amountWaived, gstPercentages);
 				waiverdetail.setCurrWaiverAmount(amountWaived);
 			}
@@ -1923,6 +2046,8 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		auditHeader = businessValidation(auditHeader, "doReject");
 
 		if (!auditHeader.isNextProcess()) {
@@ -1942,6 +2067,18 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		// feeWaiverHeader));
 
 		financeMainDAO.updateMaintainceStatus(fwh.getFinID(), "");
+
+		finServiceInstrutionDAO.deleteList(fwh.getFinID(), fwh.getEvent(), "_Temp");
+		// Extended field Render Details.
+		List<AuditDetail> extendedDetails = fwh.getAuditDetailMap().get("ExtendedFieldDetails");
+		if (extendedDetails != null && extendedDetails.size() > 0) {
+			auditDetails.addAll(extendedFieldDetailsService.delete(fwh.getExtendedFieldHeader(), fwh.getFinReference(),
+					fwh.getExtendedFieldRender().getSeqNo(), "_Temp", auditHeader.getAuditTranType(), extendedDetails));
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		auditHeaderDAO.addAudit(auditHeader);
 
@@ -2012,11 +2149,28 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
+		List<AuditDetail> auditDetails = new ArrayList<>();
+
 		AuditDetail auditDetail = validation(auditHeader.getAuditDetail(), auditHeader.getUsrLanguage(), method);
 		auditHeader.setAuditDetail(auditDetail);
 		auditHeader = getAuditDetails(auditHeader, method);
 		auditHeader.setErrorList(auditDetail.getErrorDetails());
 		auditHeader = nextProcess(auditHeader);
+
+		FeeWaiverHeader fwh = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
+
+		// Extended field details Validation
+		if (fwh.getExtendedFieldRender() != null) {
+			List<AuditDetail> details = fwh.getAuditDetailMap().get("ExtendedFieldDetails");
+			ExtendedFieldHeader extHeader = fwh.getExtendedFieldHeader();
+			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method,
+					auditHeader.getUsrLanguage());
+			auditDetails.addAll(details);
+		}
+
+		for (int i = 0; i < auditDetails.size(); i++) {
+			auditHeader.setErrorList(auditDetails.get(i).getErrorDetails());
+		}
 
 		logger.debug(Literal.LEAVING);
 		return auditHeader;
@@ -2042,6 +2196,15 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		if (CollectionUtils.isNotEmpty(feeWaiverDetails)) {
 			auditDetailMap.put("FeeWaiverDetails", setFeeWaiverAuditData(feeWaiverHeader, auditTranType, method));
 			auditDetails.addAll(auditDetailMap.get("FeeWaiverDetails"));
+		}
+
+		// Extended Field Details
+		if (feeWaiverHeader.getExtendedFieldRender() != null) {
+			auditDetailMap.put("ExtendedFieldDetails",
+					extendedFieldDetailsService.setExtendedFieldsAuditData(feeWaiverHeader.getExtendedFieldHeader(),
+							feeWaiverHeader.getExtendedFieldRender(), auditTranType, method,
+							feeWaiverHeader.getExtendedFieldHeader().getModuleName()));
+			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
 		}
 
 		feeWaiverHeader.setAuditDetailMap(auditDetailMap);
@@ -2285,6 +2448,14 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	public void setManualAdviseList(List<ManualAdvise> manualAdviseList) {
 		this.manualAdviseList = manualAdviseList;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
+
+	public void setFinServiceInstrutionDAO(FinServiceInstrutionDAO finServiceInstrutionDAO) {
+		this.finServiceInstrutionDAO = finServiceInstrutionDAO;
 	}
 
 }

@@ -108,6 +108,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private FinFeeDetail befImage;
 	private LoggedInUser userDetails;
 	private Date postDate;
+	private Date valueDate;
 	private String transactionId;
 	private BigDecimal calculatedOn = BigDecimal.ZERO;
 	private boolean refundable;
@@ -143,6 +144,7 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 	private boolean paidCalcReq = false;
 	private String prvTaxComponent = "I";
 	private boolean upfrontFee;
+	private boolean restructureFee;
 
 	public FinFeeDetail() {
 		super();
@@ -229,6 +231,8 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		entity.setPaidCalcReq(this.paidCalcReq);
 		entity.setPrvTaxComponent(this.prvTaxComponent);
 		entity.setUpfrontFee(this.upfrontFee);
+		entity.setRestructureFee(this.restructureFee);
+		entity.setValueDate(this.valueDate);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -275,10 +279,12 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		excludeFields.add("paidCalcReq");
 		excludeFields.add("prvTaxComponent");
 		excludeFields.add("upfrontFee");
+		excludeFields.add("valueDate");
+		excludeFields.add("restructureFee");
 
 		return excludeFields;
 	}
-	
+
 	public long getFinID() {
 		return finID;
 	}
@@ -899,4 +905,19 @@ public class FinFeeDetail extends AbstractWorkflowEntity {
 		this.upfrontFee = upfrontFee;
 	}
 
+	public Date getValueDate() {
+		return valueDate;
+	}
+
+	public void setValueDate(Date valueDate) {
+		this.valueDate = valueDate;
+	}
+
+	public boolean isRestructureFee() {
+		return restructureFee;
+	}
+
+	public void setRestructureFee(boolean restructureFee) {
+		this.restructureFee = restructureFee;
+	}
 }

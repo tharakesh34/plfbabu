@@ -67,7 +67,9 @@ public interface FinanceRepaymentsDAO {
 
 	long getNewRepayID();
 
-	Long getLinkedTranIdByReceipt(long receiptId, String type);
+	List<Long> getLinkedTranIdByReceipt(long receiptId, String type);
 
 	Date getMaxValueDate(long finID);
+
+	Date getFinSchdDateByReceiptId(long receiptid, String type);
 }

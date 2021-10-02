@@ -488,7 +488,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		try {
 			latch.await();
 
-			logger.info("Thread Execution for the pool thread{} to thread{} ended", startThread + 1, endThread + 1);
+			logger.info("Thread Execution for the pool thread{} to thread{} ended", startThread + 1, endThread);
 
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -792,11 +792,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				}
 			}
 
-			ErrorDetail errorDetail = receiptService.getWaiverValidation(finID, rud.getReceiptPurpose(),
-					rud.getValueDate());
-			if (errorDetail != null) {
-				rud.getErrorDetails().add(ErrorUtil.getErrorDetail(errorDetail));
-			}
+			receiptService.getWaiverValidation(rud.getFinID(), rud.getReceiptPurpose(), rud.getValueDate());
 
 			rudList.add(rud);
 

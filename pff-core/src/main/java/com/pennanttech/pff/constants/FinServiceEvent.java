@@ -85,4 +85,9 @@ public class FinServiceEvent {
 	public static final String FEEWAIVERS = "FeeWaivers";
 	public static final String PUTCALL = "Putcall";
 	public static final String COLLATERAL_LTV_BREACHS = "CollateralLTVBreachs"; // not using
+	public static final String REALIZATION = "Realization";
+	public static final String UPFRONT_FEE = "UpfrontFee";
+	public static final String UPFRONT_FEE_CAN = "UpfrontFeeCancel";
+	public static final String EXTENDEDFIELDS_MAINTAIN = "MaintExtendedFields";
+
 }

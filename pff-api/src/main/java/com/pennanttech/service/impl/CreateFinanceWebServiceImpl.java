@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.backend.dao.UserDAO;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
@@ -43,6 +42,7 @@ import com.pennant.backend.model.finance.FinanceDedup;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDeviations;
 import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.LoanStage;
 import com.pennant.backend.model.finance.OverDraftMaintenance;
 import com.pennant.backend.model.finance.UserActions;
@@ -83,6 +83,7 @@ import com.pennanttech.ws.model.eligibility.AgreementDetails;
 import com.pennanttech.ws.model.finance.FinanceDedupDetails;
 import com.pennanttech.ws.model.finance.FinanceDedupRequest;
 import com.pennanttech.ws.model.finance.FinanceDedupResponse;
+import com.pennanttech.ws.model.finance.FinanceStatusEnquiryDetail;
 import com.pennanttech.ws.model.finance.LoanStatus;
 import com.pennanttech.ws.model.finance.LoanStatusDetails;
 import com.pennanttech.ws.model.finance.MoveLoanStageRequest;
@@ -104,7 +105,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	private FinanceDataValidation financeDataValidation;
 	private CollateralSetupService collateralSetupService;
 	private ActivityLogService activityLogService;
-	private UserDAO userDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private FinanceDeviationsDAO financeDeviationsDAO;
 	private DeviationHelper deviationHelper;
@@ -1081,14 +1081,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 
 	}
 
-	private WSReturnStatus validateOldFinReference(FinanceDetail fd, boolean active) {
-		WSReturnStatus returnStatus = new WSReturnStatus();
-
-		logger.debug(Literal.LEAVING);
-
-		return returnStatus;
-	}
-
 	private String[] getLogFields(FinanceDetail fd) {
 		String[] logfields = new String[3];
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -1759,6 +1751,62 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		return response;
 	}
 
+	@Override
+	public FinanceStatusEnquiryDetail getLoansStatusEnquiry(FinanceStatusEnquiryDetail fsed) throws ServiceException {
+		logger.debug(Literal.ENTERING);
+
+		FinanceStatusEnquiryDetail lsd = new FinanceStatusEnquiryDetail();
+
+		List<FinanceStatusEnquiry> enquiryDetails = fsed.getFinanceStatusEnquiryList();
+
+		if (CollectionUtils.isEmpty(enquiryDetails)) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "LoanSatusDetails";
+			lsd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", valueParam));
+			return lsd;
+		}
+
+		if (enquiryDetails.size() > 20) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "FinReferences";
+			valueParam[1] = "20";
+			lsd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90220", valueParam));
+			return lsd;
+		}
+
+		List<FinanceStatusEnquiry> responseList = new ArrayList<>();
+
+		for (FinanceStatusEnquiry detail : enquiryDetails) {
+			if (StringUtils.isBlank(detail.getFinReference())) {
+				lsd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", new String[] { "Finreference" }));
+				return lsd;
+			} else {
+
+				FinanceStatusEnquiry fse = financeMainDAO.getLoanStatusDetailsByFinReference(detail.getFinID());
+				if (fse == null) {
+					fse = new FinanceStatusEnquiry();
+					fse.setStatus("No Loan Are Available for the Reference");
+				}
+				// set Finance closing status
+				if (StringUtils.isBlank(fse.getClosingStatus()) && StringUtils.isBlank(fse.getStatus())) {
+					fse.setClosingStatus(APIConstants.CLOSE_STATUS_ACTIVE);
+				}
+				// Temporary FIX at API Level, it should be FIX in entire Application level.
+				if (FinanceConstants.CLOSE_STATUS_CANCELLED.equals(fse.getClosingStatus())
+						|| FinanceConstants.CLOSE_STATUS_EARLYSETTLE.equals(fse.getClosingStatus())) {
+					fse.setOutStandPrincipal(BigDecimal.ZERO);
+				}
+				responseList.add(fse);
+			}
+		}
+
+		lsd.setFinanceStatusEnquiryList(responseList);
+		lsd.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+		logger.debug(Literal.LEAVING);
+
+		return lsd;
+	}
+
 	@Autowired
 	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
 		this.createFinanceController = createFinanceController;
@@ -1802,11 +1850,6 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setActivityLogService(ActivityLogService activityLogService) {
 		this.activityLogService = activityLogService;
-	}
-
-	@Autowired
-	public void setUserDAO(UserDAO userDAO) {
-		this.userDAO = userDAO;
 	}
 
 	@Autowired

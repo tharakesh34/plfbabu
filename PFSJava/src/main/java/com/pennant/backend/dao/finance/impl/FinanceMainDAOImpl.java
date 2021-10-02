@@ -68,6 +68,7 @@ import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceMainExtension;
+import com.pennant.backend.model.finance.FinanceStatusEnquiry;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.UserPendingCases;
 import com.pennant.backend.util.PennantConstants;
@@ -570,7 +571,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", PromotionCode, TdsPercentage, TdsStartDate, TdsEndDate, TdsLimitAmt");
 			sql.append(", VanReq, VanCode, SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount");
 			sql.append(", AlwGrcAdj, EndGrcPeriodAftrFullDisb, AutoIncGrcEndDate, PlanEMIHAlwInGrace, SchdVersion");
-			sql.append(", SubVentionFrom, ManufacturerDealerId");
+			sql.append(", SubVentionFrom, ManufacturerDealerId, Escrow, CustBankId");
 			// HL
 			sql.append(", FinOcrRequired, ReqLoanAmt, ReqLoanTenor, OfferProduct, OfferAmount");
 			sql.append(", CustSegmentation, BaseProduct, ProcessType, BureauTimeSeries");
@@ -593,7 +594,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-			sql.append(", ?, ?, ?, ?, ?, ?");
+			sql.append(", ?, ?, ?, ?, ?, ?, ?, ?");
 			// HL
 			sql.append(", ?, ?, ?, ?, ?");
 			sql.append(", ?, ?, ?, ?");
@@ -817,6 +818,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setInt(index++, fm.getSchdVersion());
 					ps.setString(index++, fm.getSubVentionFrom());
 					ps.setObject(index++, fm.getManufacturerDealerId());
+					ps.setBoolean(index++, fm.isEscrow());
+					ps.setObject(index++, fm.getCustBankId());
 
 					// HL
 					ps.setBoolean(index++, fm.isFinOcrRequired());
@@ -948,7 +951,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(
 					" TDSPercentage = :TdsPercentage, TdsStartDate = :TdsStartDate, TdsEndDate = :TdsEndDate, TdsLimitAmt = :TdsLimitAmt");
 			sql.append(", VanReq =:VanReq, VanCode =:VanCode, PlanEMIHAlwInGrace = :PlanEMIHAlwInGrace");
-			sql.append(", SubVentionFrom = :SubVentionFrom , ManufacturerDealerId = :ManufacturerDealerId");
+			sql.append(
+					", SubVentionFrom = :SubVentionFrom , ManufacturerDealerId = :ManufacturerDealerId, Escrow = :Escrow, CustBankId =:CustBankId");
 
 			// HL
 			sql.append(", FinOcrRequired = :FinOcrRequired, ReqLoanAmt = :ReqLoanAmt, ReqLoanTenor = :ReqLoanTenor");
@@ -4485,7 +4489,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(", MandateID, LimitValid, ApplicationNo, EligibilityMethod, PftServicingODLimit");
 			sql.append(", BusinessVertical, ReAgeBucket, JointCustId, InitiateUser, Approved");
 			sql.append(", JointAccount, FinStatus, AvailedUnPlanEmi, PlanEMIHAlwInGrace, SchdVersion");
-			sql.append(", SubVentionFrom, ManufacturerDealerId");
+			sql.append(", SubVentionFrom, ManufacturerDealerId, Escrow, CustBankId");
 
 			// HL
 			sql.append(", ReqLoanAmt, ReqLoanTenor, FinOcrRequired, OfferProduct, OfferAmount, CustSegmentation");
@@ -4507,6 +4511,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				sql.append(", LovDescEligibilityMethod, LovDescFinPurposeName, ConnectorCode");
 				sql.append(", ConnectorDesc, BusinessVerticalCode, BusinessVerticalDesc, LovDescSourcingBranch");
 				sql.append(", EmployeeName, ManufacturerDealerName, ManufacturerDealerCode");
+				sql.append(", CustAcctNumber, CustAcctHolderName");
 			}
 		}
 
@@ -4752,6 +4757,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setSchdVersion(rs.getInt("SchdVersion"));
 				fm.setSubVentionFrom(rs.getString("SubVentionFrom"));
 				fm.setManufacturerDealerId(JdbcUtil.getLong(rs.getObject("ManufacturerDealerId")));
+				fm.setEscrow(rs.getBoolean("Escrow"));
+				fm.setCustBankId(JdbcUtil.getLong(rs.getObject("CustBankId")));
 
 				// HL
 				fm.setReqLoanAmt(rs.getBigDecimal("ReqLoanAmt"));
@@ -4822,6 +4829,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setEmployeeName(rs.getString("EmployeeName"));
 					fm.setManufacturerDealerName(rs.getString("ManufacturerDealerName"));
 					fm.setManufacturerDealerCode(rs.getString("ManufacturerDealerCode"));
+					fm.setCustAcctNumber(rs.getString("CustAcctNumber"));
+					fm.setCustAcctHolderName(rs.getString("custAcctHolderName"));
 				}
 			}
 
@@ -5822,6 +5831,57 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setCustID(rs.getLong("WorkflowId"));
 
 			return fm;
+		}
+
+	}
+
+	@Override
+	public FinanceStatusEnquiry getLoanStatusDetailsByFinReference(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FM.FinID, FM.FinReference, FP.CurODDays, FP.TotalPriBal, FM.ClosingStatus");
+		sql.append(" From FinanceMain FM");
+		sql.append(" Inner Join FinPftDetails FP ON FM.FinID = FP.FinID");
+		sql.append(" Where FM.FinID = ?");
+
+		logger.debug(Literal.SQL, sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
+				FinanceStatusEnquiry fse = new FinanceStatusEnquiry();
+
+				fse.setFinReference(rs.getString("FinReference"));
+				fse.setCurODDays(rs.getInt("CurODDays"));
+				fse.setOutStandPrincipal(rs.getBigDecimal("TotalPriBal"));
+				fse.setClosingStatus(rs.getString("ClosingStatus"));
+
+				return fse;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			logger.warn("Record is not found in FinanceMain for the specified FinReference >> {}", finID);
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getFinCategoryByFinType(String finType) {
+		String sql = "Select FinCategory From RMTFinanceTypes Where FinType = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		return this.jdbcOperations.queryForObject(sql, String.class, finType);
+	}
+
+	@Override
+	public int getCustomerBankCountById(Long bankId, long custId) {
+		String sql = "Select Count(BankId) From CustomerBankInfo Where BankId = ? and CustId = ?";
+
+		logger.trace(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), bankId, custId);
+		} catch (EmptyResultDataAccessException dae) {
+			return 0;
 		}
 
 	}

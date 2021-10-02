@@ -38,6 +38,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.finance.FeeWaiverHeaderDAO;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
+import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -205,6 +206,18 @@ public class FeeWaiverHeaderDAOImpl extends SequenceDao<FeeWaiverHeader> impleme
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
+	}
+
+	@Override
+	public boolean isFeeWaiverInProcess(long finID) {
+		String sql = "Select coalesce(count(FinID), 0) from FeeWaiverHeader_View where FinID = ? and RecordStatus in (?, ?)";
+
+		logger.debug(Literal.SQL + sql);
+
+		Object[] args = new Object[] { finID, PennantConstants.RCD_STATUS_SUBMITTED,
+				PennantConstants.RCD_STATUS_RESUBMITTED };
+
+		return this.jdbcOperations.queryForObject(sql, Integer.class, args) > 0;
 	}
 
 	private StringBuilder getSelectQuery(String type) {

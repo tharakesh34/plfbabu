@@ -52,6 +52,7 @@ import com.pennant.backend.model.customermasters.CustomerEligibilityCheck;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.extendedfield.ExtendedField;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.covenant.Covenant;
@@ -306,6 +307,8 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	@XmlElement
 	private boolean isOrigination;
 	private List<LinkedFinances> linkedFinancesList;
+	private Map<String, BigDecimal> gstPercentages = new HashMap<>();
+	private ExtendedFieldExtension extendedFieldExtension = null;
 
 	public FinanceDetail() {
 		super();
@@ -316,6 +319,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 		excludeFields.add("orderStatus");
 		excludeFields.add("receiptProcessingAmt");
 		excludeFields.add("isOrigination");
+		excludeFields.add("gstPercentages");
 
 		return excludeFields;
 	}
@@ -1607,6 +1611,22 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 
 	public void setLinkedFinancesList(List<LinkedFinances> linkedFinancesList) {
 		this.linkedFinancesList = linkedFinancesList;
+	}
+
+	public Map<String, BigDecimal> getGstPercentages() {
+		return gstPercentages;
+	}
+
+	public void setGstPercentages(Map<String, BigDecimal> gstPercentages) {
+		this.gstPercentages = gstPercentages;
+	}
+
+	public ExtendedFieldExtension getExtendedFieldExtension() {
+		return extendedFieldExtension;
+	}
+
+	public void setExtendedFieldExtension(ExtendedFieldExtension extendedFieldExtension) {
+		this.extendedFieldExtension = extendedFieldExtension;
 	}
 
 }

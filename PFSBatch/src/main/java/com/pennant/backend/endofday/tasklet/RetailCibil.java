@@ -10,6 +10,7 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.util.BatchUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.eod.EODUtil;
@@ -34,13 +35,19 @@ public class RetailCibil implements Tasklet {
 
 			BatchUtil.setExecutionStatus(context, StepUtil.CIBIL_EXTRACT_RETAIL);
 
-			new Thread(new CIBILProcessThread(retailCibilReport)).start();
-			Thread.sleep(1000);
+			RetailCibilReport.executing = true;
+			if (!ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+				retailCibilReport.generateReport();
+			} else {
+				retailCibilReport.generateReportBasedOnEntity();
+			}
 
 			logger.info("COMPLETED CIBIL Process for the value date {}", valueDate);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			throw e;
+		} finally {
+			RetailCibilReport.executing = false;
 		}
 
 		return RepeatStatus.FINISHED;
@@ -49,23 +56,6 @@ public class RetailCibil implements Tasklet {
 	@Autowired
 	public void setRetailCibilReport(RetailCibilReport retailCibilReport) {
 		this.retailCibilReport = retailCibilReport;
-	}
-
-	public class CIBILProcessThread implements Runnable {
-		private RetailCibilReport cibilReport;
-
-		public CIBILProcessThread(RetailCibilReport cibilReport) {
-			this.cibilReport = cibilReport;
-		}
-
-		public void run() {
-			try {
-				logger.debug("Cibil Service started...");
-				cibilReport.generateReport();
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
 	}
 
 }

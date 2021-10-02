@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FileDownloadListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-06-2013    														*
- *                                                                  						*
- * Modified Date    :  26-06-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FileDownloadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-06-2013 * * Modified
+ * Date : 26-06-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-06-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-06-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -69,6 +51,7 @@ import org.zkoss.zul.ListitemRenderer;
 import org.zkoss.zul.Paging;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.Property;
 import com.pennant.backend.util.PennantConstants;
@@ -173,6 +156,11 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 		doRenderPage();
 		search();
 
+		if (RetailCibilReport.executing || CorporateCibilReport.executing) {
+			this.btnexecute.setDisabled(true);
+			this.btnexecute.setTooltiptext("EOD CIBIL generation is in process. Please initiate after some time.");
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -191,14 +179,23 @@ public class CIBILFileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> imp
 
 		try {
 			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
-				retailCibilReport.generateReport();
+				if (!ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+					retailCibilReport.generateReport();
+				} else {
+					retailCibilReport.generateReportBasedOnEntity();
+				}
 			} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(segmentType)) {
-				corporateCibilReport.generateReport();
+				if (!ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+					corporateCibilReport.generateReport();
+				} else {
+					corporateCibilReport.generateReportBasedOnEntity();
+				}
 			} else {
 				MessageUtil.showError("File Type cannot be blank.");
 				return;
 			}
 		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 

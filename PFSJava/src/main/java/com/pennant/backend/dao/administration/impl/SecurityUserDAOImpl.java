@@ -425,7 +425,6 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where UsrID = :UsrID and UserDivision = :UserDivision");
 		sql.append(" and UserBranch =:UserBranch");
-		// sql.append(" and entity = :entity");
 
 		logger.debug("updateSql:" + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);

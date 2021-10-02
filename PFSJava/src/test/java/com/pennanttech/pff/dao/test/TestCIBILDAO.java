@@ -66,7 +66,7 @@ public class TestCIBILDAO {
 
 		cIBILDAO.getCollateralDetails(3021, "CORP"); // no data found
 
-		cIBILDAO.getChequeBounceStatus(5354); // no data found
+		cIBILDAO.getChequeBounceStatus(""); // method changed while moving delta from 5.16
 
 		cIBILDAO.getGuarantorsDetails(3548, true);
 		cIBILDAO.getGuarantorsDetails(3710, false);
@@ -139,7 +139,7 @@ public class TestCIBILDAO {
 	@Rollback(true)
 	public void testExtractCustomers() throws Exception {
 		// Issue with SysParamUtil.getAppDate()
-		cIBILDAO.extractCustomers("RETAIL");
+		cIBILDAO.extractCustomers("RETAIL", "ESFB"); // method changed while moving delta from 5.16
 	}
 
 	@Test
@@ -147,7 +147,7 @@ public class TestCIBILDAO {
 	@Rollback(true)
 	public void testExtractCustomers1() throws Exception {
 		// Issue with SysParamUtil.getAppDate()s
-		cIBILDAO.extractCustomers("CORP");
+		cIBILDAO.extractCustomers("CORP", "ESFB"); // method changed while moving delta from 5.16
 	}
 
 	@Test

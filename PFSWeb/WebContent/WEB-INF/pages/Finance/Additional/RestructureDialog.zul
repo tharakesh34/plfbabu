@@ -2,105 +2,108 @@
 <?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
 <?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
 
-<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd">
 
-	<window id="window_RestructureDialog" border="normal" apply="${restructureDialogCtrl}" width="650px" height="400px"
+	<window id="window_RestructureDialog" border="normal" apply="${restructureDialogCtrl}" width="98%" height="90%"
 		sizable="true" title="${c:l('window_RestructureDialog.title')}" closable="true">
 
 		<borderlayout id="borderlayoutFrequency">
-			<center border="none" autoscroll="false">
+			<center border="none" autoscroll="true">
 
-				<groupbox id="gb_FrequencyDetails" height="320px" style="border:1px solid #F38C60;">
+				<groupbox id="gb_RestructureDetail" style="border:1px solid #F38C60;">
 					<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 						<columns>
 							<column width="220px" />
 							<column />
+							<column width="220px" />
+							<column />
 						</columns>
-						<rows>						
-							<row id="row_restructuringType">
-								<label id="label_RestructureDialog_RestructuringType" value="${c:l('label_RestructureDialog_RestructuringType.value')}" />
+						<rows>
+							<row>
+								<label id="label_RestructureDialog_RestructuringType"
+									value="${c:l('label_RestructureDialog_RestructuringType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="restructuringType" readonly="true" width="170px"/>
+									<combobox id="restructuringType" readonly="true" width="170px" />
+								</hbox>
+								<label id="label_RestructureDialog_RestructuringReason"
+									value="${c:l('label_RestructureDialog_RestructuringReason.value')}" />
+								<hbox>
+									<space spacing="2px" sclass="mandatory" />
+									<combobox id="restructuringReason" readonly="true" width="170px" />
 								</hbox>
 							</row>
-														
-							<row id="row_restructureDate" >
-								<label
-									id="label_RestructureDate"
+							<row>
+								<label id="label_RestructureDate"
 									value="${c:l('label_RestructureDialog_RestructureDate.value')}" />
 								<hbox>
-									<space spacing="2px"
-										sclass="mandatory" id="space_TillDate" />
-									<combobox id="restructureDate"
-										readonly="true" width="120px">
-									</combobox>
+									<space spacing="2px" sclass="mandatory" id="space_TillDate" />
+									<combobox id="restructureDate" readonly="true" width="120px"></combobox>
+									<datebox id="restructureDateIn" width="120px" visible="false" />
 								</hbox>
 							</row>
-							
-							<row id="row_restructuringReason">
-								<label id="label_RestructureDialog_RestructuringReason" value="${c:l('label_RestructureDialog_RestructuringReason.value')}" />
-								<hbox>
-									<space spacing="2px" sclass="mandatory" />
-									<combobox id="restructuringReason" readonly="true" width="170px"/>
-								</hbox>
-							</row>
-							<row id="row_numberOfEMIHoliday">
-								<label id="label_RestructureDialog_NumberOfEMIHoliday" value="${c:l('label_RestructureDialog_NumberOfEMIHoliday.value')}" />
+							<row>
+								<label id="label_RestructureDialog_NumberOfEMIHoliday"
+									value="${c:l('label_RestructureDialog_NumberOfEMIHoliday.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<intbox id="numberOfEMIHoliday" width="60px" maxlength="2" />
 								</hbox>
-							</row>
-							<row id="row_numberOfPriHoliday">
-								<label id="label_RestructureDialog_NumberOfPriHoliday" value="${c:l('label_RestructureDialog_NumberOfPriHoliday.value')}" />
+								<label id="label_RestructureDialog_NumberOfPriHoliday"
+									value="${c:l('label_RestructureDialog_NumberOfPriHoliday.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<intbox id="numberOfPriHoliday" width="60px" maxlength="2" />
 								</hbox>
 							</row>
-
-							<row id="row_grcMaxAmount">
-								<label
-									id="label_RestructureDialog_grcMaxAmount"
-									value="${c:l('label_RestructureDialog_GrcMaxAmount.value')}" />
-								<hbox>
-									<currencyBox id="grcMaxAmount" />
-								</hbox>
-							</row>
-
-
-							<row id="row_numberOfEMITerms">
-								<label id="label_RestructureDialog_NumberOfEMITerms" value="${c:l('label_RestructureDialog_NumberOfEMITerms.value')}" />
+							<row>
+								<label id="label_RestructureDialog_NumberOfEMITerms"
+									value="${c:l('label_RestructureDialog_NumberOfEMITerms.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
 									<intbox id="numberOfEMITerms" width="60px" maxlength="3" />
 								</hbox>
-							</row>
-							<row id="row_totNoOfRestructuring">
-								<label id="label_RestructureDialog_TotNoOfRestructuring" value="${c:l('label_RestructureDialog_TotNoOfRestructuring.value')}" />
+								<label id="label_RestructureDialog_TotNoOfRestructuring"
+									value="${c:l('label_RestructureDialog_TotNoOfRestructuring.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<intbox id="totNoOfRestructuring" width="60px" maxlength="3" readonly="true"/>
+									<intbox id="totNoOfRestructuring" width="60px" maxlength="3" readonly="true" />
 								</hbox>
 							</row>
-							<row id="row_recalculationType">
-								<label id="label_RestructureDialog_RecalculationType" value="${c:l('label_RestructureDialog_RecalculationType.value')}" />
+							<row id="rateReviewRow" visible="false">
+								<label id="label_RestructureDialog_ActRate"
+									value="${c:l('label_RestructureDialog_ActRate.value')}" />
+								<hbox>
+									<space spacing="2px" id="space_ActRate" sclass="mandatory" />
+									<decimalbox id="actRate" width="120px" maxlength="15"
+										style="text-align:right" />
+								</hbox>
+								<label id="label_RestructureDialog_BaseRate"
+									value="${c:l('label_RestructureDialog_BaseRate.value')}" />
+								<ratebox id="baseRate" />
+							</row>
+							<row>
+								<label id="label_RestructureDialog_grcMaxAmount"
+									value="${c:l('label_RestructureDialog_GrcMaxAmount.value')}" />
+								<currencyBox id="grcMaxAmount" />
+								<label id="label_RestructureDialog_RecalculationType"
+									value="${c:l('label_RestructureDialog_RecalculationType.value')}" />
 								<hbox>
 									<space spacing="2px" sclass="mandatory" />
-									<combobox id="recalculationType" readonly="true" width="170px"/>
+									<combobox id="recalculationType" readonly="true" width="170px" />
 								</hbox>
 							</row>
 							<row>
-								<label id="label_RestructureDialog_ServiceReqNo" value="${c:l('label_RestructureDialog_ServiceReqNo.value')}" />
+								<label id="label_RestructureDialog_ServiceReqNo"
+									value="${c:l('label_RestructureDialog_ServiceReqNo.value')}" />
 								<hbox>
 									<space spacing="2px" id="space_serviceReqNo" />
 									<uppercasebox id="serviceReqNo" width="170px" visible="true" />
 								</hbox>
-							</row>
-							<row>
-								<label id="label_RestructureDialog_Remarks" value="${c:l('label_RestructureDialog_Remarks.value')}" />
+								<label id="label_RestructureDialog_Remarks"
+									value="${c:l('label_RestructureDialog_Remarks.value')}" />
 								<hbox>
 									<space spacing="2px" />
 									<textbox id="remarks" maxlength="200" width="250px" rows="2" />
@@ -108,6 +111,34 @@
 							</row>
 						</rows>
 					</grid>
+					<listbox id="listBoxCharges" emptyMessage="${c:l('listbox.emptyMessage')}" style="overflow:auto"
+						tooltiptext="${c:l('listbox.tooltiptext1')}" width="99.7%" height="100%" multiple="false" span="true"
+						sizedByContent="true" visible="false">
+						<listhead sizable="true">
+							<listheader id="listheader_RestructureCharge_Select"
+								label="${c:l('listheader_RestructureCharge_Select.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_RestructureCharge_ChargeCode"
+								label="${c:l('listheader_RestructureCharge_ChargeCode.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_RestructureCharge_BalanceAmount"
+								label="${c:l('listheader_RestructureCharge_BalanceAmount.label')}" sort="false" hflex="min" align="right"/>
+							<listheader id="listheader_RestructureCharge_TdsAmount" visible="false"
+								label="${c:l('listheader_RestructureCharge_TdsAmount.label')}" sort="false" hflex="min" align="right" />
+							<listheader id="listheader_RestructureCharge_TaxType"
+								label="${c:l('listheader_RestructureCharge_TaxType.label')}" sort="false" hflex="min" />
+							<listheader id="listheader_RestructureCharge_CGST"
+								label="${c:l('listheader_RestructureCharge_CGST.label')}" sort="false" hflex="min" align="right" />
+							<listheader id="listheader_RestructureCharge_SGST"
+								label="${c:l('listheader_RestructureCharge_SGST.label')}" sort="false" hflex="min" align="right" />
+							<listheader id="listheader_RestructureCharge_UGST"
+								label="${c:l('listheader_RestructureCharge_UGST.label')}" sort="false" hflex="min" align="right" />
+							<listheader id="listheader_RestructureCharge_IGST"
+								label="${c:l('listheader_RestructureCharge_IGST.label')}" sort="false" hflex="min" align="right" />
+							<listheader id="listheader_RestructureCharge_CESS"
+								label="${c:l('listheader_RestructureCharge_CESS.label')}" sort="false" hflex="min" align="right" />
+							<listheader id="listheader_RestructureCharge_TotalAmount"
+								label="${c:l('listheader_RestructureCharge_TotalAmount.label')}" sort="false" hflex="min" align="right" />
+						</listhead>
+					</listbox>
 				</groupbox>
 			</center>
 			<south border="none" margins="1,0,0,0" size="30px" splittable="false">
@@ -116,8 +147,10 @@
 						<rows>
 							<row valign="middle">
 								<hbox align="start">
-									<button id="btnRestructure" label="${c:l('btnRestructure.label')}" tooltiptext="${c:l('btnRestructure.tooltiptext')}" />
-									<button id="btnClose" label="${c:l('btnClose.label')}" tooltiptext="${c:l('btnClose.tooltiptext')}" />
+									<button id="btnRestructure" label="${c:l('btnRestructure.label')}"
+										tooltiptext="${c:l('btnRestructure.tooltiptext')}" />
+									<button id="btnClose" label="${c:l('btnClose.label')}"
+										tooltiptext="${c:l('btnClose.tooltiptext')}" />
 								</hbox>
 							</row>
 						</rows>

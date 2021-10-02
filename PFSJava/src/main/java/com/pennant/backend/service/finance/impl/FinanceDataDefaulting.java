@@ -278,18 +278,6 @@ public class FinanceDataDefaulting {
 			}
 		}
 
-		if (StringUtils.isNotBlank(stepPolicy)) {
-			if (!StringUtils.containsIgnoreCase(alwdStepPolicies, stepPolicy)) {
-				String[] valueParm = new String[2];
-				valueParm[0] = finType;
-				valueParm[1] = alwdStepPolicies;
-				errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90147", valueParm)));
-				schdData.setErrorDetails(errorDetails);
-
-				return;
-			}
-		}
-
 		if (PennantConstants.STEPPING_CALC_PERC.equals(calcOfSteps) && StringUtils.isNotBlank(stepType)) {
 			if (!FinanceConstants.STEPTYPE_EMI.equals(stepType) && !FinanceConstants.STEPTYPE_PRIBAL.equals(stepType)) {
 				String[] valueParm = new String[2];
@@ -1061,8 +1049,10 @@ public class FinanceDataDefaulting {
 
 		// Manual Steps? Default Step type
 		if (fm.isAlwManualSteps()) {
-			if (StringUtils.isBlank(fm.getStepType())) {
-				fm.setStepType(financeType.getDftStepPolicyType());
+			if (PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
+				if (StringUtils.isBlank(fm.getStepType())) {
+					fm.setStepType(financeType.getDftStepPolicyType());
+				}
 			}
 		} else {
 			// Default Step Policy
@@ -1072,8 +1062,13 @@ public class FinanceDataDefaulting {
 			}
 		}
 
-		fm.setCalcOfSteps(financeType.getCalcOfSteps());
-		fm.setStepsAppliedFor(financeType.getStepsAppliedFor());
+		if (StringUtils.isBlank(fm.getCalcOfSteps())) {
+			fm.setCalcOfSteps(financeType.getCalcOfSteps());
+		}
+
+		if (StringUtils.isBlank(fm.getStepsAppliedFor())) {
+			fm.setStepsAppliedFor(financeType.getStepsAppliedFor());
+		}
 	}
 
 	/*

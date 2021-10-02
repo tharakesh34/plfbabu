@@ -25,6 +25,8 @@ import org.zkoss.zul.Window;
 import com.pennant.CurrencyBox;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.service.collateral.CollateralSetupService;
+import com.pennant.backend.service.extendedfields.ExtendedFieldDetailsService;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.Constraint.PTDecimalValidator;
@@ -54,6 +56,8 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 	private TVerificationDialogCtrl tVerificationDialogCtrl;
 	private List<Verification> valuationList = new ArrayList<>();
 	List<ValueLabel> decisionOnValList = new ArrayList<>();
+	private CollateralSetupService collateralSetupService;
+	private ExtendedFieldDetailsService extendedFieldDetailsService;
 
 	public FinalValuationDialogCtrl() {
 		super();
@@ -218,7 +222,7 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 			wve.add(we);
 		}
 		try {
-			//PSD#155631
+			// PSD#155631
 			if (ImplementationConstants.TV_FINALVAL_AMOUNT_VALD) {
 				validateRemarks();
 			}
@@ -357,4 +361,11 @@ public class FinalValuationDialogCtrl extends GFCBaseCtrl<Verification> {
 		this.tVerificationDialogCtrl = tVerificationDialogCtrl;
 	}
 
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
+	}
+
+	public void setExtendedFieldDetailsService(ExtendedFieldDetailsService extendedFieldDetailsService) {
+		this.extendedFieldDetailsService = extendedFieldDetailsService;
+	}
 }

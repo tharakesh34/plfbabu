@@ -14,7 +14,7 @@ import com.pennant.backend.model.finance.ForeClosureReport;
 import com.pennant.backend.model.systemmasters.StatementOfAccount;
 
 @XmlAccessorType(XmlAccessType.NONE)
-@XmlType(propOrder = { "customer", "finance", "finReference", "docImage","foreclosureReport", "returnStatus" })
+@XmlType(propOrder = { "customer", "finance", "finReference", "docImage", "foreclosureReport", "returnStatus" })
 public class FinStatementResponse {
 	@XmlElement
 	private CustomerDetails customer;

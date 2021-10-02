@@ -27,7 +27,7 @@
 										multiple="false">
 										<listhead sizable="true">
 											<listheader label="${c:l('label_ExtendedFieldsEnquiry_Reference')}" hflex="min" />
-											<listheader label="${c:l('label_ExtendedFieldsEnquiry_SeqNo')}" hflex="min" visible="false" />
+											<listheader label="${c:l('label_ExtendedFieldsEnquiry_SeqNo')}" hflex="min" />
 											<listheader label="${c:l('label.RecordStatus')}" sort="auto" hflex="min" />
 											<listheader label="${c:l('label.RecordType')}" sort="auto" hflex="min" />
 										</listhead>

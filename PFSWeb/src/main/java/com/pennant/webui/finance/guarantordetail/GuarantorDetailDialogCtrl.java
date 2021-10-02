@@ -1487,6 +1487,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 		try {
 			if (this.guranteePercentage.getValue() != null) {
 				aGuarantorDetail.setGuranteePercentage(this.guranteePercentage.getValue());
+			} else {
+				aGuarantorDetail.setGuranteePercentage(BigDecimal.ZERO);
 			}
 
 		} catch (WrongValueException we) {

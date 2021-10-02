@@ -27,7 +27,7 @@ public class CollectionDataDownload implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 		logger.debug(Literal.ENTERING);
 		BatchUtil.setExecutionStatus(chunkContext, StepUtil.COLLECTION_DOWNLOAD);
-		collectionDataDownloadProcess.processDownload();
+		getCollectionDataDownloadProcess().processDownload();
 
 		logger.debug(Literal.LEAVING);
 		return RepeatStatus.FINISHED;

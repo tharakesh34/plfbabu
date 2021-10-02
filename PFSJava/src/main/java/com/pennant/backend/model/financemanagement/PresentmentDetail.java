@@ -129,6 +129,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	private String utrNumber;
 	private String clearingStatus;
 	private boolean finisActive;
+	private Date representmentDate;
 
 	public PresentmentDetail() {
 		super();
@@ -201,6 +202,9 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		entity.setUserDetails(this.userDetails);
 		entity.setPresentmentType(this.presentmentType);
 		entity.setUtrNumber(this.utrNumber);
+		entity.setClearingStatus(this.clearingStatus);
+		entity.setFinisActive(this.finisActive);
+		entity.setRepresentmentDate(this.representmentDate);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -216,7 +220,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	}
 
 	public Set<String> getExcludeFields() {
-		Set<String> excludeFields = new HashSet<String>();
+		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("accountNo");
 		excludeFields.add("acType");
 		excludeFields.add("bounceReason");
@@ -236,6 +240,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		excludeFields.add("linkedTranId");
 		excludeFields.add("presentmentType");
 		excludeFields.add("hostReference");
+		excludeFields.add("representmentDate");
 
 		return excludeFields;
 	}
@@ -786,5 +791,13 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setHostReference(String hostReference) {
 		this.hostReference = hostReference;
+	}
+
+	public Date getRepresentmentDate() {
+		return representmentDate;
+	}
+
+	public void setRepresentmentDate(Date representmentDate) {
+		this.representmentDate = representmentDate;
 	}
 }

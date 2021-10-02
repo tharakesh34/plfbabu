@@ -345,7 +345,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			this.listheader_FeeDetailList_Terms.setVisible(false);
 		}
 
-		if (StringUtils.equals(this.moduleDefiner, FinServiceEvent.ADDDISB)) {
+		if (FinServiceEvent.ADDDISB.equals(this.moduleDefiner)
+				|| FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)) {
 			this.listheader_FeeDetailList_FeeScheduleMethod.setVisible(true);
 			this.listheader_FeeDetailList_PaidAmount.setVisible(false);
 		}
@@ -1457,8 +1458,10 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					BigDecimal remainingFee = PennantApplicationUtil
 							.unFormateAmount(BigDecimal.valueOf(remFeeBox.doubleValue()), formatter);
 
-					if (StringUtils.isNotBlank(this.moduleDefiner) && remainingFee.compareTo(BigDecimal.ZERO) != 0
-							&& !StringUtils.equals(this.moduleDefiner, FinServiceEvent.ADDDISB)) {
+					if (StringUtils.isNotBlank(this.moduleDefiner)
+							&& !FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)
+							&& remainingFee.compareTo(BigDecimal.ZERO) != 0
+							&& !FinServiceEvent.ADDDISB.equals(this.moduleDefiner)) {
 						throw new WrongValueException(remFeeBox,
 								Labels.getLabel("label_Fee_PaidWaiverAmount_NotEqual"));
 					}
@@ -1737,6 +1740,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 				} else {
 					actualBox.setDisabled(readOnly ? true : !finFeeDetail.isAlwModifyFee());
 				}
+
+				if (finFeeDetail.isRestructureFee()
+						|| (getFinanceDetail().getFinScheduleData().getRestructureDetail() != null
+								&& FinServiceEvent.RESTRUCTURE.equals(getFinanceDetail().getModuleDefiner()))) {
+					actualBox.setDisabled(true);
+				}
+
 				actualBox.setId(getComponentId(FEE_UNIQUEID_ACTUALAMOUNT, finFeeDetail));
 				actualBox.setValue(
 						PennantApplicationUtil.formateAmount(finFeeDetail.getActualAmountOriginal(), formatter));
@@ -1977,6 +1987,18 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 							+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
 				}
 
+				if (FinServiceEvent.RESTRUCTURE.equals(this.moduleDefiner)) {
+					excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
+							+ CalculationConstants.REMFEE_PART_OF_DISBURSE + "," + ","
+							+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + "," + ","
+							+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
+							+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
+							+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + ",";
+
+					feeScheduleMethod = CalculationConstants.REMFEE_PART_OF_SALE_PRICE;
+					finFeeDetail.setFeeScheduleMethod(feeScheduleMethod);
+				}
+
 				if (StringUtils.equals(CalculationConstants.REMFEE_WAIVED_BY_BANK, feeScheduleMethod)
 						|| StringUtils.equals(CalculationConstants.REMFEE_PAID_BY_CUSTOMER, feeScheduleMethod)) {
 					feeScheduleMethod = "";
@@ -1991,6 +2013,13 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 					feeSchdMthdDisable = readOnly;
 				}
 				feeSchdMethCombo.setDisabled(feeSchdMthdDisable);
+
+				if (finFeeDetail.isRestructureFee()
+						|| (getFinanceDetail().getFinScheduleData().getRestructureDetail() != null
+								&& FinServiceEvent.RESTRUCTURE.equals(getFinanceDetail().getModuleDefiner()))) {
+					feeSchdMethCombo.setDisabled(true);
+				}
+
 				lc.appendChild(feeSchdMethCombo);
 				lc.setParent(item);
 
@@ -2737,36 +2766,45 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		logger.debug("Leaving");
 	}
 
-	private List<FinFeeDetail> calculateFees(List<FinFeeDetail> finFeeDetailsList, FinScheduleData finScheduleData,
-			Date valueDate) {
+	private List<FinFeeDetail> calculateFees(List<FinFeeDetail> fees, FinScheduleData schdData, Date valueDate) {
 		logger.debug(Literal.ENTERING);
 
+		FinanceMain fm = schdData.getFinanceMain();
 		// Calculate Fee Rules
-		calculateFeeRules(finFeeDetailsList, finScheduleData);
+		calculateFeeRules(fees, schdData);
 
 		// Calculate the fee Percentage
-		calculateFeePercentageAmount(finScheduleData, valueDate);
+		calculateFeePercentageAmount(schdData, valueDate);
 
 		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
+		// Calculating GST
+		Date appDate = SysParamUtil.getAppDate();
+
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
 			if (subventionFeeCode.equals(finFeeDetail.getFeeTypeCode())) {
-				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getDealerTaxPercentages());
+				this.finFeeDetailService.calculateFees(finFeeDetail, schdData, getDealerTaxPercentages());
 			} else {
-				this.finFeeDetailService.calculateFees(finFeeDetail, finScheduleData, getTaxPercentages());
+				this.finFeeDetailService.calculateFees(finFeeDetail, schdData, getTaxPercentages());
+			}
+
+			if (finFeeDetail.isOriginationFee()) {
+				finFeeDetail.setValueDate(fm.getFinStartDate());
+			} else {
+				finFeeDetail.setValueDate(appDate);
 			}
 		}
 
 		getCalculatedTdsOnFees(getFinFeeDetailList(), financeDetail.getFinScheduleData());
 
-		feeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), finScheduleData, getFinFeeDetailList());
+		feeDetailService.setFeeAmount(getFinanceDetail().getModuleDefiner(), schdData, getFinFeeDetailList());
 
 		doFillFinFeeDetailList(getFinFeeDetailUpdateList());
 
-		finScheduleData.setFinFeeDetailList(getFinFeeDetailList());
+		schdData.setFinFeeDetailList(getFinFeeDetailList());
 
 		logger.debug(Literal.LEAVING);
 
-		return finFeeDetailsList;
+		return fees;
 	}
 
 	private void calculateFeeRules(List<FinFeeDetail> fees, FinScheduleData scheduleData) {
@@ -2928,7 +2966,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 								financeDetail, getDealerTaxPercentages(), false);
 					} else {
 						this.finFeeDetailService.processGSTCalForPercentage(finFeeDetail, calPercentageFee,
-								financeDetail, taxPercentages, false);
+								financeDetail, getTaxPercentages(), false);
 					}
 				} else {
 					if (!finFeeDetail.isFeeModified() || !finFeeDetail.isAlwModifyFee()) {

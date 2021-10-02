@@ -41,16 +41,20 @@ import com.pennant.backend.model.finance.CashBackDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.PaymentInstruction;
+import com.pennant.backend.model.finance.RestructureCharge;
+import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
+import com.pennant.backend.model.receiptupload.UploadAlloctionDetail;
 import com.pennant.backend.model.rmtmasters.FinTypePartnerBank;
 import com.pennant.backend.model.rmtmasters.GSTRate;
 import com.pennant.backend.model.rmtmasters.Promotion;
@@ -676,6 +680,107 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		return new AuditHeader(String.valueOf(paymentHeader.getPaymentId()),
 				String.valueOf(paymentHeader.getPaymentId()), null, null, auditDetail, paymentHeader.getUserDetails(),
 				new HashMap<String, List<ErrorDetail>>());
+	}
+
+	@Override
+	public void createRestructReceipt(FinanceDetail fd) {
+		FinScheduleData schData = fd.getFinScheduleData();
+		FinanceMain fm = schData.getFinanceMain();
+		RestructureDetail rd = schData.getRestructureDetail();
+
+		List<UploadAlloctionDetail> uplAlocList = new ArrayList<>();
+		BigDecimal totAmount = BigDecimal.ZERO;
+		BigDecimal bpiAmount = BigDecimal.ZERO;
+
+		for (RestructureCharge rc : rd.getChargeList()) {
+			if (!rc.isCapitalized()) {
+				continue;
+			}
+
+			if ("BPI".equals(rc.getAlocType()) || RepayConstants.ALLOCATION_FEE.equals(rc.getAlocType())) {
+				if ("BPI".equals(rc.getAlocType())) {
+					bpiAmount = rc.getTotalAmount();
+				}
+
+				continue;
+			}
+
+			String alocType = "";
+			switch (rc.getAlocType()) {
+			case RepayConstants.ALLOCATION_PFT:
+				alocType = "I";
+				break;
+			case RepayConstants.ALLOCATION_PRI:
+				alocType = "P";
+				break;
+			case RepayConstants.ALLOCATION_LPFT:
+				alocType = "L";
+				break;
+			case RepayConstants.ALLOCATION_ODC:
+				alocType = "O";
+				break;
+			case RepayConstants.ALLOCATION_MANADV:
+				alocType = "M";
+				break;
+			default:
+				alocType = "B";
+				break;
+			}
+
+			if (StringUtils.isBlank(alocType)) {
+				continue;// ERROR
+			}
+
+			UploadAlloctionDetail detail = new UploadAlloctionDetail();
+			detail.setAllocationType(alocType);
+			detail.setReferenceCode(rc.getFeeCode());
+			detail.setPaidAmount(rc.getTotalAmount());
+			uplAlocList.add(detail);
+
+			totAmount = totAmount.add(rc.getTotalAmount());
+		}
+
+		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinReference(fm.getFinReference());
+		fsi.setModule("Receipts");
+		fsi.setValueDate(rd.getRestructureDate());
+		fsi.setAmount(totAmount);
+		fsi.setAllocationType(RepayConstants.ALLOCATIONTYPE_MANUAL);
+		fsi.setLoggedInUser(fm.getUserDetails());
+		fsi.setStatus(RepayConstants.PAYSTATUS_APPROVED);
+		fsi.setDepositDate(rd.getRestructureDate());
+		fsi.setRealizationDate(rd.getRestructureDate());
+		fsi.setInstrumentDate(rd.getRestructureDate());
+		fsi.setReceivedDate(rd.getRestructureDate());
+		fsi.setRemarks("Restructure Capitalization");
+		fsi.setPaymentMode(RepayConstants.PAYTYPE_RESTRUCT);
+		fsi.setExcessAdjustTo(RepayConstants.EXCESSADJUSTTO_EXCESS);
+		fsi.setEntity(fm.getEntityCode());
+		fsi.setReceiptPurpose(FinServiceEvent.RESTRUCTURE);
+		fsi.setReceiptdetailExits(false);
+		fsi.setUploadAllocationDetails(uplAlocList);
+		fsi.setReqType(RepayConstants.REQTYPE_POST);
+		fsi.setRecalType(rd.getRecalculationType());
+		fsi.setBpiAmount(bpiAmount);
+
+		FinReceiptDetail rcd = new FinReceiptDetail();
+		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
+		rcd.setAmount(totAmount);
+		rcd.setValueDate(rd.getRestructureDate());
+		rcd.setDepositDate(rd.getRestructureDate());
+		rcd.setReceivedDate(rd.getRestructureDate());
+		rcd.setStatus(fsi.getStatus());
+		rcd.setRemarks("Restructure Capitalization");
+		rcd.setReference(fm.getFinReference());
+		rcd.setReceiptPurpose(FinServiceEvent.RESTRUCTURE);
+		fsi.setReceiptDetail(rcd);
+		fsi.setExcldTdsCal(true);
+
+		// Create Receipt Against Loan
+		FinanceDetail detail = receiptService.receiptTransaction(fsi, FinServiceEvent.RESTRUCTURE);
+		if (detail.getReturnStatus() != null) {
+			throw new AppException("AppException", detail.getReturnStatus().getReturnText());
+		}
 	}
 
 	public void setFeeTypeDAO(FeeTypeDAO feeTypeDAO) {

@@ -387,112 +387,117 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	private void processStepLoans(FinanceMain finMain) {
+	private void processStepLoans(FinanceMain fm) {
 		boolean isStepLoan = false;
 		Date appDate = SysParamUtil.getAppDate();
 
-		if (finMain.isStepFinance()) {
-			if (StringUtils.isNotBlank(finMain.getStepPolicy())
-					|| (finMain.isAlwManualSteps() && finMain.getNoOfSteps() > 0)) {
+		if (fm.isStepFinance()) {
+			if (StringUtils.isNotBlank(fm.getStepPolicy()) || (fm.isAlwManualSteps() && fm.getNoOfSteps() > 0)) {
 				isStepLoan = true;
 			}
 		}
 
-		if (isStepLoan) {
-			readOnlyComponent(true, this.cbReCalType);
-			readOnlyComponent(true, cbFromDate);
-			Comboitem comboitem = new Comboitem();
+		if (!isStepLoan) {
+			return;
+		}
+
+		readOnlyComponent(true, this.cbReCalType);
+		readOnlyComponent(true, cbFromDate);
+		Comboitem comboitem = new Comboitem();
+
+		FinScheduleData schdData = getFinScheduleData();
+		List<RepayInstruction> rpst = schdData.getRepayInstructions();
+		Date recalFromDate = null;
+
+		if (PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
 			comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
 			comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
-			this.cbReCalType.appendChild(comboitem);
-			this.cbReCalType.setSelectedItem(comboitem);
 
-			List<RepayInstruction> rpst = getFinScheduleData().getRepayInstructions();
-			Date recalFromDate = null;
-
-			if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_PERC)) {
-				comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
-				comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
-				if (appDate.compareTo(finMain.getGrcPeriodEndDate()) > 0) {
-					RepayInstruction rins = rpst.get(rpst.size() - 1);
-					recalFromDate = rins.getRepayDate();
-					finMain.setRecalSteps(false);
-				} else {
-					finMain.setRecalSteps(false);
-					recalFromDate = rpst.get(rpst.size() - 1).getRepayDate();
-					for (RepayInstruction repayInstruction : rpst) {
-						if (repayInstruction.getRepayDate().compareTo(finMain.getGrcPeriodEndDate()) > 0) {
-							recalFromDate = repayInstruction.getRepayDate();
-							break;
-						}
+			if (appDate.compareTo(fm.getGrcPeriodEndDate()) > 0) {
+				RepayInstruction rins = rpst.get(rpst.size() - 1);
+				recalFromDate = rins.getRepayDate();
+				fm.setRecalSteps(false);
+			} else {
+				fm.setRecalSteps(false);
+				recalFromDate = rpst.get(rpst.size() - 1).getRepayDate();
+				for (RepayInstruction repayInstruction : rpst) {
+					if (repayInstruction.getRepayDate().compareTo(fm.getGrcPeriodEndDate()) > 0) {
+						recalFromDate = repayInstruction.getRepayDate();
+						break;
 					}
-				}
-			} else if (StringUtils.equals(finMain.getCalcOfSteps(), PennantConstants.STEPPING_CALC_AMT)) {
-
-				List<FinanceStepPolicyDetail> spdList = new ArrayList<>();
-				List<FinanceStepPolicyDetail> rpyList = new ArrayList<>(1);
-				List<FinanceStepPolicyDetail> grcList = new ArrayList<>(1);
-				FinanceStepPolicyDetail rpyStp = null;
-				for (FinanceStepPolicyDetail financeStepPolicyDetail : getFinScheduleData().getStepPolicyDetails()) {
-					if (StringUtils.equals(financeStepPolicyDetail.getStepSpecifier(),
-							PennantConstants.STEP_SPECIFIER_REG_EMI)) {
-						rpyList.add(financeStepPolicyDetail);
-					} else {
-						grcList.add(financeStepPolicyDetail);
-					}
-				}
-				if (CollectionUtils.isNotEmpty(rpyList)) {
-					Collections.sort(rpyList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
-							: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
-					rpyStp = rpyList.get(rpyList.size() - 1);
-					finMain.setRpyStps(true);
-				}
-				if (CollectionUtils.isNotEmpty(grcList)) {
-					Collections.sort(grcList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
-							: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
-					finMain.setGrcStps(true);
-				}
-				spdList.addAll(grcList);
-				spdList.addAll(rpyList);
-				getFinScheduleData().setStepPolicyDetails(spdList);
-				List<FinanceScheduleDetail> fsdList = getFinScheduleData().getFinanceScheduleDetails();
-				int fsdSize = fsdList.size();
-				FinanceScheduleDetail fsd = getFinScheduleData().getFinanceScheduleDetails().get(fsdSize - 1);
-				finMain.setAdjTerms(0);
-				if (fsd.getSchDate().compareTo(rpyStp.getStepEnd()) != 0) {
-					comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
-					comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
-					finMain.setRecalType(CalculationConstants.RPYCHG_ADDRECAL);
-					int months = DateUtility.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
-					finMain.setAdjTerms(months);
-					finMain.setRecalToDate(finMain.getMaturityDate());
-					for (FinanceScheduleDetail finSch : fsdList) {
-						if (finSch.getSchDate().compareTo(appDate) > 0) {
-							recalFromDate = finSch.getSchDate();
-							break;
-						}
-					}
-				} else {
-					comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
-					comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
-					finMain.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
-					recalFromDate = rpyStp.getStepStart();
-					finMain.setRecalToDate(finMain.getMaturityDate());
 				}
 			}
-			this.cbReCalType.appendChild(comboitem);
-			this.cbReCalType.setSelectedItem(comboitem);
-			finMain.setRecalFromDate(recalFromDate);
-			comboitem = new Comboitem();
-			comboitem.setLabel(DateUtility.formatToLongDate(recalFromDate));
-			comboitem.setValue(recalFromDate);
-			cbFromDate.appendChild(comboitem);
-			cbFromDate.setSelectedItem(comboitem);
-			this.label_AddDisbursementDialog_TillFromDate
-					.setValue(Labels.getLabel("label_AddDisbursementDialog_CalFromDate.value"));
-			this.fromDateRow.setVisible(true);
-			this.numOfTermsRow.setVisible(false);
+		} else if (PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())) {
+			List<FinanceStepPolicyDetail> spdList = new ArrayList<>();
+			List<FinanceStepPolicyDetail> rpyList = new ArrayList<>(1);
+			List<FinanceStepPolicyDetail> grcList = new ArrayList<>(1);
+			FinanceStepPolicyDetail rpyStp = null;
+
+			for (FinanceStepPolicyDetail spd : schdData.getStepPolicyDetails()) {
+				if (PennantConstants.STEP_SPECIFIER_REG_EMI.equals(spd.getStepSpecifier())) {
+					rpyList.add(spd);
+				} else {
+					grcList.add(spd);
+				}
+			}
+
+			if (CollectionUtils.isNotEmpty(rpyList)) {
+				Collections.sort(rpyList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
+						: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
+				rpyStp = rpyList.get(rpyList.size() - 1);
+				fm.setRpyStps(true);
+			}
+
+			if (CollectionUtils.isNotEmpty(grcList)) {
+				Collections.sort(grcList, (step1, step2) -> step1.getStepNo() > step2.getStepNo() ? 1
+						: step1.getStepNo() < step2.getStepNo() ? -1 : 0);
+				fm.setGrcStps(true);
+			}
+
+			spdList.addAll(grcList);
+			spdList.addAll(rpyList);
+			schdData.setStepPolicyDetails(spdList);
+			List<FinanceScheduleDetail> fsdList = schdData.getFinanceScheduleDetails();
+			int fsdSize = fsdList.size();
+			FinanceScheduleDetail fsd = schdData.getFinanceScheduleDetails().get(fsdSize - 1);
+			fm.setAdjTerms(0);
+
+			if (fsd.getSchDate().compareTo(rpyStp.getStepEnd()) != 0) {
+				comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
+				comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
+				fm.setRecalType(CalculationConstants.RPYCHG_ADDRECAL);
+				int months = DateUtility.getMonthsBetween(fsd.getSchDate(), rpyStp.getStepEnd());
+				fm.setAdjTerms(months);
+				fm.setRecalToDate(fm.getMaturityDate());
+				for (FinanceScheduleDetail finSch : fsdList) {
+					if (finSch.getSchDate().compareTo(appDate) > 0) {
+						recalFromDate = finSch.getSchDate();
+						break;
+					}
+				}
+
+			} else {
+				comboitem.setValue(CalculationConstants.RPYCHG_STEPINST);
+				comboitem.setLabel(Labels.getLabel("label_" + CalculationConstants.RPYCHG_STEPINST));
+				fm.setRecalType(CalculationConstants.RPYCHG_TILLMDT);
+				recalFromDate = rpyStp.getStepStart();
+				fm.setRecalToDate(fm.getMaturityDate());
+			}
 		}
+
+		this.cbReCalType.appendChild(comboitem);
+		this.cbReCalType.setSelectedItem(comboitem);
+
+		fm.setRecalFromDate(recalFromDate);
+		comboitem = new Comboitem();
+		comboitem.setLabel(DateUtility.formatToLongDate(recalFromDate));
+		comboitem.setValue(recalFromDate);
+		cbFromDate.appendChild(comboitem);
+		cbFromDate.setSelectedItem(comboitem);
+		this.label_AddDisbursementDialog_TillFromDate
+				.setValue(Labels.getLabel("label_AddDisbursementDialog_CalFromDate.value"));
+		this.fromDateRow.setVisible(true);
+		this.numOfTermsRow.setVisible(false);
 	}
 
 	/**
@@ -1073,6 +1078,13 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				finMain.setRecalToDate(maturityDate);
 				finServiceInstruction.setRecalFromDate(fromDate);
 				finServiceInstruction.setRecalToDate(maturityDate);
+			} else if (isStepLoan && PennantConstants.STEPPING_CALC_AMT.equals(finMain.getCalcOfSteps())
+					&& CalculationConstants.RPYCHG_STEPINST
+							.equals(this.cbReCalType.getSelectedItem().getValue().toString())) {
+				finServiceInstruction.setRecalFromDate(finMain.getRecalFromDate());
+				finServiceInstruction.setRecalToDate(finMain.getRecalToDate());
+				finServiceInstruction.setTerms(finMain.getAdjTerms());
+				finServiceInstruction.setRecalType(finMain.getRecalType());
 			}
 		}
 
@@ -1374,10 +1386,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		fillSchDates(cbTillDate, getFinScheduleData(), null);
 
 		changeRecalType();
-		String valueAsString = SysParamUtil.getValueAsString("STEP_LOAN_SERVICING_REQ");
-		if (StringUtils.equalsIgnoreCase(valueAsString, PennantConstants.YES)) {
-			processStepLoans(getFinScheduleData().getFinanceMain());
-		}
+		processStepLoans(getFinScheduleData().getFinanceMain());
 		logger.debug("Leaving" + event.toString());
 	}
 

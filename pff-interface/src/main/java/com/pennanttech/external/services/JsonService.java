@@ -86,7 +86,7 @@ public abstract class JsonService<T> {
 
 		Timestamp reqSentOn = null;
 
-		String url = serviceDetail.getServiceUrl();
+		String url = App.getProperty(serviceDetail.getServiceUrl());
 		if (StringUtils.trimToNull(serviceDetail.getServiceEndPoint()) != null) {
 			url = StringUtils.trimToEmpty(url) + serviceDetail.getServiceEndPoint();
 		}

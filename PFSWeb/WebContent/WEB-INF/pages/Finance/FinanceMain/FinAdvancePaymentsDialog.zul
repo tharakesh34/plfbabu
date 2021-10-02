@@ -232,6 +232,13 @@
 											<button upload="true" label="${c:l('btBrowse_label')}" id="btnUploadDoc" hflex="1" />
 										</hbox>
 									</row>
+									<row>
+										<label id="label_LEI" value="${c:l('label_FinAdvancePaymentsDialog_LEI.value')}" />
+										<hbox>
+											<space spacing="2px"/>
+											<textbox id="leiNumber" maxlength="100"/>
+										</hbox>
+									</row>
 								</rows>
 							</grid>
 						</groupbox>

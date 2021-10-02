@@ -34,6 +34,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
@@ -73,6 +74,7 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.customermasters.Customer;
+import com.pennant.backend.model.finance.ExtendedFieldMaintenance;
 import com.pennant.backend.model.finance.FeeWaiverHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
@@ -91,6 +93,7 @@ import com.pennant.backend.model.rulefactory.FeeRule;
 import com.pennant.backend.model.staticparms.InterestRateBasisCode;
 import com.pennant.backend.model.staticparms.ScheduleMethod;
 import com.pennant.backend.service.finance.ChangeTDSService;
+import com.pennant.backend.service.finance.ExtendedFieldMaintenanceService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinCovenantMaintanceService;
 import com.pennant.backend.service.finance.FinOCRHeaderService;
@@ -233,6 +236,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 	private transient FinExcessAmountDAO finExcessAmountDAO;
 	private transient ReceiptUploadDetailDAO receiptUploadDetailDAO;
 	private transient FinReceiptHeaderDAO finReceiptHeaderDAO;
+	private transient ExtendedFieldMaintenanceService extendedFieldMaintenanceService;
 
 	/**
 	 * Default constructor
@@ -1003,6 +1007,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.BASICMAINTAIN)
 				|| moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
 			whereClause = new StringBuilder(" ");
+		} else if (moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
+			whereClause = new StringBuilder(" FinIsActive in ( 0, 1) ");
 		} else if (moduleDefiner.equals(FinServiceEvent.COLLATERAL)) {
 			whereClause = new StringBuilder(" FinIsActive = 0");
 		} else if (!moduleDefiner.equals(FinServiceEvent.RECEIPT)) {
@@ -1025,14 +1031,15 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				whereClause.append(" AND (" + buildedWhereCondition + ") ");
 			}
 		}
-
-		if (!ImplementationConstants.ALLOW_ALL_SERV_RCDS) {
-			if (App.DATABASE == Database.ORACLE) {
-				whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
-			} else {
-				// for postgredb sometimes record type is null or empty('')
-				whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
-						+ moduleDefiner + "' ) ");
+		if (!(moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN))) {
+			if (!!ImplementationConstants.ALLOW_ALL_SERV_RCDS) {
+				if (App.DATABASE == Database.ORACLE) {
+					whereClause.append(" AND (RcdMaintainSts IS NULL OR RcdMaintainSts = '" + moduleDefiner + "' ) ");
+				} else {
+					// for postgredb sometimes record type is null or empty('')
+					whereClause.append(" AND ( (RcdMaintainSts IS NULL or RcdMaintainSts = '') OR RcdMaintainSts = '"
+							+ moduleDefiner + "' ) ");
+				}
 			}
 		}
 
@@ -1304,7 +1311,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				&& !moduleDefiner.equals(FinServiceEvent.FEEWAIVERS) && !moduleDefiner.equals(FinServiceEvent.CHANGETDS)
 				&& !moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)
 				&& !moduleDefiner.equals(FinServiceEvent.COLLATERAL)
-				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)) {
+				&& !moduleDefiner.equals(FinServiceEvent.LINKDELINK)
+				&& !moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
 
 			openFinanceMainDialog(item);
 
@@ -1354,8 +1362,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else if (moduleDefiner.equals(FinServiceEvent.CHANGETDS)) {
 
 			openFinChangeTDSMaintanceDialog(item);
-		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
-			openLoanDownsizingDialog(item);
+		} else if (moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
+
+			openExtendedFieldsMaintanceDialog(item);
 		} else if (moduleDefiner.equals(FinServiceEvent.LOANDOWNSIZING)) {
 			openLoanDownsizingDialog(item);
 		} else {
@@ -1384,6 +1393,114 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.isDashboard = false;
 		this.isDetailScreen = false;
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void openExtendedFieldsMaintanceDialog(Listitem item) throws Exception {
+
+		logger.debug(Literal.ENTERING);
+		// get the selected FinanceMain object
+
+		if (item != null) {
+			// CAST AND STORE THE SELECTED OBJECT
+			final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
+
+			// Check whether the user has authority to change/view the record.
+			String whereCond1 = " where FinReference=?";
+
+			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { aFinanceMain.getFinReference() })) {
+				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
+				return;
+			}
+
+			// Set WorkFlow Details
+			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
+			if (workFlowDetails == null) {
+				MessageUtil.showError(PennantJavaUtil.getLabel("WORKFLOW_CONFIG_NOT_FOUND"));
+				return;
+			}
+			ExtendedFieldMaintenance extendedFieldMaintenance = null;
+			// ExtendedFieldMaintenance
+			extendedFieldMaintenance = extendedFieldMaintenanceService
+					.getExtendedFieldMaintenanceByFinRef(aFinanceMain.getFinReference());
+
+			if (ObjectUtils.isEmpty(extendedFieldMaintenance)) {
+				extendedFieldMaintenance = new ExtendedFieldMaintenance();
+				extendedFieldMaintenance.setReference(aFinanceMain.getFinReference());
+				extendedFieldMaintenance.setNewRecord(true);
+			}
+
+			// Role Code State Checking
+			String userRole = extendedFieldMaintenance.getNextRoleCode();
+			if (StringUtils.isEmpty(userRole)) {
+				userRole = workFlowDetails.getFirstTaskOwner();
+			}
+
+			String nextroleCode = extendedFieldMaintenance.getNextRoleCode();
+			if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
+				String[] errParm = new String[1];
+				String[] valueParm = new String[1];
+				valueParm[0] = aFinanceMain.getFinReference();
+				errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+
+				ErrorDetail errorDetails = ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
+						getUserWorkspace().getUserLanguage());
+				MessageUtil.showError(errorDetails.getError());
+
+				Events.sendEvent(Events.ON_CLICK, this.btnClear, null);
+				logger.debug("Leaving");
+				return;
+			}
+
+			String whereCond = " where FinID = ?";
+			if (isWorkFlowEnabled()) {
+
+				if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinID() })
+						|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+					showExtendedFieldsMaintainDetailView(extendedFieldMaintenance, aFinanceMain.getFinID());
+				} else {
+					MessageUtil.showError(Labels.getLabel("info.not_authorized"));
+				}
+			} else {
+				if (doCheckAuthority(aFinanceMain, whereCond, new Object[] { aFinanceMain.getFinID() })
+						|| StringUtils.equals(aFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+					showExtendedFieldsMaintainDetailView(extendedFieldMaintenance, aFinanceMain.getFinID());
+				} else {
+					MessageUtil.showError(Labels.getLabel("info.not_authorized"));
+				}
+			}
+		}
+		logger.debug(Literal.LEAVING);
+
+	}
+
+	private void showExtendedFieldsMaintainDetailView(ExtendedFieldMaintenance fldMnt, long finID) throws Exception {
+
+		logger.debug("Entering");
+
+		if (fldMnt.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			fldMnt.setWorkflowId(workFlowDetails.getWorkFlowId());
+		}
+
+		FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(finID, "_AView", false);
+
+		map.put("extendedFieldMaintenance", fldMnt);
+		map.put("financeSelectCtrl", this);
+		map.put("moduleCode", moduleDefiner);
+		map.put("moduleDefiner", moduleDefiner);
+		map.put("menuItemRightName", menuItemRightName);
+		map.put("eventCode", eventCodeRef);
+		map.put("financeDetail", financeDetail);
+
+		// call the ZUL-file with the parameters packed in a map
+		try {
+			Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ExtendedFieldMaintenanceDialog.zul", null,
+					map);
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
+		logger.debug("Leaving");
+
 	}
 
 	private void setWorkflowDetails(String finType, boolean isPromotion) {
@@ -1443,14 +1560,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String userRole = aFinanceMain.getNextRoleCode();
 			if (StringUtils.isEmpty(userRole)) {
 				userRole = workFlowDetails.getFirstTaskOwner();
-			}
-
-			// check if payable amount present
-			List<ManualAdvise> manualAdvise = getFinanceWriteoffService().getManualAdviseByRef(aFinanceMain.getFinID(),
-					FinanceConstants.MANUAL_ADVISE_PAYABLE, "");
-			if (CollectionUtils.isNotEmpty(manualAdvise)) {
-				MessageUtil.showError(Labels.getLabel("MANUALADVISE_EXITS"));
-				return;
 			}
 
 			final FinanceDetail financeDetail = getFinanceDetailService().getServicingFinance(aFinanceMain.getFinID(),
@@ -2168,6 +2277,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
+			aFinanceMain.setFinCategory(financeDetailService.getFinCategory(aFinanceMain.getFinType()));
+
 			// Set Workflow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
@@ -2586,6 +2697,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 				return;
 			}
 
+			aFinanceMain.setFinCategory(financeDetailService.getFinCategory(aFinanceMain.getFinType()));
+
 			// Set WorkFlow Details
 			setWorkflowDetails(aFinanceMain.getFinType(), StringUtils.isNotEmpty(aFinanceMain.getLovDescFinProduct()));
 			if (workFlowDetails == null) {
@@ -2816,6 +2929,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// FinanceDetails
 		FinanceDetail financeDetail = financeDetailService.getFinanceDetailForFinOptions(fm);
 
+		fmi.setFinServiceInstructions(
+				financeMaintenanceService.getFinServiceInstructions(fm.getFinID(), moduleDefiner));
+
 		// Covenants List
 		// finMaintainInstruction.setFinCovenantTypeList(financeDetail.getCovenantTypeList());
 
@@ -2939,6 +3055,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// FinanceDetails
 		FinanceDetail financeDetail = financeDetailService.getFinanceDetailForCovenants(fm);
 
+		fwh.setFinServiceInstructions(
+				financeMaintenanceService.getFinServiceInstructions(fm.getFinID(), moduleDefiner));
+
 		// Role Code State Checking
 		String userRole = fwh.getNextRoleCode();
 		if (StringUtils.isEmpty(userRole)) {
@@ -3026,7 +3145,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		} else {
 			type = "_TView";
 		}
-		
+
 		fmi.setFinID(finID);
 		fmi.setFinReference(finReference);
 
@@ -3186,17 +3305,22 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void showFinOptionMaintanceView(FinMaintainInstruction finMaintainInstruction, FinanceDetail financeDetail)
-			throws Exception {
+	private void showFinOptionMaintanceView(FinMaintainInstruction fmi, FinanceDetail fd) throws Exception {
 		logger.debug("Entering");
 
-		if (finMaintainInstruction.getWorkflowId() == 0 && isWorkFlowEnabled()) {
-			finMaintainInstruction.setWorkflowId(workFlowDetails.getWorkFlowId());
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		fmi.setFinID(fm.getFinID());
+		fmi.setFinReference(fm.getFinReference());
+
+		if (fmi.getWorkflowId() == 0 && isWorkFlowEnabled()) {
+			fmi.setWorkflowId(workFlowDetails.getWorkFlowId());
 		}
 
-		map.put("finMaintainInstruction", finMaintainInstruction);
+		map.put("finMaintainInstruction", fmi);
 		map.put("financeSelectCtrl", this);
-		map.put("financeDetail", financeDetail);
+		map.put("financeDetail", fd);
 		map.put("moduleCode", moduleDefiner);
 		map.put("moduleDefiner", moduleDefiner);
 		map.put("menuItemRightName", menuItemRightName);
@@ -3204,7 +3328,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		map.put("isEnquiry", false);
 		map.put("roleCode", getRole());
 		map.put("module", "Maintanance");
-		map.put("finHeaderList", getFinBasicDetails(financeDetail));
+		map.put("finHeaderList", getFinBasicDetails(fd));
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
@@ -3488,9 +3612,13 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 					eventCodeRef = "";
 					moduleDefiner = FinServiceEvent.RESTRUCTURE;
 					workflowCode = FinServiceEvent.RESTRUCTURE;
-					eventCodeRef = AccountingEvent.SCDCHG;
+					eventCodeRef = AccountingEvent.RESTRUCTURE;
 					this.btnNew
 							.setVisible(getUserWorkspace().isAllowed("button_FinanceSelectList_NewRestructureDetail"));
+				} else if ("tab_ExtendedFields".equals(tab.getId())) {
+					eventCodeRef = "";
+					moduleDefiner = FinServiceEvent.EXTENDEDFIELDS_MAINTAIN;
+					workflowCode = FinServiceEvent.EXTENDEDFIELDS_MAINTAIN;
 				}
 				return;
 			}
@@ -3513,7 +3641,6 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		 * HashMap.
 		 */
 		final Map<String, Object> map = new HashMap<String, Object>();
-		map.put("loanType", finType.getValue());
 		map.put("financeSelectCtrl", this);
 		map.put("tabbox", tab);
 		map.put("moduleDefiner", moduleDefiner);
@@ -3564,6 +3691,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		else if (moduleDefiner.equals(FinServiceEvent.FEEWAIVERS)) {
 			this.searchObject.addTabelName("FeeWaivers_View");
+		} else if (moduleDefiner.equals(FinServiceEvent.EXTENDEDFIELDS_MAINTAIN)) {
+			this.searchObject.addTabelName("Extended_Field_Mnt_View");
 		} else {
 			this.searchObject.addTabelName("FinanceMaintenance_View");
 		}
@@ -4079,5 +4208,9 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	public void setLinkedFinancesService(LinkedFinancesService linkedFinancesService) {
 		this.linkedFinancesService = linkedFinancesService;
+	}
+
+	public void setExtendedFieldMaintenanceService(ExtendedFieldMaintenanceService extendedFieldMaintenanceService) {
+		this.extendedFieldMaintenanceService = extendedFieldMaintenanceService;
 	}
 }

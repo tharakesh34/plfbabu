@@ -25,11 +25,26 @@
 					<groupbox style="overflow:auto">
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px;">
 							<columns>
-								<column width="150px" />
-								<column />
+								<column width="15%" />
+								<column width="35%" />
+								<column width="15%" />
+								<column width="35%" />
 							</columns>
 							<rows>
-								<row>
+								<row id="rowMandateType">
+									<label value="${c:l('label_MandateList_MandateType.value')}" />
+									<hbox>
+										<space spacing="2px" sclass="mandatory" id="space_instrumentType" />
+										<combobox id="mandateType" width="350px" />
+									</hbox>
+								</row>
+								<row id="rowPartnerBank">
+									<label value="${c:l('label_MandateList_PartnerBank.value')}" />
+									<hbox>
+										<extendedcombobox id="partnerBank" width="350px" />
+									</hbox>
+								</row>
+								<row id = "rowfileConfig">
 									<label id="label_FileConfiguration" value="${c:l('label_FileConfiguration.value')}" />
 									<hbox spacing="2px">
 										<space spacing="2px" sclass="mandatory" />

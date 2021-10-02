@@ -4258,4 +4258,12 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="DE#550" author="saiteja.r">
+		<sql>
+			<![CDATA[
+				 DELETE FROM FINSERVICEINSTRUCTION_TEMP WHERE FINREFERENCE IN (SELECT FINREFERENCE FROM FINANCEMAIN WHERE RECORDSTATUS = 'Approved') AND FINEVENT = 'ORIGINATION';
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

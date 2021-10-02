@@ -86,6 +86,7 @@ import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -287,7 +288,20 @@ public class ExtFieldConfigDialogCtrl extends GFCBaseCtrl<ExtendedFieldHeader> i
 			this.label_SubModule.setVisible(true);
 			this.product.setVisible(true);
 			this.product.setValue(subModuleVal);
-			fillComboBox(finEvent, extendedFieldHeader.getEvent(), PennantStaticListUtil.getValueLabels(events), "");
+			List<String> excludeValue = new ArrayList<>();
+
+			excludeValue.add(FinServiceEvent.SUSPHEAD);
+			excludeValue.add(FinServiceEvent.COVENANTS);
+			excludeValue.add(FinServiceEvent.CHANGETDS);
+			excludeValue.add(FinServiceEvent.PROVISION);
+			excludeValue.add(FinServiceEvent.CANCELFIN);
+			excludeValue.add(FinServiceEvent.CANCELDISB);
+			excludeValue.add(FinServiceEvent.NOCISSUANCE);
+			excludeValue.add(FinServiceEvent.OVERDRAFTSCHD);
+			excludeValue.add(FinServiceEvent.CHGSCHDMETHOD);
+
+			fillComboBox(finEvent, extendedFieldHeader.getEvent(), PennantStaticListUtil.getValueLabels(events),
+					excludeValue);
 		} else if (moduleVal.equals(ExtendedFieldConstants.MODULE_VERIFICATION)) {
 			this.subModule.setVisible(true);
 			this.space_subModule.setVisible(true);

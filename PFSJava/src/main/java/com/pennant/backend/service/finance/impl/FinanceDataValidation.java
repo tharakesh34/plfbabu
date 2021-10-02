@@ -162,7 +162,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.MandateConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.RuleConstants;
@@ -2085,13 +2084,7 @@ public class FinanceDataValidation {
 								avilId = true;
 							}
 
-							if (colltype.contains(setupDetails.getCollateralType())) {
-								String[] valueParm = new String[2];
-								valueParm[1] = setupDetails.getCollateralType();
-								valueParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":";
-								errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("41001", valueParm)));
-								return errorDetails;
-							} else {
+							if (!colltype.contains(setupDetails.getCollateralType())) {
 								colltype.add(setupDetails.getCollateralType());
 							}
 
@@ -3398,6 +3391,28 @@ public class FinanceDataValidation {
 						return errorDetails;
 					}
 				}
+
+				if (StringUtils.isNotEmpty(advPayment.getLei())) {
+					if (advPayment.getLei().length() > 50) {
+						String[] valueParm = new String[4];
+						valueParm[0] = "LEI ";
+						valueParm[1] = "length should be ";
+						valueParm[2] = "less than ";
+						valueParm[3] = "or equal to 50. ";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+					}
+					Pattern pattern = Pattern.compile(
+							PennantRegularExpressions.getRegexMapper(PennantRegularExpressions.REGEX_ALPHANUM));
+
+					Matcher matcher = pattern.matcher(advPayment.getLei());
+
+					if (!matcher.matches()) {
+						String[] valueParm = new String[1];
+						valueParm[0] = "Lei";
+						errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("90347", "", valueParm), "EN"));
+					}
+				}
+
 				if (StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_CHEQUE)
 						|| StringUtils.equals(advPayment.getPaymentType(), DisbursementConstants.PAYMENT_TYPE_DD)) {
 
@@ -3898,6 +3913,53 @@ public class FinanceDataValidation {
 			valueParm[1] = finType.getFinType();
 
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+		}
+
+		if (ImplementationConstants.ALLOW_ESCROW_MODE) {
+			if (FinanceConstants.REPAYMTH_MANUAL.equals(fm.getFinRepayMethod())) {
+				if (fm.isEscrow() && fm.getCustBankId() == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CustBankId";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return;
+				}
+				if (!fm.isEscrow() && fm.getCustBankId() != null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Escrow";
+					valueParm[1] = "should ";
+					valueParm[2] = "be ";
+					valueParm[3] = "true ";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					return;
+				}
+				int count = financeMainDAO.getCustomerBankCountById(fm.getCustBankId(), fm.getCustID());
+				if (count <= 0) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "CustBankId";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90405", valueParm)));
+					return;
+				}
+			} else {
+				if (fm.isEscrow() || fm.getCustBankId() != null) {
+					String[] valueParm = new String[4];
+					valueParm[0] = "Escrow ";
+					valueParm[1] = "is not applicable ";
+					valueParm[2] = "for repay method: ";
+					valueParm[3] = fm.getFinRepayMethod();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+					return;
+				}
+			}
+		} else {
+			if (fm.isEscrow() || fm.getCustBankId() != null) {
+				String[] valueParm = new String[4];
+				valueParm[0] = "Escrow ";
+				valueParm[1] = "is ";
+				valueParm[2] = "not ";
+				valueParm[3] = "applicable. ";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+				return;
+			}
 		}
 
 		if (!errors.isEmpty()) {
@@ -4407,13 +4469,15 @@ public class FinanceDataValidation {
 				return;
 			}
 
-			if (FinanceConstants.STEPTYPE_PRIBAL.equals(stepType)
-					&& CalculationConstants.SCHMTHD_EQUAL.equals(scheduleMethod)) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Equal Installments (Principal and Interest)";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30555", valueParm)));
+			if (PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
+				if (FinanceConstants.STEPTYPE_EMI.equals(fm.getStepType())
+						&& !CalculationConstants.SCHMTHD_EQUAL.equals(fm.getScheduleMethod())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "Equal Installments (Principal and Interest)";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30703", valueParm)));
 
-				return;
+					return;
+				}
 			}
 
 			if (fm.isPlanEMIHAlw()) {
@@ -4421,6 +4485,50 @@ public class FinanceDataValidation {
 				valueParm[0] = "Planned EMI";
 				valueParm[1] = "step";
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90283", valueParm)));
+			}
+
+			if (StringUtils.isNotBlank(fm.getStepsAppliedFor())) {
+				List<ValueLabel> stepsApplForList = PennantStaticListUtil.getStepsAppliedFor();
+				boolean stepsApplForSts = false;
+				for (ValueLabel value : stepsApplForList) {
+					if (StringUtils.equals(value.getValue(), fm.getStepsAppliedFor())) {
+						stepsApplForSts = true;
+						break;
+					}
+				}
+				if (!stepsApplForSts) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "stepsAppliedFor";
+					valueParm[1] = fm.getStepsAppliedFor();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0012", valueParm)));
+				}
+			}
+
+			if (!PennantConstants.STEPPING_APPLIED_EMI.equals(fm.getStepsAppliedFor())) {
+				if (!PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())) {
+					String[] valueParm = new String[1];
+					valueParm[0] = fm.getStepsAppliedFor();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0013", valueParm)));
+				}
+			} else {
+				List<ValueLabel> calcOfStepsList = PennantStaticListUtil.getCalcOfStepsList();
+				boolean calcOfStepsSts = false;
+				for (ValueLabel value : calcOfStepsList) {
+					if (StringUtils.equals(value.getValue(), fm.getCalcOfSteps())) {
+						calcOfStepsSts = true;
+						break;
+					}
+				}
+				if (!calcOfStepsSts) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "calcOfSteps";
+					valueParm[0] = fm.getCalcOfSteps();
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0012", valueParm)));
+				}
+			}
+			if (StringUtils.isNotBlank(fm.getStepPolicy())
+					&& PennantConstants.STEPPING_CALC_AMT.equals(fm.getCalcOfSteps())) {
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0015", null)));
 			}
 		}
 
@@ -4442,7 +4550,7 @@ public class FinanceDataValidation {
 				return;
 			}
 
-			if (PennantConstants.STEPPING_CALC_PERC.equals(finType.getCalcOfSteps())
+			if (PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())
 					&& !FinanceConstants.STEPTYPE_EMI.equals(stepType)
 					&& !FinanceConstants.STEPTYPE_PRIBAL.equals(stepType)) {
 				String[] valueParm = new String[2];
@@ -4463,18 +4571,30 @@ public class FinanceDataValidation {
 			if (StringUtils.isBlank(fm.getStepPolicy())) {
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90146", null)));
 			} else {
-				if (!StringUtils.containsIgnoreCase(finType.getAlwdStepPolicies(), fm.getStepPolicy())) {
-					String[] valueParm = new String[2];
-					valueParm[0] = fm.getFinType();
-					valueParm[1] = finType.getAlwdStepPolicies();
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90147", valueParm)));
-				}
-
 				StepPolicyHeader stepHeader = stepPolicyService.getApprovedStepPolicyHeaderById(fm.getStepPolicy());
 				if (stepHeader == null) {
 					String[] valueParm = new String[1];
 					valueParm[0] = fm.getStepPolicy();
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90252", valueParm)));
+				}
+
+				if (PennantConstants.STEPPING_CALC_PERC.equals(finType.getCalcOfSteps())) {
+					if (!StringUtils.containsIgnoreCase(finType.getAlwdStepPolicies(), fm.getStepPolicy())) {
+						String[] valueParm = new String[2];
+						valueParm[0] = fm.getFinType();
+						valueParm[1] = finType.getAlwdStepPolicies();
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90147", valueParm)));
+					}
+				}
+
+				// Validate stepType
+				if (stepHeader != null) {
+					if (!stepHeader.getStepType().equals(stepType)) {
+						String[] valueParm = new String[2];
+						valueParm[0] = fm.getStepPolicy();
+						valueParm[1] = stepHeader.getStepType();
+						errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP0014", valueParm)));
+					}
 				}
 			}
 		}
@@ -6028,7 +6148,6 @@ public class FinanceDataValidation {
 		FinanceMain fm = schdData.getFinanceMain();
 		List<FinanceStepPolicyDetail> stepPolicyDetails = schdData.getStepPolicyDetails();
 
-		BigDecimal tenorPercTotal = BigDecimal.ZERO;
 		BigDecimal emiPercTotal = BigDecimal.ZERO;
 		int totalSteps = 0;
 
@@ -6043,13 +6162,22 @@ public class FinanceDataValidation {
 
 		// validate split percentages
 		if (PennantConstants.STEPPING_CALC_PERC.equals(fm.getCalcOfSteps())) {
-
-			if (fm.getNoOfSteps() != 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "NoOfSteps";
-				valueParm[1] = "Zero";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
-				return;
+			if (!fm.isAlwManualSteps()) {
+				if (fm.getNoOfSteps() != 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "NoOfSteps";
+					valueParm[1] = "Zero";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					return;
+				}
+			} else {
+				if (fm.getNoOfSteps() == 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "NoOfSteps";
+					valueParm[1] = "Zero";
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
+					return;
+				}
 			}
 
 			if (fm.getNoOfGrcSteps() != 0) {
@@ -6060,14 +6188,16 @@ public class FinanceDataValidation {
 				return;
 			}
 
+			if (fm.getNoOfSteps() != schdData.getStepPolicyDetails().size()) {
+				String[] valueParm = new String[2];
+				valueParm[0] = Labels.getLabel("label_FinanceMainDialog_RepaySteps.value");
+				valueParm[1] = Labels.getLabel("label_FinanceMainDialog_RepaySteps.value");
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP005", valueParm)));
+				return;
+			}
+
 			for (FinanceStepPolicyDetail policyDetail : stepPolicyDetails) {
-				if (policyDetail.getTenorSplitPerc().compareTo(BigDecimal.ZERO) <= 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Tenor split perc";
-					valueParm[1] = "zero";
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
-					return;
-				} else if (policyDetail.getEmiSplitPerc().compareTo(BigDecimal.ZERO) <= 0) {
+				if (policyDetail.getEmiSplitPerc().compareTo(BigDecimal.ZERO) <= 0) {
 					String[] valueParm = new String[2];
 					valueParm[0] = "EMI split perc";
 					valueParm[1] = "zero";
@@ -6090,24 +6220,18 @@ public class FinanceDataValidation {
 					valueParm[0] = "Step No " + policyDetail.getStepNo();
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP004", valueParm)));
 					return;
-				} else if (policyDetail.getInstallments() != 0) {
+				} else if (policyDetail.getInstallments() == 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "Instalments";
+					valueParm[0] = "Installments";
 					valueParm[1] = "Zero";
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 					return;
 				}
 			}
 
 			for (FinanceStepPolicyDetail policyDetail : stepPolicyDetails) {
-				tenorPercTotal = tenorPercTotal.add(policyDetail.getTenorSplitPerc());
 				emiPercTotal = emiPercTotal.add(policyDetail.getEmiSplitPerc());
 				totalSteps++;
-			}
-
-			if (tenorPercTotal.compareTo(new BigDecimal(100)) != 0) {
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90234", null)));
-				return;
 			}
 
 			if (FinanceConstants.STEPTYPE_EMI.equals(stepType)) {
@@ -6173,15 +6297,9 @@ public class FinanceDataValidation {
 					return;
 				} else if (spd.getInstallments() == 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "Number of instalments";
+					valueParm[0] = "Number of Installments";
 					valueParm[1] = "Zero";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
-					return;
-				} else if (spd.getTenorSplitPerc().compareTo(BigDecimal.ZERO) != 0) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Tenor split perc";
-					valueParm[1] = "Zero";
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 					return;
 				} else if (spd.getRateMargin().compareTo(BigDecimal.ZERO) != 0) {
 					String[] valueParm = new String[2];
@@ -6253,7 +6371,7 @@ public class FinanceDataValidation {
 				String[] valueParm = new String[2];
 				valueParm[0] = "Grace steps";
 				valueParm[1] = "No Grace Period LAN";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP006", null)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("STP006", valueParm)));
 				return;
 			}
 
@@ -6345,7 +6463,7 @@ public class FinanceDataValidation {
 					return;
 				} else if (spd.isAutoCal() && spd.getSteppedEMI().compareTo(BigDecimal.ZERO) != 0) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "Steppef EMI";
+					valueParm[0] = "Stepped EMI";
 					valueParm[1] = "zero for auto calculate step";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90277", valueParm)));
 					return;

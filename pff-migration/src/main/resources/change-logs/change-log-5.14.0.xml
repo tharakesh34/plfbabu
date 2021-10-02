@@ -2638,6 +2638,16 @@
 		</sql>
 	</changeSet>
 
+	<changeSet id="ST#2145.4.1" author="naveenkumar.a">
+		<sql>
+			<![CDATA[
+				UPDATE FINANCEMAIN Set SchdVersion = 0 Where SchdVersion is null;
+				UPDATE FINANCEMAIN_TEMP Set SchdVersion = 0 Where SchdVersion is null;
+				UPDATE REJECTFINANCEMAIN Set SchdVersion = 0 Where SchdVersion is null;
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="ST#2145.5" author="naveenkumar.a" dbms="postgresql, oracle">
 		<addDefaultValue columnName="SchdVersion" tableName="FINANCEMAIN" defaultValue="0" />
 		<addDefaultValue columnName="SchdVersion" tableName="FINANCEMAIN_TEMP" defaultValue="0" />
