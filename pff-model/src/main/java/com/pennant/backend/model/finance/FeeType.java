@@ -67,6 +67,12 @@ public class FeeType extends AbstractWorkflowEntity {
 	private String dueAcctSetCodeName;
 	private boolean tdsReq;
 
+	// ### START SFA_20210405 -->
+	private String acType;
+	private String acTypeDesc;
+	private String feeIncomeOrExpense;
+	// ### END SFA_20210405 <--
+
 	public FeeType() {
 		super();
 	}
@@ -101,6 +107,9 @@ public class FeeType extends AbstractWorkflowEntity {
 		entity.setDueAcctSetCode(this.dueAcctSetCode);
 		entity.setDueAcctSetCodeName(this.dueAcctSetCodeName);
 		entity.setTdsReq(this.tdsReq);
+		entity.setAcType(this.acType);
+		entity.setAcTypeDesc(this.acTypeDesc);
+		entity.setFeeIncomeOrExpense(this.feeIncomeOrExpense);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -121,6 +130,8 @@ public class FeeType extends AbstractWorkflowEntity {
 		excludeFields.add("accountSetCodeName");
 		excludeFields.add("dueAcctSetCode");
 		excludeFields.add("dueAcctSetCodeName");
+		excludeFields.add("acType");
+		excludeFields.add("acTypeDesc");
 		return excludeFields;
 	}
 
@@ -310,6 +321,29 @@ public class FeeType extends AbstractWorkflowEntity {
 
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
+	}
+	public String getAcType() {
+		return acType;
+	}
+
+	public void setAcType(String acType) {
+		this.acType = acType;
+	}
+
+	public String getAcTypeDesc() {
+		return acTypeDesc;
+	}
+
+	public void setAcTypeDesc(String acTypeDesc) {
+		this.acTypeDesc = acTypeDesc;
+	}
+
+	public String getFeeIncomeOrExpense() {
+		return feeIncomeOrExpense;
+	}
+
+	public void setFeeIncomeOrExpense(String feeIncomeOrExpense) {
+		this.feeIncomeOrExpense = feeIncomeOrExpense;
 	}
 
 }

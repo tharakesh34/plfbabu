@@ -203,6 +203,7 @@ public class ImplementationConstants {
 		SNAP_SHOT_DATE_AS_CUR_BUS_DATE = getValueAsBoolean(extensions, "SNAP_SHOT_DATE_AS_CUR_BUS_DATE", false);
 		// this constant should be true for goderaj
 		CHEQUE_AMOUNT_ZERO_UDC = getValueAsBoolean(extensions, "CHEQUE_AMOUNT_ZERO_UDC", false);
+		ALLOW_SINGLE_FEE_CONFIG = getValueAsBoolean(extensions, "ALLOW_SINGLE_FEE_CONFIG", false);
 		VALIDATION_ON_CHECKER_APPROVER_ALLOWED = getValueAsBoolean(extensions, "VALIDATION_ON_CHECKER_APPROVER_ALLOWED",
 				false);
 		CIBIL_BASED_ON_ENTITY = getValueAsBoolean(extensions, "CIBIL_BASED_ON_ENTITY", false);
@@ -525,6 +526,7 @@ public class ImplementationConstants {
 	public static boolean DISBURSEMENT_INSTRUCTIONS_OFF_LINE;
 	public static boolean SNAP_SHOT_DATE_AS_CUR_BUS_DATE;
 	public static boolean CHEQUE_AMOUNT_ZERO_UDC;
+	public static boolean ALLOW_SINGLE_FEE_CONFIG;
 
 	private static Map<String, Object> getFeatureExtensions() {
 		IFeatureExtension featureExtension;

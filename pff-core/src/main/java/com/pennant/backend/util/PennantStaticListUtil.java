@@ -355,6 +355,8 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> calcOfstepsList;
 	private static List<ValueLabel> stepsAppliedFor;
 	private static List<ValueLabel> stepDisbCalCodes;
+	// ### START SFA_20210405 -->
+	private static ArrayList<ValueLabel> receivableOrPayable;
 
 	/**
 	 * Gets the list of applications.
@@ -5505,4 +5507,17 @@ public class PennantStaticListUtil {
 		}
 		return taxInvoiceForList;
 	}
+	// ### START SFA_20210405 -->
+	public static ArrayList<ValueLabel> getReceivableOrPayable() {
+		if (receivableOrPayable == null) {
+			receivableOrPayable = new ArrayList<ValueLabel>(2);
+			receivableOrPayable.add(new ValueLabel(String.valueOf(PennantConstants.RECEIVABLE),
+					Labels.getLabel("label_TransEntry_Receivable")));
+			receivableOrPayable.add(new ValueLabel(String.valueOf(PennantConstants.PAYABLE),
+					Labels.getLabel("label_TransEntry_Payable")));
+		}
+		return receivableOrPayable;
+	}
+	// ### END SFA_20210405 <--
+
 }

@@ -88,6 +88,7 @@ import com.pennant.backend.model.rulefactory.AmountCode;
 import com.pennant.backend.model.rulefactory.Rule;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
@@ -204,6 +205,30 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private String userRole = "";
 	private boolean isGSTApplicable = false;
 
+	// ### START SFA_20210405 -->
+	protected Row row_FeeRepeat;
+	protected Label label_TransactionEntryDialog_FeeRepeat;
+	protected Checkbox feeRepeat;
+	protected Hbox hbox_feeRepeat;
+
+	protected Label label_TransactionEntryDialog_RecOrPay;
+	protected Combobox receivableOrPayable;
+	protected Hbox hbox_receivableOrPayable;
+
+	protected Row row_AssignEntry;
+	protected Label label_TransactionEntryDialog_AssignEntry;
+	protected Checkbox assignmentEntry;
+	protected Hbox hbox_assignmentEntry;
+
+	protected Label label_TransactionEntryDialog_Bulking;
+	protected Checkbox bulking;
+	protected Hbox hbox_bulking;
+
+	private List<ValueLabel> listRecOrPay = PennantStaticListUtil.getReceivableOrPayable();
+	public static final int DEFAULT_TYPE = PennantConstants.RECEIVABLE;
+
+	// ### END SFA_20210405 <--
+
 	/**
 	 * default constructor.<br>
 	 */
@@ -307,6 +332,17 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.groupboxWf.setVisible(false);
 		}
 
+		// ### START SFA_20210405 -->
+		if (!ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+			this.row_FeeRepeat.setVisible(false);
+			this.row_AssignEntry.setVisible(false);
+			this.feeRepeat.setChecked(false);
+			this.receivableOrPayable.setVisible(false);
+			this.assignmentEntry.setChecked(false);
+			this.bulking.setChecked(false);
+		}
+		// ### END SFA_20210405 <--
+
 		logger.debug("Leaving");
 	}
 
@@ -395,7 +431,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event An event sent to the event handler of a component.
+	 * @param event
+	 *            An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -422,7 +459,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aTransactionEntry TransactionEntry
+	 * @param aTransactionEntry
+	 *            TransactionEntry
 	 */
 	public void doWriteBeanToComponents(TransactionEntry aTransactionEntry) {
 		logger.debug("Entering");
@@ -522,6 +560,23 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		// Fill AmountCode And Operators
 		fillListbox(this.operator, PennantStaticListUtil.getMathBasicOperator(), true);
 		doCheckRuleDecider();
+
+		// ### START SFA_20210405 -->
+		this.feeRepeat.setChecked(aTransactionEntry.isFeeRepeat());
+		fillComboBox(this.receivableOrPayable, String.valueOf(aTransactionEntry.getReceivableOrPayable()), listRecOrPay,
+				"");
+
+		if (aTransactionEntry.getAccountType().startsWith(FinanceConstants.FEE_IE)
+				|| this.amountRule.getValue().contains("FEE_")) {
+			this.label_TransactionEntryDialog_Bulking.setVisible(true);
+			this.bulking.setVisible(true);
+		} else {
+			this.receivableOrPayable.setDisabled(true);
+		}
+
+		//this.assignmentEntry.setChecked(aTransactionEntry.isAssignmentEntry());
+		this.bulking.setChecked(aTransactionEntry.isBulking());
+		// ### END SFA_20210405 <--
 
 		this.recordStatus.setValue(aTransactionEntry.getRecordStatus());
 		logger.debug("Leaving");
@@ -633,6 +688,42 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 
 		aTransactionEntry.setFeeCode("");
+
+		// ### START SFA_20210405 -->
+		try {
+			aTransactionEntry.setFeeRepeat(this.feeRepeat.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		try {
+			String strRecOrPay = null;
+			if (this.receivableOrPayable.getSelectedItem() != null) {
+				strRecOrPay = this.receivableOrPayable.getSelectedItem().getValue().toString();
+			}
+			if (strRecOrPay != null && !PennantConstants.List_Select.equals(strRecOrPay)) {
+				aTransactionEntry.setReceivableOrPayable(Integer.parseInt(strRecOrPay));
+
+			} else {
+				aTransactionEntry.setReceivableOrPayable(0);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
+		//		try {
+		//			aTransactionEntry.setAssignmentEntry(this.assignmentEntry.isChecked());
+		//		} catch (WrongValueException we) {
+		//			wve.add(we);
+		//		}
+
+		try {
+			aTransactionEntry.setBulking(this.bulking.isChecked());
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+		// ### END SFA_20210405 <--
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -721,6 +812,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.debitcredit.setConstraint(new StaticListValidator(PennantStaticListUtil.getTranType(),
 					Labels.getLabel("label_TransactionEntryDialog_Debitcredit.value")));
 		}
+		if (!this.receivableOrPayable.isDisabled()) {
+			this.receivableOrPayable
+					.setConstraint(new StaticListValidator(PennantStaticListUtil.getReceivableOrPayable(),
+							Labels.getLabel("label_TransactionEntryDialog_RecOrPay.value")));
+		}
 
 		logger.debug("Leaving");
 	}
@@ -735,6 +831,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.transDesc.setConstraint("");
 		this.debitcredit.setConstraint("");
 		this.account.setConstraint("");
+		this.receivableOrPayable.setConstraint("");
 		logger.debug("Leaving");
 	}
 
@@ -886,6 +983,11 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			this.entryByInvestment.setChecked(false);
 		}
 
+		// ### START SFA_20210405 -->
+		// Made same as account type edit rights
+		this.bulking.setDisabled(this.btnSearchAccountType.isDisabled());
+		// ### END SFA_20210405 <--
+
 		if (getUserWorkspace().isReadOnly("TransactionEntryDialog_amountRule")) {
 			this.amountRule.setReadonly(true);
 			this.column_CustomerData.setWidth("0%");
@@ -952,6 +1054,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.column_Operators.setWidth("0%");
 		this.operator.setVisible(false);
 
+		// ### START SFA_20210405 -->
+		//this.assignmentEntry.setDisabled(this.btnSearchAccountType.isDisabled());
+		// ### END SFA_20210405 <--
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(true);
@@ -989,6 +1095,14 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		this.rvsTransactionCode.setValue("");
 		this.lovDescRvsTransactionCodeName.setValue("");
 		this.amountRule.setValue("");
+
+		// ### START SFA_20210405 -->
+		this.feeRepeat.setChecked(false);
+		this.receivableOrPayable.setValue("");
+		//this.assignmentEntry.setChecked(false);
+		this.bulking.setChecked(false);
+		// ### END SFA_20210405 <--
+
 		logger.debug("Leaving");
 	}
 
@@ -1336,10 +1450,77 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				this.accountType.setValue(details.getAcType());
 				this.lovDescAccountTypeName.setValue(details.getAcType() + "-" + details.getAcTypeDesc());
 
+				// ### START SFA_20210405 -->
+				this.feeRepeat.setChecked(false);
+				this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
+				this.receivableOrPayable.setDisabled(true);
+				this.label_TransactionEntryDialog_Bulking.setVisible(false);
+				//this.assignmentEntry.setDisabled(true);
+				this.bulking.setVisible(false);
+
+				if (details.getAcType().startsWith(FinanceConstants.FEE_IE)) {
+					this.feeRepeat.setChecked(true);
+					this.receivableOrPayable.setDisabled(false);
+					this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
+					this.label_TransactionEntryDialog_Bulking.setVisible(true);
+					//this.assignmentEntry.setDisabled(false);
+					this.bulking.setVisible(true);
+					getSingleFeeCodes();
+
+				} else {
+					getAllFeeCodes();
+				}
+				// ### END SFA_20210405 <--
 			}
 		}
 
 		logger.debug("Leaving" + event.toString());
+	}
+
+	private void getSingleFeeCodes() {
+		this.feeCodeListbox.getItems().clear();
+		List<FeeType> feeRulesList = new ArrayList<FeeType>();
+
+		feeRulesList.add(new FeeType());
+		feeRulesList.get(feeRulesList.size() - 1).setFeeTypeCode("FEE");
+		feeRulesList.get(feeRulesList.size() - 1).setFeeTypeDesc("Fee Type");
+
+		prepareFeeAmountsList(feeRulesList);
+	}
+
+	private void prepareFeeAmountsList(List<FeeType> feeRulesList) {
+		Listitem item = null;
+		Listgroup group = null;
+		Listcell lc = null;
+
+		Map<String, String> feeMap = fillAccountingDetails();
+		List<String> feeMapKeys = new ArrayList<>(feeMap.keySet());
+
+		for (FeeType feeType : feeRulesList) {
+			String feeTypeCode = feeType.getFeeTypeCode();
+			String feeTypeDesc = feeType.getFeeTypeDesc();
+
+			group = new Listgroup(feeTypeCode);
+			this.feeCodeListbox.appendChild(group);
+			group.setOpen(false);
+
+			for (String feeCode : feeMapKeys) {
+				String ruleCode = feeTypeCode + feeCode;
+				String ruleCodeDesc = feeTypeDesc + feeCode;
+
+				item = new Listitem();
+				lc = new Listcell(ruleCode);
+
+				if (!amountcodes.contains(ruleCode)) {
+					amountcodes.add(ruleCode);
+				}
+
+				lc.setParent(item);
+				lc = new Listcell(ruleCodeDesc);
+				lc.setParent(item);
+				this.feeCodeListbox.appendChild(item);
+			}
+		}
 	}
 
 	public void onClick$btnSearchSystemIntAccount(Event event) {
@@ -1497,12 +1678,22 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		logger.debug("Leaving");
 	}
 
+	// ### START SFA_20210405 -->
+	// Earlier code moved to getAllFeeCodes
+	private void getFeeCodes() {
+		if (FinanceConstants.FEE_IE.equals(this.accountType.getValue())) {
+			getSingleFeeCodes();
+		} else {
+			getAllFeeCodes();
+		}
+	}
+
 	/**
 	 * Method for get the list of Rules existing on base of Event
 	 * 
 	 * @param allowedevent
 	 */
-	private void getFeeCodes() {
+	private void getAllFeeCodes() {
 		logger.debug(Literal.ENTERING);
 
 		this.feeCodeListbox.getItems().clear();
@@ -1866,6 +2057,10 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	 */
 	private boolean validate(ForwardEvent event) throws InterruptedException {
 		boolean noerrors = false;
+		boolean containsFeeCode = false;
+		boolean amountCode = false;
+		Set<String> hSet = new HashSet<String>();
+		boolean excludeFlag = false;
 		// object containing errors and variables
 		Object[] data = (Object[]) event.getOrigin().getData();
 		// array of errors
@@ -1880,6 +2075,37 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 				for (int i = 0; i < variables.size(); i++) {
 					JSONObject variable = (JSONObject) variables.get(i);
 					if (!"Result".equals(variable.get("name"))) {
+
+						// ### START SFA_20210405 -->
+						hSet = getExcludedAmountCodes();
+						if (this.accountType.getValue().startsWith(FinanceConstants.FEE_IE)
+								&& !variable.get("name").toString().startsWith("FEE_")
+								&& !hSet.contains(variable.get("name").toString())) {
+							noerrors = false;
+							MessageUtil.showError(
+									"Rule shouldn't contain this amount code when Account type is - FEE_IE/FEE_IE_CGST/FEE_IE_SGST/FEE_IE_UGST/FEE_IE_IGST/FEE_IE_CESS");
+							return noerrors;
+						}
+						if (variable.get("name").toString().startsWith("FEE_")) {
+							containsFeeCode = true;
+						}
+						if (!variable.get("name").toString().startsWith("FEE_")) {
+							amountCode = true;
+
+						}
+						if (hSet.contains(variable.get("name").toString())) {
+							excludeFlag = true;
+						}
+
+						if (containsFeeCode && amountCode) {
+							if (!excludeFlag) {
+								noerrors = false;
+								MessageUtil.showError("Can't club amount code with fee code");
+								return noerrors;
+							}
+						}
+						// ### END SFA_20210405 <--
+
 						if (!amountcodes.contains(variable.get("name"))) {
 							// if new variables found throw error message
 							noerrors = false;
@@ -1890,7 +2116,26 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 						}
 					}
 				}
-				if (noerrors) {
+				if (noerrors && !excludeFlag) {
+					// ### START SFA_20210405 -->
+					boolean validationRslt = false;
+					validationRslt = validateResult();
+					if (validationRslt && containsFeeCode) {
+						this.feeRepeat.setChecked(true);
+						this.receivableOrPayable.setDisabled(false);
+						this.receivableOrPayable.setValue(this.receivableOrPayable.getValue());
+						this.label_TransactionEntryDialog_Bulking.setVisible(true);
+						//this.assignmentEntry.setDisabled(false);
+						this.bulking.setVisible(true);
+					} else {
+						this.feeRepeat.setChecked(false);
+						this.receivableOrPayable.setValue(Labels.getLabel("Combo.Select"));
+						this.receivableOrPayable.setDisabled(true);
+						this.label_TransactionEntryDialog_Bulking.setVisible(false);
+						//this.assignmentEntry.setDisabled(true);
+						this.bulking.setVisible(false);
+					}
+					// ### END SFA_20210405 <--
 					return validateResult();
 				}
 
@@ -1910,6 +2155,13 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 			MessageUtil.showError("Error found in Rule. Please correct the rule and try again");
 		}
 		return noerrors;
+	}
+
+	public Set<String> getExcludedAmountCodes() {
+		Set<String> excludedFields = new HashSet<String>();
+		excludedFields.add("negativeFee");
+		excludedFields.add("ae_assignmentPerc");
+		return excludedFields;
 	}
 
 	/**
@@ -2029,7 +2281,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e (Exception)
+	 * @param e
+	 *            (Exception)
 	 */
 	private void showMessage(Exception e) {
 		logger.debug("Entering");
@@ -2046,7 +2299,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event (Event)
+	 * @param event
+	 *            (Event)
 	 * 
 	 * @throws Exception
 	 */

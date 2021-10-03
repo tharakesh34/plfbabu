@@ -113,6 +113,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 	protected ExtendedCombobox percRule;
 	protected Label label_FinTypeFeesDialog_PercRule;
 
+	// ### START SFA_20210405 -->
+	protected Label label_FinTypeFeesDialog_InclForAssignment;
+	protected Checkbox inclForAssignment;
+	// ### END SFA_20210405 <--
+
 	// not auto wired vars
 	private FinTypeFees finTypeFees; // overhanded per param
 	private transient FinTypeFeesDialogCtrl finTypeFeesDialogCtrl; // overhanded per
@@ -279,6 +284,11 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 			this.groupboxWf.setVisible(true);
 		} else {
 			this.groupboxWf.setVisible(false);
+		}
+
+		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+			this.label_FinTypeFeesDialog_InclForAssignment.setVisible(true);
+			this.inclForAssignment.setVisible(true);
 		}
 		logger.debug("Leaving");
 	}
@@ -471,6 +481,12 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.active.setChecked(aFinTypeFees.isActive());
 		this.alwPreIncomization.setChecked(aFinTypeFees.isAlwPreIncomization());
 		this.recordStatus.setValue(aFinTypeFees.getRecordStatus());
+		
+		// ### START SFA_20210405 -->
+		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+			this.inclForAssignment.setChecked(aFinTypeFees.isInclForAssignment());
+		}
+		// ### END SFA_20210405 <--
 
 		doSetRuleFilters(this.ruleCode, "FEES");
 		doSetRuleFilters(this.percRule, "FEEPERC");
@@ -663,6 +679,16 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
+
+		// ### START SFA_20210405 -->
+		if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+			try {
+				aFinTypeFees.setInclForAssignment(this.inclForAssignment.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+		// ### END SFA_20210405 <--
 
 		doRemoveValidation();
 		if (wve.size() > 0) {
@@ -896,6 +922,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		readOnlyComponent(true, this.maxWaiver);
 		readOnlyComponent(true, this.active);
 		readOnlyComponent(true, this.alwPreIncomization);
+		readOnlyComponent(true, this.inclForAssignment);
 
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
@@ -933,6 +960,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.active.setChecked(false);
 		this.alwPreIncomization.setChecked(false);
 		this.feeOrder.setValue(0);
+		this.inclForAssignment.setChecked(false);
 		logger.debug("Leaving");
 	}
 

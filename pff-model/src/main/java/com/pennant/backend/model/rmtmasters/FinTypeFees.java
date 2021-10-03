@@ -87,6 +87,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	private boolean alwPreIncomization;
 	private boolean tdsReq;
+	private boolean inclForAssignment;
 
 	public FinTypeFees() {
 		super();
@@ -132,6 +133,7 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 		entity.setTaxComponent(this.taxComponent);
 		entity.setAlwPreIncomization(this.alwPreIncomization);
 		entity.setTdsReq(this.tdsReq);
+		entity.setInclForAssignment(this.inclForAssignment);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -422,6 +424,14 @@ public class FinTypeFees extends AbstractWorkflowEntity {
 
 	public void setPercRule(String percRule) {
 		this.percRule = percRule;
+	}
+
+	public boolean isInclForAssignment() {
+		return inclForAssignment;
+	}
+
+	public void setInclForAssignment(boolean inclForAssignment) {
+		this.inclForAssignment = inclForAssignment;
 	}
 
 }

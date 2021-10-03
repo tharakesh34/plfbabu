@@ -370,4 +370,16 @@ public class FeeTypeServiceImpl extends GenericService<FeeType> implements FeeTy
 	public List<FeeType> getAMZReqFeeTypes() {
 		return feeTypeDAO.getAMZReqFeeTypes();
 	}
+
+	@Override
+	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
+		return feeTypeDAO.getFeeTypeListByIds(feeTypeIds, type);
+
+	}
+
+	@Override
+	public List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type) {
+		return feeTypeDAO.getFeeTypeListByCodes(feeTypeCodes, type);
+	}
+
 }

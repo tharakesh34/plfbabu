@@ -75,6 +75,7 @@ import com.pennant.app.util.ReceiptCalculator;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -87,6 +88,7 @@ import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.payment.PaymentDetail;
 import com.pennant.backend.model.payment.PaymentHeader;
 import com.pennant.backend.model.rulefactory.AEEvent;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.payment.PaymentHeaderService;
 import com.pennant.backend.util.AssetConstants;
@@ -183,7 +185,8 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	private PaymentTransaction paymentTransaction;
 	private transient FinAdvancePaymentsService finAdvancePaymentsService;
 	private Button btnSave_payment;
-
+	private FeeTypeService feeTypeService;
+	
 	/**
 	 * default constructor.<br>
 	 */
@@ -1147,6 +1150,20 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 			accountingDetailDialogCtrl.doFillAccounting(aeEvent.getReturnDataSet());
 			isAccountingExecuted = true;
 		}
+
+		List<PaymentDetail> paymentDetailsList = this.paymentHeader.getPaymentDetailList();
+		List<String> feeTypeCodes = new ArrayList<>();
+		List<FeeType> feeTypesList = new ArrayList<>();
+
+		for (PaymentDetail paymentDetail : paymentDetailsList) {
+			feeTypeCodes.add(paymentDetail.getFeeTypeCode());
+		}
+
+		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
+			feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
+			aeEvent.setFeesList(feeTypesList);
+		}
+
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -2234,5 +2251,10 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 	public void setFinAdvancePaymentsService(FinAdvancePaymentsService finAdvancePaymentsService) {
 		this.finAdvancePaymentsService = finAdvancePaymentsService;
 	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
+	}
+
 
 }

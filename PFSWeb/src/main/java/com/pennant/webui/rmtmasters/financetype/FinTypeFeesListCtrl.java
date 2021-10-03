@@ -48,9 +48,11 @@ import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -77,6 +79,11 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 
 	protected Button btnNew_FinTypeFeesList_Origination;
 	protected Button btnNew_FinTypeFeesList_Servicing;
+
+	// ### START SFA_20210405 -->
+	protected Listheader listheader_FinTypeFeesList_Org_InclForAssigment;
+	protected Listheader listheader_FinTypeFeesList_Serv_InclForAssigment;
+	// ### END SFA_20210405 <--
 
 	private List<FinTypeFees> finTypeFeesList = new ArrayList<FinTypeFees>();
 	private Map<String, String> eventDetailMap = new HashMap<String, String>();
@@ -174,7 +181,11 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	private void doSetFieldProperties() {
-
+		/*
+		 * if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+		 * this.listheader_FinTypeFeesList_Org_InclForAssigment.setVisible(true);
+		 * this.listheader_FinTypeFeesList_Serv_InclForAssigment.setVisible(true); }
+		 */
 	}
 
 	private void doCheckRights() {
@@ -301,6 +312,18 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 				alwDeviationCB.setDisabled(true);
 				alwDeviationCB.setParent(lc);
 				lc.setParent(item);
+
+				// ### START SFA_20210405 -->
+//				if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+//					lc = new Listcell();
+//					Checkbox inclForAssignment = new Checkbox();
+//					inclForAssignment.setChecked(finTypeFee.isInclForAssignment());
+//					inclForAssignment.setDisabled(true);
+//					inclForAssignment.setParent(lc);
+//					lc.setParent(item);
+//				}
+				// ### END SFA_20210405 <--
+
 				lc = new Listcell(finTypeFee.getRecordStatus());
 				lc.setParent(item);
 				lc = new Listcell(finTypeFee.getRecordType());
@@ -482,6 +505,18 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 					alwDeviationCB.setDisabled(true);
 					alwDeviationCB.setParent(lc);
 					lc.setParent(item);
+
+					// ### START SFA_20210405 -->
+//					if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+//						lc = new Listcell();
+//						Checkbox inclForAssignment = new Checkbox();
+//						inclForAssignment.setChecked(finTypeFee.isInclForAssignment());
+//						inclForAssignment.setDisabled(true);
+//						inclForAssignment.setParent(lc);
+//						lc.setParent(item);
+//					}
+					// ### END SFA_20210405 <--
+
 					lc = new Listcell(finTypeFee.getRecordStatus());
 					lc.setParent(item);
 					lc = new Listcell(finTypeFee.getRecordType());

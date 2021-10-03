@@ -5296,11 +5296,8 @@
 
 	<!--============ Account Engine Rule Execution ============== -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution" scope="prototype">
-		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 
@@ -5374,6 +5371,7 @@
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="provisionDAO" ref="provisionDAO" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<!--============ Finance Repayment Process Util ============== -->
@@ -8211,7 +8209,9 @@
 		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
 		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
 		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
+	
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="paymentDetailDAO" ref="paymentDetailDAO" />

@@ -79,6 +79,8 @@
 											sort="false" hflex="min" />
 										<listheader id="listheader_FinTypeFeesList_Serv_AlwDeviation" label="${c:l('listheader_FinTypeFeesList_AllowDeviation.label')}"
 											sort="false" hflex="min" />
+										<listheader id="listheader_FinTypeFeesList_Serv_InclForAssigment" label="${c:l('listheader_FinTypeFeesList_InclForAssigment.label')}"
+											sort="false" hflex="min" visible="false"/>	
 										<listheader label="${c:l('listheader_RecordStatus.label')}" sort="false" hflex="min" />
 										<listheader label="${c:l('listheader_RecordType.label')}" sort="false" hflex="min" />
 									</listhead>

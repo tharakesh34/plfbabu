@@ -87,6 +87,7 @@ import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinStatusDetail;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -96,11 +97,13 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.InvoiceDetail;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
@@ -144,6 +147,7 @@ public class RepaymentPostingsUtil {
 	private FeeTypeDAO feeTypeDAO;
 	protected GSTInvoiceTxnService gstInvoiceTxnService;
 	protected FinanceTypeDAO financeTypeDAO;
+	private FeeTypeService feeTypeService;
 
 	public RepaymentPostingsUtil() {
 		super();
@@ -151,14 +155,14 @@ public class RepaymentPostingsUtil {
 
 	public List<Object> postingProcess(FinanceMain fm, List<FinanceScheduleDetail> schedules, List<FinFeeDetail> fees,
 			FinanceProfitDetail fpd, FinRepayQueueHeader rqh, String eventCode, Date valuedate, Date postDate,
-			String presetmentType) throws AppException {
+			FinReceiptHeader rch) throws AppException {
 
-		return postingProcessExecution(fm, schedules, fees, fpd, rqh, eventCode, valuedate, postDate, presetmentType);
+		return postingProcessExecution(fm, schedules, fees, fpd, rqh, eventCode, valuedate, postDate, rch);
 	}
 
 	private List<Object> postingProcessExecution(FinanceMain fm, List<FinanceScheduleDetail> schedules,
 			List<FinFeeDetail> fees, FinanceProfitDetail fpd, FinRepayQueueHeader rqh, String eventCode, Date valuedate,
-			Date postDate, String presentmentType) throws AppException {
+			Date postDate, FinReceiptHeader rch) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> actReturnList = null;
@@ -200,7 +204,7 @@ public class RepaymentPostingsUtil {
 
 		if ((totalPayAmount.add(totalWaivedAmount)).compareTo(BigDecimal.ZERO) > 0 || bouncePaidExists) {
 			actReturnList = doSchedulePostings(rqh, valuedate, postDate, fm, schedules, fees, fpd, eventCode, aeEvent,
-					presentmentType);
+					rch);
 			if ((boolean) actReturnList.get(0)) {
 				transOrder = (int) actReturnList.get(7);
 			}
@@ -208,7 +212,7 @@ public class RepaymentPostingsUtil {
 
 			// Method for Postings Process only for Late Pay Profit Waiver case
 			aeEvent = postingEntryProcess(valuedate, postDate, valuedate, false, fm, schedules, fpd, rqh, aeEvent,
-					eventCode, fees, presentmentType);
+					eventCode, fees, rch);
 
 			// Database Updations for Finance RepayQueue Details List
 			List<FinODDetails> latePftODTotals = new ArrayList<>();
@@ -489,14 +493,14 @@ public class RepaymentPostingsUtil {
 
 	private List<Object> doSchedulePostings(FinRepayQueueHeader rqh, Date valueDate, Date postDate, FinanceMain fm,
 			List<FinanceScheduleDetail> schedules, List<FinFeeDetail> fees, FinanceProfitDetail fpd, String eventCode,
-			AEEvent aeEvent, String presentmentType) throws AppException {
+			AEEvent aeEvent, FinReceiptHeader rch) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		List<Object> actReturnList = new ArrayList<>();
 
 		// Method for Postings Process
 		aeEvent = postingEntryProcess(valueDate, postDate, valueDate, false, fm, schedules, fpd, rqh, aeEvent,
-				eventCode, fees, presentmentType);
+				eventCode, fees, rch);
 
 		if (!aeEvent.isPostingSucess()) {
 			actReturnList.add(aeEvent.isPostingSucess());
@@ -716,7 +720,6 @@ public class RepaymentPostingsUtil {
 		// Finance Profit Details Updation
 		String oldFinStatus = fm.getFinStatus();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 		EventProperties eventProperties = fm.getEventProperties();
 
 		Date appDate = null;
@@ -875,8 +878,7 @@ public class RepaymentPostingsUtil {
 
 	private AEEvent postingEntryProcess(Date valueDate, Date postDate, Date dateSchdDate, boolean isEODProcess,
 			FinanceMain fm, List<FinanceScheduleDetail> schedules, FinanceProfitDetail fpd, FinRepayQueueHeader rqh,
-			AEEvent overdueEvent, String eventCode, List<FinFeeDetail> fees, String presentmentType)
-			throws AppException {
+			AEEvent overdueEvent, String eventCode, List<FinFeeDetail> fees, FinReceiptHeader rch) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		// AmountCodes Preparation
@@ -913,6 +915,7 @@ public class RepaymentPostingsUtil {
 		amountCodes.setCashAcExecuted(rqh.isStageAccExecuted() ? "Y" : "N");
 		aeEvent.setPostDate(postDate);
 
+		String presentmentType = rch.getPresentmentType();
 		if (PennantConstants.PROCESS_REPRESENTMENT.equals(presentmentType)
 				&& ImplementationConstants.PENALTY_CALC_ON_REPRESENTATION) {
 			aeEvent.setValueDate(postDate);
@@ -1202,6 +1205,28 @@ public class RepaymentPostingsUtil {
 		}
 
 		prepareFeeRulesMap(dataMap, fees, rqh.getPayType());
+
+		if (rch != null) {
+			List<ReceiptAllocationDetail> radList = rch.getAllocations();
+			List<FeeType> feeTypesList = new ArrayList<>();
+			List<String> feeTypeCodes = new ArrayList<>();
+			for (ReceiptAllocationDetail rad : radList) {
+				if (rad.getAllocationType().equals(RepayConstants.ALLOCATION_MANADV)) {
+					feeTypeCodes.add(rad.getFeeTypeCode());
+				}
+			}
+			if (CollectionUtils.isNotEmpty(fees)) {
+				for (FinFeeDetail finFeeDetail : fees) {
+					feeTypeCodes.add(finFeeDetail.getFeeTypeCode());
+				}
+
+			}
+			if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
+				feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
+				aeEvent.setFeesList(feeTypesList);
+			}
+		}
+
 		addZeroifNotContainsObj(dataMap, "bounceChargePaid");
 		addZeroifNotContainsObj(dataMap, "bounceCharge_CGST_P");
 		addZeroifNotContainsObj(dataMap, "bounceCharge_IGST_P");
@@ -1864,4 +1889,9 @@ public class RepaymentPostingsUtil {
 	public void setProvisionDAO(ProvisionDAO provisionDAO) {
 		this.provisionDAO = provisionDAO;
 	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
+	}
+
 }

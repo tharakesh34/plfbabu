@@ -74,6 +74,20 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private String lovDescAccSetCodeName;
 	private String lovDescAccSetCodeDesc;
 	private String lovDescSysInAcTypeName;
+	
+	// ### START SFA_20210405 -->
+	private boolean feeRepeat = false;
+	private int receivableOrPayable;
+	private boolean assignmentEntry = false;
+	private boolean bulking = false;
+	
+	TransactionEntry singleFeeCGSTTxn = null;
+	TransactionEntry singleFeeSGSTTxn = null;
+	TransactionEntry singleFeeUGSTTxn = null;
+	TransactionEntry singleFeeIGSTTxn = null;
+	TransactionEntry singleFeeCESSTxn = null;
+	
+	// ### END SFA_20210405 <--
 
 	public TransactionEntry() {
 		super();
@@ -119,6 +133,10 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 		entity.setLovDescAccSetCodeName(this.lovDescAccSetCodeName);
 		entity.setLovDescAccSetCodeDesc(this.lovDescAccSetCodeDesc);
 		entity.setLovDescSysInAcTypeName(this.lovDescSysInAcTypeName);
+		entity.setFeeRepeat(this.feeRepeat);
+		entity.setReceivableOrPayable(this.receivableOrPayable);
+		entity.setAssignmentEntry(this.assignmentEntry);
+		entity.setBulking(this.bulking);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -430,5 +448,78 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	public void setDerivedTranOrder(int derivedTranOrder) {
 		this.derivedTranOrder = derivedTranOrder;
 	}
+	public boolean isFeeRepeat() {
+		return feeRepeat;
+	}
 
+	public void setFeeRepeat(boolean feeRepeat) {
+		this.feeRepeat = feeRepeat;
+	}
+
+	public int getReceivableOrPayable() {
+		return receivableOrPayable;
+	}
+
+	public void setReceivableOrPayable(int receivableOrPayable) {
+		this.receivableOrPayable = receivableOrPayable;
+	}
+
+	public boolean isAssignmentEntry() {
+		return assignmentEntry;
+	}
+
+	public void setAssignmentEntry(boolean assignmentEntry) {
+		this.assignmentEntry = assignmentEntry;
+	}
+
+	public boolean isBulking() {
+		return bulking;
+	}
+
+	public void setBulking(boolean bulking) {
+		this.bulking = bulking;
+	}
+
+	public TransactionEntry getSingleFeeCGSTTxn() {
+		return singleFeeCGSTTxn;
+	}
+
+	public void setSingleFeeCGSTTxn(TransactionEntry singleFeeCGSTTxn) {
+		this.singleFeeCGSTTxn = singleFeeCGSTTxn;
+	}
+
+	public TransactionEntry getSingleFeeSGSTTxn() {
+		return singleFeeSGSTTxn;
+	}
+
+	public void setSingleFeeSGSTTxn(TransactionEntry singleFeeSGSTTxn) {
+		this.singleFeeSGSTTxn = singleFeeSGSTTxn;
+	}
+
+	public TransactionEntry getSingleFeeUGSTTxn() {
+		return singleFeeUGSTTxn;
+	}
+
+	public void setSingleFeeUGSTTxn(TransactionEntry singleFeeUGSTTxn) {
+		this.singleFeeUGSTTxn = singleFeeUGSTTxn;
+	}
+
+	public TransactionEntry getSingleFeeIGSTTxn() {
+		return singleFeeIGSTTxn;
+	}
+
+	public void setSingleFeeIGSTTxn(TransactionEntry singleFeeIGSTTxn) {
+		this.singleFeeIGSTTxn = singleFeeIGSTTxn;
+	}
+
+	public TransactionEntry getSingleFeeCESSTxn() {
+		return singleFeeCESSTxn;
+	}
+
+	public void setSingleFeeCESSTxn(TransactionEntry singleFeeCESSTxn) {
+		this.singleFeeCESSTxn = singleFeeCESSTxn;
+	}
+	
+	
+	
 }

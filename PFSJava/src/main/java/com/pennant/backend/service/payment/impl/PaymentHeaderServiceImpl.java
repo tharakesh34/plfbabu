@@ -54,6 +54,7 @@ import com.pennant.backend.dao.payment.PaymentHeaderDAO;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -69,6 +70,7 @@ import com.pennant.backend.model.rulefactory.AEAmountCodes;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.applicationmaster.InstrumentwiseLimitService;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.GSTInvoiceTxnService;
@@ -112,6 +114,7 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 	private FinAdvancePaymentsService finAdvancePaymentsService;
 	private transient InstrumentwiseLimitService instrumentwiseLimitService;
 	private FinanceMainDAO financeMainDAO;
+	private FeeTypeService feeTypeService;
 	@Autowired(required = false)
 	@Qualifier("paymentInstructionPostValidationHook")
 	private PostValidationHook postValidationHook;
@@ -656,6 +659,20 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		aeEvent.setCcy(fm.getFinCcy());
 		aeEvent.setFinID(fm.getFinID());
 		aeEvent.setFinReference(fm.getFinReference());
+		
+		List<PaymentDetail> paymentDetailsList = ph.getPaymentDetailList();
+		List<String> feeTypeCodes = new ArrayList<>();
+		List<FeeType> feeTypesList = new ArrayList<>();
+
+		for (PaymentDetail paymentDetail : paymentDetailsList) {
+			feeTypeCodes.add(paymentDetail.getFeeTypeCode());
+		}
+
+		if (feeTypeCodes != null && !feeTypeCodes.isEmpty()) {
+			feeTypesList = feeTypeService.getFeeTypeListByCodes(feeTypeCodes, "");
+			aeEvent.setFeesList(feeTypesList);
+		}
+
 		aeEvent.setDataMap(amountCodes.getDeclaredFieldValues());
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
@@ -983,8 +1000,8 @@ public class PaymentHeaderServiceImpl extends GenericService<PaymentHeader> impl
 		this.financeMainDAO = financeMainDAO;
 	}
 
-	// ******************************************************//
-	// *********************** Setter ***********************//
-	// ******************************************************//
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
+	}
 
 }

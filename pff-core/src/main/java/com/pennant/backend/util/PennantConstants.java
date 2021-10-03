@@ -892,6 +892,13 @@ public class PennantConstants {
 	public static final String STEP_SPECIFIER_GRACE = "G";
 	public static final String STEP_SPECIFIER_REG_EMI = "R";
 
+	// ### START SFA_20210405 -->
+	public static final int RECEIVABLE = 1; // Receivable
+	public static final int PAYABLE = 2; // Payable
+	public static final String RESULT = "Result=";
+	public static final String BULKING = "(BULKING)";
+	// ### END SFA_20210405 <--
+
 	public static final String MODULETYPE_MAINT = "MAINT";
 	public static final String INSTRUMENT_TYPE_PARTNER_BANK = "INSTRUMENT_TYPE_PARTNER_BANK";
 	public static final String INSTRUMENT_TYPE = "INSTRUMENT_TYPE";

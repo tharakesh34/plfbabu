@@ -281,7 +281,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
-		selectSql.append(", FinTypeFeeId,  PercType, PercRule");
+		selectSql.append(", FinTypeFeeId,  PercType, PercRule, InclForAssignment");
 
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -335,7 +335,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		insertSql.append(" CalculateOn, AlwDeviation, MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, ModuleId,AlwPreIncomization");
-		insertSql.append(", FinTypeFeeId, PercType, PercRule)");
+		insertSql.append(", FinTypeFeeId, PercType, PercRule, InclForAssignment)");
 		insertSql.append(" Values(:FinType, :OriginationFee, :FinEvent, :FeeTypeID, :FeeOrder, :ReferenceId,");
 		insertSql.append(" :FeeScheduleMethod, :CalculationType, :RuleCode, :Amount, :Percentage,");
 		insertSql
@@ -343,7 +343,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(
 				" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId, :ModuleId,:AlwPreIncomization");
-		insertSql.append(", :FinTypeFeeId, :PercType, :PercRule)");
+		insertSql.append(", :FinTypeFeeId, :PercType, :PercRule, :InclForAssignment)");
 
 		if (finTypeFees.getFinTypeFeeId() == Long.MIN_VALUE) {
 			finTypeFees.setFinTypeFeeId(getNextValue("SEQFINTYPEFEES"));
@@ -381,7 +381,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 				" RuleCode = :RuleCode, Amount = :Amount,Percentage = :Percentage, CalculateOn = :CalculateOn, AlwDeviation = :AlwDeviation,  ReferenceId=:ReferenceId,");
 		updateSql.append(
 				" MaxWaiverPerc = :MaxWaiverPerc,AlwModifyFee = :AlwModifyFee, AlwModifyFeeSchdMthd = :AlwModifyFeeSchdMthd, Active = :Active,AlwPreIncomization=:AlwPreIncomization,");
-		updateSql.append(" PercType = :PercType, PercRule = :PercRule,");
+		updateSql.append(" PercType = :PercType, PercRule = :PercRule,  InclForAssignment = :InclForAssignment, ");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
 		updateSql.append(
 				" RecordStatus= :RecordStatus, RoleCode = :RoleCode, NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
@@ -562,7 +562,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		}
 		selectSql.append(" Version, LastMntBy, LastMntOn, RecordStatus,");
 		selectSql.append(" RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId, ModuleId");
-		selectSql.append(", FinTypeFeeId, PercType, PercRule");
+		selectSql.append(", FinTypeFeeId, PercType, PercRule, InclForAssignment ");
 
 		selectSql.append(" FROM FinTypeFees");
 		selectSql.append(StringUtils.trimToEmpty(type));
@@ -593,7 +593,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		sql.append(", AlwModifyFee, AlwModifyFeeSchdMthd, Active, AlwPreIncomization, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId, ModuleId");
-		sql.append(", FinTypeFeeId, PercType, PercRule");
+		sql.append(", FinTypeFeeId, PercType, PercRule, InclForAssignment");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent, TdsReq");
@@ -681,6 +681,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		selectSql.append(
 				" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
 		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active,AlwPreIncomization,");
+		selectSql.append(" InclForAssignment, ");
 		if (type.contains("View")) {
 			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
 		}
@@ -720,7 +721,7 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		selectSql.append(
 				" FeeScheduleMethod, CalculationType, RuleCode, Amount, Percentage, CalculateOn, AlwDeviation,");
 		selectSql.append(" MaxWaiverPerc, AlwModifyFee, AlwModifyFeeSchdMthd, Active, AlwPreIncomization,");
-		selectSql.append(" PercType, PercRule,");
+		selectSql.append(" PercType, PercRule, InclForAssignment,");
 		if (type.contains("View")) {
 			selectSql.append(" FeeTypeCode, FeeTypeDesc, RuleDesc, TaxApplicable, TaxComponent,");
 		}

@@ -141,6 +141,15 @@
 										<checkbox id="active" />
 									</hbox>
 								</row>
+								
+								<!-- ### START SFA_20210405 -->
+								<row id="row7" visible="true">
+									<label id="label_FeeIncomeOrExpense" value="${c:l('label_FeeTypeDialog_FeeIncomeOrExpense.value')}"  visible="true"/>
+									<hbox id="hlayout_FeeIncomeOrExpense" visible="true">
+										<extendedcombobox id="feeIncomeOrExpense" />
+									</hbox>
+								</row>
+								<!-- ### END SFA_20210405 -->
 							</rows>
 						</grid>
 					</groupbox>

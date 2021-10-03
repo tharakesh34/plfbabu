@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,19 +49,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.constants.AccountConstants;
-import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
-import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
 import com.pennant.backend.dao.rmtmasters.TransactionEntryDAO;
-import com.pennant.backend.dao.rulefactory.RuleDAO;
-import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.rmtmasters.TransactionEntry;
 import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.model.rulefactory.Rule;
+import com.pennant.backend.util.FinanceConstants;
+import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennant.cache.util.AccountingConfigCache;
@@ -73,11 +73,8 @@ public class AccountEngineExecution implements Serializable {
 	private static final long serialVersionUID = 852062955563015315L;
 	private Logger logger = LogManager.getLogger(AccountEngineExecution.class);
 
-	private FinanceMainDAO financeMainDAO;
 	private TransactionEntryDAO transactionEntryDAO;
-	private RuleDAO ruleDAO;
 	private CustomerDAO customerDAO;
-	private CurrencyDAO currencyDAO;
 	private AccountingSetDAO accountingSetDAO;
 
 	// Default Constructor
@@ -247,13 +244,48 @@ public class AccountEngineExecution implements Serializable {
 		List<ReturnDataSet> returnDataSets = new ArrayList<>();
 		List<TransactionEntry> txnEntries = new ArrayList<>();
 
-		if (aeEvent.isEOD()) {
-			acSetList.stream()
-					.forEach(acSet -> txnEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(acSet)));
-		} else {
-			acSetList.stream().forEach(acSet -> txnEntries.addAll(AccountingConfigCache.getTransactionEntry(acSet)));
+		for (Long accountSetId : acSetList) {
+			if (aeEvent.isEOD()) {
+				txnEntries.addAll(AccountingConfigCache.getCacheTransactionEntry(accountSetId));
+			} else {
+				txnEntries.addAll(AccountingConfigCache.getTransactionEntry(accountSetId));
+			}
 		}
-
+		
+		TransactionEntry singleFeeTxn = getSingleFeeTxn(FinanceConstants.FEE_IE, txnEntries);
+		
+		if (singleFeeTxn != null) {
+			List<FeeType> feeTypes = getNotConfigurerFeeTypes(aeEvent.getFeesList(), txnEntries);
+			
+			for (FeeType feeType : feeTypes) {
+				if(feeType.getFeeIncomeOrExpense() == null) {
+					throw new AppException("Account Type should configured for the Fee Type: "+feeType.getFeeTypeCode());
+				}
+				
+				if (feeType.isTaxApplicable()) {
+					setSingleFeeGSTTxn(singleFeeTxn, txnEntries);
+				}
+				
+			}
+			
+			int index = txnEntries.indexOf(singleFeeTxn);
+			
+			txnEntries.addAll(index, getTxnEntries(singleFeeTxn, feeTypes));
+			
+			
+			int transOrder = 10;
+			
+			for (TransactionEntry txn : txnEntries) {
+				txn.setTransOrder(transOrder);
+				transOrder = transOrder+10;
+			}
+			
+		}
+		
+		
+		//txnEntries = expandFeeEntries(aeEvent, txnEntries);
+		
+		
 		EventProperties eventProperties = aeEvent.getEventProperties();
 
 		boolean isPostZeroEntries = false;
@@ -292,8 +324,10 @@ public class AccountEngineExecution implements Serializable {
 		}
 
 		ReturnDataSet returnDataSet;
-		// This is to maintain the multiple transactions with in the same linked train ID.
-		// Late pay and Repay will be coming separately and will have same linked tranID.
+		// This is to maintain the multiple transactions with in the same linked train
+		// ID.
+		// Late pay and Repay will be coming separately and will have same linked
+		// tranID.
 		int seq = aeEvent.getTransOrder();
 
 		if (!aeEvent.isEOD()) {
@@ -414,15 +448,17 @@ public class AccountEngineExecution implements Serializable {
 			 */
 
 			/*
-			 * THIS CODE WAS WRITTEN FOR BANKS WHERE PLF HITS CORE BANKING SYTSEM FOR ACCOUNTING if
-			 * (accountCcyMap.containsKey(acc.getAccountId())) { String acCcy = accountCcyMap.get(acc.getAccountId());
+			 * THIS CODE WAS WRITTEN FOR BANKS WHERE PLF HITS CORE BANKING SYTSEM FOR
+			 * ACCOUNTING if (accountCcyMap.containsKey(acc.getAccountId())) { String acCcy
+			 * = accountCcyMap.get(acc.getAccountId());
 			 * 
-			 * if (!StringUtils.equals(ccy, acCcy)) { postAmount = returnDataSet.getPostAmount();
-			 * returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(ccy, acCcy, postAmount));
-			 * returnDataSet.setEventProperties(eventProperties);
+			 * if (!StringUtils.equals(ccy, acCcy)) { postAmount =
+			 * returnDataSet.getPostAmount();
+			 * returnDataSet.setPostAmount(CalculationUtil.getConvertedAmount(ccy, acCcy,
+			 * postAmount)); returnDataSet.setEventProperties(eventProperties);
 			 * 
-			 * //Add Extra Entries For Debit & Credit newEntries = createAccOnCCyConversion(returnDataSet, acCcy,
-			 * postAmount, dataMap);
+			 * //Add Extra Entries For Debit & Credit newEntries =
+			 * createAccOnCCyConversion(returnDataSet, acCcy, postAmount, dataMap);
 			 * 
 			 * returnDataSet.setAcCcy(acCcy); } }
 			 */
@@ -445,6 +481,59 @@ public class AccountEngineExecution implements Serializable {
 		aeEvent.setTransOrder(seq);
 
 		return returnDataSets;
+	}
+
+	private void setSingleFeeGSTTxn(TransactionEntry singleFeeTxn, List<TransactionEntry> txnEntries) {
+		singleFeeTxn.setSingleFeeCGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_CGST, txnEntries));
+		singleFeeTxn.setSingleFeeSGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_SGST, txnEntries));
+		singleFeeTxn.setSingleFeeUGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_UGST, txnEntries));
+		singleFeeTxn.setSingleFeeIGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_IGST, txnEntries));
+		singleFeeTxn.setSingleFeeCESSTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_CESS, txnEntries));
+	}
+
+	private List<TransactionEntry> getTxnEntries(TransactionEntry singleFeeTxn, List<FeeType> feeTypes) {
+		List<TransactionEntry> list = new ArrayList<>();
+		
+		
+		if(singleFeeTxn.isBulking()) {
+			list.add(createBulkingTE(singleFeeTxn, feeTypes));
+		} else {
+			for (FeeType feeType : feeTypes) {
+				list.add(createNewTE(singleFeeTxn, feeType));
+			}
+		}
+		
+		return list;
+	}
+
+	private List<FeeType> getNotConfigurerFeeTypes(List<FeeType> feesList, List<TransactionEntry> txnEntries) {
+		List<FeeType> feeTypes = new ArrayList<>();
+
+		for (FeeType feeType : feesList) {
+			boolean exists = false;
+			for (TransactionEntry txnEntry : txnEntries) {
+				if (txnEntry.getFeeCode().equals(feeType.getFeeTypeCode())) {
+					exists = true;
+					break;
+				}
+			}
+
+			if (!exists) {
+				feeTypes.add(feeType);
+			}
+		}
+
+		return feeTypes;
+	}
+
+	private TransactionEntry getSingleFeeTxn(String feeType, List<TransactionEntry> txnEntries) {
+		for (TransactionEntry transactionEntry : txnEntries) {
+			String accountType = transactionEntry.getAccountType();
+			if(accountType.equals(feeType)) {
+				return transactionEntry;
+			}
+		}
+		return null;
 	}
 
 	private void addFeeCodes(Map<String, Object> dataMap, TransactionEntry txnEntry) {
@@ -475,13 +564,6 @@ public class AccountEngineExecution implements Serializable {
 			dataMap.putAll(FeeCalculator.getFeeRuleMap(fd));
 		}
 
-	}
-
-	private void doFilldataMap(Map<String, Object> dataMap) {
-		Customer customer = customerDAO.getCustomerForPostings((long) dataMap.get("fm_custID"));
-		if (customer != null) {
-			customer.getDeclaredFieldValues(dataMap);
-		}
 	}
 
 	private void setAccountNumber(AEEvent aeEvent, TransactionEntry txnEntry, Map<String, Object> dataMap) {
@@ -523,25 +605,121 @@ public class AccountEngineExecution implements Serializable {
 
 		return amount == null ? BigDecimal.ZERO : amount;
 	}
+	
+	private List<TransactionEntry> expandFeeEntries(AEEvent aeEvent, List<TransactionEntry> transEntryList) {
+		List<TransactionEntry> newTEList = new ArrayList<>();
+		List<TransactionEntry> tempTEList = new ArrayList<>();
+		List<FeeType> feeTypeList = new ArrayList<>();
+		List<String> rmvList = new ArrayList<String>();
+		int tranOrder = 0;
 
-	public void setRuleDAO(RuleDAO ruleDAO) {
-		this.ruleDAO = ruleDAO;
+		for (int iTe = 0; iTe < transEntryList.size(); iTe++) {
+			TransactionEntry transEntry = transEntryList.get(iTe);
+
+			if (!transEntry.isFeeRepeat()) {
+				tranOrder = tranOrder + 10;
+				transEntry.setTransOrder(tranOrder);
+				newTEList.add(transEntry);
+				continue;
+			}
+
+			feeTypeList = aeEvent.getFeesList();
+
+			if (transEntry.isBulking() && !feeTypeList.isEmpty()) {
+				TransactionEntry newTe = createBulkingTE(transEntry, feeTypeList);
+				tranOrder = tranOrder + 10;
+				newTe.setTransOrder(tranOrder);
+				newTEList.add(newTe);
+				continue;
+			}
+
+			for (FeeType feeType : feeTypeList) {
+				final String feeTypeCode = feeType.getFeeTypeCode();
+
+				if (feeType.isManualAdvice()) {
+					if (transEntry.getReceivableOrPayable() != feeType.getAdviseType()
+							|| feeType.getFeeIncomeOrExpense() == null) {
+						rmvList.add(feeTypeCode);
+						logger.debug("Advise Type for fee code :" + feeTypeCode
+								+ " in fee type master should be same as ReceivableOrPayable in Transaction entry");
+						logger.debug("Removing " + feeTypeCode + " entry from Transaction entry creation");
+						continue;
+					}
+				} else {
+					feeType.setAdviseType(PennantConstants.RECEIVABLE);
+				}
+
+				TransactionEntry newTe = createNewTE(transEntry, feeType);
+				tranOrder = tranOrder + 10;
+				newTe.setTransOrder(tranOrder);
+				newTEList.add(newTe);
+			}
+
+		}
+		for (TransactionEntry te : newTEList) {
+			if (te.getFeeCode() != null) {
+				for (String feeTypeCode : rmvList) {
+					if (te.getFeeCode().equalsIgnoreCase(feeTypeCode)) {
+						tempTEList.add(te);
+					}
+				}
+			}
+		}
+		newTEList.removeAll(tempTEList);
+		logger.debug(Literal.LEAVING);
+		return newTEList;
+	}
+
+	private TransactionEntry createBulkingTE(final TransactionEntry transactionEntry,
+			final List<FeeType> feeTypeFeeList) {
+		TransactionEntry newTtransactionEntry = transactionEntry.copyEntity();
+
+		StringBuilder tempStrBuilder = new StringBuilder();
+		StringBuilder amtRuleStrBuilder = new StringBuilder();
+		for (FeeType feeType : feeTypeFeeList) {
+
+			String amountRule = newTtransactionEntry.getAmountRule();
+			amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
+			tempStrBuilder = tempStrBuilder.append("(" + amountRule.substring(7, amountRule.length() - 1)).append(")+");
+		}
+		amtRuleStrBuilder.append(PennantConstants.RESULT
+				.concat(tempStrBuilder.replace(tempStrBuilder.length() - 1, tempStrBuilder.length(), ";").toString()));
+
+		logger.debug("Final amount rule built for bulking of fee - " + amtRuleStrBuilder);
+
+		newTtransactionEntry.setTransDesc(transactionEntry.getAccountType().concat(" " + PennantConstants.BULKING));
+		newTtransactionEntry.setAmountRule(amtRuleStrBuilder.toString());
+		return newTtransactionEntry;
+	}
+
+	private TransactionEntry createNewTE(final TransactionEntry transactionEntry, final FeeType feeType) {
+		logger.debug("Creating transaction entry for feeCode - " + feeType.getFeeTypeCode());
+
+		TransactionEntry txnEntry = transactionEntry.copyEntity();
+
+		if (transactionEntry.getAccountType().startsWith("FEE_")) {
+			txnEntry.setAccountType(feeType.getFeeIncomeOrExpense());
+		} else {
+			txnEntry.setAccountType(transactionEntry.getAccountType());
+		}
+		
+		String amountRule = txnEntry.getAmountRule();
+		amountRule = amountRule.replaceAll("FEE", feeType.getFeeTypeCode().toUpperCase());
+
+		String accountType = StringUtils.trimToEmpty(txnEntry.getAccountType());
+		txnEntry.setTransDesc(feeType.getFeeTypeDesc().concat(" (").concat(accountType).concat(")"));
+
+		txnEntry.setAmountRule(amountRule);
+		txnEntry.setFeeCode(feeType.getFeeTypeCode());
+		return txnEntry;
 	}
 
 	public void setTransactionEntryDAO(TransactionEntryDAO transactionEntryDAO) {
 		this.transactionEntryDAO = transactionEntryDAO;
 	}
 
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
 	public void setCustomerDAO(CustomerDAO customerDAO) {
 		this.customerDAO = customerDAO;
-	}
-
-	public void setCurrencyDAO(CurrencyDAO currencyDAO) {
-		this.currencyDAO = currencyDAO;
 	}
 
 	public void setAccountingSetDAO(AccountingSetDAO accountingSetDAO) {

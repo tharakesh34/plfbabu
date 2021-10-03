@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.model.eventproperties.EventProperties;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 
 public class AEEvent implements Serializable {
@@ -73,6 +74,8 @@ public class AEEvent implements Serializable {
 	private String postingType = AccountConstants.ACCOUNT_EVENT_POSTINGTYPE_LOAN;
 
 	private long paymentId;
+
+	private List<FeeType> FeesList = new ArrayList<>();
 
 	public AEEvent() {
 		super();
@@ -440,6 +443,14 @@ public class AEEvent implements Serializable {
 
 	public void setPaymentId(long paymentId) {
 		this.paymentId = paymentId;
+	}
+	
+	public List<FeeType> getFeesList() {
+		return FeesList;
+	}
+
+	public void setFeesList(List<FeeType> feesList) {
+		FeesList = feesList;
 	}
 
 }

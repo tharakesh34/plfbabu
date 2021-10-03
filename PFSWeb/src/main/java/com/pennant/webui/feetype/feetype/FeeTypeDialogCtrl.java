@@ -54,6 +54,7 @@ import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FeeType;
+import com.pennant.backend.model.rmtmasters.AccountType;
 import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.feetype.FeeTypeService;
@@ -171,6 +172,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	private boolean dueCreationReq = false;
 	protected Checkbox amortzReq;
 	private Boolean feeTypeEnquiry = false;
+
+	// ### START SFA_20210405 -->
+	protected Row row7;
+	protected Hbox hlayout_FeeIncomeOrExpense;
+	protected Label label_FeeIncomeOrExpense;
+	protected ExtendedCombobox feeIncomeOrExpense;
+	// ### END SFA_20210405 <--
 
 	/**
 	 * default constructor.<br>
@@ -492,6 +500,16 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.groupboxWf.setVisible(false);
 		}
 
+		// ### START SFA_20210405 -->
+		this.feeIncomeOrExpense.setWidth("200px");
+		this.feeIncomeOrExpense.setModuleName("AccountType");
+		//this.feeIncomeOrExpense.setMandatoryStyle(true);
+		this.feeIncomeOrExpense.setValueColumn("AcType");
+		this.feeIncomeOrExpense.setDescColumn("AcTypeDesc");
+		this.feeIncomeOrExpense.setDisplayStyle(2);
+		this.feeIncomeOrExpense.setValidateColumns(new String[] { "AcType" });
+		// ### END SFA_20210405 <--
+
 		logger.debug("Leaving");
 	}
 
@@ -610,6 +628,9 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.amortzReq.setDisabled(false);
 			this.btnSave.setVisible(true);
 		}
+		
+		this.feeIncomeOrExpense.setValue(aFeeType.getFeeIncomeOrExpense());
+		this.feeIncomeOrExpense.setObject(new AccountType(aFeeType.getFeeIncomeOrExpense()));
 
 		this.recordStatus.setValue(aFeeType.getRecordStatus());
 		logger.debug("Leaving");
@@ -744,6 +765,19 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			wve.add(we);
 		}
 
+		try {
+			if (this.feeIncomeOrExpense.getObject() instanceof AccountType) {
+				AccountType accountType = (AccountType) this.feeIncomeOrExpense.getObject();
+				if (accountType != null) {
+					aFeeType.setFeeIncomeOrExpense(accountType.getAcType());
+				}
+			} else {
+				aFeeType.setFeeIncomeOrExpense(null);
+			}
+		} catch (WrongValueException we) {
+			wve.add(we);
+		}
+
 		doRemoveValidation();
 		doRemoveLOVValidation();
 
@@ -803,7 +837,6 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.taxComponent.setConstraint(new StaticListValidator(listTaxComponent,
 					Labels.getLabel("label_FeeTypeDialog_TaxComponent.value")));
 		}
-
 		logger.debug("Leaving");
 	}
 
@@ -818,6 +851,11 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.accountingSetID.setConstraint("");
 		this.adviseType.setConstraint("");
 		this.taxComponent.setConstraint("");
+
+		// ### START SFA_20210405 -->
+		this.feeIncomeOrExpense.setConstraint("");
+		// ### END SFA_20210405 <--
+
 		logger.debug("Leaving");
 	}
 
@@ -930,6 +968,12 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		readOnlyComponent(isReadOnly("FeeTypeDialog_AmortizationRequired"), this.dueAccSet);
 		readOnlyComponent(isReadOnly("FeeTypeDialog_TaxApplicable"), this.tdsReq);
 
+		// ### START SFA_20210405 -->
+		this.feeIncomeOrExpense.setReadonly(isReadOnly("FeeTypeDialog_FeeIncomeOrExpense"));
+		//this.feeWaiver.setReadonly(isReadOnly("FeeTypeDialog_FeeWaiver"));
+		//this.feeRefund.setReadonly(isReadOnly("FeeTypeDialog_FeeRefund"));
+		// ### END SFA_20210405 <--
+
 		if (isWorkFlowEnabled()) {
 			for (int i = 0; i < userAction.getItemCount(); i++) {
 				userAction.getItemAtIndex(i).setDisabled(false);
@@ -995,6 +1039,13 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.taxComponent.setSelectedIndex(0);
 
 		this.amortzReq.setChecked(false);
+
+		// ### START SFA_20210405 -->
+		this.feeIncomeOrExpense.setValue("");
+		//this.feeWaiver.setValue("");
+		//this.feeRefund.setValue("");
+		// ### END SFA_20210405 <--
+
 		logger.debug("Leaving");
 	}
 

@@ -88,6 +88,7 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
 		customConstants.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
 		customConstants.put("POPULATE_DFT_INCOME_DETAILS", true);
+		customConstants.put("ALLOW_SINGLE_FEE_CONFIG", true);
 
 		customConstants.put("RESTRUCTURE_DFT_APP_DATE", true);
 

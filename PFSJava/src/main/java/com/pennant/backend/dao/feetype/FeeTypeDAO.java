@@ -89,4 +89,9 @@ public interface FeeTypeDAO extends BasicCrudDao<FeeType> {
 	List<FeeType> getAMZReqFeeTypes();
 
 	String getTaxComponent(String feeTypeCode);
+
+	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
+
+	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String type);
+
 }

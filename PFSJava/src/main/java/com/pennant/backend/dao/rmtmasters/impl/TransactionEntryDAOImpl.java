@@ -140,7 +140,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch ,AccountSubHeadRule,");
 		selectSql.append(
 				" TranscationCode, RvsTransactionCode, AmountRule,FeeCode,ChargeType,EntryByInvestment,OpenNewFinAc,");
-		selectSql.append(" PostToSys, DerivedTranOrder, ");
+		selectSql.append(" PostToSys, DerivedTranOrder, FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking, ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescAccountTypeName,lovDescAccountSubHeadRuleName,");
 			selectSql.append(" lovDescTranscationCodeName,lovDescRvsTransactionCodeName, ");
@@ -186,8 +186,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc,");
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch,");
 		selectSql.append(" AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule,ChargeType,");
-		selectSql.append(" PostToSys, DerivedTranOrder, ");
-		selectSql.append(" FeeCode , EntryByInvestment ,OpenNewFinAc");
+		selectSql.append(" PostToSys, DerivedTranOrder, FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking");
+		selectSql.append(", FeeCode , EntryByInvestment ,OpenNewFinAc");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" , lovDescEventCodeName, lovDescEventCodeDesc ");
 			if (!postingsProcess) {
@@ -258,7 +258,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
 		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
-		sql.append(", ChargeType, FeeCode, OpenNewFinAc, PostToSys, DerivedTranOrder");
+		sql.append(", ChargeType, FeeCode, OpenNewFinAc, PostToSys, DerivedTranOrder, FeeRepeat");
+		sql.append(", ReceivableOrPayable, AssignmentEntry, Bulking");
 		sql.append(" from RMTTransactionEntry");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where AccountSetid = ?");
@@ -292,7 +293,10 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 				te.setOpenNewFinAc(rs.getBoolean("OpenNewFinAc"));
 				te.setPostToSys(rs.getString("PostToSys"));
 				te.setDerivedTranOrder(rs.getInt("DerivedTranOrder"));
-
+				te.setFeeRepeat(rs.getBoolean("FeeRepeat"));
+				te.setReceivableOrPayable(rs.getInt("ReceivableOrPayable"));
+				te.setAssignmentEntry(rs.getBoolean("AssignmentEntry"));
+				te.setBulking(rs.getBoolean("Bulking"));
 				return te;
 
 			});
@@ -322,7 +326,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		sql.append(" AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting, Account, AccountType");
 		sql.append(", AccountBranch, AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule");
 		sql.append(", ChargeType, FeeCode, EntryByInvestment, OpenNewFinAc, PostToSys, DerivedTranOrder");
-
+		sql.append(", FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking ");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescEventCodeName, LovDescAccSetCodeName");
 
@@ -669,13 +673,13 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		insertSql.append(" (AccountSetid, TransOrder, TransDesc, Debitcredit, ShadowPosting,");
 		insertSql.append(" Account, AccountType, AccountBranch, AccountSubHeadRule, TranscationCode,");
 		insertSql.append(" RvsTransactionCode, AmountRule,FeeCode,ChargeType, EntryByInvestment ,OpenNewFinAc,");
-		insertSql.append(" PostToSys, DerivedTranOrder , ");
+		insertSql.append(" PostToSys, DerivedTranOrder , FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking, ");
 		insertSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId) ");
 		insertSql.append(" Values(:AccountSetid, :TransOrder, :TransDesc, :Debitcredit, :ShadowPosting,");
 		insertSql.append(" :Account, :AccountType,:AccountBranch, :AccountSubHeadRule, :TranscationCode,");
 		insertSql.append(" :RvsTransactionCode, :AmountRule,:FeeCode,:ChargeType, :EntryByInvestment ,:OpenNewFinAc,");
-		insertSql.append(" :PostToSys, :DerivedTranOrder, ");
+		insertSql.append(" :PostToSys, :DerivedTranOrder, :FeeRepeat, :ReceivableOrPayable, :AssignmentEntry, :Bulking,");
 		insertSql.append(" :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode,");
 		insertSql.append(" :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 
@@ -709,7 +713,9 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		updateSql.append(" AccountBranch=:AccountBranch,AccountSubHeadRule = :AccountSubHeadRule,");
 		updateSql.append(" TranscationCode = :TranscationCode, RvsTransactionCode = :RvsTransactionCode,");
 		updateSql.append(" AmountRule = :AmountRule,FeeCode=:FeeCode, ");
-		updateSql.append(" PostToSys =:PostToSys, DerivedTranOrder=:DerivedTranOrder, ");
+		updateSql.append(" PostToSys =:PostToSys, DerivedTranOrder=:DerivedTranOrder, FeeRepeat=:FeeRepeat, ");
+		updateSql.append(
+				" ReceivableOrPayable = :ReceivableOrPayable, AssignmentEntry =:AssignmentEntry, Bulking =:Bulking, ");
 		updateSql
 				.append(" ChargeType =:ChargeType, EntryByInvestment =:EntryByInvestment ,OpenNewFinAc=:OpenNewFinAc,");
 		updateSql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn,");
@@ -751,7 +757,8 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 		StringBuilder selectSql = new StringBuilder("Select AccountSetid, TransOrder, TransDesc,");
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType,AccountBranch,");
 		selectSql.append(" AccountSubHeadRule, TranscationCode, RvsTransactionCode, AmountRule,ChargeType,");
-		selectSql.append(" PostToSys, DerivedTranOrder, FeeCode,EntryByInvestment,OpenNewFinAc,");
+		selectSql.append(" PostToSys, DerivedTranOrder, FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking");
+		selectSql.append(", FeeCode,EntryByInvestment,OpenNewFinAc,");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			selectSql.append(" lovDescAccountTypeName,lovDescAccountSubHeadRuleName,");
 			selectSql.append(" lovDescTranscationCodeName,lovDescRvsTransactionCodeName ,");
@@ -780,6 +787,7 @@ public class TransactionEntryDAOImpl extends BasicDao<TransactionEntry> implemen
 
 		StringBuilder selectSql = new StringBuilder("Select  TransOrder, TransDesc,");
 		selectSql.append(" Debitcredit, ShadowPosting, Account, AccountType, AmountRule ");
+		selectSql.append(" , FeeRepeat, ReceivableOrPayable, AssignmentEntry, Bulking");
 		selectSql.append(" From RMTODTransactionEntry");
 
 		logger.debug("selectSql: " + selectSql.toString());

@@ -143,6 +143,17 @@
 									<checkbox id="alwPreIncomization" />
 								</hbox>
 							</row>
+							<!-- ### START SFA_20210405 -->
+							<row visible="false">
+								<label id="label_FinTypeFeesDialog_InclForAssignment" value="${c:l('label_FinTypeFeesDialog_InclForAssignment.value')}" 
+								visible="false"/>
+								<hbox>
+									<space spacing="2px" />
+									<checkbox id="inclForAssignment" visible="false"/>
+								</hbox>
+							</row>
+							<!-- ### END SFA_20210405 -->
+							
 						</rows>
 					</grid>
 				</groupbox>

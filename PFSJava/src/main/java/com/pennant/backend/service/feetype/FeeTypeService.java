@@ -67,4 +67,9 @@ public interface FeeTypeService {
 	String getTaxCompByCode(String feeTypeCode);
 
 	List<FeeType> getAMZReqFeeTypes();
+
+	List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type);
+
+	List<FeeType> getFeeTypeListByCodes(List<String> feeTypeCodes, String string);
+
 }

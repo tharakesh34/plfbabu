@@ -402,4 +402,12 @@ public class FinanceConstants {
 	public static final String VRPL_VRBL = "PLBL";
 
 	public static final String FLAG_RESTRUCTURE = "R";
+
+	public static final String FEE_IE = "FEE_IE";
+	public static final String FEE_IE_CGST = "FEE_IE_CGST";
+	public static final String FEE_IE_SGST = "FEE_IE_SGST";
+	public static final String FEE_IE_IGST = "FEE_IE_IGST";
+	public static final String FEE_IE_UGST = "FEE_IE_UGST";
+	public static final String FEE_IE_CESS = "FEE_IE_CESS";
+
 }

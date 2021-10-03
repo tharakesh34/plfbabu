@@ -200,6 +200,7 @@ import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
 import com.pennant.backend.model.finance.ExtBreDetails;
 import com.pennant.backend.model.finance.ExtCreditReviewConfig;
+import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
@@ -266,6 +267,7 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerExtLiabilityService;
 import com.pennant.backend.service.customermasters.CustomerService;
 import com.pennant.backend.service.dedup.DedupParmService;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PricingDetailService;
@@ -1108,6 +1110,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 	private SubventionDetail oldSubventionDetail;
 	protected transient boolean oldVar_finOCRRequired;
+	
+	private FeeTypeService feeTypeService;
 
 	/**
 	 * default constructor.<br>
@@ -14902,6 +14906,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isBlank(moduleDefiner)) {
 
 			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
+			
+			setFeesesForAccounting(aeEvent, getFinanceDetail());
 
 			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
 
@@ -14939,6 +14945,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!feesExecuted) {// No segregation of fees based on
 									// instruction
 					prepareFeeRulesMap(tempAmountCodes, dataMap);
+
+					setFeesesForAccounting(aeEvent, getFinanceDetail());
+
 				}
 
 				if (StringUtils.equals(moduleDefiner, FinServiceEvent.ADDDISB)) {
@@ -22447,6 +22456,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return years;
 	}
 
+	private void setFeesesForAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		List<FeeType> feeTypesList = new ArrayList<>();
+		List<Long> feeTypeIds = new ArrayList<>();
+
+		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				feeTypeIds.add(finFeeDetail.getFeeTypeID());
+			}
+			if (!feeTypeIds.isEmpty()) {
+				feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeIds, "");
+				aeEvent.setFeesList(feeTypesList);
+			}
+		}
+		logger.debug(Literal.LEAVING);
+	}
+
 	public List<String> getAssignCollateralRef() {
 		return assignCollateralRef;
 	}
@@ -22672,4 +22700,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	public void setCollateralDelinkDialogCtrl(CollateralDelinkDialogCtrl collateralDelinkDialogCtrl) {
 		this.collateralDelinkDialogCtrl = collateralDelinkDialogCtrl;
 	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
+	}
+
 }

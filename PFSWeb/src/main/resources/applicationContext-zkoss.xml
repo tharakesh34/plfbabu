@@ -1577,6 +1577,7 @@
 		<property name="dMSService" ref="dMSService" />
 		<property name="pricingDetailService" ref="pricingDetailService" />
 		<property name="financeTypeService" ref="financeTypeService" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<bean id="financePreApprovalDialogCtrl" class="com.pennant.webui.finance.financemain.FinancePreApprovalDialogCtrl"
@@ -3930,6 +3931,7 @@
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="receiptCalculator" ref="receiptCalculator" />
 		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<!-- DMS DocumentDetails -->

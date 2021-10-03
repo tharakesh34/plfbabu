@@ -187,6 +187,7 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.collateral.impl.CollateralAssignmentValidation;
 import com.pennant.backend.service.collateral.impl.FinAssetTypesValidation;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
+import com.pennant.backend.service.feetype.FeeTypeService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
 import com.pennant.backend.service.finance.putcall.FinOptionService;
 import com.pennant.backend.service.loanquery.QueryDetailService;
@@ -299,6 +300,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	protected AccountingSetDAO accountingSetDAO;
 	protected SubventionService subventionService;
 	protected RestructureService restructureService;
+	private FeeTypeService feeTypeService;
 
 	public GenericFinanceDetailService() {
 		super();
@@ -1519,6 +1521,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		Map<String, Object> dataMap = aeEvent.getDataMap();
 		Map<String, Object> gstExecutionMap = null;
 
+		setFeesesForAccounting(aeEvent, fd);
+
 		if (PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID()) && auditHeader.getApiHeader() != null
 				&& FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
 			String custDftBranch = null;
@@ -1612,6 +1616,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 				if (!feesExecuted) {// No segregation of fees based on instruction
 					dataMap = prepareFeeRulesMap(tempAmountCodes, dataMap, fd);
+					setFeesesForAccounting(aeEvent, fd);
 				}
 
 				if (FinServiceEvent.ADDDISB.equals(fd.getModuleDefiner())) {
@@ -1775,6 +1780,25 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		doSave_PftDetails(pftDetail, isNew);
 		logger.debug("Leaving");
 		return auditHeader;
+	}
+
+	private void setFeesesForAccounting(AEEvent aeEvent, FinanceDetail financeDetail) {
+		logger.debug(Literal.ENTERING);
+
+		List<FeeType> feeTypesList = new ArrayList<>();
+		List<Long> feeTypeIds = new ArrayList<>();
+
+		List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
+		if (finFeeDetailList != null && !finFeeDetailList.isEmpty()) {
+			for (FinFeeDetail finFeeDetail : finFeeDetailList) {
+				feeTypeIds.add(finFeeDetail.getFeeTypeID());
+			}
+			if (!feeTypeIds.isEmpty()) {
+				feeTypesList = feeTypeService.getFeeTypeListByIds(feeTypeIds, "");
+				aeEvent.setFeesList(feeTypesList);
+			}
+		}
+		logger.debug(Literal.LEAVING);
 	}
 
 	private boolean setSubventionFeeToDataMap(String branchCode, FinanceDetail fd, FinanceMain financeMain,
@@ -3192,6 +3216,14 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 	public void setRestructureService(RestructureService restructureService) {
 		this.restructureService = restructureService;
+	}
+
+	public FeeTypeService getFeeTypeService() {
+		return feeTypeService;
+	}
+
+	public void setFeeTypeService(FeeTypeService feeTypeService) {
+		this.feeTypeService = feeTypeService;
 	}
 
 }

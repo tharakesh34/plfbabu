@@ -524,11 +524,8 @@
 
 	<!--============ Account Engine Rule Execution ============== -->
 	<bean name="engineExecution" class="com.pennant.app.util.AccountEngineExecution" scope="prototype">
-		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
-		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="customerDAO" ref="customerDAO" />
-		<property name="currencyDAO" ref="currencyDAO" />
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 	</bean>
 

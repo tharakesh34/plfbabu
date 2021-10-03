@@ -2222,12 +2222,12 @@ public class RepaymentProcessUtil {
 			rpyQueueHeader.setStageAccExecuted(isStageAccExecuted);
 
 			List<FinanceScheduleDetail> scheduleDetails = fsd.getFinanceScheduleDetails();
-			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinFeeDetails();
+			List<FinFeeDetail> finFeeDetailList = financeDetail.getFinScheduleData().getFinFeeDetailList();
 			FinanceProfitDetail profitDetail = fsd.getFinPftDeatil();
 			String eventCode = getEventCode(rch.getReceiptPurpose(), rch.getReceiptMode());
 
 			returnList = repayPostingUtil.postingProcess(fm, scheduleDetails, finFeeDetailList, profitDetail,
-					rpyQueueHeader, eventCode, rch.getValueDate(), postDate, rch.getPresentmentType());
+					rpyQueueHeader, eventCode, rch.getValueDate(), postDate, rch);
 
 		} catch (InterfaceException e) {
 			logger.error("Exception: ", e);
