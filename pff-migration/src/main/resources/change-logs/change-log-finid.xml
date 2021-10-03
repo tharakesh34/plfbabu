@@ -2763,8 +2763,8 @@
 			<column name="FinReference" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
-	<!-- <changeSet id="92.2" author="murthy.y"> <sql> <![CDATA[ Update finfeedetail_snapshot set FinID = (select m.FinID from 
-		FINID_MAPPING m where finfeedetail_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	 <changeSet id="92.2" author="murthy.y"> <sql> <![CDATA[ Update finfeedetail_snapshot set FinID = (select m.FinID from 
+		FINID_MAPPING m where finfeedetail_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="92.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_feedetail_snapshot_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finfeedetail_snapshot"
@@ -3037,8 +3037,8 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<!-- <changeSet id="101.2" author="murthy.y"> <sql> <![CDATA[ Update finoddetails_snapshot set FinID = (select m.FinID from 
-		FINID_MAPPING m where finoddetails_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="101.2" author="murthy.y"> <sql> <![CDATA[ Update finoddetails_snapshot set FinID = (select m.FinID from 
+		FINID_MAPPING m where finoddetails_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="101.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finoddetails_snap_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finoddetails_snapshot"
@@ -3137,8 +3137,8 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<!-- <changeSet id="105.2" author="murthy.y"> <sql> <![CDATA[ Update finpftdetails_snapshot set FinID = (select m.FinID 
-		from FINID_MAPPING m where finpftdetails_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="105.2" author="murthy.y"> <sql> <![CDATA[ Update finpftdetails_snapshot set FinID = (select m.FinID 
+		from FINID_MAPPING m where finpftdetails_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="105.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finpftdetails_snap_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finpftdetails_snapshot"
@@ -3282,8 +3282,8 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<!-- <changeSet id="110.2" author="murthy.y"> <sql> <![CDATA[ Update finrepayinstruction_log set FinID = (select m.FinID 
-		from FINID_MAPPING m where finrepayinstruction_log.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="110.2" author="murthy.y"> <sql> <![CDATA[ Update finrepayinstruction_log set FinID = (select m.FinID 
+		from FINID_MAPPING m where finrepayinstruction_log.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="110.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finrepayinstrion_log_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finrepayinstruction_log"
@@ -3301,8 +3301,8 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<!-- <changeSet id="111.2" author="murthy.y"> <sql> <![CDATA[ Update finscheduledetails_log set FinID = (select m.FinID 
-		from FINID_MAPPING m where finscheduledetails_log.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="111.2" author="murthy.y"> <sql> <![CDATA[ Update finscheduledetails_log set FinID = (select m.FinID 
+		from FINID_MAPPING m where finscheduledetails_log.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="111.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_scheduledetails_log_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finscheduledetails_log"
@@ -3841,8 +3841,8 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<!-- <changeSet id="130.2" author="murthy.y"> <sql> <![CDATA[ Update manualadvise_snapshot set FinID = (select m.FinID from 
-		FINID_MAPPING m where manualadvise_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="130.2" author="murthy.y"> <sql> <![CDATA[ Update manualadvise_snapshot set FinID = (select m.FinID from 
+		FINID_MAPPING m where manualadvise_snapshot.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="130.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_manualadvise_snap_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise_snapshot"
@@ -4139,8 +4139,8 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<!-- <changeSet id="141.2" author="murthy.y"> <sql> <![CDATA[ Update postings set FinID = (select m.FinID from FINID_MAPPING 
-		m where postings.FinReference = m.FinReference); ]]> </sql> </changeSet> -->
+	<changeSet id="141.2" author="murthy.y"> <sql> <![CDATA[ Update postings set FinID = (select m.FinID from FINID_MAPPING 
+		m where postings.FinReference = m.FinReference); ]]> </sql> </changeSet>
 	<changeSet id="141.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_postings_finid" referencedTableName="FinanceMain"
 			baseColumnNames="FinID" baseTableName="postings" referencedColumnNames="FinID" />

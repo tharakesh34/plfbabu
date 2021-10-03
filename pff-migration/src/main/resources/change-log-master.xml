@@ -26,9 +26,9 @@
 	<include file="change-logs/change-log-account-updater.xml"/>
 	<include file="change-logs/change-log-islamic_code_removal.xml" />
 	<include file="change-logs/change-log-db-based-scheduler.xml" />
+	<include file="change-logs/change-log-single_fee_accounting.xml" />
 	<include file="change-logs/change-log-finid.xml" />
 	<include file="change-logs/change-log-finid_views.xml" />
-	<include file="change-logs/change-log-single_fee_accounting.xml" />
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
 	<include file="change-logs/change-log-indexes.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
