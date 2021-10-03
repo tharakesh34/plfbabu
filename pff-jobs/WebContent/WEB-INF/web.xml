@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+
+	<display-name>pennApps Lending Factory</display-name>
+	<description>pennApps Lending Factory</description>
+
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+				classpath:applicationContext-txn.xml,
+				classpath:applicationContext-db.xml,
+				classpath:applicationContext-jdbc.xml,
+				classpath:applicationContext-daos.xml,
+ 				classpath:interfaceContext-core.xml,
+ 				classpath:interfaceContext.xml,
+ 				classpath:extensionContext.xml,
+ 				classpath:applicationContext-jobs.xml,
+				classpath:applicationContext-api.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_ID</param-name>
+		<param-value>1</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_CODE</param-name>
+		<param-value>PFF</param-value>
+	</context-param>
+	<context-param>
+		<param-name>APP_TYPE</param-name>
+		<param-value>JOBS</param-value>
+	</context-param>
+	<context-param>
+		<param-name>isLog4jAutoInitializationDisabled</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<listener>
+		<display-name>Application startup</display-name>
+		<listener-class>com.pennanttech.pennapps.web.ApplicationStartup</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>cxf</servlet-name>
+		<servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>cxf</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+
+</web-app>

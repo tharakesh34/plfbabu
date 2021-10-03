@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:cxf="http://cxf.apache.org/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://cxf.apache.org/core 
+	http://cxf.apache.org/schemas/core.xsd  
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+	http://cxf.apache.org/jaxws 
+	http://cxf.apache.org/schemas/jaxws.xsd
+	http://cxf.apache.org/jaxrs 
+	http://cxf.apache.org/schemas/jaxrs.xsd
+    http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:component-scan base-package="com.pennanttech.pennapps.core.job" />
+	
+	<context:annotation-config />
+	
+	<!-- these are included in the dependency jar -->
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<bean id="jobMonitorWebService" class="com.pennanttech.pennapps.web.job.api.JobMonitorWebServiceImpl">
+		<property name="jobScheduler" ref="jobScheduler" />
+		<property name="jobDataAccess" ref="jobDataAccess" />
+	</bean>
+	
+	<bean id="jacksonMapper" class="com.pennant.app.util.CustomObjectMapper" />
+	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider">
+		<property name="mapper">
+			<ref bean="jacksonMapper" />
+		</property>
+	</bean>
+
+	<jaxrs:server id="restContainer" address="/jobMonitorService">
+		<jaxrs:serviceBeans>
+			<ref bean="jobMonitorWebService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<ref bean="jsonProvider" />
+		</jaxrs:providers>
+	</jaxrs:server>
+
+</beans>

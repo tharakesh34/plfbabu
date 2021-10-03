@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+	<import resource="classpath:applicationContext-jdbc.xml" />
+
+	<bean id="jobDataAccess" class="com.pennanttech.pennapps.core.job.JobDataAccess" parent="basicDao" />
+
+	<bean id="jobScheduler" class="com.pennanttech.pff.scheduler.jobs.PFFJobScheduler" init-method="start"
+		depends-on="sysParamUtil">
+		<property name="jobDataAccess" ref="jobDataAccess" />
+		<property name="accountUpdater" ref="accountUpdater" />
+		<property name="smsEngine" ref="smsEngine" />
+		<property name="emailEngine" ref="emailEngine" />
+		<property name="disbursementRequestService" ref="disbursementRequestService" />
+		<property name="defaultGstInvoiceGenerator" ref="defaultGstInvoiceGenerator" />
+		<property name="invokeSysNotifications" ref="invokeSysNotifications" />
+		<property name="processSystemNotifications" ref="processSystemNotifications" />
+		<property name="receiptUploadHeaderService" ref="receiptUploadHeaderService" />
+		<property name="covenantAlerts" ref="covenantAlerts" />
+		<property name="putCallAlerts" ref="putCallAlerts" />
+		<property name="lmsServiceLogAlerts" ref="lmsServiceLogAlerts" />
+		<property name="securityUserDAO" ref="securityUserDAO" />
+		<property name="cashBackDBDProcess" ref="cashBackDBDProcess" />
+		<property name="dMSService" ref="dMSService" />
+		<property name="externalInterfaceService" ref="externalInterfaceService" />
+		<property name="defaultMandateProcess" ref="defaultMandateProcess" />
+		<property name="presentmentJobService" ref="presentmentJobService" />
+		<property name="extractCustomerData" ref="extractCustomerData" />
+		<property name="eodService" ref="eodService" />
+		<property name="nonLanReceiptService" ref="nonLanReceiptService" />
+	</bean>
+
+	<bean id="jobMonitorServer" class="com.pennanttech.pennapps.core.job.monitor.JobJmxClient"
+		init-method="startServer">
+		<property name="jobDataAccess" ref="jobDataAccess" />
+	</bean>
+	
+	<bean id="systemParameterService" class="com.pennant.backend.service.smtmasters.impl.PFSParameterServiceImpl">
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+	</bean>
+	<bean name="globalVariableService"
+		class="com.pennant.backend.service.finance.globalvariable.GlobalVariableServiceImpl">
+		<property name="pFSParameterDAO" ref="pFSParameterDAO" />
+	</bean>
+
+	<bean id="sysParamUtil" class="com.pennant.app.util.SysParamUtil">
+		<property name="systemParameterService" ref="systemParameterService" />
+		<property name="globalVariableService" ref="globalVariableService" />
+	</bean>
+	<bean id="pFSParameterDAO" class="com.pennant.backend.dao.smtmasters.impl.PFSParameterDAOImpl" parent="basicDao" />
+</beans>
