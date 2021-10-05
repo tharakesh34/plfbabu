@@ -56,8 +56,6 @@ import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
-import org.zkoss.zul.Listcell;
-import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -88,8 +86,6 @@ import com.pennant.backend.model.dashboard.ChartDetail;
 import com.pennant.backend.model.dashboard.DashboardConfiguration;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
-import com.pennant.backend.model.finance.FinContributorDetail;
-import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -115,7 +111,6 @@ import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.component.Uppercasebox;
@@ -146,7 +141,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Groupbox gb_repaymentDetails;
 	protected Tab financeTypeDetailsTab;
 	protected Tab repayGraphTab;
-	protected Tab riaDetailsTab;
 	protected Tabpanels tabpanelsBoxIndexCenter;
 	protected Tabs tabsIndexCenter;
 	protected Tab disburseDetailsTab;
@@ -345,22 +339,8 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox profitDaysBasis_graph;
 	protected Textbox finBranch_graph;
 	protected Textbox custCIF_graph;
-	protected Intbox minContributors;
-	protected Intbox maxContributors;
-	protected Decimalbox minContributionAmt;
-	protected Decimalbox maxContributionAmt;
-	protected Intbox curContributors;
-	protected Decimalbox curContributionAmt;
-	protected Decimalbox curBankInvest;
-	protected Decimalbox avgMudaribRate;
-	protected Checkbox alwContributorsToLeave;
-	protected Checkbox alwContributorsToJoin;
-	protected Listbox listBoxFinContributor;
-	protected BigDecimal curContributionCalAmt = null;
 	// not auto wired variables
 	private FinScheduleData finScheduleData; // over handed per parameters
-	private FinContributorHeader finContributorHeader; // over handed per
-														// parameters
 	private FinanceDetail financeDetail;
 	private CommitmentService commitmentService;
 
@@ -424,8 +404,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Label disb_maturityDate;
 
 	protected Listbox listBoxDisbursementDetail;
-	protected Listbox listBoxContributorDetails;
-
 	private FinanceSummary finSummary;
 
 	protected Label label_migrated;
@@ -615,14 +593,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				setFinScheduleData(null);
 			}
 
-			if (arguments.containsKey("contributorHeader")) {
-				setFinContributorHeader((FinContributorHeader) arguments.get("contributorHeader"));
-			} else {
-				setFinContributorHeader(null);
-			}
-
-			setFinContributorHeader(null);
-
 			if (arguments.containsKey("financeSummary")) {
 				this.finSummary = (FinanceSummary) arguments.get("financeSummary");
 			} else {
@@ -736,20 +706,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.priDueForPayment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.pftDueForPayment.setMaxlength(18);
 			this.pftDueForPayment.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.minContributors.setMaxlength(4);
-			this.maxContributors.setMaxlength(4);
-			this.minContributionAmt.setMaxlength(18);
-			this.minContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.maxContributionAmt.setMaxlength(18);
-			this.maxContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.curContributors.setMaxlength(4);
-			this.curContributionAmt.setMaxlength(18);
-			this.curContributionAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.curBankInvest.setMaxlength(18);
-			this.curBankInvest.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
-			this.avgMudaribRate.setMaxlength(13);
-			this.avgMudaribRate.setScale(9);
-			this.avgMudaribRate.setFormat(PennantConstants.rateFormate9);
 			this.finODTotPenaltyAmt.setMaxlength(18);
 			this.finODTotPenaltyAmt.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 			this.finODTotWaived.setMaxlength(18);
@@ -1344,27 +1300,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.utilizedAmt.setValue(PennantAppUtil.formateAmount(financeSummary.getUtilizedAmt(), formatter));
 			this.availableAmt.setValue(PennantAppUtil.formateAmount(
 					aFinanceMain.getFinAssetValue().subtract(financeSummary.getUnPaidPrincipal()), formatter));
-		}
-
-		// Contributor Header Details
-		if (getFinContributorHeader() != null) {
-			this.minContributors.setValue(finContributorHeader.getMinContributors());
-			this.maxContributors.setValue(finContributorHeader.getMaxContributors());
-			this.minContributionAmt
-					.setValue(PennantAppUtil.formateAmount(finContributorHeader.getMinContributionAmt(), formatter));
-			this.maxContributionAmt
-					.setValue(PennantAppUtil.formateAmount(finContributorHeader.getMaxContributionAmt(), formatter));
-			this.curContributors.setValue(finContributorHeader.getCurContributors());
-			this.curContributionAmt
-					.setValue(PennantAppUtil.formateAmount(finContributorHeader.getCurContributionAmt(), formatter));
-			this.curBankInvest
-					.setValue(PennantAppUtil.formateAmount(finContributorHeader.getCurBankInvestment(), formatter));
-			this.avgMudaribRate.setValue(finContributorHeader.getAvgMudaribRate());
-			this.alwContributorsToLeave.setChecked(finContributorHeader.isAlwContributorsToLeave());
-			this.alwContributorsToJoin.setChecked(finContributorHeader.isAlwContributorsToJoin());
-			contributionCalculations(finContributorHeader.getContributorDetailList(), false);
-		} else {
-			this.riaDetailsTab.setVisible(false);
 		}
 
 		this.disburseDetailsTab.setVisible(false);
@@ -2051,167 +1986,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	/**
-	 * Method for calculations of Contribution Details Amount , Mudarib rate and Total Investments
-	 * 
-	 * @param contributorDetails
-	 */
-	private void contributionCalculations(List<FinContributorDetail> contributorDetails, boolean doCalculations) {
-		logger.debug("Entering");
-		this.listBoxFinContributor.getItems().clear();
-
-		addBankShareOrTotal(true, calcBankShare(contributorDetails));
-
-		if (contributorDetails != null && contributorDetails.size() > 0) {
-			Listitem item = null;
-			Listcell lc = null;
-			curContributionCalAmt = BigDecimal.ZERO;
-
-			int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
-
-			BigDecimal finAmt = PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter);
-			for (FinContributorDetail detail : contributorDetails) {
-				item = new Listitem();
-				lc = new Listcell(detail.getLovDescContributorCIF() + " - " + detail.getContributorName());
-				lc.setParent(item);
-				lc = new Listcell(PennantAppUtil.amountFormate(detail.getContributorInvest(), formatter));
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.formatAccountNumber(detail.getInvestAccount()));
-				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(detail.getInvestDate()));
-				lc.setParent(item);
-				lc = new Listcell(DateUtility.formatToLongDate(detail.getRecordDate()));
-				lc.setParent(item);
-				BigDecimal ttlInvestPerc = (detail.getContributorInvest().divide(finAmt, 9, RoundingMode.HALF_DOWN))
-						.multiply(new BigDecimal(100));
-				detail.setTotalInvestPerc(ttlInvestPerc);
-				lc = new Listcell(PennantApplicationUtil.formatRate(ttlInvestPerc.doubleValue(), 2) + " %");
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(PennantApplicationUtil.formatRate(detail.getMudaribPerc().doubleValue(), 2) + " %");
-				lc.setStyle("text-align:right;");
-				lc.setParent(item);
-				lc = new Listcell(detail.getRecordStatus());
-				lc.setParent(item);
-				lc = new Listcell(PennantJavaUtil.getLabel(detail.getRecordType()));
-				lc.setParent(item);
-				item.setAttribute("data", detail);
-				ComponentsCtrl.applyForward(item, "onDoubleClick=onFinContributorItemDoubleClicked");
-				this.listBoxFinContributor.appendChild(item);
-			}
-			curContributionCalAmt = PennantAppUtil.unFormateAmount(this.curContributionAmt.getValue(), formatter);
-		}
-
-		// Adding Totals for Total List
-		addBankShareOrTotal(false, PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter));
-
-		logger.debug("Leaving");
-	}
-
-	private void addBankShareOrTotal(boolean isBankShare, BigDecimal contribution) {
-		Listitem item = new Listitem();
-
-		String label = Labels.getLabel("label_TotalContribution");
-		String sClass = "font-weight:bold;";
-		String mudaribPer = "";
-
-		String rcdDate = "";
-		if (isBankShare) {
-			label = SysParamUtil.getValueAsString("BANK_NAME");
-			sClass = "";
-			rcdDate = DateUtility.getAppDate(DateFormat.LONG_DATE);
-			mudaribPer = "0.00%";
-		} else {
-			item.setStyle("background-color: #C0EBDF;");
-		}
-
-		Listcell lc = new Listcell(label);
-		lc.setStyle(sClass);
-		lc.setParent(item);
-
-		lc = new Listcell(PennantAppUtil.amountFormate(contribution, formatter));
-		lc.setStyle(sClass + "text-align:right;");
-		lc.setParent(item);
-
-		lc = new Listcell();
-		lc.setParent(item);
-
-		lc = new Listcell();
-		lc.setParent(item);
-
-		lc = new Listcell(rcdDate);
-		lc.setParent(item);
-
-		BigDecimal finAmt = PennantAppUtil
-				.unFormateAmount(this.finAmount.getValue().subtract(this.totalDownPayment.getValue()), formatter);
-		BigDecimal ttlInvestPerc = (contribution.divide(finAmt, 9, RoundingMode.HALF_DOWN))
-				.multiply(new BigDecimal(100));
-		lc = new Listcell(PennantApplicationUtil.formatRate(ttlInvestPerc.doubleValue(), 2) + " %");
-		lc.setStyle(sClass + "text-align:right;");
-		lc.setParent(item);
-
-		lc = new Listcell(mudaribPer);
-		lc.setStyle("text-align:right;");
-		lc.setParent(item);
-
-		lc = new Listcell();
-		lc.setParent(item);
-
-		lc = new Listcell();
-		lc.setParent(item);
-		this.listBoxFinContributor.appendChild(item);
-	}
-
-	private BigDecimal calcBankShare(List<FinContributorDetail> contributorDetails) {
-
-		BigDecimal totContrInvst = BigDecimal.ZERO;
-
-		if (contributorDetails != null && contributorDetails.size() > 0) {
-			for (FinContributorDetail detail : contributorDetails) {
-				totContrInvst = totContrInvst.add(detail.getContributorInvest());
-			}
-		}
-
-		BigDecimal finAmt = PennantAppUtil
-				.unFormateAmount(this.finAmount.getValue().subtract(this.totalDownPayment.getValue()), formatter);
-		return finAmt.subtract(totContrInvst);
-	}
-
-	public void onFinContributorItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering");
-		// get the selected invoiceHeader object
-		final Listitem item = this.listBoxFinContributor.getSelectedItem();
-		if (item != null) {
-			// CAST AND STORE THE SELECTED OBJECT
-			final FinContributorDetail finContributorDetail = (FinContributorDetail) item.getAttribute("data");
-			if (finContributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				MessageUtil.showError("Not Allowed to maintain This Record");
-			} else {
-				int formatter = CurrencyUtil.getFormat(getFinScheduleData().getFinanceMain().getFinCcy());
-
-				final Map<String, Object> map = new HashMap<String, Object>();
-				map.put("finContributorDetail", finContributorDetail);
-				map.put("formatter", formatter);
-				map.put("moduleType", "");
-				map.put("finCcy", this.finCcy.getValue());
-				map.put("finAmount", PennantAppUtil.unFormateAmount(this.finAmount.getValue(), formatter));
-				BigDecimal maxAmt = PennantAppUtil.unFormateAmount(this.maxContributionAmt.getValue(), formatter);
-				map.put("balInvestAmount",
-						maxAmt.subtract(curContributionCalAmt).add(finContributorDetail.getContributorInvest()));
-				// call the zul-file with the parameters packed in a map
-				try {
-					Executions.createComponents(
-							"/WEB-INF/pages/Finance/FinanceContributor/FinContributorDetailDialog.zul",
-							window_FinanceEnquiryDialog, map);
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
-			}
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
 	 * Opens the Dialog window modal.
 	 * 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
@@ -2303,18 +2077,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.oDChargeAmtOrPerc.setReadonly(true);
 		this.oDAllowWaiver.setDisabled(true);
 		this.oDMaxWaiverPerc.setReadonly(true);
-
-		// Contribution Details
-		this.minContributors.setReadonly(true);
-		this.maxContributors.setReadonly(true);
-		this.minContributionAmt.setDisabled(true);
-		this.maxContributionAmt.setDisabled(true);
-		this.curContributors.setReadonly(true);
-		this.curContributionAmt.setDisabled(true);
-		this.curBankInvest.setDisabled(true);
-		this.avgMudaribRate.setDisabled(true);
-		this.alwContributorsToLeave.setDisabled(true);
-		this.alwContributorsToJoin.setDisabled(true);
 
 		this.applicationNo.setReadonly(true);
 		this.referralId.setReadonly(true);
@@ -2622,14 +2384,6 @@ public class FinanceEnquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
-	}
-
-	public void setFinContributorHeader(FinContributorHeader finContributorHeader) {
-		this.finContributorHeader = finContributorHeader;
-	}
-
-	public FinContributorHeader getFinContributorHeader() {
-		return finContributorHeader;
 	}
 
 	public CustomerService getCustomerService() {

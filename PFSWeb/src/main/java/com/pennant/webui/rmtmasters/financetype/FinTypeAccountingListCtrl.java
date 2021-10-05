@@ -80,7 +80,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 	protected boolean isOverdraft = false;
 	protected boolean consumerDurable = false;
 	private boolean isCompReadonly = false;
-	private boolean allowRIAInvestment = false;
 	private boolean validate = false;
 
 	private Object mainController;
@@ -127,10 +126,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 
 			if (arguments.containsKey("moduleId")) {
 				moduleId = (int) arguments.get("moduleId");
-			}
-
-			if (arguments.containsKey("allowRIAInvestment")) {
-				this.allowRIAInvestment = (boolean) arguments.get("allowRIAInvestment");
 			}
 
 			if (arguments.containsKey("mainController")) {
@@ -431,7 +426,7 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		extendedCombobox.setTextBoxWidth(80);
 		Filter[] filters = new Filter[2];
 		filters[0] = new Filter("EventCode", eventCode, Filter.OP_EQUAL);
-		filters[1] = new Filter("EntryByInvestment", this.allowRIAInvestment ? 1 : 0, Filter.OP_EQUAL);
+		filters[1] = new Filter("EntryByInvestment", 0, Filter.OP_EQUAL);
 		extendedCombobox.setFilters(filters);
 		return extendedCombobox;
 	}
@@ -552,18 +547,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 		return finTypeAccList;
 	}
 
-	public void setRIAAccountingProps(String eventCode, boolean allowRIAInvestment) {
-		if (this.listBoxAccountingDetails.getFellowIfAny(eventCode) != null) {
-			Filter[] filters = new Filter[2];
-			filters[0] = new Filter("EventCode", eventCode, Filter.OP_EQUAL);
-			filters[1] = new Filter("EntryByInvestment", allowRIAInvestment ? 1 : 0, Filter.OP_EQUAL);
-			ExtendedCombobox extCombobox = (ExtendedCombobox) this.listBoxAccountingDetails.getFellowIfAny(eventCode);
-			extCombobox.setValue("", "");
-			extCombobox.setObject("");
-			extCombobox.setFilters(filters);
-		}
-	}
-
 	public List<FinTypeAccounting> getFinTypeAccountingList() {
 		return finTypeAccountingList;
 	}
@@ -578,14 +561,6 @@ public class FinTypeAccountingListCtrl extends GFCBaseCtrl<FinTypeAccounting> {
 
 	public void setMainController(Object mainController) {
 		this.mainController = mainController;
-	}
-
-	public boolean isAllowRIAInvestment() {
-		return allowRIAInvestment;
-	}
-
-	public void setAllowRIAInvestment(boolean allowRIAInvestment) {
-		this.allowRIAInvestment = allowRIAInvestment;
 	}
 
 	public boolean isValidate() {

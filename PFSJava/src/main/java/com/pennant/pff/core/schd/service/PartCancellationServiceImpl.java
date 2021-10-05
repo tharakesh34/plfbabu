@@ -193,7 +193,6 @@ public class PartCancellationServiceImpl extends GenericService<FinServiceInstru
 		finScheduleData.setFinODPenaltyRate(null);
 		finScheduleData.setFeeRules(new ArrayList<FeeRule>());
 
-		aFinanceDetail.setFinContributorHeader(null);
 		aFinanceDetail.setTatDetail(null);
 		aFinanceDetail.setFinanceCheckList(new ArrayList<FinanceCheckListReference>(1));
 		aFinanceDetail.setCheckList(new ArrayList<FinanceReferenceDetail>(1));

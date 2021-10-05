@@ -77,7 +77,6 @@ import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.expenses.FinExpenseDetails;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.CreditReviewDetails;
-import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -406,15 +405,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					getFinanceDetailService().getFinAssetTypesByFinRef(this.finReference, "_TView"));
 			financeDetail.setFinScheduleData(finScheduleData);
 			if (finScheduleData.getFinanceMain() != null) {
-				FinContributorHeader contributorHeader = getFinanceDetailService()
-						.getFinContributorHeaderById(this.finReference);
 				financeSummary = getFinanceDetailService().getFinanceProfitDetails(this.finID);
 				map.put("financeSummary", financeSummary);
 
 				finScheduleData.getFinanceMain().setLovDescProductCodeName(enquiry.getLovDescProductCodeName());
 				map.put("finScheduleData", finScheduleData);
 				map.put("financeDetail", financeDetail);
-				map.put("contributorHeader", contributorHeader);
 				map.put("fromApproved", fromApproved);
 				path = "/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceDetailEnquiryDialog.zul";
 			}

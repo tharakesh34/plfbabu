@@ -80,8 +80,6 @@ import com.pennant.backend.dao.configuration.VASRecordingDAO;
 import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.finance.CreditReviewDetailDAO;
 import com.pennant.backend.dao.finance.ExtendedFieldMaintenanceDAO;
-import com.pennant.backend.dao.finance.FinContributorDetailDAO;
-import com.pennant.backend.dao.finance.FinContributorHeaderDAO;
 import com.pennant.backend.dao.finance.FinExpenseDetailsDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
 import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
@@ -148,8 +146,6 @@ import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinAssetTypes;
-import com.pennant.backend.model.finance.FinContributorDetail;
-import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinFeeConfig;
@@ -323,8 +319,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	private CustomerIncomeDAO customerIncomeDAO;
 	private IncomeTypeDAO incomeTypeDAO;
-	private FinContributorHeaderDAO finContributorHeaderDAO;
-	private FinContributorDetailDAO finContributorDetailDAO;
 	private FinanceReferenceDetailDAO financeReferenceDetailDAO;
 	private RuleDAO ruleDAO;
 	private AccountTypeDAO accountTypeDAO;
@@ -1277,16 +1271,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			if (StringUtils.equals(procEdtEvent, FinServiceEvent.ORG)) {
-				// Finance Contributor Details
-				if (financeType.isAllowRIAInvestment()) {
-					fd.setFinContributorHeader(
-							getFinContributorHeaderDAO().getFinContributorHeaderById(finReference, "_View"));
-					if (fd.getFinContributorHeader() != null) {
-						fd.getFinContributorHeader().setContributorDetailList(
-								getFinContributorDetailDAO().getFinContributorDetailByFinRef(finReference, "_View"));
-					}
-				}
-
 				// Advance Payment Details
 				fd.setAdvancePaymentsList(finAdvancePaymentsService.getFinAdvancePaymentsById(finID, "_View"));
 
@@ -2102,31 +2086,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		// Save Contributor Header Details
 		// =======================================
 		String auditTranType = auditHeader.getAuditTranType();
-		if (fd.getFinContributorHeader() != null) {
-
-			FinContributorHeader contributorHeader = fd.getFinContributorHeader();
-			contributorHeader.setWorkflowId(0);
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader());
-			if (contributorHeader.isNewRecord()) {
-				getFinContributorHeaderDAO().save(contributorHeader, table);
-			} else {
-				getFinContributorHeaderDAO().update(contributorHeader, table);
-			}
-
-			auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1],
-					fd.getFinContributorHeader().getBefImage(), fd.getFinContributorHeader()));
-
-			if (contributorHeader.getContributorDetailList() != null
-					&& contributorHeader.getContributorDetailList().size() > 0) {
-				List<AuditDetail> details = fd.getAuditDetailMap().get("Contributor");
-				details = processingContributorList(details, table, contributorHeader.getFinReference());
-				auditDetails.addAll(details);
-			}
-		}
-
 		// Save Cheque Header Details
 		// =======================================
 		if (fd.getChequeHeader() != null) {
@@ -3887,7 +3848,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				doDeleteAddlFieldDetails(fd, "");
 				auditDetails.addAll(jointGuarantorDeletion(fd, "", tranType));
 				auditDetails.addAll(checkListDetailService.delete(fd, "", auditTranType));
-				auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(fd, "", auditTranType)));
 			}
 		} else {
 			roleCode = fm.getRoleCode();
@@ -4053,26 +4013,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				 * !financeDetail.getFinFlagsDetails().isEmpty()) { finFlagDetailsDAO.savefinFlagList(financeDetail.
 				 * getFinFlagsDetails(), ""); }
 				 */
-
-				// Save Contributor Header Details
-				// =======================================
-				if (fd.getFinContributorHeader() != null) {
-
-					FinContributorHeader contributorHeader = fd.getFinContributorHeader();
-					String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader());
-					getFinContributorHeaderDAO().save(contributorHeader, "");
-					auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1],
-							fd.getFinContributorHeader().getBefImage(), fd.getFinContributorHeader()));
-
-					// Save Contributor Header Details
-					// =======================================
-					if (contributorHeader.getContributorDetailList() != null
-							&& contributorHeader.getContributorDetailList().size() > 0) {
-						List<AuditDetail> details = fd.getAuditDetailMap().get("Contributor");
-						details = processingContributorList(details, "", contributorHeader.getFinReference());
-						auditDetails.addAll(details);
-					}
-				}
 
 				// Vas Recording Details
 				if (schdData.getVasRecordingList() != null && !schdData.getVasRecordingList().isEmpty()) {
@@ -4587,7 +4527,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 				auditDetailList.addAll(checkListDetailService.delete(fd, "_Temp", auditTranType));
-				auditDetailList.addAll(getListAuditDetails(listDeletion_FinContributor(fd, "_Temp", auditTranType)));
 				if (payments != null) {
 					auditDetailList.addAll(finAdvancePaymentsService.delete(payments, "_Temp", auditTranType));
 				}
@@ -5462,7 +5401,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				doDeleteAddlFieldDetails(fd, "");
 				auditDetails.addAll(jointGuarantorDeletion(fd, "", tranType));
 				auditDetails.addAll(checkListDetailService.delete(fd, "", auditTranType));
-				auditDetails.addAll(getListAuditDetails(listDeletion_FinContributor(fd, "", auditTranType)));
 			}
 
 		} else {
@@ -5494,28 +5432,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				// Fee Charge Details
 				// =======================================
 				saveFeeChargeList(schdData, moduleDefiner, isWIF, preApprovalTableType);
-
-				// Save Contributor Header Details
-				// =======================================
-				if (fd.getFinContributorHeader() != null) {
-
-					FinContributorHeader contributorHeader = fd.getFinContributorHeader();
-					String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader());
-					getFinContributorHeaderDAO().save(contributorHeader, preApprovalTableType);
-					auditDetails.add(new AuditDetail(auditTranType, 1, fields[0], fields[1],
-							fd.getFinContributorHeader().getBefImage(), fd.getFinContributorHeader()));
-
-					// Save Contributor Header Details
-					// =======================================
-					if (contributorHeader.getContributorDetailList() != null
-							&& contributorHeader.getContributorDetailList().size() > 0) {
-						List<AuditDetail> details = fd.getAuditDetailMap().get("Contributor");
-						details = processingContributorList(details, preApprovalTableType,
-								contributorHeader.getFinReference());
-						auditDetails.addAll(details);
-					}
-				}
-
 			} else {
 
 				tranType = PennantConstants.TRAN_UPD;
@@ -5700,7 +5616,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 				auditDetailList.addAll(checkListDetailService.delete(fd, "_Temp", auditTranType));
-				auditDetailList.addAll(getListAuditDetails(listDeletion_FinContributor(fd, "_Temp", auditTranType)));
 
 				if (fd.getAdvancePaymentsList() != null) {
 					auditDetails.addAll(
@@ -6238,8 +6153,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			auditDetails.addAll(jointGuarantorDeletion(fd, "_Temp", auditHeader.getAuditTranType()));
 			auditDetails.addAll(checkListDetailService.delete(fd, "_Temp", auditHeader.getAuditTranType()));
-			auditDetails.addAll(
-					getListAuditDetails(listDeletion_FinContributor(fd, "_Temp", auditHeader.getAuditTranType())));
 			if (fd.getAdvancePaymentsList() != null) {
 				auditDetails.addAll(finAdvancePaymentsService.delete(fd.getAdvancePaymentsList(), "_Temp",
 						auditHeader.getAuditTranType()));
@@ -7396,17 +7309,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		if (!financeDetail.isExtSource()) {
-
-			// Finance Contribution Details
-			// =======================================
-			if (financeDetail.getFinContributorHeader() != null
-					&& financeDetail.getFinContributorHeader().getContributorDetailList() != null
-					&& financeDetail.getFinContributorHeader().getContributorDetailList().size() > 0) {
-				auditDetailMap.put("Contributor",
-						setContributorAuditData(financeDetail.getFinContributorHeader(), auditTranType, method));
-				auditDetails.addAll(auditDetailMap.get("Contributor"));
-			}
-
 			// Finance Document Details
 			// =======================================
 			if (financeDetail.getDocumentDetailsList() != null && financeDetail.getDocumentDetailsList().size() > 0) {
@@ -7937,44 +7839,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	/**
-	 * Method for Deletion of Contributor Details
-	 * 
-	 * @param finDetail
-	 * @param tableType
-	 * @param auditTranType
-	 * @return
-	 */
-	private List<AuditDetail> listDeletion_FinContributor(FinanceDetail finDetail, String tableType,
-			String auditTranType) {
-		logger.debug("Entering ");
-
-		List<AuditDetail> auditList = new ArrayList<AuditDetail>();
-		if (finDetail.getFinContributorHeader() != null) {
-			String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorHeader(), "");
-			FinContributorHeader contributorHeader = finDetail.getFinContributorHeader();
-			auditList.add(new AuditDetail(auditTranType, 1, fields[0], fields[1], contributorHeader.getBefImage(),
-					contributorHeader));
-
-			getFinContributorHeaderDAO().delete(contributorHeader.getFinReference(), tableType);
-
-			String[] fields1 = PennantJavaUtil.getFieldDetails(new FinContributorDetail(), "");
-			if (contributorHeader.getContributorDetailList() != null
-					&& contributorHeader.getContributorDetailList().size() > 0) {
-
-				for (int i = 0; i < contributorHeader.getContributorDetailList().size(); i++) {
-					FinContributorDetail contributorDetail = contributorHeader.getContributorDetailList().get(i);
-					auditList.add(new AuditDetail(auditTranType, i + 1, fields1[0], fields1[1],
-							contributorDetail.getBefImage(), contributorDetail));
-				}
-				getFinContributorDetailDAO().deleteByFinRef(
-						contributorHeader.getContributorDetailList().get(0).getFinReference(), tableType);
-			}
-		}
-		logger.debug("Leaving ");
-		return auditList;
-	}
-
-	/**
 	 * Method to get Schedule related data.
 	 * 
 	 * @param finReference (String)
@@ -8195,20 +8059,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		return financeMainDAO.getFinanceProfitDetails(finID);
 	}
 
-	/**
-	 * Method for getting Finance Contributor Header Details
-	 */
-	public FinContributorHeader getFinContributorHeaderById(String finReference) {
-		logger.debug(Literal.ENTERING);
-		FinContributorHeader header = getFinContributorHeaderDAO().getFinContributorHeaderById(finReference, "_AView");
-		if (header != null) {
-			header.setContributorDetailList(
-					getFinContributorDetailDAO().getFinContributorDetailByFinRef(finReference, "_AView"));
-		}
-		logger.debug(Literal.LEAVING);
-		return header;
-	}
-
 	@Override
 	public List<ReturnDataSet> getPostingsByFinRefAndEvent(String finReference, String finEvent, boolean showZeroBal,
 			String postingGroupBy, String type) {
@@ -8332,105 +8182,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			amount = amount.multiply(aCurrency.getCcySpotRate());
 		}
 		return amount;
-	}
-
-	/**
-	 * Method For Preparing List of AuditDetails for Contributor Details
-	 * 
-	 * @param auditDetails
-	 * @param type
-	 * @param custId
-	 * @return
-	 */
-	private List<AuditDetail> processingContributorList(List<AuditDetail> auditDetails, String type,
-			String finReference) {
-		logger.debug(Literal.ENTERING);
-
-		boolean saveRecord = false;
-		boolean updateRecord = false;
-		boolean deleteRecord = false;
-		boolean approveRec = false;
-
-		for (int i = 0; i < auditDetails.size(); i++) {
-
-			FinContributorDetail contributorDetail = (FinContributorDetail) auditDetails.get(i).getModelData();
-			saveRecord = false;
-			updateRecord = false;
-			deleteRecord = false;
-			approveRec = false;
-			String rcdType = "";
-			String recordStatus = "";
-
-			if (StringUtils.isEmpty(type)) {
-				approveRec = true;
-				contributorDetail.setRoleCode("");
-				contributorDetail.setNextRoleCode("");
-				contributorDetail.setTaskId("");
-				contributorDetail.setNextTaskId("");
-			}
-
-			contributorDetail.setWorkflowId(0);
-
-			if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-				deleteRecord = true;
-			} else if (contributorDetail.isNewRecord()) {
-				saveRecord = true;
-				if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-					contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-
-			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-				if (approveRec) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_UPD)) {
-				updateRecord = true;
-			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)) {
-				if (approveRec) {
-					deleteRecord = true;
-				} else if (contributorDetail.isNewRecord()) {
-					saveRecord = true;
-				} else {
-					updateRecord = true;
-				}
-			}
-			if (approveRec) {
-				rcdType = contributorDetail.getRecordType();
-				recordStatus = contributorDetail.getRecordStatus();
-				contributorDetail.setRecordType("");
-				contributorDetail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-			}
-			if (saveRecord) {
-				if (StringUtils.isBlank(contributorDetail.getFinReference())) {
-					contributorDetail.setFinReference(finReference);
-				}
-				finContributorDetailDAO.save(contributorDetail, type);
-			}
-
-			if (updateRecord) {
-				finContributorDetailDAO.update(contributorDetail, type);
-			}
-
-			if (deleteRecord) {
-				finContributorDetailDAO.delete(contributorDetail, type);
-			}
-
-			if (approveRec) {
-				contributorDetail.setRecordType(rcdType);
-				contributorDetail.setRecordStatus(recordStatus);
-			}
-			auditDetails.get(i).setModelData(contributorDetail);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return auditDetails;
-
 	}
 
 	@Override
@@ -9530,22 +9281,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setAccountTypeDAO(AccountTypeDAO accountTypeDAO) {
 		this.accountTypeDAO = accountTypeDAO;
-	}
-
-	public void setFinContributorHeaderDAO(FinContributorHeaderDAO finContributorHeaderDAO) {
-		this.finContributorHeaderDAO = finContributorHeaderDAO;
-	}
-
-	public FinContributorHeaderDAO getFinContributorHeaderDAO() {
-		return finContributorHeaderDAO;
-	}
-
-	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
-		this.finContributorDetailDAO = finContributorDetailDAO;
-	}
-
-	public FinContributorDetailDAO getFinContributorDetailDAO() {
-		return finContributorDetailDAO;
 	}
 
 	public void setIncomeTypeDAO(IncomeTypeDAO incomeTypeDAO) {

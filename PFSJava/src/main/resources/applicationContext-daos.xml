@@ -3370,8 +3370,6 @@
 		<property name="accountProcessUtil" ref="accountProcessUtil" />
 		<property name="custLimitIntefaceService" ref="custLimitIntefaceService" />
 		<property name="accountTypeDAO" ref="accountTypeDAO" />
-		<property name="finContributorHeaderDAO" ref="finContributorHeaderDAO" />
-		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
 		<property name="ruleDAO" ref="ruleDAO" />
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
@@ -3622,14 +3620,6 @@
 	<bean name="financeMainServiceTarget" class="com.pennant.backend.service.finance.impl.FinanceMainServiceImpl">
 		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
-
-	<!-- Finance Contributors Header -->
-	<bean id="finContributorHeaderDAO" class="com.pennant.backend.dao.finance.impl.FinContributorHeaderDAOImpl"
-		parent="basicDao" />
-
-	<!-- Finance Contributors Details -->
-	<bean id="finContributorDetailDAO" class="com.pennant.backend.dao.finance.impl.FinContributorDetailDAOImpl"
-		parent="sequenceDao" />
 
 	<!-- Finance Agreement Details -->
 	<bean id="finAgreementDetailDAO" class="com.pennant.backend.dao.finance.impl.FinAgreementDetailDAOImpl"
@@ -5313,7 +5303,6 @@
 		<property name="commitmentDAO" ref="commitmentDAO" />
 		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />
-		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="financeTypeDAO" ref="financeTypeDAO" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="divisionDetailDAO" ref="divisionDetailDAO" />
@@ -7500,7 +7489,6 @@
 		<property name="financeProfitDetailDAO" ref="profitDetailsDAO" />
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
-		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />

@@ -1284,8 +1284,6 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		copyTableById("FinAgreementDetail_Temp", "RejectFinAgreementDetail", finID);
 		copyTableById("FinanceEligibilityDetail", "RejectFinanceEligibilityDetail", finID);
 		copyTableById("FinanceScoreHeader", "RejectFinanceScoreHeader", finID);
-		copyTableById("FinContributorHeader_Temp", "RejectFinContributorHeader", finID);
-		copyTableById("FinContributorDetail_Temp", "RejectFinContributorDetail", finID);
 		copyTableById("FinDisbursementDetails_Temp", "RejectFinDisbursementdetails", finID);
 		copyTableById("FinRepayinstruction_Temp", "RejectFinRepayinstruction", finID);
 		copyTableById("FinScheduledetails_Temp", "RejectFinScheduledetails", finID);

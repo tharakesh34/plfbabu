@@ -12,7 +12,6 @@
 					<tabbox width="99%" height="100%" id="tabBoxIndexCenter">
 						<tabs id="tabsIndexCenter">
 							<tab id="financeTypeDetailsTab" label="${c:l('finBasicDetails')}" />
-							<tab id="riaDetailsTab" label="${c:l('ContributorDetails')}" />
 							<tab id="disburseDetailsTab" label="${c:l('AdvanceBillingDetails')}" />
 							<tab id="repayGraphTab" visible="false" label="${c:l('GraphReport')}" />
 							<tab id="assestsTab" visible="false" />
@@ -1298,121 +1297,6 @@
 									</grid>
 								</groupbox>
 							</tabpanel>
-							<tabpanel id="contributorTabPanel" style="overflow:auto">
-								<groupbox id="gb_contributorDetails">
-									<caption label="${c:l('ContributorDetails')}" />
-									<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
-										<columns>
-											<column width="190px" />
-											<column />
-											<column width="190px" />
-											<column />
-										</columns>
-										<rows>
-											<row>
-												<label id="label_FinanceMainDialog_MinContributors" value="${c:l('label_FinanceMainDialog_MinContributors.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<intbox id="minContributors" width="72px" />
-												</hbox>
-												<label id="label_FinanceMainDialog_MaxContributors" value="${c:l('label_FinanceMainDialog_MaxContributors.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<intbox id="maxContributors" width="72px" />
-												</hbox>
-											</row>
-											<row>
-												<label id="label_FinanceMainDialog_MinContributionAmt" value="${c:l('label_FinanceMainDialog_MinContributionAmt.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="minContributionAmt" width="150px" />
-												</hbox>
-												<label id="label_FinanceMainDialog_MaxContributionAmt" value="${c:l('label_FinanceMainDialog_MaxContributionAmt.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="maxContributionAmt" width="150px" />
-												</hbox>
-											</row>
-											<row>
-												<label id="label_FinanceMainDialog_CurContributors" value="${c:l('label_FinanceMainDialog_CurContributors.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<intbox id="curContributors" width="72px" readonly="true" />
-												</hbox>
-												<label id="label_FinanceMainDialog_CurContributionAmt" value="${c:l('label_FinanceMainDialog_CurContributionAmt.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="curContributionAmt" width="150px" readonly="true" />
-												</hbox>
-											</row>
-											<row>
-												<label id="label_FinanceMainDialog_CurBankInvest" value="${c:l('label_FinanceMainDialog_CurBankInvest.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="curBankInvest" width="150px" readonly="true" />
-												</hbox>
-												<label id="label_FinanceMainDialog_AvgMudaribRate" value="${c:l('label_FinanceMainDialog_AvgMudaribRate.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<decimalbox id="avgMudaribRate" width="150px" readonly="true" />
-												</hbox>
-											</row>
-											<row>
-												<label id="label_FinanceMainDialog_AlwContributorsToLeave" value="${c:l('label_FinanceMainDialog_AlwContributorsToLeave.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="alwContributorsToLeave" checked="false" />
-												</hbox>
-												<label id="label_FinanceMainDialog_AlwContributorsToJoin" value="${c:l('label_FinanceMainDialog_AlwContributorsToJoin.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="alwContributorsToJoin" checked="false" />
-												</hbox>
-											</row>
-										</rows>
-									</grid>
-								</groupbox>
-								<space height="10px" />
-								<div sclass="z-toolbar" style="padding:0px" height="28px">
-									<hbox pack="stretch" sclass="hboxRemoveWhiteStrips" width="100%" widths="30%,40%,30%">
-										<toolbar align="start" style="border-style: none;" width="100%">
-											<space spacing="2px" />
-											<label id="label_ContributorList" value="${c:l('label_ContributorList.label')}" style="font-weight:bold;font-size:11px;padding-top:5px;" />
-											<space spacing="2px" />
-										</toolbar>
-										<toolbar align="center" style="border-style: none;" width="100%">
-											<space spacing="2px" />
-											<space spacing="2px" />
-										</toolbar>
-										<toolbar align="end" style="border-style: none;" width="100%">
-											<space spacing="5px" />
-										</toolbar>
-									</hbox>
-								</div>
-								<listbox id="listBoxFinContributor" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="" width="99.8%"
-									multiple="false" sizedByContent="true" span="true">
-									<listhead sizable="true">
-										<listheader id="listheader_ContributorCIF" label="${c:l('listheader_ContributorCIF.label')}" sort="false"
-											hflex="min" />
-										<listheader id="listheader_ContributorInvest" label="${c:l('listheader_ContributorInvest.label')}"
-											sort="false" hflex="min" />
-										<listheader id="listheader_InvestAcc" label="${c:l('listheader_InvestAcc.label')}" sort="false"
-											hflex="min" />
-										<listheader id="listheader_InvestDate" label="${c:l('listheader_InvestDate.label')}" sort="false"
-											hflex="min" />
-										<listheader id="listheader_RecordDate" label="${c:l('listheader_RecordDate.label')}" sort="false"
-											hflex="min" />
-										<listheader id="listheader_TotalInvestPerc" label="${c:l('listheader_TotalInvestPerc.label')}"
-											sort="false" hflex="min" />
-										<listheader id="listheader_MudaribPerc" label="${c:l('listheader_MudaribPerc.label')}" sort="false"
-											hflex="min" />
-										<listheader id="listheader_RecordStatus" visible="false" label="${c:l('listheader_RecordStatus.label')}"
-											sort="false" hflex="min" />
-										<listheader id="listheader_RecordType" visible="false" label="${c:l('listheader_RecordType.label')}"
-											sort="false" hflex="min" />
-									</listhead>
-								</listbox>
-							</tabpanel>
 							<tabpanel id="tabpanel_disburse" style="overflow:auto">
 								<groupbox style="border:none;">
 									<grid id="grid_effRateOfReturn" sclass="GridLayoutNoBorder" fixedLayout="true">
@@ -1459,22 +1343,6 @@
 											</row>
 										</rows>
 									</grid>
-									<listbox id="listBoxContributorDetails" height="100px" fixedLayout="true" sizedByContent="true" span="true"
-										sclass="" emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
-										multiple="false">
-										<listhead sizable="false">
-											<listheader id="listheader_DisbursementDetailDialog_AssetContractor" label="${c:l('listheader_DisbursementDetailDialog_AssetContractor.label')}"
-												sort="false" hflex="min" />
-											<listheader id="listheader_DisbursementDetailDialog_AssetDesc" label="${c:l('listheader_DisbursementDetailDialog_AssetDesc.label')}"
-												sort="false" hflex="min" />
-											<listheader id="listheader_DisbursementDetailDialog_AssetValue" label="${c:l('listheader_DisbursementDetailDialog_AssetValue.label')}"
-												sort="false" hflex="min" />
-											<listheader id="listheader_DisbursementDetailDialog_AssetBillPercent" label="${c:l('listheader_DisbursementDetailDialog_ContributorBillPercent.label')}"
-												sort="false" hflex="min" />
-											<listheader id="listheader_DisbursementDetailDialog_RecordType" label="${c:l('listheader_RecordType.label')}"
-												sort="false" hflex="min" />
-										</listhead>
-									</listbox>
 									<listbox id="listBoxDisbursementDetail" fixedLayout="true" sizedByContent="true" span="true"
 										emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%"
 										multiple="false" height="150px">

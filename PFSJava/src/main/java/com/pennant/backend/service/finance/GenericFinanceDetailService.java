@@ -142,8 +142,6 @@ import com.pennant.backend.model.finance.AdvancePaymentDetail;
 import com.pennant.backend.model.finance.AdviseDueTaxDetail;
 import com.pennant.backend.model.finance.FeeType;
 import com.pennant.backend.model.finance.FinAssetTypes;
-import com.pennant.backend.model.finance.FinContributorDetail;
-import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinIRRDetails;
@@ -331,70 +329,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		logger.debug("Leaving ");
-		return auditDetails;
-	}
-
-	/**
-	 * Methods for Creating List of Audit Details with detailed fields
-	 * 
-	 * @param contributorHeader
-	 * @param auditTranType
-	 * @param method
-	 * @return
-	 */
-	public List<AuditDetail> setContributorAuditData(FinContributorHeader contributorHeader, String auditTranType,
-			String method) {
-		logger.debug("Entering");
-
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		String[] fields = PennantJavaUtil.getFieldDetails(new FinContributorDetail(""));
-
-		for (int i = 0; i < contributorHeader.getContributorDetailList().size(); i++) {
-
-			FinContributorDetail contributorDetail = contributorHeader.getContributorDetailList().get(i);
-			if (StringUtils.isEmpty(contributorDetail.getRecordType())) {
-				continue;
-			}
-
-			contributorDetail.setWorkflowId(contributorHeader.getWorkflowId());
-			contributorDetail.setFinReference(contributorHeader.getFinReference());
-
-			boolean isRcdType = false;
-
-			if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_ADD)) {
-				contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				isRcdType = true;
-			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_UPD)) {
-				contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				isRcdType = true;
-			} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RCD_DEL)) {
-				contributorDetail.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-				isRcdType = true;
-			}
-
-			if ("saveOrUpdate".equals(method) && (isRcdType)) {
-				contributorDetail.setNewRecord(true);
-			}
-
-			if (!auditTranType.equals(PennantConstants.TRAN_WF)) {
-				if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_NEW)) {
-					auditTranType = PennantConstants.TRAN_ADD;
-				} else if (contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_DEL)
-						|| contributorDetail.getRecordType().equalsIgnoreCase(PennantConstants.RECORD_TYPE_CAN)) {
-					auditTranType = PennantConstants.TRAN_DEL;
-				} else {
-					auditTranType = PennantConstants.TRAN_UPD;
-				}
-			}
-
-			contributorDetail.setRecordStatus(contributorHeader.getRecordStatus());
-			contributorDetail.setUserDetails(contributorHeader.getUserDetails());
-			contributorDetail.setLastMntOn(contributorHeader.getLastMntOn());
-
-			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1],
-					contributorDetail.getBefImage(), contributorDetail));
-		}
-		logger.debug("Leaving");
 		return auditDetails;
 	}
 

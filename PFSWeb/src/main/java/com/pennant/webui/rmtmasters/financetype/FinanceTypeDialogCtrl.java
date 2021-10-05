@@ -188,7 +188,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 	protected Checkbox finCommitmentOvrride; // autoWired
 	protected Checkbox limitRequired; // autoWired
 	protected Checkbox overrideLimit; // autoWired
-	protected Checkbox allowRIAInvestment; // autoWired
 	protected ExtendedCombobox finDivision; // autoWired
 	protected Checkbox finIsActive; // autoWired
 	protected Checkbox alwMultiPartyDisb; // autoWired
@@ -1107,7 +1106,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.limitRequired.setChecked(aFinanceType.isLimitRequired());
 		this.overrideLimit.setChecked(aFinanceType.isOverrideLimit());
 		doLimitChecked(this.limitRequired.isChecked(), this.overrideLimit);
-		this.allowRIAInvestment.setChecked(aFinanceType.isAllowRIAInvestment());
 		this.finIsActive.setChecked(aFinanceType.isFinIsActive());
 		this.alwMultiPartyDisb.setChecked(aFinanceType.isAlwMultiPartyDisb());
 		this.droplineOD.setChecked(aFinanceType.isDroplineOD());
@@ -1142,7 +1140,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.developerFinance.setChecked(aFinanceType.isDeveloperFinance());
 		setDeveloperFinanceFlagDetail();
 
-		doCheckRIA(aFinanceType.getProductCategory());
 		doSetProductBasedLabels(aFinanceType.getProductCategory());
 
 		// ================= Tab 2
@@ -1721,7 +1718,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 			map.put("roleCode", getRole());
 			map.put("finType", this.finType.getValue());
 			map.put("moduleId", FinanceConstants.MODULEID_FINTYPE);
-			map.put("allowRIAInvestment", this.allowRIAInvestment.isChecked());
 			map.put("mainController", this);
 			map.put("isCompReadonly", this.isCompReadonly);
 			map.put("isOverdraft", isOverdraft);
@@ -2003,11 +1999,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		try {
 			aFinanceType.setOverrideLimit(this.overrideLimit.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-		try {
-			aFinanceType.setAllowRIAInvestment(this.allowRIAInvestment.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -4305,7 +4296,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		this.downPayRule.setReadonly(isTrue);
 		this.cbfinDaysCalType.setDisabled(isTrue);
 		this.finIsActive.setDisabled(isTrue);
-		this.allowRIAInvestment.setDisabled(isTrue);
 		this.overrideLimit.setDisabled(isTrue);
 		this.tDSApplicable.setDisabled(isTrue);
 		if (!isOverdraft && !consumerDurable) {
@@ -5510,54 +5500,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 	}
 
-	public void onCheck$allowRIAInvestment(Event event) {
-		logger.debug(Literal.ENTERING + event.toString());
-
-		boolean allowRIAInvestmentFlag = this.allowRIAInvestment.isChecked();
-
-		if (getFinTypeAccountingListCtrl() != null) {
-			getFinTypeAccountingListCtrl().setAllowRIAInvestment(allowRIAInvestmentFlag);
-
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSP, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSF, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.ADDDBSN, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CMTDISB, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZPD, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ_MON, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZ, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMZSUSP, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PD, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.NORM_PIS, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PD_NORM, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PD_PIS, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_PD, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PIS_NORM, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.RATCHG, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REPAY, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.LATEPAY, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.INSTDATE, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.GRACEEND, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.PROVSN, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SCDCHG, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFFRQ, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.DEFRPY, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.COMPOUND, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEOFF, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.WRITEBK, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.MATURITY, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYSTL, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EARLYPAY, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.AMENDMENT, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.SEGMENT, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.CANCELFIN, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.EMIHOLIDAY, allowRIAInvestmentFlag);
-			getFinTypeAccountingListCtrl().setRIAAccountingProps(AccountingEvent.REAGING, allowRIAInvestmentFlag);
-		}
-
-		logger.debug(Literal.LEAVING + event.toString());
-	}
-
 	// ******************************
 	// ********** Tab 1 *************
 	// ******************************
@@ -5621,13 +5563,11 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 
 		if (this.cbfinProductType.getSelectedItem() != null
 				&& !StringUtils.equals(getComboboxValue(this.cbfinProductType), PennantConstants.List_Select)) {
-			this.allowRIAInvestment.setChecked(false);
 			String productCtg = getProductService()
 					.getProductCtgByProduct(this.cbfinProductType.getSelectedItem().getValue().toString());
 			getFinanceType().setProductCategory(productCtg);
 			doSetProductBasedLabels(productCtg);
 			doSetDownpayProperties(productCtg, true);
-			doCheckRIA(productCtg.toString());
 
 			this.fInIsAlwGrace.setDisabled(isCompReadonly);
 		}
@@ -5850,15 +5790,6 @@ public class FinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceType> {
 		}
 		logger.debug("Leaving ");
 		return 0;
-	}
-
-	private void doCheckRIA(String productCtg) {
-		this.allowRIAInvestment.setDisabled(true);
-		if (StringUtils.isNotBlank(productCtg)) {
-			if (FinanceConstants.PRODUCT_CONVENTIONAL.equals(productCtg)) {
-				this.allowRIAInvestment.setDisabled(isCompReadonly);
-			}
-		}
 	}
 
 	private void doSetProductBasedLabels(String productCtg) {

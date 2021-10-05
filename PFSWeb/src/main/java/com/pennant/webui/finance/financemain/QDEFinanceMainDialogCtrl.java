@@ -1373,16 +1373,6 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		// fill the financeMain object with the components data
 		doWriteComponentsToBean(aFinanceDetail, true);
 
-		// Save Contributor List Details
-		/*
-		 * if (isRIAExist) { Tab tab = null; if (tabsIndexCenter.getFellowIfAny("contributorsTab") != null) { tab =
-		 * (Tab) tabsIndexCenter.getFellowIfAny("contributorsTab"); }
-		 * 
-		 * aFinanceDetail = getContributorDetailsDialogCtrl().doSaveContributorsDetail(aFinanceDetail, tab); } else {
-		 */ aFinanceDetail.setFinContributorHeader(null);
-		/*
-		 * }
-		 */
 		// Validation For Mandatory Recommendation
 		if (!doValidateRecommendation()) {
 			return;

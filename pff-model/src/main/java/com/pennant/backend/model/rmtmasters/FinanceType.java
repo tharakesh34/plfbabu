@@ -129,7 +129,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 	private boolean finCommitmentReq;
 	private boolean finCollateralReq;
 	private String collateralType;
-	private boolean allowRIAInvestment;
 	private boolean overrideLimit;
 	private boolean limitRequired;
 	private boolean finCommitmentOvrride;
@@ -257,8 +256,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	@XmlTransient
 	private LoggedInUser userDetails;
-
-	private Map<String, AccountingSet> lovDescAERule = new HashMap<String, AccountingSet>();
 
 	@XmlTransient
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<String, List<AuditDetail>>();
@@ -421,7 +418,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setFinCommitmentReq(this.finCommitmentReq);
 		entity.setFinCollateralReq(this.finCollateralReq);
 		entity.setCollateralType(this.collateralType);
-		entity.setAllowRIAInvestment(this.allowRIAInvestment);
 		entity.setOverrideLimit(this.overrideLimit);
 		entity.setLimitRequired(this.limitRequired);
 		entity.setFinCommitmentOvrride(this.finCommitmentOvrride);
@@ -529,9 +525,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		entity.setAllowedLoanPurposes(this.allowedLoanPurposes);
 		entity.setSpecificLoanPurposes(this.specificLoanPurposes);
 		entity.setUserDetails(this.userDetails);
-		this.lovDescAERule.entrySet().stream().forEach(e -> entity.getLovDescAERule().put(e.getKey(),
-				e.getValue() == null ? null : e.getValue().copyEntity()));
-
 		this.auditDetailMap.entrySet().stream().forEach(e -> {
 			List<AuditDetail> newList = new ArrayList<AuditDetail>();
 			if (e.getValue() != null) {
@@ -1231,22 +1224,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		this.auditDetailMap = auditDetailMap;
 	}
 
-	public void setLovDescAERule(String aEEvent, AccountingSet lovDescAERule) {
-		if (this.lovDescAERule == null) {
-			this.lovDescAERule = new HashMap<String, AccountingSet>();
-		} else {
-			if (this.lovDescAERule.containsKey(aEEvent)) {
-				this.lovDescAERule.remove(aEEvent);
-			}
-		}
-		this.lovDescAERule.put(aEEvent, lovDescAERule);
-
-	}
-
-	public Map<String, AccountingSet> getLovDescAERule() {
-		return lovDescAERule;
-	}
-
 	public boolean isFinIsAlwGrcRepay() {
 		return finIsAlwGrcRepay;
 	}
@@ -1325,18 +1302,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 
 	public void setCollateralType(String collateralType) {
 		this.collateralType = collateralType;
-	}
-
-	public void setLovDescAERule(Map<String, AccountingSet> lovDescAERule) {
-		this.lovDescAERule = lovDescAERule;
-	}
-
-	public void setAllowRIAInvestment(boolean allowRIAInvestment) {
-		this.allowRIAInvestment = allowRIAInvestment;
-	}
-
-	public boolean isAllowRIAInvestment() {
-		return allowRIAInvestment;
 	}
 
 	public void setFinCommitmentOvrride(boolean finCommitmentOvrride) {

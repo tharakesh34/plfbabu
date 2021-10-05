@@ -1748,12 +1748,6 @@
 		<property name="extendedFieldMaintenanceService" ref = "extendedFieldMaintenanceService" />
 	</bean>
 
-	<!--============ Finance Contributor Detail ============== -->
-
-	<bean id="finContributorDetailDialogCtrl" class="com.pennant.webui.finance.contributor.FinContributorDetailDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-	</bean>
-
 	<!--============ Step Detail Detail ============== -->
 
 	<bean id="stepDetailDialogCtrl" class="com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl"
@@ -1784,11 +1778,6 @@
 		parent="basisCtrl">
 		<property name="vasConfigurationService" ref="vASConfigurationService" />
 	</bean>
-
-	<!--============ Contributor Detail ============== -->
-
-	<bean id="contributorDetailsDialogCtrl" class="com.pennant.webui.finance.financemain.ContributorDetailsDialogCtrl"
-		parent="basisListCtrl" scope="prototype" />
 
 	<!--============ Finance Document Detail ============== -->
 

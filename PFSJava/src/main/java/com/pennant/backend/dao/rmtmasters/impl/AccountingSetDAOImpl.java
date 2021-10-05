@@ -25,8 +25,6 @@
 
 package com.pennant.backend.dao.rmtmasters.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,10 +54,8 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 	/**
 	 * Fetch the Record Accounting Set details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return AccountingSet
 	 */
 	@Override
@@ -99,10 +95,8 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 	 * This method Deletes the Record from the RMTAccountingSet or RMTAccountingSet_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Accounting Set by key AccountSetid
 	 * 
-	 * @param Accounting
-	 *            Set (accountingSet)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Accounting Set (accountingSet)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -135,10 +129,8 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 	 * 
 	 * save Accounting Set
 	 * 
-	 * @param Accounting
-	 *            Set (accountingSet)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Accounting Set (accountingSet)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -173,10 +165,8 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 	 * This method updates the Record RMTAccountingSet or RMTAccountingSet_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Accounting Set by key AccountSetid and Version
 	 * 
-	 * @param Accounting
-	 *            Set (accountingSet)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Accounting Set (accountingSet)
+	 * @param type       (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -209,30 +199,6 @@ public class AccountingSetDAOImpl extends SequenceDao<AccountingSet> implements 
 			throw new ConcurrencyException();
 		}
 		logger.debug("Leaving");
-	}
-
-	@Override
-	public List<AccountingSet> getListAERuleBySysDflt(boolean isAllowedRIA, String type) {
-		logger.debug("Entering");
-
-		AccountingSet accountingSet = new AccountingSet();
-		accountingSet.setEntryByInvestment(isAllowedRIA);
-		accountingSet.setSystemDefault(true);
-
-		StringBuilder selectSql = new StringBuilder(
-				"Select AccountSetid, EventCode, AccountSetCode,  AccountSetCodeName  ");
-		selectSql.append(" From RMTAccountingSet");
-		selectSql.append(StringUtils.trim(type));
-		selectSql.append(
-				" Where EventCode IN ('ADDDBSP','ADDDBSF','ADDDBSN','AMZ','AMZSUSP','AMZPD','CMTDISB','EMIDAY','REAGING',");
-		selectSql.append(" 'NORM_PIS','PIS_NORM','RATCHG','REPAY', 'EARLYPAY','EARLYSTL','LATEPAY',");
-		selectSql.append(" 'WRITEOFF','WRITEBK','GRACEEND','DEFFRQ','DEFRPY','PROVSN','SCDCHG','COMPOUND','DPRCIATE')");
-		selectSql.append("  AND SystemDefault= :SystemDefault AND EntryByInvestment=:EntryByInvestment ");
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(accountingSet);
-		RowMapper<AccountingSet> typeRowMapper = BeanPropertyRowMapper.newInstance(AccountingSet.class);
-		logger.debug("Leaving");
-		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 
 	/**

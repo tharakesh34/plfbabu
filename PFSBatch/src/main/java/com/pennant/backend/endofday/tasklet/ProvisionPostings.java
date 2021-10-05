@@ -238,7 +238,7 @@ public class ProvisionPostings implements Tasklet {
 	private String prepareProvMovementSelectQuery() {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" pm.FinReference,pm.ProvMovementDate,pm.ProvMovementSeq , pm.DueFromDate");
-		sql.append(", pm.ProvisionedAmt, pm.ProvisionDue, T3.AllowRIAInvestment, T4.AcrTillLBD, T4.PftAmzSusp");
+		sql.append(", pm.ProvisionedAmt, pm.ProvisionDue, T4.AcrTillLBD, T4.PftAmzSusp");
 		sql.append(", pfd.AmzTillLBD, pfd.LPITillLBD, pfd.LPPTillLBD, pfd.GstLpiTillLBD, pfd.GstLppTillLBD");
 		sql.append(" FROM FinProvMovements pm");
 		sql.append(" Inner Join FinanceMain fm On fm.FinID = pm.FinID ");

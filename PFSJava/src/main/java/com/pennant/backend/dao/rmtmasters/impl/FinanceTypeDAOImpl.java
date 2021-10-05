@@ -84,7 +84,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", FinIsRateRvwAtGrcEnd, FinSchCalCodeOnRvw, FinAssetType");
 		sql.append(", FinIsActive ");
 		sql.append(", FinGrcSchdMthd, FinIsAlwGrcRepay, FinMargin, FinGrcMargin, FinScheduleOn, FinGrcScheduleOn");
-		sql.append(", FinCommitmentReq, FinCollateralReq, AllowRIAInvestment");
+		sql.append(", FinCommitmentReq, FinCollateralReq");
 		sql.append(", OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq");
 		sql.append(", FinPftUnChanged, ManualSchedule, ApplyODPenalty, ODIncGrcDays, ODChargeType");
 		sql.append(", ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
@@ -195,7 +195,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 				ft.setFinGrcScheduleOn(rs.getString("FinGrcScheduleOn"));
 				ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
 				ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
-				ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
 				ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
 				ft.setLimitRequired(rs.getBoolean("LimitRequired"));
 				ft.setFinCommitmentOvrride(rs.getBoolean("FinCommitmentOvrride"));
@@ -367,7 +366,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(", AlwPlanDeferment, FinIsRateRvwAtGrcEnd, PlanDeferCount ");
 		sql.append(", FinIsAlwGrcRepay, FinGrcSchdMthd, FinGrcMargin, FinMargin, FinCommitmentReq");
 		sql.append(", FinCollateralReq ");
-		sql.append(", AllowRIAInvestment, OverrideLimit, LimitRequired, FinCommitmentOvrride");
+		sql.append(", OverrideLimit, LimitRequired, FinCommitmentOvrride");
 		sql.append(", FinCollateralOvrride, FinRepayPftOnFrq, FinPftUnChanged, ApplyODPenalty, ODIncGrcDays");
 		sql.append(", ODChargeType, ODGraceDays, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc");
 		sql.append(", ODMinCapAmount, FinDivision, Product, StartDate, EndDate");
@@ -471,7 +470,6 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 					ft.setFinMargin(rs.getBigDecimal("FinMargin"));
 					ft.setFinCommitmentReq(rs.getBoolean("FinCommitmentReq"));
 					ft.setFinCollateralReq(rs.getBoolean("FinCollateralReq"));
-					ft.setAllowRIAInvestment(rs.getBoolean("AllowRIAInvestment"));
 					ft.setOverrideLimit(rs.getBoolean("OverrideLimit"));
 					ft.setLimitRequired(rs.getBoolean("LimitRequired"));
 					ft.setFinCommitmentOvrride(rs.getBoolean("FinCommitmentOvrride"));
@@ -624,7 +622,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		financeType.setFinType(finType);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinCategory, FinDivision, ");
-		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
+		selectSql.append(" FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(
 				" PastduePftCalMthd, PastduePftMargin,alwMultiPartyDisb, alwMaxDisbCheckReq, CostOfFunds, FinLTVCheck, PartiallySecured , AlwVan, vanAllocationMethod, AlwSanctionAmt, AlwSanctionAmtOverride, AutoApprove  ");
 		selectSql.append(
@@ -657,7 +655,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		logger.debug(Literal.ENTERING);
 
 		StringBuilder selectSql = new StringBuilder("SELECT FinType, Product, FinCategory, FinDivision, ");
-		selectSql.append(" AllowRIAInvestment, FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
+		selectSql.append(" FinIsAlwPartialRpy, FinSuspTrigger, FinSuspRemarks,  ");
 		selectSql.append(
 				" PastduePftCalMthd, PastduePftMargin,RpyHierarchy, CostOfFunds, FinLTVCheck, PartiallySecured ");
 		selectSql.append(" FROM RMTFinanceTypes");
@@ -744,8 +742,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append("	FinCommitmentReq,FinCollateralReq,");
 		sql.append(" FinMargin,FinGrcMargin,FinScheduleOn,FinGrcScheduleOn, ");
 		sql.append(" FinPftUnChanged ,ManualSchedule,");
-		sql.append(
-				"  AllowRIAInvestment , OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, ");
+		sql.append("  OverrideLimit, LimitRequired, FinCommitmentOvrride, FinCollateralOvrride, FinRepayPftOnFrq, ");
 		sql.append(
 				"  ApplyODPenalty , ODIncGrcDays , ODChargeType , ODGraceDays , ODChargeCalOn , ODChargeAmtOrPerc , ODAllowWaiver , ODMaxWaiverPerc, ODMinCapAmount, FinDivision, ");
 		sql.append(
@@ -794,7 +791,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" :FinMargin,:FinGrcMargin,:FinScheduleOn,:FinGrcScheduleOn, ");
 		sql.append(" :FinPftUnChanged ,:ManualSchedule,");
 		sql.append(
-				" :AllowRIAInvestment , :OverrideLimit, :LimitRequired, :FinCommitmentOvrride, :FinCollateralOvrride , :FinRepayPftOnFrq, ");
+				" :OverrideLimit, :LimitRequired, :FinCommitmentOvrride, :FinCollateralOvrride , :FinRepayPftOnFrq, ");
 		sql.append(
 				" :ApplyODPenalty , :ODIncGrcDays , :ODChargeType , :ODGraceDays , :ODChargeCalOn , :ODChargeAmtOrPerc , :ODAllowWaiver , :ODMaxWaiverPerc, :ODMinCapAmount, :FinDivision, ");
 		sql.append(
@@ -890,7 +887,7 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		sql.append(" FinMargin=:FinMargin,FinGrcMargin=:FinGrcMargin,");
 		sql.append(" FinCommitmentReq=:FinCommitmentReq ,FinCollateralReq=:FinCollateralReq ,");
 		sql.append(" FinPftUnChanged=:FinPftUnChanged ,ManualSchedule = :ManualSchedule,");
-		sql.append(" AllowRIAInvestment =:AllowRIAInvestment , OverrideLimit=:OverrideLimit, ");
+		sql.append(" OverrideLimit=:OverrideLimit, ");
 		sql.append(
 				" LimitRequired=:LimitRequired ,FinCommitmentOvrride=:FinCommitmentOvrride ,FinCollateralOvrride=:FinCollateralOvrride , FinRepayPftOnFrq =:FinRepayPftOnFrq, ");
 		sql.append(

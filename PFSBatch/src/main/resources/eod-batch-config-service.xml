@@ -27,7 +27,6 @@
 		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
 		<property name="presentmentDetailDAO" ref="presentmentDetailDAO" />
 		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
-		<property name="finContributorDetailDAO" ref="finContributorDetailDAO" />
 		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
 		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
 		<property name="postingsDAO" ref="postingsDAO" />

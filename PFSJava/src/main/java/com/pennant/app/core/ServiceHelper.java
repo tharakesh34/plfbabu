@@ -57,7 +57,6 @@ import com.pennant.backend.dao.amortization.ProjectedAmortizationDAO;
 import com.pennant.backend.dao.applicationmaster.CustomerStatusCodeDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.eod.EODConfigDAO;
-import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.finance.FinLogEntryDetailDAO;
 import com.pennant.backend.dao.finance.FinODDetailsDAO;
 import com.pennant.backend.dao.finance.FinServiceInstrutionDAO;
@@ -113,7 +112,6 @@ abstract public class ServiceHelper {
 	protected PresentmentDetailDAO presentmentDetailDAO;
 	protected FinServiceInstrutionDAO finServiceInstructionDAO;
 	// accounting
-	private FinContributorDetailDAO finContributorDetailDAO;
 	private FinTypeAccountingDAO finTypeAccountingDAO;
 	private PostingsDAO postingsDAO;
 	private AccountProcessUtil accountProcessUtil;
@@ -254,10 +252,6 @@ abstract public class ServiceHelper {
 			}
 		}
 		return false;
-	}
-
-	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
-		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
 
 	public void setPostingsDAO(PostingsDAO postingsDAO) {

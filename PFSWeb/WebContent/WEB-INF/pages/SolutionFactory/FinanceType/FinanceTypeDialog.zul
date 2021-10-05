@@ -292,14 +292,6 @@
 														image="/images/icons/LOVSearch.png" visible="false" />
 												</hbox>
 											</row>
-											<row visible="false">
-												<label id="label_FinanceTypeDialog_AllowRIAInvestment"
-													value="${c:l('label_FinanceTypeDialog_AllowRIAInvestment.value')}" />
-												<hbox>
-													<space spacing="2px" />
-													<checkbox id="allowRIAInvestment" checked="false" />
-												</hbox>
-											</row>
 											<row>
 												<label id="label_FinanceTypeDialog_FinDivision"
 													value="${c:l('label_FinanceTypeDialog_FinDivision.value')}" />

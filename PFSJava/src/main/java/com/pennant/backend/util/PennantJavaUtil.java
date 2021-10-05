@@ -225,8 +225,6 @@ import com.pennant.backend.model.finance.FinAgreementDetail;
 import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinChangeCustomer;
 import com.pennant.backend.model.finance.FinCollaterals;
-import com.pennant.backend.model.finance.FinContributorDetail;
-import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCovenantType;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
@@ -248,6 +246,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceRepayPriority;
 import com.pennant.backend.model.finance.FinanceScoreDetail;
 import com.pennant.backend.model.finance.FinanceScoreHeader;
+import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSuspHead;
 import com.pennant.backend.model.finance.ForeClosure;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
@@ -1923,19 +1922,8 @@ public class PennantJavaUtil {
 						new String[] { "FinReference", "Event" }, null, 300));
 
 		/************ Finance Related Module Details *************/
-
-		ModuleUtil.register("FinContributorHeader",
-				new ModuleMapping("FinContributorHeader", FinContributorHeader.class,
-						new String[] { "FinContributorHeader", "FinContributorHeader_AView" }, masterWF,
-						new String[] { "FinReference", "CurBankInvestment " }, null, 300));
-
-		ModuleUtil.register("FinContributorDetail",
-				new ModuleMapping("FinContributorDetail", FinContributorDetail.class,
-						new String[] { "FinContributorDetail", "FinContributorDetail_AView" }, masterWF,
-						new String[] { "FinReference", "ContributorInvest" }, null, 300));
-
 		ModuleUtil.register("FinanceStepPolicyDetail",
-				new ModuleMapping("FinContributorDetail", FinContributorDetail.class,
+				new ModuleMapping("FinStepPolicyDetail", FinanceStepPolicyDetail.class,
 						new String[] { "FinStepPolicyDetail", "FinStepPolicyDetail_Temp" }, null,
 						new String[] { "FinReference", "StepNo" }, null, 300));
 

@@ -110,7 +110,6 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private boolean isExtSource = false;
 	@XmlTransient
 	private Map<String, List<AuditDetail>> auditDetailMap = new HashMap<>(1);
-	private FinContributorHeader finContributorHeader;
 	private CustomerEligibilityCheck customerEligibilityCheck;
 	private TATDetail tatDetail;
 	private CollateralSetup collSetup;
@@ -394,14 +393,6 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 
 	public void setAuditDetailMap(Map<String, List<AuditDetail>> auditDetailMap) {
 		this.auditDetailMap = auditDetailMap;
-	}
-
-	public FinContributorHeader getFinContributorHeader() {
-		return finContributorHeader;
-	}
-
-	public void setFinContributorHeader(FinContributorHeader finContributorHeader) {
-		this.finContributorHeader = finContributorHeader;
 	}
 
 	public CustomerEligibilityCheck getCustomerEligibilityCheck() {

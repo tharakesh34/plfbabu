@@ -1334,14 +1334,10 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 		aeEvent.setDataMap(dataMap);
 
-		if (!schdData.getFinanceType().isAllowRIAInvestment()) {
-			aeEvent.setDataMap(dataMap);
-			getEngineExecution().getAccEngineExecResults(aeEvent);
+		aeEvent.setDataMap(dataMap);
+		getEngineExecution().getAccEngineExecResults(aeEvent);
 
-			returnSetEntries = aeEvent.getReturnDataSet();
-		} else {
-			// FIXME : DataSet Removal to be worked on if it requires in future
-		}
+		returnSetEntries = aeEvent.getReturnDataSet();
 
 		if (getAccountingDetailDialogCtrl() != null) {
 			getAccountingDetailDialogCtrl().doFillAccounting(returnSetEntries);

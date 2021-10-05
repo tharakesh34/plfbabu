@@ -60,7 +60,6 @@ import com.pennant.backend.model.financemanagement.FinTypeReceiptModes;
 import com.pennant.backend.model.financemanagement.FinTypeVASProducts;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
-import com.pennant.backend.model.rmtmasters.AccountingSet;
 import com.pennant.backend.model.rmtmasters.FinTypeAccounting;
 import com.pennant.backend.model.rmtmasters.FinTypeExpense;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -131,12 +130,6 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		FinanceType financeType = new FinanceType();
 		financeType.setFinCategory("");
 		financeType.setNewRecord(true);
-
-		List<AccountingSet> accountEngineRules = getAccountingSetDAO()
-				.getListAERuleBySysDflt(financeType.isAllowRIAInvestment(), "");
-		for (int i = 0; i < accountEngineRules.size(); i++) {
-			financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
-		}
 
 		logger.debug("Leaving");
 
@@ -297,11 +290,6 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(finType, "_View");
 
 		if (financeType != null) {
-			List<AccountingSet> accountEngineRules = getAccountingSetDAO()
-					.getListAERuleBySysDflt(financeType.isAllowRIAInvestment(), "");
-			for (int i = 0; i < accountEngineRules.size(); i++) {
-				financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
-			}
 			// FinTypeVasProduct Details
 			financeType.setFinTypeVASProductsList(getFinTypeVASProductsDAO().getVASProductsByFinType(finType, "_View"));
 			financeType
@@ -343,11 +331,6 @@ public class FinanceTypeServiceImpl extends GenericService<FinanceType> implemen
 
 		FinanceType financeType = getFinanceTypeDAO().getFinanceTypeByID(finType, "_AView");
 		if (financeType != null) {
-			List<AccountingSet> accountEngineRules = getAccountingSetDAO()
-					.getListAERuleBySysDflt(financeType.isAllowRIAInvestment(), "");
-			for (int i = 0; i < accountEngineRules.size(); i++) {
-				financeType.setLovDescAERule(accountEngineRules.get(i).getEventCode(), accountEngineRules.get(i));
-			}
 			financeType.setFinTypeFeesList(
 					getFinTypeFeesService().getApprovedFinTypeFeesById(finType, FinanceConstants.MODULEID_FINTYPE));
 			financeType.setFinTypeAccountingList(getFinTypeAccountingService()

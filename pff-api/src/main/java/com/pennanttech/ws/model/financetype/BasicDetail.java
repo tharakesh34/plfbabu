@@ -12,8 +12,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder = { "finCcy", "lovDescFinCcyName", "finDaysCalType", "lovDescFinDaysCalTypeName", "finMinAmount",
 		"finMaxAmount", "finCategory", "finAssetType", "finIsDwPayRequired", "downPayRule", "downPayRuleDesc",
 		"fInIsAlwGrace", "finIsAlwMD", "alwMaxDisbCheckReq", "limitRequired", "overrideLimit", "finCollateralReq",
-		"finCollateralOvrride", "collateralType", "partiallySecured", "allowRIAInvestment", "finDivision",
-		"finIsActive", "finCommitmentReq", "finCommitmentOvrride", "alwMultiPartyDisb", "tDSApplicable" })
+		"finCollateralOvrride", "collateralType", "partiallySecured", "finDivision", "finIsActive", "finCommitmentReq",
+		"finCommitmentOvrride", "alwMultiPartyDisb", "tDSApplicable" })
 @XmlRootElement(name = "basicDetails")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BasicDetail implements Serializable {
@@ -53,7 +53,6 @@ public class BasicDetail implements Serializable {
 	private boolean finCollateralReq;
 	private boolean finCollateralOvrride;
 	private String collateralType;
-	private boolean allowRIAInvestment;
 	private String finDivision;
 	private boolean finIsActive;
 	private boolean finCommitmentReq;
@@ -205,14 +204,6 @@ public class BasicDetail implements Serializable {
 
 	public void setCollateralType(String collateralType) {
 		this.collateralType = collateralType;
-	}
-
-	public boolean isAllowRIAInvestment() {
-		return allowRIAInvestment;
-	}
-
-	public void setAllowRIAInvestment(boolean allowRIAInvestment) {
-		this.allowRIAInvestment = allowRIAInvestment;
 	}
 
 	public String getFinDivision() {

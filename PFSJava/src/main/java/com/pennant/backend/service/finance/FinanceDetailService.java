@@ -42,7 +42,6 @@ import com.pennant.backend.model.customermasters.CustomerIncome;
 import com.pennant.backend.model.customermasters.WIFCustomer;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinAssetTypes;
-import com.pennant.backend.model.finance.FinContributorHeader;
 import com.pennant.backend.model.finance.FinCustomerDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -110,8 +109,6 @@ public interface FinanceDetailService {
 	AuditHeader doCheckLimits(AuditHeader auditHeader);
 
 	void updateCustCIF(long custID, long finID);
-
-	FinContributorHeader getFinContributorHeaderById(String finReference);
 
 	List<DocumentDetails> getFinDocByFinRef(String finReference, String finEvent, String type);
 

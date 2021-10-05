@@ -858,7 +858,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// Sub Window Child Details Dialog Controllers
 	private transient ScheduleDetailDialogCtrl scheduleDetailDialogCtrl;
-	private transient ContributorDetailsDialogCtrl contributorDetailsDialogCtrl;
 	private transient StepDetailDialogCtrl stepDetailDialogCtrl;
 	private transient EligibilityDetailDialogCtrl eligibilityDetailDialogCtrl;
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl;
@@ -933,7 +932,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected Commitment commitment;
 	protected Tab listWindowTab;
-	protected boolean isRIAExist;
 	protected String moduleDefiner = "";
 	protected String eventCode = "";
 	protected String menuItemRightName = null;
@@ -1110,7 +1108,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Datebox subventionEndDate_two;
 	private SubventionDetail oldSubventionDetail;
 	protected transient boolean oldVar_finOCRRequired;
-	
+
 	private FeeTypeService feeTypeService;
 
 	/**
@@ -1948,13 +1946,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			// Step Policy Details
 			appendStepDetailTab(onLoad, true);
-
-			// Contributor details Tab Addition
-			if (financeType.isAllowRIAInvestment()) {
-				isRIAExist = true;
-				appendContributorDetailsTab(onLoad);
-			}
-
 		}
 
 		// Fee Details Tab Addition
@@ -2617,21 +2608,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	/**
-	 * Method for Rendering Schedule Details Data in finance
-	 */
-	protected void appendContributorDetailsTab(boolean onLoadProcess) {
-		logger.debug(Literal.ENTERING);
-		if (onLoadProcess) {
-			createTab(AssetConstants.UNIQUE_ID_CONTRIBUTOR, true);
-		} else {
-			contributorWindow = Executions.createComponents(
-					"/WEB-INF/pages/Finance/FinanceMain/ContributorDetailsDialog.zul",
-					getTabpanel(AssetConstants.UNIQUE_ID_CONTRIBUTOR), getDefaultArguments());
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
 	protected void appendAgreementFieldsTab(boolean onLoad) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 		try {
@@ -3134,9 +3110,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			break;
 		case AssetConstants.UNIQUE_ID_TAX:
 			financeTaxDetailDialogCtrl.doSetLabels(getFinBasicDetails());
-			break;
-		case AssetConstants.UNIQUE_ID_CONTRIBUTOR:
-			contributorDetailsDialogCtrl.doSetLabels(getFinBasicDetails());
 			break;
 		case AssetConstants.UNIQUE_ID_ADVANCEPAYMENTS:
 			finAdvancePaymentsListCtrl.doSetLabels(getFinBasicDetails());
@@ -6974,14 +6947,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 			}
 			afd.setExtendedFieldRender(extendedFieldCtrl.save(validationReq));
-		}
-
-		// Save Contributor List Details
-		if (isRIAExist) {
-			afd = contributorDetailsDialogCtrl.doSaveContributorsDetail(afd,
-					getTab(AssetConstants.UNIQUE_ID_CONTRIBUTOR));
-		} else {
-			afd.setFinContributorHeader(null);
 		}
 
 		FinanceType finType = afd.getFinScheduleData().getFinanceType();
@@ -14906,7 +14871,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		if (StringUtils.isBlank(moduleDefiner)) {
 
 			prepareFeeRulesMap(aeEvent.getAeAmountCodes(), dataMap);
-			
+
 			setFeesesForAccounting(aeEvent, getFinanceDetail());
 
 			Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(financeMain.getFinID());
@@ -16919,12 +16884,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		Clients.clearWrongValue(this.downPayBank);
 		setDownpayAmount();
 
-		// Contributor Details Resetting List Data
-		if (contributorDetailsDialogCtrl != null) {
-			contributorDetailsDialogCtrl.doResetContributorDetails();
-			BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
-			contributorDetailsDialogCtrl.doSetFinAmount(this.finAmount.getActualValue(), downPayment);
-		}
 		onChangeFinAndDownpayAmount();
 		setDownPayPercentage();
 		setNetFinanceAmount(false);
@@ -16957,12 +16916,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		setDownPayPercentage();
 		setNetFinanceAmount(false);
 
-		// Contributor Details Resetting List Data
-		if (contributorDetailsDialogCtrl != null) {
-			contributorDetailsDialogCtrl.doResetContributorDetails();
-			BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
-			contributorDetailsDialogCtrl.doSetFinAmount(this.finAmount.getActualValue(), downPayment);
-		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
@@ -17190,11 +17143,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		setDownpayAmount();
 
 		// Contributor Details Resetting List Data
-		if (contributorDetailsDialogCtrl != null) {
-			contributorDetailsDialogCtrl.doResetContributorDetails();
-			BigDecimal downPayment = this.downPayBank.getActualValue().add(this.downPaySupl.getActualValue());
-			contributorDetailsDialogCtrl.doSetFinAmount(this.finAmount.getActualValue(), downPayment);
-		}
 		setDownPayPercentage();
 		setNetFinanceAmount(false);
 
@@ -17506,11 +17454,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Closing Check List Details Window
 		if (getFinanceCheckListReferenceDialogCtrl() != null) {
 			getFinanceCheckListReferenceDialogCtrl().closeDialog();
-		}
-
-		// Closing Customer Details Window
-		if (getContributorDetailsDialogCtrl() != null) {
-			getContributorDetailsDialogCtrl().closeDialog();
 		}
 
 		// Closing Customer Details Window
@@ -19412,12 +19355,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 
 		if (doValidation(getAuditHeader(getFinanceDetail(), ""))) {
-
-			// Contributor Details Checking for RIA Accounting
-			if (isRIAExist && contributorDetailsDialogCtrl != null) {
-				contributorDetailsDialogCtrl.doSaveContributorsDetail(getFinanceDetail(),
-						getTab(AssetConstants.UNIQUE_ID_CONTRIBUTOR));
-			}
 			validFinScheduleData.setErrorDetails(new ArrayList<ErrorDetail>());
 
 			if (this.manualSchedule.isChecked()) {
@@ -19770,14 +19707,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setStageAccountingDetailDialogCtrl(StageAccountingDetailDialogCtrl stageAccountingDetailDialogCtrl) {
 		this.stageAccountingDetailDialogCtrl = stageAccountingDetailDialogCtrl;
-	}
-
-	public ContributorDetailsDialogCtrl getContributorDetailsDialogCtrl() {
-		return contributorDetailsDialogCtrl;
-	}
-
-	public void setContributorDetailsDialogCtrl(ContributorDetailsDialogCtrl contributorDetailsDialogCtrl) {
-		this.contributorDetailsDialogCtrl = contributorDetailsDialogCtrl;
 	}
 
 	public JointAccountDetailDialogCtrl getJointAccountDetailDialogCtrl() {

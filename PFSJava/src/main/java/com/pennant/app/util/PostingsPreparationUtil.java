@@ -54,7 +54,6 @@ import org.springframework.beans.BeanUtils;
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.backend.dao.commitment.CommitmentDAO;
 import com.pennant.backend.dao.commitment.CommitmentMovementDAO;
-import com.pennant.backend.dao.finance.FinContributorDetailDAO;
 import com.pennant.backend.dao.rmtmasters.FinTypeAccountingDAO;
 import com.pennant.backend.dao.rmtmasters.FinanceTypeDAO;
 import com.pennant.backend.dao.rulefactory.PostingsDAO;
@@ -74,7 +73,6 @@ public class PostingsPreparationUtil implements Serializable {
 	private Logger logger = LogManager.getLogger(PostingsPreparationUtil.class);
 
 	private AccountEngineExecution engineExecution;
-	private FinContributorDetailDAO finContributorDetailDAO;
 	private PostingsDAO postingsDAO;
 	private AccountProcessUtil accountProcessUtil;
 	private CommitmentDAO commitmentDAO;
@@ -758,10 +756,6 @@ public class PostingsPreparationUtil implements Serializable {
 
 	public void setCommitmentMovementDAO(CommitmentMovementDAO commitmentMovementDAO) {
 		this.commitmentMovementDAO = commitmentMovementDAO;
-	}
-
-	public void setFinContributorDetailDAO(FinContributorDetailDAO finContributorDetailDAO) {
-		this.finContributorDetailDAO = finContributorDetailDAO;
 	}
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {

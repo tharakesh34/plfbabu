@@ -504,7 +504,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	private transient DocumentDetailDialogCtrl documentDetailDialogCtrl = null;
 	private transient AccountingDetailDialogCtrl accountingDetailDialogCtrl = null;
 	private transient StageAccountingDetailDialogCtrl StageAccountingDetailDialogCtrl = null;
-	private transient ContributorDetailsDialogCtrl contributorDetailsDialogCtrl = null;
 	private transient JointAccountDetailDialogCtrl jointAccountDetailDialogCtrl = null;
 	private transient AgreementDetailDialogCtrl agreementDetailDialogCtrl = null;
 	private transient ScoringDetailDialogCtrl scoringDetailDialogCtrl = null;
@@ -1355,27 +1354,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void onSelectStageAccountingDetailsTab(ForwardEvent event) {
 		getStageAccountingDetailDialogCtrl().doSetLabels(getFinBasicDetails());
-	}
-
-	/**
-	 * Method for Rendering Schedule Details Data in finance
-	 */
-	public void appendContributorDetailsTab(boolean onLoadProcess) {
-		logger.debug("Entering");
-
-		Tab tab = new Tab("Contributors");
-		tab.setId("contributorsTab");
-		tabsIndexCenter.appendChild(tab);
-
-		Tabpanel tabpanel = new Tabpanel();
-		tabpanel.setId("contributorsTabPanel");
-		tabpanel.setStyle("overflow:auto;");
-		tabpanel.setParent(tabpanelsBoxIndexCenter);
-		tabpanel.setHeight(this.borderLayoutHeight - 100 + "px");
-
-		Executions.createComponents("/WEB-INF/pages/Finance/FinanceMain/ContributorDetailsDialog.zul", tabpanel,
-				getDefaultArguments());
-		logger.debug("Leaving");
 	}
 
 	/**
@@ -7069,14 +7047,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 
 	public void setStageAccountingDetailDialogCtrl(StageAccountingDetailDialogCtrl stageAccountingDetailDialogCtrl) {
 		StageAccountingDetailDialogCtrl = stageAccountingDetailDialogCtrl;
-	}
-
-	public ContributorDetailsDialogCtrl getContributorDetailsDialogCtrl() {
-		return contributorDetailsDialogCtrl;
-	}
-
-	public void setContributorDetailsDialogCtrl(ContributorDetailsDialogCtrl contributorDetailsDialogCtrl) {
-		this.contributorDetailsDialogCtrl = contributorDetailsDialogCtrl;
 	}
 
 	public JointAccountDetailDialogCtrl getJointAccountDetailDialogCtrl() {
