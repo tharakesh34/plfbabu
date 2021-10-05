@@ -62,7 +62,6 @@ import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
-import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
@@ -279,7 +278,6 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<RecommendationNotes> recommendationNoteList = new ArrayList<>(1);
 	private DueDiligenceDetails dueDiligenceDetails;
 	private String orderStatus;
-	private SynopsisDetails synopsisDetails;
 	private SpreadSheet spreadSheet = new SpreadSheet();
 	private boolean spreadSheetloaded = false;
 	private List<CollateralAssignment> tempCollateralAssignmentList = new ArrayList<>();
@@ -1468,14 +1466,6 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 
 	public void setRecommendationNoteList(List<RecommendationNotes> recommendationNoteList) {
 		this.recommendationNoteList = recommendationNoteList;
-	}
-
-	public SynopsisDetails getSynopsisDetails() {
-		return synopsisDetails;
-	}
-
-	public void setSynopsisDetails(SynopsisDetails synopsisDetails) {
-		this.synopsisDetails = synopsisDetails;
 	}
 
 	public boolean isSpreadSheetloaded() {

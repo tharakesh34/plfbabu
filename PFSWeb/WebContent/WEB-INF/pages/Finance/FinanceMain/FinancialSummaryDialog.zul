@@ -27,8 +27,6 @@
 						style="display:none" height="35px" width="35px" />
 					<image id="imgReferences" src="/images/icons/reference.svg" tooltiptext="References"
 						style="display:none" height="35px" width="35px" />
-					<image id="imgSynopsisandpddetails" src="/images/icons/case_Synopsis.svg"
-						tooltiptext="Case Synopsis/PD Details" style="display:none" height="35px" width="35px" />
 					<image id="imgDeviations" src="/images/icons/deviation.svg" tooltiptext="Deviations"
 						style="display:none" height="35px" width="35px" />
 					<image id="imgRecommendationNote" src="/images/icons/recommendationNotes.svg"
@@ -328,91 +326,6 @@
 					<groupbox id="gb_assetDetails" visible="false" style="padding:30px 25px 0px 15px;">
 						<caption id="assetDetails" label="Asset Details"></caption>
 						<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:none"></grid>
-					</groupbox>
-					<groupbox id="gb_synopsisAndPdDetails" visible="false" style="padding:30px 25px 0px 15px;">
-						<caption id="synopsisAndPdDetails" label="Case Synopsis/PD Details"></caption>
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_CustomerBackground.value')}"></caption>
-							<hbox>
-								<ptCKeditor id="customerBackground" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_DetailedBusinessProfile.value')}">
-							</caption>
-							<hbox>
-								<ptCKeditor id="detailedBusinessProfile" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_DetailedofGroupCompanies.value')}">
-							</caption>
-							<hbox>
-								<ptCKeditor id="detailsofGroupCompaniesIfAny" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_PdDetails.value')}"></caption>
-							<hbox>
-								<ptCKeditor id="pdDetails" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_MajorProduct.value')}"></caption>
-							<hbox>
-								<ptCKeditor id="majorProduct" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_Commentoncollateraldetails.value')}">
-							</caption>
-							<hbox>
-								<ptCKeditor id="cmtOnCollateralDtls" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_EndUse.value')}"></caption>
-							<hbox>
-								<ptCKeditor id="endUse" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
-
-						<groupbox>
-							<caption label="${c:l('label_FinancialSummaryDailog_OtherRemarks.value')}"></caption>
-							<hbox>
-								<ptCKeditor id="otherRemarks" width="100%" height="300px"
-									customConfigurationsPath="/ptjs/customizedConfig.js"
-									w:onDoubleClick="displayContent(this.getSelectedItem().getLabel())" />
-							</hbox>
-							<space />
-						</groupbox>
 					</groupbox>
 					<groupbox id="gb_deviations" visible="false" style="padding:30px 25px 0px 15px;">
 						<caption id="deviations" label="Deviations"></caption>

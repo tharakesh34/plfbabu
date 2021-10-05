@@ -11464,35 +11464,6 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
-	<!--============ Financial Summary Synopsis Details ============== -->
-	<bean id="synopsisDetailsDAO" class="com.pennant.backend.dao.finance.financialSummary.impl.SynopsisDetailsDAOImpl"
-		parent="sequenceDao" />
-
-	<bean id="synopsisDetailsService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
-		<property name="transactionManager">
-			<ref bean="transactionManager" />
-		</property>
-		<property name="target">
-			<ref bean="synopsisDetailsServiceTarget" />
-		</property>
-		<property name="transactionAttributes">
-			<props>
-				<prop key="saveOrUpdate*">PROPAGATION_REQUIRED</prop>
-				<prop key="delete*">PROPAGATION_REQUIRED</prop>
-				<prop key="doApprove*">PROPAGATION_REQUIRED</prop>
-				<prop key="doReject*">PROPAGATION_REQUIRED</prop>
-				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
-			</props>
-		</property>
-	</bean>
-
-	<bean name="synopsisDetailsServiceTarget"
-		class="com.pennant.backend.service.finance.financialsummary.impl.SynopsisDetailsServiceImpl">
-		<property name="synopsisDetailsDAO" ref="synopsisDetailsDAO" />
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-
-	</bean>
-
 	<bean id="dpdEnquiryService" class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager">
 			<ref bean="transactionManager" />

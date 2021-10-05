@@ -194,7 +194,6 @@ import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
-import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.financemanagement.FinFlagsDetail;
 import com.pennant.backend.model.financemanagement.Provision;
@@ -242,7 +241,6 @@ import com.pennant.backend.service.finance.financialsummary.DueDiligenceDetailsS
 import com.pennant.backend.service.finance.financialsummary.RecommendationNotesDetailsService;
 import com.pennant.backend.service.finance.financialsummary.RisksAndMitigantsService;
 import com.pennant.backend.service.finance.financialsummary.SanctionConditionsService;
-import com.pennant.backend.service.finance.financialsummary.SynopsisDetailsService;
 import com.pennant.backend.service.financemanagement.bankorcorpcreditreview.CreditFinancialService;
 import com.pennant.backend.service.legal.LegalDetailService;
 import com.pennant.backend.service.limitservice.impl.LimitManagement;
@@ -433,9 +431,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	@Autowired(required = false)
 	private RecommendationNotesDetailsService recommendationNotesDetailsService;
-
-	@Autowired(required = false)
-	private SynopsisDetailsService synopsisDetailsService;
 
 	private FinanceWorkFlowService financeWorkFlowService;
 
@@ -690,9 +685,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		/* Financial Summary DueDiligences Details */
 		fd.getRecommendationNoteList().addAll(recommendationNotesDetailsDAO.getRecommendationNotesDetails(finID));
-
-		/* SynopsisDetails details */
-		fd.setSynopsisDetails(synopsisDetailsService.getSynopsisDetails(finID));
 
 		/* Finance OCR Details */
 		fd.setFinOCRHeader(finOCRHeaderService.getFinOCRHeaderByRef(finID, "_View"));
@@ -2663,20 +2655,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditTranType, false));
 		}
 
-		// Synoposis Details
-		// =======================================
-		SynopsisDetails synopsisDetails = fd.getSynopsisDetails();
-		if (synopsisDetails != null && synopsisDetailsService != null) {
-			synopsisDetails.setRecordStatus(fm.getRecordStatus());
-			synopsisDetails.setRoleCode(fm.getRoleCode());
-			synopsisDetails.setNextRoleCode(fm.getNextRoleCode());
-			synopsisDetails.setTaskId((fm.getTaskId()));
-			synopsisDetails.setNextTaskId((fm.getNextTaskId()));
-			synopsisDetails.setWorkflowId((fm.getWorkflowId()));
-			synopsisDetails.setFinID((fm.getFinID()));
-			synopsisDetails.setFinReference((fm.getFinReference()));
-			auditDetails.add(synopsisDetailsService.saveOrUpdate(synopsisDetails, tableType, auditTranType));
-		}
 		// Fin OCR Details
 		// =========================
 		if (fd.getFinOCRHeader() != null && finOCRHeaderService != null) {
@@ -4275,10 +4253,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetails.addAll(recommendationNotesDetailsService.doApprove(recommendationNotesList,
 							TableType.MAIN_TAB, tranType));
 				}
-				// Synopsis Details
-				if (fd.getSynopsisDetails() != null) {
-					synopsisDetailsService.doApprove(fd.getSynopsisDetails(), TableType.MAIN_TAB, tranType);
-				}
 
 				// Fin OCR Details
 				// =========================
@@ -4614,30 +4588,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					auditDetailList
 							.addAll(finCollateralService.delete(fd.getFinanceCollaterals(), "_Temp", auditTranType));
 				}
-				/*
-				 * //Deleting FinancailSummary RisksAndMitigants Details List<RisksAndMitigants> risksAndMitigants =
-				 * financeDetail.getRisksAndMitigantsList(); if (CollectionUtils.isNotEmpty(risksAndMitigants)) {
-				 * auditDetails.addAll(risksAndMitigantsService.delete( risksAndMitigants, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary SanctionConditions Details List<SanctionConditions>
-				 * sanctionConditions = financeDetail.getSanctionDetailsList(); if
-				 * (CollectionUtils.isNotEmpty(sanctionConditions)) {
-				 * auditDetails.addAll(sanctionConditionsService.delete( sanctionConditions, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
-				 * List<DealRecommendationMerits> dealRecommendationMerits =
-				 * financeDetail.getDealRecommendationMeritsDetailsList(); if
-				 * (CollectionUtils.isNotEmpty(dealRecommendationMerits)) {
-				 * auditDetails.addAll(dealRecommendationMeritsService.delete( dealRecommendationMerits,
-				 * TableType.TEMP_TAB, auditTranType)); } //Deleting FinancailSummary DueDiligence Details
-				 * List<DueDiligenceDetails> dueDiligenceDetails = financeDetail.getDueDiligenceDetailsList(); if
-				 * (CollectionUtils.isNotEmpty(dueDiligenceDetails)) {
-				 * auditDetails.addAll(dueDiligenceDetailsService.delete( dueDiligenceDetails, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
-				 * 
-				 * 
-				 * //Deleting FinancailSummary Synopsis Details if (financeDetail.getSynopsisDetails() != null) {
-				 * auditDetailList.add(synopsisDetailsService.delete( financeDetail.getSynopsisDetails(),
-				 * TableType.TEMP_TAB, auditTranType)); }
-				 */
 
 			}
 
@@ -5647,30 +5597,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (CollectionUtils.isNotEmpty(finOptions)) {
 					auditDetails.addAll(finOptionService.delete(finOptions, TableType.TEMP_TAB, auditTranType));
 				}
-				/*
-				 * //Deleting FinancailSummary RisksAndMitigants Details List<RisksAndMitigants> risksAndMitigants =
-				 * financeDetail.getRisksAndMitigantsList(); if (CollectionUtils.isNotEmpty(risksAndMitigants)) {
-				 * auditDetails.addAll(risksAndMitigantsService.delete( risksAndMitigants, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary SanctionConditions Details List<SanctionConditions>
-				 * sanctionConditions = financeDetail.getSanctionDetailsList(); if
-				 * (CollectionUtils.isNotEmpty(sanctionConditions)) {
-				 * auditDetails.addAll(sanctionConditionsService.delete( sanctionConditions, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
-				 * List<DealRecommendationMerits> dealRecommendationMerits =
-				 * financeDetail.getDealRecommendationMeritsDetailsList(); if
-				 * (CollectionUtils.isNotEmpty(dealRecommendationMerits)) {
-				 * auditDetails.addAll(dealRecommendationMeritsService.delete( dealRecommendationMerits,
-				 * TableType.TEMP_TAB, auditTranType)); } //Deleting FinancailSummary DueDiligence Details
-				 * List<DueDiligenceDetails> dueDiligenceDetails = financeDetail.getDueDiligenceDetailsList(); if
-				 * (CollectionUtils.isNotEmpty(dueDiligenceDetails)) {
-				 * auditDetails.addAll(dueDiligenceDetailsService.delete( dueDiligenceDetails, TableType.TEMP_TAB,
-				 * auditTranType)); } //Deleting FinancailSummary DealRecommendationMerits Details
-				 * 
-				 * 
-				 * //Deleting FinancailSummary Synopsis Details if (financeDetail.getSynopsisDetails() != null) {
-				 * auditDetailList.add(synopsisDetailsService.delete( financeDetail.getSynopsisDetails(),
-				 * TableType.TEMP_TAB, auditTranType)); }
-				 */
 
 				// Collateral assignment Details
 				if (fd.getCollateralAssignmentList() != null && !fd.getCollateralAssignmentList().isEmpty()) {
@@ -10659,10 +10585,6 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setRecommendationNotesDetailsDAO(RecommendationNotesDetailsDAO recommendationNotesDetailsDAO) {
 		this.recommendationNotesDetailsDAO = recommendationNotesDetailsDAO;
-	}
-
-	public void setSynopsisDetailsService(SynopsisDetailsService synopsisDetailsService) {
-		this.synopsisDetailsService = synopsisDetailsService;
 	}
 
 	public void setDrawingPowerService(DrawingPowerService drawingPowerService) {
