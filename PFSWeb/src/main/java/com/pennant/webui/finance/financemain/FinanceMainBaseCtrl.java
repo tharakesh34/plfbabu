@@ -7803,6 +7803,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			afd.setRecommendationNoteList(null);
 		}
+		if (financialSummaryDialogCtrl != null) {
+			financialSummaryDialogCtrl.doFillSynopsisDetails(afd.getFinScheduleData().getFinanceMain());
+			afd.setSynopsisDetails(financialSummaryDialogCtrl.getSynopsisDetails());
+		} else {
+			afd.setSynopsisDetails(null);
+		}
 
 		Tab pmayDetailsTab = getTab(AssetConstants.UNIQUE_ID_PMAY);
 		if ((pmayDetailsTab != null && pmayDetailsTab.isVisible()) && pmayDialogCtrl != null) {

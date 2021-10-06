@@ -24,6 +24,7 @@
  */
 package com.pennant.webui.finance.financialsummary;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -95,6 +96,7 @@ import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotesConfiguration;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
+import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.psl.PSLDetail;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.solutionfactory.DeviationParam;
@@ -103,9 +105,11 @@ import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.finance.GuarantorDetailService;
 import com.pennant.backend.util.DeviationConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
+import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
+import com.pennant.component.PTCKeditor;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.customermasters.customer.CustomerDialogCtrl;
@@ -150,8 +154,16 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Textbox endUseOfFunds;
 	private Textbox btTenure;
 	private Textbox btdetailsEmi;
+	protected PTCKeditor customerBackground;
+	protected PTCKeditor detailedBusinessProfile;
+	protected PTCKeditor detailsofGroupCompaniesIfAny;
+	protected PTCKeditor pdDetails;
+	protected PTCKeditor majorProduct;
+	protected PTCKeditor otherRemarks;
 	private Textbox purposeOfLoan;
 	private Textbox employeerName;
+	protected PTCKeditor cmtOnCollateralDtls;
+	protected PTCKeditor endUse;
 
 	protected Listbox listBoxCustomerDetails;
 	protected Listbox listBoxReferencesDetails;
@@ -197,6 +209,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private DueDiligenceDetailsDAO dueDiligenceDetailsDAO;
 	private QueryDetailDAO queryDetailDAO;
 	private RecommendationNotesDetailsDAO recommendationNotesDetailsDAO;
+	private SynopsisDetails synopsisDetails = new SynopsisDetails();
 
 	long idCount = 0;
 	private Image imgBasicDetails;
@@ -204,6 +217,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Image imgCustomerDetails;
 	private Image imgDueDiligence;
 	private Image imgReferences;
+	private Image imgSynopsisandpddetails;
 	private Image imgDeviations;
 	private Image imgDealRecommendationMerits;
 	private Image imgSanctionConditions;
@@ -226,6 +240,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private Groupbox gb_references;
 	private Groupbox gb_collateralDetails;
 	private Groupbox gb_assetDetails;
+	private Groupbox gb_synopsisAndPdDetails;
 	private Groupbox gb_deviations;
 	private Groupbox gb_sanctionConditionsDetails;
 	private Groupbox gb_risksAndMitigants;
@@ -260,6 +275,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private boolean isreferencesVisible = false;
 	private boolean iscollateralDetailsVisible = false;
 	private boolean isassetDetailsVisible = false;
+	private boolean issynopsisAndPdDetailsVisible = false;
 	private boolean isdeviationsDetailsVisible = false;
 	private boolean isrecommendationNoteDetailsVisible = false;
 	private boolean isdealRecommendationMeritsDetailsVisible = false;
@@ -428,7 +444,11 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			isassetDetailsVisible = true;
 			gb_assetDetails.setVisible(true);
 		}
-
+		if (cetGroupBoxesVisibility.contains("gb_synopsisAndPdDetails")) {
+			issynopsisAndPdDetailsVisible = true;
+			imgSynopsisandpddetails.setStyle("display:block");
+			gb_synopsisAndPdDetails.setVisible(true);
+		}
 		if (cetGroupBoxesVisibility.contains("gb_deviations")) {
 			isdeviationsDetailsVisible = true;
 			imgDeviations.setStyle("display:block");
@@ -522,6 +542,51 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.product.setValue(financeMain.getLovDescFinTypeName());
 		this.loanReference.setValue(financeMain.getFinReference());
 		this.source.setValue(financeMain.getLovDescSourceCity());
+		if (financeDetail.getSynopsisDetails() != null) {
+			try {
+				if (financeDetail.getSynopsisDetails().getCustomerBackGround() != null) {
+					// We are using UTF-8 character set to provide the compatibility of the existing data
+					this.customerBackground
+							.setValue(new String(financeDetail.getSynopsisDetails().getCustomerBackGround(),
+									NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getDetailedBusinessProfile() != null) {
+					this.detailedBusinessProfile
+							.setValue(new String(financeDetail.getSynopsisDetails().getDetailedBusinessProfile(),
+									NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny() != null) {
+					this.detailsofGroupCompaniesIfAny
+							.setValue(new String(financeDetail.getSynopsisDetails().getDetailsofGroupCompaniesIfAny(),
+									NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getPdDetails() != null) {
+					this.pdDetails.setValue(new String(financeDetail.getSynopsisDetails().getPdDetails(),
+							NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getMajorProduct() != null) {
+					this.majorProduct.setValue(new String(financeDetail.getSynopsisDetails().getMajorProduct(),
+							NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getOtherRemarks() != null) {
+					this.otherRemarks.setValue(new String(financeDetail.getSynopsisDetails().getOtherRemarks(),
+							NotificationConstants.UTF_EIGHT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getCmtOnCollateralDtls() != null) {
+					// new requirement
+					this.cmtOnCollateralDtls
+							.setValue(new String(financeDetail.getSynopsisDetails().getCmtOnCollateralDtls(),
+									NotificationConstants.DEFAULT_CHARSET));
+				}
+				if (financeDetail.getSynopsisDetails().getEndUse() != null) {
+					this.endUse.setValue(new String(financeDetail.getSynopsisDetails().getEndUse(),
+							NotificationConstants.DEFAULT_CHARSET));
+				}
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		if (isbasicDetailsVisible) {
 			doFillBasicDetails(financeMain, fsdList);
 		}
@@ -770,6 +835,42 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			lc.setParent(item);
 			this.listBoxReferencesDetails.appendChild(item);
 		}
+		logger.debug("Leaving");
+	}
+
+	public void doFillSynopsisDetails(FinanceMain fm) {
+		logger.debug("Entering");
+
+		if (financeDetail.getSynopsisDetails() != null) {
+			synopsisDetails.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+			synopsisDetails.setNewRecord(false);
+		} else {
+			synopsisDetails.setRecordStatus(PennantConstants.RECORD_TYPE_NEW);
+			synopsisDetails.setNewRecord(true);
+		}
+		try {
+			synopsisDetails.setCustomerBackGround(
+					this.customerBackground.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setDetailedBusinessProfile(
+					this.detailedBusinessProfile.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setDetailsofGroupCompaniesIfAny(
+					this.detailsofGroupCompaniesIfAny.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setPdDetails(this.pdDetails.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails
+					.setMajorProduct(this.majorProduct.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails
+					.setOtherRemarks(this.otherRemarks.getValue().getBytes(NotificationConstants.UTF_EIGHT_CHARSET));
+			synopsisDetails.setCmtOnCollateralDtls(
+					this.cmtOnCollateralDtls.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
+			synopsisDetails.setEndUse(this.endUse.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		synopsisDetails.setFinID(fm.getFinID());
+		synopsisDetails.setFinReference(fm.getFinReference());
+
+		setSynopsisDetails(synopsisDetails);
+
 		logger.debug("Leaving");
 	}
 
@@ -1647,6 +1748,12 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
+	public void onClick$imgSynopsisandpddetails(Event event) throws Exception {
+		logger.debug("Entering");
+		gb_synopsisAndPdDetails.focus();
+		logger.debug("Leaving");
+	}
+
 	public void onClick$imgDeviations(Event event) throws Exception {
 		logger.debug("Entering");
 		gb_deviations.focus();
@@ -1898,6 +2005,14 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	public void setRecommendationNotesDetailsDAO(RecommendationNotesDetailsDAO recommendationNotesDetailsDAO) {
 		this.recommendationNotesDetailsDAO = recommendationNotesDetailsDAO;
+	}
+
+	public SynopsisDetails getSynopsisDetails() {
+		return synopsisDetails;
+	}
+
+	public void setSynopsisDetails(SynopsisDetails synopsisDetails) {
+		this.synopsisDetails = synopsisDetails;
 	}
 
 	public CustomerDialogCtrl getCustomerDialogCtrl() {

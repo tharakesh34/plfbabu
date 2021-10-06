@@ -276,6 +276,7 @@ import com.pennant.backend.model.finance.financialsummary.DueDiligenceDetails;
 import com.pennant.backend.model.finance.financialsummary.RecommendationNotes;
 import com.pennant.backend.model.finance.financialsummary.RisksAndMitigants;
 import com.pennant.backend.model.finance.financialsummary.SanctionConditions;
+import com.pennant.backend.model.finance.financialsummary.SynopsisDetails;
 import com.pennant.backend.model.finance.finoption.FinOption;
 import com.pennant.backend.model.finance.liability.LiabilityRequest;
 import com.pennant.backend.model.finance.psl.PSLCategory;
@@ -3446,6 +3447,11 @@ public class PennantJavaUtil {
 		ModuleUtil.register("RecommendationNotes",
 				new ModuleMapping("RecommendationNotes", RecommendationNotes.class,
 						new String[] { "RecommendationNotes" }, masterWF, new String[] { "Particulars", "Remarks" },
+						null, 300));
+		ModuleUtil.register("SynopsisDetails",
+				new ModuleMapping("SynopsisDetails", SynopsisDetails.class, new String[] { "SynopsisDetails" },
+						masterWF, new String[] { "CustomerBackGround", "DetailedBusinessProfile",
+								"DetailsofGroupCompaniesIfAny", "PdDetails", "MajorProduct", "OtherRemarks" },
 						null, 300));
 
 		ModuleUtil.register("LoanCancelReasons",
