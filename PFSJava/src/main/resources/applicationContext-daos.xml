@@ -10947,6 +10947,7 @@
 		<property name="accountingSetDAO" ref="accountingSetDAO" />
 		<property name="subventionService" ref="subventionService" />
 		<property name="restructureService" ref="restructureService" />
+		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
 
 	<bean id="receiptUploadApprovalProcess" class="com.pennanttech.pff.receipt.upload.ReceiptUploadApprovalProcess">
