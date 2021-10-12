@@ -576,6 +576,7 @@ public class ProjectedAmortizationService {
 
 		projAccrual.setAccruedOn(curMonthEnd);
 		projAccrual.setFinReference(prvProjAccrual.getFinReference());
+		projAccrual.setFinID(prvProjAccrual.getFinID());
 
 		// ACCRUAL Calculation
 		BigDecimal pftAccrued = totalProfit.subtract(prvProjAccrual.getCumulativeAccrued());

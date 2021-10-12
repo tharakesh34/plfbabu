@@ -656,6 +656,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
 			rpySchd.setLinkedTranId(linkedTranId);
 			rpySchd.setFinReference(fd.getFinScheduleData().getFinReference());
+			rpySchd.setFinID(fd.getFinScheduleData().getFinID());
 		}
 		financeRepaymentsDAO.saveRpySchdList(repayData.getRepayScheduleDetails(), TableType.MAIN_TAB);
 

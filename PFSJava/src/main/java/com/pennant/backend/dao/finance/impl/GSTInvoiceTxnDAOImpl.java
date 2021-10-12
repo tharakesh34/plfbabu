@@ -111,7 +111,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 				ps.setString(index++, gsti.getCustomerAddress());
 				ps.setString(index++, gsti.getInvoice_Status());
 				ps.setString(index++, gsti.getInvoiceType());
-				ps.setLong(index++, gsti.getDueInvoiceId());
+				ps.setObject(index++, gsti.getDueInvoiceId());
 				ps.setString(index++, gsti.getInvoiceFor());
 			});
 		} catch (DuplicateKeyException e) {

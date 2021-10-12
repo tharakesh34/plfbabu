@@ -3360,6 +3360,7 @@ public class ReceiptCalculator {
 		RepayScheduleDetail rps = new RepayScheduleDetail();
 		rps.setRepayID(1);
 		rps.setFinReference(curSchd.getFinReference());
+		rps.setFinID(curSchd.getFinID());
 		rps.setSchDate(curSchd.getSchDate());
 		rps.setDefSchdDate(curSchd.getDefSchdDate());
 		rps.setSchdFor("S");
@@ -3406,6 +3407,7 @@ public class ReceiptCalculator {
 		RepayScheduleDetail rps = new RepayScheduleDetail();
 		rps.setRepayID(1);
 		rps.setFinReference(fod.getFinReference());
+		rps.setFinID(fod.getFinID());
 		rps.setSchdFor("S");
 		rps.setSchDate(fod.getFinODSchdDate());
 		rps.setDaysLate(fod.getFinCurODDays());

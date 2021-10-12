@@ -1743,6 +1743,7 @@ public class RepaymentProcessUtil {
 
 					RepayScheduleDetail rpySchd = rpySchdList.get(i);
 					rpySchd.setFinReference(rch.getReference());
+					rpySchd.setFinID(rch.getFinID());
 					rpySchd.setRepayID(repayID);
 					rpySchd.setRepaySchID(i + 1);
 					rpySchd.setLinkedTranId(rph.getLinkedTranId());
@@ -2315,6 +2316,7 @@ public class RepaymentProcessUtil {
 		if (rsd == null) {
 			rsd = new RepayScheduleDetail();
 			rsd.setFinReference(curSchd.getFinReference());
+			rsd.setFinID(curSchd.getFinID());
 			rsd.setSchDate(curSchd.getSchDate());
 			rsd.setDefSchdDate(curSchd.getSchDate());
 

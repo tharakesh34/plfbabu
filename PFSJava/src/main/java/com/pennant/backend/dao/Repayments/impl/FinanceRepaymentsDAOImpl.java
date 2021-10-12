@@ -502,10 +502,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append(", SchdFee, SchdFeePaid, SchdFeeBal, SchdFeePayNow, LatePftSchd, LatePftSchdPaid, LatePftSchdBal");
 		sql.append(", LatePftSchdPayNow, PftSchdWaivedNow, LatePftSchdWaivedNow, PriSchdWaivedNow, SchdFeeWaivedNow");
 		sql.append(", TaxHeaderId, WaiverId");
-		sql.append(")");
+		sql.append(") values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(", ?, ?,  ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(" Values(");
 		sql.append(")");
 
 		logger.debug(Literal.SQL + sql.toString());
