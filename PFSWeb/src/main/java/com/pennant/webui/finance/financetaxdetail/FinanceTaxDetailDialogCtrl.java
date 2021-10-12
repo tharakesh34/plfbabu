@@ -1248,9 +1248,12 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 		// Finance Reference
 		try {
-			aFinanceTaxDetail.setFinID(ComponentUtil.getFinID(this.finReference));
-			aFinanceTaxDetail.setFinReference(this.finReference.getValue());
-			this.financeTaxDetail.setFinReference(this.finReference.getValue());
+			long finid = ComponentUtil.getFinID(this.finReference);
+			String finrefrence= this.finReference.getValue();
+			aFinanceTaxDetail.setFinID(finid);
+			aFinanceTaxDetail.setFinReference(finrefrence);
+			this.financeTaxDetail.setFinID(finid);
+			this.financeTaxDetail.setFinReference(finrefrence);
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
