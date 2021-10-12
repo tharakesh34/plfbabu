@@ -188,13 +188,14 @@ public class FinMaturityService extends ServiceHelper {
 	 * @return
 	 */
 	private String prepareSelectQuery() {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select fm.FinReference, fm.finID, fm.CustID, fm.FinType, fm.MaturityDate, fm.ClosedDate, pd.AMZMethod");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" fm.finID, fm.FinReference, fm.CustID, fm.FinType, fm.MaturityDate, fm.ClosedDate, pd.AMZMethod");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join FinPftDetails pd ON pd.FinID = fm.FinID");
-		sql.append(" WHERE fm.FinIsActive = 0 and fm.ClosedDate >= ? and fm.ClosedDate <= ?");
+		sql.append(" Where fm.FinIsActive = 0 and fm.ClosedDate >= ? and fm.ClosedDate <= ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
 		return sql.toString();
 	}
 

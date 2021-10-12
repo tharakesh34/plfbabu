@@ -541,8 +541,8 @@ public class AdvancePaymentService extends ServiceHelper {
 
 		RepayScheduleDetail rsd = new RepayScheduleDetail();
 
-		rsd.setFinReference(curSchd.getFinReference());
 		rsd.setFinID(curSchd.getFinID());
+		rsd.setFinReference(curSchd.getFinReference());
 		rsd.setSchDate(curSchd.getSchDate());
 		rsd.setSchdFor(FinanceConstants.SCH_TYPE_SCHEDULE);
 		rsd.setProfitSchdBal(curSchd.getProfitSchd());

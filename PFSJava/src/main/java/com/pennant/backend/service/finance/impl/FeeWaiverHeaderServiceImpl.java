@@ -1770,9 +1770,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		long id = financeRepaymentsDAO.saveFinRepayHeader(rph, TableType.MAIN_TAB);
 
 		RepayScheduleDetail rsd = new RepayScheduleDetail();
+
 		rsd.setWaiverId(fwh.getWaiverId());
-		rsd.setFinReference(schedule.getFinReference());
 		rsd.setFinID(schedule.getFinID());
+		rsd.setFinReference(schedule.getFinReference());
 		rsd.setSchDate(schedule.getSchDate());
 		rsd.setSchdFor(FinanceConstants.SCH_TYPE_SCHEDULE);
 		rsd.setProfitSchdBal(schedule.getProfitSchd());

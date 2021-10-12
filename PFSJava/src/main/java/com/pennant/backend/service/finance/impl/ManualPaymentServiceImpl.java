@@ -655,8 +655,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 		// Update Linked Transaction ID after Repayment Postings Process if workflow not found
 		for (RepayScheduleDetail rpySchd : repayData.getRepayScheduleDetails()) {
 			rpySchd.setLinkedTranId(linkedTranId);
-			rpySchd.setFinReference(fd.getFinScheduleData().getFinReference());
 			rpySchd.setFinID(fd.getFinScheduleData().getFinID());
+			rpySchd.setFinReference(fd.getFinScheduleData().getFinReference());
 		}
 		financeRepaymentsDAO.saveRpySchdList(repayData.getRepayScheduleDetails(), TableType.MAIN_TAB);
 
