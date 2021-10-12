@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.plfdb" value="PLF_LIQUIBASE_CORE3.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.orcplfdb" value="PLF_INT_CORE3." dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.plfdb" value="PLF_LIQUIBASE_CORE3.." dbms="mssql" />
+	<property name="call.refdb" value="PLF_INT_CORE3." dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.4" author="m.mounika">
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="ContractorId" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="DisbRetPerc" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="DisbRetAmount" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="DisbRetPaid" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="RetPaidDate" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="DisbClaim" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="DisbDisbursed" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="NetAdvDue" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="NetRetDue" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="ConsultFeeFrq" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="ConsultFeeStartDate" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="ConsultFeeEndDate" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="InsuranceAmt" />
+		<dropColumn tableName="AdtFinDisbursementDetails" columnName="DisbAccountId" />
+	</changeSet>
+
+
+	<changeSet id="1.5" author="m.mounika">
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinDepositRestrictedTo" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinAEBuyOrInception" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinAESellOrMaturity" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="AllowDownpayPgm" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="AlwAdvanceRent" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="GrcAdvBaseRate" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="GrcAdvMargin" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="GrcAdvPftRate" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="RpyAdvBaseRate" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="RpyAdvMargin" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="RpyAdvPftRate" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="RollOverFinance" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="RollOverFrq" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinDepreciationReq" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinDepreciationFrq" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinAcType" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinContingentAcType" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinSuspAcType" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinBankContingentAcType" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinProvisionAcType" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="PftPayAcType" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinIsOpenPftPayAcc" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinIsOpenNewFinAc" />
+		<dropColumn tableName="AdtRMTFinanceTypes" columnName="AllowRIAInvestment" />
+	</changeSet>
+
+	<changeSet id="1.7" author="m.mounika">
+		<dropColumn tableName="AdtFinanceMain" columnName="MMAId" />
+		<dropColumn tableName="AdtFinanceMain" columnName="ShariaStatus" />
+		<dropColumn tableName="AdtFinanceMain" columnName="GrcAdvBaseRate" />
+		<dropColumn tableName="AdtFinanceMain" columnName="GrcAdvMargin" />
+		<dropColumn tableName="AdtFinanceMain" columnName="GrcAdvPftRate" />
+		<dropColumn tableName="AdtFinanceMain" columnName="RpyAdvBaseRate" />
+		<dropColumn tableName="AdtFinanceMain" columnName="RpyAdvMargin" />
+		<dropColumn tableName="AdtFinanceMain" columnName="RpyAdvPftRate" />
+		<dropColumn tableName="AdtFinanceMain" columnName="SupplementRent" />
+		<dropColumn tableName="AdtFinanceMain" columnName="IncreasedCost" />
+		<dropColumn tableName="AdtFinanceMain" columnName="RolloverFrq" />
+		<dropColumn tableName="AdtFinanceMain" columnName="NextRolloverDate" />
+		<dropColumn tableName="AdtFinanceMain" columnName="BankName" />
+		<dropColumn tableName="AdtFinanceMain" columnName="Iban" />
+		<dropColumn tableName="AdtFinanceMain" columnName="AccountType" />
+		<dropColumn tableName="AdtFinanceMain" columnName="DdaReferenceNo" />
+		<dropColumn tableName="AdtFinanceMain" columnName="FinAccount" />
+		<dropColumn tableName="AdtFinanceMain" columnName="FinCustPftAccount" />
+		<dropColumn tableName="AdtFinanceMain" columnName="DisbAccountId" />
+		<dropColumn tableName="AdtFinanceMain" columnName="RepayAccountId" />
+		<dropColumn tableName="AdtFinanceMain" columnName="FinCancelAc" />
+		<dropColumn tableName="AdtFinanceMain" columnName="DownPayAccount" />
+		<dropColumn tableName="AdtFinanceMain" columnName="DepreciationFrq" />
+		<dropColumn tableName="AdtFinanceMain" columnName="SecurityDeposit" />
+		<dropColumn tableName="AdtFinanceMain" columnName="TakeOverFinance" />
+		<dropColumn tableName="AdtFinanceMain" columnName="FeeAccountId" />
+		<dropColumn tableName="AdtFinanceMain" columnName="DeductInsDisb" />
+		<dropColumn tableName="AdtFinanceMain" columnName="InsuranceAmt" />
+		<dropColumn tableName="AdtFinanceMain" columnName="NextDepDate" />
+		<dropColumn tableName="AdtFinanceMain" columnName="LastDepDate" />
+	</changeSet>
+
+	<changeSet id="1.8" author="m.mounika">
+		<dropColumn tableName="AdtFinScheduleDetails" columnName="CalOnIndRate" />
+		<dropColumn tableName="AdtFinScheduleDetails" columnName="InsuranceAmt" />
+	</changeSet>
+
+	<changeSet id="1.9" author="m.mounika">
+		<dropTable tableName="adtagreementfielddetails" />
+	</changeSet>
+
+	<changeSet id="1.10" author="m.mounika">
+		<dropTable tableName="adtbulkprocessdetails" />
+	</changeSet>
+
+	<changeSet id="1.11" author="m.mounika">
+		<dropTable tableName="adtbulkratechangedetails" />
+	</changeSet>
+
+	<changeSet id="1.12" author="m.mounika">
+		<dropTable tableName="adtbundledproductsdetail" />
+	</changeSet>
+
+	<changeSet id="1.13" author="m.mounika">
+		<dropTable tableName="adtetihadcreditbureaudetail" />
+	</changeSet>
+
+	<changeSet id="1.14" author="m.mounika">
+		<dropTable tableName="adtfincontractorastdtls" />
+	</changeSet>
+
+	<changeSet id="1.15" author="m.mounika">
+		<dropTable tableName="adtfincontributordetail" />
+	</changeSet>
+
+	<changeSet id="1.16" author="m.mounika">
+		<dropTable tableName="adtfincontributorheader" />
+	</changeSet>
+
+	<changeSet id="1.17" author="m.mounika">
+		<dropTable tableName="adtfindefermentdetail" />
+	</changeSet>
+
+	<changeSet id="1.18" author="m.mounika">
+		<dropTable tableName="adtfinpolicecasedetail" />
+	</changeSet>
+
+	<changeSet id="1.19" author="m.mounika">
+		<dropTable tableName="adtinsurancedetails" />
+	</changeSet>
+
+	<changeSet id="1.20" author="m.mounika">
+		<dropTable tableName="adtfindefermentheader" />
+	</changeSet>
+
+</databaseChangeLog>

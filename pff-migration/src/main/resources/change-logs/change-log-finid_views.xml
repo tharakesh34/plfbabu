@@ -29,7 +29,7 @@
 
 	<!-- (FMV) :: Finance Main Views handle in single place start -->
 
-	<changeSet id="FMV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'financemain_lview'); 
@@ -37,7 +37,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_1" author="Gopal.p">
+	<changeSet id="FMV_1.1" author="Gopal.p">
 		<createView viewName="FINANCEMAIN_LVIEW" replaceIfExists="true">
 			<![CDATA[
 		 		SELECT T1.FINID,
@@ -64,7 +64,6 @@
 					T1.NEXTTASKID,
 					T1.FINPREAPPROVEDREF,
 					T1.RCDMAINTAINSTS,
-					T1.INSURANCEAMT,
 					T1.FINCURRASSETVALUE,
 					T1.CALTERMS,
 					T1.DEVIATIONAPPROVAL,
@@ -139,7 +138,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FMV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_lview');	
@@ -147,7 +146,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'financemain_aview'); 
@@ -155,7 +154,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_2" author="Gopal.p">
+	<changeSet id="FMV_2.1" author="Gopal.p">
 		<createView viewName="FINANCEMAIN_AVIEW" replaceIfExists="true">
 			 <![CDATA[ 
 				SELECT T1.FINID,
@@ -475,7 +474,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FMV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_aview');	
@@ -483,7 +482,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
 			select deps_save_and_drop_dependencies ('plf', 'financemain_view'); 
@@ -491,7 +490,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_3" author="Gopal.p">
+	<changeSet id="FMV_3.1" author="Gopal.p">
 		<createView viewName="FINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -1122,14 +1121,14 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FMV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_view');	
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="FMV_4_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_4.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_tview');
@@ -1137,7 +1136,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_4" author="Gopal.p">
+	<changeSet id="FMV_4.1" author="Gopal.p">
 		<createView viewName="FINANCEMAIN_TVIEW" replaceIfExists="true">
 		    <![CDATA[
 				SELECT T1.FINID,
@@ -1208,12 +1207,9 @@
 					T1.AVAILEDDEFFRQCHANGE,
 					T1.RECALTYPE,
 					T1.FINASSETVALUE,
-					T1.DISBACCOUNTID,
-					T1.REPAYACCOUNTID,
 					T1.FINISACTIVE,
 					T1.LIMITVALID,
 					T1.OVERRIDELIMIT,
-					T1.SECURITYDEPOSIT,
 					T1.VERSION,
 					T1.LASTMNTBY,
 					T1.LASTMNTON,
@@ -1244,12 +1240,7 @@
 					T1.FINCURRASSETVALUE,
 					T1.FINCOMMITMENTREF,
 					T1.FINLIMITREF,
-					T1.DEPRECIATIONFRQ,
 					T1.FINCONTRACTDATE,
-					T1.NEXTDEPDATE,
-					T1.LASTDEPDATE,
-					T1.FINACCOUNT,
-					T1.FINCUSTPFTACCOUNT,
 					T17.ACRTILLLBD LOVDESCACCRUEDTILLLBD,
 					T7.FINRVWRATEAPPLFOR,
 					T1.TOTALREPAYAMT,
@@ -1268,17 +1259,12 @@
 					T1.FINSTATUS,
 					T1.FINSTSREASON,
 					T1.INITIATEUSER,
-					T1.BANKNAME,
-					T1.IBAN,
-					T1.ACCOUNTTYPE,
-					T1.DDAREFERENCENO,
 					T7.FINSCHEDULEON LOVDESCFINSCHEDULEON,
 					T1.CUSTDSR,
 					T1.JOINTACCOUNT,
 					T1.JOINTCUSTID,
 					T1.DOWNPAYBANK,
 					T1.DOWNPAYSUPL,
-					T1.DOWNPAYACCOUNT,
 					T1.SECURITYCOLLATERAL,
 					T1.APPROVED,
 					T1.DISCREPANCY,
@@ -1303,26 +1289,11 @@
 					T1.RPYMAXRATE,
 					T1.DEVIATIONAPPROVAL,
 					T1.MANUALSCHEDULE,
-					T1.TAKEOVERFINANCE,
-					T1.GRCADVBASERATE,
-					T1.GRCADVMARGIN,
-					T1.GRCADVPFTRATE,
-					T1.RPYADVBASERATE,
-					T1.RPYADVMARGIN,
-					T1.RPYADVPFTRATE,
-					T1.SUPPLEMENTRENT,
-					T1.INCREASEDCOST,
 					T1.CREDITINSAMT,
-					T1.ROLLOVERFRQ,
-					T1.NEXTROLLOVERDATE,
 					T27.CUSTSTSDESCRIPTION,
-					T1.SHARIASTATUS,
 					T1.INITIATEDATE,
 					T1.FINPREAPPROVEDREF,
-					T1.MMAID,
 					T1.ACCOUNTSOFFICER,
-					T1.FEEACCOUNTID,
-					T1.FINCANCELAC,
 					T28.DEALERNAME LOVDESCACCOUNTSOFFICER,
 					T28.DEALERCITY LOVDESCSOURCECITY,
 					T1.DSACODE,
@@ -1332,8 +1303,6 @@
 					T1.DROPLINEFRQ,
 					T1.FIRSTDROPLINEDATE,
 					T1.PFTSERVICINGODLIMIT,
-					T1.INSURANCEAMT,
-					T1.DEDUCTINSDISB,
 					T1.ALWBPI,
 					T1.BPITREATMENT,
 					T1.PLANEMIHALW,
@@ -1485,7 +1454,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FMV_4_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_4.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_tview');
@@ -1679,7 +1648,7 @@
 
 	<!-- (WFMV) :: WIFinance Main Views handle in single place start -->
 
-	<changeSet id="WFMV_1_pre" author="Gopal.p" dbms="postgresql">
+		<changeSet id="WFMV_1.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_aview');
@@ -1687,7 +1656,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="WFMV_1" author="Gopal.p">
+	<changeSet id="WFMV_1.2" author="Gopal.p">
 		<createView viewName="WIFFINANCEMAIN_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -1778,20 +1747,13 @@
 					T1.LASTREPAYPFTDATE,
 					T1.LASTREPAYRVWDATE,
 					T1.LASTREPAYCPZDATE,
-					T1.DISBACCOUNTID,
-					T1.REPAYACCOUNTID,
 					T1.ALLOWGRCREPAY,
 					T1.GRCSCHDMTHD,
 					T1.REPAYMARGIN,
 					T1.GRCMARGIN,
-					T1.DEPRECIATIONFRQ,
 					T1.FINCOMMITMENTREF,
 					T1.FINCURRASSETVALUE,
 					T1.FINCONTRACTDATE,
-					T1.NEXTDEPDATE,
-					T1.LASTDEPDATE,
-					T1.FINACCOUNT,
-					T1.FINCUSTPFTACCOUNT,
 					T7.FINRVWRATEAPPLFOR,
 					T1.TOTALREPAYAMT,
 					T1.CLOSINGSTATUS,
@@ -1820,19 +1782,7 @@
 					T1.RPYMINRATE,
 					T1.RPYMAXRATE,
 					T1.MANUALSCHEDULE,
-					T1.TAKEOVERFINANCE,
-					T1.GRCADVBASERATE,
-					T1.GRCADVMARGIN,
-					T1.GRCADVPFTRATE,
-					T1.RPYADVBASERATE,
-					T1.RPYADVMARGIN,
-					T1.RPYADVPFTRATE,
-					T1.SUPPLEMENTRENT,
-					T1.INCREASEDCOST,
-					T1.FEEACCOUNTID,
 					T1.TDSAPPLICABLE,
-					T1.INSURANCEAMT,
-					T1.DEDUCTINSDISB,
 					T1.ALWBPI,
 					T1.BPITREATMENT,
 					T1.PLANEMIHALW,
@@ -1888,7 +1838,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="WFMV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="WFMV_1.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinancemain_aview');
@@ -1896,7 +1846,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="WFMV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="WFMV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_view');
@@ -1904,7 +1854,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="WFMV_2" author="Gopal.p">
+	<changeSet id="WFMV_2.1" author="Gopal.p">
 		<createView viewName="WIFFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -1995,20 +1945,13 @@
 					T1.LASTREPAYPFTDATE,
 					T1.LASTREPAYRVWDATE,
 					T1.LASTREPAYCPZDATE,
-					T1.DISBACCOUNTID,
-					T1.REPAYACCOUNTID,
 					T1.ALLOWGRCREPAY,
 					T1.GRCSCHDMTHD,
 					T1.REPAYMARGIN,
 					T1.GRCMARGIN,
-					T1.DEPRECIATIONFRQ,
 					T1.FINCOMMITMENTREF,
 					T1.FINCURRASSETVALUE,
 					T1.FINCONTRACTDATE,
-					T1.NEXTDEPDATE,
-					T1.LASTDEPDATE,
-					T1.FINACCOUNT,
-					T1.FINCUSTPFTACCOUNT,
 					T7.FINRVWRATEAPPLFOR,
 					T1.TOTALREPAYAMT,
 					T1.CLOSINGSTATUS,
@@ -2037,19 +1980,7 @@
 					T1.RPYMINRATE,
 					T1.RPYMAXRATE,
 					T1.MANUALSCHEDULE,
-					T1.TAKEOVERFINANCE,
-					T1.GRCADVBASERATE,
-					T1.GRCADVMARGIN,
-					T1.GRCADVPFTRATE,
-					T1.RPYADVBASERATE,
-					T1.RPYADVMARGIN,
-					T1.RPYADVPFTRATE,
-					T1.SUPPLEMENTRENT,
-					T1.INCREASEDCOST,
-					T1.FEEACCOUNTID,
 					T1.TDSAPPLICABLE,
-					T1.INSURANCEAMT,
-					T1.DEDUCTINSDISB,
 					T1.ALWBPI,
 					T1.BPITREATMENT,
 					T1.PLANEMIHALW,
@@ -2194,20 +2125,13 @@
 					T1.LASTREPAYPFTDATE,
 					T1.LASTREPAYRVWDATE,
 					T1.LASTREPAYCPZDATE,
-					T1.DISBACCOUNTID,
-					T1.REPAYACCOUNTID,
 					T1.ALLOWGRCREPAY,
 					T1.GRCSCHDMTHD,
 					T1.REPAYMARGIN,
 					T1.GRCMARGIN,
-					T1.DEPRECIATIONFRQ,
 					T1.FINCOMMITMENTREF,
 					T1.FINCURRASSETVALUE,
 					T1.FINCONTRACTDATE,
-					T1.NEXTDEPDATE,
-					T1.LASTDEPDATE,
-					T1.FINACCOUNT,
-					T1.FINCUSTPFTACCOUNT,
 					T7.FINRVWRATEAPPLFOR,
 					T1.TOTALREPAYAMT,
 					T1.CLOSINGSTATUS,
@@ -2236,19 +2160,7 @@
 					T1.RPYMINRATE,
 					T1.RPYMAXRATE,
 					T1.MANUALSCHEDULE,
-					T1.TAKEOVERFINANCE,
-					T1.GRCADVBASERATE,
-					T1.GRCADVMARGIN,
-					T1.GRCADVPFTRATE,
-					T1.RPYADVBASERATE,
-					T1.RPYADVMARGIN,
-					T1.RPYADVPFTRATE,
-					T1.SUPPLEMENTRENT,
-					T1.INCREASEDCOST,
-					T1.FEEACCOUNTID,
 					T1.TDSAPPLICABLE,
-					T1.INSURANCEAMT,
-					T1.DEDUCTINSDISB,
 					T1.ALWBPI,
 					T1.BPITREATMENT,
 					T1.PLANEMIHALW,
@@ -2311,7 +2223,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="WFM_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="WFM_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinancemain_view');
@@ -2362,7 +2274,7 @@
 
 	<!-- (FEV) :: Finance Enquiry views handle in single place start -->
 
-	<changeSet id="FEV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_tview');
@@ -2370,7 +2282,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FEV_1" author="Gopal.p">
+	<changeSet id="FEV_1.1" author="Gopal.p">
 		<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -2404,8 +2316,8 @@
 					T1.MANDATEID,
 					T1.FINREPAYMETHOD,
 					T1.FINASSETVALUE,
-					T1.FINCURRASSETVALUE + T1.FEECHARGEAMT + T1.INSURANCEAMT FINANCINGAMOUNT,
-					T1.FINCURRASSETVALUE - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT + T1.INSURANCEAMT CURFINAMOUNT,
+					T1.FINCURRASSETVALUE + T1.FEECHARGEAMT FINANCINGAMOUNT,
+					T1.FINCURRASSETVALUE - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT CURFINAMOUNT,
 					T2.FINTYPEDESC LOVDESCFINTYPENAME,
 					T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
 					T2.FINDIVISION LOVDESCFINDIVISION,
@@ -2444,7 +2356,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FEV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_tview');
@@ -2550,7 +2462,7 @@
 
 	<!-- (SDV) :: Finance Schedule detail Views handle in single place start -->
 
-	<changeSet id="SDV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finscheduledetails_tview');
@@ -2558,7 +2470,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_1" author="Gopal.p">
+	<changeSet id="SDV_1.1" author="Gopal.p">
 		<createView viewName="FINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
 		    <![CDATA[
 				SELECT T2.FINID,
@@ -2596,7 +2508,6 @@
 					T1.DEFSCHDDATE,
 					T1.SCHDMETHOD,
 					T1.MRGRATE,
-					T1.CALONINDRATE,
 					T1.FEECHARGEAMT,
 					T1.CALCULATEDRATE,
 					T1.EARLYPAIDBAL,
@@ -2611,29 +2522,10 @@
 					T1.FEESCHD,
 					T1.SCHDFEEPAID,
 					T1.SCHDFEEOS,
-					T1.INSSCHD,
-					T1.SCHDINSPAID,
-					T1.ADVPFTRATE,
-					T1.ADVPROFIT,
-					T1.ADVREPAYAMOUNT,
-					T1.ADVBASERATE,
-					T1.ADVMARGIN,
-					T1.ADVCALRATE,
-					T1.SUPLRENT,
-					T1.INCRCOST,
-					T1.SUPLRENTPAID,
-					T1.INCRCOSTPAID,
-					T1.ROLLOVERONSCHDATE,
-					T1.ROLLOVERAMOUNT,
-					T1.ROLLOVERAMOUNTPAID,
 					T1.TDSAMOUNT,
 					T1.TDSPAID,
 					T1.PFTDAYSBASIS,
-					T1.WRITEOFFINS,
-					T1.WRITEOFFINCRCOST,
-					T1.WRITEOFFSUPLRENT,
 					T1.WRITEOFFSCHFEE,
-					T1.INSURANCEAMT,
 					T1.INSTNUMBER,
 					T1.BPIORHOLIDAY,
 					T1.FRQDATE,
@@ -2650,7 +2542,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="SDV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finscheduledetails_tview');	
@@ -2658,7 +2550,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finscheduledetails_view');
@@ -2666,7 +2558,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_2" author="Gopal.p">
+	<changeSet id="SDV_2.1" author="Gopal.p">
 		<createView viewName="FINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINID,
@@ -2807,7 +2699,7 @@
 	</changeSet>
 
 
-	<changeSet id="SDV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finscheduledetails_view');	
@@ -2911,22 +2803,41 @@
 		</sql>
 	</changeSet>
 
-    <changeSet id="SDV_4" author="Gopal.p">
+	<changeSet id="SDV_4" author="Gopal.p" dbms="oracle">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
-				SELECT T.REPAYACCOUNTID,
-					T.FINTYPE,
+				SELECT T.FINTYPE,
 					T.FINID,
 					T.FINREFERENCE,
 					T.SCHDATE,
 					T.FINCCY,
 					T.REPAYAMOUNT
 				   FROM (SELECT row_number() OVER (PARTITION BY T1.FINID ORDER BY T1.SCHDATE) ROW_NUM,
-							T2.REPAYACCOUNTID, T2.FINTYPE, T2.FINID, T1.SCHDATE, T2.FINREFERENCE, T2.FINCCY, T1.REPAYAMOUNT
+							T2.FINTYPE, T2.FINID, T1.SCHDATE, T2.FINREFERENCE, T2.FINCCY, T1.REPAYAMOUNT
 						FROM FINSCHEDULEDETAILS T1
 						JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
 						WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND
-						T1.SCHDATE > (to_date((SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_DATE'), 'yyyy-MM-dd'))) t
+						T1.SCHDATE > ((SELECT to_date(SYSPARMVALUE ,'yyyy-mm-dd') FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_DATE'))) t
+				  WHERE t.ROW_NUM = 1
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="SDV_4" author="Gopal.p" dbms="postgresql,mssql">
+		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T.FINTYPE,
+					T.FINID,
+					T.FINREFERENCE,
+					T.SCHDATE,
+					T.FINCCY,
+					T.REPAYAMOUNT
+				   FROM (SELECT row_number() OVER (PARTITION BY T1.FINID ORDER BY T1.SCHDATE) ROW_NUM,
+							T2.FINTYPE, T2.FINID, T1.SCHDATE, T2.FINREFERENCE, T2.FINCCY, T1.REPAYAMOUNT
+						FROM FINSCHEDULEDETAILS T1
+						JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+						WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND
+						T1.SCHDATE > ((SELECT cast(SYSPARMVALUE as date) FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_DATE'))) t
 				  WHERE t.ROW_NUM = 1
 			]]>
 		</createView>
@@ -2944,7 +2855,7 @@
 
 	<!-- (FDDV) :: FIN DISBURSEMENT DETAILS Views handle in single place start -->
 
-	<changeSet id="FDDV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'findisbursementdetails_view');
@@ -2952,7 +2863,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FDDV_1" author="Gopal.p">
+	<changeSet id="FDDV_1.1" author="Gopal.p">
 		<createView viewName="FINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T3.FINID,
@@ -3026,7 +2937,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FDDV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'findisbursementdetails_view');	
@@ -3034,7 +2945,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FDDV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_2.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'findisbursementdetails_tview');
@@ -3042,7 +2953,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FDDV_2" author="Gopal.p">
+	<changeSet id="FDDV_2.2" author="Gopal.p">
 		<createView viewName="FINDISBURSEMENTDETAILS_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T3.FINID,
@@ -3050,10 +2961,8 @@
 					T1.DISBDATE,
 					T1.DISBSEQ,
 					T1.DISBDESC,
-					T1.DISBACCOUNTID,
 					T1.DISBAMOUNT,
 					T1.DISBREQDATE,
-					T1.DISBDISBURSED,
 					T1.DISBISACTIVE,
 					T1.DISBREMARKS,
 					T1.VERSION,
@@ -3069,21 +2978,9 @@
 					T1.FEECHARGEAMT,
 					T1.DISBSTATUS,
 					T1.DISBTYPE,
-					T1.DISBCLAIM,
 					T1.DISBEXPTYPE,
-					T1.DISBRETPERC,
-					T1.DISBRETAMOUNT,
 					T1.AUTODISB,
-					T1.NETADVDUE,
-					T1.NETRETDUE,
-					T1.DISBRETPAID,
-					T1.RETPAIDDATE,
 					T2.EXPENCETYPENAME LOVDESCDISBEXPTYPE,
-					T1.CONSULTFEEFRQ,
-					T1.CONSULTFEESTARTDATE,
-					T1.CONSULTFEEENDDATE,
-					T1.CONTRACTORID,
-					T1.INSURANCEAMT,
 					T1.INSTRUCTIONUID,
 					T1.QUICKDISB,
 					T1.INSTCALREQ,
@@ -3095,7 +2992,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FDDV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_2.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'findisbursementdetails_tview');	
@@ -3103,7 +3000,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FDDV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'findisbursementdetails_aview');
@@ -3111,7 +3008,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FDDV_3" author="Gopal.p">
+	<changeSet id="FDDV_3.1" author="Gopal.p">
 		<createView viewName="FINDISBURSEMENTDETAILS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T3.FINID,
@@ -3150,7 +3047,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FDDV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'findisbursementdetails_aview');	
@@ -4408,7 +4305,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FGDV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FGDV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finguarantorsdetails_view');
@@ -4416,7 +4313,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FGDV_3" author="Gopal.p">
+	<changeSet id="FGDV_3.1" author="Gopal.p">
 		<createView viewName="FINGUARANTORSDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.GUARANTORID,
@@ -4465,7 +4362,7 @@
 				FROM FINGUARANTORSDETAILS_TEMP T1
 				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
 				JOIN SECUSERS T2 ON T1.LASTMNTBY = T2.USRID
-				LEFT JOIN CUSTOMERS T3 ON T1.GUARANTORCIF::TEXT = T3.CUSTCIF::TEXT
+				LEFT JOIN CUSTOMERS T3 ON T1.GUARANTORCIF = T3.CUSTCIF
 				UNION ALL
 				SELECT T1.GUARANTORID,
 					FM.FINID,
@@ -4507,7 +4404,7 @@
 					T2.USRFNAME,
 					T2.USRMNAME,
 					T2.USRLNAME,
-					COALESCE(T3.CUSTID, 0::BIGINT) AS CUSTID,
+					COALESCE(T3.CUSTID, 0) AS CUSTID,
 					T3.CUSTSHRTNAME,
 					T3.CUSTDOB AS LOVCUSTDOB
 				FROM FINGUARANTORSDETAILS T1
@@ -4520,7 +4417,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FGDV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FGDV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finguarantorsdetails_view');	
@@ -7322,7 +7219,7 @@
 
 	<!-- (FWV) :: Fee Waiver views are handle in single place start -->
 
-	<changeSet id="FWV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FWV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'feewaivers_view');
@@ -7330,7 +7227,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FWV_1" author="Gopal.p">
+	<changeSet id="FWV_1.1" author="Gopal.p">
 		<createView viewName="FEEWAIVERS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT DISTINCT T1.FINID,
@@ -7470,7 +7367,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FWV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FWV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'feewaivers_view');	
@@ -10658,7 +10555,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.11_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.11.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
 			select deps_save_and_drop_dependencies ('plf', 'financemaintenance_view'); 
@@ -10666,7 +10563,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.11" author="Gopal.p">
+	<changeSet id="ST#2367.11.1" author="Gopal.p">
 		<createView viewName="FINANCEMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -10811,7 +10708,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.11_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.11.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemaintenance_view');	
@@ -11727,7 +11624,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.20_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.20.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'covenantsmaintenance_view');
@@ -11735,7 +11632,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.20" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.20.1" author="Gopal.p" dbms="postgresql">
 		<createView viewName="COVENANTSMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -11867,7 +11764,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.20_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.20.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'covenantsmaintenance_view');
@@ -11970,7 +11867,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.22_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.22.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies('plf','customerfinancedetails_view');
@@ -11978,7 +11875,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.22" author="Gopal.p">
+	<changeSet id="ST#2367.22.1" author="Gopal.p">
 		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -12019,13 +11916,15 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.22_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.22.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
-			select deps_restore_dependencies('plf','customerfinancedetails_view');
+			<![CDATA[
+				select deps_restore_dependencies('plf','customerfinancedetails_view');
+			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.23_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.23.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies('plf','customerfinancedetails_aview');
@@ -12033,7 +11932,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.23" author="Gopal.p">
+	<changeSet id="ST#2367.23.1" author="Gopal.p">
 		<createView viewName="CUSTOMERFINANCEDETAILS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -12071,21 +11970,23 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.23_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.23.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
-			select deps_restore_dependencies('plf','customerfinancedetails_aview');
-		</sql>
-	</changeSet>
-
-	<changeSet id="ST#2367.24_pre" author="Gopal.p" dbms="postgresql">
-		<sql>
-		<![CDATA[
-			select deps_save_and_drop_dependencies('plf','finsusphead_view');
+			<![CDATA[
+				select deps_restore_dependencies('plf','customerfinancedetails_aview');
 			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.24" author="Gopal.p">
+	<changeSet id="ST#2367.24.1_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies('plf','finsusphead_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#2367.24.1" author="Gopal.p">
 		<createView viewName="FINSUSPHEAD_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,	
@@ -12155,13 +12056,15 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.24_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.24.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
-			select deps_restore_dependencies('plf','finsusphead_view');
+			<![CDATA[
+				select deps_restore_dependencies('plf','finsusphead_view');
+			]]>
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.25_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.25.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies('plf','finsusphead_aview');
@@ -12169,7 +12072,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.25" author="Gopal.p">
+	<changeSet id="ST#2367.25.1" author="Gopal.p">
 		<createView viewName="FINSUSPHEAD_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINID,
@@ -12205,9 +12108,11 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.25_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.25.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
-			select deps_restore_dependencies('plf','finsusphead_aview');
+			<![CDATA[
+				select deps_restore_dependencies('plf','finsusphead_aview');
+			]]>
 		</sql>
 	</changeSet>
 
@@ -13470,7 +13375,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.45_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.45.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinscheduledetails_tview');
@@ -13478,7 +13383,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.45" author="Gopal.p">
+	<changeSet id="ST#2367.45.1" author="Gopal.p">
 		<createView viewName="WIFFINSCHEDULEDETAILS_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -13516,7 +13421,6 @@
 					T1.DEFSCHDDATE,
 					T1.SCHDMETHOD,
 					T1.MRGRATE,
-					T1.CALONINDRATE,
 					T1.FEECHARGEAMT,
 					T1.CALCULATEDRATE,
 					T1.ORGPFT,
@@ -13526,25 +13430,9 @@
 					T1.FEESCHD,
 					T1.SCHDFEEPAID,
 					T1.SCHDFEEOS,
-					T1.INSSCHD,
-					T1.SCHDINSPAID,
-					T1.ADVPFTRATE,
-					T1.ADVPROFIT,
-					T1.ADVREPAYAMOUNT,
-					T1.ADVBASERATE,
-					T1.ADVMARGIN,
-					T1.ADVCALRATE,
-					T1.SUPLRENT,
-					T1.INCRCOST,
-					T1.SUPLRENTPAID,
-					T1.INCRCOSTPAID,
-					T1.ROLLOVERONSCHDATE,
-					T1.ROLLOVERAMOUNT,
-					T1.ROLLOVERAMOUNTPAID,
 					T1.TDSAMOUNT,
 					T1.TDSPAID,
 					T1.PFTDAYSBASIS,
-					T1.INSURANCEAMT,
 					T1.INSTNUMBER,
 					T1.BPIORHOLIDAY,
 					T1.FRQDATE,
@@ -13557,7 +13445,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.45_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.45.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinscheduledetails_tview');
@@ -13565,7 +13453,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.46_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.46.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinscheduledetails_view');
@@ -13573,7 +13461,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.46" author="Gopal.p">
+	<changeSet id="ST#2367.46.1" author="Gopal.p">
 		<createView viewName="WIFFINSCHEDULEDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -13611,7 +13499,6 @@
 					T1.DEFSCHDDATE,
 					T1.SCHDMETHOD,
 					T1.MRGRATE,
-					T1.CALONINDRATE,
 					T1.FEECHARGEAMT,
 					T1.CALCULATEDRATE,
 					T1.ORGPFT,
@@ -13621,24 +13508,8 @@
 					T1.FEESCHD,
 					T1.SCHDFEEPAID,
 					T1.SCHDFEEOS,
-					T1.INSSCHD,
-					T1.SCHDINSPAID,
-					T1.ADVPFTRATE,
-					T1.ADVPROFIT,
-					T1.ADVREPAYAMOUNT,
-					T1.ADVBASERATE,
-					T1.ADVMARGIN,
-					T1.ADVCALRATE,
-					T1.SUPLRENT,
-					T1.INCRCOST,
-					T1.SUPLRENTPAID,
-					T1.INCRCOSTPAID,
-					T1.ROLLOVERONSCHDATE,
-					T1.ROLLOVERAMOUNT,
-					T1.ROLLOVERAMOUNTPAID,
 					T1.TDSAMOUNT,
 					T1.PFTDAYSBASIS,
-					T1.INSURANCEAMT,
 					T1.INSTNUMBER,
 					T1.BPIORHOLIDAY,
 					T1.FRQDATE,
@@ -13683,7 +13554,6 @@
 					T1.DEFSCHDDATE,
 					T1.SCHDMETHOD,
 					T1.MRGRATE,
-					T1.CALONINDRATE,
 					T1.FEECHARGEAMT,
 					T1.CALCULATEDRATE,
 					T1.ORGPFT,
@@ -13693,24 +13563,8 @@
 					T1.FEESCHD,
 					T1.SCHDFEEPAID,
 					T1.SCHDFEEOS,
-					T1.INSSCHD,
-					T1.SCHDINSPAID,
-					T1.ADVPFTRATE,
-					T1.ADVPROFIT,
-					T1.ADVREPAYAMOUNT,
-					T1.ADVBASERATE,
-					T1.ADVMARGIN,
-					T1.ADVCALRATE,
-					T1.SUPLRENT,
-					T1.INCRCOST,
-					T1.SUPLRENTPAID,
-					T1.INCRCOSTPAID,
-					T1.ROLLOVERONSCHDATE,
-					T1.ROLLOVERAMOUNT,
-					T1.ROLLOVERAMOUNTPAID,
 					T1.TDSAMOUNT,
 					T1.PFTDAYSBASIS,
-					T1.INSURANCEAMT,
 					T1.INSTNUMBER,
 					T1.BPIORHOLIDAY,
 					T1.FRQDATE,
@@ -13725,7 +13579,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.46_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.46.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffinscheduledetails_view');
@@ -13733,7 +13587,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.47_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.47.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffindisbursementdetails_view');
@@ -13741,7 +13595,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.47" author="Gopal.p">
+	<changeSet id="ST#2367.47.1" author="Gopal.p">
 		<createView viewName="WIFFINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -13749,9 +13603,7 @@
 					T1.DISBDATE,
 					T1.DISBSEQ,
 					T1.DISBDESC,
-					T1.DISBACCOUNTID,
 					T1.DISBAMOUNT,
-					T1.DISBDISBURSED,
 					T1.DISBISACTIVE,
 					T1.DISBREMARKS,
 					T1.VERSION,
@@ -13765,8 +13617,7 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID,
 					T1.DISBREQDATE,
-					T1.FEECHARGEAMT,
-					T1.INSURANCEAMT
+					T1.FEECHARGEAMT
 				FROM WIFFINDISBURSEMENTDETAILS_TEMP T1
 				INNER JOIN WIFFINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
 				UNION ALL
@@ -13775,9 +13626,7 @@
 					T1.DISBDATE,
 					T1.DISBSEQ,
 					T1.DISBDESC,
-					T1.DISBACCOUNTID,
 					T1.DISBAMOUNT,
-					T1.DISBDISBURSED,
 					T1.DISBISACTIVE,
 					T1.DISBREMARKS,
 					T1.VERSION,
@@ -13791,8 +13640,7 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID,
 					T1.DISBREQDATE,
-					T1.FEECHARGEAMT,
-					T1.INSURANCEAMT
+					T1.FEECHARGEAMT
 				FROM WIFFINDISBURSEMENTDETAILS T1
 				INNER JOIN WIFFINANCEMAIN FM ON FM.FINID = T1.FINID
 				WHERE NOT EXISTS (SELECT 1 FROM WIFFINDISBURSEMENTDETAILS_TEMP
@@ -13801,7 +13649,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.47_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.47.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'wiffindisbursementdetails_view');
@@ -15022,7 +14870,7 @@
 
 	<!-- Dependency with Finance Main /Receipt Views -->
 
-	<changeSet id="ST#1211.100.9.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#556.37.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'verification_tv_view'); 
@@ -15030,7 +14878,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.9.1" author="Gopal.p">
+	<changeSet id="ST#556.37.1" author="Gopal.p">
 		<createView viewName="VERIFICATION_TV_VIEW" replaceIfExists="true">
 			<![CDATA[	 
 				SELECT TV.VERIFICATIONID,
@@ -15167,7 +15015,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#1211.100.9.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#556.37.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'verification_tv_view');	
@@ -17778,4 +17626,264 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="ST#556.62_pre" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'investment_deal_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.62" author="Mounika.M">
+		<createView viewName="INVESTMENT_DEAL_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+				    T1.INVESTMENTREF,
+				    T1.FINTYPE,
+				    T3.FINTYPEDESC LOVDESCFINTYPENAME,
+				    T1.FINCCY,
+				    T1.FINAMOUNT,
+				    T1.TOTALPROFIT,
+				    T1.TOTALREPAYAMT,
+				    T1.FINSTARTDATE,
+				    T1.MATURITYDATE,
+				    T1.LASTREPAYDATE,
+				    T1.LASTREPAYPFTDATE,
+				    T1.LASTREPAYRVWDATE,
+				    T1.LASTREPAYCPZDATE,
+				    T1.RECORDSTATUS,
+				    T1.RECORDTYPE,
+				    T1.ROLECODE,
+				    T1.NEXTROLECODE,
+				    T1.VERSION,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.WORKFLOWID,
+				    T2.CUSTID,
+				    T2.CUSTCIF LOVDESCCUSTCIF,
+				    T2.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+				    T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    T1.REPAYPROFITRATE,
+				    T1.FINBRANCH,
+				    T7.BRANCHDESC LOVDESCFINBRANCHNAME,
+				    T1.SCHEDULEMETHOD,
+				    T10.SCHDMETHODDESC LOVDESCSCHEDULEMETHODNAME,
+				    T1.PROFITDAYSBASIS,
+				    T9.INTRATEBASISCODE LOVDESCPROFITDAYSBASISNAME
+				FROM FINANCEMAIN_TEMP T1
+				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
+				JOIN RMTFINANCETYPES T3 ON T3.FINTYPE = T1.FINTYPE
+				JOIN INVESTMENTFINHEADER_VIEW T6 ON T6.INVESTMENTREF = T1.INVESTMENTREF
+				JOIN RMTBRANCHES T7 ON T7.BRANCHCODE = T1.FINBRANCH
+				JOIN BMTINTRATEBASISCODES T9 ON T9.INTRATEBASISCODE = T1.PROFITDAYSBASIS
+				JOIN BMTSCHDMETHOD T10 ON T1.SCHEDULEMETHOD = T10.SCHDMETHOD
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#556.62_post" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'investment_deal_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.63_pre" author="Mounika.M" dbms="postgresql">
+		<sql> 
+		<![CDATA[ 
+			select deps_save_and_drop_dependencies ('plf', 'collateralassignment_tview'); 
+		]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#556.63" author="Mounika.M">
+		<createView viewName="COLLATERALASSIGNMENT_TVIEW" replaceIfExists="true">
+			<![CDATA[
+					SELECT CA.MODULE,
+						CA.REFERENCE,
+						CA.COLLATERALREF,
+						CA.ASSIGNPERC,
+						CS.COLLATERALCCY,
+						CA.ACTIVE,
+						CA.HOSTREFERENCE,
+						CS.COLLATERALVALUE,
+						CS.BANKVALUATION,
+						T.TOTASSIGNPERC - CA.ASSIGNPERC TOTASSIGNPERC,
+						FM.FINCURRASSETVALUE - FM.DOWNPAYMENT + FM.FEECHARGEAMT - FM.FINREPAYMENTAMOUNT UTILIZEDAMOUNT,
+						CA.VERSION,
+						CA.LASTMNTBY,
+						CA.LASTMNTON,
+						CA.RECORDSTATUS,
+						CA.ROLECODE,
+						CA.NEXTROLECODE,
+						CA.TASKID,
+						CA.NEXTTASKID,
+						CA.RECORDTYPE,
+						CA.WORKFLOWID,
+						CS.SPECIALLTV,
+						CS.BANKLTV,
+						CU.CUSTCIF AS DEPOSITORCIF,
+						CS.COLLATERALTYPE
+						FROM COLLATERALASSIGNMENT_TEMP CA
+						JOIN COLLATERALSETUP CS ON CA.COLLATERALREF = CS.COLLATERALREF
+						JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID
+						LEFT JOIN (SELECT T1.COLLATERALREF, SUM(T1.ASSIGNPERC) TOTASSIGNPERC FROM 
+							(SELECT CAT.REFERENCE, CAT.COLLATERALREF, CAT.ASSIGNPERC FROM COLLATERALASSIGNMENT_TEMP CAT
+							 UNION
+							 SELECT CA_1.REFERENCE, CA_1.COLLATERALREF, CA_1.ASSIGNPERC FROM COLLATERALASSIGNMENT CA_1
+							 WHERE NOT EXISTS (SELECT 1 FROM COLLATERALASSIGNMENT_TEMP
+								WHERE COLLATERALASSIGNMENT_TEMP.COLLATERALREF = CA_1.COLLATERALREF AND COLLATERALASSIGNMENT_TEMP.MODULE = CA_1.MODULE 
+									AND COLLATERALASSIGNMENT_TEMP.REFERENCE = CA_1.REFERENCE)) T1 GROUP BY T1.COLLATERALREF) T ON T.COLLATERALREF = CA.COLLATERALREF
+						LEFT JOIN FINANCEMAIN_TEMP FM ON CA.REFERENCE = FM.FINREFERENCE
+					]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#556.63_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+					select deps_restore_dependencies ('plf', 'collateralassignment_tview');	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.64_pre" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.64" author="Mounika.M">
+		<createView viewName="FINANCEENQUIRY_HIERARCHY_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+				    T1.FINBRANCH,
+				    T1.FINTYPE,
+				    T1.FINCCY,
+				    T1.SCHEDULEMETHOD,
+				    T1.PROFITDAYSBASIS,
+				    T1.FINSTARTDATE,
+				    T1.CALTERMS NUMBEROFTERMS,
+				    T1.CUSTID,
+				    T1.FINAMOUNT,
+				    T1.GRCPERIODENDDATE,
+				    T1.MATURITYDATE,
+				    T1.FINREPAYMENTAMOUNT,
+				    T1.FINISACTIVE,
+				    T1.ALLOWGRCPERIOD,
+				    T1.DOWNPAYMENT,
+				    T1.MIGRATEDFINANCE,
+				    T1.LASTREPAYDATE,
+				    T1.LASTREPAYPFTDATE,
+				    T1.FINCURRASSETVALUE,
+				    T1.BLACKLISTED,
+				    T1.FEECHARGEAMT,
+				    T1.CLOSINGSTATUS,
+				    T1.GRACETERMS,
+				    T1.ALWMULTIDISB,
+				    T1.DEFFERMENTS,
+				    T1.FINSTATUS,
+				    T1.MANDATEID,
+				    T1.FINREPAYMETHOD,
+				    T1.FINASSETVALUE,
+				    T1.FINCURRASSETVALUE + T1.TOTALCPZ + T1.FEECHARGEAMT FINANCINGAMOUNT,
+				    T1.TOTALCPZ,
+				    T1.FINCURRASSETVALUE + T1.TOTALCPZ - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT CURFINAMOUNT,
+				    T2.FINTYPEDESC LOVDESCFINTYPENAME,
+				    T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+				    T2.FINDIVISION LOVDESCFINDIVISION,
+				    T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+				    T3.CUSTCIF LOVDESCCUSTCIF,
+				    T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+				    T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+				    T5.CUSTTYPECTG,
+				    COALESCE(T9.NOINST, 0) NOINST,
+				    H.REPORTING_TO
+				FROM FINANCEMAIN_TEMP T1
+				JOIN USER_HIERARCHY H ON T1.BUSINESSVERTICAL = COALESCE(H.BUSINESS_VERTICAL, T1.BUSINESSVERTICAL) AND T1.FINCATEGORY = COALESCE(H.PRODUCT, T1.FINCATEGORY) AND T1.FINTYPE = COALESCE(H.FIN_TYPE, T1.FINTYPE) AND T1.FINBRANCH = COALESCE(H.BRANCH, T1.FINBRANCH)
+				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINID = T9.FINID
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#556.64_post" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.65_pre" author="Mounika.M" dbms="postgresql">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'collateralassignment_ctview'); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#556.65" author="Mounika.M">
+		<createView viewName="COLLATERALASSIGNMENT_CTVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT CA.MODULE,
+					CA.REFERENCE,
+					CA.COLLATERALREF,
+					CA.ASSIGNPERC,
+					CS.COLLATERALCCY,
+					CA.ACTIVE,
+					CS.COLLATERALVALUE,
+					CS.BANKVALUATION,
+					T.TOTASSIGNPERC - CA.ASSIGNPERC TOTASSIGNPERC,
+					FM.FINCURRASSETVALUE - FM.DOWNPAYMENT + FM.FEECHARGEAMT - FM.FINREPAYMENTAMOUNT AS UTILIZEDAMOUNT,
+					CA.VERSION,
+					CA.LASTMNTBY,
+					CA.LASTMNTON,
+					CA.RECORDSTATUS,
+					CA.ROLECODE,
+					CA.NEXTROLECODE,
+					CA.TASKID,
+					CA.NEXTTASKID,
+					CA.RECORDTYPE,
+					CA.WORKFLOWID,
+					CS.SPECIALLTV,
+					CS.BANKLTV,
+					CA.HOSTREFERENCE,
+					CU.CUSTCIF AS DEPOSITORCIF,
+					CS.COLLATERALTYPE
+				FROM COLLATERALASSIGNMENT_TEMP CA
+				JOIN COLLATERALSETUP_TEMP CS ON CA.COLLATERALREF= CS.COLLATERALREF
+				JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID
+				LEFT JOIN (SELECT T1.COLLATERALREF, SUM(T1.ASSIGNPERC) TOTASSIGNPERC FROM 
+					(SELECT CAT.REFERENCE, CAT.COLLATERALREF, CAT.ASSIGNPERC FROM COLLATERALASSIGNMENT_TEMP CAT
+					UNION
+					SELECT CA_1.REFERENCE, CA_1.COLLATERALREF, CA_1.ASSIGNPERC FROM COLLATERALASSIGNMENT CA_1
+					WHERE NOT EXISTS (SELECT 1 FROM COLLATERALASSIGNMENT_TEMP
+						WHERE COLLATERALASSIGNMENT_TEMP.COLLATERALREF = CA_1.COLLATERALREF AND COLLATERALASSIGNMENT_TEMP.MODULE = CA_1.MODULE 
+							AND COLLATERALASSIGNMENT_TEMP.REFERENCE = CA_1.REFERENCE)) T1 GROUP BY T1.COLLATERALREF) T ON T.COLLATERALREF = CA.COLLATERALREF
+				LEFT JOIN FINANCEMAIN_TEMP FM ON CA.REFERENCE = FM.FINREFERENCE
+				]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#556.65_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'collateralassignment_ctview');	
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

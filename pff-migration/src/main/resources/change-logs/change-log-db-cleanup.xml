@@ -40,6 +40,18 @@
 		<dropColumn tableName="FinWriteoffDetail" columnName="WriteoffIns"/>
 	</changeSet>
 	
+	<changeSet id="1.0.1" author="m.mounika">
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="WrittenoffIncrCost"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="WrittenoffSuplRent"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="UnpaidIncrCost"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="UnpaidSuplRent"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="WriteoffIncrCost"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="WriteoffSuplRent"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="UnpaidIns"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="WrittenoffIns"/>
+		<dropColumn tableName="FinWriteoffDetail_Temp" columnName="WriteoffIns"/>
+	</changeSet>
+	
 	 <changeSet id="1.1" author="m.mounika">
 		<dropColumn tableName="FinRepayHeader" columnName="TotalSuplRent"/>
 		<dropColumn tableName="FinRepayHeader" columnName="TotalIncrCost"/>
@@ -48,7 +60,15 @@
 		<dropColumn tableName="FinRepayHeader" columnName="InsRefund"/>
 	</changeSet>
 	
-	 <changeSet id="1.2" author="m.mounika">
+	 <changeSet id="1.1.1" author="m.mounika">
+		<dropColumn tableName="FinRepayHeader_Temp" columnName="TotalSuplRent"/>
+		<dropColumn tableName="FinRepayHeader_Temp" columnName="TotalIncrCost"/>
+		<dropColumn tableName="FinRepayHeader_Temp" columnName="TotalIns"/>
+		<dropColumn tableName="FinRepayHeader_Temp" columnName="RepayAccountId"/>
+		<dropColumn tableName="FinRepayHeader_Temp" columnName="InsRefund"/>
+	</changeSet>
+	
+	<changeSet id="1.2" author="m.mounika">
 		<dropColumn tableName="FinRepayDetails" columnName="SchdSuplRentPaid"/>
 		<dropColumn tableName="FinRepayDetails" columnName="SchdIncrCostPaid"/>
 		<dropColumn tableName="FinRepayDetails" columnName="SchdInsPaid"/>
@@ -72,6 +92,24 @@
 		<dropColumn tableName="FinRepayScheduleDetail" columnName="SchdInsWaivedNow"/>
 	</changeSet>
 	
+	<changeSet id="1.3.1" author="m.mounika">
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdSuplRent"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdSuplRentPaid"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdSuplRentBal"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdSuplRentPayNow"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdSuplRentWaivedNow"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdIncrCost"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdIncrCostPaid"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdIncrCostBal"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdIncrCostPayNow"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdIncrCostWaivedNow"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdIns"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdInsPaid"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdInsBal"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdInsPayNow"/>
+		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdInsWaivedNow"/>
+	</changeSet>
+	
 	<changeSet id="1.4" author="m.mounika">
 		<dropColumn tableName="FinDisbursementDetails" columnName="ContractorId"/>
 		<dropColumn tableName="FinDisbursementDetails" columnName="DisbRetPerc"/>
@@ -87,6 +125,35 @@
 		<dropColumn tableName="FinDisbursementDetails" columnName="ConsultFeeEndDate"/>
 		<dropColumn tableName="FinDisbursementDetails" columnName="InsuranceAmt"/>
 		<dropColumn tableName="FinDisbursementDetails" columnName="DisbAccountId"/>
+	</changeSet>
+	
+	<changeSet id="1.4.2" author="m.mounika">
+		<dropColumn tableName="WIFFinDisbursementDetails" columnName="DisbDisbursed"/>
+		<dropColumn tableName="WIFFinDisbursementDetails" columnName="InsuranceAmt"/>
+		<dropColumn tableName="WIFFinDisbursementDetails" columnName="DisbAccountId"/>
+	</changeSet>
+	
+	<changeSet id="1.4.3" author="m.mounika">
+		<dropColumn tableName="WIFFinDisbursementDetails_Temp" columnName="DisbDisbursed"/>
+		<dropColumn tableName="WIFFinDisbursementDetails_Temp" columnName="InsuranceAmt"/>
+		<dropColumn tableName="WIFFinDisbursementDetails_Temp" columnName="DisbAccountId"/>
+	</changeSet>
+	
+	<changeSet id="1.4.1" author="m.mounika">
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="ContractorId"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbRetPerc"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbRetAmount"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbRetPaid"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="RetPaidDate"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbClaim"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbDisbursed"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="NetAdvDue"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="NetRetDue"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="ConsultFeeFrq"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="ConsultFeeStartDate"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="ConsultFeeEndDate"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="InsuranceAmt"/>
+		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbAccountId"/>
 	</changeSet>
 	
     <changeSet id="1.5" author="m.mounika">
@@ -114,6 +181,33 @@
 		<dropColumn tableName="RMTFinanceTypes" columnName="FinIsOpenPftPayAcc"/>
 		<dropColumn tableName="RMTFinanceTypes" columnName="FinIsOpenNewFinAc"/>
 		<dropColumn tableName="RMTFinanceTypes" columnName="AllowRIAInvestment"/>	
+	</changeSet>
+	
+	<changeSet id="1.5.1" author="m.mounika">
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinDepositRestrictedTo"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinAEBuyOrInception"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinAESellOrMaturity"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="AllowDownpayPgm"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="AlwAdvanceRent"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="GrcAdvBaseRate"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="GrcAdvMargin"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="GrcAdvPftRate"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="RpyAdvBaseRate"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="RpyAdvMargin"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="RpyAdvPftRate"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="RollOverFinance"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="RollOverFrq"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinDepreciationReq"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinDepreciationFrq"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinAcType"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinContingentAcType"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinSuspAcType"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinBankContingentAcType"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinProvisionAcType"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="PftPayAcType"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinIsOpenPftPayAcc"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="FinIsOpenNewFinAc"/>
+		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="AllowRIAInvestment"/>	
 	</changeSet>
 	
     <changeSet id="1.6" author="m.mounika">
@@ -164,7 +258,84 @@
 		<dropColumn tableName="FinanceMain" columnName="LastDepDate"/>
 	</changeSet>
 	
-	 <changeSet id="1.8" author="m.mounika">
+	<changeSet id="1.7.1" author="m.mounika">
+		<dropColumn tableName="FinanceMain_Temp" columnName="MMAId"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="ShariaStatus"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="GrcAdvBaseRate"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="GrcAdvMargin"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="GrcAdvPftRate"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="RpyAdvBaseRate"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="RpyAdvMargin"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="RpyAdvPftRate"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="SupplementRent"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="IncreasedCost"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="RolloverFrq"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="NextRolloverDate"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="BankName"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="Iban"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="AccountType"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="DdaReferenceNo"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="FinAccount"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="FinCustPftAccount"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="DisbAccountId"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="RepayAccountId"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="FinCancelAc"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="DownPayAccount"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="DepreciationFrq"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="SecurityDeposit"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="TakeOverFinance"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="FeeAccountId"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="DeductInsDisb"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="InsuranceAmt"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="NextDepDate"/>
+		<dropColumn tableName="FinanceMain_Temp" columnName="LastDepDate"/>
+	</changeSet>
+	
+	<changeSet id="1.7.2" author="m.mounika">
+		<dropColumn tableName="WIFFinanceMain" columnName="GrcAdvBaseRate"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="GrcAdvMargin"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="GrcAdvPftRate"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="RpyAdvBaseRate"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="RpyAdvMargin"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="RpyAdvPftRate"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="SupplementRent"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="IncreasedCost"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="FinAccount"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="FinCustPftAccount"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="DisbAccountId"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="RepayAccountId"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="DepreciationFrq"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="TakeOverFinance"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="FeeAccountId"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="DeductInsDisb"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="InsuranceAmt"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="NextDepDate"/>
+		<dropColumn tableName="WIFFinanceMain" columnName="LastDepDate"/>
+	</changeSet>
+	
+	<changeSet id="1.7.3" author="m.mounika">
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="GrcAdvBaseRate"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="GrcAdvMargin"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="GrcAdvPftRate"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="RpyAdvBaseRate"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="RpyAdvMargin"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="RpyAdvPftRate"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="SupplementRent"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="IncreasedCost"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="FinAccount"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="FinCustPftAccount"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="DisbAccountId"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="RepayAccountId"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="DepreciationFrq"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="TakeOverFinance"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="FeeAccountId"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="DeductInsDisb"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="InsuranceAmt"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="NextDepDate"/>
+		<dropColumn tableName="WIFFinanceMain_Temp" columnName="LastDepDate"/>
+	</changeSet>
+	
+	<changeSet id="1.8" author="m.mounika">
 		<dropColumn tableName="FinScheduleDetails" columnName="RolloverOnSchDate"/>
 		<dropColumn tableName="FinScheduleDetails" columnName="CalOnIndRate"/>
 		<dropColumn tableName="FinScheduleDetails" columnName="RolloverAmount"/>
@@ -188,6 +359,72 @@
 		<dropColumn tableName="FinScheduleDetails" columnName="InsuranceAmt"/>
 	</changeSet> 
 	
+	<changeSet id="1.8.1" author="m.mounika">
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="RolloverOnSchDate"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="CalOnIndRate"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="RolloverAmount"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="RolloverAmountPaid"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="AdvBaseRate"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="AdvMargin"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="AdvPftRate"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="AdvCalRate"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="AdvProfit"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="AdvRepayAmount"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="SuplRent"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="IncrCost"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="SuplRentPaid"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="IncrCostPaid"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="WriteoffIncrCost"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="WriteoffSuplRent"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="Rebate"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="InsSchd"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="SchdInsPaid"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="WriteoffIns"/>
+		<dropColumn tableName="FinScheduleDetails_Temp" columnName="InsuranceAmt"/>
+	</changeSet> 
+	
+	<changeSet id="1.8.2" author="m.mounika">
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="RolloverOnSchDate"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="CalOnIndRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="RolloverAmount"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="RolloverAmountPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="AdvBaseRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="AdvMargin"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="AdvPftRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="AdvCalRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="AdvProfit"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="AdvRepayAmount"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="SuplRent"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="IncrCost"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="SuplRentPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="IncrCostPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="Rebate"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="InsSchd"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="SchdInsPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails" columnName="InsuranceAmt"/>
+	</changeSet>
+	
+	<changeSet id="1.8.3" author="m.mounika">
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="RolloverOnSchDate"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="CalOnIndRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="RolloverAmount"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="RolloverAmountPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="AdvBaseRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="AdvMargin"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="AdvPftRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="AdvCalRate"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="AdvProfit"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="AdvRepayAmount"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="SuplRent"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="IncrCost"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="SuplRentPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="IncrCostPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="Rebate"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="InsSchd"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="SchdInsPaid"/>
+		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="InsuranceAmt"/>
+	</changeSet>  
+	
 	<changeSet id="1.9" author="m.mounika">
 		<dropTable tableName="agreementfielddetails"/>
 	</changeSet>
@@ -208,6 +445,10 @@
 		<dropView viewName="bulkprocessdetails_view"/>
 	</changeSet>
 	
+	<changeSet id="1.10.2" author="m.mounika">
+		<dropTable tableName="bulkprocessdetails_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.10" author="m.mounika">
 		<dropTable tableName="bulkprocessdetails"/>
 	</changeSet>
@@ -224,6 +465,10 @@
 		<dropView viewName="bulkratechangedetails_view"/>
 	</changeSet>
 	
+	<changeSet id="1.11.3" author="m.mounika">
+		<dropTable tableName="bulkratechangedetails_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.11" author="m.mounika">
 		<dropTable tableName="bulkratechangedetails"/>
 	</changeSet>
@@ -234,6 +479,14 @@
 	
 	<changeSet id="1.12.1" author="m.mounika">
 		<dropView viewName="bundledproductsdetail_view"/>
+	</changeSet>
+	
+	<changeSet id="1.12.2" author="m.mounika">
+		<dropView viewName="bundledproductsdetail_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.12.3" author="m.mounika">
+		<dropTable tableName="bundledproductsdetail_temp"/>
 	</changeSet>
 	
 	<changeSet id="1.12" author="m.mounika">
@@ -276,6 +529,14 @@
 		<dropView viewName="etihadcreditbureaudetail_view"/>
 	</changeSet>
 	
+	<changeSet id="1.20.2" author="m.mounika">
+		<dropView viewName="etihadcreditbureaudetail_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.20.3" author="m.mounika">
+		<dropTable tableName="etihadcreditbureaudetail_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.20" author="m.mounika">
 		<dropTable tableName="etihadcreditbureaudetail"/>
 	</changeSet>
@@ -312,6 +573,14 @@
 		<dropView viewName="financepremiumdetail_view"/>
 	</changeSet>
 	
+	<changeSet id="1.27.2" author="m.mounika">
+		<dropView viewName="financepremiumdetail_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.27.3" author="m.mounika">
+		<dropTable tableName="financepremiumdetail_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.27" author="m.mounika">
 		<dropTable tableName="financepremiumdetail"/>
 	</changeSet>
@@ -344,6 +613,14 @@
 		<dropView viewName="fincontractorastdtls_view"/>
 	</changeSet>
 	
+	<changeSet id="1.33.2" author="m.mounika">
+		<dropView viewName="fincontractorastdtls_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.33.3" author="m.mounika">
+		<dropTable tableName="fincontractorastdtls_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.33" author="m.mounika">
 		<dropTable tableName="fincontractorastdtls"/>
 	</changeSet>
@@ -354,6 +631,14 @@
 	
 	<changeSet id="1.34.1" author="m.mounika">
 		<dropView viewName="fincontributordetail_view"/>
+	</changeSet>
+	
+	<changeSet id="1.34.2" author="m.mounika">
+		<dropView viewName="fincontributordetail_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.34.3" author="m.mounika">
+		<dropTable tableName="fincontributordetail_temp"/>
 	</changeSet>
 	
 	<changeSet id="1.34" author="m.mounika">
@@ -370,6 +655,13 @@
 	
 	<changeSet id="1.36.0" author="m.mounika">
 		<dropView viewName="fincontributorheader_view"/>
+	</changeSet>
+	
+	<changeSet id="1.36.2" author="m.mounika">
+		<dropView viewName="fincontributorheader_tview"/>
+	</changeSet>
+	<changeSet id="1.36.3" author="m.mounika">
+		<dropTable tableName="fincontributorheader_temp"/>
 	</changeSet>
 	
 	<changeSet id="1.36" author="m.mounika">
@@ -390,6 +682,10 @@
 	
 	<changeSet id="1.39.1" author="m.mounika">
 		<dropView viewName="findefermentdetail_aview"/>
+	</changeSet>
+	
+	<changeSet id="1.39.3" author="m.mounika">
+		<dropTable tableName="findefermentdetail_temp"/>
 	</changeSet>
 	
 	<changeSet id="1.39" author="m.mounika">
@@ -472,6 +768,10 @@
 		<dropView viewName="insurancedetails_aview"/>
 	</changeSet>
 	
+	<changeSet id="1.56.3" author="m.mounika">
+		<dropTable tableName="insurancedetails_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.56" author="m.mounika">
 		<dropTable tableName="insurancedetails"/>
 	</changeSet>
@@ -488,6 +788,14 @@
 		<dropView viewName="rolledoverfinancedetail_view"/>
 	</changeSet>
 	
+	<changeSet id="1.59.1" author="m.mounika">
+		<dropView viewName="rolledoverfinancedetail_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.59.2" author="m.mounika">
+		<dropTable tableName="rolledoverfinancedetail_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.59" author="m.mounika">
 		<dropTable tableName="rolledoverfinancedetail"/>
 	</changeSet>
@@ -496,12 +804,24 @@
 		<dropTable tableName="rolledoverfinanceheader"/>
 	</changeSet>
 	
+	<changeSet id="1.60.1" author="m.mounika">
+		<dropTable tableName="rolledoverfinanceheader_temp"/>
+	</changeSet>
+	
 	<changeSet id="1.61.0" author="m.mounika">
 		<dropView viewName="secondaryaccounts_aview"/>
 	</changeSet>
 	
 	<changeSet id="1.61.1" author="m.mounika">
 		<dropView viewName="secondaryaccounts_view"/>
+	</changeSet>
+	
+	<changeSet id="1.61.2" author="m.mounika">
+		<dropView viewName="secondaryaccounts_tview"/>
+	</changeSet>
+	
+	<changeSet id="1.61.3" author="m.mounika">
+		<dropTable tableName="secondaryaccounts_temp"/>
 	</changeSet>
 	
 	<changeSet id="1.61" author="m.mounika">
@@ -560,6 +880,10 @@
 		<dropTable tableName="wiffininsurances"/>
 	</changeSet> 
 	
+	 <changeSet id="FDH_2" author="m.mounika">
+		<dropTable tableName="wiffininsurances_temp"/>
+	</changeSet> 
+	
 	<changeSet id="FH_1.1" author="Mounika.M">
 		<dropView viewName="findefermentheader_view"/>
 	</changeSet>
@@ -572,5 +896,30 @@
 		<dropTable tableName="findefermentheader"/>
 	</changeSet>
 	
+	<changeSet id="FH_2" author="m.mounika">
+		<dropTable tableName="findefermentheader_temp"/>
+	</changeSet>
 	
+	<changeSet id="1.70.0" author="Mounika.M">
+		<dropView viewName="wiffindefermentheader_view"/>
+	</changeSet>
+	
+	<changeSet id="1.70.1" author="m.mounika">
+		<dropTable tableName="wiffindefermentheader_temp"/>
+	</changeSet>
+	
+	<changeSet id="1.70.2" author="m.mounika">
+		<dropTable tableName="wiffindefermentheader"/>
+	</changeSet>
+	
+	<changeSet id="1.71.0" author="Mounika.M">
+		<dropView viewName="wiffindefermentdetail_view"/>
+	</changeSet>
+	
+	<changeSet id="1.71.1" author="m.mounika">
+		<dropTable tableName="wiffindefermentdetail_temp"/>
+	</changeSet>
+	<changeSet id="1.71.2" author="m.mounika">
+		<dropTable tableName="wiffindefermentdetail"/>
+	</changeSet>
 </databaseChangeLog>
