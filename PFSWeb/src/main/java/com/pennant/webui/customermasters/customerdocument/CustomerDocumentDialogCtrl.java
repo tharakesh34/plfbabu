@@ -1098,7 +1098,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		final CustomerDocument aCustomerDocument = new CustomerDocument();
 		BeanUtils.copyProperties(getCustomerDocument(), aCustomerDocument);
 
-		if (isFinanceProcess && MasterDefUtil.getDocCode(DocType.PAN).equals(aCustomerDocument.getCustDocCategory())) {
+		String docCode = StringUtils.trimToEmpty(MasterDefUtil.getDocCode(DocType.PAN));
+
+		if (isFinanceProcess && docCode.equals(aCustomerDocument.getCustDocCategory())) {
 			MessageUtil.showError("Document with PAN Number Can't be deleted!!!");
 		} else {
 			final String keyReference = Labels.getLabel("label_CustomerDocumentDialog_CustDocType.value") + " : "
