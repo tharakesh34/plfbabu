@@ -1422,9 +1422,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 
 		boolean isNew = false;
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
-		if (StringUtils.equals(FinServiceEvent.ORG, fd.getModuleDefiner())) {
+		if (FinServiceEvent.ORG.equals(fd.getModuleDefiner())) {
 			pftDetail = new FinanceProfitDetail();
 			isNew = true;
 
@@ -1604,9 +1603,9 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		}
 
 		// BPI Updation Checking for Deduct from Disbursement case only
-		if (StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)
-				&& StringUtils.equals(FinanceConstants.BPI_DISBURSMENT, fm.getBpiTreatment())
-				&& aeEvent.isBpiIncomized() && SysParamUtil.isAllowed(SMTParameterConstants.BPI_INCOMIZED_ON_ORG)
+		if (FinServiceEvent.ORG.equals(fd.getModuleDefiner())
+				&& FinanceConstants.BPI_DISBURSMENT.equals(fm.getBpiTreatment()) && aeEvent.isBpiIncomized()
+				&& SysParamUtil.isAllowed(SMTParameterConstants.BPI_INCOMIZED_ON_ORG)
 				&& !SysParamUtil.isAllowed(SMTParameterConstants.BPI_PAID_ON_INSTDATE)) {
 			pftDetail.setAmzTillLBD(pftDetail.getAmzTillLBD().add(amountCodes.getBpi()));
 		}
