@@ -307,7 +307,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				for (ReceiptAllocationDetail allocation : allocations) {
 					allocation.setTotalPaid(allocation.getPaidAmount().add(allocation.getTdsPaid()));
 					Long headerId = allocation.getTaxHeaderId();
-					if (headerId > 0) {
+					if (headerId != null && headerId > 0) {
 						List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
 						TaxHeader taxHeader = new TaxHeader(headerId);
 						taxHeader.setTaxDetails(taxDetails);
@@ -624,7 +624,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		List<ReceiptAllocationDetail> radList = allocationDetailDAO.getAllocationsByReceiptID(receiptID, tableType);
 		for (ReceiptAllocationDetail rad : radList) {
 			Long taxHeaderId = rad.getTaxHeaderId();
-			if (taxHeaderId != 0) {
+			if (taxHeaderId != null && taxHeaderId != 0) {
 				List<Taxes> taxDetailById = taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, tableType);
 				TaxHeader taxHeader = new TaxHeader(taxHeaderId);
 				taxHeader.setTaxDetails(taxDetailById);
@@ -5418,20 +5418,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(receiptId, "_View");
-		if (CollectionUtils.isNotEmpty(allocations)) {
-			for (ReceiptAllocationDetail receiptAllocationDetail : allocations) {
-				receiptAllocationDetail.setTotalPaid(
-						receiptAllocationDetail.getPaidAmount().add(receiptAllocationDetail.getTdsPaid()));
-				receiptAllocationDetail
-						.setTotRecv(receiptAllocationDetail.getTotalDue().add(receiptAllocationDetail.getTdsDue()));
-				if (receiptAllocationDetail.getTaxHeaderId() != 0) {
-					List<Taxes> taxDetailById = taxHeaderDetailsDAO
-							.getTaxDetailById(receiptAllocationDetail.getTaxHeaderId(), "_View");
-					TaxHeader taxHeader = new TaxHeader(receiptAllocationDetail.getTaxHeaderId());
-					taxHeader.setTaxDetails(taxDetailById);
-				}
+		for (ReceiptAllocationDetail rad : allocations) {
+			rad.setTotalPaid(rad.getPaidAmount().add(rad.getTdsPaid()));
+			rad.setTotRecv(rad.getTotalDue().add(rad.getTdsDue()));
+
+			Long taxHeaderId = rad.getTaxHeaderId();
+
+			if (taxHeaderId != null && taxHeaderId != 0) {
+				List<Taxes> taxDetailById = taxHeaderDetailsDAO.getTaxDetailById(taxHeaderId, "_View");
+				TaxHeader taxHeader = new TaxHeader(taxHeaderId);
+				taxHeader.setTaxDetails(taxDetailById);
 			}
 		}
+
 		rch.setAllocations(allocations);
 
 		rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptId, "_View"));

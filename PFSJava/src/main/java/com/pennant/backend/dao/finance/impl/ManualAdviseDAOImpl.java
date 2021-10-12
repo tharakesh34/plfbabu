@@ -45,7 +45,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
-import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -957,7 +956,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", ma.Remarks, ma.FinSource, ma.LinkedTranId");
 		sql.append(", ma.Version, ma.LastMntOn, ma.LastMntBy, ma.RecordStatus");
 		sql.append(", ma.RoleCode, ma.NextRoleCode, ma.TaskId, ma.NextTaskId, ma.RecordType, ma.WorkflowId");
-		sql.append(" From ManualaAdvise_Aview ma");
+		sql.append(" From ManualAdvise_Aview ma");
 		sql.append(" Left Join FeeTypes ft on ma.FeeTypeId = ft.FeeTypeId");
 		sql.append(" Where FinID = ?");
 
@@ -967,7 +966,6 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setInt(index++, FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 
 		}, (rs, rowNum) -> {
 			ManualAdvise ma = new ManualAdvise();

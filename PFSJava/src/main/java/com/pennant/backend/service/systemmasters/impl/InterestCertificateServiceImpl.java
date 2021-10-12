@@ -318,14 +318,13 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 		BigDecimal ppAmount = BigDecimal.ZERO;
 		List<ReceiptAllocationDetail> allocationDetails = receiptAllocationDetailDAO
 				.getAllocationsByReceiptID(receiptID, "");
-		if (CollectionUtils.isNotEmpty(allocationDetails)) {
-			for (ReceiptAllocationDetail allocationDetail : allocationDetails) {
-				// Part Payment
-				if (RepayConstants.ALLOCATION_PP.equals(allocationDetail.getAllocationType())) {
-					ppAmount = ppAmount.add(allocationDetail.getPaidAmount());
-				}
+		for (ReceiptAllocationDetail allocationDetail : allocationDetails) {
+			// Part Payment
+			if (RepayConstants.ALLOCATION_PP.equals(allocationDetail.getAllocationType())) {
+				ppAmount = ppAmount.add(allocationDetail.getPaidAmount());
 			}
 		}
+
 		return ppAmount;
 	}
 

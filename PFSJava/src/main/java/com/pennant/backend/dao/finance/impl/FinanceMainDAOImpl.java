@@ -5603,15 +5603,15 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		return null;
 	}
 
-	private String getBasicFieldsQuery(TableType tableType, boolean isFinReference) {
-		StringBuilder sql = new StringBuilder("Select * From (");
-		sql.append(" Select FinID, FinReference, fm.FinType, fm.FinCategory, CustID, EntityCode, FinDivision");
+	private String getBasicFieldsQuery(String tableType, boolean isFinReference) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, fm.FinType, fm.FinCategory, CustID, EntityCode, FinDivision");
 		sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
-		sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
+		sql.append(" From FinanceMain").append(tableType).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
 
@@ -5620,27 +5620,34 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		} else {
 			sql.append(" Where FinID = ?");
 		}
+		return sql.toString();
+	}
 
-		if (tableType == TableType.VIEW || tableType == TableType.BOTH_TAB) {
-			sql.append(" Union all");
-			sql.append(" Select FinID, FinReference, fm.FinType, fm.FinCategory, CustID, EntityCode, FinDivision");
-			sql.append(", FinBranch, FinAmount, fm.FinCcy, FinPurpose, FinStartDate");
-			sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
-			sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
-			sql.append(", FinAssetValue, FinCurrAssetValue");
-			sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
-			sql.append(" From FinanceMain").append(tableType.getSuffix()).append(" fm");
-			sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
-			sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
-			if (isFinReference) {
-				sql.append(" Where FinReference = ?");
-			} else {
-				sql.append(" Where FinID = ?");
-			}
-			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+	private String getBasicFieldsQuery(TableType tableType, boolean isFinReference) {
+		StringBuilder sql = new StringBuilder();
+
+		switch (tableType) {
+		case MAIN_TAB:
+		case AVIEW:
+			sql.append(getBasicFieldsQuery("", isFinReference));
+			break;
+		case TEMP_TAB:
+		case TVIEW:
+			sql.append(getBasicFieldsQuery("_Temp", isFinReference));
+			break;
+		case BOTH_TAB:
+		case VIEW:
+			sql.append("Select * From (");
+			sql.append(getBasicFieldsQuery("_Temp", isFinReference));
+			sql.append(" Union All ");
+			sql.append(getBasicFieldsQuery("", isFinReference));
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinanceMain_Temp.FinID = fm.FinID)");
+			sql.append(" ) fm");
+			break;
+		default:
+			sql.append(getBasicFieldsQuery(tableType.getSuffix(), isFinReference));
+			break;
 		}
-
-		sql.append(" ) fm");
 
 		return sql.toString();
 	}

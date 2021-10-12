@@ -26116,4 +26116,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#178226.1" author="Gopal">
+		<sql>
+			<![CDATA[
+   		     	UPDATE REPORTLIST SET FIELDTYPE = 'String,String,BigDecimal,BigDecimal,BigDecimal,boolean' WHERE  MODULE = 'Country';
+        	 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

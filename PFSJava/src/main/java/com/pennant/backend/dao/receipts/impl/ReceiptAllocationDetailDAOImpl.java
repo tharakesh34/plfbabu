@@ -61,12 +61,9 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 	@Override
 	public List<ReceiptAllocationDetail> getAllocationsByReceiptID(long receiptID, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptAllocationid, ReceiptID, AllocationID, AllocationType, AllocationTo");
 		sql.append(", PaidAmount, WaivedAmount, WaiverAccepted, PaidGST, TotalDue, WaivedGST, TaxHeaderId");
-		sql.append(", TdsDue, TdsPaid, TdsWaived");
 		sql.append(", TdsDue, TdsPaid, TdsWaived");
 
 		if (StringUtils.trimToEmpty(type).contains("View")) {
@@ -77,52 +74,36 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 		sql.append(StringUtils.trim(type));
 		sql.append(" Where ReceiptID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index++, receiptID);
-				}
-			}, new RowMapper<ReceiptAllocationDetail>() {
-				@Override
-				public ReceiptAllocationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, receiptID);
+		}, (rs, rowNum) -> {
+			ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
 
-					rad.setReceiptAllocationid(rs.getLong("ReceiptAllocationid"));
-					rad.setReceiptID(rs.getLong("ReceiptID"));
-					rad.setAllocationID(rs.getInt("AllocationID"));
-					rad.setAllocationType(rs.getString("AllocationType"));
-					rad.setAllocationTo(rs.getLong("AllocationTo"));
-					rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					rad.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					rad.setWaiverAccepted(rs.getString("WaiverAccepted"));
-					rad.setPaidGST(rs.getBigDecimal("PaidGST"));
-					rad.setTotalDue(rs.getBigDecimal("TotalDue"));
-					rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
-					rad.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));// TdsDue,TdsPaid,TdsWaived
-					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
-					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
-					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
-					rad.setTdsDue(rs.getBigDecimal("TdsDue"));
-					rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
-					rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
+			rad.setReceiptAllocationid(rs.getLong("ReceiptAllocationid"));
+			rad.setReceiptID(rs.getLong("ReceiptID"));
+			rad.setAllocationID(rs.getInt("AllocationID"));
+			rad.setAllocationType(rs.getString("AllocationType"));
+			rad.setAllocationTo(rs.getLong("AllocationTo"));
+			rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			rad.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			rad.setWaiverAccepted(rs.getString("WaiverAccepted"));
+			rad.setPaidGST(rs.getBigDecimal("PaidGST"));
+			rad.setTotalDue(rs.getBigDecimal("TotalDue"));
+			rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
+			rad.setTaxHeaderId(JdbcUtil.getLong(rs.getObject("TaxHeaderId")));
+			rad.setTdsDue(rs.getBigDecimal("TdsDue"));
+			rad.setTdsPaid(rs.getBigDecimal("TdsPaid"));
+			rad.setTdsWaived(rs.getBigDecimal("TdsWaived"));
 
-					if (StringUtils.trimToEmpty(type).contains("View")) {
-						rad.setTypeDesc(rs.getString("TypeDesc"));
-					}
+			if (StringUtils.trimToEmpty(type).contains("View")) {
+				rad.setTypeDesc(rs.getString("TypeDesc"));
+			}
 
-					return rad;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return rad;
+		});
 	}
 
 	@Override

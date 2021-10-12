@@ -220,6 +220,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 						}
 					} else {
 						fwd = new FeeWaiverDetail();
+						fwd.setFinID(finID);
 						fwd.setFinReference(finReference);
 						fwd.setNewRecord(true);
 						fwd.setAdviseId(ma.getAdviseID());
@@ -257,6 +258,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 				// get Bounce charges
 				fwd = new FeeWaiverDetail();
+				fwd.setFinID(finID);
 				fwd.setFinReference(finReference);
 				fwd.setNewRecord(true);
 				fwd.setAdviseId(-3);
@@ -315,6 +317,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 				if (receivableAmt.subtract(receivedAmt).compareTo(BigDecimal.ZERO) > 0) {
 					fwd = new FeeWaiverDetail();
+					fwd.setFinID(finID);
 					fwd.setFinReference(finReference);
 					fwd.setNewRecord(true);
 					fwd.setAdviseId(-1);
@@ -356,6 +359,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 
 				fwd = new FeeWaiverDetail();
+				fwd.setFinID(finID);
 				fwd.setFinReference(finReference);
 				fwd.setNewRecord(true);
 				fwd.setAdviseId(-2);
@@ -395,6 +399,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				}
 
 				fwd = new FeeWaiverDetail();
+				fwd.setFinID(finID);
 				fwd.setFinReference(finReference);
 				fwd.setNewRecord(true);
 				fwd.setAdviseId(-4);
@@ -497,8 +502,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		List<FeeWaiverDetail> fwd = feeWaiverDetailDAO.getFeeWaiverByWaiverId(fwh.getWaiverId(), "_Temp");
 		fwh.setFeeWaiverDetails(fwd);
 
+		String finReference = fwh.getFinReference();
 		for (FeeWaiverDetail feeWaiver : fwd) {
-			feeWaiver.setFinReference(fwh.getFinReference());
+			feeWaiver.setFinID(finID);
+			feeWaiver.setFinReference(finReference);
 			if (feeWaiver.getTaxHeaderId() != null) {
 				// Fetch Tax Details
 				TaxHeader header = taxHeaderDetailsService.getTaxHeaderById(feeWaiver.getTaxHeaderId(), "_Temp");
@@ -538,7 +545,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			return auditHeader;
 		}
 
-		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
+		List<AuditDetail> auditDetails = new ArrayList<>();
 		fwh = (FeeWaiverHeader) auditHeader.getAuditDetail().getModelData();
 
 		TableType tableType = TableType.MAIN_TAB;
