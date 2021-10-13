@@ -54,7 +54,7 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 		sql.append(" FinID, FinReference, SUM(AdvInt) AdvInt, SUM(AdvIntTds) AdvIntTds");
 		sql.append(", SUM(AdvEMI) AdvEMI, SUM(AdvEMITds) AdvEMITds");
 		sql.append(" From AdvancePaymentDetails");
-		sql.append(" Where FinID = ? Group by FinReference");
+		sql.append(" Where FinID = ? Group by FinID, FinReference");
 
 		logger.debug(Literal.SQL + sql);
 
@@ -70,7 +70,7 @@ public class AdvancePaymentDetailDAOImpl extends BasicDao<AdvancePaymentDetail> 
 				apd.setAdvEMITds(rs.getBigDecimal("AdvEMITds"));
 
 				return apd;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn("Record is not found in AdvancePaymentDetails table for the specified FinID >> {}", finID);
 		}
