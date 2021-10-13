@@ -4460,7 +4460,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
 
-		receiptData.setFinReference(finReference);
+		receiptData.setFinID(finID);
 		receiptData.setFinReference(finReference);
 
 		LoggedInUser userDetails = null;

@@ -663,6 +663,7 @@ public class FinStatementController extends SummaryDetailService {
 			rch.setValueDate(SysParamUtil.getAppDate());
 
 			receiptData.setReceiptHeader(rch);
+			receiptData.setFinID(fm.getFinID());
 			receiptData.setFinReference(fm.getFinReference());
 			receiptData.setBuildProcess("I");
 			receiptData.setValueDate(SysParamUtil.getAppDate());
@@ -1038,6 +1039,7 @@ public class FinStatementController extends SummaryDetailService {
 
 		rh.setValueDate(valueDate);
 		frd.setReceiptHeader(rh);
+		frd.setFinID(finID);
 		frd.setFinReference(finReference);
 		frd.setBuildProcess("I");
 		frd.setValueDate(valueDate);

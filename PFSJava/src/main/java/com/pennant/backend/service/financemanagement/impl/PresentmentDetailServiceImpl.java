@@ -533,6 +533,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		}
 
 		finReceiptData.setReceiptHeader(rh);
+		finReceiptData.setFinID(finID);
 		finReceiptData.setFinReference(finReference);
 		finReceiptData.setSourceId("");
 
@@ -611,6 +612,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 		rch.setRemarks("");
 
 		rd.setReceiptHeader(rch);
+		rd.setFinID(finID);
 		rd.setFinReference(finReference);
 		rd.setSourceId("");
 
@@ -705,6 +707,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		rch.setRemarks("");
 		rd.setReceiptHeader(rch);
+		rd.setFinID(finID);
 		rd.setFinReference(finReference);
 		rd.setSourceId("");
 
@@ -804,6 +807,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 
 		rch.setRemarks("");
 		rd.setReceiptHeader(rch);
+		rd.setFinID(finID);
 		rd.setFinReference(finReference);
 		rd.setSourceId("");
 

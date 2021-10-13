@@ -230,6 +230,8 @@ public class ReceiptCalculator {
 	private FinReceiptData initializeReceipt(FinReceiptData rd) {
 		FinScheduleData schdData = rd.getFinanceDetail().getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		
+		rd.setFinID(fm.getFinID());
 		rd.setFinReference(fm.getFinReference());
 		rd.setRepayMain(null);
 		boolean isAllocated = false;
