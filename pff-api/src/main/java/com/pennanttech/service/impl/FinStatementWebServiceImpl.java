@@ -205,6 +205,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			return finStatementResponse;
 		}
 
+		statementRequest.setFinID(fm.getFinID());
 		// call controller to get NOC details
 		FinStatementResponse response = finStatementController.getStatement(statementRequest, APIConstants.STMT_NOC);
 
@@ -255,6 +256,7 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		}
 
 		stmtRequest.setFinReference(finReference);
+		stmtRequest.setFinID(finID);
 
 		// call controller to get fore-closure letter
 		FinStatementResponse response = finStatementController.getStatement(stmtRequest, APIConstants.STMT_FORECLOSURE);
