@@ -420,7 +420,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 			rch.setReceiptID(receiptId);
 		}
 
-		long linkedTranId = rch.getLinkedTranId();
+		Long linkedTranId = rch.getLinkedTranId();
 
 		if (PennantConstants.FINSOURCE_ID_API.equals(receiptHeader.getSourceId())) {
 
@@ -557,13 +557,11 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		return auditHeader;
 	}
 
-	public long executeAccounting(FinReceiptData receiptData) {
+	public Long executeAccounting(FinReceiptData receiptData) {
 		logger.info(Literal.ENTERING);
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
-		String receiptMode = rch.getReceiptMode();
 		String receiptChannel = rch.getReceiptChannel();
-		BigDecimal receiptAmount = rch.getReceiptAmount();
 
 		/*
 		 * if (RepayConstants.RECEIPTMODE_CASH.equals(receiptMode) && !RECEIPT_SOURCE_MOBILE.equals(receiptChannel)) {
@@ -576,7 +574,9 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		aeEvent.setBranch(rch.getCashierBranch());
 		aeEvent.setPostingUserBranch(rch.getCashierBranch());
 		aeEvent.setAccountingEvent(AccountingEvent.NLRCPT);
+		if(rch.getFinID() != null){
 		aeEvent.setFinID(rch.getFinID());
+		}
 		aeEvent.setFinReference(rch.getReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setPostRefId(rch.getReceiptID());
