@@ -2074,7 +2074,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				customer = this.financeDetail.getCustomerDetails().getCustomer();
 			} else {
 				Long finID = this.financeTaxDetail.getFinID();
-				if (finID != null) {
+				if (finID != null && finID > 0) {
 					FinanceMain fm = this.financeTaxDetailService.getFinanceDetailsForService(finID, "_View", false);
 					customer = this.financeTaxDetailService.getCustomerByID(fm.getCustID());
 				}
