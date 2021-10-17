@@ -80,13 +80,12 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	private int receivableOrPayable;
 	private boolean assignmentEntry = false;
 	private boolean bulking = false;
-	
-	TransactionEntry singleFeeCGSTTxn = null;
-	TransactionEntry singleFeeSGSTTxn = null;
-	TransactionEntry singleFeeUGSTTxn = null;
-	TransactionEntry singleFeeIGSTTxn = null;
-	TransactionEntry singleFeeCESSTxn = null;
-	
+
+	/*
+	 * TransactionEntry singleFeeCGSTTxn = null; TransactionEntry singleFeeSGSTTxn = null; TransactionEntry
+	 * singleFeeUGSTTxn = null; TransactionEntry singleFeeIGSTTxn = null; TransactionEntry singleFeeCESSTxn = null;
+	 */
+
 	// ### END SFA_20210405 <--
 
 	public TransactionEntry() {
@@ -479,47 +478,25 @@ public class TransactionEntry extends AbstractWorkflowEntity {
 	public void setBulking(boolean bulking) {
 		this.bulking = bulking;
 	}
-
-	public TransactionEntry getSingleFeeCGSTTxn() {
-		return singleFeeCGSTTxn;
-	}
-
-	public void setSingleFeeCGSTTxn(TransactionEntry singleFeeCGSTTxn) {
-		this.singleFeeCGSTTxn = singleFeeCGSTTxn;
-	}
-
-	public TransactionEntry getSingleFeeSGSTTxn() {
-		return singleFeeSGSTTxn;
-	}
-
-	public void setSingleFeeSGSTTxn(TransactionEntry singleFeeSGSTTxn) {
-		this.singleFeeSGSTTxn = singleFeeSGSTTxn;
-	}
-
-	public TransactionEntry getSingleFeeUGSTTxn() {
-		return singleFeeUGSTTxn;
-	}
-
-	public void setSingleFeeUGSTTxn(TransactionEntry singleFeeUGSTTxn) {
-		this.singleFeeUGSTTxn = singleFeeUGSTTxn;
-	}
-
-	public TransactionEntry getSingleFeeIGSTTxn() {
-		return singleFeeIGSTTxn;
-	}
-
-	public void setSingleFeeIGSTTxn(TransactionEntry singleFeeIGSTTxn) {
-		this.singleFeeIGSTTxn = singleFeeIGSTTxn;
-	}
-
-	public TransactionEntry getSingleFeeCESSTxn() {
-		return singleFeeCESSTxn;
-	}
-
-	public void setSingleFeeCESSTxn(TransactionEntry singleFeeCESSTxn) {
-		this.singleFeeCESSTxn = singleFeeCESSTxn;
-	}
-	
-	
-	
+	/*
+	 * public TransactionEntry getSingleFeeCGSTTxn() { return singleFeeCGSTTxn; }
+	 * 
+	 * public void setSingleFeeCGSTTxn(TransactionEntry singleFeeCGSTTxn) { this.singleFeeCGSTTxn = singleFeeCGSTTxn; }
+	 * 
+	 * public TransactionEntry getSingleFeeSGSTTxn() { return singleFeeSGSTTxn; }
+	 * 
+	 * public void setSingleFeeSGSTTxn(TransactionEntry singleFeeSGSTTxn) { this.singleFeeSGSTTxn = singleFeeSGSTTxn; }
+	 * 
+	 * public TransactionEntry getSingleFeeUGSTTxn() { return singleFeeUGSTTxn; }
+	 * 
+	 * public void setSingleFeeUGSTTxn(TransactionEntry singleFeeUGSTTxn) { this.singleFeeUGSTTxn = singleFeeUGSTTxn; }
+	 * 
+	 * public TransactionEntry getSingleFeeIGSTTxn() { return singleFeeIGSTTxn; }
+	 * 
+	 * public void setSingleFeeIGSTTxn(TransactionEntry singleFeeIGSTTxn) { this.singleFeeIGSTTxn = singleFeeIGSTTxn; }
+	 * 
+	 * public TransactionEntry getSingleFeeCESSTxn() { return singleFeeCESSTxn; }
+	 * 
+	 * public void setSingleFeeCESSTxn(TransactionEntry singleFeeCESSTxn) { this.singleFeeCESSTxn = singleFeeCESSTxn; }
+	 */
 }

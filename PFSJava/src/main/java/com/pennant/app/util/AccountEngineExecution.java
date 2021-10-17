@@ -37,7 +37,6 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -261,11 +260,11 @@ public class AccountEngineExecution implements Serializable {
 				if(feeType.getFeeIncomeOrExpense() == null) {
 					throw new AppException("Account Type should configured for the Fee Type: "+feeType.getFeeTypeCode());
 				}
-				
-				if (feeType.isTaxApplicable()) {
-					setSingleFeeGSTTxn(singleFeeTxn, txnEntries);
-				}
-				
+
+				/*
+				 * if (feeType.isTaxApplicable()) { setSingleFeeGSTTxn(singleFeeTxn, txnEntries); }
+				 */
+
 			}
 			
 			int index = txnEntries.indexOf(singleFeeTxn);
@@ -483,13 +482,14 @@ public class AccountEngineExecution implements Serializable {
 		return returnDataSets;
 	}
 
-	private void setSingleFeeGSTTxn(TransactionEntry singleFeeTxn, List<TransactionEntry> txnEntries) {
-		singleFeeTxn.setSingleFeeCGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_CGST, txnEntries));
-		singleFeeTxn.setSingleFeeSGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_SGST, txnEntries));
-		singleFeeTxn.setSingleFeeUGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_UGST, txnEntries));
-		singleFeeTxn.setSingleFeeIGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_IGST, txnEntries));
-		singleFeeTxn.setSingleFeeCESSTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_CESS, txnEntries));
-	}
+	/*
+	 * private void setSingleFeeGSTTxn(TransactionEntry singleFeeTxn, List<TransactionEntry> txnEntries) {
+	 * singleFeeTxn.setSingleFeeCGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_CGST, txnEntries));
+	 * singleFeeTxn.setSingleFeeSGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_SGST, txnEntries));
+	 * singleFeeTxn.setSingleFeeUGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_UGST, txnEntries));
+	 * singleFeeTxn.setSingleFeeIGSTTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_IGST, txnEntries));
+	 * singleFeeTxn.setSingleFeeCESSTxn(getSingleFeeTxn(FinanceConstants.FEE_IE_CESS, txnEntries)); }
+	 */
 
 	private List<TransactionEntry> getTxnEntries(TransactionEntry singleFeeTxn, List<FeeType> feeTypes) {
 		List<TransactionEntry> list = new ArrayList<>();
