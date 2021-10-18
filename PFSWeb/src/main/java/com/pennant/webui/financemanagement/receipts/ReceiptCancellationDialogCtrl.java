@@ -728,7 +728,8 @@ public class ReceiptCancellationDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			}
 
 			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
-			bounce.setFinID(aReceiptHeader.getFinID());
+			Long finID = aReceiptHeader.getFinID();
+			bounce.setFinID(finID == null ? 0 : finID);
 			bounce.setFinReference(aReceiptHeader.getReference());
 			bounce.setFeeTypeID(0);
 			bounce.setSequence(0);

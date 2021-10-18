@@ -574,9 +574,11 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		aeEvent.setBranch(rch.getCashierBranch());
 		aeEvent.setPostingUserBranch(rch.getCashierBranch());
 		aeEvent.setAccountingEvent(AccountingEvent.NLRCPT);
-		if(rch.getFinID() != null){
-		aeEvent.setFinID(rch.getFinID());
+
+		if (rch.getFinID() != null) {
+			aeEvent.setFinID(rch.getFinID());
 		}
+
 		aeEvent.setFinReference(rch.getReference());
 		aeEvent.setValueDate(SysParamUtil.getAppDate());
 		aeEvent.setPostRefId(rch.getReceiptID());

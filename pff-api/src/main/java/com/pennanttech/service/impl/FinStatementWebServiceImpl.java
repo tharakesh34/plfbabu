@@ -255,8 +255,8 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			return finStatementResponse;
 		}
 
-		stmtRequest.setFinReference(finReference);
 		stmtRequest.setFinID(finID);
+		stmtRequest.setFinReference(finReference);
 
 		// call controller to get fore-closure letter
 		FinStatementResponse response = finStatementController.getStatement(stmtRequest, APIConstants.STMT_FORECLOSURE);
