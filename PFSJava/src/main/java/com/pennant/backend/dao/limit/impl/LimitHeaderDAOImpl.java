@@ -785,7 +785,7 @@ public class LimitHeaderDAOImpl extends SequenceDao<LimitHeader> implements Limi
 		String sql;
 		String whereClause = "RuleCode = ? and LimitStructureCode = ?";
 
-		Object obj = new Object[] { ruleCode, limitStructureCode };
+		Object[] obj = new Object[] { ruleCode, limitStructureCode };
 
 		switch (tableType) {
 		case MAIN_TAB:
