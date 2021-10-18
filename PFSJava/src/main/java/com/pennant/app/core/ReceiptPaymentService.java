@@ -118,6 +118,7 @@ public class ReceiptPaymentService extends ServiceHelper {
 
 					PresentmentDetail pd = new PresentmentDetail();
 					// Schedule Setup
+					pd.setFinID(finID);
 					pd.setFinReference(finReference);
 					pd.setSchDate(sch.getSchDate());
 
