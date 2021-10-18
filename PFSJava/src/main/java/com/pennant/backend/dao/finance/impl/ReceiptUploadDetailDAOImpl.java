@@ -291,7 +291,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		logger.debug(Literal.SQL, sql);
 
 		return this.jdbcOperations.query(sql, ps -> ps.setLong(1, uploadHeaderId), (rs, rowNum) -> {
-			return (Long) rs.getObject("UploadDetailId");
+			return JdbcUtil.getLong(rs.getObject("UploadDetailId"));
 		});
 	}
 
