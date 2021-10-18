@@ -5653,4 +5653,8 @@
 		parent="basisCtrl">
 		<property name="activityLogService" ref="activityLogService" />
 	</bean>
+	
+	<bean id="otpCtrl" class="com.pennapps.security.core.otp.OtpCtrl" scope="prototype">
+		<property name="otpAuthentication" ref="otpAuthentication"/>
+	</bean>
 </beans> 

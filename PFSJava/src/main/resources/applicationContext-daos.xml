@@ -67,9 +67,9 @@
 	<!-- ============================================================== -->
 	<bean id="emailEngine" class="com.pennanttech.pennapps.notification.email.EmailEngine">
 		<constructor-arg ref="dataSource" />
-	<constructor-arg ref="outgoingMailProperties" />
+		<constructor-arg ref="outgoingMailProperties" />
 	</bean>
-	
+
 	<bean id="outgoingMailProperties"
 		class="com.pennanttech.pennapps.notification.email.configuration.OutgoingMailProperties">
 		<property name="servreId" value="${notification.email.out.server.id}" />
@@ -8199,7 +8199,7 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="feeTypeService" ref="feeTypeService" />
 	</bean>
-	
+
 	<bean name="paymentDetailService" class="com.pennant.backend.service.payment.impl.PaymentDetailServiceImpl">
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 		<property name="paymentDetailDAO" ref="paymentDetailDAO" />
@@ -12513,7 +12513,7 @@
 	<bean id="accountUpdater" class="com.pennanttech.pff.core.account.engine.AccountUpdater"
 		parent="abstractAccountUpdater">
 		<constructor-arg ref="dataSource" />
-		<constructor-arg ref="jobDataAccess"/>
+		<constructor-arg ref="jobDataAccess" />
 	</bean>
 
 	<bean id="accountByFinReferrenceDAOImpl"
@@ -12634,5 +12634,23 @@
 
 	<bean id="partnerBankModeConfigDAO"
 		class="com.pennant.backend.dao.financemanagement.impl.PartnerBankModeConfigDAOImpl" parent="sequenceDao" />
+
+	<bean id="otpDataAccess" class="com.pennapps.security.core.otp.OTPDataAccess" parent="basicDao"/>
+	
+	<bean id="otpAuthentication" class="com.pennapps.security.core.otp.OTPAuthentication">
+		<property name="fromat" value="${otp.format}" />
+		<property name="length" value="${otp.length}" />
+		<property name="validity" value="${otp.validity}" />
+		<property name="otpDataAccess" ref="otpDataAccess" />
+		<property name="smsNotificationService" ref="smsGateway" />
+	</bean>
+	<bean id="smsGateway" class="com.pennanttech.pennapps.notification.sms.SmsGateway">
+		<property name="url" value="${sms.gateway.url}" />
+		<property name="senderId" value="${sms.gateway.sender.id}" />
+		<property name="channel" value="${sms.gateway.channel}" />
+		<property name="dcs" value="${sms.gateway.dcs}" />
+		<property name="flashSms" value="${sms.gateway.flashsms}" />
+		<property name="route" value="${sms.gateway.route}" />
+	</bean>
 
 </beans>
