@@ -549,7 +549,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" From FinODDetails T1");
 		sql.append(" Inner Join (Select FinID, max(FinCurODDays) MaxODDays From FinODDetails");
 		sql.append(" Where FinID = ? and FinCurODAmt > 0 group by FinID) T2 ");
-		sql.append(" ON T1.FinID = T2.FinID abd T1.FinCurODDays = T2.MaxODDays and T1.FinCurODAmt > 0");
+		sql.append(" ON T1.FinID = T2.FinID and T1.FinCurODDays = T2.MaxODDays and T1.FinCurODAmt > 0");
 
 		logger.debug(Literal.SQL + sql.toString());
 
