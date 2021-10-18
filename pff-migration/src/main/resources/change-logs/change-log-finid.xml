@@ -5033,11 +5033,6 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="176.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_scheduleduetaxdtls_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="scheduleduetaxdetails"
-			referencedColumnNames="FinID" />
-	</changeSet>
 
 	<changeSet id="176.4" author="murthy.y">
 		<createIndex tableName="scheduleduetaxdetails" indexName="idx_scheduleduetaxdtls_finid">
