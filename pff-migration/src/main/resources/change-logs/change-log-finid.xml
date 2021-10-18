@@ -43,11 +43,11 @@
 		</createTable>
 	</changeSet>
 
-	<changeSet id="2.1" author="murthy.y" dbms="postgresql,mssql">
+	<!-- <changeSet id="2.1" author="murthy.y" >
 		<createIndex tableName="FINID_MAPPING" indexName="idx_FM_FR">
 			<column name="FinReference" type="varchar(20)" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 
 	<changeSet id="3" author="murthy.y">
 		<sql>
@@ -206,10 +206,10 @@
 		<dropForeignKeyConstraint baseTableName="finodcrecovery"
 			constraintName="fk_finodcrecovery_finmain" />
 	</changeSet>
-	<changeSet id="4.3_Pre.0018" author="murthy.y">
+	<!-- <changeSet id="4.3_Pre.0018" author="murthy.y">
 		<dropForeignKeyConstraint baseTableName="finoddetails"
 			constraintName="fk_finoddetails_finmain" />
-	</changeSet>
+	</changeSet> -->
 	<changeSet id="4.3_Pre.0019" author="murthy.y">
 		<dropForeignKeyConstraint baseTableName="finodpenaltyrates"
 			constraintName="fk_finodpenaltyrates_finmain" />
@@ -2267,7 +2267,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="71.4" author="murthy.y">
 		<createIndex tableName="financechecklistref" indexName="idx_financechklistref_finid">
 			<column name="FinID" type="bigint" />
@@ -2761,16 +2761,16 @@
 		</addColumn>
 	</changeSet>	
 	
-	<changeSet id="92.2_Pre" author="murthy.y">
+	<!-- <changeSet id="92.2_Pre" author="murthy.y">
 		<createIndex tableName="finfeedetail_snapshot" indexName="idx_finfeedetail_snapshot_fr">
 			<column name="FinReference" type="varchar(20)" />
 		</createIndex>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="92.2" author="murthy.y" dbms="postgresql,mssql"> 
 		<sql> 
 			<![CDATA[ 
-				Update plf.finfeedetail_snapshot set FinID = m.finid from plf.FINID_MAPPING m where finfeedetail_snapshot.FinReference = m.FinReference; 
+				Update finfeedetail_snapshot set FinID = m.finid from FINID_MAPPING m where finfeedetail_snapshot.FinReference = m.FinReference; 
 			]]> 
 		</sql> 
 	</changeSet>	
@@ -4231,7 +4231,7 @@
 			]]> 
 		</sql> 
 	</changeSet>
-
+	
 	<changeSet id="141.4" author="murthy.y">
 		<createIndex tableName="postings" indexName="idx_postings_finid">
 			<column name="FinID" type="bigint" />

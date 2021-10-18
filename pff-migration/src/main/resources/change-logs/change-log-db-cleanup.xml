@@ -68,6 +68,16 @@
 		<dropColumn tableName="FinRepayHeader_Temp" columnName="InsRefund"/>
 	</changeSet>
 	
+	<changeSet id="1.2_pre" author="m.mounika" dbms="mssql">
+		<sql> 
+			<![CDATA[ 
+				alter table FinRepayDetails drop constraint DF_FRD_SCHDSUPLRENTPAID;
+				alter table FinRepayDetails drop constraint DF_FRD_SCHDINCRCOSTPAID;
+				alter table FinRepayDetails drop constraint DF_FRD_SCHDINSPAID;
+			]]>
+		</sql>
+	</changeSet>
+
 	<changeSet id="1.2" author="m.mounika">
 		<dropColumn tableName="FinRepayDetails" columnName="SchdSuplRentPaid"/>
 		<dropColumn tableName="FinRepayDetails" columnName="SchdIncrCostPaid"/>
@@ -110,6 +120,10 @@
 		<dropColumn tableName="FinRepayScheduleDetail_Temp" columnName="SchdInsWaivedNow"/>
 	</changeSet>
 	
+	<changeSet id="1.4_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="FinDisbursementDetails"/>
+	</changeSet>
+	
 	<changeSet id="1.4" author="m.mounika">
 		<dropColumn tableName="FinDisbursementDetails" columnName="ContractorId"/>
 		<dropColumn tableName="FinDisbursementDetails" columnName="DisbRetPerc"/>
@@ -126,6 +140,10 @@
 		<dropColumn tableName="FinDisbursementDetails" columnName="InsuranceAmt"/>
 		<dropColumn tableName="FinDisbursementDetails" columnName="DisbAccountId"/>
 	</changeSet>
+
+	<changeSet id="1.4.2_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="WIFFinDisbursementDetails"/>
+	</changeSet>
 	
 	<changeSet id="1.4.2" author="m.mounika">
 		<dropColumn tableName="WIFFinDisbursementDetails" columnName="DisbDisbursed"/>
@@ -133,10 +151,18 @@
 		<dropColumn tableName="WIFFinDisbursementDetails" columnName="DisbAccountId"/>
 	</changeSet>
 	
+	<changeSet id="1.4.3_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="WIFFinDisbursementDetails_Temp"/>
+	</changeSet>
+	
 	<changeSet id="1.4.3" author="m.mounika">
 		<dropColumn tableName="WIFFinDisbursementDetails_Temp" columnName="DisbDisbursed"/>
 		<dropColumn tableName="WIFFinDisbursementDetails_Temp" columnName="InsuranceAmt"/>
 		<dropColumn tableName="WIFFinDisbursementDetails_Temp" columnName="DisbAccountId"/>
+	</changeSet>
+	
+	<changeSet id="1.4.1_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="FinDisbursementDetails_Temp"/>
 	</changeSet>
 	
 	<changeSet id="1.4.1" author="m.mounika">
@@ -154,6 +180,23 @@
 		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="ConsultFeeEndDate"/>
 		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="InsuranceAmt"/>
 		<dropColumn tableName="FinDisbursementDetails_Temp" columnName="DisbAccountId"/>
+	</changeSet>
+	
+	<changeSet id="1.5_pre" author="m.mounika" dbms="mssql">
+		<sql> 
+			<![CDATA[ 
+				drop index IX_RMTFIN_FINAEBUYORINCEPTION on RMTFinanceTypes;
+			]]>
+		</sql>
+	</changeSet>
+	
+	
+	<changeSet id="1.5.0_pre" author="m.mounika" dbms="mssql">
+		<sql> 
+			<![CDATA[ 
+				drop index IX_RMTFIN_FINAESELLORMATURITY on RMTFinanceTypes;
+			]]>
+		</sql>
 	</changeSet>
 	
     <changeSet id="1.5" author="m.mounika">
@@ -210,6 +253,13 @@
 		<dropColumn tableName="RMTFinanceTypes_Temp" columnName="AllowRIAInvestment"/>	
 	</changeSet>
 	
+	<changeSet id="1.6_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="TotalAdvPftSchd" tableName="FinPftDetails"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="TotalRbtSchd" tableName="FinPftDetails"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="TdSchdAdvPft" tableName="FinPftDetails"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="TdSchdRbt" tableName="FinPftDetails"/>
+	</changeSet>
+				
     <changeSet id="1.6" author="m.mounika">
 		<dropColumn tableName="FinPftDetails" columnName="TotalAdvPftSchd"/>
 		<dropColumn tableName="FinPftDetails" columnName="TotalRbtSchd"/>
@@ -224,6 +274,11 @@
 		<dropColumn tableName="FinPftDetails" columnName="UEIncomeSuspAccount"/>
 		<dropColumn tableName="FinPftDetails" columnName="DISBACTCCY"/>
 	</changeSet> 
+	
+	<changeSet id="1.7_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="DeductInsDisb" tableName="FinanceMain"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="FinanceMain"/>
+	</changeSet>
 	
 	<changeSet id="1.7" author="m.mounika">
 		<dropColumn tableName="FinanceMain" columnName="MMAId"/>
@@ -256,6 +311,11 @@
 		<dropColumn tableName="FinanceMain" columnName="InsuranceAmt"/>
 		<dropColumn tableName="FinanceMain" columnName="NextDepDate"/>
 		<dropColumn tableName="FinanceMain" columnName="LastDepDate"/>
+	</changeSet>
+	
+	<changeSet id="1.7.1_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="DeductInsDisb" tableName="FinanceMain_Temp"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="FinanceMain_Temp"/>
 	</changeSet>
 	
 	<changeSet id="1.7.1" author="m.mounika">
@@ -291,6 +351,11 @@
 		<dropColumn tableName="FinanceMain_Temp" columnName="LastDepDate"/>
 	</changeSet>
 	
+	<changeSet id="1.7.2_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="DeductInsDisb" tableName="WIFFinanceMain"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="WIFFinanceMain"/>
+	</changeSet>
+	
 	<changeSet id="1.7.2" author="m.mounika">
 		<dropColumn tableName="WIFFinanceMain" columnName="GrcAdvBaseRate"/>
 		<dropColumn tableName="WIFFinanceMain" columnName="GrcAdvMargin"/>
@@ -313,6 +378,11 @@
 		<dropColumn tableName="WIFFinanceMain" columnName="LastDepDate"/>
 	</changeSet>
 	
+	<changeSet id="1.7.3_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="DeductInsDisb" tableName="WIFFinanceMain_Temp"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="WIFFinanceMain_Temp"/>
+	</changeSet>
+	
 	<changeSet id="1.7.3" author="m.mounika">
 		<dropColumn tableName="WIFFinanceMain_Temp" columnName="GrcAdvBaseRate"/>
 		<dropColumn tableName="WIFFinanceMain_Temp" columnName="GrcAdvMargin"/>
@@ -333,6 +403,10 @@
 		<dropColumn tableName="WIFFinanceMain_Temp" columnName="InsuranceAmt"/>
 		<dropColumn tableName="WIFFinanceMain_Temp" columnName="NextDepDate"/>
 		<dropColumn tableName="WIFFinanceMain_Temp" columnName="LastDepDate"/>
+	</changeSet>
+	
+	<changeSet id="1.8_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="FinScheduleDetails"/>
 	</changeSet>
 	
 	<changeSet id="1.8" author="m.mounika">
@@ -359,6 +433,10 @@
 		<dropColumn tableName="FinScheduleDetails" columnName="InsuranceAmt"/>
 	</changeSet> 
 	
+	<changeSet id="1.8.1_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="FinScheduleDetails_Temp"/>
+	</changeSet>
+	
 	<changeSet id="1.8.1" author="m.mounika">
 		<dropColumn tableName="FinScheduleDetails_Temp" columnName="RolloverOnSchDate"/>
 		<dropColumn tableName="FinScheduleDetails_Temp" columnName="CalOnIndRate"/>
@@ -383,6 +461,10 @@
 		<dropColumn tableName="FinScheduleDetails_Temp" columnName="InsuranceAmt"/>
 	</changeSet> 
 	
+	<changeSet id="1.8.2_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="WIFFinScheduleDetails"/>
+	</changeSet>
+	
 	<changeSet id="1.8.2" author="m.mounika">
 		<dropColumn tableName="WIFFinScheduleDetails" columnName="RolloverOnSchDate"/>
 		<dropColumn tableName="WIFFinScheduleDetails" columnName="CalOnIndRate"/>
@@ -402,6 +484,10 @@
 		<dropColumn tableName="WIFFinScheduleDetails" columnName="InsSchd"/>
 		<dropColumn tableName="WIFFinScheduleDetails" columnName="SchdInsPaid"/>
 		<dropColumn tableName="WIFFinScheduleDetails" columnName="InsuranceAmt"/>
+	</changeSet>
+	
+	<changeSet id="1.8.3_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="WIFFinScheduleDetails_Temp"/>
 	</changeSet>
 	
 	<changeSet id="1.8.3" author="m.mounika">
@@ -425,16 +511,16 @@
 		<dropColumn tableName="WIFFinScheduleDetails_Temp" columnName="InsuranceAmt"/>
 	</changeSet>  
 	
-	<changeSet id="1.9" author="m.mounika">
-		<dropTable tableName="agreementfielddetails"/>
-	</changeSet>
-	
 	<changeSet id="1.9.0" author="m.mounika">
 		<dropView viewName="agreementfielddetails_aview"/>
 	</changeSet>
 	
 	<changeSet id="1.9.1" author="m.mounika">
 		<dropView viewName="agreementfielddetails_view"/>
+	</changeSet>
+	
+	<changeSet id="1.9" author="m.mounika">
+		<dropTable tableName="agreementfielddetails"/>
 	</changeSet>
 	
 	<changeSet id="1.10.0" author="m.mounika">
@@ -505,9 +591,9 @@
 		<dropTable tableName="bundledproductsdetail_pa"/>
 	</changeSet>
 	
-	<changeSet id="1.16" author="m.mounika">
+	<!-- <changeSet id="1.16" author="m.mounika">
 		<dropTable tableName="covid_interest_refund_lan"/>
-	</changeSet>
+	</changeSet> -->
 	
 	<changeSet id="1.17" author="m.mounika">
 		<dropTable tableName="customerdedupdetail_pa"/>

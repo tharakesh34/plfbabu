@@ -2364,7 +2364,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FEV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_view');
@@ -2372,7 +2372,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FEV_2" author="Gopal.p">
+	<changeSet id="FEV_2.1" author="Gopal.p">
 		<createView viewName="FINANCEENQUIRY_VIEW" replaceIfExists="true">
 		  <![CDATA[
 				SELECT T1.FINID,
@@ -2450,7 +2450,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FEV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_view');
@@ -2707,7 +2707,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finscheduledetails_aview');
@@ -2715,7 +2715,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_3" author="Gopal.p">
+	<changeSet id="SDV_3.1" author="Gopal.p">
 		<createView viewName="FINSCHEDULEDETAILS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINID,
@@ -2787,7 +2787,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="SDV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finscheduledetails_aview');	
@@ -2795,7 +2795,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_4_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_4.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finscheduledetails_iview');
@@ -2803,7 +2803,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="SDV_4" author="Gopal.p" dbms="oracle">
+	<changeSet id="SDV_4.1" author="Gopal.p" dbms="oracle">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T.FINTYPE,
@@ -2823,7 +2823,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="SDV_4" author="Gopal.p" dbms="postgresql,mssql">
+	<changeSet id="SDV_4.1" author="Gopal.p" dbms="postgresql,mssql">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T.FINTYPE,
@@ -2843,7 +2843,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="SDV_4_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="SDV_4.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finscheduledetails_iview');	
@@ -15081,7 +15081,7 @@
 				    T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
 				    T4.PRODUCTCATEGORY,
 				    COALESCE(T9.NOINST, 0 ) NOINST,
-				    COALESCE(T5.ROLEDESC, FN_GET_ROLEDESC(T10.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				    COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T10.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 				    T10.FINMAINTAINID,
 				    T10.EVENT RCDMAINTAINSTS,
 				    T10.NEXTROLECODE,
@@ -15170,7 +15170,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.39_pre" author="Mounika.m">
+	<changeSet id="ST#556.39_pre" author="Mounika.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemaintenance_aview'); 
@@ -15250,7 +15250,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.60_pre" author="Mounika.M">
+	<changeSet id="ST#556.60_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finoptionsmaintenance_view'); 
@@ -15308,7 +15308,7 @@
 				    T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
 				    T4.PRODUCTCATEGORY,
 				    COALESCE(T9.NOINST, 0) NOINST,
-				    COALESCE(T5.ROLEDESC, FN_GET_ROLEDESC(T10.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				    COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T10.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 				    T10.FINMAINTAINID,
 				    T10.EVENT RCDMAINTAINSTS,
 				    T10.NEXTROLECODE,
@@ -15397,7 +15397,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.40_pre" author="Mounika.M">
+	<changeSet id="ST#556.40_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'linkedfinmaintenance_view'); 
@@ -15455,7 +15455,7 @@
 				    T3.FINCATEGORY LOVDESCPRODUCTCODENAME,
 				    T4.PRODUCTCATEGORY,
 				    COALESCE(T9.NOINST, 0) NOINST,
-				    COALESCE(T5.ROLEDESC, FN_GET_ROLEDESC(T10.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				    COALESCE(T5.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T10.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 				    T10.FINMAINTAINID,
 				    T10.EVENT RCDMAINTAINSTS,
 				    T10.NEXTROLECODE,
@@ -15540,7 +15540,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.40_post" author="Mounika.M">
+	<changeSet id="ST#556.40_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'linkedfinmaintenance_view');	
@@ -15548,7 +15548,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.41_pre" author="Mounika.M">
+	<changeSet id="ST#556.41_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rolledoverfinancedetail_tview'); 
@@ -15576,7 +15576,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.41_post" author="Mounika.M">
+	<changeSet id="ST#556.41_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rolledoverfinancedetail_tview');	
@@ -15584,7 +15584,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.43_pre" author="Mounika.M">
+	<changeSet id="ST#556.43_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'extended_field_mnt_view'); 
@@ -15610,7 +15610,7 @@
 				    T2.FEECHARGEAMT,
 				    T2.FINREPAYMENTAMOUNT,
 				    T2.CLOSINGSTATUS,
-				    COALESCE(T4.ROLEDESC, FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				    COALESCE(T4.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 				    T2.FINSTARTDATE,
 				    T2.NUMBEROFTERMS,
 				    T2.MATURITYDATE,
@@ -15654,7 +15654,7 @@
 				    T2.FEECHARGEAMT,
 				    T2.FINREPAYMENTAMOUNT,
 				    T2.CLOSINGSTATUS,
-				    COALESCE(T4.ROLEDESC, FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
+				    COALESCE(T4.ROLEDESC, ${add.schema}FN_GET_ROLEDESC(T1.NEXTROLECODE)) LOVDESCREQUESTSTAGE,
 				    T2.FINSTARTDATE,
 				    T2.NUMBEROFTERMS,
 				    T2.MATURITYDATE,
@@ -15685,7 +15685,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	<changeSet id="ST#556.43_post" author="Mounika.M">
+	<changeSet id="ST#556.43_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'extended_field_mnt_view');	
@@ -15693,7 +15693,7 @@
 		</sql>
 	</changeSet>
 	
-    <changeSet id="ST#556.44_pre" author="Mounika.M">
+    <changeSet id="ST#556.44_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rpt_provision_view'); 
@@ -15701,7 +15701,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.44" author="Mounika.M">
+	<changeSet id="ST#556.44" author="Mounika.M" dbms="postgresql">
 		<createView viewName="RPT_PROVISION_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T3.FINDIVISION,
@@ -15775,7 +15775,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.44_post" author="Mounika.M">
+	<changeSet id="ST#556.44_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rpt_provision_view');
@@ -15783,7 +15783,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.45_pre" author="Mounika.M">
+	<changeSet id="ST#556.45_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aview'); 
@@ -16024,7 +16024,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.45_post" author="Mounika.M">
+	<changeSet id="ST#556.45_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_aview');
@@ -16032,7 +16032,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.46_pre" author="M.Mounika">
+	<changeSet id="ST#556.46_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_view'); 
@@ -16501,7 +16501,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.46_post" author="M.Mounika">
+	<changeSet id="ST#556.46_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_view');
@@ -16509,7 +16509,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.61_pre" author="M.Mounika">
+	<changeSet id="ST#556.61_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_orgview'); 	
@@ -16723,7 +16723,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.61_post" author="M.Mounika">
+	<changeSet id="ST#556.61_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_orgview');
@@ -16731,7 +16731,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.47_pre" author="Mounika.M">
+	<changeSet id="ST#556.47_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rmtfinancetypes_aeview'); 
@@ -16756,7 +16756,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.47_post" author="Mounika.M">
+	<changeSet id="ST#556.47_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rmtfinancetypes_aeview');
@@ -16785,8 +16785,8 @@
 				            CASE WHEN ((T2_1.FINDIVISION) = 'BFSD') THEN 1
 	                    		 WHEN ((T2_1.FINDIVISION) = 'CL') THEN 2
 	                    		 ELSE NULL END FINDIVORDER,
-	            	SUM(UDF_CONVERTCURRENCY((T1_1.TOTALPRIBAL + T1_1.TOTALPFTBAL), (T1_1.FINCCY), 'INR')) PORTFOLIOEXPOSUREBHD,
-	            	SUM(UDF_CONVERTCURRENCY((T1_1.TOTALPRIBAL + T1_1.TOTALPFTBAL), (T1_1.FINCCY), 'USD')) PORTFOLIOEXPOSUREUSD,
+	            	SUM(${add.schema}UDF_CONVERTCURRENCY((T1_1.TOTALPRIBAL + T1_1.TOTALPFTBAL), (T1_1.FINCCY), 'INR')) PORTFOLIOEXPOSUREBHD,
+	            	SUM(${add.schema}UDF_CONVERTCURRENCY((T1_1.TOTALPRIBAL + T1_1.TOTALPFTBAL), (T1_1.FINCCY), 'USD')) PORTFOLIOEXPOSUREUSD,
 	            	COUNT(DISTINCT T1_1.CUSTCIF) TOTALCUSTOMERS
 	           	FROM (FINPFTDETAILS T1_1 JOIN RMTFINANCETYPES T2_1 ON (((T1_1.FINTYPE) = (T2_1.FINTYPE))))
 	          	GROUP BY T1_1.FINTYPE, T2_1.FINDIVISION) T
@@ -16794,12 +16794,12 @@
 	     		JOIN SMTDIVISIONDETAIL ON (((SMTDIVISIONDETAIL.DIVISIONCODE) = (T.FINDIVISION))))
 	     		JOIN ( SELECT RPT_PORTFOLIOBEHAVIOR.FINDIVISION, RPT_PORTFOLIOBEHAVIOR.FINTYPE, COUNT(*) NOOFRECORDS
 	           	FROM RPT_PORTFOLIOBEHAVIOR
-	          	GROUP BY RPT_PORTFOLIOBEHAVIOR.FINTYPE, RPT_PORTFOLIOBEHAVIOR.FINDIVISION) T2 ON ((((T.FINTYPE) = (T2.FINTYPE)) AND ((T.FINDIVISION) = (T2.FINDIVISION)))));
+	          	GROUP BY RPT_PORTFOLIOBEHAVIOR.FINTYPE, RPT_PORTFOLIOBEHAVIOR.FINDIVISION) T2 ON ((((T.FINTYPE) = (T2.FINTYPE)) AND ((T.FINDIVISION) = (T2.FINDIVISION)))))
 			]]>
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.49_pre" author="Mounika.M">
+	<changeSet id="ST#556.49_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rpt_portfoliobehavior');
@@ -16816,8 +16816,8 @@
 				    1 GRADE,
 				    'EXCEPTIONAL-RISK FREE' CLASSIFICATION,
 				    '0' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
 				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE= T3.FINTYPE
@@ -16830,8 +16830,8 @@
     				2 GRADE,
     				'EXCELLENT-LOW RISK' CLASSIFICATION,
     				'1-15' DPD,
-    				SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-    				SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+    				SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+    				SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16844,8 +16844,8 @@
     				3 GRADE,
 				    'SUPERIOR-MODEST RISK' CLASSIFICATION,
 				    '16-30' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16858,8 +16858,8 @@
 				    4 AS GRADE,
 				    'GOOD-ABOVE AVERAGE RISK' CLASSIFICATION,
 				    '31-45' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16872,8 +16872,8 @@
 				    5 AS GRADE,
 				    'SATISFACTORY-AVERAGE RISK' CLASSIFICATION,
 				    '46-60' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16886,8 +16886,8 @@
 				    6 GRADE,
 				    'ADEQUATE-BORDERLINE' CLASSIFICATION,
 				    '61-70' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16900,8 +16900,8 @@
 				    7 GRADE,
 				    'WATCH LIST' CLASSIFICATION,
 				    '71-80' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16914,8 +16914,8 @@
 				    8 GRADE,
 				    'SPECIAL MENTION'CLASSIFICATION,
 				    '81-90' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16928,8 +16928,8 @@
 				    9 GRADE,
 				    'SUBSTANDARD' CLASSIFICATION,
 				    '91-180' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16942,8 +16942,8 @@
 				    10 GRADE,
 				    'DOUBTFUL' CLASSIFICATION,
 				    '181-365' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16956,8 +16956,8 @@
 				    11 GRADE,
 				    'LOSS' CLASSIFICATION,
 				    '365>' DPD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
-				    SUM(UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'INR')) CUROUTSTANDINGBHD,
+				    SUM(${add.schema}UDF_CONVERTCURRENCY(T1.FINCURODPRI + T1.FINCURODPFT, T2.FINCCY, 'USD')) CUROUTSTANDINGUSD
    				FROM FINODDETAILS T1
      			JOIN FINPFTDETAILS T2 ON T1.FINID = T2.FINID
      			JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -16967,7 +16967,7 @@
 		</createView>
 	</changeSet>
 	
-	 <changeSet id="ST#556.49_post" author="Mounika.M">
+	 <changeSet id="ST#556.49_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rpt_portfoliobehavior');
@@ -16975,7 +16975,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.50_pre" author="Mounika.M">
+	<changeSet id="ST#556.50_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'customerfinances_iview');
@@ -17020,7 +17020,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.50_post" author="Mounika.M">
+	<changeSet id="ST#556.50_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'customerfinances_iview');
@@ -17028,7 +17028,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.51_pre" author="Mounika.M">
+	<changeSet id="ST#556.51_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finunpaidrepayments_iview');
@@ -17036,7 +17036,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.51" author="Mounika.M">
+	<changeSet id="ST#556.51" author="Mounika.M" dbms="postgresql">
 		<createView viewName="FINUNPAIDREPAYMENTS_IVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT TEMP.FINTYPE,
@@ -17054,14 +17054,64 @@
 				     T1.REPAYAMOUNT
            		FROM FINSCHEDULEDETAILS T1
              	JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
-          		WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND T1.SCHDATE > (( SELECT SM.SYSPARMVALUE::DATE SYSPARMVALUE
+          		WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND cast(T1.SCHDATE as character varying(1000))> (( SELECT SM.SYSPARMVALUE SYSPARMVALUE
                 FROM SMTPARAMETERS SM
                 WHERE SM.SYSPARMCODE = 'APP_DATE'))) TEMP WHERE TEMP.ROW_NUM = 1
 			]]>
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.51_post" author="Mounika.M">
+	<changeSet id="ST#556.51" author="Mounika.M" dbms="oracle">
+		<createView viewName="FINUNPAIDREPAYMENTS_IVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT TEMP.FINTYPE,
+				    TEMP.FINID,
+				    TEMP.FINREFERENCE,
+				    TEMP.SCHDATE,
+				    TEMP.FINCCY,
+				    TEMP.REPAYAMOUNT
+   				FROM ( SELECT ROW_NUMBER() OVER (PARTITION BY T1.FINID ORDER BY T1.SCHDATE) ROW_NUM,
+				     T2.FINTYPE,
+				     T2.FINREFERENCE,
+				     T2.FINID,
+				     T1.SCHDATE,
+				     T2.FINCCY,
+				     T1.REPAYAMOUNT
+           		FROM FINSCHEDULEDETAILS T1
+             	JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+          		WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND cast(T1.SCHDATE as varchar2(1000))> (( SELECT SM.SYSPARMVALUE SYSPARMVALUE
+                FROM SMTPARAMETERS SM
+                WHERE SM.SYSPARMCODE = 'APP_DATE'))) TEMP WHERE TEMP.ROW_NUM = 1
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#556.51" author="Mounika.M" dbms="mssql">
+		<createView viewName="FINUNPAIDREPAYMENTS_IVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT TEMP.FINTYPE,
+				    TEMP.FINID,
+				    TEMP.FINREFERENCE,
+				    TEMP.SCHDATE,
+				    TEMP.FINCCY,
+				    TEMP.REPAYAMOUNT
+   				FROM ( SELECT ROW_NUMBER() OVER (PARTITION BY T1.FINID ORDER BY T1.SCHDATE) ROW_NUM,
+				     T2.FINTYPE,
+				     T2.FINREFERENCE,
+				     T2.FINID,
+				     T1.SCHDATE,
+				     T2.FINCCY,
+				     T1.REPAYAMOUNT
+           		FROM FINSCHEDULEDETAILS T1
+             	JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+          		WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND cast(T1.SCHDATE as varchar(1000))> (( SELECT SM.SYSPARMVALUE SYSPARMVALUE
+                FROM SMTPARAMETERS SM
+                WHERE SM.SYSPARMCODE = 'APP_DATE'))) TEMP WHERE TEMP.ROW_NUM = 1
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#556.51_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finunpaidrepayments_iview');
@@ -17069,7 +17119,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.52_pre" author="M.Mounika">
+	<changeSet id="ST#556.52_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rpt_noliability_view');
@@ -17090,7 +17140,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.52_post" author="M.Mounika">
+	<changeSet id="ST#556.52_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rpt_noliability_view');
@@ -17098,7 +17148,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.53_pre" author="Mounika.M">
+	<changeSet id="ST#556.53_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finscheduledetails_iview');
@@ -17106,7 +17156,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.53" author="Mounika.M">
+	<changeSet id="ST#556.53" author="Mounika.M" dbms="postgresql,oracle">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T.FINTYPE,
@@ -17131,7 +17181,32 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.53_post" author="Mounika.M">
+	<changeSet id="ST#556.53" author="Mounika.M" dbms="mssql">
+		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T.FINTYPE,
+				    T.FINID,
+				    T.FINREFERENCE,
+				    T.SCHDATE,
+				    T.FINCCY,
+				    T.REPAYAMOUNT
+   				FROM ( SELECT ROW_NUMBER() OVER (PARTITION BY T1.FINID ORDER BY T1.SCHDATE) AS ROW_NUM,
+		            T2.FINTYPE,
+		            T2.FINID,
+		            T1.SCHDATE,
+		            T2.FINREFERENCE,
+		            T2.FINCCY,
+		            T1.REPAYAMOUNT
+           		FROM FINSCHEDULEDETAILS T1
+             	JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+          		WHERE (T1.PROFITSCHD - T1.SCHDPFTPAID + T1.PRINCIPALSCHD - T1.SCHDPRIPAID) <> 0 AND T1.SCHDATE > (( SELECT SMTPARAMETERS.SYSPARMVALUE
+                FROM SMTPARAMETERS
+                WHERE SMTPARAMETERS.SYSPARMCODE = 'APP_DATE'))) T WHERE T.ROW_NUM = 1
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#556.53_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finscheduledetails_iview');
@@ -17139,7 +17214,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.54_pre" author="M.Mounika">
+	<changeSet id="ST#556.54_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'collateralassignment_aview');
@@ -17191,7 +17266,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.54_post" author="M.Mounika">
+	<changeSet id="ST#556.54_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'collateralassignment_aview');
@@ -17199,7 +17274,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.55_pre" author="Mounika.M">
+	<changeSet id="ST#556.55_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'collateralassignment_view');
@@ -17292,7 +17367,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.55_post" author="Mounika.M">
+	<changeSet id="ST#556.55_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'collateralassignment_view');
@@ -17300,7 +17375,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.56_pre" author="Mounika.M">
+	<changeSet id="ST#556.56_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_view');
@@ -17367,7 +17442,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.56_post" author="Mounika.M">
+	<changeSet id="ST#556.56_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_view');
@@ -17375,7 +17450,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.57_pre" author="Mounika.M">
+	<changeSet id="ST#556.57_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finoverdueenquiry_view');
@@ -17436,7 +17511,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.57_post" author="Mounika.M">
+	<changeSet id="ST#556.57_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finoverdueenquiry_view');
@@ -17444,7 +17519,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.58_pre" author="Mounika.M">
+	<changeSet id="ST#556.58_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandateenquiry_view');
@@ -17452,7 +17527,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.58" author="Mounika.M">
+	<changeSet id="ST#556.58" author="Mounika.M" dbms="postgresql">
 		<createView viewName="MANDATEENQUIRY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -17506,12 +17581,130 @@
 				JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
 				LEFT JOIN FINPFTDETAILS T9 ON T1.FINID = T9.FINID
 				LEFT JOIN ( SELECT FINSCHEDULEDETAILS.FINID, MAX(FINSCHEDULEDETAILS.REPAYAMOUNT + FINSCHEDULEDETAILS.FEESCHD) MAXINSTAMOUNT
-				FROM FINSCHEDULEDETAILS WHERE FINSCHEDULEDETAILS.SCHDATE::CHARACTER VARYING(500)::TEXT >= ((( SELECT SMTPARAMETERS.SYSPARMVALUE FROM SMTPARAMETERS WHERE SMTPARAMETERS.SYSPARMCODE = 'APP_DATE'))) GROUP BY FINSCHEDULEDETAILS.FINID) T6 ON T6.FINID = T1.FINID				
+				FROM FINSCHEDULEDETAILS WHERE cast(FINSCHEDULEDETAILS.SCHDATE as character varying(1000)) >= ((( SELECT SMTPARAMETERS.SYSPARMVALUE FROM SMTPARAMETERS WHERE SMTPARAMETERS.SYSPARMCODE = 'APP_DATE'))) GROUP BY FINSCHEDULEDETAILS.FINID) T6 ON T6.FINID = T1.FINID				
 			]]>
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.58_post" author="Mounika.M">
+	<changeSet id="ST#556.58" author="Mounika.M" dbms="oracle">
+		<createView viewName="MANDATEENQUIRY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+				    T1.FINBRANCH,
+				    T1.FINTYPE,
+				    T1.FINCCY,
+				    T1.SCHEDULEMETHOD,
+				    T1.PROFITDAYSBASIS,
+				    T1.FINSTARTDATE,
+				    T1.CALTERMS NUMBEROFTERMS,
+				    T1.CUSTID,
+				    T1.FINAMOUNT,
+				    T1.GRCPERIODENDDATE,
+				    T1.MATURITYDATE,
+				    T1.FINREPAYMENTAMOUNT,
+				    T1.FINISACTIVE,
+				    T1.ALLOWGRCPERIOD,
+				    T1.DOWNPAYMENT,
+				    T1.MIGRATEDFINANCE,
+				    T1.LASTREPAYDATE,
+				    T1.LASTREPAYPFTDATE,
+				    T1.FINCURRASSETVALUE,
+				    T1.BLACKLISTED,
+				    T1.FEECHARGEAMT,
+				    T1.CLOSINGSTATUS,
+				    T1.GRACETERMS,
+				    T1.ALWMULTIDISB,
+				    T1.DEFFERMENTS,
+				    T1.FINSTATUS,
+				    T1.MANDATEID,
+				    T1.FINREPAYMETHOD,
+				    T1.FINASSETVALUE,
+				    T1.FINCURRASSETVALUE + T1.FEECHARGEAMT FINANCINGAMOUNT,
+				    T1.FINCURRASSETVALUE - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT CURFINAMOUNT,
+				    T2.FINTYPEDESC LOVDESCFINTYPENAME,
+				    T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+				    T2.FINDIVISION LOVDESCFINDIVISION,
+				    T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+				    T3.CUSTCIF LOVDESCCUSTCIF,
+				    T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+				    T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+				    T5.CUSTTYPECTG,
+				    COALESCE(T9.NOINST, 0) NOINST,
+				    T6.MAXINSTAMOUNT
+				FROM FINANCEMAIN T1
+				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINID = T9.FINID
+				LEFT JOIN ( SELECT FINSCHEDULEDETAILS.FINID, MAX(FINSCHEDULEDETAILS.REPAYAMOUNT + FINSCHEDULEDETAILS.FEESCHD) MAXINSTAMOUNT
+				FROM FINSCHEDULEDETAILS WHERE cast(FINSCHEDULEDETAILS.SCHDATE as varchar2(1000)) >= ((( SELECT SMTPARAMETERS.SYSPARMVALUE FROM SMTPARAMETERS WHERE SMTPARAMETERS.SYSPARMCODE = 'APP_DATE'))) GROUP BY FINSCHEDULEDETAILS.FINID) T6 ON T6.FINID = T1.FINID				
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#556.58" author="Mounika.M" dbms="mssql">
+		<createView viewName="MANDATEENQUIRY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+				    T1.FINBRANCH,
+				    T1.FINTYPE,
+				    T1.FINCCY,
+				    T1.SCHEDULEMETHOD,
+				    T1.PROFITDAYSBASIS,
+				    T1.FINSTARTDATE,
+				    T1.CALTERMS NUMBEROFTERMS,
+				    T1.CUSTID,
+				    T1.FINAMOUNT,
+				    T1.GRCPERIODENDDATE,
+				    T1.MATURITYDATE,
+				    T1.FINREPAYMENTAMOUNT,
+				    T1.FINISACTIVE,
+				    T1.ALLOWGRCPERIOD,
+				    T1.DOWNPAYMENT,
+				    T1.MIGRATEDFINANCE,
+				    T1.LASTREPAYDATE,
+				    T1.LASTREPAYPFTDATE,
+				    T1.FINCURRASSETVALUE,
+				    T1.BLACKLISTED,
+				    T1.FEECHARGEAMT,
+				    T1.CLOSINGSTATUS,
+				    T1.GRACETERMS,
+				    T1.ALWMULTIDISB,
+				    T1.DEFFERMENTS,
+				    T1.FINSTATUS,
+				    T1.MANDATEID,
+				    T1.FINREPAYMETHOD,
+				    T1.FINASSETVALUE,
+				    T1.FINCURRASSETVALUE + T1.FEECHARGEAMT FINANCINGAMOUNT,
+				    T1.FINCURRASSETVALUE - T1.FINREPAYMENTAMOUNT + T1.FEECHARGEAMT CURFINAMOUNT,
+				    T2.FINTYPEDESC LOVDESCFINTYPENAME,
+				    T2.FINSCHEDULEON LOVDESCFINSCHEDULEON,
+				    T2.FINDIVISION LOVDESCFINDIVISION,
+				    T2.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    T2.FINISALWDIFFERMENT LOVDESCFINALWDEFERMENT,
+				    T3.CUSTCIF LOVDESCCUSTCIF,
+				    T3.CUSTSHRTNAME LOVDESCCUSTSHRTNAME,
+				    T4.BRANCHDESC LOVDESCFINBRANCHNAME,
+				    T5.CUSTTYPECTG,
+				    COALESCE(T9.NOINST, 0) NOINST,
+				    T6.MAXINSTAMOUNT
+				FROM FINANCEMAIN T1
+				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
+				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
+				JOIN RMTBRANCHES T4 ON T1.FINBRANCH = T4.BRANCHCODE
+				JOIN RMTCUSTTYPES T5 ON T3.CUSTTYPECODE = T5.CUSTTYPECODE
+				LEFT JOIN FINPFTDETAILS T9 ON T1.FINID = T9.FINID
+				LEFT JOIN ( SELECT FINSCHEDULEDETAILS.FINID, MAX(FINSCHEDULEDETAILS.REPAYAMOUNT + FINSCHEDULEDETAILS.FEESCHD) MAXINSTAMOUNT
+				FROM FINSCHEDULEDETAILS WHERE cast(FINSCHEDULEDETAILS.SCHDATE as varchar(1000)) >= ((( SELECT SMTPARAMETERS.SYSPARMVALUE FROM SMTPARAMETERS WHERE SMTPARAMETERS.SYSPARMCODE = 'APP_DATE'))) GROUP BY FINSCHEDULEDETAILS.FINID) T6 ON T6.FINID = T1.FINID				
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="ST#556.58_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'mandateenquiry_view');
@@ -17519,7 +17712,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.59_pre" author="Mounika.M">
+	<changeSet id="ST#556.59_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'dm_disb_details_daily_view');
@@ -17527,11 +17720,11 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.59" author="Mounika.M">
+	<changeSet id="ST#556.59" author="Mounika.M" dbms="postgresql">
 		<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINAPPROVEDDATE AGREEMENTDATE,
-				    ${call.substr}(T2.FINREFERENCE, 9, LENGTH(T2.FINREFERENCE)) APPLID,
+				    ${call.substr}(T2.FINREFERENCE, 9, ${call.collength}(T2.FINREFERENCE)) APPLID,
 				    T2.FINREFERENCE AGREEMENTNO,
 				    T3.DISBSEQ DISBURSEMENTNO,
 				    T3.DISBDATE DISBURSEMENTDATE,
@@ -17619,7 +17812,191 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.59_post" author="Mounika.M">
+	<changeSet id="ST#556.59" author="Mounika.M" dbms="oracle">
+		<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T2.FINAPPROVEDDATE AGREEMENTDATE,
+				    ${call.substr}(T2.FINREFERENCE, 9, ${call.collength}(T2.FINREFERENCE)) APPLID,
+				    T2.FINREFERENCE AGREEMENTNO,
+				    T3.DISBSEQ DISBURSEMENTNO,
+				    T3.DISBDATE DISBURSEMENTDATE,
+				    NULL PARENT_AGREEMENTNO,
+				    T2.FINAMOUNT / RC.CCYMINORCCYUNITS AMTFIN,
+				    (T2.FINAMOUNT - T2.DOWNPAYMENT + T2.FEECHARGEAMT) / RC.CCYMINORCCYUNITS NET_AMTFIN,
+				    T7.DISBAMOUNT / RC.CCYMINORCCYUNITS DISBURSEDAMT,
+        			CASE WHEN T2.FINASSETVALUE = T2.FINCURRASSETVALUE THEN 
+            			'FULLY DISBURSED'
+            		ELSE 
+            			'PARTIALLY DISBURSED'
+        			END DISB_STATUS,
+    				T1.FIRSTREPAYDATE FIRST_DUE_DATE,
+    				to_char( T2.MATURITYDATE - T2.FINSTARTDATE,'MONTH') GROSS_TENURE,
+				    T1.NOINST NET_TENURE,
+				    T2.MATURITYDATE,
+				    T2.LASTREPAYDATE EXPIRYDATE,
+				    NULL NO_OF_ADV_INSTL,
+				    NULL ADV_EMI_AMT,
+				    T2.FIRSTREPAY EMI,
+				    T2.FINREPAYMETHOD REPAYMENT_MODE,
+				    T2.FINTYPE PRODUCTFLAG,
+				    P.PROMOTIONID,
+				    NULL ICICI_LOMBARD,
+				    NULL BAGIC,
+				    NULL BALIC_CHARGES,
+				    NULL BUSINESSDATE,
+				    'N' PROCESSED_FLAG,
+				    NULL PROCESS_DATE,
+				    NULL SEGMENTS,
+				    T9.TOTALFEE / RC.CCYMINORCCYUNITS FEE,
+				    NULL DEALER_SUBV,
+				    NULL MANU_SUBV_DED,
+				    NULL MANU_SUBV_NDED,
+				    T2.BPIAMOUNT / RC.CCYMINORCCYUNITS PREEMI,
+				    NULL EXISTING_LANNO,
+				    NULL MORTGAGE_FEE,
+				    NULL COMMITMENT_FEE,
+				    T10.PROCES_FEE / RC.CCYMINORCCYUNITS PROCESSING_FEE,
+				    NULL PRE_EMI_RECEIVABLE,
+				    T2.FINREPAYMETHOD PAYMENTMODE,
+        			CASE WHEN  ${call.substr}(T2.REPAYFRQ, 1, 1) = 'Y' THEN
+							'A'
+            			ELSE 
+            				 ${call.substr}(T2.REPAYFRQ, 1, 1)
+        			END FREQ,
+				    FA.LLREFERENCENO CHEQUENUM,
+				    ${call.substr}(FA.BENEFICIARYACCNO, 1, 16) CUST_ACCT_NO,
+				    T5.BANKNAME,
+				    T6.MICR MICRCODE,
+				    NULL BUSINESS_YEAR,
+				    NULL EMI_CHARGE,
+				    NULL PDC_CHARGE,
+				    CASE WHEN T2.EFFECTIVERATEOFRETURN > 999 THEN 
+				    		999	
+            			 ELSE 
+            			 	T2.EFFECTIVERATEOFRETURN
+        			END IRR_PER,
+				    T9.TOTALFEE / RC.CCYMINORCCYUNITS FEE_WL,
+				    NULL ELC_CHARGE,
+				    NULL CREDIT_VIDYA_FEES,
+				    NULL BATCH_ID
+				FROM FINANCEMAIN T2
+				JOIN FINPFTDETAILS T1 ON T1.FINID = T2.FINID
+				JOIN FINDISBURSEMENTDETAILS T3 ON T3.FINID = T2.FINID
+				JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T2.FINBRANCH
+     			LEFT JOIN BMTBANKDETAIL T5 ON T5.BANKCODE = T6.BANKCODE
+     			LEFT JOIN PROMOTIONS P ON P.PROMOTIONCODE = T2.PROMOTIONCODE
+     			JOIN RMTCURRENCIES RC ON RC.CCYCODE = T2.FINCCY
+     			LEFT JOIN ( SELECT FINDISBURSEMENTDETAILS.FINID, SUM(FINDISBURSEMENTDETAILS.DISBAMOUNT) DISBAMOUNT FROM FINDISBURSEMENTDETAILS
+          					WHERE FINDISBURSEMENTDETAILS.DISBDATE <= (( SELECT TO_DATE(SMTPARAMETERS.SYSPARMVALUE, 'YYYY-MM-DD') SYSPARMVALUE FROM SMTPARAMETERS
+                  			WHERE SMTPARAMETERS.SYSPARMCODE ='APP_DATE')) GROUP BY FINDISBURSEMENTDETAILS.FINID) T7 ON T7.FINID = T2.FINID
+     			LEFT JOIN ( SELECT FINEXCESSAMOUNT.FINID, SUM(FINEXCESSAMOUNT.BALANCEAMT) BALANCEAMT FROM FINEXCESSAMOUNT
+          					WHERE FINEXCESSAMOUNT.AMOUNTTYPE = 'A' GROUP BY FINEXCESSAMOUNT.FINID) T8 ON T8.FINID = T2.FINID
+     			LEFT JOIN ( SELECT FINFEEDETAIL.FINID, SUM(FINFEEDETAIL.ACTUALAMOUNT - FINFEEDETAIL.WAIVEDAMOUNT) TOTALFEE FROM FINFEEDETAIL GROUP BY FINFEEDETAIL.FINID) T9 ON T9.FINID = T2.FINID
+     			LEFT JOIN ( SELECT F.FINID, SUM(F.ACTUALAMOUNT - F.WAIVEDAMOUNT) PROCES_FEE FROM FINFEEDETAIL F
+             	JOIN FEETYPES FT ON F.FEETYPEID = FT.FEETYPEID WHERE FT.FEETYPECODE = 'PROCFEE'
+          		GROUP BY F.FINID) T10 ON T10.FINID = T2.FINID
+     			LEFT JOIN ( SELECT FA_1.FINREFERENCE, FA_1.BENEFICIARYACCNO, FA_1.LLREFERENCENO
+           		FROM ( SELECT FINADVANCEPAYMENTS.FINREFERENCE, MAX(FINADVANCEPAYMENTS.PAYMENTSEQ) MAXPAYMENTSEQ FROM FINADVANCEPAYMENTS
+                GROUP BY FINADVANCEPAYMENTS.FINREFERENCE) T
+             	JOIN FINADVANCEPAYMENTS FA_1 ON FA_1.FINREFERENCE = T.FINREFERENCE AND FA_1.PAYMENTSEQ = T.MAXPAYMENTSEQ) FA ON FA.FINREFERENCE = T2.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+	
+		<changeSet id="ST#556.59" author="Mounika.M" dbms="mssql">
+		<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T2.FINAPPROVEDDATE AGREEMENTDATE,
+				    ${call.substr}(T2.FINREFERENCE, 9, ${call.collength}(T2.FINREFERENCE)) APPLID,
+				    T2.FINREFERENCE AGREEMENTNO,
+				    T3.DISBSEQ DISBURSEMENTNO,
+				    T3.DISBDATE DISBURSEMENTDATE,
+				    NULL PARENT_AGREEMENTNO,
+				    T2.FINAMOUNT / RC.CCYMINORCCYUNITS AMTFIN,
+				    (T2.FINAMOUNT - T2.DOWNPAYMENT + T2.FEECHARGEAMT) / RC.CCYMINORCCYUNITS NET_AMTFIN,
+				    T7.DISBAMOUNT / RC.CCYMINORCCYUNITS DISBURSEDAMT,
+        			CASE WHEN T2.FINASSETVALUE = T2.FINCURRASSETVALUE THEN 
+            			'FULLY DISBURSED'
+            		ELSE 
+            			'PARTIALLY DISBURSED'
+        			END DISB_STATUS,
+    				T1.FIRSTREPAYDATE FIRST_DUE_DATE,
+    				DATEPART(MONTH,T2.MATURITYDATE - T2.FINSTARTDATE) GROSS_TENURE,
+				    T1.NOINST NET_TENURE,
+				    T2.MATURITYDATE,
+				    T2.LASTREPAYDATE EXPIRYDATE,
+				    NULL NO_OF_ADV_INSTL,
+				    NULL ADV_EMI_AMT,
+				    T2.FIRSTREPAY EMI,
+				    T2.FINREPAYMETHOD REPAYMENT_MODE,
+				    T2.FINTYPE PRODUCTFLAG,
+				    P.PROMOTIONID,
+				    NULL ICICI_LOMBARD,
+				    NULL BAGIC,
+				    NULL BALIC_CHARGES,
+				    NULL BUSINESSDATE,
+				    'N' PROCESSED_FLAG,
+				    NULL PROCESS_DATE,
+				    NULL SEGMENTS,
+				    T9.TOTALFEE / RC.CCYMINORCCYUNITS FEE,
+				    NULL DEALER_SUBV,
+				    NULL MANU_SUBV_DED,
+				    NULL MANU_SUBV_NDED,
+				    T2.BPIAMOUNT / RC.CCYMINORCCYUNITS PREEMI,
+				    NULL EXISTING_LANNO,
+				    NULL MORTGAGE_FEE,
+				    NULL COMMITMENT_FEE,
+				    T10.PROCES_FEE / RC.CCYMINORCCYUNITS PROCESSING_FEE,
+				    NULL PRE_EMI_RECEIVABLE,
+				    T2.FINREPAYMETHOD PAYMENTMODE,
+        			CASE WHEN  ${call.substr}(T2.REPAYFRQ, 1, 1) = 'Y' THEN
+							'A'
+            			ELSE 
+            				 ${call.substr}(T2.REPAYFRQ, 1, 1)
+        			END FREQ,
+				    FA.LLREFERENCENO CHEQUENUM,
+				    ${call.substr}(FA.BENEFICIARYACCNO, 1, 16) CUST_ACCT_NO,
+				    T5.BANKNAME,
+				    T6.MICR MICRCODE,
+				    NULL BUSINESS_YEAR,
+				    NULL EMI_CHARGE,
+				    NULL PDC_CHARGE,
+				    CASE WHEN T2.EFFECTIVERATEOFRETURN > 999 THEN 
+				    		999	
+            			 ELSE 
+            			 	T2.EFFECTIVERATEOFRETURN
+        			END IRR_PER,
+				    T9.TOTALFEE / RC.CCYMINORCCYUNITS FEE_WL,
+				    NULL ELC_CHARGE,
+				    NULL CREDIT_VIDYA_FEES,
+				    NULL BATCH_ID
+				FROM FINANCEMAIN T2
+				JOIN FINPFTDETAILS T1 ON T1.FINID = T2.FINID
+				JOIN FINDISBURSEMENTDETAILS T3 ON T3.FINID = T2.FINID
+				JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T2.FINTYPE
+				LEFT JOIN BANKBRANCHES T6 ON T6.BRANCHCODE = T2.FINBRANCH
+     			LEFT JOIN BMTBANKDETAIL T5 ON T5.BANKCODE = T6.BANKCODE
+     			LEFT JOIN PROMOTIONS P ON P.PROMOTIONCODE = T2.PROMOTIONCODE
+     			JOIN RMTCURRENCIES RC ON RC.CCYCODE = T2.FINCCY
+     			LEFT JOIN ( SELECT FINDISBURSEMENTDETAILS.FINID, SUM(FINDISBURSEMENTDETAILS.DISBAMOUNT) DISBAMOUNT FROM FINDISBURSEMENTDETAILS
+          					WHERE FINDISBURSEMENTDETAILS.DISBDATE <= (( SELECT SMTPARAMETERS.SYSPARMVALUE SYSPARMVALUE FROM SMTPARAMETERS
+                  			WHERE SMTPARAMETERS.SYSPARMCODE ='APP_DATE')) GROUP BY FINDISBURSEMENTDETAILS.FINID) T7 ON T7.FINID = T2.FINID
+     			LEFT JOIN ( SELECT FINEXCESSAMOUNT.FINID, SUM(FINEXCESSAMOUNT.BALANCEAMT) BALANCEAMT FROM FINEXCESSAMOUNT
+          					WHERE FINEXCESSAMOUNT.AMOUNTTYPE = 'A' GROUP BY FINEXCESSAMOUNT.FINID) T8 ON T8.FINID = T2.FINID
+     			LEFT JOIN ( SELECT FINFEEDETAIL.FINID, SUM(FINFEEDETAIL.ACTUALAMOUNT - FINFEEDETAIL.WAIVEDAMOUNT) TOTALFEE FROM FINFEEDETAIL GROUP BY FINFEEDETAIL.FINID) T9 ON T9.FINID = T2.FINID
+     			LEFT JOIN ( SELECT F.FINID, SUM(F.ACTUALAMOUNT - F.WAIVEDAMOUNT) PROCES_FEE FROM FINFEEDETAIL F
+             	JOIN FEETYPES FT ON F.FEETYPEID = FT.FEETYPEID WHERE FT.FEETYPECODE = 'PROCFEE'
+          		GROUP BY F.FINID) T10 ON T10.FINID = T2.FINID
+     			LEFT JOIN ( SELECT FA_1.FINREFERENCE, FA_1.BENEFICIARYACCNO, FA_1.LLREFERENCENO
+           		FROM ( SELECT FINADVANCEPAYMENTS.FINREFERENCE, MAX(FINADVANCEPAYMENTS.PAYMENTSEQ) MAXPAYMENTSEQ FROM FINADVANCEPAYMENTS
+                GROUP BY FINADVANCEPAYMENTS.FINREFERENCE) T
+             	JOIN FINADVANCEPAYMENTS FA_1 ON FA_1.FINREFERENCE = T.FINREFERENCE AND FA_1.PAYMENTSEQ = T.MAXPAYMENTSEQ) FA ON FA.FINREFERENCE = T2.FINREFERENCE
+			]]>
+		</createView>
+	</changeSet>
+		
+	<changeSet id="ST#556.59_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'dm_disb_details_daily_view');
@@ -17627,7 +18004,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.62_pre" author="Mounika.M">
+	<changeSet id="ST#556.62_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'investment_deal_tview');
@@ -17685,7 +18062,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.62_post" author="Mounika.M">
+	<changeSet id="ST#556.62_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'investment_deal_tview');
@@ -17752,7 +18129,7 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#556.64_pre" author="Mounika.M">
+	<changeSet id="ST#556.64_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_tview');
@@ -17819,7 +18196,7 @@
 		</createView>
 	</changeSet>
 	
-	<changeSet id="ST#556.64_post" author="Mounika.M">
+	<changeSet id="ST#556.64_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_tview');
@@ -17882,6 +18259,319 @@
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'collateralassignment_ctview');	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.66_pre" author="Gopal" dbms="postgresql">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'rpt_emrassetagingoddtl_view'); 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="ST#556.66" author="Gopal">
+		<createView viewName="rpt_emrassetagingoddtl_view" replaceIfExists="true">
+			<![CDATA[	 
+			SELECT 
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 0 to 7D' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference)))))
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-7') AND ((- t1.fincuroddays) <= 0))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 7D to 1M' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-30') AND ((- t1.fincuroddays) < '-7'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 1M to 3M' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference)))))
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-90') AND ((- t1.fincuroddays) < '-30'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 3M to 6M' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-180') AND ((- t1.fincuroddays) < '-90'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 6M to 1Y' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-365') AND ((- t1.fincuroddays) < '-180'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 1Y to 3Y' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-1095') AND ((- t1.fincuroddays) < '-365'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 3Y to 5Y' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-1825') AND ((- t1.fincuroddays) < '-1095'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 5Y to 10Y' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-3650') AND ((- t1.fincuroddays) < '-1825'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 10Y to 20Y' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-7300') AND ((- t1.fincuroddays) < '-3650'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE OVER 20Y' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) < '-7300'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpri, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'NOT YET PAID' AS clmn,
+				'P' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) > 0))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 0 to 7D' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-7') AND ((- t1.fincuroddays) <= 0))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 7D to 1M' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-30') AND ((- t1.fincuroddays) < '-7'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 1M to 3M' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-90') AND ((- t1.fincuroddays) < '-30'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 3M to 6M' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-180') AND ((- t1.fincuroddays) < '-90'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 6M to 1Y' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-365') AND ((- t1.fincuroddays) < '-180'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 1Y to 3Y' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-1095') AND ((- t1.fincuroddays) < '-365'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 3Y to 5Y' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-1825') AND ((- t1.fincuroddays) < '-1095'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 5Y to 10Y' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-3650') AND ((- t1.fincuroddays) < '-1825'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE 10Y to 20Y' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) >= '-7300') AND ((- t1.fincuroddays) < '-3650'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'DUE OVER 20Y' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) < '-7300'))
+			
+			UNION ALL
+			SELECT 
+				
+				sum(${add.schema}udf_convertcurrency(t1.fincurodpft, (t2.finccy), 'INR')) AS unpaidtotalamt,
+				'NOT YET PAID' AS clmn,
+				'I' AS flag
+			FROM ((finoddetails t1
+				JOIN finpftdetails t2 ON (((t1.finreference) = (t2.finreference))))
+				)
+			WHERE (((t2.closingstatus <> ('C')) OR (t2.closingstatus IS NULL)) AND (t2.finisactive = 1) AND (t2.pftinsusp = 1) AND (t1.fincurodamt <> (0)) AND ((- t1.fincuroddays) > 0))
+		]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#556.66_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rpt_emrassetagingoddtl_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.67_pre" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rolledoverfinancedetail_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="ST#556.67" author="Mounika.M">
+		<createView viewName="ROLLEDOVERFINANCEDETAIL_VIEW" replaceIfExists="true">
+		<![CDATA[
+			SELECT r.newfinreference,
+				r.finreference,
+				r.rolloveramount,
+				r.custpayment,
+				p.totalpftbal,
+				p.totalpribal,
+				f.finstartdate AS startdate,
+				f.finamount,
+				f.effectiverateofreturn AS profitrate,
+				f.totalprofit
+			FROM ((rolledoverfinancedetail_temp r
+				JOIN financemain f ON (((r.finreference) = (f.finreference))))
+				JOIN finpftdetails p ON (((f.finreference) = (p.finreference))))
+			UNION ALL
+			SELECT r.newfinreference,
+				r.finreference,
+				r.rolloveramount,
+				r.custpayment,
+				p.totalpftbal,
+				p.totalpribal,
+				f.finstartdate AS startdate,
+				f.finamount,
+				f.effectiverateofreturn AS profitrate,
+				f.totalprofit
+			FROM ((rolledoverfinancedetail r
+				JOIN financemain f ON (((r.finreference) = (f.finreference))))
+				JOIN finpftdetails p ON (((f.finreference) = (p.finreference))))
+			WHERE (NOT (EXISTS ( SELECT 1
+					FROM rolledoverfinancedetail_temp
+					WHERE (((rolledoverfinancedetail_temp.finreference) = (r.finreference)) AND ((rolledoverfinancedetail_temp.newfinreference) = (r.newfinreference))))))
+		]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="ST#556.67_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rolledoverfinancedetail_view');
 			]]>
 		</sql>
 	</changeSet>

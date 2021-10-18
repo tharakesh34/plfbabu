@@ -39,6 +39,10 @@
 			Set search_path = plfaudit,plf,public,pg_catalog;
 		</sql>
 	</changeSet>
+	
+	<changeSet id="1.4_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="AdtFinDisbursementDetails"/>
+	</changeSet>
 
 	<changeSet id="1.4" author="m.mounika">
 		<dropColumn tableName="AdtFinDisbursementDetails" columnName="ContractorId" />
@@ -84,6 +88,15 @@
 		<dropColumn tableName="AdtRMTFinanceTypes" columnName="FinIsOpenNewFinAc" />
 		<dropColumn tableName="AdtRMTFinanceTypes" columnName="AllowRIAInvestment" />
 	</changeSet>
+	
+	<changeSet id="1.7_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="DeductInsDisb" tableName="AdtFinanceMain"/>
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="AdtFinanceMain"/>
+	</changeSet>
+	
+	<changeSet id="1.7.0_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="SecurityDeposit" tableName="AdtFinanceMain"/>
+	</changeSet>
 
 	<changeSet id="1.7" author="m.mounika">
 		<dropColumn tableName="AdtFinanceMain" columnName="MMAId" />
@@ -118,6 +131,10 @@
 		<dropColumn tableName="AdtFinanceMain" columnName="LastDepDate" />
 	</changeSet>
 
+	<changeSet id="1.8_pre" author="m.mounika" dbms="mssql">
+    	<dropDefaultValue columnDataType="decimal(18,0)" columnName="InsuranceAmt" tableName="AdtFinScheduleDetails"/>
+	</changeSet>
+	
 	<changeSet id="1.8" author="m.mounika">
 		<dropColumn tableName="AdtFinScheduleDetails" columnName="CalOnIndRate" />
 		<dropColumn tableName="AdtFinScheduleDetails" columnName="InsuranceAmt" />
