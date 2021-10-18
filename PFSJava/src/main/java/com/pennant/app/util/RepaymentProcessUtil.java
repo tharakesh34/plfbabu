@@ -1740,13 +1740,12 @@ public class RepaymentProcessUtil {
 
 			List<RepayScheduleDetail> rpySchdList = rph.getRepayScheduleDetails();
 			if (CollectionUtils.isNotEmpty(rpySchdList)) {
-				for (int i = 0; i < rpySchdList.size(); i++) {
-
-					RepayScheduleDetail rpySchd = rpySchdList.get(i);
+				int i = 0;
+				for (RepayScheduleDetail rpySchd : rpySchdList) {
 					rpySchd.setFinID(rch.getFinID());
 					rpySchd.setFinReference(rch.getReference());
 					rpySchd.setRepayID(repayID);
-					rpySchd.setRepaySchID(i + 1);
+					rpySchd.setRepaySchID(++i);
 					rpySchd.setLinkedTranId(rph.getLinkedTranId());
 
 					if (rpySchd.getTaxHeader() != null
