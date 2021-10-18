@@ -318,6 +318,7 @@ public class RepaymentProcessUtil {
 		Date postDate = getPostDate(postingDate);
 		if (isSchdLogReq) {
 			entryDetail = new FinLogEntryDetail();
+			entryDetail.setFinID(finID);
 			entryDetail.setFinReference(finReference);
 			entryDetail.setEventAction(receiptPurpose);
 			entryDetail.setSchdlRecal(false);

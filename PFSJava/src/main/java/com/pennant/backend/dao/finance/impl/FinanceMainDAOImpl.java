@@ -3010,7 +3010,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public int getCountByBlockedFinances(long finID) {
-		String sql = "Select count(FinID) From BlockedFinance Where FinID = ?";
+		String sql = "Select count(FinID) From BlockedFinances Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
