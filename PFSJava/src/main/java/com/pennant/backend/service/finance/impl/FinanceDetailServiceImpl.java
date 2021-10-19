@@ -2185,8 +2185,28 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				holidayList.add(emiHoliday);
 			}
 
+			for (int i = 0; i < schdData.getPlanEMIHDates().size(); i++) {
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+					planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+					planEMIHDate = schdData.getPlanEMIHDates().get(i);
+				}
+
+				FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
+				emiHoliday.setFinID(finID);
+				emiHoliday.setFinReference(finReference);
+				emiHoliday.setPlanEMIHMonth(planEMIHMonth);
+				emiHoliday.setPlanEMIHDate(planEMIHDate);
+				holidayList.add(emiHoliday);
+			}
+
 			if (!holidayList.isEmpty()) {
-				finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, table);
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+					finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, table);
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+					finPlanEmiHolidayDAO.savePlanEMIHDates(holidayList, table);
+				}
+
 			}
 		}
 
@@ -4458,8 +4478,29 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				holidayList.add(emiHoliday);
 			}
 
+			for (int i = 0; i < schdData.getPlanEMIHDates().size(); i++) {
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+					planEMIHMonth = schdData.getPlanEMIHmonths().get(i);
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+					planEMIHDate = schdData.getPlanEMIHDates().get(i);
+				}
+
+				FinPlanEmiHoliday emiHoliday = new FinPlanEmiHoliday();
+				emiHoliday.setFinID(finID);
+				emiHoliday.setFinReference(finReference);
+				emiHoliday.setPlanEMIHMonth(planEMIHMonth);
+				emiHoliday.setPlanEMIHDate(planEMIHDate);
+				holidayList.add(emiHoliday);
+			}
+
 			if (!holidayList.isEmpty()) {
-				finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, "");
+
+				if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)) {
+					finPlanEmiHolidayDAO.savePlanEMIHMonths(holidayList, "");
+				} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
+					finPlanEmiHolidayDAO.savePlanEMIHDates(holidayList, "");
+				}
+
 			}
 		}
 

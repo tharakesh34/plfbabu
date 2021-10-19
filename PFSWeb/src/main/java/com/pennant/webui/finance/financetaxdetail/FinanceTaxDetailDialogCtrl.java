@@ -446,6 +446,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			if (financeMain != null) {
 				long finID = financeMain.getFinID();
 				String finRef = financeMain.getFinReference();
+				this.financeTaxDetail.setFinID(finID);
 				this.finReference.setValue(finRef, "");
 				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finID, "_AView"));
 				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finID, "_AView"));
