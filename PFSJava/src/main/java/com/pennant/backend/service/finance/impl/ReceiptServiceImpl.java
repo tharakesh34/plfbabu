@@ -5280,6 +5280,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rcd.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
 		}
 		fsi.setReceiptDetail(rcd);
+		if (fsi.getFinID() <= 0) {
+			fsi.setFinID(rud.getFinID() == null ? 0 : rud.getFinID());
+		}
 		return fsi;
 	}
 

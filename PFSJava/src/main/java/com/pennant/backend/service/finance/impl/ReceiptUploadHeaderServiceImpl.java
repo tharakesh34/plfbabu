@@ -707,8 +707,10 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 			if (finID == null) {
 				setErrorToRUD(rud, "RU0004", rud.getReference());
+			} else {
+				rud.setFinID(finID);
 			}
-
+			
 			if (dedupCheck) {
 
 				if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
@@ -792,7 +794,11 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				}
 			}
 
-			receiptService.getWaiverValidation(rud.getFinID(), rud.getReceiptPurpose(), rud.getValueDate());
+			ErrorDetail errorDetail = receiptService.getWaiverValidation(rud.getFinID(), rud.getReceiptPurpose(),
+					rud.getValueDate());
+			if (errorDetail != null) {
+				rud.getErrorDetails().add(ErrorUtil.getErrorDetail(errorDetail));
+			}
 
 			rudList.add(rud);
 
