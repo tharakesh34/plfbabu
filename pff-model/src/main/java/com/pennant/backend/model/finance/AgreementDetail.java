@@ -3024,7 +3024,6 @@ public class AgreementDetail {
 		private String schTotalPriAmt = ""; //Payment Amount (AED)
 		private String schdSeqNo = "";
 		private String closingBalance = ""; //closing Balance(AED)
-		private String insSchd = ""; //Insurance Fee
 		private String advPayment = ""; // Advance Payment
 		private String openingPrincipal = ""; // Advance Payment
 		private String rateOfInterst = ""; // Advance Payment
@@ -3076,14 +3075,6 @@ public class AgreementDetail {
 
 		public void setClosingBalance(String closingBalance) {
 			this.closingBalance = closingBalance;
-		}
-
-		public String getInsSchd() {
-			return insSchd;
-		}
-
-		public void setInsSchd(String insSchd) {
-			this.insSchd = insSchd;
 		}
 
 		public String getSchTotalPriAmt() {
