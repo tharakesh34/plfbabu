@@ -425,7 +425,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		setDefaultDateFormats(fsi);
 
 		FinanceDetail fd = null;
-		WSReturnStatus returnStatus = null;
+		WSReturnStatus returnStatus = new WSReturnStatus();
 		Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 		if (finID != null) {
 			fsi.setWif(false);
@@ -2903,7 +2903,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
-			if (financeMainDAO.getFinID(finReference, TableType.MAIN_TAB) == null) {
+			Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+			if (finID == null) {
 				String[] valueParm = new String[4];
 				valueParm[0] = "Fin";
 				valueParm[1] = "Reference";
@@ -2911,6 +2912,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				valueParm[3] = "exists";
 				return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 			}
+
+			sub.setFinID(finID);
 
 			if (StringUtils.isEmpty(finType)) {
 				String[] valueParm = new String[1];
@@ -3199,7 +3202,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FeeWaiverHeader feeWaiver = new FeeWaiverHeader();
 		List<FeeWaiverDetail> actaulfeeWaiverDetails = new ArrayList<>();
 
-		long finID = feeWaiverHeader.getFinID();
 		String finReference = feeWaiverHeader.getFinReference();
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
@@ -3253,7 +3255,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		// get fee waiver details from manual advise and finoddetails to prepare the list.
 		feeWaiver.setNewRecord(true);
-		feeWaiver.setFinID(finID);
+		feeWaiver.setFinID(fm.getFinID());
 		feeWaiver.setFinReference(finReference);
 		feeWaiver = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiver);
 

@@ -5743,10 +5743,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	public Long getActiveFinID(String finReference) {
 		StringBuilder sql = new StringBuilder("Select FinID From (");
-		sql.append(" Select FinID From FinanceMain Where FinReference = ? and FinIsActive = ?");
-		sql.append(" Union All");
 		sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ? and FinIsActive = ?");
-		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" Union All");
+		sql.append(" Select FinID From FinanceMain fm Where FinReference = ? and FinIsActive = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
 		sql.append(" ) fm");
 
 		try {
