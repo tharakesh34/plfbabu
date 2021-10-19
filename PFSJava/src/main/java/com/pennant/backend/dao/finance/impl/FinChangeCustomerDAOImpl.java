@@ -123,11 +123,11 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
-				ps.setLong(index, fcc.getId());
-				ps.setLong(index, fcc.getFinID());
-				ps.setString(index, fcc.getFinReference());
-				ps.setLong(index, fcc.getOldCustId());
-				ps.setLong(index, fcc.getCoApplicantId());
+				ps.setLong(index++, fcc.getId());
+				ps.setLong(index++, fcc.getFinID());
+				ps.setString(index++, fcc.getFinReference());
+				ps.setLong(index++, fcc.getOldCustId());
+				ps.setLong(index++, fcc.getCoApplicantId());
 				ps.setInt(index++, fcc.getVersion());
 				ps.setLong(index++, fcc.getLastMntBy());
 				ps.setTimestamp(index++, fcc.getLastMntOn());

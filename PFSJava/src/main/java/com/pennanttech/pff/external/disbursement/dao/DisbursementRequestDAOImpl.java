@@ -106,8 +106,8 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		final String DISB_FI_EMAIL = SysParamUtil.getValueAsString("DISB_FI_EMAIL");
 
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" PaymentId CustCIF, FinID, FinReference, AmtTobeReleased, Disbursement_Type, LLDate, PayableLoc");
-		sql.append(", PrintingLoc  CustShrtName, Customer_Mobile, Customer_Email, Customer_State, Customer_City");
+		sql.append(" PaymentId, CustCIF, FinID, FinReference, AmtTobeReleased, Disbursement_Type, LLDate, PayableLoc");
+		sql.append(", PrintingLoc,  CustShrtName, Customer_Mobile, Customer_Email, Customer_State, Customer_City");
 		sql.append(", Customer_Address1, Customer_Address2, Customer_Address3, Customer_Address4, Customer_Address5");
 		sql.append(", BankName, BranchDesc, Benficiary_Branch_State, Benficiary_Branch_City, MICR_Code, IFSC_Code");
 		sql.append(", Beneficiary_Mobile, Benficiry_Email, BeneficiaryAccno, BeneficiaryName");
@@ -273,8 +273,10 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", Channel, Batch_Id, Auto_Download, Header_Id, Lei, City_Name, Province_Name");
 		sql.append(", Partnerbank_Id, Partnerbank_Code, Partnerbank_Account, Cheque_Number, Downloaded_On)");
 		sql.append(" Values (");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
 			this.jdbcOperations.update(con -> {
