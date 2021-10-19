@@ -67,6 +67,7 @@ import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.RuleExecutionUtil;
+import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.NotesDAO;
 import com.pennant.backend.dao.QueueAssignmentDAO;
@@ -4933,6 +4934,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			finishedTasks.add(task.getOperation());
 			serviceTasks = getRemainingServiceTasks(engine, taskId, afinanceMain, finishedTasks);
 		}
+
+		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+		afinanceMain.setUserDetails(userDetails);
 
 		// Save the data.
 		if (!auditHeader.isProcessCompleted()) {
