@@ -531,24 +531,18 @@
 			from
 			(select USRID from SECUSERS union all select USRID from SECUSERS_Temp) T;
 
+			
 			SET @SQLCmd = '
-			CREATE
+			ALTER
 			SEQUENCE [dbo].[SEQSECUSERS]
-			AS [bigint]
-			START WITH '
-			+ CAST( @MAXNO AS VARCHAR(30)) +
-			'INCREMENT BY 1
-			MINVALUE
-			-9223372036854775808
-			MAXVALUE 9223372036854775807
-			CACHE ';
-
+			RESTART WITH '
+			+ CAST( @MAXNO AS VARCHAR(30)) ;
 
 			EXEC
 			SP_EXECUTESQL @SQLCmd;
 			]]>
 		</sql>
 	</changeSet>
-	
+
 
 </databaseChangeLog>

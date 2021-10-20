@@ -2628,16 +2628,6 @@
 		</addColumn>
 	</changeSet>
 
-	<changeSet id="ST#2145.4" author="naveenkumar.a">
-		<sql>
-			<![CDATA[
-				UPDATE FINANCEMAIN Set SchdVersion = 0;
-				UPDATE FINANCEMAIN_TEMP Set SchdVersion = 0;
-				UPDATE REJECTFINANCEMAIN Set SchdVersion = 0;
-			]]>
-		</sql>
-	</changeSet>
-
 	<changeSet id="ST#2145.4.1" author="naveenkumar.a">
 		<sql>
 			<![CDATA[
