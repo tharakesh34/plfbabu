@@ -116,10 +116,10 @@
 	<changeSet id="ST#3007.11" author="vijaya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TET_FeeRepeat DEFAULT 0 FOR FeeRepeat;
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TET_ReceivableOrPayable DEFAULT 0 FOR ReceivableOrPayable;
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TET_AssignmentEntry DEFAULT 0 FOR AssignmentEntry;
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TET_Bulking DEFAULT 0 FOR Bulking;
+				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_RTET_FeeRepeat DEFAULT 0 FOR FeeRepeat;
+				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_RTET_ReceivableOrPayable DEFAULT 0 FOR ReceivableOrPayable;
+				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_RTET_AssignmentEntry DEFAULT 0 FOR AssignmentEntry;
+				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_RTET_Bulking DEFAULT 0 FOR Bulking;
 			]]>
 		</sql>
 	</changeSet>
@@ -134,26 +134,26 @@
 	<changeSet id="ST#3007.12" author="vijaya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TE_FeeRepeat DEFAULT 0 FOR FeeRepeat;
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TE_ReceivableOrPayable DEFAULT 0 FOR ReceivableOrPayable;
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_TE_AssignmentEntry DEFAULT 0 FOR AssignmentEntry;
-				ALTER TABLE RMTTRANSACTIONENTRY_TEMP ADD CONSTRAINT DF_FE_Bulking DEFAULT 0 FOR Bulking;
+				ALTER TABLE RMTTRANSACTIONENTRY ADD CONSTRAINT DF_RTE_FeeRepeat DEFAULT 0 FOR FeeRepeat;
+				ALTER TABLE RMTTRANSACTIONENTRY ADD CONSTRAINT DF_RTE_ReceivableOrPayable DEFAULT 0 FOR ReceivableOrPayable;
+				ALTER TABLE RMTTRANSACTIONENTRY ADD CONSTRAINT DF_RTE_AssignmentEntry DEFAULT 0 FOR AssignmentEntry;
+				ALTER TABLE RMTTRANSACTIONENTRY ADD CONSTRAINT DF_RFE_Bulking DEFAULT 0 FOR Bulking;
 			]]>
 		</sql>
 	</changeSet>
-
+	
 	<changeSet id="ST#3007.13" author="vijaya.a">
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="FeeRepeat" />
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="ReceivableOrPayable" />
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="AssignmentEntry" />
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="Bulking" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="FeeRepeat" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="ReceivableOrPayable"	columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="AssignmentEntry" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY_TEMP" columnName="Bulking"	columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#3007.14" author="vijaya.a">
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="FeeRepeat" />
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="ReceivableOrPayable" />
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="AssignmentEntry" />
-		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="Bulking" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="FeeRepeat" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="ReceivableOrPayable" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="AssignmentEntry" columnDataType="boolean" />
+		<addNotNullConstraint tableName="RMTTRANSACTIONENTRY" columnName="Bulking" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#3007.15" author="vijaya.a">
@@ -222,7 +222,7 @@
 	</changeSet>
 
 	<changeSet id="ST#3007.24" author="vijaya.a">
-		<addNotNullConstraint tableName="FINTYPEFEES" columnName="InclForAssignment" />
+		<addNotNullConstraint tableName="FINTYPEFEES_TEMP" columnName="InclForAssignment" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#3007.25" author="vijaya.a" dbms="postgresql, oracle">
@@ -232,13 +232,13 @@
 	<changeSet id="ST#3007.25" author="vijaya.a" dbms="mssql">
 		<sql>
 			<![CDATA[
-				ALTER TABLE FINTYPEFEES_TEMP ADD CONSTRAINT DF_FTF_InclForAssignment DEFAULT 0 FOR InclForAssignment;
+				ALTER TABLE FINTYPEFEES ADD CONSTRAINT DF_FTF_InclForAssignment DEFAULT 0 FOR InclForAssignment;
 			]]>
 		</sql>
 	</changeSet>
 
 	<changeSet id="ST#3007.26" author="vijaya.a">
-		<addNotNullConstraint tableName="FINTYPEFEES" columnName="InclForAssignment" />
+		<addNotNullConstraint tableName="FINTYPEFEES" columnName="InclForAssignment" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#3007.27_pre" author="vijaya.a" dbms="postgresql">

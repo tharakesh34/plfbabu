@@ -74,10 +74,10 @@
 	</changeSet>
 
 	<changeSet id="ST#3007.7" author="vijaya.a">
-		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="FeeRepeat" />
-		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="ReceivableOrPayable" />
-		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="AssignmentEntry" />
-		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="Bulking" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="FeeRepeat" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="ReceivableOrPayable" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="AssignmentEntry" columnDataType="boolean" />
+		<addNotNullConstraint tableName="ADTRMTTRANSACTIONENTRY" columnName="Bulking" columnDataType="boolean" />
 	</changeSet>
 
 	<changeSet id="ST#3007.8" author="vijaya.a">
@@ -114,7 +114,7 @@
 	</changeSet>
 
 	<changeSet id="ST#3007.12" author="vijaya.a">
-		<addNotNullConstraint tableName="ADTFINTYPEFEES" columnName="InclForAssignment" />
+		<addNotNullConstraint tableName="ADTFINTYPEFEES" columnName="InclForAssignment" columnDataType="boolean" />
 	</changeSet>
 
 </databaseChangeLog>
