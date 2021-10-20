@@ -10766,7 +10766,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.13" author="Gopal.p">
+	<changeSet id="ST#2367.13.1" author="Gopal.p">
 		<createView viewName="HOLDDISBURSEMENT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -10787,7 +10787,7 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
 				FROM HOLDDISBURSEMENT_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
 				UNION ALL
 				SELECT FM.FINID,
 					FM.FINREFERENCE,

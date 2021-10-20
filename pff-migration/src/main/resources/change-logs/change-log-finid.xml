@@ -1552,10 +1552,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="43.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_adviseuploads_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="adviseuploads" referencedColumnNames="FinID" />
-	</changeSet>
+
 	<changeSet id="43.4" author="murthy.y">
 		<createIndex tableName="adviseuploads" indexName="idx_adviseuploads_finid">
 			<column name="FinID" type="bigint" />
@@ -4279,11 +4276,6 @@
 				Update presentmentdetails_temp set FinID = (select m.FinID from FINID_MAPPING m where presentmentdetails_temp.FinReference = m.FinReference);
 			]]>
 		</sql>
-	</changeSet>
-	<changeSet id="143.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_presentmentdetails_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="presentmentdetails"
-			referencedColumnNames="FinID" />
 	</changeSet>
 
 	<changeSet id="143.4" author="murthy.y">

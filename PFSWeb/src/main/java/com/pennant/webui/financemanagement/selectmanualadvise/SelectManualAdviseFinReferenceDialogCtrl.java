@@ -242,6 +242,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 				// FinanceMain financeMain = (FinanceMain) this.finReference.getObject();
 				// holdDisbursement.setDisbursedAmount(financeMain.getFinCurrAssetValue());
 				// holdDisbursement.setTotalLoanAmt(financeMain.getFinAssetValue());
+				holdDisbursement.setFinID(finID);
 				holdDisbursement.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 				Executions.createComponents("/WEB-INF/pages/Finance/HoldDisbursement/HoldDisbursementDialog.zul", null,
 						arg);
