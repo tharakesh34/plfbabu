@@ -1071,6 +1071,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 
 		FinExpenseMovements finExpenseMovements = new FinExpenseMovements();
 		finExpenseMovements.setFinExpenseId(finExpenseDetailId);
+		finExpenseMovements.setFinID(fm.getFinID());
 		finExpenseMovements.setFinReference(fm.getFinReference());
 		finExpenseMovements.setUploadId(uploadDetail.getUploadId());
 		finExpenseMovements.setModeType(PennantConstants.EXPENSE_MODE_UPLOAD);

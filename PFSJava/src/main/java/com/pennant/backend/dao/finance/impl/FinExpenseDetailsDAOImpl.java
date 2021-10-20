@@ -89,9 +89,9 @@ public class FinExpenseDetailsDAOImpl extends SequenceDao<FinExpenseDetails> imp
 	@Override
 	public FinExpenseDetails getFinExpenseDetailsByReference(String finReference, long expenseTypeId) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append("(FinExpenseId, FinID, FinReference, ExpenseTypeId, Amount");
+		sql.append(" FinExpenseId, FinID, FinReference, ExpenseTypeId, Amount");
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
-		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId)");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinExpenseDetails");
 		sql.append(" Where FinReference = ? and ExpenseTypeId = ?");
 
