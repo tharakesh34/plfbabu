@@ -47,7 +47,7 @@ import java.util.Date;
 import com.pennant.backend.model.finance.FinanceMain;
 
 public interface ChangeTDSDAO {
-	FinanceMain getFinanceBasicDetailByRef(String finReference);
+	FinanceMain getFinanceBasicDetailByRef(long finID);
 
 	boolean isTDSCheck(String reference, Date appDate);
 

@@ -3900,8 +3900,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		long finID = fmi.getFinID();
-		String finReference = fmi.getFinReference();
-		FinanceMain financeMain = getChangeTDSService().getFinanceBasicDetailByRef(finReference);
+		FinanceMain financeMain = getChangeTDSService().getFinanceBasicDetailByRef(finID);
 		FinanceDetail financeDetail = getFinanceDetailService().getFinSchdDetailById(finID, "_AView", false);
 		boolean isTDSCheck = false;
 		Date date = SysParamUtil.getAppDate();

@@ -29,8 +29,6 @@ import java.util.Date;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.backend.dao.finance.ChangeTDSDAO;
@@ -49,31 +47,44 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 	}
 
 	@Override
-	public FinanceMain getFinanceBasicDetailByRef(String finReference) {
-		logger.debug(Literal.ENTERING);
+	public FinanceMain getFinanceBasicDetailByRef(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FM.FinID, FM.FinReference, FT.FinType, FT.FinTypeDesc");
+		sql.append(", FM.TDSApplicable, FM.FinAssetValue, FM.FinBranch");
+		sql.append(", FM.CustID, Cust.CustCIF, Cust.CustShrtName");
+		sql.append(", FM.FinStartDate, FM.MaturityDate, CURR.CCYCode From FinanceMain FM");
+		sql.append(" Inner Join Customers Cust on FM.CustID = Cust.CustID");
+		sql.append(" Inner Join RMTFinanceTypes FT ON FT.FinType = FM.FinType");
+		sql.append(" Inner Join RMTCurrencies CURR ON CURR.CCYCode = FM.FinCCY");
+		sql.append(" Where FM.FinID = ?");
 
-		StringBuilder sql = null;
-		MapSqlParameterSource source = null;
-		sql = new StringBuilder();
-		sql.append(
-				"  SELECT FM.FinReference, FT.FinType, FT.FINTYPEDESC LovDescFinTypeName, FM.TDSAPPLICABLE, FM.FinAssetValue, FM.FinBranch,");
-		sql.append(" FM.CustId, Cust.CUSTCIF LovDescCustCif, Cust.CUSTSHRTNAME LovDescCustShrtName,");
-		sql.append(" FM.FinAssetValue,FM.FINSTARTDATE, FM.MATURITYDATE,CURR.CCYCODE finCcy  FROM FINANCEMAIN FM");
-		sql.append(" INNER JOIN Customers Cust on FM.CUSTID=Cust.CUSTID");
-		sql.append(" INNER JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE");
-		sql.append(" INNER JOIN RMTCURRENCIES CURR ON CURR.CCYCODE = FM.FINCCY");
-		sql.append(" Where FM.FinReference = :FinReference");
-		logger.trace(Literal.SQL + sql.toString());
-		source = new MapSqlParameterSource();
-		source.addValue("FinReference", finReference);
+		logger.debug(Literal.SQL + sql.toString());
 
-		RowMapper<FinanceMain> rowMapper = BeanPropertyRowMapper.newInstance(FinanceMain.class);
 		try {
-			return jdbcTemplate.queryForObject(sql.toString(), source, rowMapper);
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setFinType(rs.getString("FinType"));
+				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
+				fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+				fm.setFinBranch(rs.getString("FinBranch"));
+				fm.setCustID(rs.getLong("CustID"));
+				fm.setLovDescCustCIF(rs.getString("CustCIF"));
+				fm.setLovDescCustShrtName(rs.getString("CustShrtName"));
+				fm.setFinStartDate(rs.getDate("FinStartDate"));
+				fm.setMaturityDate(rs.getDate("MaturityDate"));
+				fm.setFinCcy(rs.getString("CCYCode"));
+
+				return fm;
+
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 

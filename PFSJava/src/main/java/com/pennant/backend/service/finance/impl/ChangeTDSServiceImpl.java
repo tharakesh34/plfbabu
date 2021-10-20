@@ -56,8 +56,8 @@ public class ChangeTDSServiceImpl extends GenericService<FinMaintainInstruction>
 	}
 
 	@Override
-	public FinanceMain getFinanceBasicDetailByRef(String finReference) {
-		return changeTDSDAO.getFinanceBasicDetailByRef(finReference);
+	public FinanceMain getFinanceBasicDetailByRef(long finID) {
+		return changeTDSDAO.getFinanceBasicDetailByRef(finID);
 	}
 
 	@Override

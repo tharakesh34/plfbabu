@@ -49,7 +49,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 
 public interface ChangeTDSService {
 
-	FinanceMain getFinanceBasicDetailByRef(String trimToEmpty);
+	FinanceMain getFinanceBasicDetailByRef(long finID);
 
 	boolean isTDSCheck(String trimToEmpty, Date appDate);
 
