@@ -273,8 +273,9 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 		sql.append(", Channel, Batch_Id, Auto_Download, Header_Id, Lei, City_Name, Province_Name");
 		sql.append(", Partnerbank_Id, Partnerbank_Code, Partnerbank_Account, Cheque_Number, Downloaded_On)");
 		sql.append(" Values (");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -345,7 +346,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 			}, keyHolder);
 
 		} catch (Exception e) {
-			//
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		return keyHolder.getKey().longValue();
@@ -409,7 +410,7 @@ public class DisbursementRequestDAOImpl extends SequenceDao<DisbursementRequest>
 	}
 
 	private int updateStatusWithBatchID(String tableName, String colName, DisbursementRequest req) {
-		StringBuilder sql = new StringBuilder("Update");
+		StringBuilder sql = new StringBuilder("Update ");
 		sql.append(tableName);
 		sql.append(" Set Status = ? Where ");
 		sql.append(colName);

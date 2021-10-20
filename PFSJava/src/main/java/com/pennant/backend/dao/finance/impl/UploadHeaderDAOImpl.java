@@ -340,7 +340,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 		sql.append(" Set FileLocation = ?, FileName = ?, TransactionDate = ?, TotalRecords = ?");
 		sql.append(", SuccessCount = ?, FailedCount = ?, Module = ?, EntityCode = ?, FileDownload = ?");
 		sql.append(", ApprovedDate = ?, MakerId = ?, ApproverId = ?");
-		sql.append(", Version = ?, LastMntBy = ?, , LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?");
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
 		sql.append(" Where UploadId = ?");
 		sql.append(QueryUtil.getConcurrencyClause(tableType));
@@ -373,7 +373,7 @@ public class UploadHeaderDAOImpl extends SequenceDao<UploadHeader> implements Up
 			ps.setString(index++, uh.getRecordType());
 			ps.setLong(index++, uh.getWorkflowId());
 
-			ps.setLong(index, uh.getUploadId());
+			ps.setLong(index++, uh.getUploadId());
 
 			if (tableType == TableType.TEMP_TAB) {
 				ps.setTimestamp(index++, uh.getPrevMntOn());

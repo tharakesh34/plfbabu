@@ -60,8 +60,8 @@ public class DisbursementRequestsQueries {
 		}
 
 		StringBuilder sql = new StringBuilder("INSERT INTO DISBURSEMENT_MOVEMENTS");
-		sql.append("(HEADER_ID, BATCH_ID, TARGET_TYPE, FILE_NAME, FILE_LOCATION");
-		sql.append(", DATA_ENGINE_CONFIG, POST_EVENTS, CREATED_ON, CREATED_BY, PROCESSED_ON, FAILURE_REASON)");
+		sql.append("(HEADER_ID, BATCH_ID, TARGET_TYPE, FILE_NAME, FILE_LOCATION, DATA_ENGINE_CONFIG");
+		sql.append(", POST_EVENTS, CREATED_ON, CREATED_BY, PROCESS_FLAG, PROCESSED_ON, FAILURE_REASON)");
 		sql.append(" VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		insertMovement = sql.toString();
