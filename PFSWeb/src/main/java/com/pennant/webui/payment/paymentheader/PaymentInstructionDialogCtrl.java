@@ -642,8 +642,8 @@ public class PaymentInstructionDialogCtrl extends GFCBaseCtrl<PaymentInstruction
 			}
 			if (!this.acctNumber.isReadonly()) {
 				this.acctNumber.setConstraint(
-						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountNumber.value"), null,
-								true, minAccNoLength, maxAccNoLength));
+						new PTStringValidator(Labels.getLabel("label_DisbInstructionsDialog_AccountNumber.value"),
+								PennantRegularExpressions.REGEX_NUMERIC, true, minAccNoLength, maxAccNoLength));
 			}
 		}
 

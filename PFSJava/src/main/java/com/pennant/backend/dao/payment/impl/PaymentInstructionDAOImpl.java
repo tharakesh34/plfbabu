@@ -101,7 +101,7 @@ public class PaymentInstructionDAOImpl extends SequenceDao<PaymentInstruction> i
 		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(") values(");
 		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?");
+		sql.append(", ?, ?, ?, ?, ?");
 		sql.append(")");
 
 		if (pi.getPaymentInstructionId() <= 0) {
