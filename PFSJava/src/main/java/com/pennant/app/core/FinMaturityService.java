@@ -152,7 +152,7 @@ public class FinMaturityService extends ServiceHelper {
 
 				// Maturity Month ProjectedAccrual
 				projAccrual = this.projectedAmortizationService.prepareMaturityMonthProjAcc(prvProjAccrual, schdDetails,
-						finReference, curMonthEnd);
+						finID, finReference, curMonthEnd);
 				projAccrualList.add(projAccrual);
 
 				// PSD Ticket : 133306; AMZ Method Update for Loans created and EarlySettled in same month

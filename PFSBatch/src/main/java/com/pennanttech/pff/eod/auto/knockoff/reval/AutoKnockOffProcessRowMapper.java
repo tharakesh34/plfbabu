@@ -18,6 +18,7 @@ public class AutoKnockOffProcessRowMapper implements RowMapper<AutoKnockOffExces
 	public AutoKnockOffExcess mapRow(ResultSet rs, int rowNum) throws SQLException {
 		AutoKnockOffExcess knockOff = new AutoKnockOffExcess();
 		knockOff.setID(rs.getLong("ExcessID"));
+		knockOff.setFinID(rs.getLong("FinID"));
 		knockOff.setFinReference(rs.getString("FinReference"));
 		knockOff.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
 		knockOff.setBalanceAmount(rs.getBigDecimal("BalanceAmount"));

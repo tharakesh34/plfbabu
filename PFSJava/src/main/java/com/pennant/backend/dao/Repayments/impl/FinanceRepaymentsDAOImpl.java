@@ -513,7 +513,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 
 			@Override
 			public void setValues(PreparedStatement ps, int i) throws SQLException {
-				RepayScheduleDetail rsd = rsdList.get(0);
+				RepayScheduleDetail rsd = rsdList.get(i);
 				int index = 1;
 
 				ps.setLong(index++, rsd.getRepayID());

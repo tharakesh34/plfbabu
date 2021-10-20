@@ -508,7 +508,7 @@ public class ProjectedAmortizationService {
 	 * @param maturityDate
 	 */
 	public ProjectedAccrual prepareMaturityMonthProjAcc(ProjectedAccrual prvProjAccrual,
-			List<FinanceScheduleDetail> schedules, String finReference, Date curMonthEnd) {
+			List<FinanceScheduleDetail> schedules, long finID, String finReference, Date curMonthEnd) {
 
 		Date prvSchdDate = null;
 		Date curSchdDate = null;
@@ -571,6 +571,7 @@ public class ProjectedAmortizationService {
 
 		if (prvProjAccrual == null) {
 			prvProjAccrual = new ProjectedAccrual();
+			prvProjAccrual.setFinID(finID);
 			prvProjAccrual.setFinReference(finReference);
 		}
 

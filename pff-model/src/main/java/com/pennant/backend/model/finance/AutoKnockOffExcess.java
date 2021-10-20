@@ -11,6 +11,7 @@ public class AutoKnockOffExcess implements Serializable {
 	private static final long serialVersionUID = 2800538447276766022L;
 
 	private long iD;
+	private long finID;
 	private String finReference;
 	private String amountType;
 	private BigDecimal balanceAmount;
@@ -33,6 +34,14 @@ public class AutoKnockOffExcess implements Serializable {
 
 	public void setID(long iD) {
 		this.iD = iD;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

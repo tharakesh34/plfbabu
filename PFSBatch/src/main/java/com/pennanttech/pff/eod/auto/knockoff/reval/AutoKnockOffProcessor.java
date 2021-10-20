@@ -107,6 +107,7 @@ public class AutoKnockOffProcessor extends BasicDao<AutoKnockOffExcess>
 		knockOffMap.put(knockOffData.getID(), fmList);
 
 		AutoKnockOffData ad = new AutoKnockOffData();
+		ad.setFinID(knockOffData.getFinID());
 		ad.setFinReference(knockOffData.getFinReference());
 		ad.setValueDate(knockOffData.getValueDate());
 		ad.setAmount(knockOffData.getBalanceAmount());
