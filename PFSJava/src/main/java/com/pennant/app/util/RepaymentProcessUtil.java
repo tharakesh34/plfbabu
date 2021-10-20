@@ -1719,6 +1719,7 @@ public class RepaymentProcessUtil {
 				// If record Not found then record count should be zero. Need to create new Excess Record
 				if (recordCount <= 0) {
 					FinExcessAmount excess = new FinExcessAmount();
+					excess.setFinID(rch.getFinID());
 					excess.setFinReference(rch.getReference());
 					excess.setAmountType(rch.getExcessAdjustTo());
 					excess.setAmount(rph.getExcessAmount());
