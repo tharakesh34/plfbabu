@@ -2855,7 +2855,7 @@
 
 	<!-- (FDDV) :: FIN DISBURSEMENT DETAILS Views handle in single place start -->
 
-	<changeSet id="FDDV_1.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_1.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'findisbursementdetails_view');
@@ -2863,7 +2863,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FDDV_1.1" author="Gopal.p">
+	<changeSet id="FDDV_1.2" author="Gopal.p">
 		<createView viewName="FINDISBURSEMENTDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T3.FINID,
@@ -2929,7 +2929,7 @@
 					T1.InstCalReq,
 					T1.LINKEDDISBID
 				FROM FINDISBURSEMENTDETAILS T1
-				INNER JOIN FINANCEMAIN_TEMP T3 ON T3.FINID = T1.FINID
+				INNER JOIN FINANCEMAIN T3 ON T3.FINID = T1.FINID
 				LEFT JOIN AMTEXPENSETYPE T2 ON T2.EXPENCETYPEID = T1.DISBEXPTYPE
 				WHERE NOT (EXISTS (SELECT 1 FROM FINDISBURSEMENTDETAILS_TEMP
 					WHERE FINDISBURSEMENTDETAILS_TEMP.FINID = T1.FINID))
@@ -2937,7 +2937,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FDDV_1.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FDDV_1.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'findisbursementdetails_view');	
