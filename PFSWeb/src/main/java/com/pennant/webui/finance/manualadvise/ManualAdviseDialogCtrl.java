@@ -827,6 +827,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		// Loan Reference
 		try {
 			// this.finReference.getValidatedValue();
+			aManualAdvise.setFinID(financeMain.getFinID());
 			aManualAdvise.setFinReference(this.lbl_LoanReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);

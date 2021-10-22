@@ -175,8 +175,8 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 		sql.append(" Inner Join Customers Cust on fm.CustId = Cust.CustId");
 		sql.append(" Inner Join RMTFinanceTypes FT on FT.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
-		sql.append(" Where fm.FinID in ");
-		sql.append("(Select FinID From PaymentMethod_Upload_Detail Where BatchId = ?)");
+		sql.append(" Where fm.FinReference in ");
+		sql.append("(Select FinReference From PaymentMethod_Upload_Detail Where BatchId = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
