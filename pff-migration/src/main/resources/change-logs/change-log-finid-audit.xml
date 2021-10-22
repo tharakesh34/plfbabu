@@ -2582,5 +2582,10 @@
 		</createIndex>
 	</changeSet>
 	
-
+	<changeSet id="72" author="Gireesh">
+		<addColumn tableName="ADTREINSTATEFINANCE">
+			<column name="FinID" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

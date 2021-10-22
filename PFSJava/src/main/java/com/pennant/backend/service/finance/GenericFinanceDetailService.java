@@ -2435,6 +2435,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		if (finScheduleData.getStepPolicyDetails() != null && finScheduleData.getStepPolicyDetails().size() > 0) {
 			// Finance Fee Charge Details
 			for (int i = 0; i < finScheduleData.getStepPolicyDetails().size(); i++) {
+				finScheduleData.getStepPolicyDetails().get(i).setFinID(finScheduleData.getFinID());
 				finScheduleData.getStepPolicyDetails().get(i).setFinReference(finScheduleData.getFinReference());
 			}
 			financeStepDetailDAO.saveList(finScheduleData.getStepPolicyDetails(), isWIF, tableType);

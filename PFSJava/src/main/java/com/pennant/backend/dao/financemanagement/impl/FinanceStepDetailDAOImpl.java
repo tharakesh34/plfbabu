@@ -104,7 +104,7 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId)");
 		sql.append(" Values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sql.append(", ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
