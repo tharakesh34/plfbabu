@@ -741,6 +741,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		}
 
 		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinID(fm.getFinID());
 		fsi.setFinReference(fm.getFinReference());
 		fsi.setModule("Receipts");
 		fsi.setValueDate(rd.getRestructureDate());

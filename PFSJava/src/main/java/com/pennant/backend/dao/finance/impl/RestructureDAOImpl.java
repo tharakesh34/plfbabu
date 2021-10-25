@@ -336,7 +336,7 @@ public class RestructureDAOImpl extends SequenceDao<RestructureDetail> implement
 			RestructureDetail rd = new RestructureDetail();
 
 			rd.setId(rs.getLong("Id"));
-			rd.setId(rs.getLong("FinID"));
+			rd.setFinID(rs.getLong("FinID"));
 			rd.setFinReference(rs.getString("FinReference"));
 			rd.setRestructureType(rs.getString("RestructureType"));
 			rd.setRestructureDate(rs.getTimestamp("RestructureDate"));
