@@ -3613,11 +3613,6 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="119.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_holddisbursement_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="holddisbursement"
-			referencedColumnNames="FinID" />
-	</changeSet>
 
 	<changeSet id="119.4" author="murthy.y">
 		<createIndex tableName="holddisbursement" indexName="idx_holddisbursement_finid">

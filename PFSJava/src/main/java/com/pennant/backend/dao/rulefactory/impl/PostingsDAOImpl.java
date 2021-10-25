@@ -79,7 +79,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ValueDate, PostDate, AppDate, AppValueDate, TranCode, RevTranCode, TranDesc");
 		sql.append(", RevTranCode, DrOrCr, Account, PostAmount");
-		sql.append(" FinEvent, AcCcy, PostBranch, UserBranch ");
+		sql.append(", FinEvent, AcCcy, PostBranch, UserBranch ");
 
 		if (StringUtils.isNotBlank(type)) {
 			sql.append(", LovDescEventCodeName");
@@ -124,7 +124,7 @@ public class PostingsDAOImpl extends SequenceDao<ReturnDataSet> implements Posti
 			ps.setString(index++, reference);
 
 			for (String event : finEvent.split(",")) {
-				ps.setString(index++, event);
+				ps.setString(index++, StringUtils.trimToEmpty(event));
 			}
 
 			if (!showZeroBal) {
