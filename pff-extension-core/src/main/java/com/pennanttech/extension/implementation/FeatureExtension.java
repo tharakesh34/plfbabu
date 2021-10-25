@@ -82,7 +82,7 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("MANDATE_ALLOW_CO_APP", true);
 		customConstants.put("DISBURSEMENT_ALLOW_CO_APP", true);
 		customConstants.put("CHEQUE_ALLOW_CO_APP", true);
-		customConstants.put("CUST_ADDR_AUTO_FILL", false);
+		customConstants.put("CUST_ADDR_AUTO_FILL", true);
 		customConstants.put("HOLD_DISB_INST_POST", true);
 		customConstants.put("VAS_INST_ON_DISB", true);
 		customConstants.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
