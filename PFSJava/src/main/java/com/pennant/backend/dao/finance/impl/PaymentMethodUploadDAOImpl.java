@@ -203,8 +203,8 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 	}
 
 	@Override
-	public void updateChangePaymentDetails(PaymentMethodUpload paymentUpload) {
-		String sql = "Update PaymentMethod_Upload_Detail Set UploadStatusRemarks = ?, Status = ? Where Id = ?";
+	public void updateChangePaymentDetails(PaymentMethodUpload pu) {
+		String sql = "Update PaymentMethod_Upload_Detail Set FinID = ?, UploadStatusRemarks = ?, Status = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -212,9 +212,10 @@ public class PaymentMethodUploadDAOImpl extends SequenceDao<PaymentMethodUpload>
 			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
 
-				ps.setString(index++, StringUtils.trimToEmpty(paymentUpload.getUploadStatusRemarks()));
-				ps.setString(index++, paymentUpload.getStatus());
-				ps.setObject(index++, paymentUpload.getId());
+				ps.setLong(index++, pu.getFinID());
+				ps.setString(index++, StringUtils.trimToEmpty(pu.getUploadStatusRemarks()));
+				ps.setString(index++, pu.getStatus());
+				ps.setObject(index++, pu.getId());
 
 			});
 		} catch (Exception e) {
