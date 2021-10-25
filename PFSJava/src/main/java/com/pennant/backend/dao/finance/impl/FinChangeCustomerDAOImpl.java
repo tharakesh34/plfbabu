@@ -155,17 +155,17 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 		sql.append(", NextRoleCode = ?, TaskId = ?, NextTaskId = ?");
 		sql.append(", RecordType = ?, WorkflowId = ?");
 		sql.append(" Where Id = ? ");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index, fcc.getFinID());
-			ps.setString(index, fcc.getFinReference());
-			ps.setLong(index, fcc.getOldCustId());
-			ps.setLong(index, fcc.getCoApplicantId());
+			ps.setLong(index++, fcc.getFinID());
+			ps.setString(index++, fcc.getFinReference());
+			ps.setLong(index++, fcc.getOldCustId());
+			ps.setLong(index++, fcc.getCoApplicantId());
 			ps.setTimestamp(index++, fcc.getLastMntOn());
 			ps.setString(index++, fcc.getRecordStatus());
 			ps.setString(index++, fcc.getRoleCode());
@@ -174,7 +174,13 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 			ps.setString(index++, fcc.getNextTaskId());
 			ps.setString(index++, fcc.getRecordType());
 			ps.setLong(index++, fcc.getWorkflowId());
-			ps.setLong(index, fcc.getId());
+			ps.setLong(index++, fcc.getId());
+
+			if (tableType == TableType.TEMP_TAB) {
+				ps.setTimestamp(index++, fcc.getPrevMntOn());
+			} else {
+				ps.setInt(index++, fcc.getVersion() - 1);
+			}
 		});
 
 		if (recordCount == 0) {
