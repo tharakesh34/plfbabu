@@ -463,7 +463,7 @@ public class FinAdvancePaymentsDAOImpl extends SequenceDao<FinAdvancePayments> i
 		sql.append(type);
 		sql.append(" Where FinID = ?");
 
-		Object objects = null;
+		Object[] objects = null;
 
 		if (ImplementationConstants.ALW_QDP_CUSTOMIZATION) {
 			sql.append(" and Status  in(?, ?, ?, ?)");
