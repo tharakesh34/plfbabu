@@ -1989,6 +1989,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
 		aAuditHeader.setAuditDetails(tempAuditDetailList);
 		aAuditHeader.setAuditModule("Receipt");
+		auditHeaderDAO.addAudit(aAuditHeader);
 		aAuditHeader.getAuditDetail().setModelData(receiptData);
 
 		if (orgReceiptData.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
@@ -2019,7 +2020,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		auditHeader.getAuditDetail().setAuditTranType(tranType);
 		auditHeader.setAuditDetails(auditDetails);
 		auditHeader.setAuditModule("Receipt");
-		auditHeaderDAO.addAudit(auditHeader);
 		// Reset Finance Detail Object for Service Task Verifications
 		schdData.setFinanceMain(financeMain);
 		auditHeader.getAuditDetail().setModelData(receiptData);
