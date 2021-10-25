@@ -98,8 +98,6 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("RESTRUCTURE_ALW_CHARGES", true);
 
-		customConstants.put("PENALTY_CALC_ON_REPRESENTATION", true);
-
 		customConstants.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", true);
 
 		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);

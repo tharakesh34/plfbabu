@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -273,19 +272,8 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 			extendedFieldCtrl.setAppendActivityLog(true);
 			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
-			extendedFieldCtrl.setDataLoadReq(
-					(PennantConstants.RCD_STATUS_APPROVED.equals(finMaintainInstruction.getRecordStatus())
-							|| finMaintainInstruction.getRecordStatus() == null) ? true : false);
 
-			long instructionUID = Long.MIN_VALUE;
-
-			if (CollectionUtils.isNotEmpty(finMaintainInstruction.getFinServiceInstructions())) {
-				if (finMaintainInstruction.getFinServiceInstruction().getInstructionUID() != Long.MIN_VALUE) {
-					instructionUID = finMaintainInstruction.getFinServiceInstruction().getInstructionUID();
-				}
-			}
-			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(aFinanceMain.getFinReference(),
-					instructionUID);
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(aFinanceMain.getFinReference());
 
 			extendedFieldCtrl.createTab(finOptionTabs, finOptionTabPanels);
 			finMaintainInstruction.setExtendedFieldHeader(extendedFieldHeader);
@@ -1498,10 +1486,12 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		FinMaintainInstruction aFinMaintainInstruction = (FinMaintainInstruction) aAuditHeader.getAuditDetail()
 				.getModelData();
 		boolean deleteNotes = false;
+		int seqNo = 0;
 
 		if (aFinMaintainInstruction.getExtendedFieldRender() != null) {
 			ExtendedFieldRender details = aFinMaintainInstruction.getExtendedFieldRender();
 			details.setReference(aFinMaintainInstruction.getFinReference());
+			details.setSeqNo(++seqNo);
 			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 			details.setRecordStatus(aFinMaintainInstruction.getRecordStatus());

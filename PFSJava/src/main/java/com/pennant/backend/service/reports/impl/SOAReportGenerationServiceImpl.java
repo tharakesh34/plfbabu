@@ -2061,7 +2061,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							String receiptModeStatus = StringUtils.trimToEmpty(finReceiptHeader.getReceiptModeStatus());
 							// 30-08-2019:Receipt date and value date should populate in SOA
 							Date receiptDate = finReceiptHeader.getReceiptDate();
-							Date receivedDate = finReceiptHeader.getReceivedDate();
+							Date receivedDate = finReceiptHeader.getValueDate();
 							String presentmentType = "";
 
 							String favourNumber = finReceiptDetail.getFavourNumber();

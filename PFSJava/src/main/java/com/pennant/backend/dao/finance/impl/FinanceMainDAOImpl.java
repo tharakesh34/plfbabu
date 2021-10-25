@@ -4471,7 +4471,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", FinCategory, ProductCategory, AdvanceEMI, BpiPftDaysBasis, FixedTenorRate, FixedRateTenor");
 		sql.append(", GrcAdvType, GrcAdvTerms, AdvType, AdvTerms, AdvStage, AllowDrawingPower, AllowRevolving");
 		sql.append(", SanBsdSchdle, PromotionSeqId, SvAmount, CbAmount, AppliedLoanAmt");
-		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, WriteoffLoan");
+		sql.append(", FinIsRateRvwAtGrcEnd, ClosingStatus, WriteoffLoan, Restructure");
 
 		if (!wif) {
 			sql.append(", DmaCode, TdsPercentage, FinStsReason, Connector, samplingRequired, LimitApproved");
@@ -4688,6 +4688,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setFinIsRateRvwAtGrcEnd(rs.getBoolean("FinIsRateRvwAtGrcEnd"));
 			fm.setClosingStatus(rs.getString("ClosingStatus"));
 			fm.setWriteoffLoan(rs.getBoolean("WriteoffLoan"));
+			fm.setRestructure(rs.getBoolean("Restructure"));
 
 			if (!wIf) {
 				fm.setDmaCode(rs.getString("DmaCode"));
@@ -4829,6 +4830,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					fm.setManufacturerDealerCode(rs.getString("ManufacturerDealerCode"));
 					fm.setCustAcctNumber(rs.getString("CustAcctNumber"));
 					fm.setCustAcctHolderName(rs.getString("custAcctHolderName"));
+
 				}
 			}
 

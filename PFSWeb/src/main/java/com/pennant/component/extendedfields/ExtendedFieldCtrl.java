@@ -97,7 +97,7 @@ public class ExtendedFieldCtrl {
 	private boolean appendActivityLog = false;
 	private boolean extendedFieldExtnt = false;
 
-	private ArrayList<Object> finBasicDetails;
+	private List<Object> finBasicDetails = new ArrayList<>();
 	private ExtendedFieldExtension extendedFieldExtension;
 
 	/**
@@ -989,7 +989,7 @@ public class ExtendedFieldCtrl {
 		this.dataLoadReq = dataLoadReq;
 	}
 
-	public void setFinBasicDetails(ArrayList<Object> finBasicDetails) {
+	public void setFinBasicDetails(List<Object> finBasicDetails) {
 		this.finBasicDetails = finBasicDetails;
 	}
 

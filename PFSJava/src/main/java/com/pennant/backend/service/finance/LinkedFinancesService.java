@@ -33,6 +33,7 @@ import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LinkedFinances;
+import com.pennant.backend.model.rmtmasters.FinanceType;
 
 public interface LinkedFinancesService {
 
@@ -59,5 +60,7 @@ public interface LinkedFinancesService {
 	List<LinkedFinances> getLinkedFinancesByFinRef(String ref, String type);
 
 	List<String> getFinReferences(String reference);
+
+	FinanceType getFinType(String finType);
 
 }

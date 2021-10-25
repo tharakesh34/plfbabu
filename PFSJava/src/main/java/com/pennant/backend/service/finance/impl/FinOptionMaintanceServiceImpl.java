@@ -110,7 +110,7 @@ public class FinOptionMaintanceServiceImpl extends GenericService<FinMaintainIns
 					auditHeader.getAuditTranType(), false));
 		}
 
-		String rcdMaintainSts = FinServiceEvent.PUTCALL;
+		String rcdMaintainSts = FinServiceEvent.FINOPTION;
 		financeMainDAO.updateMaintainceStatus(fmi.getFinID(), rcdMaintainSts);
 
 		// FinServiceInstrution

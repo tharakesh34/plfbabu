@@ -50,6 +50,7 @@ import org.zkoss.zul.Decimalbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
+import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Textbox;
@@ -121,6 +122,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Textbox remarks;
 
 	protected Listbox listBoxCharges;
+	protected Listheader listheader_RestructureCharge_TdsAmount;
 	protected Button btnRestructure;
 
 	private FinScheduleData finScheduleData;
@@ -450,6 +452,11 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		// Fetch All charges and rendering for user selection
 		if (ImplementationConstants.RESTRUCTURE_ALW_CHARGES) {
 			this.listBoxCharges.setVisible(true);
+
+			if (ImplementationConstants.ALLOW_TDS_ON_FEE) {
+				this.listheader_RestructureCharge_TdsAmount.setVisible(true);
+			}
+
 			if (ImplementationConstants.RESTRUCTURE_DFT_APP_DATE) {
 				List<RestructureCharge> chargeList = restructureService.getRestructureChargeList(aFinSchData, appDate);
 				doFillCharges(chargeList);
@@ -748,6 +755,12 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		if (this.restructureDateIn.getValue() == null) {
 			logger.debug("Leaving" + event.toString());
 			return;
+		}
+
+		FinanceMain fm = finScheduleData.getFinanceMain();
+		if (DateUtil.compare(this.restructureDateIn.getValue(), fm.getFinStartDate()) < 0) {
+			throw new WrongValueException(this.restructureDateIn,
+					"Restructure Date should be greater than Loan Start Date");
 		}
 
 		List<RestructureCharge> chargeList = restructureService.getRestructureChargeList(getFinScheduleData(),

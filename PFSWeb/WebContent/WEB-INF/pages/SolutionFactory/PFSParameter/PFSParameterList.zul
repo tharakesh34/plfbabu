@@ -24,7 +24,7 @@
 				<!-- CRUD BUTTONS -->
 				<toolbar align="end" sclass="toolbar-end">
 					<button id="button_PFSParameterList_NewPFSParameter" label="${c:l('label_New')}"
-						tooltiptext="${c:l('button_PFSParameterList_NewPFSParameter.tooltiptext')}" sclass="z-toolbarbutton" />
+						tooltiptext="${c:l('button_PFSParameterList_NewPFSParameter.tooltiptext')}" sclass="z-toolbarbutton" visible="false"/>
 
 					<button id="btnRefresh" label="${c:l('label_Refresh')}" tooltiptext="${c:l('btnRefresh.tooltiptext')}"
 						sclass="z-toolbarbutton" />

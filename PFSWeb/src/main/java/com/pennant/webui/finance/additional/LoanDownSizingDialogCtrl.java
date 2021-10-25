@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -846,8 +845,32 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 
-		FinanceDetail aFinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinanceMain aFinanceMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+
+		if (fd.getExtendedFieldRender() != null) {
+			int seqNo = 0;
+			ExtendedFieldRender details = fd.getExtendedFieldRender();
+			details.setReference(fm.getFinReference());
+			details.setSeqNo(++seqNo);
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(fm.getRecordStatus());
+			details.setRecordType(fm.getRecordType());
+			details.setVersion(fm.getVersion());
+			details.setWorkflowId(fm.getWorkflowId());
+			details.setTaskId(fm.getTaskId());
+			details.setNextTaskId(fm.getNextTaskId());
+			details.setRoleCode(fm.getRoleCode());
+			details.setNextRoleCode(fm.getNextRoleCode());
+			details.setNewRecord(fd.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(fm.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(fm.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
 
 		try {
 			while (retValue == PennantConstants.porcessOVERIDE) {
@@ -864,14 +887,14 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						auditHeader = loanDownSizingService.doApprove(auditHeader);
 
-						if (aFinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						if (fm.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						auditHeader = loanDownSizingService.doReject(auditHeader);
 
-						if (aFinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						if (fm.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
@@ -1478,18 +1501,8 @@ public class LoanDownSizingDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 
 			extendedFieldCtrl.setAppendActivityLog(true);
 			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
-			extendedFieldCtrl.setDataLoadReq(
-					(PennantConstants.RCD_STATUS_APPROVED.equals(fm.getRecordStatus()) || fm.getRecordStatus() == null)
-							? true
-							: false);
-			long instructionUID = Long.MIN_VALUE;
 
-			if (CollectionUtils.isNotEmpty(schdData.getFinServiceInstructions())) {
-				if (schdData.getFinServiceInstruction().getInstructionUID() != Long.MIN_VALUE) {
-					instructionUID = schdData.getFinServiceInstruction().getInstructionUID();
-				}
-			}
-			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(fm.getFinReference(), instructionUID);
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(fm.getFinReference());
 
 			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
 			financeDetail.setExtendedFieldHeader(extendedFieldHeader);

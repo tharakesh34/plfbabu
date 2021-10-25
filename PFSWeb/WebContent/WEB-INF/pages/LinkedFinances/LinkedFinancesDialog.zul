@@ -65,9 +65,17 @@
 					</hbox>
 				</div>
 			</north>
-			<center border="none" autoscroll="false">
-				<div width="100%" height="100%">
-				<groupbox id="finBasicdetails" zclass="null"></groupbox>
+			<center border="none" id="divCenter" autoscroll="false">
+				<tabbox id="tabBoxIndexCenter" width="100%" height="100%">
+					<tabs id="tabsIndexCenter">
+						<tab id="tab_BasicDetailsTab" label="${c:l('label_LinkedFinances')}" />
+					</tabs>
+				<tabpanels id="tabpanelsBoxIndexCenter">
+				 <tabpanel style="overflow:auto" id="tp_basicDetails">
+				 <div id="basicDetailDiv">
+				   <!-- <div width="100%" height="100%"> -->
+				     <groupbox id="finBasicdetails" closable="false">
+				     <caption label="${c:l('label_LinkedFinancesGrid.label')}" />
 						<grid sclass="GridLayoutNoBorder"
 							fixedLayout="true" style="border:0px" id="header">
 							<columns>
@@ -124,7 +132,7 @@
 								</row>
 							</rows>
 						</grid>
-					
+					</groupbox>
 					<groupbox id="gb_loanReference"
 						sclass="gb-dialog">
 						<caption label="${c:l('label_LinkedFinancesGrid.label')}" id="caption"/>
@@ -199,6 +207,9 @@
 					</groupbox>
 				  </groupbox>
 				</div>
+				</tabpanel>
+				</tabpanels>
+				</tabbox>
 			</center>
 			<south id="south" sclass="south-dialog">
 				<groupbox id="groupboxWf" width="99%"

@@ -50,8 +50,8 @@
 				rightName="menuItem_Dashboard_DashboardConfiguration" />
 			<menuItem id="menu_Item_ErrorDetail" zulNavigation="/WEB-INF/pages/ErrorDetail/ErrorDetailList.zul"
 				rightName="menuItem_ErrorDetail_ErrorDetail" />
-			<menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
-				rightName="menuItem_SystemMaster_AddressType" />
+			<!-- <menuItem id="menu_Item_PdfUplaods" zulNavigation="/WEB-INF/pages/PdfUploads/PdfUploadList.zul"
+				rightName="menuItem_SystemMaster_AddressType" /> -->
 		</menu>
 		<menuItem id="menu_Item_FinanceUserAuthorizationLimit"
 			zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=N"

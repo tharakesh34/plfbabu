@@ -276,7 +276,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 
 		// Get the selected entity.
 		long finID = (Long) selectedItem.getAttribute("finID");
-		ReinstateFinance aReinstateFinance = reinstateFinanceService.getFinanceDetailsById(finID);
+		ReinstateFinance aReinstateFinance = reinstateFinanceService.getReinstateFinanceById(finID);
 
 		List<FinServiceInstruction> serviceInstructions = reinstateFinanceService.getFinServiceInstructions(finID,
 				"_Temp", FinServiceEvent.REINSTATE);

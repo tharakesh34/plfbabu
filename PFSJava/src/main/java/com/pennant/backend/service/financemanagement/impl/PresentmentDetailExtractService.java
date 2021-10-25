@@ -159,7 +159,7 @@ public class PresentmentDetailExtractService {
 		BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 				.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
 				.subtract(rs.getBigDecimal("SCHDPFTPAID")).subtract(rs.getBigDecimal("SCHDFEEPAID"))
-				.subtract(rs.getBigDecimal("TDSAMOUNT"));
+				.subtract((rs.getBigDecimal("TDSAMOUNT")).subtract(rs.getBigDecimal("TDSPAID")));
 
 		if (BigDecimal.ZERO.compareTo(schAmtDue) >= 0) {
 			presentments.add(pd);
@@ -233,7 +233,7 @@ public class PresentmentDetailExtractService {
 		BigDecimal schAmtDue = rs.getBigDecimal("PROFITSCHD").add(rs.getBigDecimal("PRINCIPALSCHD"))
 				.add(rs.getBigDecimal("FEESCHD")).subtract(rs.getBigDecimal("SCHDPRIPAID"))
 				.subtract(rs.getBigDecimal("SCHDPFTPAID")).subtract(rs.getBigDecimal("SCHDFEEPAID"))
-				.subtract(rs.getBigDecimal("TDSAMOUNT"));
+				.subtract((rs.getBigDecimal("TDSAMOUNT")).subtract(rs.getBigDecimal("TDSPAID")));
 		if (BigDecimal.ZERO.compareTo(schAmtDue) >= 0) {
 			presentments.add(pd);
 			return;

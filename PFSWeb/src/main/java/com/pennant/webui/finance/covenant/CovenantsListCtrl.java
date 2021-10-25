@@ -370,6 +370,11 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			doCheckEnquiry();
 
+			if (isWorkFlowEnabled() && !this.finMaintainInstruction.isNewRecord()) {
+				this.btnNotes.setVisible(true);
+				doEdit();
+			}
+
 			try {
 				doCheckEnquiry();
 				doWriteBeanToComponents();

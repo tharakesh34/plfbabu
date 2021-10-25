@@ -160,7 +160,7 @@ public class ExtendedFieldsGenerator extends AbstractController {
 	private String defaultComponentWidth = "250px";
 	private boolean overflow;
 	private boolean appendActivityLog = false;
-	private ArrayList<Object> finHeaderList;
+	private List<Object> finHeaderList = new ArrayList<>();;
 	private int seqNo = 0;
 	private long instructionUID = Long.MIN_VALUE;
 
@@ -3402,11 +3402,11 @@ public class ExtendedFieldsGenerator extends AbstractController {
 		this.appendActivityLog = appendActivityLog;
 	}
 
-	public ArrayList<Object> getFinHeaderList() {
+	public List<Object> getFinHeaderList() {
 		return finHeaderList;
 	}
 
-	public void setFinHeaderList(ArrayList<Object> finHeaderList) {
+	public void setFinHeaderList(List<Object> finHeaderList) {
 		this.finHeaderList = finHeaderList;
 	}
 

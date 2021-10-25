@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ScheduleGenerator.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ScheduleGenerator.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -169,7 +160,7 @@ public class ScheduleGenerator {
 		logger.debug("Entering");
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-			//TODO PV: Change Schedule will not work for OD facility at this point.
+			// TODO PV: Change Schedule will not work for OD facility at this point.
 			return finScheduleData;
 		}
 
@@ -192,7 +183,7 @@ public class ScheduleGenerator {
 		String newGrcSchdMethod = "";
 		String newRpySchdMethod = "";
 
-		//Find Date from which schedule dates to be removed.
+		// Find Date from which schedule dates to be removed.
 		if (newGraceEnd.compareTo(prvGraceEnd) > 0) {
 			newSchdAfter = prvGraceEnd;
 		} else {
@@ -246,7 +237,7 @@ public class ScheduleGenerator {
 		newSchdAfter = finScheduleDetails.get(iUntouch).getSchDate();
 		iUntouch = iUntouch + 1;
 
-		//CHANGE SCHEDULE
+		// CHANGE SCHEDULE
 		finScheduleData = changeSchdProcess(finScheduleData, newSchdAfter);
 		List<Date> schdDateKeyList = new ArrayList<Date>(finScheduleData.getScheduleMap().keySet());
 
@@ -278,10 +269,10 @@ public class ScheduleGenerator {
 				}
 			}
 
-			//Interest Days basis kept as same for both grace and repayment periods.
-			//curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
+			// Interest Days basis kept as same for both grace and repayment periods.
+			// curSchd.setPftDaysBasis(financeMain.getProfitDaysBasis());
 
-			//Interest Days basis kept as same for both grace and repayment periods.
+			// Interest Days basis kept as same for both grace and repayment periods.
 			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(finScheduleData.getFinanceMain().getBpiPftDaysBasis());
 			} else {
@@ -342,7 +333,7 @@ public class ScheduleGenerator {
 					curSchd.setPftOnSchDate(false);
 					curSchd.setRepayOnSchDate(false);
 
-					//Set Profit on Schedule Flag
+					// Set Profit on Schedule Flag
 					if (StringUtils.equals(CalculationConstants.SCHMTHD_GRCENDPAY, curSchd.getSchdMethod())) {
 						curSchd.setPftOnSchDate(true);
 					} else if (StringUtils.equals(CalculationConstants.SCHMTHD_PFT, curSchd.getSchdMethod())
@@ -354,7 +345,7 @@ public class ScheduleGenerator {
 						}
 					}
 
-					//Capitalize Flag
+					// Capitalize Flag
 					if (financeMain.isCpzAtGraceEnd()) {
 						curSchd.setCpzOnSchDate(true);
 					} else if (financeMain.isAllowGrcCpz()) {
@@ -411,7 +402,7 @@ public class ScheduleGenerator {
 
 			schedule.setDisbOnSchDate(true);
 			schedule.setFeeChargeAmt(disbursementDetail.getFeeChargeAmt());
-			schedule.setDisbAmount(disbursementDetail.getDisbAmount().add(prvTermDisbAmount));
+			schedule.setDisbAmount(disbursementDetail.getDisbAmount());
 
 		}
 
@@ -463,7 +454,7 @@ public class ScheduleGenerator {
 				continue;
 			}
 
-			//Interest Days basis kept as same for both grace and repayment periods.
+			// Interest Days basis kept as same for both grace and repayment periods.
 			if (StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 				curSchd.setPftDaysBasis(scheduleData.getFinanceMain().getBpiPftDaysBasis());
 			} else {
@@ -636,7 +627,7 @@ public class ScheduleGenerator {
 			}
 		}
 
-		//schedule.setPftOnSchDate(true);
+		// schedule.setPftOnSchDate(true);
 		if (financeMain.isAllowGrcPeriod() && financeMain.isAllowGrcCpz() && financeMain.isCpzAtGraceEnd()) {
 			schedule.setCpzOnSchDate(true);
 		}
@@ -648,7 +639,7 @@ public class ScheduleGenerator {
 		Date derivedMDT = financeMain.getMaturityDate();
 		int advTerms = financeMain.getAdvTerms();
 		if (advTerms > 0) {
-			//derivedMDT = DateUtility.addMonths(derivedMDT, -advEMITerms);
+			// derivedMDT = DateUtility.addMonths(derivedMDT, -advEMITerms);
 		}
 
 		// Load Repay profit dates
@@ -825,7 +816,7 @@ public class ScheduleGenerator {
 				}
 			}
 
-			//schedule.setPftOnSchDate(true);
+			// schedule.setPftOnSchDate(true);
 			if (financeMain.isAllowGrcPeriod() && financeMain.isAllowGrcCpz()) {
 				schedule.setCpzOnSchDate(true);
 			}
@@ -960,7 +951,8 @@ public class ScheduleGenerator {
 			Date endDate, int scheduleFlag, boolean reCheckFlags, boolean includeStartDate) {
 		logger.debug("Entering");
 
-		//TODO: As of now reCheckFlags code is incorporated only for capitalizations. The same can be incorporated on need basis
+		// TODO: As of now reCheckFlags code is incorporated only for capitalizations. The same can be incorporated on
+		// need basis
 
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
 		FrequencyDetails frequencyDetails = FrequencyUtil.getTerms(frequency, startDate, endDate, includeStartDate,
@@ -990,15 +982,15 @@ public class ScheduleGenerator {
 							DateUtility.getDate(DateUtility.format(calendar.getTime(), PennantConstants.dateFormat)));
 				}
 
-				//SET various schedule flags
-				//Profit On Schedule Date
+				// SET various schedule flags
+				// Profit On Schedule Date
 				if (scheduleFlag == 0) {
 					schedule.setPftOnSchDate(false);
 					schedule.setRepayOnSchDate(false);
 					schedule.setFrqDate(true);
 
 					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) <= 0) {
-						//Pay at Grace end and schedule date is grace end
+						// Pay at Grace end and schedule date is grace end
 						if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0
 								&& financeMain.getGrcSchdMthd().equals(CalculationConstants.SCHMTHD_GRCENDPAY)) {
 							schedule.setPftOnSchDate(true);
@@ -1020,7 +1012,7 @@ public class ScheduleGenerator {
 						}
 					}
 
-					//Profit Review On Schedule Date
+					// Profit Review On Schedule Date
 				} else if (scheduleFlag == 1) {
 					schedule.setRvwOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
 					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
@@ -1028,7 +1020,7 @@ public class ScheduleGenerator {
 							schedule.setRvwOnSchDate(true);
 						}
 					}
-					//Profit Capitalize On Schedule Date
+					// Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {
 
 					if (reCheckFlags && (schedule.getSchDate().compareTo(startDate) == 0
@@ -1038,7 +1030,7 @@ public class ScheduleGenerator {
 						schedule.setCpzOnSchDate(true);
 					}
 
-					//Repayment On Schedule Date
+					// Repayment On Schedule Date
 				} else if (scheduleFlag == 3) {
 					schedule.setPftOnSchDate(true);
 					schedule.setRepayOnSchDate(true);
@@ -1122,7 +1114,7 @@ public class ScheduleGenerator {
 			}
 		}
 
-		//Reset Grace Period End Date
+		// Reset Grace Period End Date
 		if (financeMain.getGrcPeriodEndDate() == null) {
 			financeMain.setGrcPeriodEndDate(financeDisbursements.get(0).getDisbDate());
 		}
@@ -1222,8 +1214,8 @@ public class ScheduleGenerator {
 			if (financeMain.getNextGrcPftDate().after(financeMain.getGrcPeriodEndDate())) {
 				errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcPftDate());
 				errorParm2[1] = DateUtility.formatToShortDate(financeMain.getGrcPeriodEndDate());
-				//System is not allowing to do Add Disbursement in Grace period
-				//return getErrorDetail("Schedule", "90161", errorParm2, errorParm2);
+				// System is not allowing to do Add Disbursement in Grace period
+				// return getErrorDetail("Schedule", "90161", errorParm2, errorParm2);
 			}
 
 			if (financeMain.isAllowGrcPftRvw()) {
@@ -1271,7 +1263,7 @@ public class ScheduleGenerator {
 				if (financeMain.getNextGrcCpzDate().before(financeMain.getNextGrcPftDate())) {
 					errorParm2[0] = DateUtility.formatToShortDate(financeMain.getNextGrcCpzDate());
 					errorParm2[1] = DateUtility.formatToShortDate(financeMain.getNextGrcPftDate());
-					//return getErrorDetail("Schedule", "30526", errorParm2, errorParm2);
+					// return getErrorDetail("Schedule", "30526", errorParm2, errorParm2);
 				}
 
 			}

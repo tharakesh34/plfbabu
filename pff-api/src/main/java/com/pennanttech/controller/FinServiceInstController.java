@@ -4518,9 +4518,12 @@ public class FinServiceInstController extends SummaryDetailService {
 					}
 					break;
 				case RepayConstants.ALLOCATION_BOUNCE:
+				case RepayConstants.ALLOCATION_LPFT:
 				case RepayConstants.ALLOCATION_ODC:
-					if (RepayConstants.ALLOCATION_ODC.equals(newAllocType) && rsFeeCode == null) {
+					if ((RepayConstants.ALLOCATION_ODC.equals(newAllocType)
+							|| RepayConstants.ALLOCATION_LPFT.equals(newAllocType)) && rsFeeCode == null) {
 						rstChrg.setFeeCode(newFeeCode);
+						rsFeeCode = rstChrg.getFeeCode();
 					}
 					if (newFeeCode.equals(rsFeeCode) && !finalChrgList.contains(rstChrg) && newCap) {
 						rstChrg.setCapitalized(newCap);

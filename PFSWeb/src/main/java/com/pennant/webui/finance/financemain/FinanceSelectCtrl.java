@@ -2047,8 +2047,10 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			List<String> finEvents = finServiceInstructionDAO.getFinEventByFinRef(finRef, "_Temp");
 			if (CollectionUtils.isNotEmpty(finEvents)) {
 				rcdMaintainSts = finEvents.get(0);
-				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
-				return;
+				if (!rcdMaintainSts.equals(moduleDefiner)) {
+					MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
+					return;
+				}
 			}
 
 			if (StringUtils.isNotEmpty(maintainSts) && !maintainSts.equals(moduleDefiner)) {
@@ -3024,6 +3026,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
+		fm.setFinCategory(financeDetailService.getFinCategory(fm.getFinType()));
+
 		// Fee Waivers
 		FeeWaiverHeader fwh = new FeeWaiverHeader();
 		if (StringUtils.equals(fm.getRcdMaintainSts(), moduleDefiner)) {
@@ -3138,6 +3142,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String type = "";
 
 		FinMaintainInstruction fmi = linkedFinancesService.getFinMaintainInstructionByFinRef(finID, moduleDefiner);
+
 		if (fmi == null) {
 			type = "_AView";
 			fmi = new FinMaintainInstruction();
@@ -3148,6 +3153,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		fmi.setFinID(finID);
 		fmi.setFinReference(finReference);
+		fmi.setFinServiceInstructions(
+				finServiceInstructionDAO.getFinServiceInstructions(finID, "_Temp", moduleDefiner));
 
 		FinanceDetail fd = new FinanceDetail();
 		fd.getFinScheduleData().setFinanceMain(fm);

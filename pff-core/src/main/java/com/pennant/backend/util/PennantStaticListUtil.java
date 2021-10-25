@@ -2266,8 +2266,6 @@ public class PennantStaticListUtil {
 					"HLDE"));
 			events.add(new FinServicingEvent(FinServiceEvent.COVENANTS, Labels.getLabel("label_FinSerEvent_Covenants"),
 					"COVN"));
-			events.add(new FinServicingEvent(FinServiceEvent.COLLATERAL,
-					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 			events.add(new FinServicingEvent(FinServiceEvent.CHGSCHDMETHOD,
 					Labels.getLabel("label_FinSerEvent_ChangeSchdMtd"), "CSCH"));
 			events.add(new FinServicingEvent(FinServiceEvent.FEEWAIVERS,
@@ -2290,8 +2288,6 @@ public class PennantStaticListUtil {
 						Labels.getLabel("label_FinSerEvent_Restructure"), "RSTCR"));
 			}
 
-			events.add(new FinServicingEvent(FinServiceEvent.LINKDELINK,
-					Labels.getLabel("label_FinSerEvent_LinkDelink"), "LDFIN"));
 			events.add(new FinServicingEvent(FinServiceEvent.REALIZATION,
 					Labels.getLabel("label_FinSerEvent_RealizationBounce"), "RBMK"));
 			events.add(new FinServicingEvent(FinServiceEvent.UPFRONT_FEE,
@@ -5507,6 +5503,7 @@ public class PennantStaticListUtil {
 		}
 		return taxInvoiceForList;
 	}
+
 	// ### START SFA_20210405 -->
 	public static ArrayList<ValueLabel> getReceivableOrPayable() {
 		if (receivableOrPayable == null) {

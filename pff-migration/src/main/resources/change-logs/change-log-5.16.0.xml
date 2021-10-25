@@ -6260,4 +6260,289 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="DE#3011.1_pre" author="Saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'receiptdetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#3011.1" author="Saikiran.n">
+		<createView viewName="RECEIPTDETAILS_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T4.CUSTCIF,
+			    	T1.REFERENCE,
+			    	T3.FINTYPE,
+			    	T1.RECEIPTID,
+			    	T1.RECEIPTDATE,
+			    	T1.RECEIPTAMOUNT,
+			    	T1.BANKCODE,
+			        T1.RECEIPTPURPOSE,
+			    	T1.RECEIPTMODE,
+			    	T1.BOUNCEDATE CANCELDATE,
+			    	T2.PAYAGAINSTID,
+			    	T1.BOUNCEDATE,
+			    	T1.REALIZATIONDATE,
+			    	T1.CANCELREASON,
+			    	T3.CLOSINGSTATUS,
+			    	T3.FINBRANCH,
+			    	T3.FINCURRASSETVALUE,
+			    	T3.PRODUCTCATEGORY,
+			    	T6.PARTNERBANKCODE,
+			    	T1.VERSION,
+			    	T1.LASTMNTBY,
+			    	T1.LASTMNTON,
+			    	T1.RECORDSTATUS,
+			    	T1.ROLECODE,
+			    	T1.NEXTROLECODE,
+			    	T1.TASKID,
+			    	T1.NEXTTASKID,
+			    	T1.RECORDTYPE,
+			    	T1.WORKFLOWID,
+			    	T5.ROLEDESC LOVDESCREQUESTSTAGE,
+			    	T1.RECEIPTMODE PAYMENTTYPE,
+			    	T1.RECEIPTMODESTATUS,
+			    	T1.ACTFINRECEIPT,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID FUNDINGAC,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE
+				FROM FINRECEIPTHEADER_TEMP T1
+			    LEFT JOIN FINRECEIPTDETAIL_TEMP T2 ON T1.RECEIPTID = T2.RECEIPTID
+			    LEFT JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+			    LEFT JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+			    JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+			    LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="DE#3011.1_post" author="Saikiran.n" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'receiptdetails_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="DE#3005" author="Saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE SMTPARAMETERS SET SYSPARMLENGTH = '42' WHERE SYSPARMCODE = 'CUST_CHANGE_ROLES';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#180943_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'reinstatefinance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#180943" author="Gireesh.G">
+		<createView viewName="REINSTATEFINANCE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINREFERENCE,
+					T2.FINTYPE,
+					T3.FINTYPEDESC,
+					T3.FINCATEGORY,
+					T4.CUSTCIF,
+					T2.FINBRANCH,
+					T5.BRANCHDESC,
+					T2.FINSTARTDATE,
+					T2.NUMBEROFTERMS,
+					T2.GRACETERMS,
+					T2.MATURITYDATE,
+					T2.FINCCY,
+					T2.FINAMOUNT,
+					T2.FINREPAYMENTAMOUNT,
+					T2.SCHEDULEMETHOD,
+					T2.FEECHARGEAMT,
+					T2.DOWNPAYBANK,
+					T2.DOWNPAYSUPL,
+					T2.PROFITDAYSBASIS,
+					T2.EFFECTIVERATEOFRETURN,
+					T2.TOTALPROFIT,
+					T3.FINDIVISION LOVDESCFINDIVISION,
+					T2.FINPREAPPROVEDREF,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T4.CUSTSHRTNAME
+				FROM REINSTATEFINANCE_TEMP T1
+				JOIN REJECTFINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE
+				JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+				JOIN CUSTOMERS T4 ON T2.CUSTID = T4.CUSTID
+				JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#180943_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'reinstatefinance_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#180464_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'receiptdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#180464" author="Gopal.p">
+		<createView viewName="RECEIPTDETAILS_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T4.CUSTCIF,
+					T1.REFERENCE,
+					T3.FINTYPE,
+					T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTAMOUNT,
+					T1.BANKCODE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.BOUNCEDATE CANCELDATE,
+					T2.PAYAGAINSTID,
+					T1.BOUNCEDATE,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T3.CLOSINGSTATUS,
+					T3.FINBRANCH,
+					T3.FINCURRASSETVALUE,
+					T3.PRODUCTCATEGORY,
+					T6.PARTNERBANKCODE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T5.ROLEDESC LOVDESCREQUESTSTAGE,
+					T1.RECEIPTMODE PAYMENTTYPE,
+					T1.RECEIPTMODESTATUS,
+					T1.ACTFINRECEIPT,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID FUNDINGAC,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					T1.KNOCKOFFTYPE,
+					tx.RECEIPTSEQID
+				FROM FINRECEIPTHEADER_TEMP T1
+				INNER JOIN (Select max(receiptseqId) receiptSeqId, RECEIPTID  from FinReceiptDetail_Temp group by RECEIPTID) tx on tx.RECEIPTID = T1.RECEIPTID
+				LEFT JOIN FINRECEIPTDETAIL_TEMP T2 ON T1.RECEIPTID = T2.RECEIPTID and T2.RECEIPTSEQID = tx.RECEIPTSEQID
+				LEFT JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+				LEFT JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+				INNER JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
+				UNION ALL
+				SELECT T4.CUSTCIF,
+					T1.REFERENCE,
+					T3.FINTYPE,
+					T1.RECEIPTID,
+					T1.RECEIPTDATE,
+					T1.RECEIPTAMOUNT,
+					T1.BANKCODE,
+					T1.RECEIPTPURPOSE,
+					T1.RECEIPTMODE,
+					T1.BOUNCEDATE CANCELDATE,
+					T2.PAYAGAINSTID,
+					T1.BOUNCEDATE,
+					T1.REALIZATIONDATE,
+					T1.CANCELREASON,
+					T3.CLOSINGSTATUS,
+					T3.FINBRANCH,
+					T3.FINCURRASSETVALUE,
+					T3.PRODUCTCATEGORY,
+					T6.PARTNERBANKCODE,
+					T1.VERSION ,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T5.ROLEDESC LOVDESCREQUESTSTAGE,
+					T1.RECEIPTMODE PAYMENTTYPE,
+					T1.RECEIPTMODESTATUS,
+					T1.ACTFINRECEIPT,
+					T1.REFWAIVERAMT,        
+					T1.SOURCE,             
+					T1.VALUEDATE,           
+					T1.TRANSACTIONREF,      
+					T1.DEPOSITDATE,         
+					T1.PARTNERBANKID FUNDINGAC,       
+					T1.PRVRECEIPTPURPOSE,   
+					T1.RECEIPTSOURCE,       
+					T1.RECAPPDATE,          
+					T1.RECEIVEDDATE,
+					t1.knockofftype,
+					tx.RECEIPTSEQID
+				FROM FINRECEIPTHEADER T1
+				INNER JOIN (Select max(receiptseqId) receiptSeqId, RECEIPTID  from FinReceiptDetail group by RECEIPTID) tx on tx.RECEIPTID = t1.RECEIPTID
+				LEFT JOIN FINRECEIPTDETAIL T2 ON T1.RECEIPTID = T2.RECEIPTID and T2.RECEIPTSEQID = tx.RECEIPTSEQID
+				LEFT JOIN FINANCEMAIN T3 ON T1.REFERENCE = T3.FINREFERENCE
+				LEFT JOIN CUSTOMERS T4 ON T3.CUSTID = T4.CUSTID
+				LEFT JOIN SECROLES T5 ON T1.NEXTROLECODE = T5.ROLECD
+				LEFT JOIN PARTNERBANKS T6 ON T6.PARTNERBANKID = T2.FUNDINGAC
+				WHERE NOT EXISTS (SELECT 1 FROM FINRECEIPTHEADER_TEMP WHERE RECEIPTID = T1.RECEIPTID)
+			]]>
+		</createView>
+	</changeSet>
+
+	<changeSet id="PSD#180464_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'receiptdetails_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#181322" author="Praveena.V">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'T2.CustCIF' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_MandateDetails') AND FIELDNAME = 'CustCIF';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#181738" author="Gireesh.G">
+		<modifyDataType tableName="PRESENTMENT_RESP_DTLS" columnName="BOUNCE_CODE" newDataType="varchar(100)" />
+		<modifyDataType tableName="PRESENTMENT_RESP_DTLS_LOG" columnName="BOUNCE_CODE" newDataType="varchar(100)" />
+	</changeSet>
+	
 </databaseChangeLog>

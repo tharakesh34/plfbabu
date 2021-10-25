@@ -230,7 +230,7 @@ public class ReceiptCalculator {
 	private FinReceiptData initializeReceipt(FinReceiptData rd) {
 		FinScheduleData schdData = rd.getFinanceDetail().getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		
+
 		rd.setFinID(fm.getFinID());
 		rd.setFinReference(fm.getFinReference());
 		rd.setRepayMain(null);
@@ -1203,7 +1203,7 @@ public class ReceiptCalculator {
 			}
 
 			BigDecimal tdsAmount = BigDecimal.ZERO;
-			if (TDSCalculator.isTDSApplicable(schdData.getFinanceMain(), isTdsApplicable)) {
+			if (TDSCalculator.isTDSApplicable(fm, isTdsApplicable)) {
 				BigDecimal taxableAmount = BigDecimal.ZERO;
 				if (StringUtils.isNotEmpty(taxType)) {
 					taxableAmount = allocDetail.getTotRecv().subtract(allocDetail.getDueGST());
@@ -1216,7 +1216,13 @@ public class ReceiptCalculator {
 				allocDetail.setTdsReq(true);
 				allocDetail.setTdsDue(tdsAmount);
 			}
-			allocDetail.setTotalDue(allocDetail.getTotalDue().subtract(tdsAmount.add(allocDetail.getInProcess())));
+
+			TaxAmountSplit tax = GSTCalculator.calculateGST(fm.getFinID(), fm.getFinCcy(), advise.getTaxComponent(),
+					allocDetail.getTotalDue());
+
+			allocDetail.setTotalDue(
+					allocDetail.getTotalDue().subtract(tdsAmount.add(allocDetail.getInProcess())).add(tax.gettGST()));
+
 			allocationsList.add(allocDetail);
 		}
 

@@ -12097,6 +12097,7 @@
 		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
 		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
 		<property name="finAssetAmtMovementDAO" ref="finAssetAmtMovementDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<!-- Loan DownSizing Movements -->
@@ -12444,6 +12445,9 @@
 		<property name="financeMainDAO" ref="financeMainDAO" />
 		<property name="finMaintainInstructionDAO" ref="finMaintainInstructionDAO" />
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
 	</bean>
 
 	<!-- Change Payment Upload -->

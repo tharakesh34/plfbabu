@@ -53,6 +53,8 @@ import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.North;
 import org.zkoss.zul.South;
+import org.zkoss.zul.Tabpanels;
+import org.zkoss.zul.Tabs;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -60,6 +62,8 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
+import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -67,10 +71,12 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennant.backend.service.finance.LinkedFinancesService;
+import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.component.Uppercasebox;
+import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
@@ -132,6 +138,9 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	private List<LinkedFinances> linkedFinList = new ArrayList<>();
 	private Map<String, LinkedFinances> linkedFinMap = new HashMap<>();
 	private ArrayList<Object> finHeaderList = new ArrayList<>();
+	private ExtendedFieldCtrl extendedFieldCtrl = null;
+	protected Tabs tabsIndexCenter;
+	protected Tabpanels tabpanelsBoxIndexCenter;
 
 	/**
 	 * default constructor.<br>
@@ -489,6 +498,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			FinanceMain fm = schData.getFinanceMain();
 			FinMaintainInstruction fmi = schData.getFinMaintainInstruction();
 
+			appendExtendedFieldDetails(this.moduleDefiner);
+
 			this.custCIF.setValue(fm.getCustCIF());
 			this.custShrtName.setValue(fm.getLovDescCustShrtName());
 			this.finReferenceHeader.setValue(fm.getFinReference());
@@ -534,6 +545,56 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * This method is for append extended field details
+	 */
+	private void appendExtendedFieldDetails(String finEvent) {
+		logger.debug(Literal.ENTERING);
+
+		ExtendedFieldRender extendedFieldRender = null;
+		FinScheduleData schData = financeDetail.getFinScheduleData();
+		FinanceMain fm = schData.getFinanceMain();
+		fm.setFinCategory(fm.getEntityCode());
+
+		try {
+
+			extendedFieldCtrl = new ExtendedFieldCtrl();
+			ExtendedFieldHeader extendedFieldHeader = this.extendedFieldCtrl
+					.getExtendedFieldHeader(ExtendedFieldConstants.MODULE_LOAN, fm.getFinCategory(), finEvent);
+			if (extendedFieldHeader == null) {
+				return;
+			}
+
+			extendedFieldCtrl.setAppendActivityLog(true);
+			extendedFieldCtrl.setFinBasicDetails(getFinBasicDetails());
+
+			extendedFieldRender = extendedFieldCtrl.getExtendedFieldRender(fm.getFinReference());
+
+			extendedFieldCtrl.createTab(tabsIndexCenter, tabpanelsBoxIndexCenter);
+			financeDetail.setExtendedFieldHeader(extendedFieldHeader);
+			financeDetail.setExtendedFieldRender(extendedFieldRender);
+
+			if (financeDetail.getBefImage() != null) {
+				financeDetail.getBefImage().setExtendedFieldHeader(extendedFieldHeader);
+				financeDetail.getBefImage().setExtendedFieldRender(extendedFieldRender);
+			}
+
+			extendedFieldCtrl.setCcyFormat(CurrencyUtil.getFormat(fm.getFinCcy()));
+			extendedFieldCtrl.setReadOnly(false);
+			extendedFieldCtrl.setWindow(window_LinkedFinancesDialog);
+			extendedFieldCtrl.setTabHeight(this.borderLayoutHeight - 100);
+			extendedFieldCtrl.setUserWorkspace(getUserWorkspace());
+			extendedFieldCtrl.setUserRole(getRole());
+			extendedFieldCtrl.render();
+		} catch (Exception e) {
+			logger.error(Labels.getLabel("message.error.Invalid_Extended_Field_Config"), e);
+			MessageUtil.showError(Labels.getLabel("message.error.Invalid_Extended_Field_Config"));
+		}
+
+		logger.debug(Literal.LEAVING);
+
 	}
 
 	/**
@@ -765,6 +826,10 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		// fill the LinkedFinances object with the components data
 		doWriteComponentsToBean(financeDetail);
 
+		if (financeDetail.getExtendedFieldHeader() != null && extendedFieldCtrl != null) {
+			financeDetail.setExtendedFieldRender(extendedFieldCtrl.save(true));
+		}
+
 		if (flag) {
 			return;
 		}
@@ -811,6 +876,11 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
+
+		if (extendedFieldCtrl != null && financeDetail.getExtendedFieldHeader() != null) {
+			extendedFieldCtrl.deAllocateAuthorities();
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -922,8 +992,33 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuditHeader aAuditHeader = auditHeader;
-		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-		FinMaintainInstruction finMainInst = afinanceDetail.getFinScheduleData().getFinMaintainInstruction();
+		FinanceDetail fd = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		FinMaintainInstruction fmi = fd.getFinScheduleData().getFinMaintainInstruction();
+
+		if (fd.getExtendedFieldRender() != null) {
+			int seqNo = 0;
+			ExtendedFieldRender details = fd.getExtendedFieldRender();
+			details.setReference(fmi.getFinReference());
+			details.setSeqNo(++seqNo);
+			details.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+			details.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			details.setRecordStatus(fmi.getRecordStatus());
+			details.setRecordType(fmi.getRecordType());
+			details.setVersion(fmi.getVersion());
+			details.setWorkflowId(fmi.getWorkflowId());
+			details.setTaskId(fmi.getTaskId());
+			details.setNextTaskId(fmi.getNextTaskId());
+			details.setRoleCode(fmi.getRoleCode());
+			details.setNextRoleCode(fmi.getNextRoleCode());
+			details.setNewRecord(fd.isNewRecord());
+			if (PennantConstants.RECORD_TYPE_DEL.equals(fmi.getRecordType())) {
+				if (StringUtils.trimToNull(details.getRecordType()) == null) {
+					details.setRecordType(fmi.getRecordType());
+					details.setNewRecord(true);
+				}
+			}
+		}
 
 		boolean deleteNotes = false;
 
@@ -942,14 +1037,14 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 						aAuditHeader = linkedFinancesService.doApprove(aAuditHeader);
 
-						if (finMainInst.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 							deleteNotes = true;
 						}
 
 					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
 						aAuditHeader = linkedFinancesService.doReject(aAuditHeader);
 
-						if (finMainInst.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						if (fmi.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 							deleteNotes = true;
 						}
 
@@ -1034,6 +1129,50 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		} catch (Exception exp) {
 			logger.error(Literal.EXCEPTION, exp);
 		}
+	}
+
+	/**
+	 * fill finance basic details to List
+	 * 
+	 * @return
+	 */
+	private List<Object> getFinBasicDetails() {
+		List<Object> arrayList = new ArrayList<>();
+		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
+		String finType = fm.getFinType();
+
+		FinanceType financeType = linkedFinancesService.getFinType(finType);
+
+		arrayList.add(0, fm.getFinType());
+		arrayList.add(1, fm.getFinCcy());
+
+		if (StringUtils.equals(fm.getScheduleMethod(), PennantConstants.List_Select)) {
+			arrayList.add(2, "");
+		} else {
+			arrayList.add(2, fm.getScheduleMethod());
+		}
+		arrayList.add(3, fm.getFinReference());
+		arrayList.add(4, fm.getProfitDaysBasis());
+		arrayList.add(5, fm.getGrcPeriodEndDate());
+		arrayList.add(6, fm.isAllowGrcPeriod());
+
+		if (StringUtils.isNotEmpty(financeType.getProduct())) {
+			arrayList.add(7, true);
+		} else {
+			arrayList.add(7, false);
+		}
+		arrayList.add(8, financeType.getFinCategory());
+
+		String custShrtName = "";
+		if (financeDetail.getCustomerDetails() != null && financeDetail.getCustomerDetails().getCustomer() != null) {
+			custShrtName = financeDetail.getCustomerDetails().getCustomer().getCustShrtName();
+		}
+
+		arrayList.add(9, custShrtName);
+		arrayList.add(10, fm.isNewRecord());
+		arrayList.add(11, moduleDefiner);
+
+		return arrayList;
 	}
 
 	public boolean isNewRecord() {

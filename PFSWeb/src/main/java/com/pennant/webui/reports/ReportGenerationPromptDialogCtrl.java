@@ -2499,9 +2499,9 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		} else if (StringUtils.equals(reportMenuCode, "menu_Item_WriteoffReport")) {
 			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
 			if ("where".equals(whereCondition.toString().trim())) {
-				whereCondition.append(" FM.WRITEOFFLOAN = " + 1);
+				whereCondition.append(" FM.WRITEOFFLOAN = 1");
 			} else {
-				whereCondition.append(" and FM.WRITEOFFLOAN = " + 1);
+				whereCondition.append(" and FM.WRITEOFFLOAN = 1");
 			}
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
@@ -2726,7 +2726,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 						|| reportMenuCode.equals("menu_Item_SubventionMISReport")) {
 					lovSearchMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
 							this.window_ReportPromptFilterCtrl, button.getId(),
-							filterMap == null ? new HashMap<String, Object>() : filterMap, filters);
+							filterMap == null ? new HashMap<String, Object>() : filterMap);
 				} else {
 					lovSearchMap = (Map<String, Object>) ExtendedMultipleSearchListBox.show(
 							this.window_ReportPromptFilterCtrl, button.getId(),

@@ -83,7 +83,8 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 		sql.append(" FinID, FinReference");
 
 		if (type.contains("View")) {
-			sql.append(", FinPreApprovedRef");
+			sql.append(", FinCategory, FinPreApprovedRef, FinType, FinCcy, ScheduleMethod");
+			sql.append(", ProfitDaysBasis, CustShrtName");
 		}
 
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode");
@@ -102,7 +103,13 @@ public class ReinstateFinanceDAOImpl extends BasicDao<ReinstateFinance> implemen
 				rf.setFinReference(rs.getString("FinReference"));
 
 				if (type.contains("View")) {
+					rf.setFinCategory(rs.getString("FinCategory"));
 					rf.setFinPreApprovedRef(rs.getString("FinPreApprovedRef"));
+					rf.setFinType(rs.getString("FinType"));
+					rf.setFinCcy(rs.getString("FinCcy"));
+					rf.setScheduleMethod(rs.getString("ScheduleMethod"));
+					rf.setProfitDaysBasis(rs.getString("ProfitDaysBasis"));
+					rf.setCustShrtName(rs.getString("CustShrtName"));
 				}
 
 				rf.setVersion(rs.getInt("Version"));

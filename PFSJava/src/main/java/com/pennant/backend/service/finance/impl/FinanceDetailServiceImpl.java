@@ -9196,18 +9196,18 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
+		String module = FinanceConstants.MODULE_NAME;
+
+		fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
 
 		schdData.setFinID(finID);
 		schdData.setFinReference(finReference);
-
 		schdData.setFinanceMain(fm);
 
+		fd.setFinScheduleData(schdData);
 		fd.setFinOptions(finOptionService.getFinOptions(finID, TableType.VIEW));
-
 		fd.setCustomerDetails(customerDetailsService.getCustomerAndCustomerDocsById(fm.getCustID(), ""));
-
-		fd.setDocumentDetailsList(
-				documentDetailsDAO.getDocumentDetailsByRef(finReference, FinanceConstants.MODULE_NAME, "", ""));
+		fd.setDocumentDetailsList(documentDetailsDAO.getDocumentDetailsByRef(finReference, module, "", ""));
 
 		return fd;
 	}

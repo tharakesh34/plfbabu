@@ -890,13 +890,18 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		FinanceMain fm = custEODEvent.getFinEODEvents().get(0).getFinanceMain();
 		Customer customer = custEODEvent.getCustomer();
 
-		String bounceCode = pd.getBounceCode();
+		String bounceCode = StringUtils.trimToNull(pd.getBounceCode());
 		String bounceRemarks = pd.getBounceRemarks();
 
 		FinReceiptHeader receiptHeader = getFinReceiptHeaderById(pd.getReceiptID(), false);
 
 		if (receiptHeader == null) {
 			pd.setErrorDesc(PennantJavaUtil.getLabel("label_FinReceiptHeader_Notavailable"));
+			return pd;
+		}
+
+		if (bounceCode == null) {
+			pd.setErrorDesc("Bounc Code is mandatory..");
 			return pd;
 		}
 

@@ -4407,7 +4407,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		/* Escrow Mode */
 		if (ImplementationConstants.ALLOW_ESCROW_MODE) {
-			if (aFinanceMain.getFinRepayMethod().equals(FinanceConstants.REPAYMTH_MANUAL)) {
+			if (FinanceConstants.REPAYMTH_MANUAL.equals(aFinanceMain.getFinRepayMethod())) {
 				this.row_Escrow.setVisible(true);
 			}
 

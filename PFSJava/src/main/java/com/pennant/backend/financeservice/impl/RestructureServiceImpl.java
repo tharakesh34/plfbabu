@@ -658,13 +658,13 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 				BigDecimal taxableAmount = adviseDue;
 				TaxAmountSplit taxSplit = new TaxAmountSplit();
 
-				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
-					taxSplit = GSTCalculator.calculateGST(finID, fm.getFinCcy(), taxType, taxableAmount);
-				}
+				taxSplit = GSTCalculator.calculateGST(finID, fm.getFinCcy(), taxType, taxableAmount);
 
-				if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
 					taxableAmount = taxableAmount.subtract(taxSplit.gettGST());
 				}
+
+				taxSplit.setTaxType(taxType);
 
 				if (advise.getBounceID() > 0) {
 					bounceTax.setcGST(bounceTax.getcGST().add(taxSplit.getcGST()));
@@ -1464,39 +1464,62 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		case "1":
 			if (noOfEmiHld == 0 || noOfpriHld == 0) {
 				errorDetails.add(getErrorDetail("90502", "EMI Holiday & Principal Holiday"));
+			} else if (noOfEmiTerms != 0) {
+				errorDetails.add(getErrorDetail("92021", getErrorMessage("Emi Terms", restructureType)));
 			}
+
 			totNoOfRst = noOfEmiHld + noOfpriHld;
 			break;
 		case "2":
+		case "11":
 			if (noOfEmiTerms == 0) {
 				errorDetails.add(getErrorDetail("90502", "EMI Terms"));
+			} else if (noOfEmiHld != 0 || noOfpriHld != 0) {
+				errorDetails.add(
+						getErrorDetail("92021", getErrorMessage("EMI Holiday & Principal Holiday", restructureType)));
 			}
+
 			totNoOfRst = noOfEmiTerms;
 			break;
 		case "3":
 		case "7":
+		case "9":
 			if (noOfEmiHld == 0 || noOfEmiTerms == 0) {
 				errorDetails.add(getErrorDetail("90502", "EMI Holiday & EMI Terms"));
+			} else if (noOfpriHld != 0) {
+				errorDetails.add(getErrorDetail("92021", getErrorMessage("Principal Holiday", restructureType)));
 			}
+
 			totNoOfRst = noOfEmiHld + noOfEmiTerms;
 			break;
 		case "4":
 			if (noOfEmiHld == 0) {
 				errorDetails.add(getErrorDetail("90502", "EMI Holiday"));
+			} else if (noOfpriHld != 0 || noOfEmiTerms != 0) {
+				errorDetails.add(
+						getErrorDetail("92021", getErrorMessage("Principal Holiday & EMI Terms", restructureType)));
 			}
+
 			totNoOfRst = noOfEmiHld;
 			break;
 		case "5":
 			if (noOfpriHld == 0) {
 				errorDetails.add(getErrorDetail("90502", "Principal Holiday"));
+			} else if (noOfEmiHld != 0 || noOfEmiTerms != 0) {
+				errorDetails.add(getErrorDetail("92021", getErrorMessage("EMI Holiday & EMI Terms ", restructureType)));
 			}
+
 			totNoOfRst = noOfpriHld;
 			break;
 		case "6":
 		case "8":
+		case "10":
 			if (noOfpriHld == 0 || noOfEmiTerms == 0) {
 				errorDetails.add(getErrorDetail("90502", "Principal Holiday & EMI Terms"));
+			} else if (noOfEmiHld != 0) {
+				errorDetails.add(getErrorDetail("92021", getErrorMessage("EMI Holiday ", restructureType)));
 			}
+
 			totNoOfRst = noOfpriHld + noOfEmiTerms;
 			break;
 		default:
@@ -1510,6 +1533,14 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 
 		restDtl.setTotNoOfRestructure(totNoOfRst);
 		logger.debug(Literal.LEAVING);
+	}
+
+	private String getErrorMessage(String msg, String rstType) {
+		StringBuilder errorMsg = new StringBuilder();
+		errorMsg.append(msg);
+		errorMsg.append(" is not applicable for given Restructure Type ");
+		errorMsg.append(rstType);
+		return errorMsg.toString();
 	}
 
 	private FinanceDetail getFinanceDetailById(long finID, String type, boolean isWif) {

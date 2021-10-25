@@ -2772,21 +2772,23 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			doCheckerApproverValidation(auditDetail, usrLanguage, repayData, finReceiptHeader);
 		}
 
-		String recordStatus = finReceiptHeader.getRecordStatus();
-		String receiptModeSts = finReceiptHeader.getReceiptModeStatus();
-		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
-				&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
-			if ((PennantConstants.RCD_STATUS_SAVED.equals(recordStatus)
-					|| PennantConstants.RCD_STATUS_SUBMITTED.equals(recordStatus)
-					|| PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus))) {
+		if (!FinServiceEvent.SCHDRPY.equals(finReceiptHeader.getReceiptPurpose())) {
+			String recordStatus = finReceiptHeader.getRecordStatus();
+			String receiptModeSts = finReceiptHeader.getReceiptModeStatus();
+			if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
+					&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
+				if ((PennantConstants.RCD_STATUS_SAVED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_SUBMITTED.equals(recordStatus)
+						|| PennantConstants.RCD_STATUS_APPROVED.equals(recordStatus))) {
 
-				String[] parms = new String[2];
-				if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
-					Date prvSchdDate = finPftDetail.getPrvRpySchDate();
-					if (finReceiptHeader.getValueDate().compareTo(prvSchdDate) < 0) {
-						parms[0] = DateUtil.formatToLongDate(finReceiptHeader.getValueDate());
-						parms[1] = DateUtil.formatToLongDate(prvSchdDate);
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0012", parms)));
+					String[] parms = new String[2];
+					if (SysParamUtil.isAllowed(SMTParameterConstants.ALLOWED_BACKDATED_RECEIPT)) {
+						Date prvSchdDate = finPftDetail.getPrvRpySchDate();
+						if (finReceiptHeader.getValueDate().compareTo(prvSchdDate) < 0) {
+							parms[0] = DateUtil.formatToLongDate(finReceiptHeader.getValueDate());
+							parms[1] = DateUtil.formatToLongDate(prvSchdDate);
+							auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0012", parms)));
+						}
 					}
 				}
 			}
@@ -7050,16 +7052,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			prvSchdDate = prvSchd.getSchDate();
 		}
 
-		String receiptModeSts = frh.getReceiptModeStatus();
-		if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
-				&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
-			if (prvSchdDate != null && valueDate != null && DateUtil.compare(valueDate, prvSchdDate) < 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = DateUtil.formatToLongDate(valueDate);
-				valueParm[1] = DateUtil.formatToLongDate(prvSchdDate);
-				auditHeader.getAuditDetail().setErrorDetail(ErrorUtil
-						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "RU0012", valueParm, valueParm)));
-				auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+		if (!FinServiceEvent.SCHDRPY.equals(receiptData.getReceiptHeader().getReceiptPurpose())) {
+			String receiptModeSts = frh.getReceiptModeStatus();
+			if (!RepayConstants.PAYSTATUS_BOUNCE.equals(receiptModeSts)
+					&& !RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeSts)) {
+				if (prvSchdDate != null && valueDate != null && DateUtil.compare(valueDate, prvSchdDate) < 0) {
+					String[] valueParm = new String[2];
+					valueParm[0] = DateUtil.formatToLongDate(valueDate);
+					valueParm[1] = DateUtil.formatToLongDate(prvSchdDate);
+					auditHeader.getAuditDetail().setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "RU0012", valueParm, valueParm)));
+					auditHeader.setErrorList(auditHeader.getAuditDetail().getErrorDetails());
+				}
 			}
 		}
 

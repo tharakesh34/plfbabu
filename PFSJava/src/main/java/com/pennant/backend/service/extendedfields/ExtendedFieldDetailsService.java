@@ -752,6 +752,7 @@ public class ExtendedFieldDetailsService {
 					recordStatus = efr.getRecordStatus();
 					efr.setRecordType("");
 					efr.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+					extendedFieldRenderDAO.delete(efr.getReference(), efr.getSeqNo(), "_Temp", tableName.toString());
 				}
 
 				// Add Common Fields
