@@ -149,8 +149,8 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			// Loan Status Checking
 			boolean isError = false;
 			for (FinanceMain fm : fmList) {
-				pmu.setFinID(fm.getFinID());
 				if (pmu.getFinReference().equals(fm.getFinReference())) {
+					pmu.setFinID(fm.getFinID());
 					pmu.setFinanceMain(fm);
 					if (!fm.isFinIsActive()) {
 						isError = true;
