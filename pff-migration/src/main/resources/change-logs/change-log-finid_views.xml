@@ -4758,7 +4758,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_view');
@@ -4858,7 +4858,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_view');	
@@ -10758,7 +10758,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.13_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.13.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'holddisbursement_view');
@@ -10813,7 +10813,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.13_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.13.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'holddisbursement_view');	
@@ -14757,7 +14757,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.37.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#556.37.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'int_mandate_request_view');
@@ -14765,7 +14765,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.37.1" author="Gopal.p">
+	<changeSet id="ST#556.37.2" author="Gopal.p">
 		<createView replaceIfExists="true" viewName="INT_MANDATE_REQUEST_VIEW">
 		 	<![CDATA[
 				SELECT M.MANDATEID,
@@ -14861,7 +14861,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#556.37.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#556.37.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'int_mandate_request_view');
