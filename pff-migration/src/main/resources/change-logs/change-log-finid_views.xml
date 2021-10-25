@@ -9713,7 +9713,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="RLV_12_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="RLV_12.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'receiptdetails_view');
@@ -9721,7 +9721,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="RLV_12" author="Gopal.p">
+	<changeSet id="RLV_12.1" author="Gopal.p">
 		<createView viewName="RECEIPTDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T4.CUSTCIF,
@@ -9839,7 +9839,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="RLV_12_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="RLV_12.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'receiptdetails_view');
@@ -9847,7 +9847,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="RLV_13_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="RLV_13.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'receiptdetails_tview');
@@ -9855,7 +9855,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="RLV_13" author="Gopal.p">
+	<changeSet id="RLV_13.1" author="Gopal.p">
 		<createView viewName="RECEIPTDETAILS_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T4.CUSTCIF,
@@ -9913,7 +9913,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="RLV_13_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="RLV_13.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'receiptdetails_tview');
@@ -10366,7 +10366,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.8_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.8.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'reinstatefinance_view');
@@ -10374,7 +10374,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.8" author="Gopal.p">
+	<changeSet id="ST#2367.8.1" author="Gopal.p">
 		<createView viewName="REINSTATEFINANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINID,
@@ -10410,7 +10410,8 @@
 					T1.TASKID,
 					T1.NEXTTASKID,
 					T1.RECORDTYPE,
-					T1.WORKFLOWID
+					T1.WORKFLOWID,
+					T4.CUSTSHRTNAME
 				FROM REINSTATEFINANCE_TEMP T1
 				JOIN REJECTFINANCEMAIN T2 ON T1.FINREFERENCE = T2.FINREFERENCE
 				JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
@@ -10420,7 +10421,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.8_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.8.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'reinstatefinance_view');	
