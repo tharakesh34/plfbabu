@@ -139,6 +139,13 @@
 												<column width="360px" />
 											</columns>
 											<rows>
+												<row visible="false">
+													<label id="label_FinanceMainDialog_FinId" value="${c:l('label_FinanceMainDialog_FinId.value')}" />
+													<hbox>
+														<space spacing="2px" id="space_finId" />
+														<longbox id="finId" width="170px" />
+													</hbox>
+												</row>
 												<row>
 													<label id="label_FinanceMainDialog_FinReference" value="${c:l('label_FinanceMainDialog_FinReference.value')}" />
 													<hbox>

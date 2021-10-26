@@ -414,6 +414,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	protected Textbox businessVertical;
 	protected Textbox finType;
 	protected Textbox finReference;
+	protected Longbox finId;
 	protected Space space_finReference;
 	protected ExtendedCombobox finCcy;
 	protected Combobox cbProfitDaysBasis;
@@ -6921,6 +6922,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		// force validation, if on, than execute by component.getValue()
 		// fill the financeMain object with the components data
+
 		this.doWriteComponentsToBean(aSchdData);
 
 		// LTD Detail
@@ -12544,10 +12546,12 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else if (StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference
 						.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
+				this.finId.setValue((aFinanceMain.getFinID()));
 			}
 
 			aFinanceMain.setFinReference(this.finReference.getValue());
-			aFinanceSchData.setFinID(aFinanceMain.getFinID());
+			aFinanceMain.setFinID(this.finId.getValue());
+			aFinanceSchData.setFinID(this.finId.getValue());
 			aFinanceSchData.setFinReference(this.finReference.getValue());
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -14684,6 +14688,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			aFinanceMain.setBusinessVertical(null);
 		}
 		aFinanceMain.setTotalFinAmount(aFinanceMain.getFinAssetValue().add(aFinanceMain.getFeeChargeAmt()));
+
+		// getFinanceDetail().setFinScheduleData(aFinanceSchData);
 
 		if (wve.size() > 0) {
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
