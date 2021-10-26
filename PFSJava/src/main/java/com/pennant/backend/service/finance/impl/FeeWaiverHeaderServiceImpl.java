@@ -2273,6 +2273,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			String[] fields = PennantJavaUtil.getFieldDetails(fwd, fwd.getExcludeFields());
 
 			auditDetails.add(new AuditDetail(auditTranType, i + 1, fields[0], fields[1], fwd.getBefImage(), fwd));
+			i++;
 		}
 
 		logger.debug(Literal.LEAVING);
