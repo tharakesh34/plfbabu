@@ -719,6 +719,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					if (i > 0) {
 						if (finMain.isNewRecord()) {
 							finMain.setSwiftBranchCode(parentFinMain.getFinReference().substring(1, 4));
+							finMain.setFinID(0);
 							finMain.setFinReference(ReferenceGenerator.generateFinRef(finMain, topUpFinType));
 							finMain.setFinType(topUpFinType.getFinType());
 							// finMain.setFinId(0);
