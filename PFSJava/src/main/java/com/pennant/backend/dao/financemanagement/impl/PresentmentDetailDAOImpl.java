@@ -1009,7 +1009,8 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 	@Override
 	public List<PresentmentDetail> getPresentmentDetail(long presentmentId, boolean includeData) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" t.Id, pd.PresentmentId, pd.FinID, pd.SchDate, pd.MandateId, pd.SchAmtDue, pd.SchPriDue");
+		sql.append(" pd.Id, pd.PresentmentId, pd.FinID, pd.FinReference");
+		sql.append(", pd.SchDate, pd.MandateId, pd.SchAmtDue, pd.SchPriDue");
 		sql.append(", pd.SchPftDue, pd.SchFeeDue, pd.SchInsDue, pd.SchPenaltyDue, pd.AdvanceAmt, pd.ExcessID");
 		sql.append(", pd.AdviseAmt, pd.PresentmentAmt, pd.EmiNo, pd.Status, pd.PresentmentRef, pd.EcsReturn");
 		sql.append(", pd.ReceiptID, pd.ExcludeReason, pd.Version, pd.LastMntOn, pd.LastMntBy, pd.RecordStatus");
@@ -1049,6 +1050,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 			pd.setId(rs.getLong("Id"));
 			pd.setHeaderId(rs.getLong("PresentmentId"));
 			pd.setFinID(rs.getLong("FinID"));
+			pd.setFinReference(rs.getString("FinReference"));
 			pd.setSchDate(rs.getTimestamp("SchDate"));
 			pd.setMandateId(rs.getLong("MandateId"));
 			pd.setSchAmtDue(rs.getBigDecimal("SchAmtDue"));

@@ -1704,6 +1704,7 @@ public class RepaymentProcessUtil {
 			FinRepayHeader rph = rcd.getRepayHeader();
 			rph.setReceiptSeqID(receiptSeqID);
 			rph.setValueDate(appValueDate);
+			rph.setFinID(rch.getFinID());
 			rph.setFinReference(rch.getReference());
 			rph.setFinEvent(rch.getReceiptPurpose());
 
