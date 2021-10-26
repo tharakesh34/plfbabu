@@ -1,0 +1,54 @@
+<?taglib uri="http://www.zkoss.org/dsp/web/core" prefix="c"?>
+<?variable-resolver class="org.zkoss.zkplus.spring.DelegatingVariableResolver"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul" xmlns:h="http://www.w3.org/1999/xhtml" xmlns:ca="client/attribute"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
+	xmlns:w="http://www.zkoss.org/2005/zk/client">
+
+	<window id="window_otp" title="Two Factor Authentication" apply="${otpCtrl}" border="normal" width="60%"
+		height="40%" mode="modal" style="padding:0px;">
+		<borderlayout>
+			<north border="none" height="20%" />
+			<west border="none" width="150px" />
+			<east border="none" width="150px" />
+			<center border="none">
+				<div align="right">
+					<grid fixedLayout="true" hflex="1">
+						<columns>
+							<column />
+						</columns>
+						<rows>
+							<row>
+								<cell align="center">
+									<hlayout>
+										<label value="Enter OTP" />
+										<space spacing="2px" sclass="mandatory" />
+										<textbox id="enterOTP" width="100px" placeholder="Enter your otp" />
+									</hlayout>
+								</cell>
+							</row>
+							<row>
+								<cell align="center">
+									<hlayout>
+										<button id="validateOtp" type="submit" label="Validate" />
+										<button id="resendOtp" type="submit" label="Resend" />
+									</hlayout>
+								</cell>
+							</row>
+							<row>
+								<cell align="center">
+									<label id="validity" />
+								</cell>
+							</row>
+						</rows>
+					</grid>
+				</div>
+			</center>
+			<south border="none" height="20%" />
+		</borderlayout>
+	</window>
+</zk>
+
+
+

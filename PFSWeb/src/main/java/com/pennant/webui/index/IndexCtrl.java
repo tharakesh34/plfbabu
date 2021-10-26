@@ -1,51 +1,43 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  IndexCtl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : IndexCtl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.index;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.collections4.map.HashedMap;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,6 +65,8 @@ import com.pennanttech.pennapps.core.security.UserType;
 import com.pennanttech.pennapps.lic.License;
 import com.pennanttech.pennapps.lic.constant.LicenseError;
 import com.pennanttech.pennapps.lic.exception.LicenseException;
+import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennapps.security.core.otp.OTPStatus;
 
 /**
  * This is the controller class for the /WEB-INF/pages/index.zul file.
@@ -146,7 +140,26 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	public void onClientInfo(ClientInfoEvent event) {
 		currentDesktopHeight.setValue(event.getDesktopHeight() - CONTENT_AREA_HEIGHT_OFFSET);
 		currentDesktopWidth.setValue(event.getDesktopWidth());
+
 		LoggedInUser user = getUserWorkspace().getLoggedInUser();
+
+		if ("Y".equalsIgnoreCase(App.getProperty("two.factor.authentication.required"))) {
+			org.zkoss.zk.ui.Session session = Executions.getCurrent().getDesktop().getSession();
+
+			if (session.getAttribute(OTPStatus.VERIFIED.name()) == null) {
+
+				if (StringUtils.isEmpty(user.getMobileNo()) && StringUtils.isEmpty(user.getEmailId())) {
+					MessageUtil
+							.showError("Mobile Number/Email-ID not exists, please contact the system administrator.");
+					Executions.sendRedirect("loginDialog.zul");
+				}
+
+				Map<String, Object> map = new HashedMap<>();
+				map.put("user", user);
+
+				Executions.createComponents("/pages/otp.zul", null, map);
+			}
+		}
 
 		try {
 			License.userLogin();

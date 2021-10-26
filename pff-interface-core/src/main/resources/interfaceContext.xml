@@ -12,7 +12,8 @@
 		http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-	<bean id="extractCustomerDataDAO" class="com.pennanttech.backend.dao.impl.ExtractCustomerDataDAOImpl" parent="basicDao">
+	<bean id="extractCustomerDataDAO" class="com.pennanttech.backend.dao.impl.ExtractCustomerDataDAOImpl"
+		parent="basicDao">
 		<property name="portalDataSource" ref="portalDataSource" />
 	</bean>
 
@@ -21,5 +22,27 @@
 		<property name="pushPullControlService" ref="pushPullControlService" />
 	</bean>
 
-	<bean id="onlineDisbursement" class="com.pennanttech.external.disbursement.services.OnlineDisbursementImpl"/>
+	<bean id="onlineDisbursement" class="com.pennanttech.external.disbursement.services.OnlineDisbursementImpl" />
+
+	<bean id="smsGateway" class="com.pennanttech.pennapps.notification.sms.SmsGateway">
+		<property name="url" value="${sms.gateway.url}" />
+		<property name="senderId" value="${sms.gateway.sender.id}" />
+		<property name="channel" value="${sms.gateway.channel}" />
+		<property name="dcs" value="${sms.gateway.dcs}" />
+		<property name="flashSms" value="${sms.gateway.flashsms}" />
+		<property name="route" value="${sms.gateway.route}" />
+	</bean>
+
+	<bean id="otpEmailEngine" class="com.pennanttech.pennapps.notification.email.EmailEngineThread">
+		<constructor-arg ref="emailEngine" />
+		<constructor-arg value="0" />
+		<constructor-arg name="emailService">
+			<null />
+		</constructor-arg>
+	</bean>
+
+	<bean id="otpService" class="com.pennapps.security.core.otp.impl.OTPServiceImpl">
+		<property name="smsGateway" ref="smsGateway" />
+		<property name="otpEmailEngine" ref="otpEmailEngine" />
+	</bean>
 </beans>

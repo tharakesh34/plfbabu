@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="satish" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1" author="tbd">
+		<createTable tableName="OTP_Messages">
+			<column name="ID" type="bigint" autoIncrement="true" startWith="1" >
+				<constraints primaryKey="true" primaryKeyName="pk_otp_messages"/>
+			</column>
+			<column name="Module" type="int">
+				<constraints nullable="false"/>
+			</column>
+			<column name="SessionID" type="varchar(500)"/>
+			<column name="OTP" type="varchar(20)">
+				<constraints nullable="false"/>
+			</column>
+			<column name="MobileNo" type="varchar(10)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="EmailID" type="varchar(50)">
+				<constraints nullable="true"/>
+			</column>
+			<column name="SentOn" type="datetime" />
+			<column name="ReceivedOn" type="datetime" />
+			<column name="Status" type="int" defaultValue="0"/>
+		</createTable>	
+	</changeSet>
+	
+	<changeSet id="2" author="tbd">
+		<createIndex tableName="OTP_Messages" indexName="idx_otp_messages_modle_otp" unique="true">
+			<column name="Module" type="int" />
+			<column name="OTP" type="varchar(20)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="3" author="tbd">
+		<createIndex tableName="OTP_Messages" indexName="idx_otp_messages_modle_otp_sid" unique="true">
+			<column name="Module" type="int" />
+			<column name="OTP" type="varchar(20)"/>
+			<column name="SessionID" type="varchar(500)"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="4" author="tbd">
+		<createIndex tableName="OTP_Messages" indexName="idx_otp_messages_id_status" unique="true">
+			<column name="ID" type="bigint"/>
+			<column name="Status" type="int"/>
+		</createIndex>
+	</changeSet>
+
+</databaseChangeLog>
