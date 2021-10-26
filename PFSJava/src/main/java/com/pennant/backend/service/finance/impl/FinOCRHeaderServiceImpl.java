@@ -512,6 +512,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 		finOCRHeader.setUserDetails(financeMain.getUserDetails());
 		finOCRHeader.setWorkflowId(financeMain.getWorkflowId());
+		finOCRHeader.setFinID(financeMain.getFinID());
 		finOCRHeader.setFinReference(financeMain.getFinReference());
 		finOCRHeader.setLastMntBy(financeMain.getLastMntBy());
 		finOCRHeader.setLastMntOn(financeMain.getLastMntOn());
@@ -888,6 +889,7 @@ public class FinOCRHeaderServiceImpl extends GenericService<FinOCRHeader> implem
 
 		for (int i = 0; i < auditDetails.size(); i++) {
 			FinOCRCapture finOCRCapture = (FinOCRCapture) auditDetails.get(i).getModelData();
+			finOCRCapture.setFinID(finOCRHeader.getFinID());
 			finOCRCapture.setFinReference(finOCRHeader.getFinReference());
 			saveRecord = false;
 			updateRecord = false;

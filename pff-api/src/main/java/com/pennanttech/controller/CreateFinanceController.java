@@ -1818,6 +1818,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 			if (finOCRHeader != null && financeMain != null) {
 				// do set workflow details
+				finOCRHeader.setFinID(financeMain.getFinID());
 				finOCRHeader.setFinReference(financeMain.getFinReference());
 				finOCRHeader.setLastMntBy(userDetails.getUserId());
 				finOCRHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -1852,6 +1853,7 @@ public class CreateFinanceController extends SummaryDetailService {
 					for (FinOCRCapture finOCRCapture : finOCRHeader.getFinOCRCapturesList()) {
 						finOCRCapture.setNewRecord(true);
 						finOCRCapture.setRecordType(PennantConstants.RCD_ADD);
+						finOCRCapture.setFinID(financeMain.getFinID());
 						finOCRCapture.setFinReference(financeMain.getFinReference());
 						finOCRCapture.setLastMntBy(userDetails.getUserId());
 						finOCRCapture.setLastMntOn(new Timestamp(System.currentTimeMillis()));

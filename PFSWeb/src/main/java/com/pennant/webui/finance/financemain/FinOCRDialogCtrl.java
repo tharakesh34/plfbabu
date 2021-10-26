@@ -914,6 +914,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		showErrorDetails(wve, this.tabOCRDefinition);
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
+		aFinOCRHeader.setFinID(financeMain.getFinID());
 		aFinOCRHeader.setFinReference(financeMain.getFinReference());
 		aFinOCRHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aFinOCRHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
