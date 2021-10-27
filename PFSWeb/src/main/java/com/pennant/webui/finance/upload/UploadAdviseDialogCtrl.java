@@ -645,7 +645,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		Date valueDate = null;
 		UploadManualAdvise adviseUpload = new UploadManualAdvise();
 		FinanceMain finMain = null;
-
+       Long finID = null;
 		// Reference
 		String finReference = row.get(0);
 		if (StringUtils.isBlank(finReference)) {
@@ -658,13 +658,14 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				finReference = null;
 			} else {
 
-				Long finID = financeMainService.getFinID(finReference);
+				finID = financeMainService.getFinID(finReference);
 				if (finID == null) {
 					reason = reason + "Loan Reference doesn't exist.";
 					error = true;
 				}
 			}
 		}
+		adviseUpload.setFinID(finID);
 		adviseUpload.setFinReference(finReference);
 
 		// Advise Type
