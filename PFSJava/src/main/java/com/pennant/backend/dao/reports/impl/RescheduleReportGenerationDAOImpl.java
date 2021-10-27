@@ -142,7 +142,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 			fsi.setPftChg(rs.getBigDecimal("PftChg"));
 			fsi.setInstructionUID(rs.getLong("InstructionUID"));
 			fsi.setLinkedTranID(rs.getLong("LinkedTranID"));
-			fsi.setLogKey(JdbcUtil.getLong(rs.getObject("LogKey")));
+			fsi.setLogKey(JdbcUtil.getLong(rs.getLong("LogKey")));
 
 			return fsi;
 		});
