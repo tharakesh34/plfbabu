@@ -5374,7 +5374,7 @@
 
 	<!-- (FOV) :: Fin Option Views handle in single place start -->
 
-	<changeSet id="FOV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FOV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fin_options_view');
@@ -5453,7 +5453,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FOV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FOV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fin_options_view');	
