@@ -78,6 +78,8 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		FinMaintainInstruction fmi = fsd.getFinMaintainInstruction();
 		long serviceUID = Long.MIN_VALUE;
 
+		fd.getExtendedFieldHeader().setEvent(FinServiceEvent.LINKDELINK);
+
 		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fd);
 
 		if (fd.getExtendedFieldRender() != null && fd.getExtendedFieldRender().getInstructionUID() != Long.MIN_VALUE) {
