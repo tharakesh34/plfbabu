@@ -228,7 +228,8 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		String reference = feePostings.getReference();
 		FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.VIEW);
 
-		if (fm != null && !FinServiceEvent.FEEPOSTING.equals(fm.getRcdMaintainSts())) {
+		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())
+				&& !FinServiceEvent.FEEPOSTING.equals(fm.getRcdMaintainSts())) {
 			String[] valueParm1 = new String[1];
 			valueParm1[0] = fm.getRcdMaintainSts();
 			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));

@@ -170,7 +170,7 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 		sql.append(", ValueDate = ?, Remarks = ?, PartnerBankId = ?, PostingDivision = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
 		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(" Where PostId= ?");
+		sql.append(" Where PostId = ?");
 
 		if (!type.endsWith("_Temp")) {
 			sql.append(" and Version = ?");
@@ -201,6 +201,8 @@ public class FeePostingsDAOImpl extends SequenceDao<FeePostings> implements FeeP
 			ps.setString(index++, fp.getNextTaskId());
 			ps.setString(index++, fp.getRecordType());
 			ps.setLong(index++, fp.getWorkflowId());
+			
+			ps.setLong(index++, fp.getPostId());
 
 			if (!type.endsWith("_Temp")) {
 				ps.setInt(index++, fp.getVersion() - 1);
