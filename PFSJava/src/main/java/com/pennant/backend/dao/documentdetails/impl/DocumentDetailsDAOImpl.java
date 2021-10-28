@@ -185,9 +185,9 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				" ( DocId, DocModule, DocCategory, Doctype,DocName,ReferenceId, FinEvent, DocPurpose, DocUri,DocReceivedDate,DocReceived,DocOriginal, DocBarcode, Remarks");
 		insertSql.append(", Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
 		insertSql.append(" TaskId, NextTaskId, RecordType, WorkflowId, docRefId, instructionUID)");
-		insertSql.append(" Values(:DocId,:DocModule, :DocCategory, :Doctype, :DocName,:ReferenceId, :FinEvent,");
+		insertSql.append(" Values(:DocId, :DocModule, :DocCategory, :Doctype, :DocName, :ReferenceId, :FinEvent,");
 		insertSql.append(
-				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal,:DocBarcode , :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
+				" :DocPurpose, :DocUri, :DocReceivedDate, :DocReceived , :docOriginal, :DocBarcode , :Remarks, :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode,");
 		insertSql.append(" :TaskId, :NextTaskId, :RecordType, :WorkflowId, :docRefId, :instructionUID)");
 
 		logger.debug("insertSql: " + insertSql.toString());
