@@ -37,7 +37,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
-import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Listbox;
@@ -54,7 +53,6 @@ import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.service.applicationmaster.ClusterHierarchyService;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.component.Uppercasebox;
@@ -384,6 +382,7 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 
 		if (aClusterHierarchey != null) {
 			this.entity.setValue(aClusterHierarchey.getEntity());
+			this.recordStatus.setValue(aClusterHierarchey.getRecordStatus());
 			for (ClusterHierarchy cluster : aClusterHierarchey.getClusterTypes()) {
 				appendClusterHierarchy(cluster);
 			}
@@ -693,16 +692,6 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		try {
 			if (doProcess(aClusterHierarchey, tranType)) {
 				refreshList();
-
-				String roleCode = aClusterHierarchey.getRoleCode();
-				String recordStatus2 = aClusterHierarchey.getRecordStatus();
-				String nextRoleCode2 = aClusterHierarchey.getNextRoleCode();
-				String id = aClusterHierarchey.getId();
-
-				String msg = PennantApplicationUtil.getSavingStatus(roleCode, nextRoleCode2, id, " Cluster ",
-						recordStatus2);
-				Clients.showNotification(msg, "info", null, null, -1);
-
 				closeDialog();
 			}
 
