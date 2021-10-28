@@ -6395,7 +6395,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						Labels.getLabel("label_FinanceMainDialog_DSACode.value"), null, true, true));
 			}
 		}
-		
+
 		if (this.escrow.isVisible()) {
 			if (this.escrow.isChecked() && StringUtils.isEmpty(this.customerBankAcct.getValue())) {
 				this.customerBankAcct.setConstraint(new PTStringValidator(
@@ -8957,6 +8957,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		// Cheque Details
 		if (aFinanceDetail.getChequeHeader() != null) {
 			ChequeHeader chequeHeader = aFinanceDetail.getChequeHeader();
+			chequeHeader.setFinID(afinanceMain.getFinID());
 			chequeHeader.setFinReference(afinanceMain.getFinReference());
 			chequeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -12550,7 +12551,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			} else if (StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference
 						.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
-				this.finId.setValue((aFinanceMain.getFinID()));
+				this.finId.setValue(aFinanceMain.getFinID());
 			}
 
 			aFinanceMain.setFinReference(this.finReference.getValue());
