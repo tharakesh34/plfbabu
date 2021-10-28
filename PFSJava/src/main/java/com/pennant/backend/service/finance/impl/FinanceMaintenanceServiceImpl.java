@@ -1057,7 +1057,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 						chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						chequeHeader.setRecordType("");
 						chequeHeader.setWorkflowId(0);
-
+						chequeHeader.setFinID(fm.getFinID());
 						chequeHeader.setFinReference(fm.getFinReference());
 						chequeHeader.setNoOfCheques(0);
 						chequeHeader.setTotalAmount(BigDecimal.ZERO);

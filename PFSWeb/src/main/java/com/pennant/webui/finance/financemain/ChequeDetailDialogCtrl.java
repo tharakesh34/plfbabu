@@ -83,6 +83,7 @@ import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.customermasters.CustomerBankInfo;
 import com.pennant.backend.model.finance.ChequeDetail;
 import com.pennant.backend.model.finance.ChequeHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -1219,7 +1220,10 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		ChequeHeader aChequeHeader = new ChequeHeader();
 		BeanUtils.copyProperties(getChequeHeader(), aChequeHeader);
 		boolean isNew = false;
-		String rcdStatus = financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus();
+
+		FinScheduleData schdData = financeDetail.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		String rcdStatus = fm.getRecordStatus();
 
 		doRemoveValidation();
 		doSetValidation();
@@ -1228,9 +1232,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			parenttab.setSelected(true);
 		} else if (!this.btnGen.isDisabled()) {
 			try {
-
-				FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-				if (FinanceConstants.REPAYMTH_PDC.equals(financeMain.getFinRepayMethod())) {
+				if (FinanceConstants.REPAYMTH_PDC.equals(fm.getFinRepayMethod())) {
 					if (CollectionUtils
 							.isNotEmpty(getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails())) {
 						financeSchedules = getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails();
@@ -1253,7 +1255,7 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 										new String[] { Labels.getLabel("label_ChequeDetailDialog_NoOfCheques.value"),
 												String.valueOf(number) }));
 					}
-				} else if (financeDetail.getFinScheduleData().getFinanceType().isChequeCaptureReq()) {
+				} else if (schdData.getFinanceType().isChequeCaptureReq()) {
 					int noOfUndateCHeques = SysParamUtil.getValueAsInt(SMTParameterConstants.NUMBEROF_UNDATED_CHEQUES);
 					if (this.totNoOfCheques.intValue() < noOfUndateCHeques) {
 						parenttab.setSelected(true);
@@ -1282,6 +1284,9 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 				aChequeHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			}
 		}
+
+		long finID = fm.getFinID();
+		aChequeHeader.setFinID(finID);
 		aChequeHeader.setFinReference(finReference);
 		aChequeHeader.setLastMntBy(getUserWorkspace().getLoggedInUser().getLoginLogId());
 		aChequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));

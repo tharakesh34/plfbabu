@@ -3252,7 +3252,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			ch.setRecordStatus(fm.getRecordStatus());
 			ch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			ch.setWorkflowId(fm.getWorkflowId());
-
+			ch.setFinID(fm.getFinID());
 			ch.setFinReference(fm.getFinReference());
 			ch.setNoOfCheques(0);
 			ch.setTotalAmount(BigDecimal.ZERO);

@@ -3926,6 +3926,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				chequeDetail.setAccountNo(chequeHeader.getAccountNo());
 
 				// setting the reference
+				chequeHeader.setFinID(financeMain.getFinID());
 				chequeHeader.setFinReference(financeMain.getFinReference());
 				chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));
 				// setting the default values
@@ -4006,6 +4007,8 @@ public class FinServiceInstController extends SummaryDetailService {
 					// subtracting the count to reduce the No.Of cheques in cheque Header
 
 					int result = chequeHeader.getNoOfCheques() - count;
+
+					chequeHeader.setFinID(financeMain.getFinID());
 					chequeHeader.setFinReference(financeMain.getFinReference());
 
 					// setting the default values if record type is delete
@@ -4133,6 +4136,8 @@ public class FinServiceInstController extends SummaryDetailService {
 					// subtracting the count to reduce the No.Of cheques in cheque Header
 
 					int result = chequeHeader.getNoOfCheques() - count;
+				
+					chequeHeader.setFinID(financeMain.getFinID());
 					chequeHeader.setFinReference(financeMain.getFinReference());
 
 					// setting the default values if record type is delete

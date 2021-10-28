@@ -333,7 +333,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 					chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					chequeHeader.setRecordType("");
 					chequeHeader.setWorkflowId(0);
-
+					chequeHeader.setFinID(changePayment.getFinID());
 					chequeHeader.setFinReference(changePayment.getFinReference());
 					chequeHeader.setNoOfCheques(0);
 					chequeHeader.setTotalAmount(BigDecimal.ZERO);
