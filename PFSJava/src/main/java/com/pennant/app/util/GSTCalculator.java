@@ -194,14 +194,14 @@ public class GSTCalculator {
 		String custResdSts = null;
 
 		if (custId > 0) {
-			dataMap = financeMainDAO.getGSTDataMap(custId, TableType.MAIN_TAB);
+			dataMap = financeMainDAO.getCustGSTDataMap(custId, TableType.MAIN_TAB);
 
 			if (MapUtils.isEmpty(dataMap)) {
-				dataMap = financeMainDAO.getGSTDataMap(custId, TableType.TEMP_TAB);
+				dataMap = financeMainDAO.getCustGSTDataMap(custId, TableType.TEMP_TAB);
 			}
 
 			if (MapUtils.isEmpty(dataMap)) {
-				dataMap = financeMainDAO.getGSTDataMap(custId, TableType.VIEW);
+				dataMap = financeMainDAO.getCustGSTDataMap(custId, TableType.VIEW);
 			}
 
 			if (dataMap.get("CustBranch") != null) {
