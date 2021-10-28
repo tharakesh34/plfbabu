@@ -29,6 +29,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -169,7 +170,11 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 				setQueueAssignmentHeader(null);
 			}
 
-			setQueueAssignment(getQueueAssignmentHeader().getQueueAssignmentsList().get(0));
+			if (CollectionUtils.isNotEmpty(getQueueAssignmentHeader().getQueueAssignmentsList())) {
+				setQueueAssignment(getQueueAssignmentHeader().getQueueAssignmentsList().get(0));
+			} else{
+				setQueueAssignment(new QueueAssignment());
+			}
 
 			doLoadWorkFlow(this.queueAssignmentHeader.isWorkflow(), this.queueAssignmentHeader.getWorkflowId(),
 					this.queueAssignmentHeader.getNextTaskId());
