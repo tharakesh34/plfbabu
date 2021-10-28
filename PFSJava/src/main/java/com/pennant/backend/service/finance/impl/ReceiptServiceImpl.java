@@ -4912,6 +4912,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String[] valueParm = new String[1];
 		valueParm[0] = parm0;
 		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
+		errorDetail.setMessage(parm0);
 		finScheduleData.setErrorDetail(errorDetail);
 		return finScheduleData;
 	}
@@ -5186,6 +5187,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public FinServiceInstruction buildFinServiceInstruction(ReceiptUploadDetail rud, String entity) {
 		FinServiceInstruction fsi = new FinServiceInstruction();
+		Long finID = financeMainDAO.getFinIDByFinReference(rud.getReference(), "", false);
+
+		if (finID == null) {
+			setErrorToRUD(rud, "RU0004", rud.getReference());
+		} else {
+			rud.setFinID(finID);
+		}
+		fsi.setFinID(rud.getFinID());
 		fsi.setFinReference(rud.getReference());
 		fsi.setExternalReference(rud.getExtReference());
 		fsi.setModule("Receipts");
@@ -5286,6 +5295,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			fsi.setFinID(rud.getFinID() == null ? 0 : rud.getFinID());
 		}
 		return fsi;
+	}
+
+	public void setErrorToRUD(ReceiptUploadDetail rud, String errorCode, String parm0) {
+		String[] valueParm = new String[1];
+		valueParm[0] = parm0;
+		rud.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm)));
 	}
 
 	@Override
@@ -5989,7 +6004,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		ErrorDetail errorDetail = financeDetail.getFinScheduleData().getErrorDetails().get(0);
 		returnStatus.setReturnCode(errorDetail.getCode());
-		returnStatus.setReturnText(errorDetail.getError());
+		returnStatus.setReturnText(errorDetail.getMessage());
 		financeDetail.setFinScheduleData(null);
 		financeDetail.setDocumentDetailsList(null);
 		financeDetail.setJointAccountDetailList(null);
