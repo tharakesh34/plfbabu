@@ -6395,12 +6395,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						Labels.getLabel("label_FinanceMainDialog_DSACode.value"), null, true, true));
 			}
 		}
-
-		if (this.escrow.isChecked() && StringUtils.isEmpty(this.customerBankAcct.getValue())) {
-			this.customerBankAcct.setConstraint(new PTStringValidator(
-					Labels.getLabel("label_FinanceMainDialog_CustomerBankAcctNumber.value"), null, true, true));
+		
+		if (this.escrow.isVisible()) {
+			if (this.escrow.isChecked() && StringUtils.isEmpty(this.customerBankAcct.getValue())) {
+				this.customerBankAcct.setConstraint(new PTStringValidator(
+						Labels.getLabel("label_FinanceMainDialog_CustomerBankAcctNumber.value"), null, true, true));
+			}
 		}
-
 		// FinanceMain Details Tab ---> 2. Grace Period Details
 
 		if (!this.graceRate.isBaseReadonly()) {

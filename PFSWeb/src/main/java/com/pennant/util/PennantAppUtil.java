@@ -2002,7 +2002,7 @@ public class PennantAppUtil {
 	 * 
 	 * @return
 	 */
-	public static List<ValueLabel> getcoApplicants() {
+	public static LovFieldDetail getcoApplicants() {
 		ArrayList<ValueLabel> coApplicants = new ArrayList<ValueLabel>();
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
@@ -2011,14 +2011,23 @@ public class PennantAppUtil {
 		searchObject.addFilterEqual("fieldCode", "CAT_COAPP");
 		searchObject.addField("fieldCodevalue");
 		searchObject.addField("valuedesc");
+		searchObject.addField("SystemDefault");
+
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
 
 		List<LovFieldDetail> appList = pagedListService.getBySearchObject(searchObject);
 		for (int i = 0; i < appList.size(); i++) {
 			ValueLabel pftRateLabel = new ValueLabel(appList.get(i).getFieldCodeValue(), appList.get(i).getValueDesc());
 			coApplicants.add(pftRateLabel);
+			
+			if (appList.get(i).isSystemDefault()) {
+				lovFieldDetail.setFieldCodeValue(appList.get(i).getFieldCodeValue());
+			}
 		}
-		return coApplicants;
-
+		
+		lovFieldDetail.setValueLabelList(coApplicants);
+		
+		return lovFieldDetail;
 	}
 
 	/**

@@ -65,7 +65,6 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.customermasters.Customer;
@@ -74,6 +73,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceExposure;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.JointAccountDetail;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.accounts.AccountsService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
@@ -196,7 +196,7 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	private String cif[] = null;
 	Customer customer = null;
 	private int baseCcyDecFormat = SysParamUtil.getValueAsInt(PennantConstants.LOCAL_CCY_FORMAT);
-	List<ValueLabel> coapplicantList = PennantAppUtil.getcoApplicants();
+	private LovFieldDetail lovFieldDetail = PennantAppUtil.getcoApplicants();
 	@Autowired
 	CustomerDetailsService customerDetailsService;
 	@Autowired
@@ -1077,7 +1077,14 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		this.custCIFName.setValue(aJointAccountDetail.getLovDescCIFName());
 		this.custCIFStatus.setValue(aJointAccountDetail.getStatus());
 		this.custCIFWorstStatus.setValue(aJointAccountDetail.getWorstStatus());
-		fillComboBox(this.catOfCoApplicant, aJointAccountDetail.getCatOfcoApplicant(), this.coapplicantList, "");
+
+		String defaultCoApp = StringUtils.trimToNull(aJointAccountDetail.getCatOfcoApplicant());
+		String fldCode = StringUtils.trimToNull(lovFieldDetail.getFieldCodeValue());
+		if (defaultCoApp == null && fldCode != null) {
+			defaultCoApp = lovFieldDetail.getFieldCodeValue();
+		}
+
+		fillComboBox(this.catOfCoApplicant, defaultCoApp, lovFieldDetail.getValueLabelList(), "");
 		this.recordStatus.setValue(aJointAccountDetail.getRecordStatus());
 		this.recordType.setValue(PennantJavaUtil.getLabel(aJointAccountDetail.getRecordType()));
 		this.authoritySignatory.setChecked(aJointAccountDetail.isAuthoritySignatory());

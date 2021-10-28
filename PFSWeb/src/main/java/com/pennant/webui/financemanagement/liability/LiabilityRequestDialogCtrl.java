@@ -56,6 +56,7 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Filedownload;
 import org.zkoss.zul.Row;
@@ -131,6 +132,11 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	protected CurrencyBox insClaimAmount;
 	protected Row row_InsPaidStatus;
 	protected Combobox insPaidStatus;
+
+	// Escrow row
+	protected Row row_Escrow;
+	protected Checkbox escrow;
+	protected ExtendedCombobox customerBankAcct;
 
 	protected ExtendedCombobox liabilityRef;
 
@@ -633,6 +639,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 
 		LiabilityRequest liabilityRequest = getLiabilityRequest();
 		liabilityRequest.setCustCIF(aFinanceDetail.getCustomerDetails().getCustomer().getCustCIF());
+		liabilityRequest.setFinID(this.finId.getValue());
 		liabilityRequest.setFinReference(this.finReference.getValue());
 
 		if (StringUtils.equals(moduleDefiner, FinServiceEvent.INSCLAIM)) {
@@ -1570,6 +1577,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 		this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
 
+		this.finId.setValue(aFinanceMain.getFinID());
 		this.finReference.setValue(aFinanceMain.getFinReference());
 		if (financeType.isFinIsAlwDifferment() && aFinanceMain.getPlanDeferCount() == 0) {
 			this.defferments.setReadonly(isReadOnly("FinanceMainDialog_defferments"));
