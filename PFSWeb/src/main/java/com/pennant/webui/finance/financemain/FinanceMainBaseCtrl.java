@@ -4224,6 +4224,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 		this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
 
+		this.finId.setValue(aFinanceMain.getFinID());
 		this.finReference.setValue(aFinanceMain.getFinReference());
 		if (financeType.isFinIsAlwDifferment() && aFinanceMain.getPlanDeferCount() == 0) {
 			this.defferments.setReadonly(isReadOnly("FinanceMainDialog_defferments"));
@@ -12538,9 +12539,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (financeType.isFinIsGenRef()) {
 					this.finReference
 							.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
+					this.finId.setValue((aFinanceMain.getFinID()));
 				} else if (StringUtils.isBlank(this.finReference.getValue())) {
 					this.finReference
 							.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
+					this.finId.setValue((aFinanceMain.getFinID()));
 				}
 				isBranchanged = false;
 			} else if (StringUtils.isBlank(this.finReference.getValue())) {
