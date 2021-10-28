@@ -5874,7 +5874,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public String getFinCategoryByFinType(String finType) {
 		String sql = "Select FinCategory From RMTFinanceTypes Where FinType = ?";
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
 		return this.jdbcOperations.queryForObject(sql, String.class, finType);
 	}
@@ -5883,7 +5883,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	public int getCustomerBankCountById(Long bankId, long custId) {
 		String sql = "Select Count(BankId) From CustomerBankInfo Where BankId = ? and CustId = ?";
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
 		try {
 			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> rs.getInt(1), bankId, custId);
@@ -5891,5 +5891,29 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			return 0;
 		}
 
+	}
+
+	@Override
+	public FinanceMain getRejectFinanceMainByRef(String finReference) {
+		String sql = "Select FinID, FinReference, TaskId, RoleCode From RejectFinanceMain Where  FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(rs.getString("FinReference"));
+				fm.setTaskId(rs.getString("TaskId"));
+				fm.setRoleCode(rs.getString("RoleCode"));
+
+				return fm;
+			}, finReference);
+		} catch (EmptyResultDataAccessException dae) {
+			//
+		}
+
+		return null;
 	}
 }

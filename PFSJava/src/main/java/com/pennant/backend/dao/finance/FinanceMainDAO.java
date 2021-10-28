@@ -379,4 +379,6 @@ public interface FinanceMainDAO {
 	String getFinCategoryByFinType(String finType);
 
 	int getCustomerBankCountById(Long BankId, long custId);
+
+	FinanceMain getRejectFinanceMainByRef(String finReference);
 }

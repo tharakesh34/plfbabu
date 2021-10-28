@@ -358,7 +358,7 @@ public class ReinstateFinanceServiceImpl extends GenericService<ReinstateFinance
 			}
 		}
 
-		FinanceMain financeMain = financeMainDAO.getFinanceMainByRef(reinstateFinance.getFinReference(), "", true);
+		FinanceMain financeMain = financeMainDAO.getRejectFinanceMainByRef(reinstateFinance.getFinReference());
 		financeMain.setApproved(null);
 		financeMain.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 		// Workflow fields
