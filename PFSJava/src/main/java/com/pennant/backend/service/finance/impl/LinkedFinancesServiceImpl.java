@@ -198,6 +198,8 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 		List<AuditDetail> auditDetails = new ArrayList<>();
 		List<AuditDetail> oldAuditDetails = new ArrayList<>();
 
+		fd.getExtendedFieldHeader().setEvent(FinServiceEvent.LINKDELINK);
+
 		List<FinServiceInstruction> serviceInstructions = getServiceInstructions(fd);
 		long serviceUID = Long.MIN_VALUE;
 
