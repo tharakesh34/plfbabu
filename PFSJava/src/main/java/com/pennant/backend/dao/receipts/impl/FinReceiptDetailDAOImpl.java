@@ -288,7 +288,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			rcd.setTransactionRef(rs.getString("TransactionRef"));
 			rcd.setFavourNumber(rs.getString("FavourNumber"));
 			rcd.setPaymentType(rs.getString("ReceiptMode"));
-			// rcd.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+			rcd.setAmount(rs.getBigDecimal("ReceiptAmount"));
 
 			return rcd;
 		});

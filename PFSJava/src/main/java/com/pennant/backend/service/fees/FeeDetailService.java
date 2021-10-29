@@ -242,7 +242,7 @@ public class FeeDetailService {
 			fee.setRemainingFee(fee.getActualAmount().subtract(fee.getPaidAmount())
 					.subtract(fee.getWaivedAmount().add(fee.getWaivedGST())));
 			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
-				fee.setRemainingFee(fee.getRemainingFee().subtract(fee.getRemTDS()));
+				fee.setRemainingFee(fee.getRemainingFee().subtract(fee.getPaidTDS()));
 			}
 		}
 
