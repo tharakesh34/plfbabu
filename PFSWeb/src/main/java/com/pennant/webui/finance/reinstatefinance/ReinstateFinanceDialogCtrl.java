@@ -1194,6 +1194,7 @@ public class ReinstateFinanceDialogCtrl extends GFCBaseCtrl<ReinstateFinance> {
 			this.finReference.setValue(details.getFinReference());
 			this.finReference.setDescription("");
 			doSetFinanceData(details.getFinID());
+			this.reinstateFinance.setFinID(details.getFinID());
 			getReinstateFinance().setFinPreApprovedRef(details.getFinPreApprovedRef());
 			getReinstateFinance().setFinCategory(details.getFinCategory());
 			// Workflow Details

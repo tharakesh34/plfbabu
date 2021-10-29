@@ -5895,7 +5895,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 	@Override
 	public FinanceMain getRejectFinanceMainByRef(String finReference) {
-		String sql = "Select FinID, FinReference, TaskId, RoleCode From RejectFinanceMain Where  FinReference = ?";
+		String sql = "Select FinID, FinReference, TaskId, RoleCode, RecordType From RejectFinanceMain Where  FinReference = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -5907,6 +5907,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setFinReference(rs.getString("FinReference"));
 				fm.setTaskId(rs.getString("TaskId"));
 				fm.setRoleCode(rs.getString("RoleCode"));
+				fm.setRecordType(rs.getString("RecordType"));
 
 				return fm;
 			}, finReference);
