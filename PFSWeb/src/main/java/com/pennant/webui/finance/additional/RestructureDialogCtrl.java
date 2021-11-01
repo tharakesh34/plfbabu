@@ -76,6 +76,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.RestructureType;
+import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
@@ -124,6 +125,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	protected Listbox listBoxCharges;
 	protected Listheader listheader_RestructureCharge_TdsAmount;
 	protected Button btnRestructure;
+
+	private LovFieldDetail lovFieldDetail = PennantAppUtil.getDefaultRestructure("RSTRS");
 
 	private FinScheduleData finScheduleData;
 	private ScheduleDetailDialogCtrl financeMainDialogCtrl;
@@ -409,8 +412,18 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		}
 		fillComboBox(this.recalculationType, recalType, PennantStaticListUtil.getRecalTypeList(), "");
 
-		fillComboBox(this.restructuringReason, "",
-				PennantAppUtil.getActiveFieldCodeList(CalculationConstants.RESTRUCTURE_REASON), "");
+		String defaultRestructure = "";
+		if (aFinSchData.getRestructureDetail() != null) {
+			defaultRestructure = StringUtils.trimToEmpty(aFinSchData.getRestructureDetail().getRestructureReason());
+		} else {
+			String fldCode = StringUtils.trimToEmpty(lovFieldDetail.getFieldCodeValue());
+			if (defaultRestructure.isEmpty() && !fldCode.isEmpty()) {
+				defaultRestructure = fldCode;
+			}
+		}
+
+		fillComboBox(this.restructuringReason, defaultRestructure, lovFieldDetail.getValueLabelList(), "");
+
 		fillSchDates(this.restructureDate, aFinSchData, fm.getFinStartDate(), null);
 
 		// Restructure Date Allowed as Input Field/selection based on Parameters
@@ -479,8 +492,15 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		fillComboBox(this.restructuringType, rstDetail.getRestructureType(), PennantAppUtil.getRestructureType(), "");
 		fillComboBox(this.recalculationType, rstDetail.getRecalculationType(), PennantStaticListUtil.getRecalTypeList(),
 				"");
-		fillComboBox(this.restructuringReason, rstDetail.getRestructureReason(),
-				PennantAppUtil.getActiveFieldCodeList(CalculationConstants.RESTRUCTURE_REASON), "");
+
+		String defaultRestructure = StringUtils.trimToNull(rstDetail.getRestructureReason());
+		String fldCode = StringUtils.trimToNull(lovFieldDetail.getLovValue());
+		if (defaultRestructure == null && fldCode != null) {
+			defaultRestructure = lovFieldDetail.getFieldCodeValue();
+		}
+
+		fillComboBox(this.restructuringReason, defaultRestructure, lovFieldDetail.getValueLabelList(), "");
+
 		fillSchDates(this.restructureDate, scheduleData, scheduleData.getFinanceMain().getFinStartDate(),
 				rstDetail.getRestructureDate());
 

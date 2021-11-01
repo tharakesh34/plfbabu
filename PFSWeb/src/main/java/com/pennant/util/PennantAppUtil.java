@@ -2402,6 +2402,35 @@ public class PennantAppUtil {
 		return fieldCodeList;
 	}
 
+	public static LovFieldDetail getDefaultRestructure(String fieldCode) {
+		List<ValueLabel> fieldCodeList = new ArrayList<ValueLabel>();
+		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
+
+		JdbcSearchObject<LovFieldDetail> searchObject = new JdbcSearchObject<LovFieldDetail>(LovFieldDetail.class);
+		searchObject.addSort("FieldCodeValue", false);
+		searchObject.addFilter(new Filter("FieldCode", fieldCode, Filter.OP_EQUAL));
+		searchObject.addFilter(new Filter("IsActive", true, Filter.OP_EQUAL));
+		searchObject.addField("FieldCodeValue");
+		searchObject.addField("ValueDesc");
+		searchObject.addField("SystemDefault");
+
+		LovFieldDetail lovFieldDetail = new LovFieldDetail();
+
+		List<LovFieldDetail> appList = pagedListService.getBySearchObject(searchObject);
+		for (int i = 0; i < appList.size(); i++) {
+			ValueLabel codeValue = new ValueLabel(String.valueOf(appList.get(i).getFieldCodeValue()),
+					appList.get(i).getValueDesc());
+			fieldCodeList.add(codeValue);
+
+			if (appList.get(i).isSystemDefault()) {
+				lovFieldDetail.setFieldCodeValue(appList.get(i).getFieldCodeValue());
+			}
+		}
+
+		lovFieldDetail.setValueLabelList(fieldCodeList);
+		return lovFieldDetail;
+	}
+
 	/**
 	 * This method will set the reason code filters for all verifications based on systemparam
 	 * 
