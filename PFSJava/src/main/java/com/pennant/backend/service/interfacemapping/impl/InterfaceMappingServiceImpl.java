@@ -61,6 +61,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.interfacemapping.InterfaceMappingService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennanttech.bajaj.process.collections.model.CollectionConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
 
@@ -143,12 +144,11 @@ public class InterfaceMappingServiceImpl extends GenericService<InterfaceMapping
 	public InterfaceMapping getInterfaceMappingById(long id) {
 		InterfaceMapping interfaceMapping = interfaceMappingDAO.getInterfaceMappingById(id, "_View");
 		interfaceMapping.setMasterMappingList(new ArrayList<>());
-		/*
-		 * if (interfaceMapping != null && StringUtils.equalsIgnoreCase(interfaceMapping.getMappingType(),
-		 * CollectionConstants.INTERFACEMAPPING_MASTER)) {
-		 * interfaceMapping.setMasterMappingList(this.masterMappingDao.getMasterMappingDetails(interfaceMapping.getId(),
-		 * "_View")); }
-		 */
+		if (interfaceMapping != null && StringUtils.equalsIgnoreCase(interfaceMapping.getMappingType(),
+				CollectionConstants.INTERFACEMAPPING_MASTER)) {
+			interfaceMapping.setMasterMappingList(
+					this.masterMappingDao.getMasterMappingDetails(interfaceMapping.getId(), "_View"));
+		}
 
 		return interfaceMapping;
 	}
