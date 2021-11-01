@@ -980,7 +980,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" rch.Fintype, ft.FinTypeDesc, ft.FinCcy, cu.CcyDesc");
 		sql.append(" From FinReceiptHeader rch ");
-		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = rsch.FinType");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = rch.FinType");
 		sql.append(" Inner Join RMTCurrencies cu on cu.CcyCode = ft.FinCcy");
 		sql.append(" Where rch.ReceiptID = ? ");
 

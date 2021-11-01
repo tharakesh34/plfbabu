@@ -1120,14 +1120,16 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 
 		// if we have any Difference between calculated fee amount and actual fee amount
 		if (feeChanges) {
+			List<WrongValueException> wve = new ArrayList<>();
 			final String msg = "Difference between calculated fee amount and actual fee amount. Do you want to proceed?";
 			MessageUtil.confirm(msg, evnt -> {
 				if (Messagebox.ON_NO.equals(evnt.getName())) {
-					ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 					wve.add(new WrongValueException("Difference between calculated fee amount and actual fee amount."));
-					showErrorDetails(wve);
 				}
 			});
+			if (wve.size() > 0) {
+				showErrorDetails(wve);
+			}
 		}
 
 		schdData.setFinFeeDetailList(finFeeDetailList);
@@ -1614,7 +1616,7 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 		return false;
 	}
 
-	private void showErrorDetails(ArrayList<WrongValueException> wve) {
+	private void showErrorDetails(List<WrongValueException> wve) {
 		logger.debug("Entering");
 
 		if (wve.size() > 0) {

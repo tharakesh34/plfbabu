@@ -445,6 +445,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("PSTENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_PostingsEnquiry.value"));
+			this.btnPrint.setVisible(false);
 			map.put("finReference", this.finReference);
 			map.put("enquiry", enquiry);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/PostingsEnquiryDialog.zul";
@@ -452,6 +453,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("RPYENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RepaymentEnuiry.value"));
+			this.btnPrint.setVisible(false);
 			List<FinanceRepayments> financeRepayments = getManualPaymentService().getFinRepayListByFinRef(this.finID,
 					false, "");
 			map.put("financeRepayments", financeRepayments);
@@ -461,6 +463,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("ODCENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_OverdueChargeEnquiry.value"));
+			this.btnPrint.setVisible(false);
 			map.put("finReference", this.finReference);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/OverDueInquiry/OverdueDetailList.zul";
@@ -482,6 +485,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				financeCheckListReference = getCheckListDetailService().getCheckListByFinRef(this.finID, "_View");
 			}
 
+			this.btnPrint.setVisible(false);
 			map.put("FinanceCheckListReference", financeCheckListReference);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CheckListEnquiry.zul";
 
@@ -492,11 +496,13 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					.getFinElgDetailList(this.finID);
 			map.put("eligibilityList", eligibilityDetails);
 			map.put("finAmountformatter", CurrencyUtil.getFormat(enquiry.getFinCcy()));
+			this.btnPrint.setVisible(false);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/EligibilityEnquiryDialog.zul";
 
 		} else if ("SCRENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_ScoringListEnquiry.value"));
+			btnPrint.setVisible(false);
 			List<Object> scoreDetails = getScoringDetailService().getFinScoreDetailList(this.finReference);
 			map.put("scoringList", scoreDetails);
 			map.put("custTypeCtg", enquiry.getCustTypeCtg());
@@ -506,7 +512,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_NotificationLogListEnquiry.value"));
 			List<Notification> notificationDetails = getNotificationDetailsService()
 					.getNotificationLogDetailList(this.finReference, this.module);
-
+			this.btnPrint.setVisible(false);
 			map.put("list", notificationDetails);
 			map.put("finReference", finReference);
 			map.put("module", module);
@@ -584,6 +590,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 			List<FinODDetails> list = pagedListService.getBySearchObject(jdbcSearchObject);
 
+			this.btnPrint.setVisible(false);
 			map.put("approvalEnquiry", "");
 			map.put("tabPaneldialogWindow", tabPanel_dialogWindow);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
@@ -593,6 +600,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} else if ("LTPPENQ".equals(this.enquiryType)) {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_LatepayProfitRecovery"));
+			this.btnPrint.setVisible(false);
 			map.put("finID", this.finID);
 			map.put("finReference", this.finReference);
 			map.put("ccyFormatter", CurrencyUtil.getFormat(this.financeEnquiry.getFinCcy()));
@@ -600,7 +608,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} else if ("COVENQ".equals(this.enquiryType)) {
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_CovenantEnquiry.value"));
-
+			this.btnPrint.setVisible(false);
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/CovenantEnquiryDialog.zul";
 
 			if (ImplementationConstants.COVENANT_MODULE_NEW) {
