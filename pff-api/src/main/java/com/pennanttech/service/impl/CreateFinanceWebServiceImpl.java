@@ -850,10 +850,10 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	public FinanceDetail cancelFinance(FinanceDetail fd) throws ServiceException {
 		logger.debug(Literal.ENTERING);
 
-		String finReference = fd.getFinReference();
 		APIErrorHandlerService.logReference(fd.getFinReference());
 
 		FinScheduleData schdData = fd.getFinScheduleData();
+		String finReference = schdData.getFinReference();
 		String externalReference = schdData.getExternalReference();
 
 		if (StringUtils.isNotBlank(finReference) && StringUtils.isNotBlank(externalReference)) {
