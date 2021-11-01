@@ -583,9 +583,14 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		getFinanceReferenceDetails(fd, userrole, "DDE", "", procEdtEvent, true);
 
-		/* Document Details */
-		fd.setDocumentDetailsList(
-				documentDetailsDAO.getDocumentDetailsByRef(finReference, moduleName, procEdtEvent, "_TView"));
+		// Document Details
+		List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(finReference, moduleName,
+				procEdtEvent, "_TView");
+		if (fd.getDocumentDetailsList() != null && !fd.getDocumentDetailsList().isEmpty()) {
+			fd.getDocumentDetailsList().addAll(documentList);
+		} else {
+			fd.setDocumentDetailsList(documentList);
+		}
 
 		/* Deviations */
 		if (ImplementationConstants.ALLOW_DEVIATIONS) {
