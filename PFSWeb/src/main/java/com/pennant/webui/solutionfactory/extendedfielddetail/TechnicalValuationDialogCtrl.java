@@ -534,6 +534,7 @@ public class TechnicalValuationDialogCtrl extends GFCBaseCtrl<ExtendedFieldDetai
 		map.put("newRecord", true);
 		map.put("maxSeqNo", maxSeqNo);
 		map.put("roleCode", getRole());
+		map.put("module", extendedFieldHeader.getModuleName());
 
 		try {
 			Executions.createComponents(
