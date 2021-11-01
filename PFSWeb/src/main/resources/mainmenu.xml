@@ -69,7 +69,7 @@
 			<menuItem id="menu_Item_Province" zulNavigation="/WEB-INF/pages/SystemMaster/Province/ProvinceList.zul"
 				rightName="menuItem_SystemMaster_Province" />
 			<menuItem id="menu_Item_District" zulNavigation="/WEB-INF/pages/SystemMaster/District/DistrictList.zul"
-				rightname="menuItem_SystemMaster_District"/>
+				rightName="menuItem_SystemMaster_District"/>
 			<menuItem id="menu_Item_City" zulNavigation="/WEB-INF/pages/SystemMaster/City/CityList.zul"
 				rightName="menuItem_SystemMaster_City" />
 			<menuItem id="menu_Item_Locality" zulNavigation="/WEB-INF/pages/masters/Locality/LocalityList.zul"
