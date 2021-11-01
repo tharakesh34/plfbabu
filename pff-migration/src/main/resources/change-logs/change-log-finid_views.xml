@@ -6507,7 +6507,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="CDV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="CDV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'chequeheader_view');
@@ -6515,7 +6515,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="CDV_2" author="Gopal.p">
+	<changeSet id="CDV_2.1" author="Gopal.p">
 		<createView viewName="CHEQUEHEADER_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.HEADERID,
@@ -6535,7 +6535,11 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
 				FROM CHEQUEHEADER_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				UNION ALL
 				SELECT T1.HEADERID,
 					FM.FINID,
@@ -6554,14 +6558,18 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
 				FROM CHEQUEHEADER T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				WHERE NOT EXISTS ( SELECT 1 FROM CHEQUEHEADER_TEMP
 					WHERE CHEQUEHEADER_TEMP.HEADERID = T1.HEADERID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="CDV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="CDV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'chequeheader_view');	
