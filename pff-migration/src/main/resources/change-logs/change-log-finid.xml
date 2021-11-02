@@ -5680,4 +5680,12 @@
 		</sql>	
 	</changeSet>
 	
+	<changeSet id="PSD#182510" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTLIST SET REPORTHEADING = 'WorkFlow Details' WHERE CODE = 'WorkFlowDetails';
+			]]>
+		</sql>	
+	</changeSet>
+	
 </databaseChangeLog>
