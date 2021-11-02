@@ -5673,9 +5673,9 @@
 	<changeSet id="PSD#182454" author="saikiran.n">
 		<sql>
 			<![CDATA[
-				UPDATE SECUSERS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='button_SecurityUserDialog_RM_btnSave';
-				UPDATE SECUSERS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='SecurityUserDialog_RM_reportingto';
-				UPDATE SECUSERS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='button_SecurityUserDialog_RM_btnDelete';
+				UPDATE SECRIGHTS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='button_SecurityUserDialog_RM_btnSave';
+				UPDATE SECRIGHTS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='SecurityUserDialog_RM_reportingto';
+				UPDATE SECRIGHTS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='button_SecurityUserDialog_RM_btnDelete';
 			]]>
 		</sql>	
 	</changeSet>
