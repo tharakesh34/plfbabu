@@ -1185,7 +1185,7 @@ public class FinTypeFeesDialogCtrl extends GFCBaseCtrl<FinTypeFees> {
 		this.ruleCode.setDescription("");
 		this.amount.setValue(BigDecimal.ZERO);
 		this.percentage.setValue(BigDecimal.ZERO);
-		this.calculationOn.setValue("");
+		this.calculationOn.setVisible(true);
 		doSetCalculationTypeProp();
 		// Fees allowed zero when calculation type is Fixed Amount
 		if (StringUtils.equals(PennantConstants.FEE_CALCULATION_TYPE_FIXEDAMOUNT,
