@@ -416,6 +416,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 			logger.debug("Log Entry Details Missing. Cancellation process for Manual Reversal Payment Process");
 
 			detail = new FinLogEntryDetail();
+			detail.setFinID(finID);
 			detail.setFinReference(finReference);
 			detail.setEventAction(FinServiceEvent.EARLYRPY);
 			detail.setSchdlRecal(false);

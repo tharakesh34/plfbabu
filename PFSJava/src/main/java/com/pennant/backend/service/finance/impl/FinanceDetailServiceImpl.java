@@ -2122,6 +2122,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 				// Create log entry for Action for Schedule Modification
 				FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+				entryDetail.setFinID(schdData.getFinID());
 				entryDetail.setFinReference(schdData.getFinReference());
 				entryDetail.setEventAction(fd.getAccountingEventCode());
 				entryDetail.setSchdlRecal(fm.isScheduleRegenerated());
@@ -5501,6 +5502,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 					// Create log entry for Action for Schedule Modification
 					// =======================================
 					FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+					entryDetail.setFinID(schdData.getFinID());
 					entryDetail.setFinReference(schdData.getFinReference());
 					entryDetail.setEventAction(fd.getAccountingEventCode());
 					entryDetail.setSchdlRecal(schdData.getFinanceMain().isScheduleRegenerated());

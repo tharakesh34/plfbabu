@@ -603,6 +603,7 @@ public class LoadFinanceData extends ServiceHelper {
 
 		entryDetail.setReversalCompleted(false);
 		entryDetail.setPostDate(fm.getEventProperties().getAppDate());
+		entryDetail.setFinID(fm.getFinID());
 		entryDetail.setFinReference(fm.getFinReference());
 		entryDetail.setSchdlRecal(fm.isScheduleChange());
 		entryDetail.setEventAction(AccountingEvent.GRACEEND);

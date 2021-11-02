@@ -387,6 +387,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
 
 		entryDetail.setReversalCompleted(false);
+		entryDetail.setFinID(finID);
 		entryDetail.setFinReference(finReference);
 		entryDetail.setPostDate(SysParamUtil.getAppDate());
 		entryDetail.setSchdlRecal(fm.isScheduleRegenerated());

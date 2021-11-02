@@ -397,6 +397,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 				// Create log entry for Action for Schedule Modification
 				FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+				entryDetail.setFinID(finID);
 				entryDetail.setFinReference(finReference);
 				entryDetail.setEventAction(rph.getFinEvent());
 				entryDetail.setSchdlRecal(rph.isSchdRegenerated());
@@ -617,6 +618,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 
 		// Create log entry for Action for Schedule Modification
 		FinLogEntryDetail entryDetail = new FinLogEntryDetail();
+		entryDetail.setFinID(finID);
 		entryDetail.setFinReference(finReference);
 		entryDetail.setEventAction(rph.getFinEvent());
 		entryDetail.setSchdlRecal(rph.isSchdRegenerated());
