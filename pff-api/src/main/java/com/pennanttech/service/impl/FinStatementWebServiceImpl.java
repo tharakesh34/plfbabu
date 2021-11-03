@@ -762,8 +762,10 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		logFields[0] = statementRequest.getCif();
 		APIErrorHandlerService.logKeyFields(logFields);
 
-		long finID = statementRequest.getFinID();
 		String finReference = statementRequest.getFinReference();
+		Long finID = financeMainDAO.getActiveFinID(finReference);
+		statementRequest.setFinID(finID);
+
 		if (StringUtils.isBlank(finReference)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "finReference";

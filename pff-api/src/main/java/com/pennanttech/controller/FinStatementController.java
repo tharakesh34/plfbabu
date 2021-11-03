@@ -695,6 +695,7 @@ public class FinStatementController extends SummaryDetailService {
 
 				closureReport.setCalDate(appDate);
 				closureReport.setValidTill(validTill);
+				closureReport.setFinID(fm.getFinID());
 				closureReport.setFinReference(fm.getFinReference());
 				closureReport.setVanNumber(fm.getVanCode() == null ? "" : fm.getVanCode());
 				closureReport.setFinAmount(PennantApplicationUtil.formateAmount(fm.getFinAmount(), formatter));
