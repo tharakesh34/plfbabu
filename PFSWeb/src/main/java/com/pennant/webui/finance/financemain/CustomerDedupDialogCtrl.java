@@ -299,8 +299,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnExistingCustomer.isVisible());
@@ -484,7 +483,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			lc = new Listcell(customerDedup.getCustShrtName());
 			lc.setParent(item);
 
-			lc = new Listcell(customerDedup.getPhoneNumber());
+			lc = new Listcell(customerDedup.getMobileNumber());
 			if (getCustomerDetails() != null && getCustomerDetails().getCustomerPhoneNumList() != null
 					&& !getCustomerDetails().getCustomerPhoneNumList().isEmpty()) {
 				for (CustomerPhoneNumber customerPhoneNumber : getCustomerDetails().getCustomerPhoneNumList()) {
