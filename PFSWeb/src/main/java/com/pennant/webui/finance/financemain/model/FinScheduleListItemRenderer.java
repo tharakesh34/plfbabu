@@ -1825,8 +1825,14 @@ public class FinScheduleListItemRenderer implements Serializable {
 					dataList.add(getFinanceScheduleDetail().getSchDate());
 					planEMIHDate.addForward("onCheck", this.window, "onCheckPlanEMIHDate", dataList);
 				}
-				if (StringUtils.equals(data.getBpiOrHoliday(), FinanceConstants.FLAG_HOLIDAY)) {
-					planEMIHDate.setChecked(true);
+				List<Date> planEMIHDates = getFinScheduleData().getPlanEMIHDates();
+				if ((FinanceConstants.FLAG_HOLIDAY.equals(data.getBpiOrHoliday())) || planEMIHDates.size() > 0) {
+					for (Date emiDate : planEMIHDates) {
+						if (DateUtil.compare(data.getSchDate(), emiDate) == 0) {
+							planEMIHDate.setChecked(true);
+							break;
+						}
+					}
 				}
 				lc.setStyle("text-align:center;cursor:default;");
 				lc.appendChild(planEMIHDate);
