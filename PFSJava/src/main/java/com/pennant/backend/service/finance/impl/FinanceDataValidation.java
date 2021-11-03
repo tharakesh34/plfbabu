@@ -1365,11 +1365,13 @@ public class FinanceDataValidation {
 			}
 		}
 
-		if (!(oDPenalty && odAllowWaiver) && (odMaxWaiverPerc.compareTo(BigDecimal.ZERO) > 0)) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "ODMaxWaiverPerc";
-			valueParm[1] = "ODAllowWaiver is disabled";
-			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+		if (!(oDPenalty && odAllowWaiver)) {
+			if ((odMaxWaiverPerc.compareTo(BigDecimal.ZERO) > 0)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "ODMaxWaiverPerc";
+				valueParm[1] = "ODAllowWaiver is disabled";
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
+			}
 		} else {
 			if (odMaxWaiverPerc.compareTo(BigDecimal.ZERO) <= 0) {
 				String[] valueParm = new String[2];
@@ -3924,16 +3926,16 @@ public class FinanceDataValidation {
 					return;
 				}
 				if (!fm.isEscrow() && fm.getCustBankId() != null) {
-					String[] valueParm = new String[1];
+					String[] valueParm = new String[4];
 					valueParm[0] = "Escrow";
 					valueParm[1] = "should ";
 					valueParm[2] = "be ";
 					valueParm[3] = "true ";
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 					return;
 				}
 				int count = financeMainDAO.getCustomerBankCountById(fm.getCustBankId(), fm.getCustID());
-				if (count <= 0) {
+				if (fm.isEscrow() && count <= 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "CustBankId";
 					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90405", valueParm)));
@@ -3946,7 +3948,7 @@ public class FinanceDataValidation {
 					valueParm[1] = "is not applicable ";
 					valueParm[2] = "for repay method: ";
 					valueParm[3] = fm.getFinRepayMethod();
-					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+					errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 					return;
 				}
 			}
@@ -3957,7 +3959,7 @@ public class FinanceDataValidation {
 				valueParm[1] = "is ";
 				valueParm[2] = "not ";
 				valueParm[3] = "applicable. ";
-				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("21005", valueParm)));
+				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("30550", valueParm)));
 				return;
 			}
 		}
@@ -4647,7 +4649,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (StringUtils.isBlank(planEMIHMethod)) {
+		if (fm.isPlanEMIHAlw() && StringUtils.isBlank(planEMIHMethod)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = "planEMIHMethod";
 			errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90502", valueParm)));
@@ -4707,7 +4709,7 @@ public class FinanceDataValidation {
 			return;
 		}
 
-		if (!FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)
+		if (StringUtils.isNotEmpty(planEMIHMethod) && !FinanceConstants.PLANEMIHMETHOD_FRQ.equals(planEMIHMethod)
 				&& !FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = FinanceConstants.PLANEMIHMETHOD_FRQ + "," + FinanceConstants.PLANEMIHMETHOD_ADHOC;

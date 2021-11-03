@@ -300,6 +300,7 @@ public class CollateralController extends ExtendedTestClass {
 		String collateralRef = collateralSetup.getCollateralRef();
 		if (StringUtils.isBlank(collateralRef)) {
 			collateralSetup.setCollateralRef(ReferenceUtil.generateCollateralRef());
+			collateralRef = collateralSetup.getCollateralRef();
 		}
 
 		Customer customer = customerDetailsService.getCustomerByCIF(collateralSetup.getDepositorCif());

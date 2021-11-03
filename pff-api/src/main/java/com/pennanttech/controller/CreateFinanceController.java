@@ -3642,8 +3642,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 			returnStatus = prepareAndExecuteAuditHeader(fd, tranType);
 		} else {
-			FinanceMain dbFinanceMain = financeDetailService.getFinanceMain(fd.getFinScheduleData().getFinID(),
-					"_Temp");
+			FinanceMain dbFinanceMain = financeDetailService.getFinanceMain(fm.getFinID(), "_Temp");
 			if (null != dbFinanceMain
 					&& !StringUtils.equals(dbFinanceMain.getRecordStatus(), PennantConstants.RCD_STATUS_REJECTED)) {
 				fm.setFinReference(dbFinanceMain.getFinReference());

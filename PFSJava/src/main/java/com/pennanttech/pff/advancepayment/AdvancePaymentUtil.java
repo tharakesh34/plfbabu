@@ -390,6 +390,7 @@ public class AdvancePaymentUtil {
 
 		// Creating Finance Advance Payment with totals
 		AdvancePaymentDetail advPay = new AdvancePaymentDetail();
+		advPay.setFinID(finMain.getFinID());
 		advPay.setFinReference(finMain.getFinReference());
 		advPay.setAdvInt(advInt);
 		advPay.setAdvIntTds(advIntTds);

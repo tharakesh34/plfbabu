@@ -795,30 +795,30 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 	/**
 	 * Method to reject loan based on data provided by customer
 	 * 
-	 * @param financeDetail {@link FinanceDetail}
+	 * @param fd {@link FinanceDetail}
 	 * @return {@link WSReturnStatus}
 	 */
 	@Override
-	public WSReturnStatus rejectFinance(FinanceDetail financeDetail) throws ServiceException {
+	public WSReturnStatus rejectFinance(FinanceDetail fd) throws ServiceException {
 
 		logger.debug(Literal.ENTERING);
 
 		WSReturnStatus returnStatus = null;
 		try {
-			if (StringUtils.isEmpty(financeDetail.getFinScheduleData().getFinReference())) {
-				List<ErrorDetail> validationErrors = createFinanceController.rejectFinanceValidations(financeDetail);
+			if (StringUtils.isEmpty(fd.getFinScheduleData().getFinReference())) {
+				List<ErrorDetail> validationErrors = createFinanceController.rejectFinanceValidations(fd);
 				if (CollectionUtils.isEmpty(validationErrors)) {
-					financeDetail = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, financeDetail);
+					fd = financeDataDefaulting.defaultFinance(PennantConstants.VLD_CRT_LOAN, fd);
 					List<ErrorDetail> financeDetailErrors = null;
-					if (!CollectionUtils.isEmpty(financeDetail.getFinScheduleData().getErrorDetails())) {
-						financeDetailErrors = financeDetail.getFinScheduleData().getErrorDetails();
+					if (!CollectionUtils.isEmpty(fd.getFinScheduleData().getErrorDetails())) {
+						financeDetailErrors = fd.getFinScheduleData().getErrorDetails();
 						for (ErrorDetail errorDetail : financeDetailErrors) {
-							doEmptyResponseObject(financeDetail);
+							doEmptyResponseObject(fd);
 							returnStatus = APIErrorHandlerService.getFailedStatus(errorDetail.getCode(),
 									errorDetail.getError());
 						}
 					} else {
-						returnStatus = createFinanceController.processRejectFinance(financeDetail, false);
+						returnStatus = createFinanceController.processRejectFinance(fd, false);
 					}
 				} else {
 					for (ErrorDetail errorDetail : validationErrors) {
@@ -827,9 +827,14 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					}
 				}
 			} else {
-				FinanceMain finMain = new FinanceMain();
-				financeDetail.getFinScheduleData().setFinanceMain(finMain);
-				returnStatus = createFinanceController.processRejectFinance(financeDetail, true);
+				FinanceMain fm = new FinanceMain();
+				Long finID = financeMainDAO.getActiveFinID(fd.getFinScheduleData().getFinReference(),
+						TableType.TEMP_TAB);
+
+				fm.setFinID(finID);
+				fd.getFinScheduleData().setFinID(finID);
+				fd.getFinScheduleData().setFinanceMain(fm);
+				returnStatus = createFinanceController.processRejectFinance(fd, true);
 			}
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
@@ -940,7 +945,8 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		try {
 			fd.setFinReference(finReference);
 			if (StringUtils.isNotBlank(finReference)) {
-				Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+				FinanceMain fm = financeMainDAO.getRejectFinanceMainByRef(finReference);
+				Long finID = fm.getFinID();
 				if (finID == null) {
 					fd = new FinanceDetail();
 					String[] valueParm = new String[1];
