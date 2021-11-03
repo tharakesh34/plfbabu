@@ -1384,8 +1384,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.downPayBank.setProperties(true, finFormatter);
 		this.downPaySupl.setProperties(false, finFormatter);
 
-		this.customerBankAcct.setProperties("CustomerBankInfoAccntNum", "AccountNumber", "AccountHolderName", false, 8);
-		this.customerBankAcct.getTextbox().setMaxlength(50);
+		if (this.row_Escrow != null) {
+			this.customerBankAcct.setProperties("CustomerBankInfoAccntNum", "AccountNumber", "AccountHolderName", false,
+					8);
+			this.customerBankAcct.getTextbox().setMaxlength(50);
+		}
 
 		this.firstDroplineDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 		this.accountsOfficer.setProperties("SourceOfficer", "DealerName", "DealerCity", false, 8);
@@ -6396,7 +6399,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 
-		if (this.escrow.isVisible()) {
+		if (this.row_Escrow != null && this.escrow.isVisible()) {
 			if (this.escrow.isChecked() && StringUtils.isEmpty(this.customerBankAcct.getValue())) {
 				this.customerBankAcct.setConstraint(new PTStringValidator(
 						Labels.getLabel("label_FinanceMainDialog_CustomerBankAcctNumber.value"), null, true, true));
@@ -6446,7 +6449,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.dmaCode.setConstraint("");
 		this.connector.setConstraint("");
 		this.salesDepartment.setConstraint("");
-		this.customerBankAcct.setConstraint("");
+		if (this.row_Escrow != null) {
+			this.customerBankAcct.setConstraint("");
+		}
 		this.employeeName.setConstraint("");
 
 		// FinanceMain Details Tab ---> 2. Grace Period Details
@@ -13877,25 +13882,25 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			wve.add(we);
 		}
 
-		try {
-			aFinanceMain.setEscrow(this.escrow.isChecked());
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aFinanceMain.setCustAcctNumber(this.customerBankAcct.getValue());
-			aFinanceMain.setCustAcctHolderName(this.customerBankAcct.getDescription());
-			Object object = this.customerBankAcct.getAttribute("CustBankId");
-			if (object != null) {
-				aFinanceMain.setCustBankId(Long.parseLong(object.toString()));
-			} else {
-				aFinanceMain.setCustBankId(null);
+		if (this.row_Escrow != null) {
+			try {
+				aFinanceMain.setEscrow(this.escrow.isChecked());
+			} catch (WrongValueException we) {
+				wve.add(we);
 			}
-		} catch (WrongValueException we) {
-			wve.add(we);
+			try {
+				aFinanceMain.setCustAcctNumber(this.customerBankAcct.getValue());
+				aFinanceMain.setCustAcctHolderName(this.customerBankAcct.getDescription());
+				Object object = this.customerBankAcct.getAttribute("CustBankId");
+				if (object != null) {
+					aFinanceMain.setCustBankId(Long.parseLong(object.toString()));
+				} else {
+					aFinanceMain.setCustBankId(null);
+				}
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
 		}
-
 		try {
 			if (isOverDraft) {
 				// validate Overdraft Limit with configured finmin and fin max
