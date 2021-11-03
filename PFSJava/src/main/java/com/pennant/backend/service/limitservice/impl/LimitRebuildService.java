@@ -187,6 +187,7 @@ public class LimitRebuildService implements LimitRebuild {
 			}
 		}
 
+		fm.add("finID");
 		fm.add("finReference");
 
 		limitFieldMap.put("fm_", fm);
