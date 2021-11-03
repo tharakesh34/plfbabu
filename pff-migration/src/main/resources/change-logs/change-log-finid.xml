@@ -5688,4 +5688,12 @@
 		</sql>	
 	</changeSet>
 	
+	<changeSet id="198" author="saikiran.n">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDTYPE='LOVSEARCH' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_MiscellaneouspostUploadStsrpt') AND FIELDID=2;
+			]]>
+		</sql>	
+	</changeSet>
+	
 </databaseChangeLog>
