@@ -12,17 +12,17 @@ import com.pennant.backend.model.finance.RescheduleLogHeader;
 
 public interface ReschedulReportGenerationDAO {
 
-	List<FinLogEntryDetail> getFinLogEntryDetailList(String finreference, Date fromDate, Date toDate);
+	List<FinLogEntryDetail> getFinLogEntryDetailList(long finID, Date fromDate, Date toDate);
 
-	RescheduleLog getFinBasicDetails(String finreference);
+	RescheduleLog getFinBasicDetails(long finID);
 
-	List<FinServiceInstruction> getFinServiceInstructions(String finreference);
+	List<FinServiceInstruction> getFinServiceInstructions(long finID);
 
-	List<FinServiceInstruction> getFinServiceInstructions(String finReference, long logkey);
+	List<FinServiceInstruction> getFinServiceInstructions(long finID, long logkey);
 
-	List<FinanceScheduleDetail> getScheduleDetails(String finreference, String type, long logkey);
+	List<FinanceScheduleDetail> getScheduleDetails(long finID, String type, long logkey);
 
-	FinanceProfitDetail getProfitDetail(String finreference);
+	FinanceProfitDetail getProfitDetail(long finID);
 
 	List<RescheduleLogHeader> getFinBasicDetails();
 

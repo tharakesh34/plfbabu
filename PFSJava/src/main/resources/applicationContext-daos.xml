@@ -12497,6 +12497,7 @@
 	<bean name="rescheduleReportGenerationServiceTarget"
 		class="com.pennant.backend.service.reports.impl.RescheduleReportGenerationServiceImpl">
 		<property name="rescheduleReportGenerationDAO" ref="rescheduleReportGenerationDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
 	</bean>
 
 	<bean id="receiptPaymentService" class="com.pennant.app.core.ReceiptPaymentService" parent="serviceHelper">

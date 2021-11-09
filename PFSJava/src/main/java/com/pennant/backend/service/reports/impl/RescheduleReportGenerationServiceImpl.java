@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.reports.ReschedulReportGenerationDAO;
 import com.pennant.backend.model.finance.FinLogEntryDetail;
 import com.pennant.backend.model.finance.FinServiceInstruction;
@@ -22,18 +23,20 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 
 public class RescheduleReportGenerationServiceImpl implements RescheduleReportGenerationService {
 	private static final Logger logger = LogManager.getLogger(RescheduleReportGenerationServiceImpl.class);
 
 	private ReschedulReportGenerationDAO rescheduleReportGenerationDAO;
+	private FinanceMainDAO financeMainDAO;
 
 	@Override
-	public List<RescheduleLog> getReschedulementList(String finreference, Date fromDate, Date toDate) {
+	public List<RescheduleLog> getReschedulementList(long finID, Date fromDate, Date toDate) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinLogEntryDetail> detailList = rescheduleReportGenerationDAO.getFinLogEntryDetailList(finreference,
-				fromDate, toDate);
+		List<FinLogEntryDetail> detailList = rescheduleReportGenerationDAO.getFinLogEntryDetailList(finID, fromDate,
+				toDate);
 
 		if (CollectionUtils.isEmpty(detailList)) {
 			return new ArrayList<>();
@@ -43,6 +46,7 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 
 		for (FinLogEntryDetail finLogEntryDetail : detailList) {
 			RescheduleLog rescheduleLog = new RescheduleLog();
+			rescheduleLog.setFinID(finLogEntryDetail.getFinID());
 			rescheduleLog.setFinReference(finLogEntryDetail.getFinReference());
 			FinServiceInstruction instruction = getServiceInstruction(rescheduleLog, finLogEntryDetail.getLogKey());
 
@@ -52,7 +56,7 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 
 			rescheduleLog.setTransactionDate(finLogEntryDetail.getPostDate());
 			rescheduleLog.setTransactionType(instruction.getFinEvent());
-			getCustBasicDetails(rescheduleLog, finreference);
+			getCustBasicDetails(rescheduleLog, finID);
 			getReschedulementDetails(rescheduleLog, finLogEntryDetail.getLogKey());
 			loglist.add(rescheduleLog);
 		}
@@ -65,8 +69,7 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 		logger.debug(Literal.ENTERING);
 
 		List<FinServiceInstruction> instructions = new ArrayList<>();
-		instructions = this.rescheduleReportGenerationDAO.getFinServiceInstructions(rescheduleLog.getFinReference(),
-				logKey);
+		instructions = this.rescheduleReportGenerationDAO.getFinServiceInstructions(rescheduleLog.getFinID(), logKey);
 
 		if (CollectionUtils.isEmpty(instructions)) {
 			return new FinServiceInstruction();
@@ -79,31 +82,30 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 	private void getReschedulementDetails(RescheduleLog rescheduleLog, long logKey) {
 		logger.debug(Literal.ENTERING);
 
-		String finReference = rescheduleLog.getFinReference();
-		List<FinServiceInstruction> instructions = this.rescheduleReportGenerationDAO
-				.getFinServiceInstructions(finReference);
+		long finID = rescheduleLog.getFinID();
+		List<FinServiceInstruction> instructions = this.rescheduleReportGenerationDAO.getFinServiceInstructions(finID);
 
 		for (FinServiceInstruction instruction : instructions) {
 			if (instruction.getLogKey() == logKey) {
-				List<FinanceScheduleDetail> schdDetails = this.rescheduleReportGenerationDAO
-						.getScheduleDetails(instruction.getFinReference(), "_LOG", instruction.getLogKey());
+				List<FinanceScheduleDetail> schdDetails = this.rescheduleReportGenerationDAO.getScheduleDetails(finID,
+						"_LOG", instruction.getLogKey());
 				getBeforeReschedulementDetails(schdDetails, rescheduleLog, instruction, false);
 				break;
 			}
 		}
 
 		for (FinServiceInstruction instruction : instructions) {
-			if (instruction.getLogKey() > logKey) {
-				List<FinanceScheduleDetail> schdDetails = this.rescheduleReportGenerationDAO
-						.getScheduleDetails(instruction.getFinReference(), "_LOG", instruction.getLogKey());
+			if (instruction.getLogKey() != null && instruction.getLogKey() > logKey) {
+				List<FinanceScheduleDetail> schdDetails = this.rescheduleReportGenerationDAO.getScheduleDetails(finID,
+						"_LOG", instruction.getLogKey());
 				getBeforeReschedulementDetails(schdDetails, rescheduleLog, instruction, true);
 				break;
 			}
 		}
 
 		if (rescheduleLog.getNewEMIAmt().compareTo(BigDecimal.ZERO) == 0 && rescheduleLog.getNewTenure() == 0) {
-			List<FinanceScheduleDetail> schdDetails = this.rescheduleReportGenerationDAO
-					.getScheduleDetails(finReference, "", 0);
+			List<FinanceScheduleDetail> schdDetails = this.rescheduleReportGenerationDAO.getScheduleDetails(finID, "",
+					0);
 			getNewReschedulementDetails(schdDetails, rescheduleLog, logKey);
 		}
 
@@ -129,7 +131,7 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 			}
 
 			int count = 0;
-			FinanceProfitDetail pfd = this.rescheduleReportGenerationDAO.getProfitDetail(instruction.getFinReference());
+			FinanceProfitDetail pfd = this.rescheduleReportGenerationDAO.getProfitDetail(instruction.getFinID());
 
 			for (FinanceScheduleDetail curSchd : schdDetails) {
 				if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
@@ -168,7 +170,7 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 		}
 
 		int count = 0;
-		FinanceProfitDetail pfd = this.rescheduleReportGenerationDAO.getProfitDetail(instruction.getFinReference());
+		FinanceProfitDetail pfd = this.rescheduleReportGenerationDAO.getProfitDetail(instruction.getFinID());
 
 		for (FinanceScheduleDetail curSchd : schdDetails) {
 			if ((curSchd.isRepayOnSchDate() || curSchd.isPftOnSchDate())) {
@@ -203,8 +205,8 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 		}
 	}
 
-	private void getCustBasicDetails(RescheduleLog reschedulementLog, String finreference) {
-		RescheduleLog reschedulement = this.rescheduleReportGenerationDAO.getFinBasicDetails(finreference);
+	private void getCustBasicDetails(RescheduleLog reschedulementLog, long finID) {
+		RescheduleLog reschedulement = this.rescheduleReportGenerationDAO.getFinBasicDetails(finID);
 		reschedulementLog.setFinBranch(reschedulement.getFinBranch());
 		reschedulementLog.setCustName(reschedulement.getCustName());
 	}
@@ -214,15 +216,24 @@ public class RescheduleReportGenerationServiceImpl implements RescheduleReportGe
 		List<RescheduleLogHeader> logHeaderList = rescheduleReportGenerationDAO.getFinBasicDetails();
 
 		for (RescheduleLogHeader reSchdLog : logHeaderList) {
-			String finReference = reSchdLog.getFinReference();
-			reSchdLog.setRescheduleLogList(getReschedulementList(finReference, fromDate, toDate));
+			long finID = reSchdLog.getFinID();
+			reSchdLog.setRescheduleLogList(getReschedulementList(finID, fromDate, toDate));
 		}
 
 		return logHeaderList;
 	}
 
+	@Override
+	public long getFinIDByFinReference(String finReference) {
+		return financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+	}
+
 	public void setRescheduleReportGenerationDAO(ReschedulReportGenerationDAO rescheduleReportGenerationDAO) {
 		this.rescheduleReportGenerationDAO = rescheduleReportGenerationDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

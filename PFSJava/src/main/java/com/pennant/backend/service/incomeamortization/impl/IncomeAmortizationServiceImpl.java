@@ -201,7 +201,9 @@ public class IncomeAmortizationServiceImpl implements IncomeAmortizationService 
 			if (avgPOS.compareTo(BigDecimal.ZERO) > 0) {
 
 				projAccrual = new ProjectedAccrual();
-				projAccrual.setFinReference(finEODEvent.getFinanceMain().getFinReference());
+				FinanceMain fm = finEODEvent.getFinanceMain();
+				projAccrual.setFinID(fm.getFinID());
+				projAccrual.setFinReference(fm.getFinReference());
 				projAccrual.setAccruedOn(finEODEvent.getEventFromDate());
 				projAccrual.setMonthEnd(true);
 				projAccrual.setAvgPOS(avgPOS);

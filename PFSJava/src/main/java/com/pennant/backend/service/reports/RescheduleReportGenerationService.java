@@ -8,7 +8,9 @@ import com.pennant.backend.model.finance.RescheduleLogHeader;
 
 public interface RescheduleReportGenerationService {
 
-	List<RescheduleLog> getReschedulementList(String finreference, Date fromDate, Date toDate);
+	List<RescheduleLog> getReschedulementList(long finID, Date fromDate, Date toDate);
 
 	List<RescheduleLogHeader> getReschedulementList(Date fromDate, Date toDate);
+
+	long getFinIDByFinReference(String finReference);
 }

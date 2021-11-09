@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,17 +25,17 @@ import com.pennanttech.pff.constants.AccountingEvent;
 public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> implements ReschedulReportGenerationDAO {
 	protected static final Logger logger = LogManager.getLogger(RescheduleReportGenerationDAOImpl.class);
 
-	public List<FinLogEntryDetail> getFinLogEntryDetailList(String finReference, Date fromDate, Date toDate) {
+	public List<FinLogEntryDetail> getFinLogEntryDetailList(long finID, Date fromDate, Date toDate) {
 		FinLogEntryRowMapper rowMapper = new FinLogEntryRowMapper();
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinReference, LogKey, EventAction, PostDate From FinLogEntryDetail");
-		sql.append(" Where FinReference = ? and PostDate >= ? and PostDate <= ? and EventAction in (?, ?)");
+		sql.append(" FinID, FinReference, LogKey, EventAction, PostDate From FinLogEntryDetail");
+		sql.append(" Where FinID = ? and PostDate >= ? and PostDate <= ? and EventAction in (?, ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(index++, finID);
 			ps.setDate(index++, fromDate);
 			ps.setDate(index++, toDate);
 			ps.setString(index++, AccountingEvent.SCDCHG);
@@ -52,6 +51,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		public FinLogEntryDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			FinLogEntryDetail fle = new FinLogEntryDetail();
 
+			fle.setFinID(rs.getLong("FinID"));
 			fle.setFinReference(rs.getString("FinReference"));
 			fle.setLogKey(rs.getLong("LogKey"));
 			fle.setPostDate(rs.getDate("PostDate"));
@@ -63,55 +63,53 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 	}
 
 	@Override
-	public RescheduleLog getFinBasicDetails(String finreference) {
+	public RescheduleLog getFinBasicDetails(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" r.Branchdesc, c.CustFName, c.CustShrtName, fm.FinBranch");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on fm.CustId = c.CustId");
 		sql.append(" Inner Join RMTBranches r on fm.FinBranch = r.BranchCode");
-		sql.append(" Where fm.FinReference = ?");
+		sql.append(" Where fm.FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcTemplate.getJdbcOperations().queryForObject(sql.toString(), new Object[] { finreference },
-					new RowMapper<RescheduleLog>() {
-						@Override
-						public RescheduleLog mapRow(ResultSet rs, int rowNum) throws SQLException {
-							RescheduleLog rl = new RescheduleLog();
-							rl.setCustName(rs.getString("CustFName") + "_" + rs.getString("CustShrtName"));
-							rl.setFinBranch(rs.getString("FinBranch") + "_" + rs.getString("Branchdesc"));
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				RescheduleLog rl = new RescheduleLog();
+				rl.setCustName(rs.getString("CustFName") + "_" + rs.getString("CustShrtName"));
+				rl.setFinBranch(rs.getString("FinBranch") + "_" + rs.getString("Branchdesc"));
 
-							return rl;
-						}
-					});
+				return rl;
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in FinanceMain for the specified FinReference >> {}", finreference);
+			//
 		}
 
 		return new RescheduleLog();
 	}
 
 	@Override
-	public List<FinServiceInstruction> getFinServiceInstructions(String finReference) {
+	public List<FinServiceInstruction> getFinServiceInstructions(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
 		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
 		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, LogKey");
 		sql.append(" From FinServiceInstruction");
-		sql.append(" Where FinReference = ?");
+		sql.append(" Where FinID = ?");
+		sql.append(" Order By LogKey");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		List<FinServiceInstruction> list = this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, finID);
 		}, (rs, i) -> {
 			FinServiceInstruction fsi = new FinServiceInstruction();
 
 			fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
 			fsi.setFinEvent(rs.getString("FinEvent"));
+			fsi.setFinID(rs.getLong("FinID"));
 			fsi.setFinReference(rs.getString("FinReference"));
 			fsi.setFromDate(rs.getTimestamp("FromDate"));
 			fsi.setToDate(rs.getTimestamp("ToDate"));
@@ -146,32 +144,30 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 			return fsi;
 		});
-
-		return list.stream().sorted((l1, l2) -> Long.compare(l1.getLogKey(), l2.getLogKey()))
-				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<FinServiceInstruction> getFinServiceInstructions(String finReference, long logkey) {
+	public List<FinServiceInstruction> getFinServiceInstructions(long finID, long logkey) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ServiceSeqId, FinEvent, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
+		sql.append(" ServiceSeqId, FinEvent, FinID, FinReference, FromDate, ToDate, PftDaysBasis, SchdMethod");
 		sql.append(", ActualRate, BaseRate, SplRate, Margin, GrcPeriodEndDate, NextGrcRepayDate, RepayPftFrq");
 		sql.append(", RepayRvwFrq, RepayCpzFrq, GrcPftFrq, GrcRvwFrq, GrcCpzFrq, RepayFrq, NextRepayDate");
 		sql.append(", Amount, RecalType, RecalFromDate, RecalToDate, PftIntact, Terms, ServiceReqNo");
 		sql.append(", Remarks, PftChg, InstructionUID, LinkedTranID, LogKey");
 		sql.append(" from FinServiceInstruction");
-		sql.append(" Where FinReference = ? and LogKey = ?");
+		sql.append(" Where FinID = ? and LogKey = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finReference);
+			ps.setLong(1, finID);
 			ps.setObject(2, logkey);
 		}, (rs, i) -> {
 			FinServiceInstruction fsi = new FinServiceInstruction();
 
 			fsi.setServiceSeqId(rs.getLong("ServiceSeqId"));
 			fsi.setFinEvent(rs.getString("FinEvent"));
+			fsi.setFinID(rs.getLong("FinID"));
 			fsi.setFinReference(rs.getString("FinReference"));
 			fsi.setFromDate(rs.getTimestamp("FromDate"));
 			fsi.setToDate(rs.getTimestamp("ToDate"));
@@ -208,7 +204,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		});
 	}
 
-	public List<FinanceScheduleDetail> getScheduleDetails(String finreference, String type, long logkey) {
+	public List<FinanceScheduleDetail> getScheduleDetails(long finID, String type, long logkey) {
 		StringBuilder sql = new StringBuilder("select");
 		sql.append(" FinID, FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate, RvwOnSchDate");
 		sql.append(", DisbOnSchDate, DownpaymentOnSchDate, BalanceForPftCal, BaseRate, SplRate, MrgRate");
@@ -223,7 +219,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		if (logkey != 0) {
 			sql.append(type);
 		}
-		sql.append(" Where Finreference= ?");
+		sql.append(" Where FinID= ?");
 		if (logkey != 0) {
 			sql.append(" and logkey = ?");
 		}
@@ -231,7 +227,7 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		RowMapper<FinanceScheduleDetail> rowMapper = new ScheduleDetailRowMapper();
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
-			ps.setString(1, finreference);
+			ps.setLong(1, finID);
 			if (logkey != 0) {
 				ps.setLong(2, logkey);
 			}
@@ -302,21 +298,20 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 
 	}
 
-	public FinanceProfitDetail getProfitDetail(String finReference) {
-		String sql = "Select MaturityDate from FinPftDetails Where FinReference = ?";
+	public FinanceProfitDetail getProfitDetail(long finID) {
+		String sql = "Select MaturityDate from FinPftDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql, new Object[] { finReference }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql, (rs, i) -> {
 				FinanceProfitDetail fpd = new FinanceProfitDetail();
 				fpd.setMaturityDate(rs.getDate("MaturityDate"));
 
 				return fpd;
-			});
+			}, finID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in FinPftDetails table for the specified FinReference >> {}",
-					finReference);
+			//
 		}
 
 		return null;
@@ -325,11 +320,11 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 	@Override
 	public List<RescheduleLogHeader> getFinBasicDetails() {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" c.CustFName, c.CustShrtName, fm.FinReference");
+		sql.append(" c.CustFName, c.CustShrtName, fm.FinID, fm.FinReference");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers c on fm.custid = c.custid ");
-		sql.append(" Where fm.FinReference In");
-		sql.append(" (Select distinct FinReference From FinServiceInstruction");
+		sql.append(" Where fm.FinID In");
+		sql.append(" (Select distinct FinID From FinServiceInstruction");
 		sql.append(" Where FinEvent = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -339,10 +334,12 @@ public class RescheduleReportGenerationDAOImpl extends BasicDao<RescheduleLog> i
 		}, (rs, i) -> {
 			RescheduleLogHeader rlh = new RescheduleLogHeader();
 
+			rlh.setFinID(rs.getLong("FinID"));
 			rlh.setFinReference(rs.getString("FinReference"));
 			rlh.setCustName(rs.getString("CustFName") + "_" + rs.getString("CustShrtName"));
 
 			return rlh;
 		});
 	}
+
 }

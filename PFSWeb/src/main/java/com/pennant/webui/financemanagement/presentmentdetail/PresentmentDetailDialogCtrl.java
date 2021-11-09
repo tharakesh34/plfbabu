@@ -76,6 +76,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.financemanagement.PresentmentDetail;
 import com.pennant.backend.model.financemanagement.PresentmentHeader;
@@ -161,6 +162,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 	protected A sampleFileDownload;
 	protected Textbox insertFinReference;
 	protected org.zkoss.zul.Row PresentmentIncludeExcludeChanges;
+	private FinanceMainDAO financeMainDAO;
 
 	List<Long> includeList = new ArrayList<>();
 	List<Long> excludeList = new ArrayList<>();
@@ -930,6 +932,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		List<Long> excludeList = new ArrayList<>();
 
 		for (PresentmentDetail pd : presentmentDetailList) {
+			pd.setFinID(financeMainDAO.getFinIDByFinReference(pd.getFinReference(), "", false));
 			PresentmentDetail presentmentDetail2 = this.presentmentDetailService
 					.getPresentmentDetailByFinRefAndPresID(pd.getFinID(), this.presentmentHeader.getId());
 			if (presentmentDetail2 == null) {
@@ -1061,4 +1064,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		this.pagedListService = pagedListService;
 	}
 
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
 }

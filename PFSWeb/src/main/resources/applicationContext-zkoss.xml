@@ -3795,6 +3795,7 @@
 	<bean id="presentmentDetailDialogCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailDialogCtrl"
 		parent="basisListCtrl" scope="prototype">
 		<property name="presentmentDetailService" ref="presentmentDetailService" />
+		<property name="financeMainDAO" ref="financeMainDAO"/>
 	</bean>
 
 	<bean id="presentmentDetailImportChangesListCtrl" class="com.pennant.webui.financemanagement.presentmentdetail.PresentmentDetailImportChangesListCtrl"

@@ -318,6 +318,7 @@ public class ProjectedAmortizationService {
 					prjAcc = map.get(curMonthEnd);
 				} else {
 					prjAcc = new ProjectedAccrual();
+					prjAcc.setFinID(fm.getFinID());
 					prjAcc.setFinReference(fm.getFinReference());
 					prjAcc.setAccruedOn(curMonthEnd);
 					prjAcc.setMonthEnd(true);
@@ -723,6 +724,7 @@ public class ProjectedAmortizationService {
 		ProjectedAccrual projAcc = new ProjectedAccrual();
 
 		projAcc.setPartialPaidAmt(schd.getPartialPaidAmt());
+		projAcc.setFinID(schd.getFinID());
 		projAcc.setFinReference(schd.getFinReference());
 		projAcc.setAccruedOn(schd.getSchDate());
 		projAcc.setMonthEnd(false);
@@ -1330,6 +1332,7 @@ public class ProjectedAmortizationService {
 					prjAcc = map.get(curMonthEnd);
 				} else {
 					prjAcc = new ProjectedAccrual();
+					prjAcc.setFinID(fm.getFinID());
 					prjAcc.setFinReference(fm.getFinReference());
 					prjAcc.setAccruedOn(curMonthEnd);
 					prjAcc.setMonthEnd(true);

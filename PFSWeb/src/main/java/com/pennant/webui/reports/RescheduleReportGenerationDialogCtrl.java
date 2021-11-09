@@ -188,6 +188,7 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 		Date endDate = null;
 		// FinReference
 		try {
+
 			finReference = this.finReference.getValue();
 		} catch (WrongValueException we) {
 			wve.add(we);
@@ -212,8 +213,9 @@ public class RescheduleReportGenerationDialogCtrl extends GFCBaseCtrl<Reschedule
 			java.sql.Date fromDate = new java.sql.Date(startDate.getTime());
 			java.sql.Date toDate = new java.sql.Date(endDate.getTime());
 			if (StringUtils.isNotBlank(finReference)) {
+				long finID = this.rescheduleReportGenerationService.getFinIDByFinReference(finReference);
 				setReschedulementList(
-						this.rescheduleReportGenerationService.getReschedulementList(finReference, fromDate, toDate));
+						this.rescheduleReportGenerationService.getReschedulementList(finID, fromDate, toDate));
 			} else {
 				setRescheduleLogHeaderList(
 						this.rescheduleReportGenerationService.getReschedulementList(fromDate, toDate));

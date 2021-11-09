@@ -258,14 +258,13 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 		MapSqlParameterSource paramMap = new MapSqlParameterSource();
 
 		StringBuilder sql = new StringBuilder();
-		sql.append(" Select AE.FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate,");
-		sql.append(
-				" RvwOnSchDate, BalanceForPftCal, CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd, RepayAmount,");
-		sql.append(" DisbAmount, DownPaymentAmount, CpzAmount, FSD.FeeChargeAmt, ");
+		sql.append(" Select FM.FINID, FM.FinReference, SchDate, SchSeq, PftOnSchDate, CpzOnSchDate, RepayOnSchDate,");
+		sql.append(" RvwOnSchDate, BalanceForPftCal, CalculatedRate, NoOfDays, ProfitCalc, ProfitSchd, PrincipalSchd");
+		sql.append(", RepayAmount, DisbAmount, DownPaymentAmount, CpzAmount, FSD.FeeChargeAmt, ");
 		sql.append(" SchdPriPaid, SchdPftPaid, SchPftPaid, SchPriPaid, Specifier, AE.FinStartDate,");
 		sql.append(" AE.MaturityDate, CcyMinorCcyUnits, CcyEditField, AE.EmiAdv, AE.ClosingStatus, AE.FinType,");
 		sql.append(" CalRoundingMode,  RoundingTarget, AE.EntityCode");
-		sql.append(" From ALM_EXTRACT AE  ");
+		sql.append(" From ALM_EXTRACT AE");
 		sql.append(" INNER JOIN FINANCEMAIN FM ON FM.FinReference = AE.FinReference");
 		sql.append(" LEFT JOIN FinScheduleDetails FSD ON FSD.FinReference = AE.FinReference");
 		sql.append(" where AE.SEQID between :FromSeq and :ToSeq order by SchDate asc");
@@ -318,6 +317,7 @@ public class ALMExtarct extends DatabaseDataEngine implements ALMProcess {
 					// To handle Overdraft loans, since Overdraft loans may not have schedules
 					if (rs.getDate("SchDate") != null) {
 						ProjectedAccrual schedule = new ProjectedAccrual();
+						schedule.setFinID(rs.getLong("FinID"));
 						schedule.setFinReference(finReference);
 						schedule.setSchdDate(rs.getDate("SchDate"));
 						schedule.setSchSeq(rs.getInt("SchSeq"));

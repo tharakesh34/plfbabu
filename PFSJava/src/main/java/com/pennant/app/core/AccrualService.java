@@ -866,6 +866,7 @@ public class AccrualService extends ServiceHelper {
 			cummAccAmt = prvMthAmz;
 
 			ProjectedAccrual prjAcc = new ProjectedAccrual();
+			prjAcc.setFinID(fm.getFinID());
 			prjAcc.setFinReference(fm.getFinReference());
 			prjAcc.setAccruedOn(prvMonthEnd);
 			prjAcc.setCumulativeAccrued(prvMthAmz);
@@ -915,6 +916,7 @@ public class AccrualService extends ServiceHelper {
 					prjAcc = map.get(curMonthEnd);
 				} else {
 					prjAcc = new ProjectedAccrual();
+					prjAcc.setFinID(fm.getFinID());
 					prjAcc.setFinReference(fm.getFinReference());
 					prjAcc.setAccruedOn(curMonthEnd);
 				}

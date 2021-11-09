@@ -6,6 +6,7 @@ import java.util.List;
 public class RescheduleLogHeader {
 
 	private String custName;
+	private long finID;
 	private String finReference;
 	private List<RescheduleLog> rescheduleLogList = new ArrayList<>();
 
@@ -18,6 +19,14 @@ public class RescheduleLogHeader {
 
 	public void setCustName(String custName) {
 		this.custName = custName;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {

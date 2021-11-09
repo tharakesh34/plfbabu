@@ -11,6 +11,7 @@ public class RescheduleLog implements Serializable {
 	private String finBranch;
 	private Date transactionDate;
 	private String transactionType;
+	private long finID;
 	private String finReference;
 	private int oldTenure;
 	private int newTenure;
@@ -35,6 +36,14 @@ public class RescheduleLog implements Serializable {
 
 	public void setTransactionType(String transactionType) {
 		this.transactionType = transactionType;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 
 	public String getFinReference() {
