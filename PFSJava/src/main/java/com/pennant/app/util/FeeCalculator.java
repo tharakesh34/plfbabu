@@ -778,9 +778,9 @@ public class FeeCalculator {
 		String feeTypeCode = fd.getFeeTypeCode();
 
 		setValue(dataMap, feeTypeCode, "_C", fd.getActualAmount());
-		setValue(dataMap, feeTypeCode, "_P", fd.getPaidAmountOriginal());
+		setValue(dataMap, feeTypeCode, "_P", fd.getPaidAmount());
 		setValue(dataMap, feeTypeCode, "_TDS_P", fd.getPaidTDS());
-		setValue(dataMap, feeTypeCode, "_N", fd.getNetAmountOriginal());
+		setValue(dataMap, feeTypeCode, "_N", fd.getNetAmount());
 		setValue(dataMap, feeTypeCode, "_TDS_N", fd.getNetTDS());
 
 		setValue(dataMap, "EX_".concat(feeTypeCode), "_P", BigDecimal.ZERO);

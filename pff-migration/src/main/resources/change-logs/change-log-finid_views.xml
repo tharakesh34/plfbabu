@@ -13943,7 +13943,7 @@
 	</changeSet>
 
 
-	<changeSet id="ST#2367.51_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.51.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'cibil_customer_loans_view');
@@ -13951,7 +13951,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.51" author="Gopal.p">
+	<changeSet id="ST#2367.51.1" author="Gopal.p">
 		<createView viewName="CIBIL_CUSTOMER_LOANS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT AT.SEGMENT_TYPE,
@@ -13984,7 +13984,8 @@
 					CU.OWNERSHIP,
 					FM.NUMBEROFTERMS,
 					FM.FIRSTREPAY,
-					${add.schema}udf_convertcurrency(CI.CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME
+					${add.schema}udf_convertcurrency(CI.CUSTINCOME, FM.FINCCY, 'INR') CUSTINCOME,
+					FM.CLOSEDDATE
 				FROM FINANCEMAIN FM
 			    JOIN CIBIL_CUSTOMER_EXTRACT CU ON CU.FINID = FM.FINID
 			    JOIN FINPFTDETAILS PD ON PD.FINID = FM.FINID
@@ -13998,7 +13999,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.51_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.51.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'cibil_customer_loans_view');
