@@ -4729,6 +4729,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode(PennantConstants.FEETYPE_BOUNCE);
 			bounce.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+			bounce.setFinID(fm.getFinID());
 			bounce.setFinReference(header.getReference());
 			bounce.setFeeTypeID(feeType.getFeeTypeID());
 			bounce.setSequence(0);

@@ -75,6 +75,7 @@ import com.pennant.backend.model.finance.financetaxdetail.GSTINInfo;
 import com.pennant.backend.model.systemmasters.City;
 import com.pennant.backend.model.systemmasters.Country;
 import com.pennant.backend.model.systemmasters.Province;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.FinanceTaxDetailService;
 import com.pennant.backend.service.gstn.validation.GSTNValidationService;
 import com.pennant.backend.util.PennantConstants;
@@ -161,6 +162,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	private GSTNValidationService gstnValidationService;
 	private CustomerAddresDAO customerAddresDAO;
 	private long custID;
+	private FinanceMainService financeMainService;
 
 	/**
 	 * default constructor.<br>
@@ -1250,7 +1252,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		// Finance Reference
 		try {
 			long finid = ComponentUtil.getFinID(this.finReference);
-			String finrefrence= this.finReference.getValue();
+			if (finid == 0) {
+				finid = financeMainService.getFinID(this.finReference.getValue());
+			}
+			String finrefrence = this.finReference.getValue();
 			aFinanceTaxDetail.setFinID(finid);
 			aFinanceTaxDetail.setFinReference(finrefrence);
 			this.financeTaxDetail.setFinID(finid);
@@ -2198,6 +2203,14 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 
 	public void setCustomerAddresDAO(CustomerAddresDAO customerAddresDAO) {
 		this.customerAddresDAO = customerAddresDAO;
+	}
+
+	public FinanceMainService getFinanceMainService() {
+		return financeMainService;
+	}
+
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
 	}
 
 }
