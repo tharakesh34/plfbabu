@@ -589,6 +589,11 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	@Override
 	public long extractCustomers(String segmentType, String entity) throws Exception {
 		StringBuilder sql = new StringBuilder("INSERT INTO CIBIL_CUSTOMER_EXTRACT");
+		sql.append("(CustID, FinID, FinReference, OwnerShip, LatestRpyDate, Segment_type");
+		if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
+			sql.append(", Entity");
+		}
+		sql.append(")");
 		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
 			sql.append(" Select CustID, FinID, FinReference, OwnerShip, LatestRpyDate, ?");
 			if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {

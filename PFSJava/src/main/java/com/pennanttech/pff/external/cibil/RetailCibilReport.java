@@ -330,7 +330,7 @@ public class RetailCibilReport extends BasicDao<Object> {
 		parameterSource.addValue("segment_type", PennantConstants.PFF_CUSTCTG_INDIV);
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT CUSTID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
+		sql.append("SELECT CUSTID, FINID, FINREFERENCE, OWNERSHIP From CIBIL_CUSTOMER_EXTRACT");
 		sql.append(" where segment_type = :segment_type");
 
 		if (ImplementationConstants.CIBIL_BASED_ON_ENTITY) {
