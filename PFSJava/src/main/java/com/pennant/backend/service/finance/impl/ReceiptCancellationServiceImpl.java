@@ -723,9 +723,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		FinReceiptData repayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = repayData.getFinanceDetail();
 
-		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
-
 		if (financeDetail != null) {
+			String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
 			if (financeDetail.getExtendedFieldRender() != null) {
 				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
 				ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
