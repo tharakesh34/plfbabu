@@ -725,17 +725,19 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		String usrLanguage = repayData.getReceiptHeader().getUserDetails().getLanguage();
 
-		if (financeDetail.getExtendedFieldRender() != null) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
-			ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
-			details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
-			auditDetails.addAll(details);
-		}
+		if (financeDetail != null) {
+			if (financeDetail.getExtendedFieldRender() != null) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldDetails");
+				ExtendedFieldHeader extHeader = financeDetail.getExtendedFieldHeader();
+				details = extendedFieldDetailsService.validateExtendedDdetails(extHeader, details, method, usrLanguage);
+				auditDetails.addAll(details);
+			}
 
-		if (financeDetail.getExtendedFieldExtension() != null) {
-			List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldExtension");
-			details = extendedFieldExtensionService.vaildateDetails(details, usrLanguage);
-			auditDetails.addAll(details);
+			if (financeDetail.getExtendedFieldExtension() != null) {
+				List<AuditDetail> details = financeDetail.getAuditDetailMap().get("ExtendedFieldExtension");
+				details = extendedFieldExtensionService.vaildateDetails(details, usrLanguage);
+				auditDetails.addAll(details);
+			}
 		}
 
 		for (int i = 0; i < auditDetails.size(); i++) {
@@ -2986,24 +2988,26 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		}
 
 		// Extended Field Details
-		if (financeDetail.getExtendedFieldRender() != null) {
-			auditDetailMap.put("ExtendedFieldDetails",
-					extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
-							financeDetail.getExtendedFieldRender(), auditTranType, method,
-							ExtendedFieldConstants.MODULE_LOAN));
-			auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
-		}
+		if (financeDetail != null) {
+			if (financeDetail.getExtendedFieldRender() != null) {
+				auditDetailMap.put("ExtendedFieldDetails",
+						extendedFieldDetailsService.setExtendedFieldsAuditData(financeDetail.getExtendedFieldHeader(),
+								financeDetail.getExtendedFieldRender(), auditTranType, method,
+								ExtendedFieldConstants.MODULE_LOAN));
+				auditDetails.addAll(auditDetailMap.get("ExtendedFieldDetails"));
+			}
 
-		ExtendedFieldExtension extendedFieldExtension = financeDetail.getExtendedFieldExtension();
-		if (extendedFieldExtension != null) {
-			auditDetailMap.put("ExtendedFieldExtension", extendedFieldExtensionService
-					.setExtendedFieldExtAuditData(extendedFieldExtension, auditTranType, method));
+			ExtendedFieldExtension extendedFieldExtension = financeDetail.getExtendedFieldExtension();
+			if (extendedFieldExtension != null) {
+				auditDetailMap.put("ExtendedFieldExtension", extendedFieldExtensionService
+						.setExtendedFieldExtAuditData(extendedFieldExtension, auditTranType, method));
+				financeDetail.setAuditDetailMap(auditDetailMap);
+				auditDetails.addAll(auditDetailMap.get("ExtendedFieldExtension"));
+			}
 			financeDetail.setAuditDetailMap(auditDetailMap);
-			auditDetails.addAll(auditDetailMap.get("ExtendedFieldExtension"));
+			repayData.setFinanceDetail(financeDetail);
 		}
 
-		financeDetail.setAuditDetailMap(auditDetailMap);
-		repayData.setFinanceDetail(financeDetail);
 		auditHeader.getAuditDetail().setModelData(repayData);
 		auditHeader.setAuditDetails(auditDetails);
 		logger.debug("Leaving ");
