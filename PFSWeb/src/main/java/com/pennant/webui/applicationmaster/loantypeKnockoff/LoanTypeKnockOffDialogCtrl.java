@@ -397,8 +397,14 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 		Listitem listitem = (Listitem) event.getData();
 
 		FinTypeKnockOff knockOffMapping = (FinTypeKnockOff) listitem.getAttribute("knockOffCodeMapping");
-		knockOffMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
-		knockOffMapping.setNewRecord(true);
+
+		if (PennantConstants.RECORD_TYPE_NEW.equals(knockOffMapping.getRecordType())) {
+			knockOffMapping.setRecordType(PennantConstants.RECORD_TYPE_CAN);
+		} else {
+			knockOffMapping.setRecordType(PennantConstants.RECORD_TYPE_DEL);
+			knockOffMapping.setNewRecord(true);
+		}
+
 		deleteFinTypeKnockOffList.add(knockOffMapping);
 
 		autoKnockOffRows.removeChild(listitem);
@@ -526,6 +532,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 				knockOffCodes.add(object.getCode());
 
 				knockOffMapping.setKnockOffId(object.getId());
+				knockOffMapping.setKnockOffCode(object.getCode());
 			} catch (WrongValueException we) {
 				wve.add(we);
 			}
@@ -675,10 +682,6 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 			this.loanType
 					.setConstraint(new PTStringValidator(Labels.getLabel("label_LoanTypeKnockOffDialog_LoanType.value"),
 							PennantRegularExpressions.REGEX_UPP_BOX_ALPHANUM, true));
-		}
-
-		if (autoKnockOffRows.getItems().isEmpty()) {
-			MessageUtil.showMessage("Please add atleast one knock off details.");
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -845,6 +848,12 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 		boolean isNew = false;
 
 		doSetValidation();
+
+		if (autoKnockOffRows.getItems().isEmpty()) {
+			MessageUtil.showMessage("Please add atleast one knock off details.");
+			return;
+		}
+
 		doWriteComponentsToBean(knockOff);
 
 		isNew = knockOff.isNewRecord();

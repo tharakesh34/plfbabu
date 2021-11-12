@@ -243,7 +243,7 @@ public class LoanTypeKnockOffServiceImpl extends GenericService<FinTypeKnockOff>
 		String[] errParm = new String[1];
 		String[] valueParm = new String[1];
 		valueParm[0] = loantypeKnockOffmapping.getKnockOffCode();
-		errParm[0] = PennantJavaUtil.getLabel("label_FinReference") + ":" + valueParm[0];
+		errParm[0] = PennantJavaUtil.getLabel("label_KnockOffCode") + ":" + valueParm[0];
 
 		if (loantypeKnockOffmapping.isNewRecord()) {
 			if (!loantypeKnockOffmapping.isWorkflow()) {

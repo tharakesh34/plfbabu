@@ -757,7 +757,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 		this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
 
-			ps.setLong(index++, requestId);
+			ps.setLong(index++, respmandate.getMandateID());
 
 			if ("Y".equals(respmandate.getStatus())) {
 				ps.setString(index++, "REJECTED");

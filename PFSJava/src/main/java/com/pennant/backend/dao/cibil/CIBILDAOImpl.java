@@ -257,12 +257,12 @@ public class CIBILDAOImpl extends BasicDao<Object> implements CIBILDAO {
 	@Override
 	public FinanceEnquiry getFinanceSummary(long customerId, long finID, String segmentType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinType, FinID, FinReference, FinStartDate, FinApprovedDate, LatestRpyDate");
+		sql.append(" FinType, cs.FinID, cs.FinReference, FinStartDate, FinApprovedDate, cs.LatestRpyDate");
 		sql.append(", RepayFrq, FinAssetValue, Future_Schedule_Prin, Instalment_Due, Instalment_Paid");
 		sql.append(", Bounce_Due, Bounce_Paid, Late_Payment_Penalty_Due, Late_Payment_Penalty_Paid");
 		sql.append(", Total_Pri_Schd, Total_Pri_Paid, Total_Pft_Schd, Total_Pft_Paid");
 		sql.append(", Excess_Amount, Excess_Amt_Paid, CurOdDays, ClosingStatus, ClosedDate");
-		sql.append(", OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate, FirstRepay");
+		sql.append(", cs.OwnerShip, NumberOfTerms, CustIncome, MaturityDate, CurReducingRate, FirstRepay");
 		sql.append(" From Cibil_Customer_Loans_View cs");
 		sql.append(" Where cs.FinID = ? and CustID = ? and cs.Segment_Type = ?");
 

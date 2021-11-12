@@ -45,7 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1087,30 +1087,25 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		// ============================================
 		FeeType penalityFeeType = null;
 		long linkedTranID = postReversalTransactions(rch, appDate);
-		long postingId = postingsDAO.getPostingId();
-
-		if (!ImplementationConstants.PRESENTMENT_STAGE_ACCOUNTING_REQ) {
-			List<ReturnDataSet> returnDataSets = null;
-			returnDataSets = postingsPreparationUtil.postReversalsByPostRef(String.valueOf(receiptID), postingId,
-					appDate);
-			if (CollectionUtils.isNotEmpty(returnDataSets)) {
-				linkedTranID = returnDataSets.get(0).getLinkedTranId();
-			}
-		}
-
-		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
+		String receiptMode = StringUtils.trimToEmpty(rch.getReceiptMode());
+		if (CollectionUtils.isNotEmpty(rch.getReceiptDetails())) {
 			for (FinReceiptDetail detail : rch.getReceiptDetails()) {
-				if (StringUtils.equals(detail.getPaymentType(), rch.getReceiptMode())
-						&& !StringUtils.equals(rch.getReceiptMode(), RepayConstants.RECEIPTMODE_EXCESS)) {
+				String paymentType = detail.getPaymentType();
+
+				if (receiptMode.equals(paymentType) && !RepayConstants.RECEIPTMODE_EXCESS.equals(receiptMode)) {
 					String receiptNumber = detail.getPaymentRef();
-					if (StringUtils.isNotBlank(receiptNumber)) {
-						List<Long> tranIdList = finStageAccountingLogDAO.getTranIdListByReceipt(receiptNumber);
-						if (tranIdList != null && !tranIdList.isEmpty()) {
-							for (Long stageLinkTranID : tranIdList) {
-								postingsPreparationUtil.postReversalsByLinkedTranID(stageLinkTranID);
-							}
-							finStageAccountingLogDAO.deleteByReceiptNo(receiptNumber);
+
+					if (StringUtils.isBlank(receiptNumber)) {
+						continue;
+					}
+					List<Long> tranIdList = finStageAccountingLogDAO.getTranIdListByReceipt(receiptNumber);
+
+					if (CollectionUtils.isNotEmpty(tranIdList)) {
+						for (Long stageLinkTranID : tranIdList) {
+							postingsPreparationUtil.postReversalsByLinkedTranID(stageLinkTranID);
 						}
+
+						finStageAccountingLogDAO.deleteByReceiptNo(receiptNumber);
 					}
 				}
 			}
@@ -1960,7 +1955,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 			// Accounting Execution Process for Deposit Reversal for CASH
 			if (ImplementationConstants.DEPOSIT_PROC_REQ) {
-				if (RepayConstants.RECEIPTMODE_CASH.equals(rch.getReceiptMode())) {
+				if (RepayConstants.RECEIPTMODE_CASH.equals(receiptMode)) {
 
 					DepositMovements movement = depositDetailsDAO.getDepositMovementsByReceiptId(receiptID, "_AView");
 					if (movement != null) {
@@ -1994,8 +1989,8 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 				// Accounting Execution Process for Deposit Reversal for Cheque
 				// / DD
-				if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rch.getReceiptMode())
-						|| RepayConstants.RECEIPTMODE_DD.equals(rch.getReceiptMode())) {
+				if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
+						|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode)) {
 
 					// Verify Cheque or DD Details exists in Deposited Cheques
 					DepositCheques depositCheque = depositChequesDAO.getDepositChequeByReceiptID(receiptID);

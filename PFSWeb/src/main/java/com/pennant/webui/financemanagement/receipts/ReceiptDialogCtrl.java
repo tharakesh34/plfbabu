@@ -3303,9 +3303,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		setReceiptModeStatus(rch);
 
-		if (rch.getReceiptMode().equals(RepayConstants.RECEIPTMODE_CASH)) {
-			this.panNumber.setValue(rch.getPanNumber());
-		}
+		this.panNumber.setValue(rch.getPanNumber());
 
 		resetModeStatus(rch.getReceiptModeStatus());
 
@@ -5223,7 +5221,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
 								.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
 						if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-							excludeFees = new HashSet<String>();
+							excludeFees = new HashSet<>();
 							for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
 								excludeFees.add(excludeFee.getFeeTypeCode());
 							}

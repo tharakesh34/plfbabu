@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ExtendedFieldHeaderDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  28-12-2011    														*
- *                                                                  						*
- * Modified Date    :  28-12-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ExtendedFieldHeaderDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 28-12-2011 * *
+ * Modified Date : 28-12-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 28-12-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 28-12-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 
 package com.pennant.backend.dao.staticparms.impl;
 
@@ -87,10 +69,8 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	/**
 	 * Fetch the Record Extended Field Header details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return ExtendedFieldHeader
 	 */
 	@Override
@@ -201,10 +181,8 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 * This method Deletes the Record from the ExtendedFieldHeader or ExtendedFieldHeader_Temp. if Record not deleted
 	 * then throws DataAccessException with error 41003. delete Extended Field Header by key ModuleId
 	 * 
-	 * @param Extended
-	 *            Field Header (extendedFieldHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Header (extendedFieldHeader)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -238,21 +216,16 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 *
 	 * save Extended Field Header
 	 * 
-	 * @param Extended
-	 *            Field Header (extendedFieldHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Header (extendedFieldHeader)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
 	 */
 	@Override
 	public long save(ExtendedFieldHeader extendedFieldHeader, String type) {
-		logger.debug("Entering");
-
 		if (extendedFieldHeader.getId() == Long.MIN_VALUE) {
 			extendedFieldHeader.setId(getNextValue("SeqExtendedFieldHeader"));
-			logger.debug("get NextValue:" + extendedFieldHeader.getId());
 		}
 
 		StringBuilder insertSql = new StringBuilder("Insert Into ExtendedFieldHeader");
@@ -268,9 +241,13 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 
 		logger.debug("insertSql: " + insertSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(extendedFieldHeader);
-		this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		try {
+			this.jdbcTemplate.update(insertSql.toString(), beanParameters);
+		} catch (Exception e) {
+			logger.debug(Literal.EXCEPTION, e);
+			throw e;
+		}
 
-		logger.debug("Leaving");
 		return extendedFieldHeader.getId();
 	}
 
@@ -279,10 +256,8 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 	 * updated then throws DataAccessException with error 41004. update Extended Field Header by key ModuleId and
 	 * Version
 	 * 
-	 * @param Extended
-	 *            Field Header (extendedFieldHeader)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Extended Field Header (extendedFieldHeader)
+	 * @param type     (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 

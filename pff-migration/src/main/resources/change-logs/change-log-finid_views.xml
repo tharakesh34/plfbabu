@@ -4878,7 +4878,7 @@
 
 	<!-- (FAPV) :: Fin Advance Payment Views handle in single place start -->
 
-	<changeSet id="FAPV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finadvancepayments_view');
@@ -4886,7 +4886,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FAPV_1" author="Gopal.p">
+	<changeSet id="FAPV_1.1" author="Gopal.p">
 		<createView viewName="FINADVANCEPAYMENTS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -4953,7 +4953,11 @@
 					T1.VASREFERENCE,
 					T1.LEI
 				FROM FINADVANCEPAYMENTS_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
 				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
@@ -5024,7 +5028,11 @@
 					T1.VASREFERENCE,
 					T1.LEI
 				FROM FINADVANCEPAYMENTS T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				LEFT JOIN BANKBRANCHES T3 ON T1.BANKBRANCHID = T3.BANKBRANCHID
 				LEFT JOIN BMTBANKDETAIL T31 ON T31.BANKCODE = T3.BANKCODE
 				LEFT JOIN BMTBANKDETAIL T4 ON T1.BANKCODE = T4.BANKCODE
@@ -5036,7 +5044,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FAPV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FAPV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finadvancepayments_view');	
