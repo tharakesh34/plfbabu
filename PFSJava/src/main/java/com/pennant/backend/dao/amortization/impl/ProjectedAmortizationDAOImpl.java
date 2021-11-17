@@ -943,7 +943,7 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 
 		logger.debug(Literal.SQL + sql);
 
-		return this.jdbcOperations.queryForObject(sql, Long.class, EodConstants.PROGRESS_WAIT);
+		return this.jdbcOperations.queryForObject(sql, Long.class, String.valueOf(EodConstants.PROGRESS_WAIT));
 	}
 
 	@Override

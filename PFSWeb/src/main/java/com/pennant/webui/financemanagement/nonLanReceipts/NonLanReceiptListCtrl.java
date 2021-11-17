@@ -62,7 +62,6 @@ import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
-import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
 public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
@@ -170,8 +169,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_NonLanReceiptList(Event event) {
 		logger.debug("Entering " + event.toString());
@@ -342,8 +340,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ReceiptList_ReceiptSearchDialog(Event event) {
 		search();
@@ -370,8 +367,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doRefresh();
@@ -383,7 +379,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		this.listHeader_CheckBox_Comp.setChecked(false);
 		doReset();
 		search();
-		//doSearch(true);
+		// doSearch(true);
 	}
 
 	public void doSearch(boolean isFilterSearch) {
@@ -397,8 +393,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -486,7 +481,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getReceiptMode());
 			lc.setParent(item);
 
-			//TODO CH : Receipt Purpose in Filter and List are different. To be corrected 
+			// TODO CH : Receipt Purpose in Filter and List are different. To be corrected
 			lc = new Listcell(finReceiptHeader.getReceiptSource());
 			lc.setParent(item);
 
@@ -586,6 +581,11 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		FinReceiptHeader finReceiptHeader = nonLanReceiptService
 				.getNonLanFinReceiptHeaderById(finRcptHeader.getReceiptID(), false, "_View");
 
+		if (finReceiptHeader == null) {
+			MessageUtil.showError("Record is not found with the receipt id " + finRcptHeader.getReceiptID());
+			return;
+		}
+
 		if (enqiryModule) {
 			FinReceiptData finReceiptData = new FinReceiptData();
 			finReceiptData.setReceiptHeader(finReceiptHeader);
@@ -621,20 +621,6 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		String whereCond = " External Reference='" + finReceiptHeader.getReference() + "'";
 		FinReceiptData finReceiptData = null;
 		if (isWorkFlowEnabled()) {
-			String eventCode = "";
-
-			if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(), FinServiceEvent.SCHDRPY)) {
-				eventCode = AccountingEvent.REPAY;
-
-			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinServiceEvent.EARLYRPY)) {
-				eventCode = AccountingEvent.EARLYPAY;
-
-			} else if (StringUtils.equals(finReceiptHeader.getReceiptPurpose(),
-					FinServiceEvent.EARLYSETTLE)) {
-				eventCode = AccountingEvent.EARLYSTL;
-
-			}
 
 			finReceiptData = new FinReceiptData();
 			finReceiptData.setReceiptHeader(finReceiptHeader);
@@ -760,8 +746,13 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		Set<Long> recId = recHeaderMap.keySet();
 		for (long receiptId : recId) {
-			FinReceiptHeader finReceiptHeader = new FinReceiptHeader();
-			finReceiptHeader = nonLanReceiptService.getNonLanFinReceiptHeaderById(receiptId, false, "_View");
+			FinReceiptHeader finReceiptHeader = nonLanReceiptService.getNonLanFinReceiptHeaderById(receiptId, false,
+					"_View");
+
+			if (finReceiptHeader == null) {
+				continue;
+			}
+
 			finReceiptHeader.setValueDate(finReceiptHeader.getReceiptDate());
 			setWorkflowDetails(finReceiptHeader.getWorkflowId(), false);
 
@@ -783,12 +774,12 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("recHeaderMap", recHeaderMap);
-		//map.put("finReceiptHeader", finReceiptHeader);
+		// map.put("finReceiptHeader", finReceiptHeader);
 		map.put("nonLanReceiptListCtrl", this);
 		map.put("module", module);
 		map.put("moduleCode", moduleCode);
 		map.put("roleCode", roleCode);
-		//	map.put("nextRoleCode", nextRoleCode);
+		// map.put("nextRoleCode", nextRoleCode);
 		map.put("recordAction", recordAction);
 
 		try {

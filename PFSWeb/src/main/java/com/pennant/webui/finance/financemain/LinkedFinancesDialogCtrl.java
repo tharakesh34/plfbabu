@@ -70,6 +70,7 @@ import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LinkedFinances;
 import com.pennant.backend.model.rmtmasters.FinanceType;
+import com.pennant.backend.service.finance.FinanceMainService;
 import com.pennant.backend.service.finance.LinkedFinancesService;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.JdbcSearchObject;
@@ -141,6 +142,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 	private ExtendedFieldCtrl extendedFieldCtrl = null;
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
+
+	private FinanceMainService financeMainService;
 
 	/**
 	 * default constructor.<br>
@@ -314,7 +317,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
 		String finref = this.finReference.getValue().trim();
-		long finID = finMain.getFinID();
+		long finID = financeMainService.getFinID(this.finReference.getValue());
 
 		Clients.clearWrongValue(this.finReference);
 		this.finReference.setErrorMessage("");
@@ -1209,6 +1212,10 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 
 	public void setFinMaintainInstruction(FinMaintainInstruction finMaintainInstruction) {
 		this.finMaintainInstruction = finMaintainInstruction;
+	}
+
+	public void setFinanceMainService(FinanceMainService financeMainService) {
+		this.financeMainService = financeMainService;
 	}
 
 }

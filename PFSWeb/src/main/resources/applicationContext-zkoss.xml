@@ -5608,6 +5608,7 @@
 		class="com.pennant.webui.finance.financemain.LinkedFinancesDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="linkedFinancesService" ref="linkedFinancesService" /> 
+		<property name="financeMainService" ref="financeMainService" /> 
 	</bean>
 	
 	<!-- Change Payment Upload -->

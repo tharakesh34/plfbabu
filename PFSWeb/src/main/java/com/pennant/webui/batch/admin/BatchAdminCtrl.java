@@ -470,47 +470,52 @@ public class BatchAdminCtrl extends GFCBaseCtrl<Object> {
 			}
 		}
 
-		MessageUtil.confirm(msg, evnt -> {
-			if (Messagebox.ON_YES.equals(evnt.getName())) {
-				PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
+		try {
+			MessageUtil.confirm(msg, evnt -> {
+				if (Messagebox.ON_YES.equals(evnt.getName())) {
+					PFSBatchAdmin.startedBy = getUserWorkspace().getLoggedInUser().getUserName();
 
-				closeOtherTabs();
-				PFSBatchAdmin.getInstance();
-				estimatedTime.setValue(BatchMonitor.getEstimateTime());
-				timer.start();
+					closeOtherTabs();
+					PFSBatchAdmin.getInstance();
+					estimatedTime.setValue(BatchMonitor.getEstimateTime());
+					timer.start();
 
-				this.btnStartJob.setDisabled(true);
-				BatchMonitor.jobExecutionId = 0;
-				BatchMonitor.avgTime = 0;
+					this.btnStartJob.setDisabled(true);
+					BatchMonitor.jobExecutionId = 0;
+					BatchMonitor.avgTime = 0;
 
-				if ("Start".equals(this.btnStartJob.getLabel())) {
-					args[0] = DateUtil.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
-					PFSBatchAdmin.setArgs(args);
-					PFSBatchAdmin.setRunType("START");
-					resetPanels();
-				} else {
-					args[0] = this.jobExecution.getJobParameters().getString("Date");
-					PFSBatchAdmin.setArgs(args);
-					PFSBatchAdmin.setRunType("RE-START");
+					if ("Start".equals(this.btnStartJob.getLabel())) {
+						args[0] = DateUtil
+								.formatToShortDate(SysParamUtil.getValueAsDate(PennantConstants.APP_DATE_NEXT));
+						PFSBatchAdmin.setArgs(args);
+						PFSBatchAdmin.setRunType("START");
+						resetPanels();
+					} else {
+						args[0] = this.jobExecution.getJobParameters().getString("Date");
+						PFSBatchAdmin.setArgs(args);
+						PFSBatchAdmin.setRunType("RE-START");
+					}
+
+					try {
+						Thread thread = new Thread(new EODJob());
+						thread.start();
+						Thread.sleep(1000);
+						collectionProcess = true;
+						isInitialise = false;
+					} catch (Exception e) {
+						timer.stop();
+						MessageUtil.showError(e);
+					}
+
+					Events.postEvent("onCreate", this.window_BatchAdmin, event);
+				} else if (Messagebox.ON_NO.equals(evnt.getName())) {
+					collectionProcess = false;
+					Events.postEvent("onCreate", this.window_BatchAdmin, event);
 				}
-
-				try {
-					Thread thread = new Thread(new EODJob());
-					thread.start();
-					Thread.sleep(1000);
-					collectionProcess = true;
-					isInitialise = false;
-				} catch (Exception e) {
-					timer.stop();
-					MessageUtil.showError(e);
-				}
-
-				Events.postEvent("onCreate", this.window_BatchAdmin, event);
-			} else if (Messagebox.ON_NO.equals(evnt.getName())) {
-				collectionProcess = false;
-				Events.postEvent("onCreate", this.window_BatchAdmin, event);
-			}
-		});
+			});
+		} catch (Exception e) {
+			MessageUtil.showError(e);
+		}
 
 		logger.debug(Literal.LEAVING);
 	}

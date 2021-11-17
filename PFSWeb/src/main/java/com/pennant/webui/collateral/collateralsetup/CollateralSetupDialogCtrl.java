@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -76,6 +77,7 @@ import com.pennant.FrequencyBox;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.ReferenceUtil;
 import com.pennant.app.util.RuleExecutionUtil;
@@ -2061,6 +2063,27 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 
 	private AuditHeader newCollateralProcess(CollateralSetup aCollateralSetup, String tranType) {
 		AuditHeader auditHeader = getAuditHeader(aCollateralSetup, tranType);
+		String[] valueParm = new String[1];
+		String[] errParm = new String[1];
+
+		valueParm[0] = aCollateralSetup.getCollateralType();
+		errParm[0] = PennantJavaUtil.getLabel("label_CollateralType") + ":" + valueParm[0];
+
+		List<CollateralSetup> collaterals = getFinanceDetail().getCollaterals();
+		if (CollectionUtils.isNotEmpty(collaterals)) {
+			for (int i = 0; i < collaterals.size(); i++) {
+				CollateralSetup collateralSetup = collaterals.get(i);
+
+				if (collateralSetup.getCollateralType().equals(aCollateralSetup.getCollateralType())) {
+					if (this.newRecord) {
+						auditHeader.setErrorDetails(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm),
+								getUserWorkspace().getUserLanguage()));
+						return auditHeader;
+					}
+				}
+			}
+		}
 		return auditHeader;
 	}
 
