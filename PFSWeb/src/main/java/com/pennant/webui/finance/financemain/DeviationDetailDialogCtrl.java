@@ -342,6 +342,8 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 			return;
 		}
 		final FinanceDeviations aFinanceDeviations = new FinanceDeviations();
+
+		aFinanceDeviations.setFinID(financeMain.getFinID());
 		aFinanceDeviations.setFinReference(financeMain.getFinReference());
 		aFinanceDeviations.setNewRecord(true);
 		aFinanceDeviations.setDeviationCategory(DeviationConstants.CAT_MANUAL);

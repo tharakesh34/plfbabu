@@ -1,45 +1,36 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  NotesCtl.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : NotesCtl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.util;
 
 import java.sql.Timestamp;
@@ -213,7 +204,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			this.isNotFinanceProcess = (boolean) arguments.get("isNotFinanceProcess");
 		}
 
-		// append finance basic details 
+		// append finance basic details
 		if (arguments.containsKey("finHeaderList")) {
 			appendFinBasicDetails((ArrayList<Object>) arguments.get("finHeaderList"));
 		}
@@ -363,10 +354,9 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			} else {
 				aNotes.setRemarks(this.remarksText.getValue().trim());
 			}
-		} else if (StringUtils.isNotEmpty(rmrks) && rmrks.contains("<")) {
-			String remarkVal = rmrks.split("\t")[1].split("<")[0];
-			remarks.setValue(remarkVal);
-			aNotes.setRemarks(remarkVal);
+		} else if (this.remarks.getValue() != null) {
+			remarks.setValue(rmrks);
+			aNotes.setRemarks(rmrks);
 		}
 
 		if (wve.size() > 0) {
@@ -515,13 +505,13 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 
 			if (this.isFinanceNotes) {
 
-				//setRecommendTypeList();
+				// setRecommendTypeList();
 				getRecommendations();
 				this.tabpanel.appendChild(this.window_notesDialog);
 				this.window_notesDialog.setTitle("");
 				this.window_notesDialog.setWidth("100%");
 				this.window_notesDialog.setHeight("90%");
-				//this.div_toolbar.setVisible(false);
+				// this.div_toolbar.setVisible(false);
 				this.btnClose.setVisible(false);
 				this.label_title.setValue(Labels.getLabel("MemoDetails"));
 
@@ -578,7 +568,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	public void getList() {
 		logger.debug("Entering");
 
-		//Retrieve Notes List By Module Reference
+		// Retrieve Notes List By Module Reference
 		List<Notes> appList = getNotesService().getNotesList(this.notes, true);
 
 		Listitem item = null;
@@ -608,18 +598,18 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				} else {
 					usrAlign = "right";
 				}
-				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
+				// Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
 				String content = "<p class='triangle-right " + alignSide + "'> <font style='font-weight:bold;'> "
 						+ StringEscapeUtils.unescapeHtml(note.getRemarks()) + " </font> <br>  ";
 				String date = DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat);
 				if ("I".equals(note.getRemarkType())) {
 					content = "<div style='word-wrap: break-word; width: 400px'>" + content
-							+ "<font style='color:#FF0000;float:" + usrAlign + ";'>"
-							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
+							+ "<font style='color:#FF0000;float:" + usrAlign + ";'>" + note.getUsrLogin().toLowerCase()
+							+ " : " + date + "</font></p>";
 				} else {
 					content = "<div style='word-wrap: break-word; width: 400px'>" + content
-							+ "<font style='color:white;float:" + usrAlign + ";'>"
-							+ note.getUsrLogin().toLowerCase() + " : " + date + "</font></p>";
+							+ "<font style='color:white;float:" + usrAlign + ";'>" + note.getUsrLogin().toLowerCase()
+							+ " : " + date + "</font></p>";
 				}
 				html.setContent(content);
 				lc.appendChild(html);
@@ -655,7 +645,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 	public void getRecommendations() {
 		logger.debug("Entering");
 
-		//Retrieve Notes List By Module Reference
+		// Retrieve Notes List By Module Reference
 		List<Notes> appList = new ArrayList<>();
 		if (StringUtils.isNotEmpty(this.notes.getReference())) {
 			appList = getNotesService().getNotesList(this.notes, false);
@@ -686,12 +676,12 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 				}
 
 				item = new Listitem();
-				//item.setStyle("vertical-align:top;text-align:center;");
-				//1
+				// item.setStyle("vertical-align:top;text-align:center;");
+				// 1
 				lc = new Listcell(note.getUsrName());
 				lc.setStyle("cursor:default;text-align:center;");
 				lc.setParent(item);
-				//2
+				// 2
 				lc = new Listcell();
 				if ("R".equals(note.getRemarkType())) {
 					lc.setLabel("Recommend");
@@ -701,15 +691,15 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 					lc.setStyle("color:green;cursor:default;text-align:center;");
 				}
 				lc.setParent(item);
-				//3
+				// 3
 				lc = new Listcell(DateUtility.format(note.getInputDate(), PennantConstants.dateTimeAMPMFormat));
 				lc.setStyle("cursor:default;");
 				lc.setParent(item);
 
-				//4
+				// 4
 				lc = new Listcell();
 				Html html = new Html();
-				//Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
+				// Fixed Stored Cross Site Scripting Vulnerability in Notes Dialogue
 				html.setContent(StringEscapeUtils.unescapeHtml(note.getRemarks()));
 				lc.appendChild(html);
 				lc.setStyle("cursor:default;");

@@ -279,10 +279,10 @@ public class EligibilityDetailServiceImpl extends GenericService<FinanceDetail> 
 			detail.setRecordStatus(fm.getRecordStatus());
 			if (financeEligibilityDetailDAO.getFinElgDetailCount(detail) > 0) {
 				updateList.add(detail);
-				auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
+				auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, i++, fields[0], fields[1], null, detail));
 			} else {
 				insertList.add(detail);
-				auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, i + 1, fields[0], fields[1], null, detail));
+				auditDetails.add(new AuditDetail(PennantConstants.TRAN_WF, i++, fields[0], fields[1], null, detail));
 			}
 		}
 
