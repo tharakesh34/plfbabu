@@ -224,6 +224,7 @@ public class PresentmentDetailExtractService {
 		pd.setPresentmentRef(getPresentmentRef(rs));
 
 		// Schedule Setup
+		pd.setFinID(rs.getLong("FINID"));
 		pd.setFinReference(rs.getString("FINREFERENCE"));
 		pd.setSchDate(rs.getDate("SCHDATE"));
 		pd.setEmiNo(rs.getInt("EMINO"));
