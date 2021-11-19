@@ -641,8 +641,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 		GuarantorDetail guarantorDetail = new GuarantorDetail();
 		guarantorDetail.setNewRecord(true);
 		guarantorDetail.setWorkflowId(0);
-		guarantorDetail.setFinID(finID);
-		guarantorDetail.setFinReference(finreference);
+		guarantorDetail.setFinID(financeMain.getFinID());
+		guarantorDetail.setFinReference(financeMain.getFinReference());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("guarantorDetail", guarantorDetail);

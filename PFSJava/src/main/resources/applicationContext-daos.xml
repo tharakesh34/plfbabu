@@ -3432,6 +3432,7 @@
 		<property name="pmayService" ref="pmayService" />
 		<property name="jointAccountDetailDAO" ref="jointAccountDetailDAO" />
 		<property name="extendedFieldMaintenanceDAO" ref="extendedFieldMaintenanceDAO" />
+		<property name="guarantorDetailDAO" ref="guarantorDetailDAO" />
 
 		<!-- Services -->
 		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />

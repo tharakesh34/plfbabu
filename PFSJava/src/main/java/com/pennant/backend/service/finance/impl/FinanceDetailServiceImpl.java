@@ -87,6 +87,7 @@ import com.pennant.backend.dao.finance.FinFlagDetailsDAO;
 import com.pennant.backend.dao.finance.FinTypeVASProductsDAO;
 import com.pennant.backend.dao.finance.FinanceTaxDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
+import com.pennant.backend.dao.finance.GuarantorDetailDAO;
 import com.pennant.backend.dao.finance.HoldDisbursementDAO;
 import com.pennant.backend.dao.finance.IRRScheduleDetailDAO;
 import com.pennant.backend.dao.finance.JointAccountDetailDAO;
@@ -449,6 +450,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	private FinOCRHeaderService finOCRHeaderService;
 	private PMAYService pmayService;
 	private JointAccountDetailDAO jointAccountDetailDAO;
+	private GuarantorDetailDAO guarantorDetailDAO;
 	private FinFeeConfigService finFeeConfigService;
 	private FeeCalculator feeCalculator;
 	@Autowired(required = false)
@@ -10420,7 +10422,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						jointAccountDetail.setFinID(fm.getFinID());
 						jointAccountDetail.setFinReference(fm.getFinReference());
 						jointAccountDetail.setNewRecord(true);
-						if (!StringUtils.equals(details.getRecordType(), PennantConstants.RECORD_TYPE_CAN)) {
+						if (!PennantConstants.RECORD_TYPE_CAN.equals(details.getRecordType())) {
 							try {
 								jointAccountDetailDAO.save(jointAccountDetail, "_Temp");
 							} catch (Exception e) {
@@ -10429,6 +10431,27 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}
 					}
 				}
+
+				List<GuarantorDetail> gurantorsDetailList = financeDetail.getGurantorsDetailList();
+				if (CollectionUtils.isNotEmpty(gurantorsDetailList)) {
+					for (GuarantorDetail details : gurantorsDetailList) {
+						Cloner cloner = new Cloner();
+						GuarantorDetail gurantorDtls = cloner.deepClone(details);
+						gurantorDtls.setId(Long.MIN_VALUE);
+						gurantorDtls.setFinID(fm.getFinID());
+						gurantorDtls.setFinReference(fm.getFinReference());
+						gurantorDtls.setNewRecord(true);
+
+						if (!PennantConstants.RECORD_TYPE_CAN.equals(details.getRecordType())) {
+							try {
+								guarantorDetailDAO.save(gurantorDtls, "_Temp");
+							} catch (Exception e) {
+								logger.error(Literal.EXCEPTION, e);
+							}
+						}
+					}
+				}
+
 			}
 
 		}
@@ -10739,6 +10762,10 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 	public void setJointAccountDetailDAO(JointAccountDetailDAO jointAccountDetailDAO) {
 		this.jointAccountDetailDAO = jointAccountDetailDAO;
+	}
+
+	public void setGuarantorDetailDAO(GuarantorDetailDAO guarantorDetailDAO) {
+		this.guarantorDetailDAO = guarantorDetailDAO;
 	}
 
 	public void setFinanceWorkFlowService(FinanceWorkFlowService financeWorkFlowService) {
