@@ -1027,6 +1027,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
+		manualAdvise.setFinID(finID);
 		manualAdvise.setFinReference(finReference);
 		manualAdvise.setFeeTypeID(0);
 		manualAdvise.setSequence(0);
