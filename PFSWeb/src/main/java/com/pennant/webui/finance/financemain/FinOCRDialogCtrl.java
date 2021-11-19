@@ -1262,6 +1262,7 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		logger.debug(Literal.LEAVING);
 		Search search = new Search(FinanceMain.class);
 		search.addField("FinAmount");
+		search.addField("FinID");
 		search.addField("FinReference");
 		search.addTabelName("FinanceMain_view");
 		search.addFilter(new Filter("ParentRef", parentRef, Filter.OP_EQUAL));
