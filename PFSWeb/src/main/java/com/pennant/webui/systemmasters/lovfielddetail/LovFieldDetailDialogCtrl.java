@@ -50,6 +50,7 @@ import com.pennant.backend.model.systemmasters.LovFieldDetail;
 import com.pennant.backend.service.systemmasters.LovFieldDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
+import com.pennant.backend.util.RepayConstants;
 import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -177,6 +178,13 @@ public class LovFieldDetailDialogCtrl extends GFCBaseCtrl<LovFieldDetail> {
 		this.fieldCode.setValidateColumns(new String[] { "FieldCode" });
 
 		logger.debug("Leaving");
+	}
+
+	public void onFulfill$fieldCode(Event event) {
+		if (RepayConstants.SUB_RECEIPT_MODE.equals(this.fieldCode.getValue())) {
+			this.fieldCodeValue.setMaxlength(8);
+			this.valueDesc.setMaxlength(8);
+		}
 	}
 
 	/**
