@@ -1217,9 +1217,6 @@ public class ReceiptCalculator {
 				allocDetail.setTdsDue(tdsAmount);
 			}
 
-			TaxAmountSplit tax = GSTCalculator.calculateGST(fm.getFinID(), fm.getFinCcy(), advise.getTaxComponent(),
-					allocDetail.getTotalDue());
-
 			allocDetail.setTotalDue(allocDetail.getTotalDue().subtract(tdsAmount.add(allocDetail.getInProcess())));
 
 			allocationsList.add(allocDetail);
