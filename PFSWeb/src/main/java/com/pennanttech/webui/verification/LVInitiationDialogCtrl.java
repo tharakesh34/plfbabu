@@ -382,22 +382,33 @@ public class LVInitiationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 * @param collateralRef
 	 */
 	private void setAgencyFiltersByCollateralCity(String collateralRef) {
-		if (StringUtils.isNotBlank(collateralRef) && ImplementationConstants.VER_AGENCY_FILTER_BY_CITY) {
-			List<String> collateralCities = new ArrayList<String>(1);
-			CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralRef, "", true);
-			if (CollectionUtils.isNotEmpty(collateralSetup.getExtendedFieldRenderList())) {
-				for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
-					Map<String, Object> mapValues = fieldRender.getMapValues();
-					if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
-						collateralCities.add((String) mapValues.get(collateralAddrCol));
-					}
-				}
-				Filter[] filter = new Filter[2];
-				filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
-				filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
-				agency.setFilters(filter);
+		if (StringUtils.isBlank(collateralRef) || !ImplementationConstants.VER_AGENCY_FILTER_BY_CITY) {
+			return;
+		}
+
+		List<String> collateralCities = new ArrayList<>(1);
+		CollateralSetup collateralSetup = collateralSetupService.getCollateralSetupByRef(collateralRef, "", true);
+
+		if (collateralSetup == null) {
+			return;
+		}
+
+		if (CollectionUtils.isEmpty(collateralSetup.getExtendedFieldRenderList())) {
+			return;
+		}
+
+		for (ExtendedFieldRender fieldRender : collateralSetup.getExtendedFieldRenderList()) {
+			Map<String, Object> mapValues = fieldRender.getMapValues();
+			if (mapValues != null && mapValues.containsKey(collateralAddrCol)) {
+				collateralCities.add((String) mapValues.get(collateralAddrCol));
 			}
 		}
+
+		Filter[] filter = new Filter[2];
+		filter[0] = new Filter("DealerType", Agencies.LVAGENCY.getKey(), Filter.OP_EQUAL);
+		filter[1] = new Filter("DealerCity", collateralCities, Filter.OP_IN);
+
+		agency.setFilters(filter);
 	}
 
 	/**
