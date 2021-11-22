@@ -1021,8 +1021,8 @@ public class ProjectedAmortizationDAOImpl extends SequenceDao<ProjectedAmortizat
 		return this.jdbcOperations.update(UPDATE_SQL, ps -> {
 			int index = 1;
 
-			ps.setInt(index++, threadId);
-			ps.setInt(index++, 0);
+			ps.setString(index++, String.valueOf(threadId));
+			ps.setString(index++, String.valueOf(0));
 		});
 	}
 }

@@ -928,6 +928,7 @@ public class ProjectedAmortizationService {
 			projIncomeAMZList.add(projIncomeAMZ);
 
 			projIncomeAMZ.setMonthEndDate(curMonthEnd);
+			projIncomeAMZ.setFinID(incomeAMZ.getFinID());
 			projIncomeAMZ.setFinReference(incomeAMZ.getFinReference());
 			projIncomeAMZ.setFinType(incomeAMZ.getFinType());
 			projIncomeAMZ.setIncomeType(incomeAMZ.getIncomeType());
@@ -966,6 +967,7 @@ public class ProjectedAmortizationService {
 			projIncomeAMZList.add(projIncomeAMZ);
 
 			projIncomeAMZ.setMonthEndDate(curMonthEnd);
+			projIncomeAMZ.setFinID(incomeAMZ.getFinID());
 			projIncomeAMZ.setFinReference(incomeAMZ.getFinReference());
 			projIncomeAMZ.setFinType(incomeAMZ.getFinType());
 			projIncomeAMZ.setIncomeType(incomeAMZ.getIncomeType());
@@ -1044,6 +1046,7 @@ public class ProjectedAmortizationService {
 					projIncomeAMZ = new ProjectedAmortization();
 
 					projIncomeAMZ.setMonthEndDate(curMonthEnd);
+					projIncomeAMZ.setFinID(incomeAMZ.getFinID());
 					projIncomeAMZ.setFinReference(incomeAMZ.getFinReference());
 					projIncomeAMZ.setFinType(incomeAMZ.getFinType());
 					projIncomeAMZ.setIncomeType(incomeAMZ.getIncomeType());
