@@ -2505,6 +2505,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			}
 			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
 					null, null);
+		} else if (StringUtils.equals(reportMenuCode, "menu_Item_PresentmentExcludeReport")) {
+			StringBuilder whereCondition = (StringBuilder) doPrepareWhereConditionOrTemplate(true, false);
+
+			whereCondition.append(" and T.excludereason != 0");
+
+			doShowReport("where".equals(whereCondition.toString().trim()) ? "" : whereCondition.toString(), null, null,
+					null, null);
 		}
 		// #PSD:152141 UAT2: Users:Report: Indaas accounting report not available -START
 		else if (StringUtils.equals(reportMenuCode, "menu_Item_AmortizationReport")) {
