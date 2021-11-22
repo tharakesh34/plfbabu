@@ -77,6 +77,7 @@ import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.bmtmasters.BankBranch;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.finance.FinanceEnquiry;
+import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.model.mandate.MandateStatus;
 import com.pennant.backend.model.mandate.MandateStatusUpdate;
@@ -695,6 +696,23 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 						new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 			}
 		}
+
+		// Mandate Periodicity Validation
+		FinanceMain fm = financeMainDAO.getFinanceMainByRef(mandate.getOrgReference(), "", false);
+
+		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
+
+			if (!validatePayFrequency(fm.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
+
+				String[] errParmFrq = new String[2];
+				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value");
+				errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayFrq.value");
+
+				auditDetail.setErrorDetail(ErrorUtil
+						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "90220", errParmFrq, null), ""));
+			}
+		}
+
 		return auditDetail;
 	}
 
@@ -810,6 +828,58 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		int remainder = value % divisor;
 
 		return remainder;
+	}
+
+	private Boolean validatePayFrequency(char repayFrq, char mandateFrq) {
+		boolean valFrq = true;
+		if (repayFrq == mandateFrq) {
+			valFrq = true;
+		} else {
+			switch (repayFrq) {
+			case 'D':
+				if (mandateFrq != 'D') {
+					valFrq = false;
+				}
+				break;
+			case 'W':
+				if (mandateFrq != 'D') {
+					valFrq = false;
+				}
+				break;
+			case 'X':
+				if (mandateFrq != 'D' || mandateFrq != 'W') {
+					valFrq = false;
+				}
+				break;
+			case 'F':
+				if (mandateFrq != 'D' || mandateFrq != 'W' || mandateFrq != 'X') {
+					valFrq = false;
+				}
+				break;
+			case 'M':
+				if (mandateFrq == 'B' || mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			case 'B':
+				if (mandateFrq == 'Q' || mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+
+			case 'Q':
+				if (mandateFrq == 'H' || mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			case 'H':
+				if (mandateFrq == 'Y') {
+					valFrq = false;
+				}
+				break;
+			}
+		}
+		return valFrq;
 	}
 
 	/**
