@@ -1129,9 +1129,12 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				for (FinFeeDetail fee : feeList) {
 					if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
-						String productCode = vASRecordingDAO.getProductCodeByReference(fee.getFinReference(),
-								fee.getVasReference());
-						fee.setFeeTypeDesc(productCode);
+						// PSD#183407
+						fee.setFeeTypeCode(fee.getVasReference());
+						/*
+						 * String productCode = vASRecordingDAO.getProductCodeByReference(fee.getFinReference(),
+						 * fee.getVasReference()); fee.setFeeTypeDesc(productCode);
+						 */
 					}
 				}
 				List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(finScheduleData, rpyDetailsMap,
