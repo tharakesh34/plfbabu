@@ -321,6 +321,7 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
 			for (FinanceMain fm : finMain) {
+				rcu.setFinID(fm.getFinID());
 				if (rcu.getFinReference().equals(fm.getFinReference())) {
 					rcu.setFinanceMain(fm);
 					if (!fm.isFinIsActive()) {

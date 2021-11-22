@@ -195,7 +195,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 		sql.append(" Inner Join Customers Cust on FM.CustId = Cust.CustId");
 		sql.append(" Inner Join RmtFinanceTypes FT on FT.FinType = FM.FinType");
 		sql.append(" Inner Join SmtDivisiondetail SD On FT.FinDivision = SD.DivisionCode");
-		sql.append(" Where FM.FinID in (Select FinID From Ratechange_Upload_Details Where BatchId = ?)");
+		sql.append(" Where FM.FinReference in (Select FinReference From Ratechange_Upload_Details Where BatchId = ?)");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -223,7 +223,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 
 	@Override
 	public void updateRateChangeDetails(RateChangeUpload rcUpload) {
-		String sql = "Update Ratechange_Upload_Details Set UploadStatusRemarks = ?, Status = ? Where Id = ?";
+		String sql = "Update Ratechange_Upload_Details Set FinID = ?, UploadStatusRemarks = ?, Status = ? Where Id = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -231,6 +231,7 @@ public class RateChangeUploadDAOImpl extends SequenceDao<RateChangeUpload> imple
 			this.jdbcOperations.update(sql, ps -> {
 				int index = 1;
 
+				ps.setLong(index++, rcUpload.getFinID());
 				ps.setString(index++, StringUtils.trimToEmpty(rcUpload.getUploadStatusRemarks()));
 				ps.setString(index++, rcUpload.getStatus());
 				ps.setObject(index++, rcUpload.getId());
