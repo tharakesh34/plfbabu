@@ -919,6 +919,14 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 			wve.add(we);
 		}
 
+		if (this.financeMain != null) {
+			try {
+				aQueryDetail.setFinID(this.financeMain.getFinID());
+			} catch (WrongValueException we) {
+				wve.add(we);
+			}
+		}
+
 		// Finance Reference
 		try {
 			aQueryDetail.setFinReference(this.finReference.getValue());
