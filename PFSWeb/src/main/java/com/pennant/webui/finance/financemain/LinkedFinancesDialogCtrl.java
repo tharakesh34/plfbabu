@@ -330,7 +330,11 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 			}
 		}
 
-		long finID = financeMainService.getFinID(this.finReference.getValue());
+		Long finID = financeMainService.getFinID(this.finReference.getValue());
+
+		if (finID == null) {
+			throw new WrongValueException(this.finReference, Labels.getLabel("invalid_reference"));
+		}
 
 		String entityCode = "";
 		if (StringUtils.isEmpty(moduleDefiner)) {
@@ -369,6 +373,7 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 
 		// Data preparation and rendering.
 		LinkedFinances linkedFin = new LinkedFinances();
+		linkedFin.setFinID(finMain.getFinID());
 		linkedFin.setFinReference(finMain.getFinReference());
 		linkedFin.setLinkedReference(financeMain.getFinReference());
 		linkedFin.setCustShrtName(financeMain.getLovDescCustShrtName());
