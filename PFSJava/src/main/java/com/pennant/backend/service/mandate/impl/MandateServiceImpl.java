@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  MandateServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  18-10-2016    														*
- *                                                                  						*
- * Modified Date    :  18-10-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : MandateServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 18-10-2016 * * Modified
+ * Date : 18-10-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 18-10-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 18-10-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -123,10 +105,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * MandateDAO's update method 3) Audit the record in to AuditHeader and AdtMandates by using
 	 * auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 	@Override
@@ -174,8 +154,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * Mandates by using MandateDAO's delete method with type as Blank 3) Audit the record in to AuditHeader and
 	 * AdtMandates by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -199,10 +178,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	/**
 	 * getMandateById fetch the details by using MandateDAO's getMandateById method.
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return Mandate
 	 */
 
@@ -220,8 +197,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * getApprovedMandateById fetch the details by using MandateDAO's getMandateById method . with parameter id and type
 	 * as blank. it fetches the approved records from the Mandates.
 	 * 
-	 * @param id
-	 *            (int)
+	 * @param id (int)
 	 * @return Mandate
 	 */
 
@@ -240,8 +216,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * record in to AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) based on the transaction
 	 * Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -389,8 +364,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * workFlow table by using getMandateDAO().delete with parameters mandate,"_Temp" 3) Audit the record in to
 	 * AuditHeader and AdtMandates by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 
@@ -416,10 +390,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * businessValidation method do the following steps. 1) validate the audit detail 2) if any error/Warnings then
 	 * assign the to auditHeader 3) identify the nextprocess
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -480,10 +452,8 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	 * mismatch conditions Fetch the error details from getMandateDAO().getErrorDetail with Error ID and language as
 	 * parameters. 6) if any error/Warnings then assign the to auditHeader
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
-	 * @param boolean
-	 *            onlineRequest
+	 * @param AuditHeader (auditHeader)
+	 * @param boolean     onlineRequest
 	 * @return auditHeader
 	 */
 
@@ -509,18 +479,18 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 
 			if (!mandate.isWorkflow()) {// With out Work flow only new records
 				if (befMandate != null) { // Record Already Exists in the table
-												// then error
+											// then error
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, valueParm), usrLanguage));
 				}
 			} else { // with work flow
 				if (mandate.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) { // if
-																							// records
+																						// records
 																						// type
 																						// is
 																						// new
 					if (befMandate != null || tempMandate != null) { // if
-																			// records
+																		// records
 																		// already
 																		// exists
 																		// in
@@ -541,10 +511,10 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			// for work flow process records or (Record to update or Delete with
 			// out work flow)
 			if (!mandate.isWorkflow()) { // With out Work flow for update and
-												// delete
+											// delete
 
 				if (befMandate == null) { // if records not exists in the main
-												// table
+											// table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41002", errParm, valueParm), usrLanguage));
 				} else {
@@ -564,7 +534,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 			} else {
 
 				if (tempMandate == null) { // if records not exists in the Work
-												// flow table
+											// flow table
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm), usrLanguage));
 				}
@@ -698,12 +668,14 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 		}
 
 		// Mandate Periodicity Validation
+		if (StringUtils.isEmpty(mandate.getOrgReference())) {
+			return auditDetail;
+		}
+
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(mandate.getOrgReference(), "", false);
 
 		if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
-
 			if (!validatePayFrequency(fm.getRepayFrq().charAt(0), mandate.getPeriodicity().charAt(0))) {
-
 				String[] errParmFrq = new String[2];
 				errParmFrq[0] = PennantJavaUtil.getLabel("label_MandateDialog_Periodicity.value");
 				errParmFrq[1] = PennantJavaUtil.getLabel("label_FinanceMainDialog_RepayFrq.value");
@@ -890,8 +862,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * @param auditHeaderDAO
-	 *            the auditHeaderDAO to set
+	 * @param auditHeaderDAO the auditHeaderDAO to set
 	 */
 	public void setAuditHeaderDAO(AuditHeaderDAO auditHeaderDAO) {
 		this.auditHeaderDAO = auditHeaderDAO;
@@ -905,8 +876,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * @param mandateDAO
-	 *            the mandateDAO to set
+	 * @param mandateDAO the mandateDAO to set
 	 */
 	public void setMandateDAO(MandateDAO mandateDAO) {
 		this.mandateDAO = mandateDAO;
@@ -928,8 +898,7 @@ public class MandateServiceImpl extends GenericService<Mandate> implements Manda
 	}
 
 	/**
-	 * @param mandateStatusDAO
-	 *            the mandateStatusDAO to set
+	 * @param mandateStatusDAO the mandateStatusDAO to set
 	 */
 	public void setMandateStatusDAO(MandateStatusDAO mandateStatusDAO) {
 		this.mandateStatusDAO = mandateStatusDAO;
