@@ -5886,7 +5886,7 @@
 
 	<!-- (OCRV) :: OCR Capture/Header/Detail Views handle in single place start -->
 
-	<changeSet id="OCRV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrcapture_aview');
@@ -5894,7 +5894,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_1" author="Gopal.p">
+	<changeSet id="OCRV_1.1" author="Gopal.p">
 		<createView viewName="FINOCRCAPTURE_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -5917,13 +5917,17 @@
 					T1.NEXTTASKID,
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
-				   FROM FINOCRCAPTURE T1
-				   INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				FROM FINOCRCAPTURE T1
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS (SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OCRV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finocrcapture_aview');	
@@ -5931,7 +5935,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrcapture_view');
@@ -5939,7 +5943,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_2" author="Gopal.p">
+	<changeSet id="OCRV_2.1" author="Gopal.p">
 		<createView viewName="FINOCRCAPTURE_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -5963,7 +5967,11 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
 				FROM FINOCRCAPTURE_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				UNION ALL
 				SELECT T1.ID,
 					FM.FINID,
@@ -5986,13 +5994,17 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
 				FROM FINOCRCAPTURE T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				WHERE NOT EXISTS (SELECT 1 FROM FINOCRCAPTURE_TEMP WHERE FINOCRCAPTURE_TEMP.ID = T1.ID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OCRV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finocrcapture_view');	
@@ -6000,7 +6012,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrheader_aview');
@@ -6008,7 +6020,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_3" author="Gopal.p">
+	<changeSet id="OCRV_3.1" author="Gopal.p">
 		<createView viewName="FINOCRHEADER_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.HEADERID,
@@ -6030,12 +6042,16 @@
 					T1.RECORDTYPE,
 					T1.WORKFLOWID
 				FROM FINOCRHEADER T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OCRV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finocrheader_aview');	
@@ -6043,7 +6059,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_4_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_4.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrheader_view');
@@ -6051,7 +6067,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_4" author="Gopal.p">
+	<changeSet id="OCRV_4.1" author="Gopal.p">
 		<createView viewName="FINOCRHEADER_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.HEADERID,
@@ -6073,7 +6089,11 @@
 					T1.WORKFLOWID,
 					T1.TOTALDEMAND
 				FROM FINOCRHEADER_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				UNION ALL
 				SELECT T1.HEADERID,
 					FM.FINID,
@@ -6094,14 +6114,18 @@
 					T1.WORKFLOWID,
 					T1.TOTALDEMAND
 				FROM FINOCRHEADER T1
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T1.FINID
 				WHERE NOT EXISTS (SELECT 1 FROM FINOCRHEADER_TEMP
 					WHERE FINOCRHEADER_TEMP.HEADERID = T1.HEADERID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OCRV_4_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_4.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finocrheader_view');	
@@ -6109,7 +6133,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_5_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_5.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrdetails_view');
@@ -6117,7 +6141,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_5" author="Gopal.p">
+	<changeSet id="OCRV_5.1" author="Gopal.p">
 		<createView viewName="FINOCRDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.DETAILID,
@@ -6146,7 +6170,11 @@
 					T1.WORKFLOWID
 				FROM FINOCRDETAILS_TEMP T1
 				JOIN FINOCRHEADER_TEMP T2 ON T1.HEADERID = T2.HEADERID
-				INNER JOIN FINANCEMAIN_TEMP FM ON FM.FINID = T2.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T2.FINID
 				UNION ALL
 				SELECT T1.DETAILID,
 					T1.HEADERID,
@@ -6174,14 +6202,18 @@
 					T1.WORKFLOWID
 				FROM FINOCRDETAILS T1
 				JOIN FINOCRHEADER T2 ON T1.HEADERID = T2.HEADERID
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T2.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T2.FINID
 				WHERE NOT EXISTS (SELECT 1 FROM FINOCRDETAILS_TEMP
 					WHERE FINOCRDETAILS_TEMP.HEADERID = T1.HEADERID)
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OCRV_5_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_5.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finocrdetails_view');	
@@ -6189,7 +6221,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_6_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_6.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'finocrdetails_aview');
@@ -6197,7 +6229,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="OCRV_6" author="Gopal.p">
+	<changeSet id="OCRV_6.1" author="Gopal.p">
 		<createView viewName="FINOCRDETAILS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.DETAILID,
@@ -6226,12 +6258,16 @@
 					T1.WORKFLOWID
 				FROM FINOCRDETAILS T1
 				JOIN FINOCRHEADER T2 ON T1.HEADERID = T2.HEADERID
-				INNER JOIN FINANCEMAIN FM ON FM.FINID = T2.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) FM ON FM.FINID = T2.FINID
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="OCRV_6_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="OCRV_6.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finocrdetails_aview');	

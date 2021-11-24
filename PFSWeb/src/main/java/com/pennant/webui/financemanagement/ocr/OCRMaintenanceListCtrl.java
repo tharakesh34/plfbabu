@@ -161,8 +161,8 @@ public class OCRMaintenanceListCtrl extends GFCBaseListCtrl<FinOCRHeader> {
 
 		}
 		FinanceDetail financeDetail = new FinanceDetail();
-		FinanceMain financeMain = financeMainService.getFinanceMain(finOcrHeader.getFinID(), new String[] { "FinType",
-				"FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue", "FinOcrRequired" }, "");
+		FinanceMain financeMain = financeMainService.getFinanceMain(finOcrHeader.getFinID(), new String[] { "FinID",
+				"FinType", "FinReference", "FinCcy", "ParentRef", "FinAmount", "FinAssetValue", "FinOcrRequired" }, "");
 		if (StringUtils.isNotEmpty(financeMain.getParentRef())) {
 			FinOCRHeader parentFinOcrHeader = finOCRHeaderService.getFinOCRHeaderByRef(financeMain.getParentRef(),
 					"_View");
