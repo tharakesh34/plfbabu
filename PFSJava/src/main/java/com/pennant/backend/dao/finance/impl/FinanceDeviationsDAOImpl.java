@@ -68,24 +68,24 @@ public class FinanceDeviationsDAOImpl extends SequenceDao<FinanceDeviations> imp
 		this.jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
 
-			ps.setLong(index, fd.getFinID());
-			ps.setString(index, fd.getFinReference());
-			ps.setString(index, fd.getModule());
-			ps.setString(index, fd.getDeviationCode());
-			ps.setString(index, fd.getDeviationType());
-			ps.setString(index, fd.getDeviationValue());
-			ps.setString(index, fd.getUserRole());
-			ps.setString(index, fd.getDelegationRole());
-			ps.setString(index, fd.getApprovalStatus());
-			ps.setDate(index, JdbcUtil.getDate(fd.getDeviationDate()));
-			ps.setString(index, fd.getDeviationCategory());
-			ps.setString(index, fd.getRemarks());
-			ps.setString(index, fd.getDeviationUserId());
-			ps.setString(index, fd.getDelegatedUserId());
-			ps.setBoolean(index, fd.isMarkDeleted());
-			ps.setString(index, fd.getRaisedUser());
-			ps.setString(index, fd.getMitigants());
-			ps.setLong(index, fd.getDeviationId());
+			ps.setLong(index++, fd.getFinID());
+			ps.setString(index++, fd.getFinReference());
+			ps.setString(index++, fd.getModule());
+			ps.setString(index++, fd.getDeviationCode());
+			ps.setString(index++, fd.getDeviationType());
+			ps.setString(index++, fd.getDeviationValue());
+			ps.setString(index++, fd.getUserRole());
+			ps.setString(index++, fd.getDelegationRole());
+			ps.setString(index++, fd.getApprovalStatus());
+			ps.setDate(index++, JdbcUtil.getDate(fd.getDeviationDate()));
+			ps.setString(index++, fd.getDeviationCategory());
+			ps.setString(index++, fd.getRemarks());
+			ps.setString(index++, fd.getDeviationUserId());
+			ps.setString(index++, fd.getDelegatedUserId());
+			ps.setBoolean(index++, fd.isMarkDeleted());
+			ps.setString(index++, fd.getRaisedUser());
+			ps.setString(index++, fd.getMitigants());
+			ps.setLong(index++, fd.getDeviationId());
 
 		});
 
