@@ -513,6 +513,7 @@ public class InstitutionLimitRebuild {
 			}
 		}
 
+		fm.add("FinID");
 		fm.add("finReference");
 		fm.add("closingStatus");
 		fm.add("recordStatus");
@@ -537,7 +538,7 @@ public class InstitutionLimitRebuild {
 		whereClause = whereClause.replace("where", "");
 		whereClause = whereClause.replace("WHERE", "");
 
-		String[] split = whereClause.split("and | AND| And");
+		String[] split = whereClause.split("and|AND|And|OR|or|Or");
 
 		for (int i = 0; i < split.length; i++) {
 			if (whereCls.length() > 1) {
