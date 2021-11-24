@@ -118,6 +118,7 @@ public class DisbursementProcessImpl implements DisbursementProcess {
 		logger.info(Literal.ENTERING);
 
 		FinAutoApprovalDetails fad = new FinAutoApprovalDetails();
+		fad.setFinID(fap.getFinID());
 		fad.setFinReference(fap.getFinReference());
 		fad.setBatchId(fap.getDisbResponseBatchId());
 		fad.setDisbId(fap.getPaymentId());
