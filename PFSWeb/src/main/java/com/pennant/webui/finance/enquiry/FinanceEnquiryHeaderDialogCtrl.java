@@ -1130,7 +1130,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				for (FinFeeDetail fee : feeList) {
 					if (AccountingEvent.VAS_FEE.equals(fee.getFinEvent())) {
 						// PSD#183407
-						fee.setFeeTypeCode(fee.getVasReference());
+						fee.setFeeTypeDesc(fee.getVasReference());
 						/*
 						 * String productCode = vASRecordingDAO.getProductCodeByReference(fee.getFinReference(),
 						 * fee.getVasReference()); fee.setFeeTypeDesc(productCode);
