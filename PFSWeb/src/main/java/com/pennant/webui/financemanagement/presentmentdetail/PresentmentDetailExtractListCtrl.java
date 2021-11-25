@@ -104,7 +104,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 	protected Button button_PresentmentDetailList_Extract;
 
 	protected Combobox mandateType;
-	protected Uppercasebox loanType;
+	protected ExtendedCombobox loanType;
 	protected Button btnloanType;
 	protected Datebox fromdate;
 	protected Datebox toDate;
@@ -164,7 +164,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.fromdate.setFormat(PennantConstants.dateFormat);
 		this.toDate.setFormat(PennantConstants.dateFormat);
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS) {
-			this.space_LoanType.setSclass("mandatory");
+			this.loanType.setMandatoryStyle(true);
 		}
 
 		this.entity.setModuleName("Entity");
@@ -173,6 +173,12 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		this.entity.setValueColumn("EntityCode");
 		this.entity.setDescColumn("EntityDesc");
 		this.entity.setValidateColumns(new String[] { "EntityCode" });
+
+		this.loanType.setModuleName("FinanceType");
+		this.loanType.setDisplayStyle(2);
+		this.loanType.setValueColumn("FinType");
+		this.loanType.setDescColumn("FinTypeDesc");
+		this.loanType.setValidateColumns(new String[] { "FinType" });
 
 		this.emandateSource.setModuleName("Mandate_Sources");
 		this.emandateSource.setDisplayStyle(2);
@@ -386,7 +392,9 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 
 		fillComboBox(this.mandateType, "", PennantStaticListUtil.getMandateTypeList(), "");
 		fillComboBox(this.presentmentType, "", PennantStaticListUtil.getPresetmentTypeList(), "");
+		this.loanType.setErrorMessage("");
 		this.loanType.setValue("");
+		this.loanType.setDescColumn("");
 		this.fromdate.setValue(null);
 		this.toDate.setValue(null);
 		this.branches.setValue("");
@@ -398,34 +406,6 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnloanType(Event event) {
-		logger.debug(Literal.ENTERING);
-
-		Object dataObject = MultiSelectionSearchListBox.show(this.window_PresentmentExtractDetailList, "FinanceType",
-				this.loanType.getValue(), null);
-		if (dataObject instanceof String) {
-			this.loanType.setValue(dataObject.toString());
-		} else {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> details = (Map<String, Object>) dataObject;
-			if (details != null) {
-				String tempflagcode = "";
-				List<String> flagKeys = new ArrayList<>(details.keySet());
-				for (int i = 0; i < flagKeys.size(); i++) {
-					if (StringUtils.isEmpty(flagKeys.get(i))) {
-						continue;
-					}
-					if (i == 0) {
-						tempflagcode = flagKeys.get(i);
-					} else {
-						tempflagcode = tempflagcode + "," + flagKeys.get(i);
-					}
-				}
-				this.loanType.setValue(tempflagcode);
-			}
-		}
-		logger.debug(Literal.LEAVING);
-	}
 
 	public void onClick$btnBranches(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -462,7 +442,7 @@ public class PresentmentDetailExtractListCtrl extends GFCBaseListCtrl<Presentmen
 		String code = mandateType.getSelectedItem().getValue();
 		if (ImplementationConstants.LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS
 				&& StringUtils.equals(code, MandateConstants.TYPE_NACH)) {
-			this.space_LoanType.setSclass("");
+			this.loanType.setMandatoryStyle(false);
 		}
 		if (MandateConstants.TYPE_EMANDATE.equals(code)) {
 			this.emandateSource.setValue("");
