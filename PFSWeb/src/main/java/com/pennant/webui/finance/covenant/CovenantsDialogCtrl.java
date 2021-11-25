@@ -644,7 +644,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			covenantType.setAlertToRoles(covenant.getAlertToRoles());
 			covenantType.setAlertsRequired(covenant.isAlertsRequired());
 			covenantType.setAlertType(covenant.getAlertType());
-			covenantType.setAllowedPaymentModes(covenant.getAllowedPaymentModes());
+			/*
+			 * covenantType.setAllowedPaymentModes(covenant.getAllowedPaymentModes());
+			 */
 			this.covenantType.setObject(covenantType);
 		}
 
@@ -2165,9 +2167,9 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		this.covenantType.setValue(covenantTypeObject.getCode());
 		this.covenantType.setDescription(covenantTypeObject.getDescription());
 		// setting the covenant type(master) payment methods to covenant object
-		if (this.covenant != null) {
-			this.covenant.setAllowedPaymentModes(covenantType.getAllowedPaymentModes());
-		}
+		/*
+		 * if (this.covenant != null) { this.covenant.setAllowedPaymentModes(covenantType.getAllowedPaymentModes()); }
+		 */
 
 		if ("LOS".equals(covenantTypeObject.getCovenantType())) {
 			onCheckLOS(covenantTypeObject.getCovenantType());
