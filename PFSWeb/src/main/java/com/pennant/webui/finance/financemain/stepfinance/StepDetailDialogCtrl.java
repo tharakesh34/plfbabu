@@ -510,7 +510,10 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		boolean stepFinance = financeMain.isStepFinance();
 
 		String stepAppliedFor = stepFinance ? financeMain.getStepsAppliedFor() : ft.getStepsAppliedFor();
-		setStepAppliedForRights(stepAppliedFor);
+
+		if (StringUtils.isNotEmpty(stepAppliedFor)) {
+			setStepAppliedForRights(stepAppliedFor);
+		}
 
 		String calcOfSteps = stepFinance ? financeMain.getCalcOfSteps() : ft.getCalcOfSteps();
 		setCalcOfStepsRights(calcOfSteps, ft.isAlwManualSteps());
