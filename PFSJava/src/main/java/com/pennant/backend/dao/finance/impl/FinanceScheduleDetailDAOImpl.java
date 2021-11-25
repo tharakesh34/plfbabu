@@ -749,7 +749,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 	@Override
 	public BigDecimal getPriPaidAmount(long finID) {
-		String sql = "Select sum(SchdPriPaid) From FinScheduleDetails Where FinID = ?";
+		String sql = "Select Coalesce(sum(SchdPriPaid), 0) From FinScheduleDetails Where FinID = ?";
 
 		logger.debug(Literal.SQL + sql);
 
