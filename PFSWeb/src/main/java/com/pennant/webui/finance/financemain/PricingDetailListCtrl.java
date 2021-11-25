@@ -713,7 +713,17 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					}
 
 					String compon = getValueFromComponent(tenure);
-					finMain.setNumberOfTerms(Integer.valueOf(compon));
+					int noOfTerms = Integer.valueOf(compon);
+					FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
+					int minTerms = finType.getFinMinTerm();
+					int maxTerms = finType.getFinMaxTerm();
+					if (noOfTerms < minTerms || noOfTerms > maxTerms) {
+						throw new WrongValueException(tenure,
+								Labels.getLabel("NUMBER_RANGE_EQ",
+										new String[] { Labels.getLabel("label_FinanceMainDialog_NumberOfTerms.value"),
+												String.valueOf(minTerms), String.valueOf(maxTerms) }));
+					}
+					finMain.setNumberOfTerms(noOfTerms);
 					finMain.setMaturityDate(null);
 
 					if (i > 0) {
