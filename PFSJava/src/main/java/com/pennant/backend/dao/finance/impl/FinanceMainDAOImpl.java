@@ -3375,7 +3375,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.FinCurrAssetValue, fm.FeeChargeAmt, fm.FinRepaymentAmount");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join LinkedFinances lf on lf.LinkedReference = fm.FinReference");
-		sql.append(" Where fm.FinReference = ?");
+		sql.append(" Where lf.FinReference = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
