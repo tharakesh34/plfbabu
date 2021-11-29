@@ -212,6 +212,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	private FinanceSummary financeSummary;
 	private DPDEnquiryService dpdEnquiryService;
 	protected boolean customer360;
+	private boolean isModelWindow = false;
 	private VASRecordingDAO vASRecordingDAO;
 
 	int listRows;
@@ -296,6 +297,10 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 			if (arguments.containsKey("customer360")) {
 				customer360 = true;
+			}
+
+			if (arguments.containsKey("isModelWindow")) {
+				isModelWindow = (Boolean) arguments.get("isModelWindow");
 			}
 
 			// Method for recall Enquiries
@@ -1029,6 +1034,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		if ("FINENQ".equals(this.enquiryType)) {
 
 			List<Object> list = new ArrayList<Object>();
+
+			Map<String, Object> aruments = new HashMap<>();
+			aruments.put("isModelWindow", isModelWindow);
+			list.add(aruments);
+
 			FinScheduleListItemRenderer finRender;
 			if (finScheduleData != null) {
 				finRender = new FinScheduleListItemRenderer();
