@@ -6537,7 +6537,11 @@ public class ScheduleCalculator {
 				curSchd.setProfitSchd(BigDecimal.ZERO);
 			}
 
-			curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance()));
+			// PSD#184263 - Getting Negative amount under schedule when EMI holidays are capitalized and 1 EMI holiday
+			// given before maturity Date.
+			if (!FinanceConstants.FLAG_HOLIDAY.equals(prvSchd.getBpiOrHoliday())) {
+				curSchd.setProfitCalc(curSchd.getProfitSchd().subtract(prvSchd.getProfitBalance()));
+			}
 		}
 
 		logger.debug("Leaving");
