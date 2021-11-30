@@ -123,28 +123,36 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 
 			if (fmi.isNewRecord()) {
 				finMaintainInstructionDAO.save(fmi, tableType);
-				linkedFinancesDAO.saveList(fd.getLinkedFinancesList(), "_TEMP");
 				auditHeader.getAuditDetail().setModelData(fmi);
 				auditHeader.setAuditReference(fmi.getFinReference());
 			} else {
-				List<LinkedFinances> saveFinances = new ArrayList<>();
-				List<LinkedFinances> updateFinances = new ArrayList<>();
 				finMaintainInstructionDAO.update(fmi, tableType);
-				for (LinkedFinances linkedFin : fd.getLinkedFinancesList()) {
-					if (linkedFin.isNewRecord()) {
-						saveFinances.add(linkedFin);
-						if (saveFinances.size() == PennantConstants.CHUNK_SIZE) {
-							linkedFinancesDAO.saveList(saveFinances, "_Temp");
-						}
-					} else {
-						updateFinances.add(linkedFin);
-						if (updateFinances.size() == PennantConstants.CHUNK_SIZE) {
-							linkedFinancesDAO.updateList(updateFinances, "_Temp");
-						}
+			}
+
+			List<LinkedFinances> saveFinances = new ArrayList<>();
+			List<LinkedFinances> updateFinances = new ArrayList<>();
+
+			for (LinkedFinances linkedFin : fd.getLinkedFinancesList()) {
+				if (linkedFin.isNewRecord()) {
+					saveFinances.add(linkedFin);
+					if (saveFinances.size() == PennantConstants.CHUNK_SIZE) {
+						linkedFinancesDAO.saveList(saveFinances, "_Temp");
+						saveFinances.isEmpty();
+					}
+				} else {
+					updateFinances.add(linkedFin);
+					if (updateFinances.size() == PennantConstants.CHUNK_SIZE) {
+						linkedFinancesDAO.updateList(updateFinances, "_Temp");
+						updateFinances.isEmpty();
 					}
 				}
+			}
 
+			if (CollectionUtils.isNotEmpty(saveFinances)) {
 				linkedFinancesDAO.saveList(saveFinances, "_Temp");
+			}
+
+			if (CollectionUtils.isNotEmpty(updateFinances)) {
 				linkedFinancesDAO.updateList(updateFinances, "_Temp");
 			}
 		}
