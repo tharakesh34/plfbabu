@@ -774,6 +774,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		map.put("childDialog", true);
 		map.put("financeEnquiry", aFinanceEnq);
 		map.put("ReceiptDialog", this);
+		map.put("isModelWindow", true);
 		map.put("enquiryType", "FINENQ");
 		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
 				this.window_ReceiptDialog, map);

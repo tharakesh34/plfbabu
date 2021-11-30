@@ -654,7 +654,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 			}
 
 			if (getScheduleDetailDialogCtrl() != null) {
-				getScheduleDetailDialogCtrl().doFillScheduleList(schdData);
+				getScheduleDetailDialogCtrl().doFillScheduleList(getFinScheduleData());
 			}
 		}
 		logger.debug("Leaving");

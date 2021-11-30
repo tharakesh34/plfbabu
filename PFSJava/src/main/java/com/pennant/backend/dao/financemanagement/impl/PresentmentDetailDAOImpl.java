@@ -298,15 +298,16 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 				" AND Not Exists( Select 1 from PresentmentDetails T7 where T1.FinID = T7.FinID AND T7.SCHDATE = T1.SCHDATE ");
 		sql.append(
 				" AND T7.ExcludeReason = '6' AND T7.PresentmentID IN (Select ID FROM PresentmentHeader Where  Status =1 OR  Status =2 OR Status =3 )) ");
+		sql.append(" AND T4.STARTDATE <= T1.SCHDATE");
 
 		if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK) && isGroupByPartnerBank(ph)) {
-			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
+			sql.append(" ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
 		} else if (SysParamUtil.isAllowed(SMTParameterConstants.GROUP_BATCH_BY_BANK)) {
-			sql.append("ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
+			sql.append(" ORDER BY T6.BANKCODE, T1.DEFSCHDDATE, T7.EntityCode");
 		} else if (isGroupByPartnerBank(ph)) {
-			sql.append("ORDER BY  T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
+			sql.append(" ORDER BY  T1.DEFSCHDDATE, T7.EntityCode, T4.PARTNERBANKID");
 		} else {
-			sql.append("ORDER BY  T1.DEFSCHDDATE, T7.EntityCode");
+			sql.append(" ORDER BY  T1.DEFSCHDDATE, T7.EntityCode");
 		}
 		return sql.toString();
 	}
