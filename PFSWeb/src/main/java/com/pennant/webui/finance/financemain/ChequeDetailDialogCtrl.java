@@ -1396,8 +1396,6 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 	}
 
 	private int getEmiNumber(int emiNum) {
-		List<Listitem> items = this.listBoxChequeDetail.getItems();
-
 		while (true) {
 			Combobox emi = getCombobox(String.valueOf(++emiNum));
 			String date = emi.getValue();
@@ -1421,6 +1419,8 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 			if (bpiorholiday) {
 				continue;
 			}
+
+			List<Listitem> items = this.listBoxChequeDetail.getItems();
 
 			for (Listitem listitem : items) {
 				List<Listcell> list = listitem.getChildren();
@@ -2392,19 +2392,40 @@ public class ChequeDetailDialogCtrl extends GFCBaseCtrl<ChequeHeader> {
 		} else {
 			financeSchedules = getFinanceSchedules();
 		}
-		for (FinanceScheduleDetail valueLabel : financeSchedules) {
-			if ((valueLabel.isRepayOnSchDate() || valueLabel.isPftOnSchDate())
-					&& (valueLabel.getInstNumber() != 0
-							|| StringUtils.equals(valueLabel.getBpiOrHoliday(), FinanceConstants.FLAG_BPI))
-					&& BigDecimal.ZERO.equals(valueLabel.getPartialPaidAmt())) {
-				comboitem = new Comboitem();
-				comboitem.setValue(valueLabel.getInstNumber());
-				comboitem.setLabel(DateUtility.formatToShortDate(valueLabel.getSchDate()));
-				comboitem.setAttribute("SchdDate", valueLabel.getSchDate());
-				combobox.appendChild(comboitem);
-				if (String.valueOf(valueLabel.getInstNumber()).equals(String.valueOf(emiNumber))) {
-					combobox.setSelectedItem(comboitem);
-				}
+
+		List<FinanceScheduleDetail> unPaidSchedules = new ArrayList<>();
+
+		for (FinanceScheduleDetail schd : financeSchedules) {
+			if ((schd.isRepayOnSchDate() || schd.isPftOnSchDate()) && (schd.getInstNumber() == 0)) {
+				continue;
+			}
+
+			if (FinanceConstants.FLAG_BPI.equals(schd.getBpiOrHoliday())) {
+				continue;
+			}
+
+			if (schd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) > 0) {
+				continue;
+			}
+
+			if (schd.isSchPftPaid() || schd.isSchPriPaid()) {
+				continue;
+			}
+
+			unPaidSchedules.add(schd);
+		}
+
+		int index = 0;
+		for (FinanceScheduleDetail valueLabel : unPaidSchedules) {
+			index++;
+			comboitem = new Comboitem();
+			comboitem.setValue(emiNumber);
+			comboitem.setLabel(DateUtility.formatToShortDate(valueLabel.getSchDate()));
+			comboitem.setAttribute("SchdDate", valueLabel.getSchDate());
+			combobox.appendChild(comboitem);
+			if (index == Integer.parseInt(emiNumber)) {
+				combobox.setSelectedItem(comboitem);
+				break;
 			}
 		}
 		return combobox;
