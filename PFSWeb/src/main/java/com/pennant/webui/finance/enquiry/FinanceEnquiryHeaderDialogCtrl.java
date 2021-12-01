@@ -667,6 +667,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 			finExpenseDetails = getUploadHeaderService().getFinExpenseDetailById(this.finReference);
 
 			map.put("finExpenseDetails", finExpenseDetails);
+			map.put("finID", this.finID);
 			map.put("finReference", this.finReference);
 			map.put("ccyformat", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/FinanceInquiry/ExpenseEnquiryDialog.zul";
