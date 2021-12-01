@@ -194,6 +194,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 				String taxComponent = null;
 				for (ManualAdvise ma : adviseList) {
 
+					if (ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()))
+							.compareTo(BigDecimal.ZERO) <= 0) {
+						continue;
+					}
+
 					BigDecimal recAmount = ma.getAdviseAmount().subtract(ma.getWaivedAmount());
 					BigDecimal totPaidGst = ma.getPaidCGST()
 							.add(ma.getPaidIGST().add(ma.getPaidSGST().add(ma.getPaidUGST()).add(ma.getPaidCESS())));

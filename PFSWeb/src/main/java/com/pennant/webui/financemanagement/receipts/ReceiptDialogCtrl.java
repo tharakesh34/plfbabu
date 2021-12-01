@@ -4081,7 +4081,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							allocteDtl.setPaidIGST(BigDecimal.ZERO);
 							allocteDtl.setPaidGST(BigDecimal.ZERO);
 							getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocteDtl,
-									FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
+									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 						}
 					}
 				}
