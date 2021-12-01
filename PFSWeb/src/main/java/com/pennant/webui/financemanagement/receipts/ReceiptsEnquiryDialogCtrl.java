@@ -528,6 +528,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Preparation of Finance Enquiry Data
 		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
 		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
+		aFinanceEnq.setFinID(finReceiptHeader.getFinID());
 		aFinanceEnq.setFinReference(finReceiptHeader.getReference());
 		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
 		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());
