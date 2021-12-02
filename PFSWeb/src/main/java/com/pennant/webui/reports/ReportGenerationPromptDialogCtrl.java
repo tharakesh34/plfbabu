@@ -28,6 +28,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1267,8 +1268,28 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 							if (!excludeDates) {
 								whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
 										aReportFilterFields, fromDateBox, ">=");
+								Datebox toDatebox = new Datebox();
+
+								if (whereCondition.toString().contains("AuditDateTime")) {
+									Datebox datebox = (Datebox) toDateBox;
+									Date toDate = datebox.getValue();
+
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(toDate);
+									cal.set(Calendar.HOUR_OF_DAY, 23);
+									cal.set(Calendar.MINUTE, 59);
+									cal.set(Calendar.SECOND, 59);
+									cal.set(Calendar.MILLISECOND, 999);
+
+									toDatebox.setValue(cal.getTime());
+									toDatebox.setId(datebox.getId());
+								} else {
+									toDatebox = (Datebox) toDateBox;
+								}
+
 								whereCondition = getWhereConditionFromDateTimeAndRangeTypes(whereCondition,
-										aReportFilterFields, toDateBox, "<=");
+										aReportFilterFields, toDatebox, "<=");
+
 							}
 						}
 					}
@@ -1467,15 +1488,28 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 
-					if (App.DATABASE == Database.SQL_SERVER) {
-						exactDate = "CONVERT(DATETIME, FLOOR(CONVERT(FLOAT," + aReportFieldsDetails.getFieldDBName()
-								+ "))) " + filter + "'"
-								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
-					}
+					if (whereCondition.toString().contains("AuditDateTime")) {
+						if (App.DATABASE == Database.SQL_SERVER) {
+							exactDate = "CONVERT(DATETIME, FLOOR(CONVERT(FLOAT," + aReportFieldsDetails.getFieldDBName()
+									+ "))) " + filter + "'"
+									+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateTimeFormat) + "'";
+						}
 
-					if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
-						exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
-								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
+						if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
+							exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
+									+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateTimeFormat) + "'";
+						}
+					} else {
+						if (App.DATABASE == Database.SQL_SERVER) {
+							exactDate = "CONVERT(DATETIME, FLOOR(CONVERT(FLOAT," + aReportFieldsDetails.getFieldDBName()
+									+ "))) " + filter + "'"
+									+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
+						}
+
+						if (App.DATABASE == Database.ORACLE || App.DATABASE == Database.POSTGRES) {
+							exactDate = aReportFieldsDetails.getFieldDBName() + " " + filter + "'"
+									+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
+						}
 					}
 					whereCondition.append(exactDate);
 
