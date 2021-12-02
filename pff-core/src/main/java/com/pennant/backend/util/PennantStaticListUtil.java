@@ -192,6 +192,7 @@ public class PennantStaticListUtil {
 	private static List<ValueLabel> presentmentExclusionList;
 	private static List<Property> presentmentBatchStatusList;
 	private static List<RoundingTarget> roundingTargetList;
+	private static List<ValueLabel> jvPostingPurposeList;
 	private static List<ValueLabel> postingPurposeList;
 	private static List<ValueLabel> authTypes;
 	private static List<ValueLabel> presentmentsStatusList;
@@ -3354,6 +3355,15 @@ public class PennantStaticListUtil {
 			roundingTargetList.add(new RoundingTarget(100, 6, Labels.getLabel("label_Rounding_100")));
 		}
 		return roundingTargetList;
+	}
+
+	public static List<ValueLabel> getJVPurposeList() {
+		if (jvPostingPurposeList == null) {
+			jvPostingPurposeList = new ArrayList<ValueLabel>(1);
+			jvPostingPurposeList
+					.add(new ValueLabel(FinanceConstants.POSTING_AGAINST_LOAN, Labels.getLabel("label_Finance")));
+		}
+		return jvPostingPurposeList;
 	}
 
 	public static List<ValueLabel> getpostingPurposeList() {

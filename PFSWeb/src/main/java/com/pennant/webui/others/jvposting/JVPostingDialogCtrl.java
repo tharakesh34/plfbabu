@@ -917,16 +917,16 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		if (aJVPosting.isNewRecord()) {
 			this.batchReference.setValue("");
 			this.baseCCy.setValue(aJVPosting.getCurrency());
-			getJVPosting().setPostingDate(DateUtility.getAppDate());
-			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getpostingPurposeList(), "");
+			getJVPosting().setPostingDate(SysParamUtil.getAppDate());
+			fillComboBox(this.postingAgainst, "", PennantStaticListUtil.getJVPurposeList(), "");
 		} else {
 			this.batchReference.setValue(String.valueOf(aJVPosting.getBatchReference()));
 			this.baseCCy.setValue(aJVPosting.getCurrency());
 			this.postingBranch.setValue(aJVPosting.getBranch());
 			this.postingBranch.setDescription(aJVPosting.getBranchDesc());
 			this.postingBranch.setReadonly(true);
-			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(),
-					PennantStaticListUtil.getpostingPurposeList(), "");
+			fillComboBox(this.postingAgainst, aJVPosting.getPostAgainst(), PennantStaticListUtil.getJVPurposeList(),
+					"");
 		}
 
 		// Added to map with legal expenses
