@@ -242,7 +242,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		selectSql.append(" From LMTFinRefDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent ");
+		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent  AND IsActive = 1");
 		if (StringUtils.isNotBlank(roleCode)) {
 			selectSql.append(" AND ShowInStage LIKE '%" + roleCode + ",%' ");
 		}
