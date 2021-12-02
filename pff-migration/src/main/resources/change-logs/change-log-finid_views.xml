@@ -3059,7 +3059,7 @@
 
 	<!-- (PMV) :: PMAY Views handle in single place start -->
 
-	<changeSet id="PMV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PMV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'pmay_view');
@@ -3067,7 +3067,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PMV_1" author="Gopal.p">
+	<changeSet id="PMV_1.1" author="Gopal.p">
 		<createView viewName="PMAY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINID,
@@ -3102,7 +3102,11 @@
 					T3.CUSTSHRTNAME,
 					T2.FINTYPE
 				FROM PMAY_TEMP T1
-				INNER JOIN FINANCEMAIN_TEMP T2 ON T2.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) T2 ON T2.FINID = T1.FINID
 				INNER JOIN CUSTOMERS T3 ON T3.CUSTID =T2.CUSTID
 				LEFT JOIN TOWNCODE T4 ON T4.TOWNCODE = T1.TOWNCODE
 				WHERE T2.FINISACTIVE = 1
@@ -3139,7 +3143,11 @@
 					T3.CUSTSHRTNAME,
 					T2.FINTYPE
 				FROM PMAY T1
-      			INNER JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+      			INNER JOIN (SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) T2 ON T2.FINID = T1.FINID
 				INNER JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
 				LEFT JOIN TOWNCODE T4 ON T4.TOWNCODE = T1.TOWNCODE
       			WHERE NOT EXISTS (SELECT 1 FROM PMAY_TEMP WHERE FINID = T2.FINID) AND T2.FINISACTIVE = 1
@@ -3147,7 +3155,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="PMV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PMV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'pmay_view');
@@ -3155,7 +3163,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PMV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PMV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'pmay_lview');
@@ -3163,7 +3171,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="PMV_2" author="Gopal.p">
+	<changeSet id="PMV_2.1" author="Gopal.p">
 		<createView viewName="PMAY_LVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINID,
@@ -3198,7 +3206,11 @@
 					T3.CUSTSHRTNAME,
 					T2.FINTYPE
 				FROM PMAY_TEMP T1
-				JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) T2 ON T2.FINID = T1.FINID
 				JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
 				LEFT JOIN TOWNCODE T4 ON T4.TOWNCODE = T1.TOWNCODE
 				WHERE T2.FINISACTIVE = 1
@@ -3235,7 +3247,11 @@
 					T3.CUSTSHRTNAME,
 					T2.FINTYPE
 				FROM PMAY T1
-				JOIN FINANCEMAIN T2 ON T2.FINID = T1.FINID
+				INNER JOIN (SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN_TEMP
+					UNION ALL
+					SELECT FINID, FINREFERENCE, CUSTID, FINISACTIVE, FINTYPE FROM FINANCEMAIN 
+					WHERE NOT EXISTS(SELECT 1 FROM FINANCEMAIN_TEMP WHERE FINID = FINANCEMAIN.FINID)
+					) T2 ON T2.FINID = T1.FINID
 				JOIN CUSTOMERS T3 ON T3.CUSTID = T2.CUSTID
 				LEFT JOIN TOWNCODE T4 ON T4.TOWNCODE = T1.TOWNCODE
 				WHERE NOT EXISTS (SELECT 1 FROM PMAY_TEMP WHERE PMAY_TEMP.FINID = T2.FINID) AND T2.FINISACTIVE = 1
@@ -3243,7 +3259,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="PMV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PMV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'pmay_lview');	
