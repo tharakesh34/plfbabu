@@ -1041,6 +1041,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			// utilisedAmt = utilisedAmt.add(reqAmount);
 		}
 
+		excess.setFinID(finID);
 		excess.setFinReference(finReference);
 		excess.setAmountType(adviceType);
 		excess.setAmount(amount);
