@@ -25641,7 +25641,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="700_pre" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="700.1_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'covenants_view');
@@ -25649,7 +25649,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="700" author="Gireesh.G">
+	<changeSet id="700.1" author="Gireesh.G">
 		<createView viewName="COVENANTS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -25747,11 +25747,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 					T1.REMARKS1
    			 	FROM COVENANTS T1
      		 	JOIN COVENANT_TYPES T2 ON T2.ID = T1.COVENANTTYPEID
+     		 	WHERE NOT EXISTS (SELECT 1 FROM COVENANTS_TEMP WHERE Id = T1.Id) 	
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="700_Post" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="700.1_Post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'covenants_view');
