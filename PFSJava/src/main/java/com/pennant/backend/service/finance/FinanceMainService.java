@@ -76,4 +76,6 @@ public interface FinanceMainService {
 
 	String getFinanceType(String value, TableType view);
 
+	FinanceMain getFinanceMainForAdviseUpload(String finRefernce);
+
 }
