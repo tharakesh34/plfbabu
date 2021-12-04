@@ -39,8 +39,6 @@ public interface FinODDetailsDAO {
 
 	void update(FinODDetails finOdDetails);
 
-	void save(FinODDetails finOdDetails);
-
 	int getPendingOverDuePayment(long finID);
 
 	void updateTotals(FinODDetails detail);

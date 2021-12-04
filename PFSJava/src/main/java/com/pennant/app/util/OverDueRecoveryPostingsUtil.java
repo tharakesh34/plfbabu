@@ -645,7 +645,6 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 
 		Date curBussDate = SysParamUtil.getAppValueDate();
 
-		String finReference = finRepayQueue.getFinReference();
 		long finID = finRepayQueue.getFinID();
 
 		FinODDetails odDetails = finODDetailsDAO.getFinODDetailsForBatch(finID, finRepayQueue.getRpyDate());
@@ -659,7 +658,10 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 		} else {
 			odDetails = prepareOverDueData(odDetails, dateValueDate, finRepayQueue, isAfterRecovery);
 			if (!isEnqPurpose && odDetails.getFinODSchdDate().compareTo(curBussDate) <= 0) {
-				finODDetailsDAO.save(odDetails);
+				List<FinODDetails> odDList = new ArrayList<>();
+				odDList.add(odDetails);
+			
+				finODDetailsDAO.saveList(odDList);
 			}
 		}
 
