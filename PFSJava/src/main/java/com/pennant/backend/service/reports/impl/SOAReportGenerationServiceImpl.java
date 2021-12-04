@@ -1412,14 +1412,12 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
 			netDue = netDue.subtract(otherReceivableDue);
-			soaSummaryReportsList.add(soaSummaryReport);
 		} else {
 			totalCharges = totalCharges.add(otherPayableDue);
 			soaSummaryReport.setDue(otherPayableDue);
 			soaSummaryReport.setReceipt(receipt);
 			soaSummaryReport.setOverDue(overDue);
 			netDue = netDue.subtract(otherPayableDue);
-			soaSummaryReportsList.add(soaSummaryReport);
 		}
 
 		soaSummaryReportsList.add(soaSummaryReport);
