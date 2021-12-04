@@ -641,6 +641,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		// Excess Record Creation
 		if (exAmount == null) {
 			exAmount = new FinExcessAmount();
+			exAmount.setFinID(finID);
 			exAmount.setFinReference(finReference);
 			exAmount.setAmountType(RepayConstants.EXAMOUNTTYPE_ADVINT);
 			exAmount.setAmount(bpiAmt);
@@ -1030,9 +1031,6 @@ public class AdvancePaymentService extends ServiceHelper {
 		BigDecimal amount = BigDecimal.ZERO;
 		BigDecimal utilisedAmt = excess.getUtilisedAmt();
 		BigDecimal reservedAmt = excess.getReservedAmt();
-
-		excess.setFinReference(finReference);
-		excess.setAmountType(adviceType);
 
 		if (AccountConstants.TRANTYPE_CREDIT.equals(txnType)) {
 			amount = excess.getAmount().add(reqAmount);
