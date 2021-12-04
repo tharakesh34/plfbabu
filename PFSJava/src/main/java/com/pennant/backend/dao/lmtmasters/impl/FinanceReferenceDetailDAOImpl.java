@@ -1,43 +1,26 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceReferenceDetailDAOImpl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceReferenceDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011 * *
+ * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 28-05-2018       Sai Krishna              0.2          bugs #388 Get active notifications* 
- *                                                        only from the process editor.     * 
- *                                                                                          * 
- * 13-06-2018       Siva					 0.3        Stage Accounting Modifications      * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * 28-05-2018 Sai Krishna 0.2 bugs #388 Get active notifications* only from the process
+ * editor. * * 13-06-2018 Siva 0.3 Stage Accounting Modifications * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.lmtmasters.impl;
@@ -122,10 +105,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	/**
 	 * Fetch the Record Finance Reference Details details by key field
 	 * 
-	 * @param id
-	 *            (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (int)
+	 * @param type (String) ""/_Temp/_View
 	 * @return FinanceReferenceDetail
 	 */
 	@Override
@@ -168,12 +149,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
-	 * @param finance
-	 *            Type (String)
-	 * @param reference
-	 *            Type (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finance   Type (String)
+	 * @param reference Type (int)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<FinanceReferenceDetail>
 	 */
 	@Override
@@ -212,7 +190,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 			selectSql.append(
 					",lovDescIsRemarksAllowed,lovDescCheckMinCount,lovDescCheckMaxCount, lovDescElgRuleValue, lovDescRuleReturnType ");
 		} else if ("_ACView".equals(StringUtils.trimToEmpty(type)) || "_TCView".equals(StringUtils.trimToEmpty(type))) {
-			//selectSql.append(" ,lovDescRefDesc , lovDescNamelov ");     ////////////////////Stage Accounting with Stage Accounting Rules change///////////
+			// selectSql.append(" ,lovDescRefDesc , lovDescNamelov "); ////////////////////Stage Accounting with Stage
+			// Accounting Rules change///////////
 			selectSql.append(" , lovDescStgRuleValue, lovDescCodelov, lovDescNamelov ");
 		} else if ("_ATView".equals(StringUtils.trimToEmpty(type)) || "_TTView".equals(StringUtils.trimToEmpty(type))) {
 			selectSql.append(" ,lovDescRefDesc , lovDescNamelov, lovDescCodelov, ResendReq ");
@@ -242,7 +221,7 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		selectSql.append(" From LMTFinRefDetail");
 		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent  AND IsActive = 1");
+		selectSql.append(" Where FinType =:FinType AND FinEvent = :FinEvent");
 		if (StringUtils.isNotBlank(roleCode)) {
 			selectSql.append(" AND ShowInStage LIKE '%" + roleCode + ",%' ");
 		}
@@ -260,12 +239,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
-	 * @param finance
-	 *            Type (String)
-	 * @param reference
-	 *            Type (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finance   Type (String)
+	 * @param reference Type (int)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<FinanceReferenceDetail>
 	 */
 	@Override
@@ -290,12 +266,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
-	 * @param finance
-	 *            Type (String)
-	 * @param reference
-	 *            Type (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finance   Type (String)
+	 * @param reference Type (int)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<FinanceReferenceDetail>
 	 */
 	@Override
@@ -471,10 +444,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 * This method Deletes the Record from the LMTFinRefDetail or LMTFinRefDetail_Temp. if Record not deleted then
 	 * throws DataAccessException with error 41003. delete Finance Reference Details by key FinRefDetailId
 	 * 
-	 * @param Finance
-	 *            Reference Details (financeReferenceDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Reference Details (financeReferenceDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -507,10 +478,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 * 
 	 * save Finance Reference Details
 	 * 
-	 * @param Finance
-	 *            Reference Details (financeReferenceDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Reference Details (financeReferenceDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -549,10 +518,8 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	 * This method updates the Record LMTFinRefDetail or LMTFinRefDetail_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Finance Reference Details by key FinRefDetailId and Version
 	 * 
-	 * @param Finance
-	 *            Reference Details (financeReferenceDetail)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Finance Reference Details (financeReferenceDetail)
+	 * @param type    (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -594,12 +561,9 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 	/**
 	 * Fetch Records Details by Finance Type, Reference Type and field
 	 * 
-	 * @param finance
-	 *            Type (String)
-	 * @param reference
-	 *            Type (int)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param finance   Type (String)
+	 * @param reference Type (int)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return List<FinanceReferenceDetail>
 	 */
 	@Override
