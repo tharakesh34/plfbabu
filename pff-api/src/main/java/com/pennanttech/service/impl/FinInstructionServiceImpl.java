@@ -136,6 +136,7 @@ import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
@@ -3179,7 +3180,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			aggrementData.setFinReference(covenantAgreement.getFinReference());
 		}
 		Date appdate = SysParamUtil.getAppDate();
-		covenantAgreement.setAppDate(appdate);
+		covenantAgreement.setAppDate(DateUtil.format(appdate, DateFormat.LONG_DATE));
 		covenantAgreement.setCovenantAggrementList(cvntAggrement);
 
 		String agreement = "LOD.docx";

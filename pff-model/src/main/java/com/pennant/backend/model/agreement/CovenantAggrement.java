@@ -1,11 +1,10 @@
 package com.pennant.backend.model.agreement;
 
-import java.util.Date;
 import java.util.List;
 
 public class CovenantAggrement {
 
-	private Date appDate;
+	private String appDate;
 	private String custshrtname = "";
 	private String finReference = "";
 	private String custAddrHnbr = "";
@@ -25,11 +24,11 @@ public class CovenantAggrement {
 	private String keyReference;
 	private List<CovenantAggrement> covenantAggrementList;
 
-	public Date getAppDate() {
+	public String getAppDate() {
 		return appDate;
 	}
 
-	public void setAppDate(Date appDate) {
+	public void setAppDate(String appDate) {
 		this.appDate = appDate;
 	}
 

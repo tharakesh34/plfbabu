@@ -47,6 +47,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.TableType;
@@ -551,7 +552,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 
 			}
 			Date appdate = SysParamUtil.getAppDate();
-			covenantAgreement.setAppDate(appdate);
+			covenantAgreement.setAppDate(DateUtil.format(appdate, DateFormat.LONG_DATE));
 			covenantAgreement.setCovenantAggrementList(cvntAggrement);
 
 			String agreement = "LOD.docx";
@@ -570,6 +571,10 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 						try {
 							value = property.invoke(covenantAggrement);
 						} catch (Exception e) {
+							continue;
+						}
+
+						if (field.equalsIgnoreCase("CovenantAggrementList")) {
 							continue;
 						}
 
