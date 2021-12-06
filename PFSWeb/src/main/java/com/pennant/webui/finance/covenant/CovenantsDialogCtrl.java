@@ -430,7 +430,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		if (!"Maintanance".equals(module)) {
 			readOnlyComponent(isReadOnly("CovenantDialog_Mandatoryrole"), this.mandRole);
 		}
-
+		readOnlyComponent(isReadOnly("CovenantDialog_Category"), this.category);
 		readOnlyComponent(isReadOnly("CovenantDialog_Otc"), this.otc);
 		readOnlyComponent(isReadOnly("CovenantDialog_Pdd"), this.pdd);
 		readOnlyComponent(isReadOnly("CovenantDialog_Receivabledate"), this.receivableDate);
