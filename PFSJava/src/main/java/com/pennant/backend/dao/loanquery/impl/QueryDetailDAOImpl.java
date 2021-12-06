@@ -120,6 +120,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 	@Override
 	public void update(QueryDetail qd, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Update QueryDetail");
+		sql.append(tableType.getSuffix());
 		sql.append(" Set Status = ?, RaisedBy = ?, QryNotes = ?, ResponsNotes = ?");
 		sql.append(", ResponseBy = ?, ResponseOn = ?, CloserNotes = ?");
 		sql.append(", CloserBy = ?, CloserOn = ?, Version = ?, Module = ?, Reference = ?");
@@ -366,7 +367,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		public QueryDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			QueryDetail qd = new QueryDetail();
 
-			qd.setFinID(rs.getLong("Id"));
+			qd.setId(rs.getLong("Id"));
 			qd.setFinID(rs.getLong("FinID"));
 			qd.setFinReference(rs.getString("FinReference"));
 			qd.setCategoryId(rs.getLong("CategoryId"));
