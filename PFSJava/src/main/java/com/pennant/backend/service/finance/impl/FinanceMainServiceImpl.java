@@ -151,6 +151,11 @@ public class FinanceMainServiceImpl extends GenericService<FinanceMain> implemen
 		return financeMainDAO.getFinanceType(finRefernce, tableType);
 	}
 
+	@Override
+	public FinanceMain getFinanceMainForAdviseUpload(String finRefernce) {
+		return financeMainDAO.getFinanceMainForAdviseUpload(finRefernce);
+	}
+
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
 		this.financeMainDAO = financeMainDAO;
 	}

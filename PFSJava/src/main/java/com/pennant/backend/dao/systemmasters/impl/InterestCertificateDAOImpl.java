@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AddressTypeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AddressTypeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.systemmasters.impl;
@@ -447,7 +429,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		sql.append(" From COVENANTS c");
 		sql.append(" Left Join COVENANT_DOCUMENTS cd on cd.CovenantID = c.ID");
 		sql.append(" Left Join COVENANT_TYPES ct on ct.ID = c.CovenantTypeID");
-		sql.append(" Left Join DOCUMENTDETAILS dd on dd.DocID = cd.ID");
+		sql.append(" Left Join DOCUMENTDETAILS dd on dd.DocID = cd.DocumentId");
 		sql.append(" Left Join FINANCEMAIN fm on fm.FinReference = c.KeyReference");
 		sql.append(" Left Join CUSTOMERS cust on fm.CustID = cust.CustID");
 		sql.append(" Left Join CUSTOMERADDRESSES custadd on custadd.CustID = cust.CustID");
@@ -464,7 +446,7 @@ public class InterestCertificateDAOImpl extends BasicDao<InterestCertificate> im
 		sql.append(" from COVENANTS_TEMP c");
 		sql.append(" left join COVENANT_DOCUMENTS_TEMP cd on cd.CovenantID = c.ID");
 		sql.append(" left join COVENANT_TYPES ct on ct.ID = c.CovenantTypeID");
-		sql.append(" left join DOCUMENTDETAILS_TEMP dd on dd.DocID = cd.ID");
+		sql.append(" left join DOCUMENTDETAILS_TEMP dd on dd.DocID = cd.DocumentId");
 		sql.append(" left join FINANCEMAIN_VIEW fm on fm.FinReference = c.KeyReference");
 		sql.append(" left join CUSTOMERS cust on fm.CustID = cust.CustID");
 		sql.append(" left join CUSTOMERADDRESSES custadd on custadd.CustID = cust.CustID");

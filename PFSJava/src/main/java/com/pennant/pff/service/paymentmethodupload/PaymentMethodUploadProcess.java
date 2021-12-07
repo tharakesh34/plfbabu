@@ -174,20 +174,21 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 			}
 
 			// Mandate id +ve or not
-			if (pmu.getMandateId() < 0) {
-				error = "Mandate Id should be Positive : " + pmu.getMandateId();
+			Long mandateId = pmu.getMandateId();
+			if (mandateId == null || mandateId < 0) {
+				error = "Mandate Id should be Positive : " + mandateId;
 				setErrorDeatils(pmu, remarks, error, "CPU001");
 				continue;
 			}
 
 			// Mandate Details checking
-			Mandate mandate = mandateService.getApprovedMandateById(pmu.getMandateId());
+			Mandate mandate = mandateService.getApprovedMandateById(mandateId);
 			if (mandate == null && !(mandateCheck)) {
-				error = "Mandate details are not available for the mandate id: " + pmu.getMandateId();
+				error = "Mandate details are not available for the mandate id: " + mandateId;
 				setErrorDeatils(pmu, remarks, error, "CPU001");
 				continue;
 			} else if (mandate != null && (mandateCheck)) {
-				error = "For Manual/PDC payment methods Mandate id is not required. Mandate Id: " + pmu.getMandateId();
+				error = "For Manual/PDC payment methods Mandate id is not required. Mandate Id: " + mandateId;
 				setErrorDeatils(pmu, remarks, error, "CPU001");
 				continue;
 			}
@@ -209,7 +210,7 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 				}
 
 				if (!StringUtils.equals(mandate.getMandateType(), pmu.getFinRepayMethod())) {
-					error = "For the Mandate Id :" + pmu.getMandateId() + ", Mandate Type :" + mandate.getMandateType()
+					error = "For the Mandate Id :" + mandateId + ", Mandate Type :" + mandate.getMandateType()
 							+ " is not matched with the given Repaymethod :" + pmu.getFinRepayMethod();
 					setErrorDeatils(pmu, remarks, error, "CPU001");
 					continue;
@@ -245,9 +246,8 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 				}
 
 				// OpenMandate
-				error = "Mandate Id : " + pmu.getMandateId()
-						+ ", is not a open mandate and  already assigned to another loan.";
-				if (!mandate.isOpenMandate() && paymentMethodUploadDAO.isMandateIdExists(pmu.getMandateId())) {
+				error = "Mandate Id : " + mandateId + ", is not a open mandate and  already assigned to another loan.";
+				if (!mandate.isOpenMandate() && paymentMethodUploadDAO.isMandateIdExists(mandateId)) {
 					setErrorDeatils(pmu, remarks, error, "CPU002");
 					continue;
 				}

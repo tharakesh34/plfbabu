@@ -381,4 +381,6 @@ public interface FinanceMainDAO {
 	int getCustomerBankCountById(Long BankId, long custId);
 
 	FinanceMain getRejectFinanceMainByRef(String finReference);
+
+	FinanceMain getFinanceMainForAdviseUpload(String finReference);
 }

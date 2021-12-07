@@ -74,7 +74,15 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 		List<FinanceReferenceDetail> referenceList = financeReferenceDetailDAO.getFinanceReferenceDetail(finType,
 				finEvent, userRole, "_AQView");
 
-		processCheckListDetails(fd, referenceList);
+		List<FinanceReferenceDetail> frdList = new ArrayList<>();
+
+		for (FinanceReferenceDetail frd : referenceList) {
+			if (frd.isIsActive()) {
+				frdList.add(frd);
+			}
+		}
+
+		processCheckListDetails(fd, frdList);
 
 		logger.debug(Literal.LEAVING);
 	}

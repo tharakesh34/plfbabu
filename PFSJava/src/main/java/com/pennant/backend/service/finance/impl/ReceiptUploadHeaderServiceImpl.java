@@ -710,7 +710,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			} else {
 				rud.setFinID(finID);
 			}
-			
+
 			if (dedupCheck) {
 
 				if (StringUtils.equalsIgnoreCase(rud.getReceiptMode(), DisbursementConstants.PAYMENT_TYPE_ONLINE)) {
@@ -1155,8 +1155,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			rud.setExtReference(strValue);
 		}
 
-		if (strValue.length() > 50) {
-			setErrorToRUD(rud, "RU0040", "[EXTERNALREF] with length more than 1 ");
+		if (strValue.length() < 0 || strValue.length() > 20) {
+			setErrorToRUD(rud, "RU0040", "[EXTERNALREF] with length more than 1 and less than or equal to 20");
 		}
 
 		// Collection Agent

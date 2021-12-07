@@ -5917,4 +5917,28 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
+
+	@Override
+	public FinanceMain getFinanceMainForAdviseUpload(String finReference) {
+		String sql = "Select FinID, FinStartDate, FinIsActive From FinanceMain Where FinReference = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				FinanceMain fm = new FinanceMain();
+
+				fm.setFinID(rs.getLong("FinID"));
+				fm.setFinReference(finReference);
+				fm.setFinStartDate(JdbcUtil.getDate(rs.getDate("FinStartDate")));
+				fm.setFinIsActive(rs.getBoolean("FinIsActive"));
+
+				return fm;
+			}, finReference);
+		} catch (EmptyResultDataAccessException dae) {
+			//
+		}
+
+		return null;
+	}
 }

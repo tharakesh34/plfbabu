@@ -302,64 +302,6 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		});
 	}
 
-	public void save(FinODDetails od) {
-		StringBuilder sql = new StringBuilder("Insert Into FinODDetails (");
-		sql.append("FinID, FinReference, FinODSchdDate, FinODFor, FinBranch, FinType, CustID, FinODTillDate");
-		sql.append(" FinCurODAmt, FinCurODPri, FinCurODPft, FinMaxODAmt, FinMaxODPri, FinMaxODPft");
-		sql.append(", GraceDays, IncGraceDays, FinCurODDays, TotPenaltyAmt, TotWaived, TotPenaltyPaid");
-		sql.append(", TotPenaltyBal, FinLMdfDate, LPIAmt, LPIPaid, LPIBal, LPIWaived");
-		sql.append(", ApplyODPenalty, ODIncGrcDays, ODChargeType, ODGraceDays, LpCpz, LpCpzAmount");
-		sql.append(", LpCurCpzBal, ODChargeCalOn, ODChargeAmtOrPerc, ODAllowWaiver, ODMaxWaiverPerc, ODRuleCode");
-		sql.append(") Values (");
-		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
-		sql.append(", ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?, ?");
-		sql.append(")");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index++, od.getFinID());
-			ps.setString(index++, od.getFinReference());
-			ps.setDate(index++, JdbcUtil.getDate(od.getFinODSchdDate()));
-			ps.setString(index++, od.getFinODFor());
-			ps.setString(index++, od.getFinBranch());
-			ps.setString(index++, od.getFinType());
-			ps.setLong(index++, od.getCustID());
-			ps.setDate(index++, JdbcUtil.getDate(od.getFinODTillDate()));
-			ps.setBigDecimal(index++, od.getFinCurODAmt());
-			ps.setBigDecimal(index++, od.getFinCurODPri());
-			ps.setBigDecimal(index++, od.getFinCurODPft());
-			ps.setBigDecimal(index++, od.getFinMaxODAmt());
-			ps.setBigDecimal(index++, od.getFinMaxODPri());
-			ps.setBigDecimal(index++, od.getFinMaxODPft());
-			ps.setInt(index++, od.getGraceDays());
-			ps.setBoolean(index++, od.isIncGraceDays());
-			ps.setInt(index++, od.getFinCurODDays());
-			ps.setBigDecimal(index++, od.getTotPenaltyAmt());
-			ps.setBigDecimal(index++, od.getTotWaived());
-			ps.setBigDecimal(index++, od.getTotPenaltyPaid());
-			ps.setBigDecimal(index++, od.getTotPenaltyBal());
-			ps.setDate(index++, JdbcUtil.getDate(od.getFinLMdfDate()));
-			ps.setBigDecimal(index++, od.getLPIAmt());
-			ps.setBigDecimal(index++, od.getLPIPaid());
-			ps.setBigDecimal(index++, od.getLPIBal());
-			ps.setBigDecimal(index++, od.getLPIWaived());
-			ps.setBoolean(index++, od.isApplyODPenalty());
-			ps.setBoolean(index++, od.isODIncGrcDays());
-			ps.setString(index++, od.getODChargeType());
-			ps.setInt(index++, od.getODGraceDays());
-			ps.setBoolean(index++, od.isLpCpz());
-			ps.setBigDecimal(index++, od.getLpCpzAmount());
-			ps.setBigDecimal(index++, od.getLpCurCpzBal());
-			ps.setString(index++, od.getODChargeCalOn());
-			ps.setBigDecimal(index++, od.getODChargeAmtOrPerc());
-			ps.setBoolean(index++, od.isODAllowWaiver());
-			ps.setBigDecimal(index++, od.getODMaxWaiverPerc());
-			ps.setString(index++, od.getODRuleCode());
-		});
-	}
-
 	public int getPendingOverDuePayment(long finID) {
 		String sql = "Select coalesce(max(FinCurODDays), 0) From FinODDetails Where FinID = ? and FinCurODAmt > ?";
 

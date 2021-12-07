@@ -641,46 +641,47 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.ENTERING);
 
 		boolean error = false;
-		String reason = "";
+		StringBuilder reason = new StringBuilder();
+
 		Date valueDate = null;
 		UploadManualAdvise adviseUpload = new UploadManualAdvise();
-		FinanceMain finMain = null;
-       Long finID = null;
+		FinanceMain fm = null;
 		// Reference
-		String finReference = row.get(0);
+		String finReference = StringUtils.trimToEmpty(row.get(0));
 		if (StringUtils.isBlank(finReference)) {
-			reason = "Loan Reference is mandatory.";
+			reason.append("Loan Reference is mandatory.");
 			error = true;
 		} else if (StringUtils.isNotBlank(finReference)) {
 			if (finReference.length() > 20) {
-				reason = reason + " Loan Reference length is exceeded, it should be lessthan or equal to 20.";
+				reason.append(" Loan Reference length is exceeded, it should be lessthan or equal to 20.");
 				error = true;
 				finReference = null;
 			} else {
-
-				finID = financeMainService.getFinID(finReference);
-				if (finID == null) {
-					reason = reason + "Loan Reference doesn't exist.";
+				fm = financeMainService.getFinanceMainForAdviseUpload(finReference);
+				if (fm == null) {
+					reason.append("Loan Reference doesn't exist.");
 					error = true;
 				}
 			}
 		}
-		adviseUpload.setFinID(finID);
+		adviseUpload.setFinID(fm.getFinID());
 		adviseUpload.setFinReference(finReference);
 
 		// Advise Type
 		String type = row.get(1);
 		if (StringUtils.isBlank(type)) {
-			reason = reason + "Advise Type is mandatory.";
+			reason.append("Advise Type is mandatory.");
 			error = true;
 		} else {
 			if (type.length() > 1) {
-				reason = reason + "Advise type length is exceeded.";
+				reason.append("Advise type length is exceeded.");
 				type = null;
-			} else if (!StringUtils.equals(type, UploadConstants.UPLOAD_PAYABLE_ADVISE)
-					&& !StringUtils.equals(type, UploadConstants.UPLOAD_RECEIVABLE_ADVISE)) {
-				reason = reason + "Advise Type should be either" + UploadConstants.UPLOAD_PAYABLE_ADVISE + "or"
-						+ UploadConstants.UPLOAD_RECEIVABLE_ADVISE;
+			} else if (!UploadConstants.UPLOAD_PAYABLE_ADVISE.equals(type)
+					&& !UploadConstants.UPLOAD_RECEIVABLE_ADVISE.equals(type)) {
+				reason.append("Advise Type should be either");
+				reason.append(UploadConstants.UPLOAD_PAYABLE_ADVISE);
+				reason.append(" or ");
+				reason.append(UploadConstants.UPLOAD_RECEIVABLE_ADVISE);
 				error = true;
 			}
 		}
@@ -689,17 +690,17 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// Fee Type
 		String feeType = row.get(2);
 		if (StringUtils.isBlank(feeType)) {
-			reason = reason + "Fee Type is mandatory.";
+			reason.append("Fee Type is mandatory.");
 			error = true;
 		} else {
 			if (feeType.length() > 8) {
-				reason = reason + "Fee type length is exceeded.";
+				reason.append("Fee type length is exceeded.");
 				error = true;
 				feeType = feeType.substring(0, 8);
 			} else {
 				FeeType fee = uploadHeaderService.getApprovedFeeTypeByFeeCode(feeType);
 				if (fee == null) {
-					reason = reason + "Fee type doesn't exist.";
+					reason.append("Fee type doesn't exist.");
 					error = true;
 				} else {
 					String adviseType = "";
@@ -709,11 +710,11 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 						adviseType = UploadConstants.UPLOAD_PAYABLE_ADVISE;
 					}
 					if (!StringUtils.equals(adviseType, type)) {
-						reason = reason + "Fee Type with the given advise type doesn't exist.";
+						reason.append("Fee Type with the given advise type doesn't exist.");
 						error = true;
 					}
 					if (!fee.isManualAdvice()) {
-						reason = reason + "manual advice not enable in the given fee types.";
+						reason.append("manual advice not enable in the given fee types.");
 						error = true;
 					}
 				}
@@ -724,21 +725,21 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		// Value Date
 		try {
 			if (StringUtils.isBlank(row.get(3))) {
-				reason = reason + "Value Date is mandatory.";
+				reason.append("Value Date is mandatory.");
 				error = true;
 			} else {
 				valueDate = getUtilDate(row.get(3));
-				if (valueDate != null && finMain != null) {
-					if (valueDate.compareTo(finMain.getFinStartDate()) < 0
-							|| valueDate.compareTo(SysParamUtil.getAppDate()) > 0) {
-						reason = reason
-								+ "Value Date should be greater than Finance Start Date & Lessthan or Equal to Application date.";
+				if (valueDate != null && fm != null) {
+					Date appDate = SysParamUtil.getAppDate();
+					if (valueDate.compareTo(fm.getFinStartDate()) < 0 || valueDate.compareTo(appDate) > 0) {
+						reason.append(
+								"Value Date should be greater than Finance Start Date & Lessthan or Equal to Application date.");
 						error = true;
 					}
 				}
 			}
 		} catch (Exception e) {
-			reason = reason + "Value date format is incorrect.It's format should be dd/MM/yyyy.";
+			reason.append("Value date format is incorrect.It's format should be dd/MM/yyyy.");
 			error = true;
 		}
 		adviseUpload.setValueDate(valueDate);
@@ -747,7 +748,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		String manualAdviseAmount = row.get(4);
 		BigDecimal advise = null;
 		if (StringUtils.isBlank(manualAdviseAmount)) {
-			reason = reason + "Advise Amount is mandatory.";
+			reason.append("Advise Amount is mandatory.");
 			error = true;
 		} else {
 			try {
@@ -757,10 +758,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 				}
 
 			} catch (NumberFormatException e) {
-				reason = reason + "Advise Amount is invalid.";
+				reason.append("Advise Amount is invalid.");
 				error = true;
 			} catch (Exception e) {
-				reason = reason + e.getMessage();
+				reason.append(e.getMessage());
 				error = true;
 			}
 
@@ -774,7 +775,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		String remarks = row.get(5);
 		if (StringUtils.isNotBlank(remarks)) {
 			if (remarks.length() > 100) {
-				reason = reason + "Remarks length is exceeded.";
+				reason.append(" Remarks length is exceeded.");
 				error = true;
 				remarks = null;
 			}
@@ -785,7 +786,8 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			String key = finReference + type + feeType;
 
 			if (validations.contains(key)) {
-				reason = "Loan Reference is duplicated in the upload file with the same advise type and fee type.";
+				reason.append(
+						"Loan Reference is duplicated in the upload file with the same advise type and fee type.");
 				error = true;
 			} else {
 				validations.add(key);
@@ -796,10 +798,10 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 			if (CollectionUtils.isNotEmpty(finEvents)) {
 				if (finEvents.contains(FinServiceEvent.ADDDISB) || finEvents.contains(FinServiceEvent.RATECHG)
 						|| finEvents.contains(FinServiceEvent.EARLYRPY)) {
-					reason = Labels.getLabel("LOAN_SERVICE_PROCESS");
+					reason = new StringBuilder(Labels.getLabel("LOAN_SERVICE_PROCESS"));
 					error = true;
 				} else if (finEvents.contains(FinServiceEvent.CANCELFIN)) {
-					reason = Labels.getLabel("LOAN_CANCEL_PROCESS");
+					reason = new StringBuilder(Labels.getLabel("LOAN_CANCEL_PROCESS"));
 					error = true;
 				}
 			}
@@ -817,7 +819,7 @@ public class UploadAdviseDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		adviseUpload.setVersion(adviseUpload.getVersion() + 1);
 
 		if (error) {
-			adviseUpload.setReason(reason);
+			adviseUpload.setReason(reason.toString());
 			adviseUpload.setStatus(UploadConstants.UPLOAD_STATUS_FAIL);
 			adviseUpload.setRejectStage(UploadConstants.UPLOAD_MAKER_STAGE);
 		} else {

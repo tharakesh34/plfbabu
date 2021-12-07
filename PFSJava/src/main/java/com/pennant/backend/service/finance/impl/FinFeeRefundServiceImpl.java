@@ -826,6 +826,7 @@ public class FinFeeRefundServiceImpl extends GenericService<FinFeeRefundHeader> 
 			// Creating Excess
 			if (excess == null) {
 				excess = new FinExcessAmount();
+				excess.setFinID(refundHeader.getFinID());
 				excess.setFinReference(refundHeader.getFinReference());
 				excess.setAmountType(RepayConstants.EXCESSADJUSTTO_EXCESS);
 				excess.setAmount(excessAmt);

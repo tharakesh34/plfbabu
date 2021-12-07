@@ -256,7 +256,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		}, (rs, rowNum) -> {
 			QueryDetail qd = new QueryDetail();
 
-			qd.setFinID(rs.getLong("Id"));
+			qd.setId(rs.getLong("Id"));
 			qd.setFinID(rs.getLong("FinID"));
 			qd.setFinReference(rs.getString("FinReference"));
 			qd.setCategoryId(rs.getLong("CategoryId"));
@@ -366,7 +366,7 @@ public class QueryDetailDAOImpl extends SequenceDao<QueryDetail> implements Quer
 		public QueryDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
 			QueryDetail qd = new QueryDetail();
 
-			qd.setFinID(rs.getLong("Id"));
+			qd.setId(rs.getLong("Id"));
 			qd.setFinID(rs.getLong("FinID"));
 			qd.setFinReference(rs.getString("FinReference"));
 			qd.setCategoryId(rs.getLong("CategoryId"));

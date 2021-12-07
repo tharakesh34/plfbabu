@@ -141,7 +141,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 		sql.append(", ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
