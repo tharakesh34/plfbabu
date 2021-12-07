@@ -193,17 +193,25 @@ public class FinChangeCustomerDAOImpl extends SequenceDao<FinChangeCustomer> imp
 		StringBuilder sql = new StringBuilder("Delete From FinChangeCustomer");
 		sql.append(tableType.getSuffix());
 		sql.append(" Where Id = ?");
-		sql.append(QueryUtil.getConcurrencyCondition(tableType));
+		sql.append(QueryUtil.getConcurrencyClause(tableType));
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, fcc.getId()));
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+				int index = 1;
+				ps.setLong(index++, fcc.getId());
+
+				if (TableType.TEMP_TAB.equals(tableType)) {
+					ps.setTimestamp(index++, fcc.getPrevMntOn());
+				} else {
+					ps.setInt(index++, fcc.getVersion() - 1);
+				}
+			});
 
 			if (recordCount == 0) {
 				throw new ConcurrencyException();
 			}
-
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}

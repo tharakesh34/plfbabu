@@ -257,6 +257,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 			try {
 				FinChangeCustomer dfinChangeCustomer = (FinChangeCustomer) this.finReference.getObject();
 				finChangeCustomer.setCustCategory(dfinChangeCustomer.getCustCategory());
+				finChangeCustomer.setFinID(finID);
 				finChangeCustomer.setFinReference(dfinChangeCustomer.getFinReference());
 				finChangeCustomer.setOldCustId(dfinChangeCustomer.getOldCustId());
 				finChangeCustomer.setFinType(dfinChangeCustomer.getFinType());
