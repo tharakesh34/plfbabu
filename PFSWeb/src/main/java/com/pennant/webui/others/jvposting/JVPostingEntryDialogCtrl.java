@@ -892,7 +892,7 @@ public class JVPostingEntryDialogCtrl extends GFCBaseCtrl<JVPostingEntry> {
 		this.txnReference.setValue((int) aJVPostingEntry.getTxnReference());
 		this.narrLine1.setValue(aJVPostingEntry.getNarrLine1());
 		this.narrLine2.setValue(aJVPostingEntry.getNarrLine2());
-		this.narrLine3.setValue(getjVPosting().getBatchPurpose());
+		this.narrLine3.setValue(aJVPostingEntry.getNarrLine3());
 		this.narrLine4.setValue(aJVPostingEntry.getNarrLine4());
 
 		CurrencyUtil.getFormat(getJVPostingEntry().getTxnCCy());
