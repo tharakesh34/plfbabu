@@ -11188,6 +11188,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			this.grcMaxAmount.setMandatory(true);
 		} else {
 			this.row_GrcMaxAmount.setVisible(false);
+			this.grcMaxAmount.setConstraint("");
+			this.grcMaxAmount.setErrorMessage("");
 			this.grcMaxAmount.setValue(BigDecimal.ZERO);
 			this.grcMaxAmount.setMandatory(false);
 		}
