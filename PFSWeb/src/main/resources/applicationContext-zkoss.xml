@@ -30,7 +30,7 @@
 		<property name="dashboardConfigurationService" ref="dashboardConfigurationService" />
 	</bean>
 
-	<bean id="dashboardCreate" class="com.pennant.webui.dashboard.DashboardCreate" parent="basisCtrl" scope="prototype">
+	<bean id="dashboardCreate" class="com.pennant.webui.dashboard.DashboardCreate" parent="basisListCtrl" scope="prototype">
 		<property name="dashboardConfigurationService" ref="dashboardConfigurationService" />
 	</bean>
 
