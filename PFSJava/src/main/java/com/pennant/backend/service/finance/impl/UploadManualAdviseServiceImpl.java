@@ -383,6 +383,7 @@ public class UploadManualAdviseServiceImpl extends GenericService<UploadManualAd
 		} else {
 			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_RECEIVABLE);
 		}
+		manualAdvise.setFinID(uploadManualAdvise.getFinID());
 		manualAdvise.setFinReference(uploadManualAdvise.getFinReference());
 		manualAdvise.setFeeTypeCode(uploadManualAdvise.getFeeTypeCode());
 		manualAdvise.setFeeTypeID(uploadManualAdvise.getFeeTypeID());
