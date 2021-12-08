@@ -66,7 +66,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinMaintainInstruction;
-import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.LowerTaxDeduction;
@@ -203,7 +202,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 
 			if (arguments.containsKey("financeMain")) {
 				this.financeMain = (FinanceMain) arguments.get("financeMain");
-				;
 			}
 
 			if (arguments.containsKey("isEnquiry")) {
@@ -494,45 +492,6 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 		if (getFinanceSelectCtrl().getListBoxFinance() != null) {
 			getFinanceSelectCtrl().getListBoxFinance().getListModel();
 		}
-	}
-
-	private void resetLowerTaxDeductionDetail(FinScheduleData aFinScheduleData) {
-		logger.debug(Literal.ENTERING);
-
-		List<LowerTaxDeduction> oldLowerTaxDeduction = getOldLowerTaxDeductionDetail();
-		List<LowerTaxDeduction> newLowerTaxDeduction = aFinScheduleData.getLowerTaxDeductionDetails();
-		boolean tdsApplicable = this.tDSApplicable.isChecked();
-
-		if (CollectionUtils.isEmpty(oldLowerTaxDeduction)) {
-			if (!tdsApplicable) {
-				aFinScheduleData.setLowerTaxDeductionDetails(null);
-			} else {
-				List<LowerTaxDeduction> ltd = new ArrayList<LowerTaxDeduction>();
-				for (LowerTaxDeduction lowerTaxDeduction : newLowerTaxDeduction) {
-					lowerTaxDeduction.setNewRecord(true);
-					lowerTaxDeduction.setVersion(1);
-					lowerTaxDeduction.setRecordType(PennantConstants.RCD_ADD);
-					ltd.add(lowerTaxDeduction);
-				}
-				aFinScheduleData.setLowerTaxDeductionDetails(ltd);
-			}
-		} else {
-			if (!tdsApplicable) {
-
-				for (LowerTaxDeduction lowerTaxDeduction : newLowerTaxDeduction) {
-					lowerTaxDeduction.setRecordType(PennantConstants.RECORD_TYPE_CAN);
-				}
-				aFinScheduleData.setLowerTaxDeductionDetails(newLowerTaxDeduction);
-			} else {
-				for (LowerTaxDeduction lowerTaxDeduction : newLowerTaxDeduction) {
-					lowerTaxDeduction.setNewRecord(false);
-					lowerTaxDeduction.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-				}
-				aFinScheduleData.setLowerTaxDeductionDetails(newLowerTaxDeduction);
-
-			}
-		}
-		logger.debug(Literal.LEAVING);
 	}
 
 	/**
