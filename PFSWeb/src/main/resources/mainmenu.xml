@@ -813,9 +813,6 @@
 			<menuItem id="menu_Item_FinFeeRefunds"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FinFeeRefundsList.zul"
 				rightName="menuItem_FinanceManagement_FinFeeRefunds" />
-			<menuItem id="menu_Item_DepositDetails"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositDetailsList.zul"
-				rightName="menuItem_FinanceManagement_DepositDetails" />
 			<menuItem id="menu_Item_ReceiptUpload"
 				zulNavigation="/WEB-INF/pages/Finance/ReceiptUpload/ReceiptUploadHeaderList.zul?approval=N"
 				rightName="menu_Item_ReceiptUpload" />
@@ -1223,8 +1220,6 @@
 			<menuItem id="menu_Item_ProvisionMovement"
 				zulNavigation="/WEB-INF/pages/Enquiry/ProvisionInquiry/ProvisionInquiryList.zul?rightName=menuItem_Enquiry_ProvisionMovement"
 				rightName="menuItem_Enquiry_ProvisionMovement" />
-			<menuItem id="menu_Item_SuspDetails" zulNavigation="/WEB-INF/pages/Enquiry/SuspInquiry/SuspEnquiryList.zul"
-				rightName="menuItem_Enquiry_SuspDetail" />
 			<menuItem id="menu_Item_ChecklistDetails"
 				zulNavigation="/WEB-INF/pages/Enquiry/FinanceInquiry/CheckListEnquiryList.zul"
 				rightName="menuItem_Enquiry_ChecklistDetailsEnquiry" />
@@ -1281,10 +1276,6 @@
 			<menuItem id="menu_Item_LegalDetailEnquiry"
 				zulNavigation="/WEB-INF/pages/Legal/LegalDetail/LegalDetailListEnquiry.zul?enqiryModule=Y"
 				rightName="menuItem_Legal_LegalDetail_Enquiry" />
-			<!-- Deposit Movements -->
-			<menuItem id="menu_Item_DepositMovementsEnquiry"
-				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/DepositMovementsList.zul?enqiryModule=Y"
-				rightName="menuItem_DepositMovements_Enquiry" />
 			<!-- Fee Waivers Enwuiry -->
 			<menuItem id="menu_Item_FeeWaiverEnquiry"
 				zulNavigation="/WEB-INF/pages/FinanceManagement/Receipts/FeeWaiverEnquiryList.zul?enqiryModule=Y"
