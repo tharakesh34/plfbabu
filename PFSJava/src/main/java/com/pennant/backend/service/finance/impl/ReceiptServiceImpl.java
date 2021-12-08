@@ -4636,6 +4636,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				fd.setFinScheduleData(schdData);
 				return receiptData;
 			}
+
+			if (fm != null && rch.getValueDate().compareTo(fm.getFinStartDate()) == 0) {
+				schdData = fd.getFinScheduleData();
+				schdData = setErrorToFSD(schdData, "21006",
+						"First Disbursement date is same as Current Business date. Not allowed for Payment.");
+				fd.setFinScheduleData(schdData);
+				return receiptData;
+			}
+
 			BigDecimal closingBal = getClosingBalance(rch.getFinID(), rch.getValueDate());
 			BigDecimal diff = closingBal.subtract(receiptData.getReceiptHeader().getPartPayAmount());
 			if (diff.compareTo(new BigDecimal(100)) < 0) {

@@ -275,7 +275,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 	public List<DocumentDetails> getDocumentDetailsByRef(String ref, String module, String finEvent, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" DocId, DocModule, DocCategory, Doctype, DocName, ReferenceId, FinEvent, DocPurpose");
-		sql.append(", DocUri, DocReceivedDate, DocReceived, DocOriginal, DocBarcode, Version, LastMntBy");
+		sql.append(", DocUri, DocReceivedDate, DocReceived, DocOriginal, DocBarcode, Remarks, Version, LastMntBy");
 		sql.append(", LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType");
 		sql.append(", WorkflowId, DocRefId, InstructionUID");
 		sql.append(" from DocumentDetails");
@@ -304,6 +304,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 			doc.setDocReceived(rs.getBoolean("DocReceived"));
 			doc.setDocOriginal(rs.getBoolean("DocOriginal"));
 			doc.setDocBarcode(rs.getString("DocBarcode"));
+			doc.setRemarks(rs.getString("Remarks"));
 			doc.setVersion(rs.getInt("Version"));
 			doc.setLastMntBy(rs.getLong("LastMntBy"));
 			doc.setLastMntOn(rs.getTimestamp("LastMntOn"));

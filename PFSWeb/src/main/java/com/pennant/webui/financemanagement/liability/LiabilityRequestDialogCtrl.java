@@ -159,6 +159,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	@Override
 	protected void doSetProperties() {
 		super.doSetProperties();
+		super.moduleCode = "LiabilityRequest";
 	}
 
 	// Component Events

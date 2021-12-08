@@ -95,8 +95,8 @@ public class ChangeTDSDAOImpl extends BasicDao<FinanceMain> implements ChangeTDS
 		StringBuilder sql = new StringBuilder("Select tdsapplicable from FinScheduleDetails");
 		sql.append(" where FINREFERENCE=:Finreference");
 		sql.append(" and SCHDATE=");
-		sql.append(" (select max(SCHDATE) from FINSCHEDULEDETAILS");
-		sql.append(" where FINREFERENCE=:Finreference and SCHDATE<=:SchDate)");
+		sql.append(" (select min(SCHDATE) from FINSCHEDULEDETAILS");
+		sql.append(" where FINREFERENCE=:Finreference and SCHDATE> :SchDate)");
 
 		logger.trace(Literal.SQL + sql.toString());
 

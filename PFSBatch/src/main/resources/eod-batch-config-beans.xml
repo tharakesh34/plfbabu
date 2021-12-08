@@ -688,6 +688,7 @@
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
 		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
 		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<bean id="externalLiabilityDAO" class="com.pennanttech.pff.dao.customer.liability.ExternalLiabilityDAOImpl"
