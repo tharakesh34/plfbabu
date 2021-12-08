@@ -235,7 +235,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 			if (arguments.containsKey("ReportConfiguration")) {
 				reportConfiguration = (ReportConfiguration) arguments.get("ReportConfiguration");
-
+				reportMenuCode = reportConfiguration.getMenuItemCode();
 			} else {
 				// get the parameters map that are overHanded by creation.
 				reportMenuCode = tabbox.getSelectedTab().getId().trim().replace("tab_", "menu_Item_");
@@ -1270,7 +1270,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 										aReportFilterFields, fromDateBox, ">=");
 								Datebox toDatebox = new Datebox();
 
-								if (whereCondition.toString().contains("AuditDateTime")) {
+								if (aReportFilterFields.getFieldDBName().contains("AuditDateTime")) {
 									Datebox datebox = (Datebox) toDateBox;
 									Date toDate = datebox.getValue();
 
@@ -1488,7 +1488,7 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 								+ DateUtility.format(datebox.getValue(), PennantConstants.DBDateFormat) + "'";
 					}
 
-					if (whereCondition.toString().contains("AuditDateTime")) {
+					if (aReportFieldsDetails.getFieldDBName().contains("AuditDateTime")) {
 						if (App.DATABASE == Database.SQL_SERVER) {
 							exactDate = "CONVERT(DATETIME, FLOOR(CONVERT(FLOAT," + aReportFieldsDetails.getFieldDBName()
 									+ "))) " + filter + "'"
