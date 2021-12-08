@@ -3807,7 +3807,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
 
 			// Check whether the user has authority to change/view the record.
-			String whereCond1 = " where FinReference=?";
+			String whereCond1 = " where FinReference = ?";
 
 			if (!doCheckAuthority(aFinanceMain, whereCond1, new Object[] { finRef })) {
 				MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
