@@ -108,6 +108,7 @@ import com.pennant.backend.model.finance.FinRepayHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceProfitDetail;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -435,6 +436,45 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		Executions.createComponents(pageName, null, map);
 
 		logger.debug("Leaving " + event.toString());
+	}
+
+	/**
+	 * Method for Showing Finance details on Clicking Finance View Button
+	 * 
+	 * @param event
+	 * @throws SuspendNotAllowedException
+	 * @throws InterruptedException
+	 */
+	public void onClick$btnSearchFinreference(Event event) throws SuspendNotAllowedException, InterruptedException {
+		logger.debug(Literal.ENTERING + event.toString());
+
+		// Preparation of Finance Enquiry Data
+		FinReceiptHeader frh = receiptData.getReceiptHeader();
+		FinanceEnquiry fe = new FinanceEnquiry();
+		fe.setFinID(frh.getFinID());
+		fe.setFinReference(frh.getReference());
+		fe.setFinType(frh.getFinType());
+		fe.setLovDescFinTypeName(frh.getFinTypeDesc());
+		fe.setFinCcy(frh.getFinCcy());
+		fe.setScheduleMethod(frh.getScheduleMethod());
+		fe.setProfitDaysBasis(frh.getPftDaysBasis());
+		fe.setFinBranch(frh.getFinBranch());
+		fe.setLovDescFinBranchName(frh.getFinBranchDesc());
+		fe.setLovDescCustCIF(frh.getCustCIF());
+		fe.setFinIsActive(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("moduleCode", moduleCode);
+		map.put("fromApproved", true);
+		map.put("childDialog", true);
+		map.put("financeEnquiry", fe);
+		map.put("ReceiptDialog", this);
+		map.put("isModelWindow", true);
+		map.put("enquiryType", "FINENQ");
+		Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+				this.window_LoanClosureEnquiryDialog, map);
+
+		logger.debug(Literal.LEAVING + event.toString());
 	}
 
 	/**
