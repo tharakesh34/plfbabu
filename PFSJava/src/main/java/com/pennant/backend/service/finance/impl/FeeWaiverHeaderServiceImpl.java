@@ -614,6 +614,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		if (CollectionUtils.isEmpty(siList)) {
 			FinServiceInstruction fsi = new FinServiceInstruction();
+			fsi.setFinID(fwh.getFinID());
 			fsi.setFinReference(fwh.getFinReference());
 			fsi.setFinEvent(fwh.getEvent());
 
