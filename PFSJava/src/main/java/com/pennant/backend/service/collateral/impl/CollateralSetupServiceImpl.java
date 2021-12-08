@@ -1920,21 +1920,15 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		return collateralSetupDAO.getVersion(collateralRef, "");
 	}
 
-	/**
-	 * Fetch list of customer collateral by custId
-	 * 
-	 * @param depositorId
-	 * @return List<CollateralSetup>
-	 */
 	@Override
-	public List<CollateralSetup> getApprovedCollateralByCustId(long depositorId) {
+	public List<CollateralSetup> getCollateralByCustId(long depositorId, String type) {
 		logger.debug(Literal.ENTERING);
 
-		List<CollateralSetup> collaterals = collateralSetupDAO.getApprovedCollateralByCustId(depositorId, "_AView");
+		List<CollateralSetup> collaterals = collateralSetupDAO.getApprovedCollateralByCustId(depositorId, type);
 		for (CollateralSetup setup : collaterals) {
-			setup.setCoOwnerDetailList(coOwnerDetailDAO.getCoOwnerDetailByRef(setup.getCollateralRef(), "_AView"));
+			setup.setCoOwnerDetailList(coOwnerDetailDAO.getCoOwnerDetailByRef(setup.getCollateralRef(), type));
 			setup.setCollateralThirdPartyList(
-					collateralThirdPartyDAO.getCollThirdPartyDetails(setup.getCollateralRef(), "_AView"));
+					collateralThirdPartyDAO.getCollThirdPartyDetails(setup.getCollateralRef(), type));
 
 			// set document details
 			setup.setDocuments(documentDetailsDAO.getDocumentDetailsByRef(setup.getCollateralRef(),
@@ -1978,6 +1972,18 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 
 		logger.debug(Literal.LEAVING);
 		return collaterals;
+
+	}
+
+	/**
+	 * Fetch list of customer collateral by custId
+	 * 
+	 * @param depositorId
+	 * @return List<CollateralSetup>
+	 */
+	@Override
+	public List<CollateralSetup> getApprovedCollateralByCustId(long depositorId) {
+		return getCollateralByCustId(depositorId, "_AView");
 	}
 
 	/**

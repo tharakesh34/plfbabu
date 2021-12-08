@@ -165,6 +165,7 @@ import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
+import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -314,6 +315,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private PostValidationHook postValidationHook;
 
 	private List<FinanceMain> financeMainList;
+	private CollateralSetupService collateralSetupService;
 
 	public CustomerDetailsServiceImpl() {
 		super();
@@ -486,7 +488,7 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		customerDetails.setCustFinanceExposureList(customerDAO.getCustomerFinanceDetailById(id));
 
 		customerDetails.setFinanceMainList(financeMainDAO.getFinanceByCustId(id, ""));
-		customerDetails.setCollateraldetailList(collateralSetupDAO.getApprovedCollateralByCustId(id, type));
+		customerDetails.setCollateraldetailList(collateralSetupService.getCollateralByCustId(id, type));
 
 		List<String> finReferences = new ArrayList<>();
 		for (FinanceMain financemain : customerDetails.getFinanceMainList()) {
@@ -8335,6 +8337,10 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setFinanceMainList(List<FinanceMain> financeMainList) {
 		this.financeMainList = financeMainList;
+	}
+
+	public void setCollateralSetupService(CollateralSetupService collateralSetupService) {
+		this.collateralSetupService = collateralSetupService;
 	}
 
 }

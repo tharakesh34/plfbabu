@@ -2109,6 +2109,7 @@
 		<property name="dMSQueueDAO" ref="dMSQueueDAO" />
 		<property name="salutationDAO" ref="salutationDAO" />
 		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
+		<property name="collateralSetupService" ref="collateralSetupService" />
 	</bean>
 
 	<!--============ CoreCustomers ============== -->

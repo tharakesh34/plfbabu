@@ -82,4 +82,6 @@ public interface CollateralSetupService {
 	CollateralSetup getCollateralSetupDetails(String collateralRef, String tableType);
 
 	List<CollateralSetup> getCollateralExtendedFields(String finReference, long custId);
+
+	List<CollateralSetup> getCollateralByCustId(long custID, String type);
 }
