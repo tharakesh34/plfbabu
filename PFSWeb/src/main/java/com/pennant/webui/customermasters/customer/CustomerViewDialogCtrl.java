@@ -245,7 +245,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Image customerPic4;
 	protected Label custShrtName4;
 	private Progressmeter basicProgress;
-	//private Progressmeter basicProgress1;
+	// private Progressmeter basicProgress1;
 	protected Listbox listBoxCustomerDirectory;
 	protected Label custShrtName3;
 	protected Label recordStatus3;
@@ -567,8 +567,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomer
-	 *            Customer
+	 * @param aCustomer Customer
 	 * @throws IOException
 	 */
 
@@ -1187,7 +1186,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				customerPic1.setSrc("images/icons/customerenquiry/female.png");
 			}
 		}
-		//Piramal change to hide the employment details section based on system param
+		// Piramal change to hide the employment details section based on system param
 		hbox_empDetails.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
 		listBoxCustomerEmploymentDetail.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
 		doFillDownload(prepareList());
@@ -2075,8 +2074,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 
-				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue()
-						.add(finEnquiry.getFeeChargeAmt());
+				BigDecimal totAmt = finEnquiry.getFinCurrAssetValue().add(finEnquiry.getFeeChargeAmt());
 				lc = new Listcell(PennantApplicationUtil.amountFormate(totAmt, format));
 				lc.setStyle("font-size:14px;font-weight: normal;; text-align:left;");
 				lc.setParent(item);
@@ -2206,8 +2204,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -3092,10 +3089,10 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		CustomerFinanceDetail customerFinanceDetail = (CustomerFinanceDetail) selectedItem.getAttribute("data");
 
 		String finReference = customerFinanceDetail.getFinReference();
-		
+
 		List<String> finReferences = new ArrayList<>();
 		finReferences.add(finReference);
-		
+
 		customerFinanceDetail.setAuditTransactionsList(
 				getApprovalStatusEnquiryDAO().getFinTransactionsList(finReferences, false, false, null));
 		customerFinanceDetail.setNotesList(getNotesDAO().getNotesListAsc(finReferences, "financeMain"));
@@ -3381,59 +3378,47 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 		Map.Entry<String, String> entry = (Entry<String, String>) soa.getAttribute("data");
 		String value = entry.getKey();
+		String path = null;
+
 		switch (value) {
 		case "BCF":
-			try {
-				String path = PathUtil.getPath(PathUtil.CUSTOMER_BALIC_CLAIM_FORM_FOR_CRITICAL_ILLNESS);
-				Filedownload.save(new File(path), "text/plain");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			path = PathUtil.getPath(PathUtil.CUSTOMER_BALIC_CLAIM_FORM_FOR_CRITICAL_ILLNESS);
 			break;
 		case "DCF":
-			try {
-				String path = PathUtil.getPath(PathUtil.CUSTOMER_DEALTH_CLAIM_FORM);
-				Filedownload.save(new File(path), "text/plain");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			path = PathUtil.getPath(PathUtil.CUSTOMER_DEALTH_CLAIM_FORM);
 			break;
 		case "FGICF":
-			try {
-				String path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_Claim_Form);
-				Filedownload.save(new File(path), "text/plain");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_Claim_Form);
 			break;
 		case "FGNCF":
-			try {
-				String path = PathUtil.getPath(PathUtil.CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM);
-				Filedownload.save(new File(path), "text/plain");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			path = PathUtil.getPath(PathUtil.CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM);
 			break;
 		case "HDFCF":
-			try {
-				String path = PathUtil.getPath(PathUtil.CUSTOMER_HDFC_CLAIM_FORM);
-				Filedownload.save(new File(path), "text/plain");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			path = PathUtil.getPath(PathUtil.CUSTOMER_HDFC_CLAIM_FORM);
 			break;
 		case "CDCICF":
-			try {
-				String path = PathUtil.getPath(PathUtil.CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM);
-				Filedownload.save(new File(path), "text/plain");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			path = PathUtil.getPath(PathUtil.CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM);
 			break;
 		default:
 			break;
 		}
 
+		if (path == null) {
+			return;
+		}
+
+		File file = new File(path);
+		if (!file.exists()) {
+			String msg = String.format("%s file not found in %s location", file.getName(), file.getParent());
+			MessageUtil.showError(msg);
+			return;
+		}
+
+		try {
+			Filedownload.save(file, "text/plain");
+		} catch (FileNotFoundException e) {
+			//
+		}
 	}
 
 	private String getTabID(String id) {
