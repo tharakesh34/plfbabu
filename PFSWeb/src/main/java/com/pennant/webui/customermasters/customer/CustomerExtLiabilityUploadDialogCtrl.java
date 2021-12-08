@@ -546,7 +546,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		case "true":
 			return true;
 		case "false":
-			return true;
+			return false;
 		default:
 			throw new WrongValueException("The given file having wrong formatted values : " + value);
 		}
