@@ -11942,7 +11942,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.22.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.22.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies('plf','customerfinancedetails_view');
@@ -11950,7 +11950,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.22.1" author="Gopal.p">
+	<changeSet id="ST#2367.22.2" author="Gopal.p">
 		<createView viewName="CUSTOMERFINANCEDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -11978,7 +11978,8 @@
 					T9.FINTYPEDESC,
 					T9.FINDIVISION LOVDESCFINDIVISION,
 					T1.FIRSTREPAY,
-					T1.NUMBEROFTERMS
+					T1.NUMBEROFTERMS,
+					T1.PRODUCTCATEGORY
 				FROM FINANCEMAIN_TEMP T1
 				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
 				LEFT JOIN SECROLES T3 ON T3.ROLECD = T1.ROLECODE
@@ -11991,7 +11992,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.22.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.22.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies('plf','customerfinancedetails_view');
@@ -11999,7 +12000,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.23.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.23.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 		<![CDATA[
 			select deps_save_and_drop_dependencies('plf','customerfinancedetails_aview');
@@ -12007,7 +12008,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2367.23.1" author="Gopal.p">
+	<changeSet id="ST#2367.23.2" author="Gopal.p">
 		<createView viewName="CUSTOMERFINANCEDETAILS_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT FM.FINID,
@@ -12035,7 +12036,8 @@
 					FT.FINTYPEDESC,
 					FT.FINDIVISION LOVDESCFINDIVISION,
 					FM.FIRSTREPAY,
-					FM.NUMBEROFTERMS
+					FM.NUMBEROFTERMS,
+					FM.PRODUCTCATEGORY
 				FROM FINANCEMAIN FM
 				JOIN RMTFINANCETYPES FT ON FT.FINTYPE = FM.FINTYPE
 				JOIN CUSTOMERS C ON C.CUSTID = FM.CUSTID
@@ -12045,7 +12047,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2367.23.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2367.23.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies('plf','customerfinancedetails_aview');

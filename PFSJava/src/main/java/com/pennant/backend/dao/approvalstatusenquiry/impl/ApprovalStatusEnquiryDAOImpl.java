@@ -152,7 +152,7 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		if (facility) {
 			sql.append(" from CustomerFacilityDetails");
 		} else {
-			sql.append(", FeeChargeAmt, NumberOfTerms, FirstRepay");
+			sql.append(", FeeChargeAmt, NumberOfTerms, FirstRepay, ProductCategory");
 			sql.append(" from CustomerFinanceDetails");
 		}
 
@@ -186,12 +186,12 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 			cfd.setLastMntByUser(rs.getString("LastMntByUser"));
 			cfd.setFinCcy(rs.getString("FinCcy"));
 			cfd.setFinTypeDesc(rs.getString("FinTypeDesc"));
-			// cfd.setLovDescFinDivision(rs.getString("LovDescFinDivision")); (In bean its not available)
 
 			if (!facility) {
 				cfd.setFeeChargeAmt(rs.getBigDecimal("FeeChargeAmt"));
 				cfd.setFirstRepay(rs.getBigDecimal("FirstRepay"));
 				cfd.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+				cfd.setProductCategory(rs.getString("ProductCategory"));
 			}
 
 			return cfd;

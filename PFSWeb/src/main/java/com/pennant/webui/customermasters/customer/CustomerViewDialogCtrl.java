@@ -3055,7 +3055,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc = new Listcell(customerFinance.getFinTypeDesc());
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
-				lc = new Listcell();//customerFinance.getLovDescFinDivision()
+				lc = new Listcell(customerFinance.getProductCategory());
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				lc.setParent(item);
 				lc = new Listcell(customerFinance.getFinCcy());

@@ -75,6 +75,7 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	private BigDecimal firstRepay = BigDecimal.ZERO;
 	@XmlElement(name = "loanTenor")
 	private int numberOfTerms = 0;
+	private String productCategory;
 
 	public CustomerFinanceDetail() {
 		super();
@@ -89,11 +90,9 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 		excludeFields.add("stage");
 		excludeFields.add("curOddays");
 		excludeFields.add("jointAccountDetails");
+		excludeFields.add("productCategory");
 		return excludeFields;
 	}
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public long getCustId() {
 		return custId;
@@ -449,4 +448,13 @@ public class CustomerFinanceDetail extends AbstractWorkflowEntity {
 	public void setJointAccountDetails(List<JointAccountDetail> jointAccountDetails) {
 		this.jointAccountDetails = jointAccountDetails;
 	}
+
+	public String getProductCategory() {
+		return productCategory;
+	}
+
+	public void setProductCategory(String productCategory) {
+		this.productCategory = productCategory;
+	}
+
 }
