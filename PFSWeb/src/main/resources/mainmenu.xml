@@ -56,9 +56,6 @@
 		<menuItem id="menu_Item_FinanceUserAuthorizationLimit"
 			zulNavigation="/WEB-INF/pages/Authorization/AuthorizationLimit/AuthorizationLimitList.zul?module=FIN;limitType=1;hold=N"
 			rightName="menu_Item_FinanceUserAuthorizationLimit" />
-		<menuItem id="menu_Item_VASProviderAccDetail"
-			zulNavigation="/WEB-INF/pages/SystemMaster/VASProviderAccDetail/VASProviderAccDetailList.zul"
-			rightName="menuItem_SystemMaster_VASProviderAccDetail" />
 	</menu>
 
 	<!-- Masters -->
@@ -650,9 +647,6 @@
 		<menuItem id="menu_Item_FinanceDeviations"
 			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/FinanceDeviationsList.zul"
 			rightName="menuItem_Finance_FinanceDeviations" />
-		<menuItem id="menu_Item_QDEFinanceMain"
-			zulNavigation="/WEB-INF/pages/Finance/FinanceMain/QDEFinanceMainList.zul?requestSource=QDE"
-			rightName="menuItem_Finance_QDEFinanceMain" />
 		<menuItem id="menu_Item_ReinstateFinance"
 			zulNavigation="/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceList.zul"
 			rightName="menuItem_FinanceManagement_ReinstateFinance" />
@@ -1437,9 +1431,6 @@
 			<!-- This menu items should enable in veritas. -->
 			<menuItem id="menu_Item_WelcomeLetter"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul" rightName="menu_Item_WelcomeLetter" />
-			<menuItem id="menu_Item_InterestStatement"
-				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
-				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" />
 			<menuItem id="menu_Item_GST_InvoiceReport"
 				zulNavigation="/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul"
 				rightName="menuItem_CustomerTemplates_NoLiabilitesCertificate" /> <!-- rightName="menu_Item_GST_InvoiceReport" -->
@@ -2049,9 +2040,6 @@
 	<!-- <menuItem id="menu_Item_ScoringType" zulNavigation="/WEB-INF/pages/BMTMasters/ScoringType/ScoringTypeList.zul" rightName="menuItem_RulesFactory_Notifications"/> -->
 	<menuItem id="menu_Item_RefundRule" zulNavigation="/WEB-INF/pages/RulesFactory/Rule/RefundList.zul"
 		rightName="menuItem_RulesFactory_RefundRules" />
-	<menuItem id="menu_Item_Query" zulNavigation="/WEB-INF/pages/ApplicationMaster/Query/QueryList.zul"
-		rightName="menuItem_RulesFactory_Query" />
-
 	<!-- Solution Factory -->
 	<!-- <menuItem id="menu_Item_WeekendMaster" zulNavigation="/WEB-INF/pages/SolutionFactory/WeekendMaster/WeekendMasterList.zul" 
 		rightName="menuItem_SolutionFactory_WeekendMaster" /> -->
