@@ -916,6 +916,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			long finID = ComponentUtil.getFinID(this.wIfFinaceRef);
 			fd = this.financeDetailService.getWIFFinanceDetailById(finID, financeEvent);
 
+			schdData = fd.getFinScheduleData();
+			fm = schdData.getFinanceMain();
+
 			fm.setCurDisbursementAmt(fm.getFinAmount());
 			fm.setNewRecord(true);
 			fm.setRecordType("");
@@ -926,6 +929,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
 			if (finODPenaltyRate == null) {
 				schdData.setFinODPenaltyRate(new FinODPenaltyRate());
+				finODPenaltyRate = schdData.getFinODPenaltyRate();
 			}
 
 			financeType = schdData.getFinanceType();
