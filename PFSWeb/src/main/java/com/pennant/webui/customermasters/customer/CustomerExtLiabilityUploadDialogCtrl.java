@@ -417,8 +417,12 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			if (getValue(cellValue) == null) {
 				ce.setMob(0);
 			} else {
-				BigDecimal bd = new BigDecimal(cellValue);
-				ce.setMob(getValueAsInt(bd.toString()));
+				try {
+					BigDecimal bd = new BigDecimal(cellValue);
+					ce.setMob(getValueAsInt(bd.toString()));
+				} catch (NumberFormatException e) {
+					throw new WrongValueException("The given file having wrong formatted values : " + cellValue);
+				}
 			}
 			break;
 		case 33:
