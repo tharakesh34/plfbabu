@@ -402,7 +402,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		doSetFieldProperties();
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class, getListRows());
-		this.searchObj.addSort("FinReference", false);
+		this.searchObj.addSort("FinID", false);
 		this.searchObj.addSort("PrevMntOn", true);
 
 		// Field Declarations for Fetching List Data
@@ -441,10 +441,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		setSearchObj(this.searchObj);
 
 		// rendering the list page data required or not.
-		if (renderListOnLoad) {
-			doSearch();
-		}
-
+		doSearch();
 		// set the itemRenderer
 		this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
 
