@@ -2393,6 +2393,8 @@
 		<property name="accountingSetService" ref="accountingSetService" />
 		<property name="engineExecution" ref="engineExecution" />
 		<property name="financeDetailService" ref="financeDetailService" />
+		<property name="eventManager" ref="eventManager" />
+		
 	</bean>
 
 	<!--============ Receipt Cancellation Process Details ============== -->
