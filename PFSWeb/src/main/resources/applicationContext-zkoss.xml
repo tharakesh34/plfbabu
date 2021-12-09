@@ -4000,6 +4000,9 @@
 		<property name="financeTaxDetailService" ref="financeTaxDetailService" />
 		<property name="gstnValidationService" ref="gstnValidationService" />
 		<property name="financeMainService" ref="financeMainService" />
+		<property name="customerAddresDAO" ref="customerAddresDAO" />
+		
+		
 	</bean>
 	<!-- Entity -->
 	<bean id="entityListCtrl" class="com.pennant.webui.applicationmaster.entity.EntityListCtrl" parent="basisListCtrl"
