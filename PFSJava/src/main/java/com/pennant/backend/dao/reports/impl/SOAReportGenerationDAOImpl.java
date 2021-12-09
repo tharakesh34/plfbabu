@@ -447,51 +447,43 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 	 */
 	@Override
 	public List<FinReceiptHeader> getFinReceiptHeaders(String finReference) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ReceiptID, ReceiptModeStatus, ReceiptDate, ReceiptMode, BounceDate");
 		sql.append(", ReceiptPurpose, RefWaiverAmt, RecAppDate, ReceivedDate, ValueDate, TDSAmount");
 		sql.append(" From FinReceiptHeader");
 		sql.append(" Where Reference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
+		return jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
 
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+			@Override
+			public void setValues(PreparedStatement ps) throws SQLException {
+				int index = 1;
 
-					ps.setString(index, finReference);
-				}
-			}, new RowMapper<FinReceiptHeader>() {
+				ps.setString(index, finReference);
+			}
+		}, new RowMapper<FinReceiptHeader>() {
 
-				@Override
-				public FinReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
-					FinReceiptHeader frh = new FinReceiptHeader();
-					frh.setReceiptID(rs.getLong("ReceiptID"));
-					frh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
-					frh.setReceiptDate(JdbcUtil.getDate(rs.getDate("ReceiptDate")));
-					frh.setReceiptMode(rs.getString("ReceiptMode"));
-					frh.setBounceDate(JdbcUtil.getDate(rs.getDate("BounceDate")));
-					frh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
-					frh.setRefWaiverAmt(rs.getBigDecimal("RefWaiverAmt"));
-					frh.setRecAppDate(JdbcUtil.getDate(rs.getDate("RecAppDate")));
-					frh.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
-					frh.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
-					frh.setTdsAmount(rs.getBigDecimal("TDSAmount"));
+			@Override
+			public FinReceiptHeader mapRow(ResultSet rs, int rowNum) throws SQLException {
+				FinReceiptHeader frh = new FinReceiptHeader();
+				frh.setReceiptID(rs.getLong("ReceiptID"));
+				frh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+				frh.setReceiptDate(JdbcUtil.getDate(rs.getDate("ReceiptDate")));
+				frh.setReceiptMode(rs.getString("ReceiptMode"));
+				frh.setBounceDate(JdbcUtil.getDate(rs.getDate("BounceDate")));
+				frh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+				frh.setRefWaiverAmt(rs.getBigDecimal("RefWaiverAmt"));
+				frh.setRecAppDate(JdbcUtil.getDate(rs.getDate("RecAppDate")));
+				frh.setReceivedDate(JdbcUtil.getDate(rs.getDate("ReceivedDate")));
+				frh.setValueDate(JdbcUtil.getDate(rs.getDate("ValueDate")));
+				frh.setTdsAmount(rs.getBigDecimal("TDSAmount"));
 
-					return frh;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-		}
+				return frh;
+			}
+		});
 
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
 	}
 
 	/**

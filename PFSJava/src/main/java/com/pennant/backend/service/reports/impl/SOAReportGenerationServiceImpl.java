@@ -2023,373 +2023,364 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 			// FinReceipt Allocation Details
 			List<ReceiptAllocationDetail> finReceiptAllocDetails = getReceiptAllocationDetailsList(finReference);
 
-			if (finReceiptHeadersList != null && !finReceiptHeadersList.isEmpty()) {
+			// FinReceiptDetails List
+			finReceiptDetailsList = getFinReceiptDetails(finReference);
 
-				// FinReceiptDetails List
-				finReceiptDetailsList = getFinReceiptDetails(finReference);
+			// FinRepayHeaders List
+			finRepayHeadersList = getFinRepayHeadersList(finReference);
 
-				// FinRepayHeaders List
-				finRepayHeadersList = getFinRepayHeadersList(finReference);
+			// FinRepayscheduledetails List
+			finRepaySchdDetails = getRepayScheduleDetailsList(finReference);
 
-				// FinRepayscheduledetails List
-				finRepaySchdDetails = getRepayScheduleDetailsList(finReference);
+			// FinReceipt Allocation Details
+			finReceiptAllocDetails = getReceiptAllocationDetailsList(finReference);
 
-				// FinReceipt Allocation Details
-				finReceiptAllocDetails = getReceiptAllocationDetailsList(finReference);
+			// Inst NO Based on
+			Map<Long, Integer> instNumbers = soaReportGenerationDAO.getInstNumber(finReference);
 
-				// Inst NO Based on
-				Map<Long, Integer> instNumbers = soaReportGenerationDAO.getInstNumber(finReference);
+			for (FinReceiptHeader rh : finReceiptHeadersList) {
+				for (FinReceiptDetail rd : finReceiptDetailsList) {
+					long receiptID = rd.getReceiptID();
+					long rhReceiptID = rh.getReceiptID();
+					int instlNo = 0;
 
-				for (FinReceiptHeader finReceiptHeader : finReceiptHeadersList) {
+					if (receiptID != rhReceiptID) {
+						continue;
+					}
 
-					for (FinReceiptDetail finReceiptDetail : finReceiptDetailsList) {
+					rHEventExcess = "Payment Received vide ";
+					String rpaymentType = StringUtils.trimToEmpty(rd.getPaymentType());
 
-						long receiptID = finReceiptDetail.getReceiptID();
-						long rhReceiptID = finReceiptHeader.getReceiptID();
-						int instlNo = 0;
-						if (receiptID == rhReceiptID) {
-							rHEventExcess = "Payment Received vide ";
-							String rpaymentType = StringUtils.trimToEmpty(finReceiptDetail.getPaymentType());
+					// Displaying label instead of Constant
+					if (RepayConstants.RECEIPTMODE_DIGITAL.equals(rpaymentType)) {
+						rpaymentType = Labels.getLabel("label_PaymentType_DIGITAL");
+					}
 
-							// Displaying label instead of Constant
-							if (RepayConstants.RECEIPTMODE_DIGITAL.equals(rpaymentType)) {
-								rpaymentType = Labels.getLabel("label_PaymentType_DIGITAL");
-							}
+					String receiptModeStatus = StringUtils.trimToEmpty(rh.getReceiptModeStatus());
+					// 30-08-2019:Receipt date and value date should populate in SOA
+					Date receiptDate = rh.getReceiptDate();
+					Date receivedDate = rh.getValueDate();
+					String presentmentType = "";
 
-							String receiptModeStatus = StringUtils.trimToEmpty(finReceiptHeader.getReceiptModeStatus());
-							// 30-08-2019:Receipt date and value date should populate in SOA
-							Date receiptDate = finReceiptHeader.getReceiptDate();
-							Date receivedDate = finReceiptHeader.getValueDate();
-							String presentmentType = "";
+					String favourNumber = rd.getFavourNumber();
 
-							String favourNumber = finReceiptDetail.getFavourNumber();
+					String status = "";
+					String paymentType = "";
+					soaTranReport = new SOATransactionReport();
 
-							String status = "";
-							String paymentType = "";
-							soaTranReport = new SOATransactionReport();
-							if (!(StringUtils.equals("EXCESS", rpaymentType)
-									|| StringUtils.equals("CASH", rpaymentType))) {
-								receiptDate = finReceiptHeader.getReceivedDate();
-								receivedDate = finReceiptHeader.getReceiptDate();
+					if (!(StringUtils.equals("EXCESS", rpaymentType) || StringUtils.equals("CASH", rpaymentType))) {
+						receiptDate = rh.getReceivedDate();
+						receivedDate = rh.getReceiptDate();
 
-								for (PresentmentDetail pd : PresentmentDetailsList) {
-									String mandateType = StringUtils.trimToEmpty(pd.getMandateType());
+						for (PresentmentDetail pd : PresentmentDetailsList) {
+							String mandateType = StringUtils.trimToEmpty(pd.getMandateType());
 
-									if (receiptID == pd.getReceiptID() && StringUtils.equals(rpaymentType,
-											RepayConstants.RECEIPTMODE_PRESENTMENT)) {
-										presentmentType = pd.getPresentmentType();
-										if (StringUtils.equals(pd.getStatus(), RepayConstants.PEXC_APPROV)) {
-											status = " - Subject to realization";
-										}
-
-										if ("Y".equalsIgnoreCase(
-												SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-											if (("P".equals(pd.getPresentmentType()))) {
-												soaTranReport.setTransactionDate(receivedDate);
-											}
-										}
-
-										instlNo = instNumbers.computeIfAbsent(pd.getReceiptID(), rid -> 0);
-
-										if (mandateType.equals(MandateConstants.TYPE_DDM)) {
-											paymentType = "Direct Debit";
-										} else {
-											paymentType = mandateType;
-										}
-										if (pd.getPresentmentType().equals(PennantConstants.PROCESS_REPRESENTMENT)) {
-											paymentType = paymentType.concat(" "
-													+ Labels.getLabel("label_PresentmentExtractionType_RePresentment"));
-										}
-										// paymentType = paymentType.concat(" EMI NO.: " + instlNo);
-									}
-
-								}
-
-								if (StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_CHEQUE)
-										&& StringUtils.equals(receiptModeStatus, RepayConstants.PAYSTATUS_DEPOSITED)) {
+							if (receiptID == pd.getReceiptID()
+									&& StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_PRESENTMENT)) {
+								presentmentType = pd.getPresentmentType();
+								if (StringUtils.equals(pd.getStatus(), RepayConstants.PEXC_APPROV)) {
 									status = " - Subject to realization";
 								}
 
-								if (StringUtils.isNotBlank(rpaymentType)) {
-									if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rpaymentType)
-											|| RepayConstants.RECEIPTMODE_DD.equals(rpaymentType)) {
-										paymentType = WordUtils.capitalize(rpaymentType) + " No.:";
-										if ("Y".equalsIgnoreCase(
-												SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+								if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+									if (("P".equals(pd.getPresentmentType()))) {
+										soaTranReport.setTransactionDate(receivedDate);
+									}
+								}
+
+								instlNo = instNumbers.computeIfAbsent(pd.getReceiptID(), rid -> 0);
+
+								if (mandateType.equals(MandateConstants.TYPE_DDM)) {
+									paymentType = "Direct Debit";
+								} else {
+									paymentType = mandateType;
+								}
+								if (pd.getPresentmentType().equals(PennantConstants.PROCESS_REPRESENTMENT)) {
+									paymentType = paymentType.concat(
+											" " + Labels.getLabel("label_PresentmentExtractionType_RePresentment"));
+								}
+								// paymentType = paymentType.concat(" EMI NO.: " + instlNo);
+							}
+
+						}
+
+						if (StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_CHEQUE)
+								&& StringUtils.equals(receiptModeStatus, RepayConstants.PAYSTATUS_DEPOSITED)) {
+							status = " - Subject to realization";
+						}
+
+						if (StringUtils.isNotBlank(rpaymentType)) {
+							if (RepayConstants.RECEIPTMODE_CHEQUE.equals(rpaymentType)
+									|| RepayConstants.RECEIPTMODE_DD.equals(rpaymentType)) {
+								paymentType = WordUtils.capitalize(rpaymentType) + " No.:";
+								if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+									soaTranReport.setTransactionDate(receivedDate);
+								}
+							} else if (!StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_PRESENTMENT)
+									&& !StringUtils.equals("PAYABLE", rpaymentType)) {
+								paymentType = rpaymentType + " No.:";
+							}
+
+							if ("PAYABLE".equals(rpaymentType)) {
+								rHEventExcess = "Amount Adjusted " + finRef;
+							}
+
+							// Restructure Receipt
+							if (AccountingEvent.RESTRUCTURE.equals(rpaymentType)) {
+								rHEventExcess = "Amount Capitalized vide  ";
+								receivedDate = rh.getValueDate();
+							}
+
+							rHEventExcess = rHEventExcess.concat(paymentType);
+						}
+						if (StringUtils.isNotBlank(rd.getTransactionRef())) {
+							rHEventExcess = rHEventExcess.concat(rd.getTransactionRef());
+						}
+						if (StringUtils.isNotBlank(favourNumber)) {
+							rHEventExcess = rHEventExcess.concat(favourNumber);
+						}
+						rHEventExcess = rHEventExcess.concat(" " + finRef);
+
+					} else if (StringUtils.equals("EXCESS", rpaymentType)) {
+						rHEventExcess = "Amount Adjusted " + finRef;
+					} else if (StringUtils.equals("CASH", rpaymentType)) {
+						rHEventExcess = "Cash Received Vide Receipt No ";
+						if (StringUtils.isNotBlank(rd.getTransactionRef())
+								&& ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
+							rHEventExcess = rHEventExcess.concat(rd.getTransactionRef());
+						} else if (StringUtils.isNotBlank(rd.getPaymentRef())) {
+							rHEventExcess = rHEventExcess.concat(rd.getPaymentRef() + finRef);
+						} else {
+							if (StringUtils.equalsIgnoreCase("Y",
+									SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+								rHEventExcess = rHEventExcess.concat(String.valueOf(receiptID));
+							}
+						}
+
+					}
+					String allocMsg = "";
+					if (radMap.containsKey(rh.getReceiptID())) {
+						int ccy = CurrencyUtil.getFormat(finMain.getFinCcy());
+
+						if (AccountingEvent.RESTRUCTURE.equals(rpaymentType)) {
+							allocMsg = buildAllocationDataForRestructure(rstChrgs, ccy);
+						} else {
+							allocMsg = buildAllocationData(radMap.get(rh.getReceiptID()), ccy);
+						}
+					}
+					soaTranReport.setValueDate(receivedDate);
+					soaTranReport.setEvent(rHEventExcess + status + allocMsg);
+					soaTranReport.setTransactionDate(receiptDate);
+					soaTranReport.setCreditAmount(rd.getAmount());
+
+					if (StringUtils.equals(rpaymentType, "EXCESS")) {
+						soaTranReport.setDebitAmount(rd.getAmount());
+					} else {
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+					}
+					soaTranReport.setPriority(10);
+					if (!StringUtils.equals(receiptModeStatus, RepayConstants.PAYSTATUS_CANCEL)) {
+						soaTransactionReports.add(soaTranReport);
+					}
+
+					// Manual TDS
+					if (rh.getTdsAmount().compareTo(BigDecimal.ZERO) > 0) {
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(rHManualTdsAmount.concat(String.valueOf(receiptID)));
+						soaTranReport.setTransactionDate(receiptDate);
+						soaTranReport.setValueDate(receiptDate);
+						soaTranReport.setCreditAmount(rh.getTdsAmount());
+						soaTranReport.setDebitAmount(BigDecimal.ZERO);
+						soaTranReport.setPriority(10);
+						soaTransactionReports.add(soaTranReport);
+					}
+
+					// Cancelled Manual TDS
+					if (rh.getTdsAmount().compareTo(BigDecimal.ZERO) > 0 && "B".equalsIgnoreCase(rd.getStatus())
+							|| "C".equalsIgnoreCase(rd.getStatus())) {
+						soaTranReport = new SOATransactionReport();
+						soaTranReport.setEvent(rHManualTdsReversalAmount.concat(String.valueOf(receiptID)));
+						soaTranReport.setTransactionDate(receiptDate);
+						soaTranReport.setValueDate(receiptDate);
+						soaTranReport.setCreditAmount(BigDecimal.ZERO);
+						soaTranReport.setDebitAmount(rh.getTdsAmount());
+						soaTranReport.setPriority(10);
+						soaTransactionReports.add(soaTranReport);
+					}
+
+					// Cancelled Receipt's Details
+					if (SysParamUtil.isAllowed(SMTParameterConstants.SOA_SHOW_CANCEL_RECEIPT)
+							&& !FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
+							&& RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)) {
+						soaTransactionReports.add(soaTranReport);
+						SOATransactionReport cancelReport = new SOATransactionReport();
+						BeanUtils.copyProperties(cancelReport, soaTranReport);
+						cancelReport.setDebitAmount(rd.getAmount());
+						if (StringUtils.equals(rpaymentType, "EXCESS")) {
+							cancelReport.setCreditAmount(rd.getAmount());
+						} else {
+							cancelReport.setCreditAmount(BigDecimal.ZERO);
+						}
+						cancelReport.setEvent(rHEventExcess.replaceAll("Received", "Cancelled") + status);
+						soaTransactionReports.add(cancelReport);
+					}
+
+					boolean tdsEntryReq = true;
+					if ((StringUtils.equalsIgnoreCase(rh.getReceiptModeStatus(), "B")
+							|| StringUtils.equalsIgnoreCase(rh.getReceiptModeStatus(), "C"))
+							&& !SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA)) {
+						tdsEntryReq = false;
+					}
+
+					// Receipt Allocation Details
+					if (tdsEntryReq) {
+						for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
+
+							if (rhReceiptID == finReceiptAllocationDetail.getReceiptID()
+									&& (StringUtils.equalsIgnoreCase("TDS",
+											finReceiptAllocationDetail.getAllocationType())
+											|| finReceiptAllocationDetail.getTdsPaid().compareTo(BigDecimal.ZERO) > 0)
+									&& (finReceiptAllocationDetail.getPaidAmount().compareTo(BigDecimal.ZERO) > 0)) {
+
+								soaTranReport = new SOATransactionReport();
+								soaTranReport.setEvent(rHTdsAdjust + finRef);
+								soaTranReport.setTransactionDate(receiptDate);
+								soaTranReport.setValueDate(receivedDate);
+								soaTranReport.setCreditAmount(
+										finReceiptAllocationDetail.getTdsPaid().compareTo(BigDecimal.ZERO) > 0
+												? finReceiptAllocationDetail.getTdsPaid()
+												: finReceiptAllocationDetail.getPaidAmount());
+								soaTranReport.setDebitAmount(BigDecimal.ZERO);
+								soaTranReport.setPriority(21);
+								soaTransactionReports.add(soaTranReport);
+							}
+						}
+					}
+
+					// Receipt Header with Manual Advise
+					if (StringUtils.equals(rh.getReceiptMode(), rpaymentType)) {
+
+						for (ManualAdvise manualAdvise : manualAdviseList) {
+							rHPaymentBouncedFor = "Payment Bounced For "; // 9
+							if (rhReceiptID == manualAdvise.getReceiptID()) {
+
+								if (StringUtils.equals(receiptModeStatus, "B") && manualAdvise.getAdviseType() == 1
+										&& manualAdvise.getBounceID() > 0) {
+
+									soaTranReport = new SOATransactionReport();
+									if (!(StringUtils.equals("EXCESS", rpaymentType)
+											|| StringUtils.equals("CASH", rpaymentType))) {
+										rHPaymentBouncedFor = rHPaymentBouncedFor.concat(rpaymentType + "No.:");
+										if (StringUtils.isNotBlank(favourNumber)) {
+											rHPaymentBouncedFor = rHPaymentBouncedFor.concat(favourNumber);
+										} else {
+											rHPaymentBouncedFor = rHPaymentBouncedFor.concat(String.valueOf(instlNo));
+											instlNo = 0;
+										}
+										rHPaymentBouncedFor = rHPaymentBouncedFor + finRef;
+									} else if (StringUtils.equals("CASH", rpaymentType)) {
+										rHPaymentBouncedFor = "Cash Bounced For Receipt No.";
+										if (StringUtils.isNotBlank(rd.getPaymentRef())) {
+											rHPaymentBouncedFor = rHPaymentBouncedFor.concat(rd.getPaymentRef());
+										}
+										rHPaymentBouncedFor = rHPaymentBouncedFor.concat(finRef);
+									}
+									soaTranReport.setEvent(rHPaymentBouncedFor);
+									soaTranReport.setTransactionDate(manualAdvise.getPostDate());
+									if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
+										if ("P".equals(presentmentType)) {
 											soaTranReport.setTransactionDate(receivedDate);
 										}
-									} else if (!StringUtils.equals(rpaymentType, RepayConstants.RECEIPTMODE_PRESENTMENT)
-											&& !StringUtils.equals("PAYABLE", rpaymentType)) {
-										paymentType = rpaymentType + " No.:";
 									}
-									// Restructure Receipt
-									if (AccountingEvent.RESTRUCTURE.equals(rpaymentType)) {
-										rHEventExcess = "Amount Capitalized vide  ";
-										receivedDate = finReceiptHeader.getValueDate();
-									}
-
-									rHEventExcess = rHEventExcess.concat(paymentType);
-								}
-								if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())) {
-									rHEventExcess = rHEventExcess.concat(finReceiptDetail.getTransactionRef());
-								}
-								if (StringUtils.isNotBlank(favourNumber)) {
-									rHEventExcess = rHEventExcess.concat(favourNumber);
-								}
-								rHEventExcess = rHEventExcess.concat(" " + finRef);
-
-							} else if (StringUtils.equals("EXCESS", rpaymentType)
-									|| StringUtils.equals("PAYABLE", rpaymentType)) {
-								rHEventExcess = "Amount Adjusted " + finRef;
-							} else if (StringUtils.equals("CASH", rpaymentType)) {
-								rHEventExcess = "Cash Received Vide Receipt No ";
-								rHEventExcess = "Cash Received Vide Receipt No ";
-								if (StringUtils.isNotBlank(finReceiptDetail.getTransactionRef())
-										&& ImplementationConstants.ALLOW_PARTNERBANK_FOR_RECEIPTS_IN_CASHMODE) {
-									rHEventExcess = rHEventExcess.concat(finReceiptDetail.getTransactionRef());
-								} else if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
-									rHEventExcess = rHEventExcess.concat(finReceiptDetail.getPaymentRef() + finRef);
-								} else {
-									if (StringUtils.equalsIgnoreCase("Y",
-											SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-										rHEventExcess = rHEventExcess.concat(String.valueOf(receiptID));
-									}
-								}
-
-							}
-							String allocMsg = "";
-							if (radMap.containsKey(finReceiptHeader.getReceiptID())) {
-								int ccy = CurrencyUtil.getFormat(finMain.getFinCcy());
-
-								if (AccountingEvent.RESTRUCTURE.equals(rpaymentType)) {
-									allocMsg = buildAllocationDataForRestructure(rstChrgs, ccy);
-								} else {
-									allocMsg = buildAllocationData(radMap.get(finReceiptHeader.getReceiptID()), ccy);
+									soaTranReport.setValueDate(rh.getBounceDate());
+									soaTranReport.setCreditAmount(BigDecimal.ZERO);
+									soaTranReport.setDebitAmount(rd.getAmount());
+									soaTranReport.setPriority(11);
+									soaTransactionReports.add(soaTranReport);
 								}
 							}
-							soaTranReport.setValueDate(receivedDate);
-							soaTranReport.setEvent(rHEventExcess + status + allocMsg);
-							soaTranReport.setTransactionDate(receiptDate);
-							soaTranReport.setCreditAmount(finReceiptDetail.getAmount());
+						}
+					}
 
-							if (StringUtils.equals(rpaymentType, "EXCESS")) {
-								soaTranReport.setDebitAmount(finReceiptDetail.getAmount());
-							} else {
-								soaTranReport.setDebitAmount(BigDecimal.ZERO);
-							}
-							soaTranReport.setPriority(10);
-							if (!StringUtils.equals(receiptModeStatus, RepayConstants.PAYSTATUS_CANCEL)) {
-								soaTransactionReports.add(soaTranReport);
-							}
+					if (finRepayHeadersList != null && !finRepayHeadersList.isEmpty()) {
 
-							// Manual TDS
-							if (finReceiptHeader.getTdsAmount().compareTo(BigDecimal.ZERO) > 0) {
-								soaTranReport = new SOATransactionReport();
-								soaTranReport.setEvent(rHManualTdsAmount.concat(String.valueOf(receiptID)));
-								soaTranReport.setTransactionDate(receiptDate);
-								soaTranReport.setValueDate(receiptDate);
-								soaTranReport.setCreditAmount(finReceiptHeader.getTdsAmount());
-								soaTranReport.setDebitAmount(BigDecimal.ZERO);
-								soaTranReport.setPriority(10);
-								soaTransactionReports.add(soaTranReport);
-							}
+						for (FinRepayHeader finRepayHeader : finRepayHeadersList) {
 
-							// Cancelled Manual TDS
-							if (finReceiptHeader.getTdsAmount().compareTo(BigDecimal.ZERO) > 0
-									&& "B".equalsIgnoreCase(finReceiptDetail.getStatus())
-									|| "C".equalsIgnoreCase(finReceiptDetail.getStatus())) {
-								soaTranReport = new SOATransactionReport();
-								soaTranReport.setEvent(rHManualTdsReversalAmount.concat(String.valueOf(receiptID)));
-								soaTranReport.setTransactionDate(receiptDate);
-								soaTranReport.setValueDate(receiptDate);
-								soaTranReport.setCreditAmount(BigDecimal.ZERO);
-								soaTranReport.setDebitAmount(finReceiptHeader.getTdsAmount());
-								soaTranReport.setPriority(10);
-								soaTransactionReports.add(soaTranReport);
-							}
+							if (rd.getReceiptSeqID() == finRepayHeader.getReceiptSeqID()) {
 
-							// Cancelled Receipt's Details
-							if (SysParamUtil.isAllowed(SMTParameterConstants.SOA_SHOW_CANCEL_RECEIPT)
-									&& !FinanceConstants.CLOSE_STATUS_CANCELLED.equals(finMain.getClosingStatus())
-									&& RepayConstants.PAYSTATUS_CANCEL.equals(receiptModeStatus)) {
-								soaTransactionReports.add(soaTranReport);
-								SOATransactionReport cancelReport = new SOATransactionReport();
-								BeanUtils.copyProperties(cancelReport, soaTranReport);
-								cancelReport.setDebitAmount(finReceiptDetail.getAmount());
-								if (StringUtils.equals(rpaymentType, "EXCESS")) {
-									cancelReport.setCreditAmount(finReceiptDetail.getAmount());
-								} else {
-									cancelReport.setCreditAmount(BigDecimal.ZERO);
-								}
-								cancelReport.setEvent(rHEventExcess.replaceAll("Received", "Cancelled") + status);
-								soaTransactionReports.add(cancelReport);
-							}
+								BigDecimal totalTdsSchdPayNow = BigDecimal.ZERO;
+								for (RepayScheduleDetail finRpySchdDetail : finRepaySchdDetails) {
 
-							boolean tdsEntryReq = true;
-							if ((StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "B")
-									|| StringUtils.equalsIgnoreCase(finReceiptHeader.getReceiptModeStatus(), "C"))
-									&& !SysParamUtil.isAllowed(SMTParameterConstants.DISPLAY_TDS_REV_SOA)) {
-								tdsEntryReq = false;
-							}
+									if (finRpySchdDetail.getRepayID() == finRepayHeader.getRepayID()) {
 
-							// Receipt Allocation Details
-							if (tdsEntryReq) {
-								for (ReceiptAllocationDetail finReceiptAllocationDetail : finReceiptAllocDetails) {
+										if (finRpySchdDetail.getTdsSchdPayNow() != null
+												&& finRpySchdDetail.getTdsSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
+											totalTdsSchdPayNow = totalTdsSchdPayNow
+													.add(finRpySchdDetail.getTdsSchdPayNow());
 
-									if (rhReceiptID == finReceiptAllocationDetail.getReceiptID() && (StringUtils
-											.equalsIgnoreCase("TDS", finReceiptAllocationDetail.getAllocationType())
-											|| finReceiptAllocationDetail.getTdsPaid().compareTo(BigDecimal.ZERO) > 0)
-											&& (finReceiptAllocationDetail.getPaidAmount()
-													.compareTo(BigDecimal.ZERO) > 0)) {
-
-										soaTranReport = new SOATransactionReport();
-										soaTranReport.setEvent(rHTdsAdjust + finRef);
-										soaTranReport.setTransactionDate(receiptDate);
-										soaTranReport.setValueDate(receivedDate);
-										soaTranReport.setCreditAmount(
-												finReceiptAllocationDetail.getTdsPaid().compareTo(BigDecimal.ZERO) > 0
-														? finReceiptAllocationDetail.getTdsPaid()
-														: finReceiptAllocationDetail.getPaidAmount());
-										soaTranReport.setDebitAmount(BigDecimal.ZERO);
-										soaTranReport.setPriority(21);
-										soaTransactionReports.add(soaTranReport);
-									}
-								}
-							}
-
-							// Receipt Header with Manual Advise
-							if (StringUtils.equals(finReceiptHeader.getReceiptMode(), rpaymentType)) {
-
-								for (ManualAdvise manualAdvise : manualAdviseList) {
-									rHPaymentBouncedFor = "Payment Bounced For "; // 9
-									if (rhReceiptID == manualAdvise.getReceiptID()) {
-
-										if (StringUtils.equals(receiptModeStatus, "B")
-												&& manualAdvise.getAdviseType() == 1
-												&& manualAdvise.getBounceID() > 0) {
-
+										}
+										// Interest from customer Waived Off
+										BigDecimal pftSchdWaivedNow = finRpySchdDetail.getPftSchdWaivedNow();
+										if (pftSchdWaivedNow != null
+												&& pftSchdWaivedNow.compareTo(BigDecimal.ZERO) > 0) {
 											soaTranReport = new SOATransactionReport();
-											if (!(StringUtils.equals("EXCESS", rpaymentType)
-													|| StringUtils.equals("CASH", rpaymentType))) {
-												rHPaymentBouncedFor = rHPaymentBouncedFor.concat(rpaymentType + "No.:");
-												if (StringUtils.isNotBlank(favourNumber)) {
-													rHPaymentBouncedFor = rHPaymentBouncedFor.concat(favourNumber);
-												} else {
-													rHPaymentBouncedFor = rHPaymentBouncedFor
-															.concat(String.valueOf(instlNo));
-													instlNo = 0;
-												}
-												rHPaymentBouncedFor = rHPaymentBouncedFor + finRef;
-											} else if (StringUtils.equals("CASH", rpaymentType)) {
-												rHPaymentBouncedFor = "Cash Bounced For Receipt No.";
-												if (StringUtils.isNotBlank(finReceiptDetail.getPaymentRef())) {
-													rHPaymentBouncedFor = rHPaymentBouncedFor
-															.concat(finReceiptDetail.getPaymentRef());
-												}
-												rHPaymentBouncedFor = rHPaymentBouncedFor.concat(finRef);
-											}
-											soaTranReport.setEvent(rHPaymentBouncedFor);
-											soaTranReport.setTransactionDate(manualAdvise.getPostDate());
-											if ("Y".equalsIgnoreCase(
-													SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))) {
-												if ("P".equals(presentmentType)) {
-													soaTranReport.setTransactionDate(receivedDate);
-												}
-											}
-											soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
-											soaTranReport.setCreditAmount(BigDecimal.ZERO);
-											soaTranReport.setDebitAmount(finReceiptDetail.getAmount());
-											soaTranReport.setPriority(11);
+											soaTranReport.setEvent(rHPftWaived + finRef);
+											soaTranReport.setTransactionDate(receivedDate);
+											soaTranReport.setValueDate(rd.getValueDate());
+											soaTranReport.setCreditAmount(pftSchdWaivedNow);
+											soaTranReport.setDebitAmount(BigDecimal.ZERO);
+											soaTranReport.setPriority(4);
+											soaTransactionReports.add(soaTranReport);
+
+										}
+										// Principal from customer Waived Off
+										BigDecimal principalSchdPayNow = finRpySchdDetail.getPrincipalSchdPayNow();
+										if (principalSchdPayNow != null
+												&& principalSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
+											soaTranReport = new SOATransactionReport();
+											soaTranReport.setEvent(rHPriWaived + finRef);
+											soaTranReport.setTransactionDate(receivedDate);
+											soaTranReport.setValueDate(rd.getValueDate());
+											soaTranReport.setCreditAmount(principalSchdPayNow);
+											soaTranReport.setDebitAmount(BigDecimal.ZERO);
+											soaTranReport.setPriority(5);
+											soaTransactionReports.add(soaTranReport);
+
+										}
+										// Penalty from customer Waived Off
+										BigDecimal waivedAmt = finRpySchdDetail.getWaivedAmt();
+										if ((StringUtils.isBlank(closingStatus)
+												|| !StringUtils.equalsIgnoreCase(closingStatus, "C"))
+												&& waivedAmt != null && waivedAmt.compareTo(BigDecimal.ZERO) > 0) {
+											soaTranReport = new SOATransactionReport();
+											soaTranReport.setEvent(rHPenaltyWaived + finRef);
+											soaTranReport.setTransactionDate(receiptDate);
+											soaTranReport.setValueDate(receivedDate);
+											soaTranReport.setCreditAmount(waivedAmt);
+											soaTranReport.setDebitAmount(BigDecimal.ZERO);
+											soaTranReport.setPriority(20);
 											soaTransactionReports.add(soaTranReport);
 										}
 									}
 								}
-							}
 
-							if (finRepayHeadersList != null && !finRepayHeadersList.isEmpty()) {
-
-								for (FinRepayHeader finRepayHeader : finRepayHeadersList) {
-
-									if (finReceiptDetail.getReceiptSeqID() == finRepayHeader.getReceiptSeqID()) {
-
-										BigDecimal totalTdsSchdPayNow = BigDecimal.ZERO;
-										for (RepayScheduleDetail finRpySchdDetail : finRepaySchdDetails) {
-
-											if (finRpySchdDetail.getRepayID() == finRepayHeader.getRepayID()) {
-
-												if (finRpySchdDetail.getTdsSchdPayNow() != null && finRpySchdDetail
-														.getTdsSchdPayNow().compareTo(BigDecimal.ZERO) > 0) {
-													totalTdsSchdPayNow = totalTdsSchdPayNow
-															.add(finRpySchdDetail.getTdsSchdPayNow());
-
-												}
-												// Interest from customer Waived Off
-												BigDecimal pftSchdWaivedNow = finRpySchdDetail.getPftSchdWaivedNow();
-												if (pftSchdWaivedNow != null
-														&& pftSchdWaivedNow.compareTo(BigDecimal.ZERO) > 0) {
-													soaTranReport = new SOATransactionReport();
-													soaTranReport.setEvent(rHPftWaived + finRef);
-													soaTranReport.setTransactionDate(receivedDate);
-													soaTranReport.setValueDate(finReceiptDetail.getValueDate());
-													soaTranReport.setCreditAmount(pftSchdWaivedNow);
-													soaTranReport.setDebitAmount(BigDecimal.ZERO);
-													soaTranReport.setPriority(4);
-													soaTransactionReports.add(soaTranReport);
-
-												}
-												// Principal from customer Waived Off
-												BigDecimal principalSchdPayNow = finRpySchdDetail
-														.getPrincipalSchdPayNow();
-												if (principalSchdPayNow != null
-														&& principalSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
-													soaTranReport = new SOATransactionReport();
-													soaTranReport.setEvent(rHPriWaived + finRef);
-													soaTranReport.setTransactionDate(receivedDate);
-													soaTranReport.setValueDate(finReceiptDetail.getValueDate());
-													soaTranReport.setCreditAmount(principalSchdPayNow);
-													soaTranReport.setDebitAmount(BigDecimal.ZERO);
-													soaTranReport.setPriority(5);
-													soaTransactionReports.add(soaTranReport);
-
-												}
-												// Penalty from customer Waived Off
-												BigDecimal waivedAmt = finRpySchdDetail.getWaivedAmt();
-												if ((StringUtils.isBlank(closingStatus)
-														|| !StringUtils.equalsIgnoreCase(closingStatus, "C"))
-														&& waivedAmt != null
-														&& waivedAmt.compareTo(BigDecimal.ZERO) > 0) {
-													soaTranReport = new SOATransactionReport();
-													soaTranReport.setEvent(rHPenaltyWaived + finRef);
-													soaTranReport.setTransactionDate(receiptDate);
-													soaTranReport.setValueDate(receivedDate);
-													soaTranReport.setCreditAmount(waivedAmt);
-													soaTranReport.setDebitAmount(BigDecimal.ZERO);
-													soaTranReport.setPriority(20);
-													soaTransactionReports.add(soaTranReport);
-												}
-											}
-										}
-
-										if ((StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "B")
-												|| StringUtils.equalsIgnoreCase(finReceiptDetail.getStatus(), "C"))
-												&& tdsEntryReq) {
-											// TDS Adjustment Reversal
-											if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
-												soaTranReport = new SOATransactionReport();
-												soaTranReport.setEvent(rHTdsAdjustReversal + finRef);
-												soaTranReport.setTransactionDate(finReceiptHeader.getReceiptDate());
-												soaTranReport.setValueDate(finReceiptHeader.getBounceDate());
-												soaTranReport.setCreditAmount(BigDecimal.ZERO);
-												soaTranReport.setDebitAmount(totalTdsSchdPayNow);
-												soaTranReport.setPriority(22);
-												soaTransactionReports.add(soaTranReport);
-											}
-
-										}
+								if ((StringUtils.equalsIgnoreCase(rd.getStatus(), "B")
+										|| StringUtils.equalsIgnoreCase(rd.getStatus(), "C")) && tdsEntryReq) {
+									// TDS Adjustment Reversal
+									if (totalTdsSchdPayNow.compareTo(BigDecimal.ZERO) > 0) {
+										soaTranReport = new SOATransactionReport();
+										soaTranReport.setEvent(rHTdsAdjustReversal + finRef);
+										soaTranReport.setTransactionDate(rh.getReceiptDate());
+										soaTranReport.setValueDate(rh.getBounceDate());
+										soaTranReport.setCreditAmount(BigDecimal.ZERO);
+										soaTranReport.setDebitAmount(totalTdsSchdPayNow);
+										soaTranReport.setPriority(22);
+										soaTransactionReports.add(soaTranReport);
 									}
 
 								}
 							}
+
 						}
 					}
 				}
