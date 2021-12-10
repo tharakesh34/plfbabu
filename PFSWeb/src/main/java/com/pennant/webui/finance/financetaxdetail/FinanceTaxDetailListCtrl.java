@@ -120,6 +120,7 @@ public class FinanceTaxDetailListCtrl extends GFCBaseListCtrl<FinanceTaxDetail> 
 		super.tableName = "FinTaxDetail_AView";
 		super.queueTableName = "FinTaxDetail_View";
 		super.enquiryTableName = "FinTaxDetail_View";
+		super.workFlowTable = "FinTaxDetail_TView";
 	}
 
 	/**

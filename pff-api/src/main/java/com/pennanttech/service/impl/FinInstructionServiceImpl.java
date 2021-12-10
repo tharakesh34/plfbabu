@@ -2073,8 +2073,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		WSReturnStatus returnStatus = new WSReturnStatus();
 		FinanceDetail fd = null;
 
-		long finID = rd.getFinID();
 		String finReference = rd.getFinReference();
+		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+		rd.setFinID(finID);
+		
 		APIErrorHandlerService.logReference(finReference);
 
 		returnStatus = validateReqType(rd.getReqType());
@@ -2088,6 +2090,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		FinServiceInstruction fsi = new FinServiceInstruction();
+		fsi.setFinID(finID);
 		fsi.setFinReference(finReference);
 		returnStatus = validateFinReference(fsi);
 
