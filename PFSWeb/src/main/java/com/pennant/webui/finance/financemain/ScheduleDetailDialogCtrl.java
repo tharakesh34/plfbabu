@@ -1234,134 +1234,133 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * @throws Exception
 	 */
 	public void onClick$btnPrintSchedule(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
+
+		if (getFinScheduleData() == null) {
+			return;
+		}
 
 		List<Object> list = new ArrayList<Object>();
 		FinScheduleListItemRenderer finRender;
-		if (getFinScheduleData() != null) {
 
-			// Fee Charges List Render For First Disbursement only/Existing
-			List<FeeRule> feeRuleList = getFinScheduleData().getFeeRules();
-			FinanceMain financeMain = getFinScheduleData().getFinanceMain();
+		// Fee Charges List Render For First Disbursement only/Existing
+		List<FeeRule> feeRuleList = getFinScheduleData().getFeeRules();
+		FinanceMain financeMain = getFinScheduleData().getFinanceMain();
 
-			// Get Finance Fee Details For Schedule Render Purpose In
-			// maintenance Stage
-			List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
-			if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
-					&& !isWIF) {
-				approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinID(), "", isWIF);
-			}
-			approvedFeeRules.addAll(feeRuleList);
+		// Get Finance Fee Details For Schedule Render Purpose In
+		// maintenance Stage
+		List<FeeRule> approvedFeeRules = new ArrayList<FeeRule>();
+		if (!financeMain.isNewRecord() && !PennantConstants.RECORD_TYPE_NEW.equals(financeMain.getRecordType())
+				&& !isWIF) {
+			approvedFeeRules = getFinanceDetailService().getApprovedFeeRules(financeMain.getFinID(), "", isWIF);
+		}
+		approvedFeeRules.addAll(feeRuleList);
 
-			Map<Date, ArrayList<FeeRule>> feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
-			for (FeeRule fee : approvedFeeRules) {
-				if (feeChargesMap.containsKey(fee.getSchDate())) {
-					ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
-					int seqNo = 0;
-					for (FeeRule feeRule : feeChargeList) {
-						if (feeRule.getFeeCode().equals(fee.getFeeCode())) {
-							if (seqNo < feeRule.getSeqNo() && fee.getSchDate().compareTo(feeRule.getSchDate()) == 0) {
-								seqNo = feeRule.getSeqNo();
-							}
+		Map<Date, ArrayList<FeeRule>> feeChargesMap = new HashMap<Date, ArrayList<FeeRule>>();
+		for (FeeRule fee : approvedFeeRules) {
+			if (feeChargesMap.containsKey(fee.getSchDate())) {
+				ArrayList<FeeRule> feeChargeList = feeChargesMap.get(fee.getSchDate());
+				int seqNo = 0;
+				for (FeeRule feeRule : feeChargeList) {
+					if (feeRule.getFeeCode().equals(fee.getFeeCode())) {
+						if (seqNo < feeRule.getSeqNo() && fee.getSchDate().compareTo(feeRule.getSchDate()) == 0) {
+							seqNo = feeRule.getSeqNo();
 						}
 					}
-					fee.setSeqNo(seqNo + 1);
-					feeChargeList.add(fee);
-					feeChargesMap.put(fee.getSchDate(), feeChargeList);
-
-				} else {
-					ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
-					feeChargeList.add(fee);
-					feeChargesMap.put(fee.getSchDate(), feeChargeList);
 				}
-			}
+				fee.setSeqNo(seqNo + 1);
+				feeChargeList.add(fee);
+				feeChargesMap.put(fee.getSchDate(), feeChargeList);
 
-			finRender = new FinScheduleListItemRenderer();
-			List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
-			list.add(subList1);
-			List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null,
-					true, false, false);
-			list.add(subList);
-
-			boolean isSchdFee = false;
-			List<FinFeeDetail> finFeeList = getFinScheduleData().getFinFeeDetailList();
-			for (int i = 0; i < finFeeList.size(); i++) {
-				FinFeeDetail finFeeDetail = finFeeList.get(i);
-				if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-						CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
-						|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-								CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
-						|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
-								CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
-					isSchdFee = true;
-					break;
-				}
-			}
-
-			list.add(isSchdFee);
-			Map<Object, Object> map = new HashMap<>();
-			map.put("isModelWindow", true);
-			list.add(map);
-			// To get Parent Window i.e Finance main based on product
-			Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()
-					.getParent().getParent().getParent();
-			Window window = null;
-			if (component instanceof Window) {
-				window = (Window) component;
 			} else {
-				window = (Window) this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()
-						.getParent().getParent().getParent().getParent();
+				ArrayList<FeeRule> feeChargeList = new ArrayList<FeeRule>();
+				feeChargeList.add(fee);
+				feeChargesMap.put(fee.getSchDate(), feeChargeList);
 			}
-			String reportName = "FINENQ_ScheduleDetail";
+		}
 
-			if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_CONVENTIONAL)) {
-				reportName = "CFINENQ_ScheduleDetail";
-			} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
-				reportName = "ODFINENQ_ScheduleDetail";
+		finRender = new FinScheduleListItemRenderer();
+		List<FinanceGraphReportData> subList1 = finRender.getScheduleGraphData(getFinScheduleData());
+		list.add(subList1);
+		List<FinanceScheduleReportData> subList = finRender.getPrintScheduleData(getFinScheduleData(), null, null, true,
+				false, false);
+		list.add(subList);
+
+		boolean isSchdFee = false;
+		List<FinFeeDetail> finFeeList = getFinScheduleData().getFinFeeDetailList();
+		for (int i = 0; i < finFeeList.size(); i++) {
+			FinFeeDetail finFeeDetail = finFeeList.get(i);
+			if (StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+					CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT)
+					|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR)
+					|| StringUtils.equals(finFeeDetail.getFeeScheduleMethod(),
+							CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS)) {
+				isSchdFee = true;
+				break;
 			}
+		}
 
-			// Customer CIF && Customer Name Setting
-			CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
-			if (customerDetails != null) {
-				Customer customer = customerDetails.getCustomer();
-				financeMain.setLovDescCustCIF(customer.getCustCIF());
-				financeMain.setLovDescCustShrtName(customer.getCustShrtName());
+		list.add(isSchdFee);
+		Map<Object, Object> map = new HashMap<>();
+		map.put("isModelWindow", true);
+		list.add(map);
+		// To get Parent Window i.e Finance main based on product
+		Component component = this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()
+				.getParent().getParent().getParent();
+		Window window = null;
+		if (component instanceof Window) {
+			window = (Window) component;
+		} else {
+			window = (Window) this.window_ScheduleDetailDialog.getParent().getParent().getParent().getParent()
+					.getParent().getParent().getParent().getParent();
+		}
+		String reportName = "FINENQ_ScheduleDetail";
+
+		if (StringUtils.equals(financeMain.getProductCategory(), FinanceConstants.PRODUCT_CONVENTIONAL)) {
+			reportName = "CFINENQ_ScheduleDetail";
+		} else if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
+			reportName = "ODFINENQ_ScheduleDetail";
+		}
+
+		// Customer CIF && Customer Name Setting
+		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
+		if (customerDetails != null) {
+			Customer customer = customerDetails.getCustomer();
+			financeMain.setLovDescCustCIF(customer.getCustCIF());
+			financeMain.setLovDescCustShrtName(customer.getCustShrtName());
+		} else {
+			financeMain.setLovDescCustCIF("");
+		}
+
+		if (isWIF) {
+			reportName = "WIFENQ_ScheduleDetail";
+			WIFCustomer customerDetailsData = getFinanceDetail().getCustomer();
+			if (customerDetailsData != null) {
+				financeMain.setLovDescCustCIF(String.valueOf(customerDetailsData.getCustID()));
+				financeMain.setLovDescCustShrtName(customerDetailsData.getCustShrtName());
 			} else {
 				financeMain.setLovDescCustCIF("");
 			}
-
-			if (isWIF) {
-				reportName = "WIFENQ_ScheduleDetail";
-				WIFCustomer customerDetailsData = getFinanceDetail().getCustomer();
-				if (customerDetailsData != null) {
-					financeMain.setLovDescCustCIF(String.valueOf(customerDetailsData.getCustID()));
-					financeMain.setLovDescCustShrtName(customerDetailsData.getCustShrtName());
-				} else {
-					financeMain.setLovDescCustCIF("");
-				}
-			}
-
-			int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(),
-					true);
-
-			int advTerms = 0;
-			if (AdvanceType.hasAdvEMI(financeMain.getAdvType())
-					&& AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
-				advTerms = financeMain.getAdvTerms();
-			}
-
-			financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
-					+ (Integer.parseInt(
-							StringUtils.isEmpty(schdl_noOfTerms.getValue()) ? "0" : schdl_noOfTerms.getValue())
-							+ advTerms + " Payments"));
-
-			SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
-			String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
-					securityUser.getUsrLName());
-
-			ReportsUtil.generatePDF(reportName, financeMain, list, usrName, window);
 		}
-		logger.debug("Leaving" + event.toString());
+
+		int months = DateUtility.getMonthsBetween(financeMain.getMaturityDate(), financeMain.getFinStartDate(), true);
+
+		int advTerms = 0;
+		if (AdvanceType.hasAdvEMI(financeMain.getAdvType()) && AdvanceStage.hasFrontEnd(financeMain.getAdvStage())) {
+			advTerms = financeMain.getAdvTerms();
+		}
+
+		financeMain.setLovDescTenorName((months / 12) + " Years " + (months % 12) + " Months / "
+				+ (Integer.parseInt(StringUtils.isEmpty(schdl_noOfTerms.getValue()) ? "0" : schdl_noOfTerms.getValue())
+						+ advTerms + " Payments"));
+
+		SecurityUser securityUser = getUserWorkspace().getUserDetails().getSecurityUser();
+		String usrName = PennantApplicationUtil.getFullName(securityUser.getUsrFName(), securityUser.getUsrMName(),
+				securityUser.getUsrLName());
+
+		ReportsUtil.generatePDF(reportName, financeMain, list, usrName, window);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
