@@ -3465,15 +3465,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.appliedLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), format));
 		fillComboBox(this.subVentionFrom, aFinanceMain.getSubVentionFrom(), PennantStaticListUtil.getSubVentionFrom(),
 				"");
-		if (!financeType.isSubventionReq()) {
-			this.row_Subvention.setVisible(false);
-		} else {
+
+		this.row_Subvention.setVisible(financeType.isSubventionReq());
+
+		if (financeType.isSubventionReq()) {
 			onChangeSubVentionFrom();
 			if (!aFinanceMain.isNewRecord()) {
 				this.manufacturerDealer.setValue(aFinanceMain.getManufacturerDealerName(),
 						aFinanceMain.getManufacturerDealerCode());
-				if (aFinanceMain.getManufacturerDealerId() > 0) {
-					this.manufacturerDealer.setAttribute("DealerId", aFinanceMain.getManufacturerDealerId());
+				Long manufacturerDealerId = aFinanceMain.getManufacturerDealerId();
+
+				if (manufacturerDealerId != null && manufacturerDealerId > 0) {
+					this.manufacturerDealer.setAttribute("DealerId", manufacturerDealerId);
 				} else {
 					this.manufacturerDealer.setAttribute("DealerId", 0);
 				}
