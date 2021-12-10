@@ -74,7 +74,8 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 		"fixedTenorRate", "eligibilityMethod", "connector", "legalRequired", "reqLoanAmt", "reqLoanTenor",
 		"offerProduct", "offerAmount", "custSegmentation", "baseProduct", "processType", "bureauTimeSeries",
 		"campaignName", "existingLanRefNo", "leadSource", "poSource", "rsa", "verification", "sourChannelCategory",
-		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps", "calcOfSteps", "stepsAppliedFor" })
+		"offerId", "endGrcPeriodAftrFullDisb", "autoIncGrcEndDate", "noOfSteps", "calcOfSteps", "stepsAppliedFor",
+		"noOfGrcSteps" })
 @XmlRootElement(name = "financeDetail")
 @XmlAccessorType(XmlAccessType.NONE)
 public class FinanceMain extends AbstractWorkflowEntity {
@@ -799,6 +800,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String stepsAppliedFor;
 	private boolean isRpyStps;
 	private boolean isGrcStps;
+	@XmlElement
 	private int noOfGrcSteps = 0;
 	@XmlElement
 	private boolean escrow = false;
