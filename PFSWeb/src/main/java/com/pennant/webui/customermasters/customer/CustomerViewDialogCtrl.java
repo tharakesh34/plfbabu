@@ -2596,6 +2596,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		FinanceMain financeMain = (FinanceMain) soa.getAttribute("financeMain");
 		Map<String, Object> arg = getDefaultArguments();
 		arg.put("financeMain", financeMain);
+		arg.put("financeReference", financeMain.getFinReference());
+		arg.put("finType", financeMain.getFinType());
 		arg.put("module", "interest");
 		arg.put("dialogWindow", window_CustomerDialogg);
 		arg.put("customer360", true);
