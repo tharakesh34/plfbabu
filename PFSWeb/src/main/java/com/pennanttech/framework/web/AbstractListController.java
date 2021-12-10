@@ -93,6 +93,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	protected String tableName;
 	protected String queueTableName;
 	protected String enquiryTableName;
+	protected String workFlowTable;
 
 	protected JdbcSearchObject<T> searchObject;
 	private ListitemRenderer<T> listitemRenderer;
@@ -220,7 +221,11 @@ public class AbstractListController<T> extends AbstractController<T> {
 				if (fromApproved.isChecked()) {
 					this.searchObject.addTabelName(tableName);
 				} else if (fromWorkFlow.isChecked()) {
-					this.searchObject.addTabelName(enquiryTableName);
+					if (workFlowTable != null) {
+						this.searchObject.addTabelName(workFlowTable);
+					} else {
+						this.searchObject.addTabelName(enquiryTableName);
+					}
 				} else {
 					this.searchObject.addTabelName(tableName);
 				}
