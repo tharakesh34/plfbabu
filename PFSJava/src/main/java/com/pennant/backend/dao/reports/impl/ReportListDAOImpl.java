@@ -48,8 +48,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
@@ -60,6 +58,7 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.BasicDao;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 /**
  * DAO methods implementation for the <b>ReportList model</b> class.<br>
@@ -104,52 +103,60 @@ public class ReportListDAOImpl extends BasicDao<ReportList> implements ReportLis
 		return reportList;
 	}
 
-	/**
-	 * Fetch the Record List Report Configuration details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return ReportList
-	 */
 	@Override
 	public ReportList getReportListById(final String id, String type) {
-		logger.debug("Entering");
-		ReportList reportList = new ReportList();
-		reportList.setId(id);
-		StringBuilder selectSql = new StringBuilder();
+		StringBuilder sql = new StringBuilder("Select");
 
-		selectSql.append(
-				"Select Code,Module, FieldLabels, FieldValues, FieldType, Addfields, ReportFileName, ReportHeading, ModuleType, FormatReq, ");
-		selectSql.append(
-				" Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From ReportList");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Code =:Code");
+		sql.append(" Code, Module, FieldLabels, FieldValues, FieldType, Addfields, ReportFileName");
+		sql.append(", ReportHeading, ModuleType, FormatReq");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode");
+		sql.append(", NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From ReportList");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Code = ?");
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(reportList);
-		RowMapper<ReportList> typeRowMapper = BeanPropertyRowMapper.newInstance(ReportList.class);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			reportList = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ReportList rl = new ReportList();
+
+				rl.setCode(rs.getString("Code"));
+				rl.setModule(rs.getString("Module"));
+				rl.setFieldLabels(rs.getString("FieldLabels"));
+				rl.setFieldValues(rs.getString("FieldValues"));
+				rl.setFieldType(rs.getString("FieldType"));
+				rl.setAddfields(rs.getString("Addfields"));
+				rl.setReportFileName(rs.getString("ReportFileName"));
+				rl.setReportHeading(rs.getString("ReportHeading"));
+				rl.setModuleType(rs.getString("ModuleType"));
+				rl.setFormatReq(rs.getBoolean("FormatReq"));
+				rl.setVersion(rs.getInt("Version"));
+				rl.setLastMntBy(rs.getLong("LastMntBy"));
+				rl.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				rl.setRecordStatus(rs.getString("RecordStatus"));
+				rl.setRoleCode(rs.getString("RoleCode"));
+				rl.setNextRoleCode(rs.getString("NextRoleCode"));
+				rl.setTaskId(rs.getString("TaskId"));
+				rl.setNextTaskId(rs.getString("NextTaskId"));
+				rl.setRecordType(rs.getString("RecordType"));
+				rl.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return rl;
+
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			reportList = null;
+			//
 		}
-		logger.debug("Leaving");
-		return reportList;
+		return null;
 	}
 
 	/**
 	 * This method Deletes the Record from the ReportList or ReportList_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete List Report Configuration by key Module
 	 * 
-	 * @param List
-	 *            Report Configuration (reportList)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param List Report Configuration (reportList)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -181,10 +188,8 @@ public class ReportListDAOImpl extends BasicDao<ReportList> implements ReportLis
 	 *
 	 * save List Report Configuration
 	 * 
-	 * @param List
-	 *            Report Configuration (reportList)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param List Report Configuration (reportList)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -217,10 +222,8 @@ public class ReportListDAOImpl extends BasicDao<ReportList> implements ReportLis
 	 * This method updates the Record ReportList or ReportList_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update List Report Configuration by key Module and Version
 	 * 
-	 * @param List
-	 *            Report Configuration (reportList)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param List Report Configuration (reportList)
+	 * @param type (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
