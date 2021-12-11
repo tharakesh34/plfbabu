@@ -1950,18 +1950,31 @@ public class FinScheduleListItemRenderer implements Serializable {
 		BigDecimal temprate = BigDecimal.ZERO;
 
 		int count = 1;
-		for (int i = 0; i < aFinScheduleData.getFinanceScheduleDetails().size(); i++) {
-			curSchd = getFinScheduleData().getFinanceScheduleDetails().get(i);
+
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+		List<FinanceScheduleDetail> originalSchedules = aFinScheduleData.getFinanceScheduleDetails();
+
+		for (FinanceScheduleDetail originalSchedule : originalSchedules) {
+			if (BigDecimal.ZERO.compareTo(originalSchedule.getClosingBalance()) == 0
+					&& BigDecimal.ZERO.compareTo(originalSchedule.getRepayAmount()) == 0) {
+				continue;
+			}
+
+			schedules.add(originalSchedule);
+
+		}
+
+		for (int i = 0; i < schedules.size(); i++) {
+			curSchd = schedules.get(i);
 			count = 1;
 			this.closingBal = curSchd.getClosingBalance();
-			if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0
-					&& i == aFinScheduleData.getFinanceScheduleDetails().size() - 1) {
+			if (curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0 && i == schedules.size() - 1) {
 				lastRec = true;
 			}
 			if (i == 0) {
 				prvSchDetail = curSchd;
 			} else {
-				prvSchDetail = aFinScheduleData.getFinanceScheduleDetails().get(i - 1);
+				prvSchDetail = schedules.get(i - 1);
 			}
 
 			// OverdraftSchedule drop Limits
@@ -3306,11 +3319,24 @@ public class FinScheduleListItemRenderer implements Serializable {
 		BigDecimal financeBal = BigDecimal.ZERO;
 
 		int formatter = CurrencyUtil.getFormat(aFinScheduleData.getFinanceMain().getFinCcy());
-		int size = aFinScheduleData.getFinanceScheduleDetails().size();
+
+		List<FinanceScheduleDetail> schedules = new ArrayList<>();
+
+		for (FinanceScheduleDetail schedule : getFinScheduleData().getFinanceScheduleDetails()) {
+
+			if (BigDecimal.ZERO.compareTo(schedule.getClosingBalance()) == 0
+					&& BigDecimal.ZERO.compareTo(schedule.getRepayAmount()) == 0) {
+				continue;
+			}
+
+			schedules.add(schedule);
+		}
+
+		int size = schedules.size();
 
 		for (int i = size - 1; i >= 0; i--) {
 
-			FinanceScheduleDetail aScheduleDetail = getFinScheduleData().getFinanceScheduleDetails().get(i);
+			FinanceScheduleDetail aScheduleDetail = schedules.get(i);
 			data = new FinanceGraphReportData();
 			data.setRecordNo(i);
 			data.setSchDate(DateUtility.formatToLongDate(aScheduleDetail.getSchDate()));
