@@ -95,6 +95,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.finance.FeeReceiptService;
 import com.pennant.backend.service.finance.FinFeeRefundService;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.rmtmasters.AccountingSetService;
 import com.pennant.backend.util.AssetConstants;
 import com.pennant.backend.util.FinanceConstants;
@@ -184,6 +185,7 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	protected Listheader listheader_FinFeeRefundList_PaidTDS;
 	protected Listheader listheader_FinFeeRefundList_TotPrvsRefundTDS;
 	protected Listheader listheader_FinFeeRefundList_AllocatedRefundTDS;
+	private FinanceDetailService financeDetailService;
 
 	/**
 	 * default constructor.<br>
@@ -375,26 +377,30 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 	 */
 	public void doSave() {
 		logger.debug(Literal.ENTERING);
-		final FinFeeRefundHeader afinFeeRefundHeader = new FinFeeRefundHeader();
-		BeanUtils.copyProperties(this.feeRefundHeader, afinFeeRefundHeader);
+		final FinFeeRefundHeader feeRefundheader = new FinFeeRefundHeader();
+		BeanUtils.copyProperties(this.feeRefundHeader, feeRefundheader);
 		boolean isNew;
 		doSetValidation();
-		doWriteComponentsToBean(afinFeeRefundHeader);
-		isNew = afinFeeRefundHeader.isNewRecord();
+
+		Long finID = financeDetailService.getFinID(feeRefundheader.getFinReference());
+
+		feeRefundheader.setFinID(finID);
+		doWriteComponentsToBean(feeRefundheader);
+		isNew = feeRefundheader.isNewRecord();
 		String tranType;
 		if (isWorkFlowEnabled()) {
 			tranType = PennantConstants.TRAN_WF;
-			if (StringUtils.isBlank(afinFeeRefundHeader.getRecordType())) {
-				afinFeeRefundHeader.setVersion(afinFeeRefundHeader.getVersion() + 1);
+			if (StringUtils.isBlank(feeRefundheader.getRecordType())) {
+				feeRefundheader.setVersion(feeRefundheader.getVersion() + 1);
 				if (isNew) {
-					afinFeeRefundHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+					feeRefundheader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				} else {
-					afinFeeRefundHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-					afinFeeRefundHeader.setNewRecord(true);
+					feeRefundheader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+					feeRefundheader.setNewRecord(true);
 				}
 			}
 		} else {
-			afinFeeRefundHeader.setVersion(afinFeeRefundHeader.getVersion() + 1);
+			feeRefundheader.setVersion(feeRefundheader.getVersion() + 1);
 			if (isNew) {
 				tranType = PennantConstants.TRAN_ADD;
 			} else {
@@ -403,13 +409,13 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 		}
 		// save it to database
 		try {
-			if (doProcess(afinFeeRefundHeader, tranType)) {
+			if (doProcess(feeRefundheader, tranType)) {
 				refreshList();
 
-				String roleCode = afinFeeRefundHeader.getRoleCode();
-				String recordStatus2 = afinFeeRefundHeader.getRecordStatus();
-				String nextRoleCode2 = afinFeeRefundHeader.getNextRoleCode();
-				String finReference = afinFeeRefundHeader.getFinReference();
+				String roleCode = feeRefundheader.getRoleCode();
+				String recordStatus2 = feeRefundheader.getRecordStatus();
+				String nextRoleCode2 = feeRefundheader.getNextRoleCode();
+				String finReference = feeRefundheader.getFinReference();
 
 				String msg = PennantApplicationUtil.getSavingStatus(roleCode, nextRoleCode2, finReference,
 						" Fee Refund ", recordStatus2);
@@ -1485,6 +1491,10 @@ public class FinFeeRefundDialogCtrl extends GFCBaseCtrl<FinFeeRefundHeader> {
 
 	public void setFinanceDetail(FinanceDetail financeDetail) {
 		this.financeDetail = financeDetail;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }
