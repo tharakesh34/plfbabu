@@ -12378,6 +12378,7 @@
 		<property name="subventionKnockOffService" ref="subventionKnockOffService" />
 		<property name="entityDAO" ref="entityDAO" />
 		<property name="subventionUploadDAO" ref="subventionUploadDAO" />
+		<property name="financeDetailService" ref="financeDetailService" />
 	</bean>
 
 	<bean name="subventionKnockOffService" class="com.pennant.pff.service.subvention.SubventionKnockOffService"

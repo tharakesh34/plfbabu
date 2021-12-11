@@ -17,6 +17,7 @@ import org.zkoss.util.media.Media;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.EntityDAO;
 import com.pennant.backend.model.applicationmaster.Entity;
+import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.pff.dao.subvention.SubventionUploadDAO;
 import com.pennant.pff.model.subvention.Subvention;
 import com.pennant.pff.model.subvention.SubventionHeader;
@@ -36,6 +37,7 @@ public class SubventionKnockOffUpload extends BasicDao<Subvention> implements Pr
 	private SubventionKnockOffService subventionKnockOffService;
 	private SubventionUploadDAO subventionUploadDAO;
 	private EntityDAO entityDAO;
+	private FinanceDetailService financeDetailService;
 
 	public SubventionKnockOffUpload() {
 		super();
@@ -101,26 +103,37 @@ public class SubventionKnockOffUpload extends BasicDao<Subvention> implements Pr
 
 	@Override
 	public void saveOrUpdate(DataEngineAttributes attributes, MapSqlParameterSource record, Table table) {
-		Subvention subvention = new Subvention();
+		Subvention sub = new Subvention();
 
-		subvention.setBatchId(JdbcUtil.getLong(record.getValue("BATCHID")));
-		subvention.setFinReference(String.valueOf(record.getValue("FINREFERENCE")));
-		subvention.setFinType(String.valueOf(record.getValue("FINTYPE")));
-		subvention.setReferenceCode(String.valueOf(record.getValue("REFERENCECODE")));
-		subvention.setCustomerName(String.valueOf(record.getValue("CUSTOMERNAME")));
-		subvention.setPostDate((Date) record.getValue("POSTDATE"));
-		subvention.setValueDate((Date) record.getValue("VALUEDATE"));
-		subvention.setTransref(String.valueOf(record.getValue("TRANSREF")));
-		subvention.setPartnerBankId(JdbcUtil.getLong(record.getValue("PARTNERBANKID")));
-		subvention.setPartnerAccNo(String.valueOf(record.getValue("PARTNERACCNO")));
+		sub.setBatchId(JdbcUtil.getLong(record.getValue("BATCHID")));
+		sub.setFinReference(String.valueOf(record.getValue("FINREFERENCE")));
+		sub.setFinType(String.valueOf(record.getValue("FINTYPE")));
+		sub.setReferenceCode(String.valueOf(record.getValue("REFERENCECODE")));
+		sub.setCustomerName(String.valueOf(record.getValue("CUSTOMERNAME")));
+		sub.setPostDate((Date) record.getValue("POSTDATE"));
+		sub.setValueDate((Date) record.getValue("VALUEDATE"));
+		sub.setTransref(String.valueOf(record.getValue("TRANSREF")));
+		sub.setPartnerBankId(JdbcUtil.getLong(record.getValue("PARTNERBANKID")));
+		sub.setPartnerAccNo(String.valueOf(record.getValue("PARTNERACCNO")));
 		BigDecimal subAmt = new BigDecimal(String.valueOf(record.getValue("AMOUNT")));
 		BigDecimal amount = subAmt.multiply(new BigDecimal(100));
-		subvention.setAmount(amount);
+		sub.setAmount(amount);
+
+		Long partnerBankId = sub.getPartnerBankId();
+
+		if (partnerBankId == null) {
+			partnerBankId = 0L;
+			sub.setPartnerBankId(partnerBankId);
+		}
+
+		Long finID = financeDetailService.getFinID(sub.getFinReference());
+
+		sub.setFinID(finID);
 
 		List<Subvention> subventions = new ArrayList<>();
-		subventions.add(subvention);
+		subventions.add(sub);
 
-		subventionUploadDAO.saveSubvention(subventions, subvention.getBatchId());
+		subventionUploadDAO.saveSubvention(subventions, sub.getBatchId());
 	}
 
 	@Override
@@ -139,6 +152,10 @@ public class SubventionKnockOffUpload extends BasicDao<Subvention> implements Pr
 
 	public void setSubventionUploadDAO(SubventionUploadDAO subventionUploadDAO) {
 		this.subventionUploadDAO = subventionUploadDAO;
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
 	}
 
 }
