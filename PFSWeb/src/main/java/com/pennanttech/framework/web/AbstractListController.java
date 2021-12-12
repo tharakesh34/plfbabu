@@ -294,7 +294,22 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * </p>
 	 */
 	protected void doAddFilters() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		boolean filterApplied = false;
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+
+			if (filter != null) {
+				filterApplied = true;
+				break;
+			}
+		}
+
+		if (!filterApplied && !renderListOnLoad) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
 
 		this.searchObject.clearFilters();
 
@@ -318,7 +333,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected boolean doCheckAuthority(AbstractWorkflowEntity entity, String whereCond) {

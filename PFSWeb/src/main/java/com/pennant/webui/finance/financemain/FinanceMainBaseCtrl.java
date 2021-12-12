@@ -17453,6 +17453,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void refreshList() {
 		JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceMainListCtrl().getSearchObj();
+
+		boolean filterApplied = false;
+		for (Filter filter : soFinanceMain.getFilters()) {
+			if (filter != null) {
+				filterApplied = true;
+				break;
+			}
+		}
+		;
+
+		if (!filterApplied && !renderListOnLoad) {
+			return;
+		}
+
 		getFinanceMainListCtrl().pagingFinanceMainList.setActivePage(0);
 		getFinanceMainListCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);
 		if (getFinanceMainListCtrl().listBoxFinanceMain != null) {
@@ -17462,6 +17476,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void refreshMaintainList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceSelectCtrl().getSearchObj(true);
+
+		boolean filterApplied = false;
+		for (Filter filter : soFinanceMain.getFilters()) {
+			if (filter != null) {
+				filterApplied = true;
+				break;
+			}
+		}
+		;
+
+		if (!filterApplied && !renderListOnLoad) {
+			return;
+		}
+
 		getFinanceSelectCtrl().getPagingFinanceList().setActivePage(0);
 		getFinanceSelectCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);
 		if (getFinanceSelectCtrl().getListBoxFinance() != null) {
