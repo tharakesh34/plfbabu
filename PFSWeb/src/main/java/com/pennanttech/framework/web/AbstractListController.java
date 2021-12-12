@@ -1,5 +1,5 @@
 /**
-
+ * 
  * Copyright 2011 - Pennant Technologies
  * 
  * This file is part of Pennant Java Application Framework and related Products. All
@@ -57,6 +57,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.jdbc.search.SearchResult;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -293,7 +294,22 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * </p>
 	 */
 	protected void doAddFilters() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		boolean filterApplied = false;
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+
+			if (filter != null) {
+				filterApplied = true;
+				break;
+			}
+		}
+
+		if (!filterApplied && !renderListOnLoad) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
 
 		this.searchObject.clearFilters();
 
@@ -317,7 +333,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 			}
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	protected boolean doCheckAuthority(AbstractWorkflowEntity entity, String whereCond) {
@@ -389,10 +405,9 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * </ol>
 	 * </p>
 	 * 
-	 * @throws IllegalAccessError
-	 *             - If the specified name of the module is not registered.
-	 * @throws Exception
-	 *             - If process flow details are not available to which the specified process flow configured.
+	 * @throws IllegalAccessError - If the specified name of the module is not registered.
+	 * @throws Exception          - If process flow details are not available to which the specified process flow
+	 *                            configured.
 	 */
 	private void doLoadWorkflow() {
 		logger.debug("Entering");
@@ -470,11 +485,9 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * This Filed will be added to the JdbcSearchObject.
 	 * </p>
 	 * 
-	 * @param fieldName
-	 *            Name of the property that needs to be render to the bean property of the provided
-	 *            <code>ListitemRenderer</code>.
-	 * @throws IllegalArgumentException
-	 *             If the specified fieldName <code>fieldName></code> is null or empty.
+	 * @param fieldName Name of the property that needs to be render to the bean property of the provided
+	 *                  <code>ListitemRenderer</code>.
+	 * @throws IllegalArgumentException If the specified fieldName <code>fieldName></code> is null or empty.
 	 */
 	protected void registerField(String fieldName) {
 		if (StringUtils.trimToNull(fieldName) == null) {
@@ -488,16 +501,12 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * This Field will be added to the JdbcSearchObject
 	 * </p>
 	 * 
-	 * @param fieldName
-	 *            Name of the property that needs to be render to the bean pro-perty of the provided
-	 *            <code>ListitemRenderer</code>.
+	 * @param fieldName  Name of the property that needs to be render to the bean pro-perty of the provided
+	 *                   <code>ListitemRenderer</code>.
 	 * 
-	 * @param listheader
-	 *            Id of the Listheader to which sets the ascending/descending sorter.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>fieldName</code> is null or empty.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>listheader</code> is null.
+	 * @param listheader Id of the Listheader to which sets the ascending/descending sorter.
+	 * @throws IllegalArgumentException If the specified <code>fieldName</code> is null or empty.
+	 * @throws IllegalArgumentException If the specified <code>listheader</code> is null.
 	 */
 	protected void registerField(String fieldName, Listheader listheader) {
 		registerField(fieldName);
@@ -515,18 +524,13 @@ public class AbstractListController<T> extends AbstractController<T> {
 	 * This Field will be added to the JdbcSearchObject and add sort by property.
 	 * </p>
 	 * 
-	 * @param fieldName
-	 *            Name of the property that needs to be render to the bean property of the provided
-	 *            <code>ListitemRenderer</code>.
-	 * @param desc
-	 *            Sorting order for the property <code>fieldName</code>. Ascending if desc == false, descending if desc
-	 *            == true.
-	 * @param listheader
-	 *            Id of the Listheader to which sets the ascending/descending sorter.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>fieldName</code> is null or empty.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>listheader</code> is null.
+	 * @param fieldName  Name of the property that needs to be render to the bean property of the provided
+	 *                   <code>ListitemRenderer</code>.
+	 * @param desc       Sorting order for the property <code>fieldName</code>. Ascending if desc == false, descending
+	 *                   if desc == true.
+	 * @param listheader Id of the Listheader to which sets the ascending/descending sorter.
+	 * @throws IllegalArgumentException If the specified <code>fieldName</code> is null or empty.
+	 * @throws IllegalArgumentException If the specified <code>listheader</code> is null.
 	 */
 	protected void registerField(String fieldName, Listheader listheader, SortOrder defaultOrder) {
 		registerField(fieldName);
@@ -543,22 +547,15 @@ public class AbstractListController<T> extends AbstractController<T> {
 	}
 
 	/**
-	 * @param fieldName
-	 *            Name of the property that needs to be render to the bean property of the provided
-	 *            <code>ListitemRenderer</code>.
-	 * @param desc
-	 *            Sorting order for the property <code>fieldName</code>. Ascending if desc == false, descending if desc
-	 *            == true.
-	 * @param listheader
-	 *            Id of the Listheader to which sets the ascending/descending sorter.
-	 * @param searchField
-	 *            Id of search field to allow the search for the filed <code>fieldName</code> registered.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>fieldName</code> is null or empty.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>listheader</code> is null.
-	 * @throws IllegalArgumentException
-	 *             If the specified <code>searchField</code> is null.
+	 * @param fieldName   Name of the property that needs to be render to the bean property of the provided
+	 *                    <code>ListitemRenderer</code>.
+	 * @param desc        Sorting order for the property <code>fieldName</code>. Ascending if desc == false, descending
+	 *                    if desc == true.
+	 * @param listheader  Id of the Listheader to which sets the ascending/descending sorter.
+	 * @param searchField Id of search field to allow the search for the filed <code>fieldName</code> registered.
+	 * @throws IllegalArgumentException If the specified <code>fieldName</code> is null or empty.
+	 * @throws IllegalArgumentException If the specified <code>listheader</code> is null.
+	 * @throws IllegalArgumentException If the specified <code>searchField</code> is null.
 	 */
 	protected void registerField(String fieldName, Listheader listheader, SortOrder defaultOrder, Component searchField,
 			Listbox searchOperator, Operators operators) {
