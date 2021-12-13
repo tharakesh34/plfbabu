@@ -26125,15 +26125,21 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#185246" author="Gireesh">
+		<sql>
+			<![CDATA[
+   		     	UPDATE REPORTLIST SET FIELDVALUES = 'FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus', FieldType = 'String, String, String, String, String, Date, int, Date, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String' WHERE  CODE ='SCHENQ'
+        	 ]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="PSD#185083" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
                UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTCIF' WHERE REPORTID IN(SELECT REPORTID FROM  REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5
                UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTSHRTNAME' WHERE REPORTID IN(SELECT REPORTID FROM .REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5
-               
 			]]>
 		</sql>
 	</changeSet>
-	
 	
 </databaseChangeLog>
