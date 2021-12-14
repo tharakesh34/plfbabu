@@ -225,20 +225,23 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 		}
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String reference = feePostings.getReference();
-		FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.VIEW);
 
-		if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())
-				&& !FinServiceEvent.FEEPOSTING.equals(fm.getRcdMaintainSts())) {
-			String[] valueParm1 = new String[1];
-			valueParm1[0] = fm.getRcdMaintainSts();
-			auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
-		}
+		if ("L".equals(feePostings.getPostAgainst())) {
+			String reference = feePostings.getReference();
+			FinanceMain fm = financeMainDAO.getFinanceMain(reference, TableType.VIEW);
 
-		if (financeWriteoffDAO.isWriteoffLoan(fm.getFinID(), "")) {
-			String[] valueParm1 = new String[1];
-			valueParm1[0] = " ";
-			auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
+			if (StringUtils.isNotEmpty(fm.getRcdMaintainSts())
+					&& !FinServiceEvent.FEEPOSTING.equals(fm.getRcdMaintainSts())) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = fm.getRcdMaintainSts();
+				auditDetail.setErrorDetail(new ErrorDetail("LMS001", valueParm1));
+			}
+
+			if (financeWriteoffDAO.isWriteoffLoan(fm.getFinID(), "")) {
+				String[] valueParm1 = new String[1];
+				valueParm1[0] = " ";
+				auditDetail.setErrorDetail(new ErrorDetail("FWF001", valueParm1));
+			}
 		}
 
 		auditDetail.setErrorDetails(ErrorUtil.getErrorDetails(auditDetail.getErrorDetails(), usrLanguage));

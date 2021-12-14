@@ -852,8 +852,11 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	@Override
 	protected void doClearMessage() {
 		this.reference.setErrorMessage("");
+		this.reference.setConstraint("");
 		this.postingDivision.setErrorMessage("");
+		this.postingDivision.setConstraint("");
 		this.partnerBankID.setErrorMessage("");
+		this.partnerBankID.setConstraint("");
 	}
 
 	public void onSelectTab(ForwardEvent event) throws Exception {
@@ -987,8 +990,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	public void onChange$postingAgainst(Event event) {
 		doClearMessage();
-		this.reference.setConstraint("");
-		this.reference.setErrorMessage("");
+
 		this.reference.setValue("", "");
 		this.postingDivision.setValue("", "");
 		this.postingDivision.setReadonly(false);
