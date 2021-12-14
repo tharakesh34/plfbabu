@@ -56,7 +56,6 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.constants.LengthConstants;
 import com.pennant.backend.dao.customermasters.CustomerAddresDAO;
 import com.pennant.backend.model.ValueLabel;
@@ -465,11 +464,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		if (this.applicableFor.getSelectedIndex() == 0) {
 			this.applicableFor.setSelectedIndex(1);
 		}
-		if (ImplementationConstants.CUST_ADDR_AUTO_FILL) {
-			setCustCIFFilter(true);
-		} else {
-			setCustomerFilters(this.applicableFor.getSelectedItem().getValue(), false);
-		}
+
+		setCustomerFilters(this.applicableFor.getSelectedItem().getValue(), false);
 	}
 
 	/**
@@ -605,15 +601,10 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	}
 
 	public void onChange$applicableFor(Event event) throws InterruptedException {
-		logger.debug("Entering" + event.toString());
-		if (ImplementationConstants.CUST_ADDR_AUTO_FILL) {
-			setCustCIFFilter(true);
-		} else {
-			String applicable = this.applicableFor.getSelectedItem().getValue();
-			setCustomerFilters(applicable, true);
-		}
-
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.ENTERING);
+		String applicable = this.applicableFor.getSelectedItem().getValue();
+		setCustomerFilters(applicable, true);
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1141,60 +1132,57 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	 * @param financeTaxDetail
 	 * 
 	 */
-	public void doWriteBeanToComponents(FinanceTaxDetail aFinanceTaxDetail) {
+	public void doWriteBeanToComponents(FinanceTaxDetail aftd) {
 		logger.debug(Literal.ENTERING);
 
-		long finID = aFinanceTaxDetail.getFinID();
-		String finRef = aFinanceTaxDetail.getFinReference();
+		long finID = aftd.getFinID();
+		String finRef = aftd.getFinReference();
 
 		this.finReference.setValue(finRef);
 
-		fillComboBox(this.applicableFor, aFinanceTaxDetail.getApplicableFor(), listApplicableFor, getExcludeFields());
+		fillComboBox(this.applicableFor, aftd.getApplicableFor(), listApplicableFor, getExcludeFields());
 
-		old_country = aFinanceTaxDetail.getCountry();
-		old_state = aFinanceTaxDetail.getPinCodeName();
-		old_city = aFinanceTaxDetail.getCity();
+		old_country = aftd.getCountry();
+		old_state = aftd.getPinCodeName();
+		old_city = aftd.getCity();
 
 		if (!fromLoan) {
-			this.recordStatus.setValue(aFinanceTaxDetail.getRecordStatus());
-			if (!aFinanceTaxDetail.isNewRecord()) {
+			this.recordStatus.setValue(aftd.getRecordStatus());
+			if (!aftd.isNewRecord()) {
 				setJointAccountDetailList(this.financeTaxDetailService.getJointAccountDetailByFinRef(finID, "_AView"));
 				setGurantorsDetailList(this.financeTaxDetailService.getGuarantorDetailByFinRef(finID, "_AView"));
 			}
 		}
 
-		this.country.setValue(aFinanceTaxDetail.getCountry(), aFinanceTaxDetail.getCountryName());
-		this.province.setValue(aFinanceTaxDetail.getProvince(), aFinanceTaxDetail.getProvinceName());
-		this.city.setValue(aFinanceTaxDetail.getCity(), aFinanceTaxDetail.getCityName());
+		this.country.setValue(aftd.getCountry(), aftd.getCountryName());
+		this.province.setValue(aftd.getProvince(), aftd.getProvinceName());
+		this.city.setValue(aftd.getCity(), aftd.getCityName());
 
-		if (aFinanceTaxDetail.getPinCodeId() != null) {
-			this.pinCode.setAttribute("pinCodeId", aFinanceTaxDetail.getPinCodeId());
+		if (aftd.getPinCodeId() != null) {
+			this.pinCode.setAttribute("pinCodeId", aftd.getPinCodeId());
 		} else {
 			this.pinCode.setAttribute("pinCodeId", null);
 		}
 
-		this.pinCode.setValue(aFinanceTaxDetail.getPinCode(), aFinanceTaxDetail.getPinCodeName());
-		this.taxCustId = aFinanceTaxDetail.getTaxCustId();
+		this.pinCode.setValue(aftd.getPinCode(), aftd.getPinCodeName());
+		this.taxCustId = aftd.getTaxCustId();
 
-		this.taxExempted.setChecked(aFinanceTaxDetail.isTaxExempted());
-		this.taxNumber.setValue(aFinanceTaxDetail.getTaxNumber());
-		this.addrLine1.setValue(aFinanceTaxDetail.getAddrLine1());
-		this.addrLine2.setValue(aFinanceTaxDetail.getAddrLine2());
-		this.addrLine3.setValue(aFinanceTaxDetail.getAddrLine3());
-		this.addrLine4.setValue(aFinanceTaxDetail.getAddrLine4());
-		this.sezCertificateNo.setValue(aFinanceTaxDetail.getSezCertificateNo());
-		this.sezValueDate.setValue(aFinanceTaxDetail.getSezValueDate());
-		this.taxNumber.setValue(aFinanceTaxDetail.getTaxNumber());
-		this.addressDetail.setValue(aFinanceTaxDetail.getAddressDetail());
+		this.taxExempted.setChecked(aftd.isTaxExempted());
+		this.taxNumber.setValue(aftd.getTaxNumber());
+		this.addrLine1.setValue(aftd.getAddrLine1());
+		this.addrLine2.setValue(aftd.getAddrLine2());
+		this.addrLine3.setValue(aftd.getAddrLine3());
+		this.addrLine4.setValue(aftd.getAddrLine4());
+		this.sezCertificateNo.setValue(aftd.getSezCertificateNo());
+		this.sezValueDate.setValue(aftd.getSezValueDate());
+		this.taxNumber.setValue(aftd.getTaxNumber());
+		this.addressDetail.setValue(aftd.getAddressDetail());
 
-		if (!enquirymode) {
-			setCustCIFFilter(false);
-		}
-		this.custRef.setValue(aFinanceTaxDetail.getCustCIF(), aFinanceTaxDetail.getCustShrtName());
-		custID = aFinanceTaxDetail.getTaxCustId();
+		this.custRef.setValue(aftd.getCustCIF(), aftd.getCustShrtName());
+		custID = aftd.getTaxCustId();
 		filterCustomerDetails();
 
-		if (!aFinanceTaxDetail.isNewRecord()) {
+		if (!aftd.isNewRecord()) {
 			List<Filter> filters = new ArrayList<>();
 
 			if (this.country.getValue() != null && !this.country.getValue().isEmpty()) {
@@ -2067,6 +2055,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 		List<String> custCIFList = new ArrayList<>();
 		readOnlyComponentChecking();
 		readOnlyComponent(true, this.custRef);
+
 		if (flag) {
 			custID = 0;
 			resetData();
@@ -2075,9 +2064,11 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			this.custRef.setErrorMessage("");
 			this.custRef.setConstraint("");
 		}
+
 		if (PennantConstants.TAXAPPLICABLEFOR_PRIMAYCUSTOMER.equals(applicableFor)) {
 			readOnlyComponent(true, this.custRef);
 			Customer customer = null;
+
 			if (fromLoan) {
 				customer = this.financeDetail.getCustomerDetails().getCustomer();
 			} else {
@@ -2087,6 +2078,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 					customer = this.financeTaxDetailService.getCustomerByID(fm.getCustID());
 				}
 			}
+
 			if (customer != null) {
 				this.custRef.setValue(customer.getCustCIF());
 				this.custRef.setDescription(customer.getCustShrtName());
