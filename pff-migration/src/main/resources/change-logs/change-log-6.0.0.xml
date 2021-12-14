@@ -26142,4 +26142,12 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#185424" author="murthy.y">
+		<sql>
+			<![CDATA[
+   		     	UPDATE REPORTFILTERFIELDS SET LovHiddenFieldMethod = 'getCustCIF' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION  WHERE MENUITEMCODE='menu_Item_ManualPaymentsDue') AND FIELDID = 5;
+        	 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
