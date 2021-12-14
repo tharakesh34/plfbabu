@@ -268,11 +268,8 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, userId, 0 },
-					String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, reference, userId, 0);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-
 			Map<String, List<String>> usrRoles = new HashMap<String, List<String>>();
 			usrRoles.put("UserRoles", userRoles);
 
@@ -293,20 +290,19 @@ public class TaskOwnersDAOImpl extends BasicDao<TaskOwners> implements TaskOwner
 			try {
 				return this.jdbcTemplate.queryForObject(sql.toString(), source, String.class);
 			} catch (EmptyResultDataAccessException e1) {
-				logger.warn(
-						"Record not found in Task_Owners table for the specified Reference >> {} and CurrentOwner {} and UserRoles >> {} ",
-						reference, 0, userRoles);
 				return null;
 			}
 		} catch (IncorrectResultSizeDataAccessException e) {
+			List<String> list = null;
 			try {
-				List<String> list = this.jdbcOperations.queryForList(sql.toString(),
-						new Object[] { reference, userId, 0 }, String.class);
+				list = this.jdbcOperations.queryForList(sql.toString(), String.class, reference, userId, 0);
+
 				if (list != null && list.size() > 0) {
 					return list.get(0);
 				} else {
 					return null;
 				}
+
 			} catch (EmptyResultDataAccessException e1) {
 				return null;
 			}
