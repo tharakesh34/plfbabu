@@ -29,6 +29,11 @@ public class ReportListDetail {
 	private String fieldString13;
 	private String fieldString14;
 	private String fieldString15;
+	private String fieldString16;
+	private String fieldString17;
+	private String fieldString18;
+	private String fieldString19;
+	private String fieldString20;
 
 	private BigDecimal fieldBigDecimal01;
 	private BigDecimal fieldBigDecimal02;
@@ -45,6 +50,11 @@ public class ReportListDetail {
 	private BigDecimal fieldBigDecimal13;
 	private BigDecimal fieldBigDecimal14;
 	private BigDecimal fieldBigDecimal15;
+	private BigDecimal fieldBigDecimal16;
+	private BigDecimal fieldBigDecimal17;
+	private BigDecimal fieldBigDecimal18;
+	private BigDecimal fieldBigDecimal19;
+	private BigDecimal fieldBigDecimal20;
 
 	private Integer fieldInt01;
 	private Integer fieldInt02;
@@ -248,6 +258,46 @@ public class ReportListDetail {
 		this.fieldString15 = fieldString15;
 	}
 
+	public String getFieldString16() {
+		return fieldString16;
+	}
+
+	public void setFieldString16(String fieldString16) {
+		this.fieldString16 = fieldString16;
+	}
+
+	public String getFieldString17() {
+		return fieldString17;
+	}
+
+	public void setFieldString17(String fieldString17) {
+		this.fieldString17 = fieldString17;
+	}
+
+	public String getFieldString18() {
+		return fieldString18;
+	}
+
+	public void setFieldString18(String fieldString18) {
+		this.fieldString18 = fieldString18;
+	}
+
+	public String getFieldString19() {
+		return fieldString19;
+	}
+
+	public void setFieldString19(String fieldString19) {
+		this.fieldString19 = fieldString19;
+	}
+
+	public String getFieldString20() {
+		return fieldString20;
+	}
+
+	public void setFieldString20(String fieldString20) {
+		this.fieldString20 = fieldString20;
+	}
+
 	/** ================ BigDecimal Parameters ============= **/
 	public BigDecimal getFieldBigDecimal01() {
 		return fieldBigDecimal01;
@@ -257,8 +307,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal01 = fieldBigDecimal01;
 
 		if (fieldBigDecimal01 != null) {
-			this.fieldString01 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal01, reportFormat), length);
+			this.fieldString01 = format(fieldBigDecimal01);
 		}
 	}
 
@@ -270,8 +319,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal02 = fieldBigDecimal02;
 
 		if (fieldBigDecimal02 != null) {
-			this.fieldString02 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal02, reportFormat), length);
+			this.fieldString02 = format(fieldBigDecimal02);
 		}
 	}
 
@@ -283,8 +331,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal03 = fieldBigDecimal03;
 
 		if (fieldBigDecimal03 != null) {
-			this.fieldString03 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal03, reportFormat), length);
+			this.fieldString03 = format(fieldBigDecimal03);
 		}
 	}
 
@@ -296,8 +343,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal04 = fieldBigDecimal04;
 
 		if (fieldBigDecimal04 != null) {
-			this.fieldString04 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal04, reportFormat), length);
+			this.fieldString04 = format(fieldBigDecimal04);
 		}
 	}
 
@@ -309,8 +355,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal05 = fieldBigDecimal05;
 
 		if (fieldBigDecimal05 != null) {
-			this.fieldString05 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal05, reportFormat), length);
+			this.fieldString05 = format(fieldBigDecimal05);
 		}
 	}
 
@@ -322,8 +367,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal06 = fieldBigDecimal06;
 
 		if (fieldBigDecimal06 != null) {
-			this.fieldString06 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal06, reportFormat), length);
+			this.fieldString06 = format(fieldBigDecimal06);
 		}
 	}
 
@@ -335,8 +379,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal07 = fieldBigDecimal07;
 
 		if (fieldBigDecimal07 != null) {
-			this.fieldString07 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal07, reportFormat), length);
+			this.fieldString07 = format(fieldBigDecimal07);
 		}
 	}
 
@@ -348,8 +391,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal08 = fieldBigDecimal08;
 
 		if (fieldBigDecimal08 != null) {
-			this.fieldString08 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal08, reportFormat), length);
+			this.fieldString08 = format(fieldBigDecimal08);
 		}
 	}
 
@@ -361,8 +403,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal09 = fieldBigDecimal09;
 
 		if (fieldBigDecimal09 != null) {
-			this.fieldString09 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal09, reportFormat), length);
+			this.fieldString09 = format(fieldBigDecimal09);
 		}
 	}
 
@@ -374,8 +415,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal10 = fieldBigDecimal10;
 
 		if (fieldBigDecimal10 != null) {
-			this.fieldString10 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal10, reportFormat), length);
+			this.fieldString10 = format(fieldBigDecimal10);
 		}
 	}
 
@@ -387,8 +427,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal11 = fieldBigDecimal11;
 
 		if (fieldBigDecimal11 != null) {
-			this.fieldString11 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal11, reportFormat), length);
+			this.fieldString11 = format(fieldBigDecimal11);
 		}
 	}
 
@@ -400,8 +439,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal12 = fieldBigDecimal12;
 
 		if (fieldBigDecimal12 != null) {
-			this.fieldString12 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal12, reportFormat), length);
+			this.fieldString12 = format(fieldBigDecimal12);
 		}
 	}
 
@@ -413,8 +451,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal13 = fieldBigDecimal13;
 
 		if (fieldBigDecimal13 != null) {
-			this.fieldString13 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal13, reportFormat), length);
+			this.fieldString13 = format(fieldBigDecimal13);
 		}
 	}
 
@@ -426,8 +463,7 @@ public class ReportListDetail {
 		this.fieldBigDecimal14 = fieldBigDecimal14;
 
 		if (fieldBigDecimal14 != null) {
-			this.fieldString14 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal14, reportFormat), length);
+			this.fieldString14 = format(fieldBigDecimal14);
 		}
 	}
 
@@ -439,8 +475,67 @@ public class ReportListDetail {
 		this.fieldBigDecimal15 = fieldBigDecimal15;
 
 		if (fieldBigDecimal15 != null) {
-			this.fieldString15 = StringUtils
-					.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal15, reportFormat), length);
+			this.fieldString15 = format(fieldBigDecimal15);
+		}
+	}
+
+	public BigDecimal getFieldBigDecimal16() {
+		return fieldBigDecimal16;
+	}
+
+	public void setFieldBigDecimal16(BigDecimal fieldBigDecimal16) {
+		this.fieldBigDecimal16 = fieldBigDecimal16;
+
+		if (fieldBigDecimal16 != null) {
+			this.fieldString16 = format(fieldBigDecimal16);
+		}
+	}
+
+	public BigDecimal getFieldBigDecimal17() {
+		return fieldBigDecimal17;
+	}
+
+	public void setFieldBigDecimal17(BigDecimal fieldBigDecimal17) {
+		this.fieldBigDecimal17 = fieldBigDecimal17;
+
+		if (fieldBigDecimal17 != null) {
+			this.fieldString17 = format(fieldBigDecimal17);
+		}
+	}
+
+	public BigDecimal getFieldBigDecimal18() {
+		return fieldBigDecimal18;
+	}
+
+	public void setFieldBigDecimal18(BigDecimal fieldBigDecimal18) {
+		this.fieldBigDecimal18 = fieldBigDecimal18;
+
+		if (fieldBigDecimal18 != null) {
+			this.fieldString18 = format(fieldBigDecimal18);
+		}
+	}
+
+	public BigDecimal getFieldBigDecimal19() {
+		return fieldBigDecimal19;
+	}
+
+	public void setFieldBigDecimal19(BigDecimal fieldBigDecimal19) {
+		this.fieldBigDecimal19 = fieldBigDecimal19;
+
+		if (fieldBigDecimal19 != null) {
+			this.fieldString19 = format(fieldBigDecimal19);
+		}
+	}
+
+	public BigDecimal getFieldBigDecimal20() {
+		return fieldBigDecimal20;
+	}
+
+	public void setFieldBigDecimal20(BigDecimal fieldBigDecimal20) {
+		this.fieldBigDecimal20 = fieldBigDecimal20;
+
+		if (fieldBigDecimal20 != null) {
+			this.fieldString20 = format(fieldBigDecimal20);
 		}
 	}
 
@@ -1170,6 +1265,10 @@ public class ReportListDetail {
 		if (fieldDate15 != null) {
 			this.fieldString15 = DateUtility.formatToLongDate(fieldDate15);
 		}
+	}
+
+	private String format(BigDecimal fieldBigDecimal15) {
+		return StringUtils.leftPad(PennantApplicationUtil.amountFormate(fieldBigDecimal15, reportFormat), length);
 	}
 
 }
