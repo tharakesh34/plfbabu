@@ -7550,7 +7550,7 @@ public class ScheduleCalculator {
 		}
 		openSchd.setRepayOnSchDate(true);
 		if (TDSCalculator.isTDSApplicable(fm)) {
-			openSchd.setTDSApplicable(schedules.get(prvIndex + 2).isTDSApplicable());
+			// openSchd.setTDSApplicable(schedules.get(prvIndex + 2).isTDSApplicable());
 			Date maturityDate = fm.getMaturityDate();
 
 			if (maturityDate.compareTo(SysParamUtil.getAppDate()) < 0) {
