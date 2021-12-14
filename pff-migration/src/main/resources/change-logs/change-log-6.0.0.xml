@@ -26158,4 +26158,15 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#185577" author="Gireesh">
+		<sql>
+			<![CDATA[
+   		     	UPDATE FINRECEIPTHEADER_TEMP SET SUBRECEIPTMODE = null WHERE SUBRECEIPTMODE = '#';
+				UPDATE FINRECEIPTHEADER SET SUBRECEIPTMODE = null WHERE SUBRECEIPTMODE = '#';
+				UPDATE FINRECEIPTHEADER_TEMP SET RECEIPTMODE = null WHERE RECEIPTMODE = '#';
+				UPDATE FINRECEIPTHEADER SET RECEIPTMODE = null WHERE RECEIPTMODE = '#';
+        	 ]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
