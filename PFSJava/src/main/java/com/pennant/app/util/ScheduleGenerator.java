@@ -1015,7 +1015,7 @@ public class ScheduleGenerator {
 					// Profit Review On Schedule Date
 				} else if (scheduleFlag == 1) {
 					schedule.setRvwOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
-					if (schedule.getSchDate().compareTo(financeMain.getGrcPeriodEndDate()) == 0) {
+					if (DateUtility.compare(schedule.getSchDate(), financeMain.getGrcPeriodEndDate()) == 0) {
 						if (financeMain.isFinIsRateRvwAtGrcEnd()) {
 							schedule.setRvwOnSchDate(true);
 						}
@@ -1023,8 +1023,8 @@ public class ScheduleGenerator {
 					// Profit Capitalize On Schedule Date
 				} else if (scheduleFlag == 2) {
 
-					if (reCheckFlags && (schedule.getSchDate().compareTo(startDate) == 0
-							|| schedule.getSchDate().compareTo(endDate) == 0)) {
+					if (reCheckFlags && (DateUtility.compare(schedule.getSchDate(), startDate) == 0
+							|| DateUtility.compare(schedule.getSchDate(), endDate) == 0)) {
 						schedule.setCpzOnSchDate(FrequencyUtil.isFrqDate(frequency, schedule.getSchDate()));
 					} else {
 						schedule.setCpzOnSchDate(true);
