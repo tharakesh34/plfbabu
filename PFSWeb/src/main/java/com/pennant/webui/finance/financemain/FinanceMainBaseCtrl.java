@@ -17463,7 +17463,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		;
 
-		if (!filterApplied && !renderListOnLoad) {
+		if (!filterApplied) {
 			return;
 		}
 
@@ -17486,7 +17486,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 		;
 
-		if (!filterApplied && !renderListOnLoad) {
+		if (!filterApplied) {
 			return;
 		}
 

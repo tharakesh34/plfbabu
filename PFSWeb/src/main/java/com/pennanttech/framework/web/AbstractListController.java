@@ -306,7 +306,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 			}
 		}
 
-		if (!filterApplied && !renderListOnLoad) {
+		if (!filterApplied) {
 			logger.debug(Literal.LEAVING);
 			return;
 		}
