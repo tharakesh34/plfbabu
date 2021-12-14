@@ -762,7 +762,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" fm.FinID, fm.FinReference, ft.FinType, ft.FinTypeDesc LovDescFinTypeName, fm.FinBranch");
 		sql.append(", fm.CustId, cu.CustCIF LovDescCustCif, cu.CustShrtName LovDescCustShrtName, SD.EntityCode");
-		sql.append(", fm.FinAssetValue, fm.FinStartDate, fm.MaturityDate, fm.FinCcy, fm.TDSApplicable");
+		sql.append(", fm.FinAssetValue, fm.FinStartDate, fm.MaturityDate, fm.FinCcy, fm.TDSApplicable, fm.TdsType");
 		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join Customers cu on fm.CustID = cu.CustID");
 		sql.append(" Inner Join RmtFinanceTypes ft on ft.FinType = fm.FinType");
@@ -789,6 +789,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 				fm.setMaturityDate(rs.getTimestamp("MaturityDate"));
 				fm.setFinCcy(rs.getString("FinCcy"));
 				fm.setTDSApplicable(rs.getBoolean("TDSApplicable"));
+				fm.setTdsType(rs.getString("TdsType"));
 
 				return fm;
 			}, finID);
