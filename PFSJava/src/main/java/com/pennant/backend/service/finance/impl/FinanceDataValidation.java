@@ -5082,7 +5082,7 @@ public class FinanceDataValidation {
 			List<Calendar> schdDates = frequency.getScheduleList();
 
 			if (schdDates != null) {
-				fm.setCalGrcEndDate(schdDates.get(schdDates.size() - 1).getTime());
+				fm.setCalGrcEndDate(DateUtil.getDatePart(schdDates.get(schdDates.size() - 1).getTime()));
 			}
 
 		} else {
