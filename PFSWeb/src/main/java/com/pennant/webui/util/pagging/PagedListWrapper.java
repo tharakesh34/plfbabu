@@ -141,7 +141,11 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 		clear();
 
 		final SearchResult<E> searchResult = getPagedListService().getSRBySearchObject(getSearchObject());
-		getPaging().setTotalSize(searchResult.getTotalCount());
+		
+		if(getPaging() != null) {
+			getPaging().setTotalSize(searchResult.getTotalCount());
+		}
+		
 		addAll(searchResult.getResult());
 	}
 
