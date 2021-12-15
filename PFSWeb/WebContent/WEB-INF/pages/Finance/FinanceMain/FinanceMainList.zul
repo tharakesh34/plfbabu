@@ -147,7 +147,7 @@
 							</rows>
 						</grid>
 						<listbox id="listBoxFinanceMain" fixedLayout="true" sizedByContent="true" span="true"
-							emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" height="100%" multiple="false">
+							emptyMessage="${c:l('listbox.emptyMessage')}" tooltiptext="${c:l('listbox.tooltiptext')}" height="100%" multiple="false" style="white-space: nowrap;">
 							<listhead sizable="true">
 								<listheader id="listheader_CustomerCIF" label="${c:l('listheader_LovDescCustCIF.label')}" sort="auto"
 									hflex="min" />

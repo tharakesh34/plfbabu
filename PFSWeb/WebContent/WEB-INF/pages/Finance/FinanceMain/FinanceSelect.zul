@@ -118,7 +118,7 @@
 						</grid>
 						<listbox id="listBoxFinance" emptyMessage="${c:l('listbox.emptyMessage')}" fixedLayout="true"
 							sizedByContent="true" span="true" tooltiptext="${c:l('listbox.tooltiptext')}" width="100%" height="100%"
-							multiple="false">
+							multiple="false" style="white-space: nowrap;">
 							<listhead sizable="true">
 								<listheader id="listheader_FinType" sort="auto" label="${c:l('listheader_FinType.label')}" hflex="min" />
 								<listheader id="listheader_FinProduct" sort="auto" label="${c:l('listheader_FinProduct.label')}"
