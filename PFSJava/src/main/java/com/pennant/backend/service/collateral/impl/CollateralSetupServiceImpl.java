@@ -338,63 +338,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					collateralSetup.getCollateralType()));
 
 			// Extended Field Details
-			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
-
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(extendedFieldHeader.getModuleName());
-			tableName.append("_");
-			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_ED");
-
-			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
-					tableName.toString(), "_View");
-
-			List<ExtendedFieldRender> renderList = new ArrayList<>();
-			for (int i = 0; i < renderMapList.size(); i++) {
-
-				Map<String, Object> extFieldMap = renderMapList.get(i);
-				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
-
-				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
-				extFieldMap.remove("Reference");
-				extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
-				extFieldMap.remove("SeqNo");
-				extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
-				extFieldMap.remove("Version");
-				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
-				extFieldMap.remove("LastMntOn");
-				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
-				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(
-						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordStatus")));
-				extFieldMap.remove("RecordStatus");
-				extendedFieldRender
-						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
-				extendedFieldRender.setNextRoleCode(
-						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextRoleCode")));
-				extFieldMap.remove("NextRoleCode");
-				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
-						: String.valueOf(extFieldMap.get("TaskId")));
-				extFieldMap.remove("TaskId");
-				extendedFieldRender
-						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextTaskId")));
-				extFieldMap.remove("NextTaskId");
-				extendedFieldRender
-						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordType")));
-				extFieldMap.remove("RecordType");
-				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
-				extFieldMap.remove("WorkflowId");
-
-				extendedFieldRender.setMapValues(extFieldMap);
-				renderList.add(extendedFieldRender);
-			}
-			collateralSetup.setExtendedFieldRenderList(renderList);
+			getExtendedFieldDetails(collateralSetup, collateralRef);
 
 			// Document Details
 			List<DocumentDetails> documentList = documentDetailsDAO.getDocumentDetailsByRef(collateralRef,
@@ -1938,6 +1882,8 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 					.getApprovedCollateralStructureByType(setup.getCollateralType());
 			setup.setCollateralStructure(collateralStructure);
 
+			getExtendedFieldDetails(setup, setup.getCollateralRef());
+
 			// set Extended details
 			String reference = setup.getCollateralRef();
 			ExtendedFieldHeader extendedFieldHeader = setup.getCollateralStructure().getExtendedFieldHeader();
@@ -3103,64 +3049,7 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 			collateralSetup.setAssignmentDetails(collateralAssignmentDAO.getCollateralAssignmentByColRef(collateralRef,
 					collateralSetup.getCollateralType()));
 
-			// Extended Field Details
-			ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
-
-			StringBuilder tableName = new StringBuilder();
-			tableName.append(extendedFieldHeader.getModuleName());
-			tableName.append("_");
-			tableName.append(extendedFieldHeader.getSubModuleName());
-			tableName.append("_ED");
-
-			List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
-					tableName.toString(), "_View");
-
-			List<ExtendedFieldRender> renderList = new ArrayList<>();
-			for (int i = 0; i < renderMapList.size(); i++) {
-
-				Map<String, Object> extFieldMap = renderMapList.get(i);
-				ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
-
-				extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
-				extFieldMap.remove("Reference");
-				extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
-				extFieldMap.remove("SeqNo");
-				extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
-				extFieldMap.remove("Version");
-				extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
-				extFieldMap.remove("LastMntOn");
-				extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
-				extFieldMap.remove("LastMntBy");
-				extendedFieldRender.setRecordStatus(
-						StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordStatus")));
-				extFieldMap.remove("RecordStatus");
-				extendedFieldRender
-						.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RoleCode")));
-				extFieldMap.remove("RoleCode");
-				extendedFieldRender.setNextRoleCode(
-						StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextRoleCode")));
-				extFieldMap.remove("NextRoleCode");
-				extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
-						: String.valueOf(extFieldMap.get("TaskId")));
-				extFieldMap.remove("TaskId");
-				extendedFieldRender
-						.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
-								: String.valueOf(extFieldMap.get("NextTaskId")));
-				extFieldMap.remove("NextTaskId");
-				extendedFieldRender
-						.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
-								: String.valueOf(extFieldMap.get("RecordType")));
-				extFieldMap.remove("RecordType");
-				extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
-				extFieldMap.remove("WorkflowId");
-
-				extendedFieldRender.setMapValues(extFieldMap);
-				renderList.add(extendedFieldRender);
-			}
-			collateralSetup.setExtendedFieldRenderList(renderList);
+			getExtendedFieldDetails(collateralSetup, collateralRef);
 
 			// Customer Details
 			collateralSetup.setCustomerDetails(getCustomerDetailsbyID(collateralSetup.getDepositorId(), true, "_View"));
@@ -3184,6 +3073,65 @@ public class CollateralSetupServiceImpl extends GenericService<CollateralSetup> 
 		}
 		logger.debug(Literal.LEAVING);
 		return collateralSetup;
+	}
+
+	private void getExtendedFieldDetails(CollateralSetup collateralSetup, String collateralRef) {
+		ExtendedFieldHeader extendedFieldHeader = collateralSetup.getCollateralStructure().getExtendedFieldHeader();
+
+		StringBuilder tableName = new StringBuilder();
+		tableName.append(extendedFieldHeader.getModuleName());
+		tableName.append("_");
+		tableName.append(extendedFieldHeader.getSubModuleName());
+		tableName.append("_ED");
+
+		List<Map<String, Object>> renderMapList = extendedFieldRenderDAO.getExtendedFieldMap(collateralRef,
+				tableName.toString(), "_View");
+
+		List<ExtendedFieldRender> renderList = new ArrayList<>();
+		for (int i = 0; i < renderMapList.size(); i++) {
+
+			Map<String, Object> extFieldMap = renderMapList.get(i);
+			ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
+
+			extendedFieldRender.setReference(String.valueOf(extFieldMap.get("Reference")));
+			extFieldMap.remove("Reference");
+			extendedFieldRender.setSeqNo(Integer.valueOf(extFieldMap.get("SeqNo").toString()));
+			extFieldMap.remove("SeqNo");
+			extendedFieldRender.setVersion(Integer.valueOf(extFieldMap.get("Version").toString()));
+			extFieldMap.remove("Version");
+			extendedFieldRender.setLastMntOn((Timestamp) extFieldMap.get("LastMntOn"));
+			extFieldMap.remove("LastMntOn");
+			extendedFieldRender.setLastMntBy(Long.valueOf(extFieldMap.get("LastMntBy").toString()));
+			extFieldMap.remove("LastMntBy");
+			extendedFieldRender
+					.setRecordStatus(StringUtils.equals(String.valueOf(extFieldMap.get("RecordStatus")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordStatus")));
+			extFieldMap.remove("RecordStatus");
+			extendedFieldRender.setRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("RoleCode")), "null") ? ""
+					: String.valueOf(extFieldMap.get("RoleCode")));
+			extFieldMap.remove("RoleCode");
+			extendedFieldRender
+					.setNextRoleCode(StringUtils.equals(String.valueOf(extFieldMap.get("NextRoleCode")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextRoleCode")));
+			extFieldMap.remove("NextRoleCode");
+			extendedFieldRender.setTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("TaskId")), "null") ? ""
+					: String.valueOf(extFieldMap.get("TaskId")));
+			extFieldMap.remove("TaskId");
+			extendedFieldRender
+					.setNextTaskId(StringUtils.equals(String.valueOf(extFieldMap.get("NextTaskId")), "null") ? ""
+							: String.valueOf(extFieldMap.get("NextTaskId")));
+			extFieldMap.remove("NextTaskId");
+			extendedFieldRender
+					.setRecordType(StringUtils.equals(String.valueOf(extFieldMap.get("RecordType")), "null") ? ""
+							: String.valueOf(extFieldMap.get("RecordType")));
+			extFieldMap.remove("RecordType");
+			extendedFieldRender.setWorkflowId(Long.valueOf(extFieldMap.get("WorkflowId").toString()));
+			extFieldMap.remove("WorkflowId");
+
+			extendedFieldRender.setMapValues(extFieldMap);
+			renderList.add(extendedFieldRender);
+		}
+		collateralSetup.setExtendedFieldRenderList(renderList);
 	}
 
 	@Override
