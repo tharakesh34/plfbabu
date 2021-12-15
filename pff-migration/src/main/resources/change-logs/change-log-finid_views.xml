@@ -1648,7 +1648,7 @@
 
 	<!-- (WFMV) :: WIFinance Main Views handle in single place start -->
 
-		<changeSet id="WFMV_1.2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="WFMV_1.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'wiffinancemain_aview');
@@ -2822,7 +2822,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="SDV_4.1" author="Gopal.p" dbms="postgresql,mssql">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -15101,7 +15101,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.38_pre" author="Mounika.M" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
@@ -15109,7 +15109,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.38" author="Mounika.M">
 		<createView viewName="COLLATERALSMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[ 
@@ -15248,7 +15248,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.39_pre" author="Mounika.m" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15256,7 +15256,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.39" author="Mounika.M">
 		<createView viewName="FINANCEMAINTENANCE_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -15320,7 +15320,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.39_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15328,7 +15328,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.60_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15336,7 +15336,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.60" author="Mounika.M">
 		<createView viewName="FINOPTIONSMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -15467,7 +15467,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.60_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15475,7 +15475,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.40_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15483,7 +15483,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.40" author="Mounika.M">
 		<createView viewName="LINKEDFINMAINTENANCE_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -15618,7 +15618,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.40_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15626,7 +15626,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.41_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15634,7 +15634,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.41" author="Mounika.M">
 		<createView viewName="ROLLEDOVERFINANCEDETAIL_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -15654,7 +15654,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.41_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15662,7 +15662,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.43_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15771,15 +15771,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-    <changeSet id="ST#556.44_pre" author="Mounika.M" dbms="postgresql">
+
+	<changeSet id="ST#556.44_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rpt_provision_view'); 
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.44" author="Mounika.M" dbms="postgresql">
 		<createView viewName="RPT_PROVISION_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -15853,7 +15853,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.44_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15861,7 +15861,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.45_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -15869,7 +15869,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.45" author="Mounika.M">
 		<createView viewName="RMTFINANCETYPES_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -16102,7 +16102,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.45_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16110,7 +16110,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.46_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16118,7 +16118,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.46" author="M.Mounika">
 		<createView viewName="RMTFINANCETYPES_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -16579,7 +16579,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.46_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16587,7 +16587,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.61_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16595,7 +16595,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.61" author="M.Mounika">
 		<createView viewName="RMTFINANCETYPES_ORGVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -16801,7 +16801,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.61_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16809,7 +16809,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.47_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16817,7 +16817,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.47" author="Mounika.M">
 		<createView viewName="RMTFINANCETYPES_AEVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -16834,7 +16834,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.47_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16842,7 +16842,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.48" author="Mounika.M">
 		<createView viewName="RPT_PORTFOLIOBEHAVIORSMRY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -16877,7 +16877,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.49_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -16885,7 +16885,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.49" author="Mounika.M">
 		<createView viewName="RPT_PORTFOLIOBEHAVIOR" replaceIfExists="true">
 			<![CDATA[
@@ -17045,15 +17045,15 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-	 <changeSet id="ST#556.49_post" author="Mounika.M" dbms="postgresql">
+
+	<changeSet id="ST#556.49_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'rpt_portfoliobehavior');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.50_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17061,7 +17061,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.50" author="Mounika.M">
 		<createView viewName="CUSTOMERFINANCES_IVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17098,7 +17098,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.50_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17106,7 +17106,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.51_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17114,7 +17114,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.51" author="Mounika.M" dbms="postgresql">
 		<createView viewName="FINUNPAIDREPAYMENTS_IVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17139,7 +17139,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.51" author="Mounika.M" dbms="oracle">
 		<createView viewName="FINUNPAIDREPAYMENTS_IVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17189,7 +17189,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.51_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17197,7 +17197,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.52_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17205,7 +17205,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.52" author="M.Mounika">
 		<createView viewName="RPT_NOLIABILITY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17218,7 +17218,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.52_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17226,7 +17226,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.53_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17234,7 +17234,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.53" author="Mounika.M" dbms="postgresql,oracle">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17259,7 +17259,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.53" author="Mounika.M" dbms="mssql">
 		<createView viewName="FINSCHEDULEDETAILS_IVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17284,7 +17284,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.53_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17292,7 +17292,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.54_pre" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17300,7 +17300,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.54" author="M.Mounika">
 		<createView viewName="COLLATERALASSIGNMENT_AVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17344,7 +17344,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.54_post" author="M.Mounika" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17352,7 +17352,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.55_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17360,7 +17360,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.55" author="Mounika.M">
 		<createView viewName="COLLATERALASSIGNMENT_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17445,7 +17445,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.55_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17453,7 +17453,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.56_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17461,7 +17461,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.56" author="Mounika.M">
 		<createView viewName="FINANCEENQUIRY_HIERARCHY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17520,7 +17520,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.56_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17528,7 +17528,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.57_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17536,7 +17536,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.57" author="Mounika.M">
 		<createView viewName="FINOVERDUEENQUIRY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17589,7 +17589,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.57_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17597,7 +17597,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.58_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17605,7 +17605,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.58" author="Mounika.M" dbms="postgresql">
 		<createView viewName="MANDATEENQUIRY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17664,7 +17664,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.58" author="Mounika.M" dbms="oracle">
 		<createView viewName="MANDATEENQUIRY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17790,7 +17790,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.59_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -17798,7 +17798,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.59" author="Mounika.M" dbms="postgresql">
 		<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17890,7 +17890,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.59" author="Mounika.M" dbms="oracle">
 		<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -17982,8 +17982,8 @@
 			]]>
 		</createView>
 	</changeSet>
-	
-		<changeSet id="ST#556.59" author="Mounika.M" dbms="mssql">
+
+	<changeSet id="ST#556.59" author="Mounika.M" dbms="mssql">
 		<createView viewName="DM_DISB_DETAILS_DAILY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T2.FINAPPROVEDDATE AGREEMENTDATE,
@@ -18074,7 +18074,7 @@
 			]]>
 		</createView>
 	</changeSet>
-		
+
 	<changeSet id="ST#556.59_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18082,7 +18082,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.62_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18090,7 +18090,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.62" author="Mounika.M">
 		<createView viewName="INVESTMENT_DEAL_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -18140,7 +18140,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.62_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18148,7 +18148,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.63_pre" author="Mounika.M" dbms="postgresql">
 		<sql> 
 		<![CDATA[ 
@@ -18207,7 +18207,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.64_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18215,7 +18215,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.64" author="Mounika.M">
 		<createView viewName="FINANCEENQUIRY_HIERARCHY_TVIEW" replaceIfExists="true">
 			<![CDATA[
@@ -18274,7 +18274,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.64_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18282,7 +18282,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.65_pre" author="Mounika.M" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
@@ -18341,7 +18341,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.66_pre" author="Gopal" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
@@ -18593,7 +18593,7 @@
 		]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.66_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18601,7 +18601,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.67_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18609,7 +18609,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.67" author="Mounika.M">
 		<createView viewName="ROLLEDOVERFINANCEDETAIL_VIEW" replaceIfExists="true">
 		<![CDATA[
@@ -18646,7 +18646,7 @@
 		]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.67_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18654,7 +18654,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.66_pre" author="Saikiran.n" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18731,7 +18731,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="ST#556.67_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18769,8 +18769,8 @@
 				select deps_restore_dependencies ('plf', 'finodpenalty_latest_rates_view');
 			]]>
 		</sql>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="ST#556.68_pre" author="vijaya.a" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18835,15 +18835,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
-		<changeSet id="PSD#185201_pre" author="Alekhya.t" dbms="postgresql">
+
+	<changeSet id="PSD#185201_pre" author="Alekhya.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#185201" author="Alekhya.t">
 		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
 			<![CDATA[
@@ -18904,7 +18904,7 @@
 			 ]]>
 		</createView>
 	</changeSet>
-	
+
 	<changeSet id="PSD#185201_post" author="Alekhya.t" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -18912,5 +18912,5 @@
 			]]>
 		</sql>
 	</changeSet>
-		
+
 </databaseChangeLog>
