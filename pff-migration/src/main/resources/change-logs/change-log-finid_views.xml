@@ -18836,4 +18836,81 @@
 		</sql>
 	</changeSet>
 	
+		<changeSet id="PSD#185201_pre" author="Alekhya.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#185201" author="Alekhya.t">
+		<createView viewName="REJECTFINANCEMAIN_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT F.FINID,
+					F.FINREFERENCE,
+					T.FINCATEGORY LOVDESCPRODUCTCODENAME,
+				    F.FINTYPE,
+				    F.FINBRANCH,
+				    F.FINSTARTDATE,
+				    F.MATURITYDATE,
+				    F.NUMBEROFTERMS,
+				    F.FINCCY,
+				    F.FINAMOUNT,
+					(((F.FINAMOUNT - F.DOWNPAYMENT) + F.FEECHARGEAMT) + F.INSURANCEAMT) FINANCINGAMOUNT,
+				    F.FEECHARGEAMT,
+				    F.INSURANCEAMT,
+					((((F.FINAMOUNT - F.DOWNPAYMENT) + F.FEECHARGEAMT) + F.INSURANCEAMT) - F.FINREPAYMENTAMOUNT) CURFINAMOUNT,
+				    F.DOWNPAYMENT,
+				    F.FINCURRASSETVALUE,
+				    F.FINASSETVALUE,
+				    F.ALLOWDRAWINGPOWER,
+				    F.PROMOTIONSEQID,
+				    F.SANBSDSCHDLE,
+					C.CUSTCIF LOVDESCCUSTCIF,
+				    F.SVAMOUNT,
+				    F.CBAMOUNT,
+				    F.FINISRATERVWATGRCEND,
+				    F.ALWGRCADJ,
+				    F.ENDGRCPERIODAFTRFULLDISB,
+				    F.AUTOINCGRCENDDATE,
+					F.REQLOANAMT,
+					F.REQLOANTENOR,
+					F.OFFERPRODUCT,
+					F.OFFERAMOUNT,
+					F.CUSTSEGMENTATION,
+					F.BASEPRODUCT,
+					F.PROCESSTYPE,
+					F.BUREAUTIMESERIES,
+					F.CAMPAIGNNAME,
+					F.EXISTINGLANREFNO,
+					F.LEADSOURCE,
+					F.POSOURCE,
+					F.RSA,
+					F.VERIFICATION,
+					F.SOURCINGBRANCH,
+					F.SOURCHANNELCATEGORY,
+					F.ASMNAME,
+					F.TDSTYPE,
+					F.WRITEOFFLOAN,
+					F.RESTRUCTURE,
+					F.CALCOFSTEPS,
+					F.STEPSAPPLIEDFOR,
+					F.NOOFGRCSTEPS,
+					F.FINREPAYMENTAMOUNT
+			    FROM REJECTFINANCEMAIN F
+				LEFT JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
+				LEFT JOIN RMTFINANCETYPES T ON F.FINTYPE = T.FINTYPE
+			 ]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#185201_post" author="Alekhya.t" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rejectfinancemain_view');
+			]]>
+		</sql>
+	</changeSet>
+		
 </databaseChangeLog>
