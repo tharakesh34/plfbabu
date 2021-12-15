@@ -813,7 +813,7 @@ public class ReceiptCalculator {
 		allocation.setEditable(isEditable);
 		allocation.setTotRecv(due);
 
-		Map<String, BigDecimal> taxPercMap = taxSplit.getTaxPercMap();
+		Map<String, BigDecimal> taxPercMap = financeDetail.getGstPercentages();
 
 		BigDecimal cgstPerc = getTaxPercentage(RuleConstants.CODE_CGST, taxPercMap);
 		BigDecimal igstPerc = getTaxPercentage(RuleConstants.CODE_IGST, taxPercMap);

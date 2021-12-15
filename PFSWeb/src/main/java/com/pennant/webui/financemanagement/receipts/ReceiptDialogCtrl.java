@@ -4041,6 +4041,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			allocate.setPaidSGST(BigDecimal.ZERO);
 			allocate.setPaidUGST(BigDecimal.ZERO);
 			allocate.setPaidIGST(BigDecimal.ZERO);
+			allocate.setPaidCESS(BigDecimal.ZERO);
 			allocate.setPaidGST(BigDecimal.ZERO);
 			getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocate,
 					FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE);
@@ -4079,9 +4080,10 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							allocteDtl.setPaidSGST(BigDecimal.ZERO);
 							allocteDtl.setPaidUGST(BigDecimal.ZERO);
 							allocteDtl.setPaidIGST(BigDecimal.ZERO);
+							allocteDtl.setPaidCESS(BigDecimal.ZERO);
 							allocteDtl.setPaidGST(BigDecimal.ZERO);
-							getReceiptCalculator().calAllocationPaidGST(financeDetail, totalPaid, allocteDtl,
-									FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
+							getReceiptCalculator().calAllocationPaidGST(financeDetail, allocteDtl.getTotalPaid(),
+									allocteDtl, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE);
 						}
 					}
 				}
