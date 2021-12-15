@@ -609,7 +609,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc.setParent(item);
 
 			String receiptMode = finReceiptHeader.getReceiptMode();
-			lc = new Listcell(receiptMode);
+			lc = new Listcell(PennantConstants.List_Select.equals(receiptMode) ? "" : receiptMode);
 			lc.setParent(item);
 
 			String receiptPurpose = finReceiptHeader.getReceiptPurpose();

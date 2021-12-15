@@ -3210,7 +3210,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
-		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
 		FinanceType finType = financeDetail.getFinScheduleData().getFinanceType();
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		Date appDate = SysParamUtil.getAppDate();
