@@ -83,8 +83,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_AcademicList(Event event) {
 		// Set the page level components.
@@ -106,17 +105,13 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 		// Render the page and display the data.
 		doRenderPage();
 
-		// rendering the list page data required or not.
-		if (renderListOnLoad) {
-			search();
-		}
+		search();
 	}
 
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_AcademicList_AcademicSearchDialog(Event event) {
 		search();
@@ -125,8 +120,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -136,8 +130,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_AcademicList_NewAcademic(Event event) {
 		logger.debug("Entering");
@@ -157,8 +150,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onAcademicItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -194,8 +186,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param academic
-	 *            The entity that need to be passed to the dialog.
+	 * @param academic The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Academic academic) {
 		logger.debug("Entering");
@@ -216,8 +207,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -226,8 +216,7 @@ public class AcademicListCtrl extends GFCBaseListCtrl<Academic> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
