@@ -96,11 +96,11 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.CustomerFinanceDetail;
 import com.pennant.backend.model.finance.FinanceEnquiry;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.insurance.InsuranceDetails;
 import com.pennant.backend.model.reports.ReportConfiguration;
 import com.pennant.backend.model.reports.ReportFilterFields;
 import com.pennant.backend.model.systemmasters.Designation;
 import com.pennant.backend.service.PagedListService;
+import com.pennant.backend.service.configuration.VASConfigurationService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerOffersService;
 import com.pennant.backend.service.customermasters.DirectorDetailService;
@@ -429,6 +429,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Label labelCKYCRef;
 	private float progressPerc;
 	private DMSService dMSService;
+	private VASConfigurationService vASConfigurationService;
 
 	/**
 	 * default constructor.<br>
@@ -3029,16 +3030,22 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	public void onCustomerVasItemDoubleClicked(Event event) throws Exception {
-
 		Listitem selectedItem = this.listBoxCustomerVasDetails.getSelectedItem();
 		VASRecording vasRecording = (VASRecording) selectedItem.getAttribute("data");
-		InsuranceDetails insuranceDetails = new InsuranceDetails();
-		insuranceDetails.setReference(vasRecording.getVasReference());
+
+		String productCode = vasRecording.getProductCode();
+		vasRecording.setVasConfiguration(vASConfigurationService.getApprovedVASConfigurationByCode(productCode, true));
+
 		Map<String, Object> arg = getDefaultArguments();
-		arg.put("insuranceDetails", insuranceDetails);
+		arg.put("enqiryModule", true);
 		arg.put("userActivityLog", true);
+		arg.put("vASRecording", vasRecording);
+		arg.put("vASRecordingListCtrl", null);
+		arg.put("module", "");
+		arg.put("vasMovement", true);
+
 		try {
-			Executions.createComponents("/WEB-INF/pages/Insurance/InsuranceEnquiryDialog.zul", null, arg);
+			Executions.createComponents("/WEB-INF/pages/VASRecording/VASRecordingDialog.zul", null, arg);
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
@@ -3450,4 +3457,9 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	public void setdMSService(DMSService dMSService) {
 		this.dMSService = dMSService;
 	}
+
+	public void setVASConfigurationService(VASConfigurationService vASConfigurationService) {
+		this.vASConfigurationService = vASConfigurationService;
+	}
+
 }

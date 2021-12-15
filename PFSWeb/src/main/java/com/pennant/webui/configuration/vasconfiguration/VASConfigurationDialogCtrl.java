@@ -103,7 +103,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.util.Constraint.PTNumberValidator;
 import com.pennant.util.Constraint.PTStringValidator;
-import com.pennant.webui.financemanagement.insurance.InsuranceFileImportService;
 import com.pennant.webui.solutionfactory.extendedfielddetail.ExtendedFieldDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
@@ -222,7 +221,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 	private Media media;
 	private boolean isImported;
 	private DataEngineConfig dataEngineConfig;
-	private InsuranceFileImportService insuranceFileImportService;
 
 	/**
 	 * default constructor.<br>
@@ -2079,65 +2077,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnImport(Event event) throws Exception {
-		logger.debug(Literal.ENTERING);
-
-		doSetValidation();
-		doWriteComponentsToBean(new VASConfiguration(), false);
-
-		doFileValidations();
-		try {
-			if (errorMsg != null) {
-				throw new Exception(errorMsg);
-			}
-			isImported = true;
-			doFileImport();
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			MessageUtil.showError(e.getMessage());
-			return;
-		}
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void doFileImport() throws InterruptedException {
-		logger.debug(Literal.ENTERING);
-
-		ProcessData processData = new ProcessData(getUserWorkspace().getUserDetails().getLoginId(),
-				VAS_PREMIUM_CALCULATION_UPLOAD, this.manufacturer.getTextbox().getValue(), this);
-		Thread thread = new Thread(processData);
-		thread.start();
-		Thread.sleep(1000);
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	public class ProcessData extends Thread {
-		private DataEngineStatus status;
-		private VASConfigurationDialogCtrl dialogCtrl;
-		private long userId;
-		private String manufacturerName;
-
-		public ProcessData(long userId, DataEngineStatus status, String manufacturerName,
-				VASConfigurationDialogCtrl dialogCtrl) {
-			this.status = status;
-			this.dialogCtrl = dialogCtrl;
-			this.userId = userId;
-			this.manufacturerName = manufacturerName;
-		}
-
-		@Override
-		public void run() {
-			try {
-				getInsuranceFileImportService().processVASPremiumCalcUploadFile(userId, status, getMedia(),
-						manufacturerName, dialogCtrl);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-				MessageUtil.showError(e.getMessage());
-			}
-		}
-	}
-
 	private void doFileValidations() {
 		logger.debug(Literal.ENTERING);
 
@@ -2276,14 +2215,6 @@ public class VASConfigurationDialogCtrl extends GFCBaseCtrl<VASConfiguration> {
 
 	public void setPremiumCalcDetList(List<VASPremiumCalcDetails> premiumCalcDetList) {
 		this.premiumCalcDetList = premiumCalcDetList;
-	}
-
-	public InsuranceFileImportService getInsuranceFileImportService() {
-		return insuranceFileImportService;
-	}
-
-	public void setInsuranceFileImportService(InsuranceFileImportService insuranceFileImportService) {
-		this.insuranceFileImportService = insuranceFileImportService;
 	}
 
 	public DataEngineConfig getDataEngineConfig() {
