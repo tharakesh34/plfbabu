@@ -1152,7 +1152,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		// External Reference
 		strValue = StringUtils.trimToEmpty(getCellStringValue(rchRow, 24));
 		if (strValue.length() < 0 || strValue.length() > 20) {
-			setErrorToRUD(rud, "RU0040", "[EXTERNALREF] with length more than 1 and less than or equal to 20");
+			setErrorToRUD(rud, "RU0040", "[EXTERNALREF] with length more than 20");
 		} else {
 			rud.setExtReference(strValue);
 		}

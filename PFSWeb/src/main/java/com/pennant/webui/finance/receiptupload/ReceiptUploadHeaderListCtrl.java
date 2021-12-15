@@ -231,7 +231,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 			} else {
 				listHeader_CheckBox_Comp.setDisabled(true);
 			}
-		} else if (renderListOnLoad) {
+		} else {
 			search();
 		}
 

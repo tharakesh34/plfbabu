@@ -165,8 +165,7 @@ public class PTListReportUtils implements Serializable {
 			}
 		}
 
-		JRBeanCollectionDataSource listDetailsDS = new JRBeanCollectionDataSource(
-				pagedListService.getBySearchObject(searchObject));
+		JRBeanCollectionDataSource listDetailsDS = new JRBeanCollectionDataSource(list);
 
 		String reportSrc = PathUtil.getPath(PathUtil.REPORTS_LIST);
 		if (code.equals(Labels.getLabel("label_CheckList.value"))) {
@@ -206,7 +205,7 @@ public class PTListReportUtils implements Serializable {
 			listDetailsDS = null;
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public static ReportListService getReportListService() {

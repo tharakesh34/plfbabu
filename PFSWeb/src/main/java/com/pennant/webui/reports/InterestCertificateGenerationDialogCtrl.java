@@ -124,6 +124,15 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 				this.WindowTitle.setValue(Labels.getLabel("menu_Item_CovenantStatusReport.value"));
 			}
 		}
+		
+		if (arguments.containsKey("finType")) {
+			this.finType.setValue((String) arguments.get("finType"));
+		}
+		
+		if (arguments.containsKey("financeReference")) {
+			this.finReference.setValue((String) arguments.get("financeReference"));
+		}
+		
 		// For customer360 Report should be displayed as modal
 		if (arguments.containsKey("customer360")) {
 			isCustomer360 = arguments.containsKey("customer360");

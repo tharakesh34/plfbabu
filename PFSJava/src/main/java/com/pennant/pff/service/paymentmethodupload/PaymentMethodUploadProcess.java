@@ -175,14 +175,24 @@ public class PaymentMethodUploadProcess extends BasicDao<PaymentMethodUpload> {
 
 			// Mandate id +ve or not
 			Long mandateId = pmu.getMandateId();
+			
+			if (mandateId == null){
+				mandateId=0L;
+			}
+			
 			if (mandateId == null || mandateId < 0) {
 				error = "Mandate Id should be Positive : " + mandateId;
 				setErrorDeatils(pmu, remarks, error, "CPU001");
 				continue;
 			}
+			
+			Mandate mandate = null;
+			if (mandateId > 0) {
+				// Mandate Details checking
+				mandate = mandateService.getApprovedMandateById(mandateId);
+			}
 
-			// Mandate Details checking
-			Mandate mandate = mandateService.getApprovedMandateById(mandateId);
+			
 			if (mandate == null && !(mandateCheck)) {
 				error = "Mandate details are not available for the mandate id: " + mandateId;
 				setErrorDeatils(pmu, remarks, error, "CPU001");

@@ -143,8 +143,13 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 		sql.append(" CoOwnerId, CollateralRef, BankCustomer, CustomerId, CoOwnerIDType, CoOwnerIDNumber");
 		sql.append(", CoOwnerCIFName, CoOwnerPercentage, MobileNo, EmailId, CoOwnerProofName, Remarks");
 		sql.append(", AddrHNbr, FlatNbr, AddrStreet, AddrLine1, AddrLine2, POBox, AddrCity, AddrProvince");
-		sql.append(", AddrCountry, AddrZIP, CoOwnerProof, CoOwnerCIF, Version, LastMntBy, LastMntOn");
+		sql.append(", AddrCountry, AddrZIP, CoOwnerProof, Version, LastMntBy, LastMntOn");
 		sql.append(", RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
+
+		if (type.contains("View")) {
+			sql.append(", CoOwnerCIF");
+		}
+
 		sql.append(" From CollateralCoOwners");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralRef = ?");
@@ -180,7 +185,6 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 			cc.setAddrCountry(rs.getString("AddrCountry"));
 			cc.setAddrZIP(rs.getString("AddrZIP"));
 			cc.setCoOwnerProof(rs.getBytes("CoOwnerProof"));
-			cc.setCoOwnerCIF(rs.getString("CoOwnerCIF"));
 			cc.setVersion(rs.getInt("Version"));
 			cc.setLastMntBy(rs.getLong("LastMntBy"));
 			cc.setLastMntOn(rs.getTimestamp("LastMntOn"));
@@ -191,6 +195,10 @@ public class CoOwnerDetailDAOImpl extends BasicDao<CoOwnerDetail> implements CoO
 			cc.setNextTaskId(rs.getString("NextTaskId"));
 			cc.setRecordType(rs.getString("RecordType"));
 			cc.setWorkflowId(rs.getLong("WorkflowId"));
+
+			if (type.contains("View")) {
+				cc.setCoOwnerCIF(rs.getString("CoOwnerCIF"));
+			}
 
 			return cc;
 		});

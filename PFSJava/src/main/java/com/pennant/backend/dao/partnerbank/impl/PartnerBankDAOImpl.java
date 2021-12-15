@@ -96,8 +96,6 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 	 */
 	@Override
 	public PartnerBank getPartnerBankById(long id, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" PartnerBankId, PartnerBankCode, PartnerBankName, BankCode, BankBranchCode, BranchMICRCode");
 		sql.append(", BranchIFSCCode, BranchCity, UtilityCode, AccountNo, AcType, AlwFileDownload");
@@ -111,72 +109,70 @@ public class PartnerBankDAOImpl extends SequenceDao<PartnerBank> implements Part
 			sql.append(", BankCodeName, BankBranchCodeName, AcTypeName, EntityDesc");
 		}
 
-		sql.append(" from PartnerBanks");
+		sql.append(" From PartnerBanks");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where PartnerBankId = ?");
 
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id },
-					new RowMapper<PartnerBank>() {
-						@Override
-						public PartnerBank mapRow(ResultSet rs, int rowNum) throws SQLException {
-							PartnerBank pb = new PartnerBank();
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<PartnerBank>() {
+				@Override
+				public PartnerBank mapRow(ResultSet rs, int rowNum) throws SQLException {
+					PartnerBank pb = new PartnerBank();
 
-							pb.setPartnerBankId(rs.getLong("PartnerBankId"));
-							pb.setPartnerBankCode(rs.getString("PartnerBankCode"));
-							pb.setPartnerBankName(rs.getString("PartnerBankName"));
-							pb.setBankCode(rs.getString("BankCode"));
-							pb.setBankBranchCode(rs.getString("BankBranchCode"));
-							pb.setBranchMICRCode(rs.getString("BranchMICRCode"));
-							pb.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
-							pb.setBranchCity(rs.getString("BranchCity"));
-							pb.setUtilityCode(rs.getString("UtilityCode"));
-							pb.setAccountNo(rs.getString("AccountNo"));
-							pb.setAcType(rs.getString("AcType"));
-							pb.setAlwFileDownload(rs.getBoolean("AlwFileDownload"));
-							pb.setInFavourLength(rs.getInt("InFavourLength"));
-							pb.setActive(rs.getBoolean("Active"));
-							pb.setAlwDisb(rs.getBoolean("AlwDisb"));
-							pb.setAlwPayment(rs.getBoolean("AlwPayment"));
-							pb.setAlwReceipt(rs.getBoolean("AlwReceipt"));
-							pb.setHostGLCode(rs.getString("HostGLCode"));
-							pb.setProfitCenterID(rs.getString("ProfitCenterID"));
-							pb.setCostCenterID(rs.getString("CostCenterID"));
-							pb.setFileName(rs.getString("FileName"));
-							pb.setEntity(rs.getString("Entity"));
-							pb.setVanCode(rs.getString("VanCode"));
-							pb.setDownloadType(rs.getString("DownloadType"));
-							pb.setDataEngineConfigName(rs.getString("DataEngineConfigName"));
-							pb.setSponsorBankCode(rs.getString("SponsorBankCode"));
-							pb.setClientCode(rs.getString("ClientCode"));
-							pb.setVersion(rs.getInt("Version"));
-							pb.setLastMntBy(rs.getLong("LastMntBy"));
-							pb.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							pb.setRecordStatus(rs.getString("RecordStatus"));
-							pb.setRoleCode(rs.getString("RoleCode"));
-							pb.setNextRoleCode(rs.getString("NextRoleCode"));
-							pb.setTaskId(rs.getString("TaskId"));
-							pb.setNextTaskId(rs.getString("NextTaskId"));
-							pb.setRecordType(rs.getString("RecordType"));
-							pb.setWorkflowId(rs.getLong("WorkflowId"));
+					pb.setPartnerBankId(rs.getLong("PartnerBankId"));
+					pb.setPartnerBankCode(rs.getString("PartnerBankCode"));
+					pb.setPartnerBankName(rs.getString("PartnerBankName"));
+					pb.setBankCode(rs.getString("BankCode"));
+					pb.setBankBranchCode(rs.getString("BankBranchCode"));
+					pb.setBranchMICRCode(rs.getString("BranchMICRCode"));
+					pb.setBranchIFSCCode(rs.getString("BranchIFSCCode"));
+					pb.setBranchCity(rs.getString("BranchCity"));
+					pb.setUtilityCode(rs.getString("UtilityCode"));
+					pb.setAccountNo(rs.getString("AccountNo"));
+					pb.setAcType(rs.getString("AcType"));
+					pb.setAlwFileDownload(rs.getBoolean("AlwFileDownload"));
+					pb.setInFavourLength(rs.getInt("InFavourLength"));
+					pb.setActive(rs.getBoolean("Active"));
+					pb.setAlwDisb(rs.getBoolean("AlwDisb"));
+					pb.setAlwPayment(rs.getBoolean("AlwPayment"));
+					pb.setAlwReceipt(rs.getBoolean("AlwReceipt"));
+					pb.setHostGLCode(rs.getString("HostGLCode"));
+					pb.setProfitCenterID(rs.getString("ProfitCenterID"));
+					pb.setCostCenterID(rs.getString("CostCenterID"));
+					pb.setFileName(rs.getString("FileName"));
+					pb.setEntity(rs.getString("Entity"));
+					pb.setVanCode(rs.getString("VanCode"));
+					pb.setDownloadType(rs.getString("DownloadType"));
+					pb.setDataEngineConfigName(rs.getString("DataEngineConfigName"));
+					pb.setSponsorBankCode(rs.getString("SponsorBankCode"));
+					pb.setClientCode(rs.getString("ClientCode"));
+					pb.setVersion(rs.getInt("Version"));
+					pb.setLastMntBy(rs.getLong("LastMntBy"));
+					pb.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					pb.setRecordStatus(rs.getString("RecordStatus"));
+					pb.setRoleCode(rs.getString("RoleCode"));
+					pb.setNextRoleCode(rs.getString("NextRoleCode"));
+					pb.setTaskId(rs.getString("TaskId"));
+					pb.setNextTaskId(rs.getString("NextTaskId"));
+					pb.setRecordType(rs.getString("RecordType"));
+					pb.setWorkflowId(rs.getLong("WorkflowId"));
 
-							if (StringUtils.trimToEmpty(type).contains("View")) {
-								pb.setBankCodeName(rs.getString("BankCodeName"));
-								pb.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
-								pb.setAcTypeName(rs.getString("AcTypeName"));
-								pb.setEntityDesc(rs.getString("EntityDesc"));
-							}
+					if (StringUtils.trimToEmpty(type).contains("View")) {
+						pb.setBankCodeName(rs.getString("BankCodeName"));
+						pb.setBankBranchCodeName(rs.getString("BankBranchCodeName"));
+						pb.setAcTypeName(rs.getString("AcTypeName"));
+						pb.setEntityDesc(rs.getString("EntityDesc"));
+					}
 
-							return pb;
-						}
-					});
+					return pb;
+				}
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

@@ -203,7 +203,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	protected boolean auditingReq;
 	protected String operationRefs = "";
 	private boolean validation = true;
-	protected boolean renderListOnLoad;
 
 	public void doAfterCompose(Component comp) throws Exception {
 		super.doAfterCompose(comp);
@@ -211,9 +210,6 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		doLoadArguments();
 
 		doSetProperties();
-
-		renderListOnLoad = ImplementationConstants.LIST_RENDER_ON_LOAD;
-
 	}
 
 	/**
@@ -587,8 +583,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	/**
 	 * Method to validate the combo box
 	 * 
-	 * @param Combobox
-	 *            (combobox) String (label)
+	 * @param Combobox (combobox) String (label)
 	 */
 	public boolean isValidComboValue(Combobox combobox, String label) {
 		if (!combobox.isDisabled() && combobox.getSelectedIndex() <= 0) {
@@ -738,7 +733,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 				((ExtendedCombobox) component).setReadonly(true);
 			} else if (component instanceof CurrencyBox) {
 				((CurrencyBox) component).setReadonly(true);
-				//((CurrencyBox) component).setMandatory(false);
+				// ((CurrencyBox) component).setMandatory(false);
 			} else if (component instanceof QueryBuilder) {
 				((QueryBuilder) component).setEditable(false);
 			} else if (component instanceof AccountSelectionBox) {
@@ -1134,7 +1129,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		this.financeWorkFlowService = financeWorkFlowService;
 	}
 
-	private PagedListWrapper<T> pagedListWrapper;
+	protected PagedListWrapper<T> pagedListWrapper;
 
 	public PagedListWrapper<T> getPagedListWrapper() {
 		return pagedListWrapper;
@@ -1254,8 +1249,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	/**
 	 * Returns value of the argument configured as configured as query string for the page in mainmenu.xml
 	 * 
-	 * @param argumentName
-	 *            Name of the query string argument.
+	 * @param argumentName Name of the query string argument.
 	 * @return argumentValue Value of the query string argument
 	 */
 	protected String getArgument(String argumentName) {
@@ -1277,16 +1271,11 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	/**
 	 * Shows Workflow window.
 	 * 
-	 * @param workFlowId
-	 *            (long)
-	 * @param moduleCode
-	 *            (String)
-	 * @param keyValue
-	 *            (Object)
-	 * @param fromAuditId
-	 *            (long)
-	 * @param toAuditId
-	 *            (long).
+	 * @param workFlowId  (long)
+	 * @param moduleCode  (String)
+	 * @param keyValue    (Object)
+	 * @param fromAuditId (long)
+	 * @param toAuditId   (long).
 	 */
 	protected void doShowWorkflow(long workFlowId, String moduleCode, Object keyValue, long fromAuditId,
 			long toAuditId) {
@@ -1304,10 +1293,8 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 	/**
 	 * Shows Activity Log Window
 	 * 
-	 * @param keyValue
-	 *            (Object)
-	 * @param map
-	 *            (Map<String, Object>).
+	 * @param keyValue (Object)
+	 * @param map      (Map<String, Object>).
 	 **/
 	protected void doShowActivityLog(Object keyValue, Map<String, Object> map) {
 		Map<String, Object> arg = new HashMap<>();
@@ -1402,7 +1389,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		long userId = getUserWorkspace().getLoggedInUser().getUserId();
 
 		if (ImplementationConstants.ALLOW_ACCESS_CONTROL_TYPE) {
-			//String tableName="";
+			// String tableName="";
 			wherQuery.append(" exists (select 1 from secuserhierarchydetail t");
 			wherQuery.append(" where t.usrid = ");
 			wherQuery.append(userId);

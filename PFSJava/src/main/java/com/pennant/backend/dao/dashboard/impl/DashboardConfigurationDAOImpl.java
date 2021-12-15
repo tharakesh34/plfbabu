@@ -367,6 +367,7 @@ public class DashboardConfigurationDAOImpl extends BasicDao<DashboardConfigurati
 			DashboardConfiguration dc = new DashboardConfiguration();
 
 			dc.setQuery(rs.getString("Query"));
+			dc.setDashboardCode(rs.getString("DashboardCode"));
 			dc.setDashboardDesc(rs.getString("DashboardDesc"));
 			dc.setDataXML(rs.getString("DataXML"));
 			dc.setRemarks(rs.getString("Remarks"));

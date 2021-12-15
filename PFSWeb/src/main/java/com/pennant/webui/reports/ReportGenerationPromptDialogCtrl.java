@@ -143,6 +143,8 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 	protected Radio pdfFormat;
 	protected Radio excelFormat;
 	protected Row rows_formatType;
+	private String financeReference = "";
+	boolean isCustomer360 = false;
 
 	protected String reportMenuCode;
 	private ReportConfiguration reportConfiguration;
@@ -231,6 +233,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 				if ("Y".equalsIgnoreCase(getArgument("entity"))) {
 					isEntity = true;
 				}
+			}
+
+			if (arguments.containsKey("customer360")) {
+				isCustomer360 = (boolean) arguments.get("customer360");
+				financeReference = (String) arguments.get("financeReference");
 			}
 
 			if (arguments.containsKey("ReportConfiguration")) {
@@ -525,6 +532,13 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 			if (aReportFieldsDetails.getFieldID() == 3 || aReportFieldsDetails.getFieldID() == 4) {
 				lovSearchFieldRow.setVisible(false);
 			}
+		}
+
+		if (isCustomer360 && aReportFieldsDetails.getFieldName().equals("FinReference")
+				&& StringUtils.isNotEmpty(financeReference)) {
+			textbox.setValue(String.valueOf(financeReference));
+			textboxhidden.setValue(String.valueOf(financeReference));
+			// textboxhidden.setValue(String.valueOf(custId));
 		}
 		logger.debug("Leaving");
 	}

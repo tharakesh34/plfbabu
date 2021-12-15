@@ -1177,47 +1177,25 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 
 	private StringBuilder getWhereClause() {
 		StringBuilder whereClause = new StringBuilder();
-		if (StringUtils.isNotEmpty(finType)) {
-			String collateralTypes = getFinanceTypeService().getAllowedCollateralTypes(finType);
-			if (StringUtils.isNotEmpty(collateralTypes)) {
-				String[] collTypes = collateralTypes.split(",");
-				whereClause.append("(CollateralType in (");
-				for (int i = 0; i < collTypes.length; i++) {
-					if (i == 0) {
-						whereClause.append("'").append(collTypes[i]).append("'");
-					} else {
-						whereClause.append(",'").append(collTypes[i]).append("'");
-					}
-				}
-				whereClause.append("))");
 
-				whereClause.append(" AND ((DepositorId = ");
-				whereClause.append(customerId).append(") ");
-				whereClause.append(
-						" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
-				whereClause.append(customerId).append(")) ) ");
-				// Adding Where Condition to Filter Not Collateral References which are not allowed to Multi Assignment
-				// in Loans
-				whereClause.append(" AND (((MultiLoanAssignment = 0 and CollateralRef NOT IN (");
-				whereClause.append(
-						" Select CollateralRef From CollateralAssignment union Select CollateralRef From CollateralAssignment_Temp)) ");
-				whereClause.append(" OR MultiLoanAssignment = 1))  ");
-				whereClause.append(" AND (expirydate isNull");
-				whereClause.append(" OR expirydate >= '" + JdbcUtil.getDate(SysParamUtil.getAppDate()) + "')");
-			} else {
-				whereClause.append(" ((DepositorId = ");
-				whereClause.append(customerId).append(") ");
-				whereClause.append(
-						" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
-				whereClause.append(customerId).append(")) )");
-			}
-		} else {
-			whereClause.append(" ((DepositorId = ");
-			whereClause.append(customerId).append(") ");
-			whereClause
-					.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
-			whereClause.append(customerId).append(")) )");
-		}
+		whereClause.append("(CollateralType in (SELECT CollateralType From RMTFinanceTypes Where FinType = '");
+		whereClause.append(finType);
+		whereClause.append("'))");
+
+		whereClause.append(" OR ((DepositorId = ");
+		whereClause.append(customerId).append(") ");
+		whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
+		whereClause.append(customerId).append(")) ) ");
+		// Adding Where Condition to Filter Not Collateral References which are not allowed to Multi Assignment
+		// in Loans
+		whereClause.append(" AND (((MultiLoanAssignment = 0 and CollateralRef NOT IN (");
+		whereClause.append(" Select CollateralRef From CollateralAssignment");
+		whereClause.append(" Union All");
+		whereClause.append(" Select CollateralRef From CollateralAssignment_Temp)) ");
+		whereClause.append(" OR MultiLoanAssignment = 1))  ");
+		whereClause.append(" AND (expirydate isNull");
+		whereClause.append(" OR expirydate >= '" + JdbcUtil.getDate(SysParamUtil.getAppDate()) + "')");
+
 		return whereClause;
 	}
 

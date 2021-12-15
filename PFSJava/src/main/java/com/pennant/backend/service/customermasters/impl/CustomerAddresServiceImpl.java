@@ -1,49 +1,32 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerAddresServiceImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  06-05-2011    														*
- *                                                                  						*
- * Modified Date    :  06-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerAddresServiceImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 06-05-2011 * *
+ * Modified Date : 06-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 06-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 06-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.service.customermasters.impl;
 
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -119,8 +102,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	 * table. based on the module workFlow Configuration. by using CustomerAddresDAO's update method 3) Audit the record
 	 * in to AuditHeader and AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -159,8 +141,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	 * CustomerAddresses by using CustomerAddresDAO's delete method with type as Blank 3) Audit the record in to
 	 * AuditHeader and AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader)
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	@Override
@@ -183,10 +164,8 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	/**
 	 * getCustomerAddresById fetch the details by using CustomerAddresDAO's getCustomerAddresById method.
 	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param id   (String)
+	 * @param type (String) ""/_Temp/_View
 	 * @return CustomerAddres
 	 */
 	@Override
@@ -198,8 +177,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	 * getApprovedCustomerAddresById fetch the details by using CustomerAddresDAO's getCustomerAddresById method . with
 	 * parameter id and type as blank. it fetches the approved records from the CustomerAddresses.
 	 * 
-	 * @param id
-	 *            (String)
+	 * @param id (String)
 	 * @return CustomerAddres
 	 */
 	public CustomerAddres getApprovedCustomerAddresById(long id, String addType) {
@@ -217,8 +195,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	 * auditHeaderDAO.addAudit(auditHeader) for Work flow 5) Audit the record in to AuditHeader and AdtCustomerAddresses
 	 * by using auditHeaderDAO.addAudit(auditHeader) based on the transaction Type.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doApprove(AuditHeader auditHeader) {
@@ -276,8 +253,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	 * workFlow table by using getCustomerAddresDAO().delete with parameters customerAddres,"_Temp" 3) Audit the record
 	 * in to AuditHeader and AdtCustomerAddresses by using auditHeaderDAO.addAudit(auditHeader) for Work flow
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	public AuditHeader doReject(AuditHeader auditHeader) {
@@ -302,8 +278,7 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	 * businessValidation method do the following steps. 1) get the details from the auditHeader. 2) fetch the details
 	 * from the tables 3) Validate the Record based on the record details. 4) Validate for any business validation.
 	 * 
-	 * @param AuditHeader
-	 *            (auditHeader)
+	 * @param AuditHeader (auditHeader)
 	 * @return auditHeader
 	 */
 	private AuditHeader businessValidation(AuditHeader auditHeader, String method) {
@@ -339,135 +314,81 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 	}
 
 	@Override
-	public AuditDetail doValidations(CustomerAddres customerAddres, String method) {
+	public AuditDetail doValidations(CustomerAddres ca, String method) {
 		AuditDetail auditDetail = new AuditDetail();
 		ErrorDetail errorDetail = new ErrorDetail();
 
-		if (StringUtils.equals(method, "Create")) {
-			List<CustomerAddres> prvCustomerAddrList = customerAddresDAO
-					.getCustomerAddresByCustomer(customerAddres.getCustID(), "");
-			if (prvCustomerAddrList != null && !prvCustomerAddrList.isEmpty()) {
-				for (CustomerAddres prvcustAddr : prvCustomerAddrList) {
-					if (prvcustAddr.getCustAddrPriority() == customerAddres.getCustAddrPriority()) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "Priority";
-						valueParm[1] = String.valueOf(customerAddres.getCustAddrPriority());
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN");
-						auditDetail.setErrorDetail(errorDetail);
-						return auditDetail;
-					}
-					if (StringUtils.equals(prvcustAddr.getCustAddrType(), customerAddres.getCustAddrType())) {
-						String[] valueParm = new String[2];
-						valueParm[0] = "AddressType";
-						valueParm[1] = customerAddres.getCustAddrType();
-						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN");
-						auditDetail.setErrorDetail(errorDetail);
-						return auditDetail;
-					}
-				}
-			} else {
-				if (customerAddres.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-					String[] valueParm = new String[2];
-					valueParm[0] = "Address Details";
-					valueParm[1] = "Address";
-					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
-					auditDetail.setErrorDetail(errorDetail);
-					return auditDetail;
-				}
-			}
-		}
-		if (StringUtils.equals(method, "Update")) {
-			List<CustomerAddres> prvCustomerAddrList = customerAddresDAO
-					.getCustomerAddresByCustomer(customerAddres.getCustID(), "");
-			if (prvCustomerAddrList != null && !prvCustomerAddrList.isEmpty()) {
-				for (CustomerAddres prvCustAddrr : prvCustomerAddrList) {
-					if (StringUtils.equals(prvCustAddrr.getCustAddrType(), customerAddres.getCustAddrType())) {
-						if (prvCustAddrr.getCustAddrPriority() == Integer
-								.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-							if (customerAddres.getCustAddrPriority() != Integer
-									.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-								String[] valueParm = new String[2];
-								valueParm[0] = "Address Details";
-								valueParm[1] = "Address should not update";
-								errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN");
-								auditDetail.setErrorDetail(errorDetail);
-								return auditDetail;
-							}
-						}
-					} else {
-						if (prvCustAddrr.getCustAddrPriority() == customerAddres.getCustAddrPriority()) {
-							String[] valueParm = new String[2];
-							valueParm[0] = "Priority";
-							valueParm[1] = String.valueOf(customerAddres.getCustAddrPriority());
-							errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN");
-							auditDetail.setErrorDetail(errorDetail);
-							return auditDetail;
-						}
-					}
-				}
-			}
+		switch (method) {
+		case "Create":
+			validateOnCreate(ca, auditDetail);
+			break;
+		case "Update":
+			validateOnUpdate(ca, auditDetail);
+			break;
+		default:
+			break;
 		}
 
+		String addressType = ca.getCustAddrType();
+
 		// validate Master code with PLF system masters
-		int count = getCustomerAddresDAO().getAddrTypeCount(customerAddres.getCustAddrType());
-		if (count <= 0) {
+		if (customerAddresDAO.getAddrTypeCount(addressType) <= 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "AddrType";
-			valueParm[1] = customerAddres.getCustAddrType();
+			valueParm[1] = addressType;
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 		}
+
 		PinCode pincode = null;
-		if (customerAddres.getPinCodeId() != null && customerAddres.getPinCodeId() < 0) {
+		if (ca.getPinCodeId() != null && ca.getPinCodeId() < 0) {
 			String[] valueParm = new String[2];
 			valueParm[0] = "PinCodeId";
 			valueParm[1] = "0";
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm));
 			auditDetail.setErrorDetail(errorDetail);
 		} else {
-			if (StringUtils.isNotBlank(customerAddres.getCustAddrZIP()) && (customerAddres.getPinCodeId() != null)) {
-				pincode = pinCodeDAO.getPinCodeById(customerAddres.getPinCodeId(), "_AView");
+			if (StringUtils.isNotBlank(ca.getCustAddrZIP()) && (ca.getPinCodeId() != null)) {
+				pincode = pinCodeDAO.getPinCodeById(ca.getPinCodeId(), "_AView");
 				if (pincode == null) {
 					String[] valueParm = new String[1];
-					valueParm[0] = "PinCodeId " + String.valueOf(customerAddres.getPinCodeId());
+					valueParm[0] = "PinCodeId " + String.valueOf(ca.getPinCodeId());
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
-				} else if (!pincode.getPinCode().equals(customerAddres.getCustAddrZIP())) {
+				} else if (!pincode.getPinCode().equals(ca.getCustAddrZIP())) {
 					String[] valueParm = new String[2];
-					valueParm[0] = "PinCode " + customerAddres.getCustAddrZIP();
-					valueParm[1] = "PinCodeId " + String.valueOf(customerAddres.getPinCodeId());
+					valueParm[0] = "PinCode " + ca.getCustAddrZIP();
+					valueParm[1] = "PinCodeId " + String.valueOf(ca.getPinCodeId());
 					errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("99017", "", valueParm));
 					auditDetail.setErrorDetail(errorDetail);
 				}
 			} else {
-				if (StringUtils.isNotBlank(customerAddres.getCustAddrZIP())
-						&& (customerAddres.getPinCodeId() == null)) {
-					int pinCodeCount = pinCodeDAO.getPinCodeCount(customerAddres.getCustAddrZIP(), "_AView");
+				if (StringUtils.isNotBlank(ca.getCustAddrZIP()) && (ca.getPinCodeId() == null)) {
+					int pinCodeCount = pinCodeDAO.getPinCodeCount(ca.getCustAddrZIP(), "_AView");
 					String[] valueParm = new String[1];
 					switch (pinCodeCount) {
 					case 0:
-						valueParm[0] = "PinCode " + customerAddres.getCustAddrZIP();
+						valueParm[0] = "PinCode " + ca.getCustAddrZIP();
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 						break;
 					case 1:
-						pincode = pinCodeDAO.getPinCode(customerAddres.getCustAddrZIP(), "_AView");
-						customerAddres.setPinCodeId(pincode.getPinCodeId());
+						pincode = pinCodeDAO.getPinCode(ca.getCustAddrZIP(), "_AView");
+						ca.setPinCodeId(pincode.getPinCodeId());
 						break;
 					default:
 						valueParm[0] = "PinCodeId";
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
-				} else if (customerAddres.getPinCodeId() != null
-						&& StringUtils.isBlank(customerAddres.getCustAddrZIP())) {
-					pincode = pinCodeDAO.getPinCodeById(customerAddres.getPinCodeId(), "_AView");
+				} else if (ca.getPinCodeId() != null && StringUtils.isBlank(ca.getCustAddrZIP())) {
+					pincode = pinCodeDAO.getPinCodeById(ca.getPinCodeId(), "_AView");
 					if (pincode != null) {
-						customerAddres.setCustAddrZIP(pincode.getPinCode());
+						ca.setCustAddrZIP(pincode.getPinCode());
 					} else {
 						String[] valueParm = new String[1];
-						valueParm[0] = "PinCodeId " + String.valueOf(customerAddres.getPinCodeId());
+						valueParm[0] = "PinCodeId " + String.valueOf(ca.getPinCodeId());
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm));
 						auditDetail.setErrorDetail(errorDetail);
 					}
@@ -475,56 +396,55 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 			}
 		}
 		if (pincode != null) {
-			if (StringUtils.isNotBlank(customerAddres.getCustAddrCountry())
-					&& !customerAddres.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
+			if (StringUtils.isNotBlank(ca.getCustAddrCountry())
+					&& !ca.getCustAddrCountry().equalsIgnoreCase(pincode.getpCCountry())) {
 
 				String[] valueParm = new String[2];
-				valueParm[0] = customerAddres.getCustAddrCountry();
-				valueParm[1] = customerAddres.getCustAddrZIP();
+				valueParm[0] = ca.getCustAddrCountry();
+				valueParm[1] = ca.getCustAddrZIP();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			} else {
-				customerAddres.setCustAddrCountry(pincode.getpCCountry());
+				ca.setCustAddrCountry(pincode.getpCCountry());
 			}
 
-			Province province = provinceDAO.getProvinceById(customerAddres.getCustAddrCountry(),
-					pincode.getpCProvince(), "");
-			if (province != null && StringUtils.isNotBlank(customerAddres.getCustAddrProvince())
-					&& !customerAddres.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
+			Province province = provinceDAO.getProvinceById(ca.getCustAddrCountry(), pincode.getpCProvince(), "");
+			if (province != null && StringUtils.isNotBlank(ca.getCustAddrProvince())
+					&& !ca.getCustAddrProvince().equalsIgnoreCase(province.getCPProvince())) {
 
 				String[] valueParm = new String[2];
-				valueParm[0] = customerAddres.getCustAddrProvince();
-				valueParm[1] = customerAddres.getCustAddrZIP();
+				valueParm[0] = ca.getCustAddrProvince();
+				valueParm[1] = ca.getCustAddrZIP();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 			} else {
-				customerAddres.setCustAddrProvince(pincode.getpCProvince());
+				ca.setCustAddrProvince(pincode.getpCProvince());
 			}
 
-			if (StringUtils.isNotBlank(customerAddres.getCustAddrCity())
-					&& !customerAddres.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
+			if (StringUtils.isNotBlank(ca.getCustAddrCity())
+					&& !ca.getCustAddrCity().equalsIgnoreCase(pincode.getCity())) {
 
 				String[] valueParm = new String[2];
-				valueParm[0] = customerAddres.getCustAddrCity();
-				valueParm[1] = customerAddres.getCustAddrZIP();
+				valueParm[0] = ca.getCustAddrCity();
+				valueParm[1] = ca.getCustAddrZIP();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm), "EN");
 				auditDetail.setErrorDetail(errorDetail);
 
 			} else {
-				customerAddres.setCustAddrCity(pincode.getCity());
+				ca.setCustAddrCity(pincode.getCity());
 			}
 
 		}
-		if (!(customerAddres.getCustAddrPriority() >= 1 && customerAddres.getCustAddrPriority() <= 5)) {
+		if (!(ca.getCustAddrPriority() >= 1 && ca.getCustAddrPriority() <= 5)) {
 			String[] valueParm = new String[1];
-			valueParm[0] = String.valueOf(customerAddres.getCustAddrPriority());
+			valueParm[0] = String.valueOf(ca.getCustAddrPriority());
 			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90114", "", valueParm), "EN");
 			auditDetail.setErrorDetail(errorDetail);
 			return auditDetail;
 
 		}
-		if (StringUtils.isNotBlank(customerAddres.getCustAddrZIP())) {
-			if (customerAddres.getCustAddrZIP().length() < 3 || customerAddres.getCustAddrZIP().length() > 6) {
+		if (StringUtils.isNotBlank(ca.getCustAddrZIP())) {
+			if (ca.getCustAddrZIP().length() < 3 || ca.getCustAddrZIP().length() > 6) {
 				String[] valueParm = new String[3];
 				valueParm[0] = "pinCode";
 				valueParm[1] = "2 digits";
@@ -534,6 +454,63 @@ public class CustomerAddresServiceImpl extends GenericService<CustomerAddres> im
 			}
 		}
 		return auditDetail;
+	}
+
+	private void validateOnUpdate(CustomerAddres ca, AuditDetail auditDetail) {
+		List<CustomerAddres> addressList = customerAddresDAO.getCustomerAddresByCustomer(ca.getCustID(), "");
+
+		Integer highPriority = Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH);
+
+		for (CustomerAddres address : addressList) {
+			if (StringUtils.equals(address.getCustAddrType(), ca.getCustAddrType())) {
+				if (address.getCustAddrPriority() == highPriority && ca.getCustAddrPriority() != highPriority) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Address Details";
+					valueParm[1] = "Address should not update";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN"));
+					return;
+				}
+			} else {
+				if (address.getCustAddrPriority() == ca.getCustAddrPriority()) {
+					String[] valueParm = new String[2];
+					valueParm[0] = "Priority";
+					valueParm[1] = String.valueOf(ca.getCustAddrPriority());
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN"));
+					return;
+				}
+			}
+		}
+	}
+
+	private void validateOnCreate(CustomerAddres ca, AuditDetail auditDetail) {
+		List<CustomerAddres> addressList = customerAddresDAO.getCustomerAddresByCustomer(ca.getCustID(), "");
+
+		if (CollectionUtils.isEmpty(addressList)) {
+			if (ca.getCustAddrPriority() != Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Address Details";
+				valueParm[1] = "Address";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90270", "", valueParm), "EN"));
+				return;
+			}
+		}
+
+		String[] valueParm = new String[2];
+		for (CustomerAddres addr : addressList) {
+			if (addr.getCustAddrPriority() == ca.getCustAddrPriority()) {
+				valueParm[0] = "Priority";
+				valueParm[1] = String.valueOf(ca.getCustAddrPriority());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30702", "", valueParm), "EN"));
+				return;
+			}
+
+			if (StringUtils.equals(addr.getCustAddrType(), ca.getCustAddrType())) {
+				valueParm[0] = "AddressType";
+				valueParm[1] = ca.getCustAddrType();
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41001", "", valueParm), "EN"));
+				return;
+			}
+		}
 	}
 
 	public void setProvinceDAO(ProvinceDAO provinceDAO) {

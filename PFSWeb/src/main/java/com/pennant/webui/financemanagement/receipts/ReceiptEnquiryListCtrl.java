@@ -129,8 +129,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ReceiptEnquiryList(Event event) {
 		// Set the page level components.
@@ -180,10 +179,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		}
 
-		// rendering the list page data required or not.
-		if (renderListOnLoad) {
-			search();
-		}
+		search();
 	}
 
 	@Override
@@ -191,11 +187,11 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		super.doAddFilters();
 
 		if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '"
-					+ FinServiceEvent.FEEPAYMENT + "' AND  (RecordType IS NULL   OR RecordType='' )");
-			//whereClause.append("AND ( ");
-			//whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
-			//whereClause.append(")");
+			StringBuilder whereClause = new StringBuilder(" ReceiptPurpose = '" + FinServiceEvent.FEEPAYMENT
+					+ "' AND  (RecordType IS NULL   OR RecordType='' )");
+			// whereClause.append("AND ( ");
+			// whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
+			// whereClause.append(")");
 			this.searchObject.addWhereClause(whereClause.toString());
 		} else {
 			this.searchObject.addWhereClause(" ReceiptPurpose != '" + FinServiceEvent.FEEPAYMENT
@@ -206,8 +202,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSearch(Event event) {
 		search();
@@ -216,8 +211,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		this.customer.setValue("");
@@ -238,8 +232,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onReceiptItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -282,8 +275,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param header
-	 *            The entity that need to be passed to the dialog.
+	 * @param header The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(FinReceiptHeader header) {
 		logger.debug("Entering");
@@ -357,7 +349,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		logger.debug("Entering " + event.toString());
 
 		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptEnquiryList,
 					"FinanceType", this.finType.getValue(), new Filter[] {});
 			if (selectedValues != null) {
@@ -392,7 +384,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (this.oldVar_sortOperator_finBranch == Filter.OP_IN
 				|| this.oldVar_sortOperator_finBranch == Filter.OP_NOT_IN) {
-			//Calling MultiSelection ListBox From DB
+			// Calling MultiSelection ListBox From DB
 			String selectedValues = (String) MultiSelectionSearchListBox.show(this.window_ReceiptEnquiryList, "Branch",
 					this.finBranch.getValue(), filters);
 			if (selectedValues != null) {
@@ -452,8 +444,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -462,8 +453,7 @@ public class ReceiptEnquiryListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

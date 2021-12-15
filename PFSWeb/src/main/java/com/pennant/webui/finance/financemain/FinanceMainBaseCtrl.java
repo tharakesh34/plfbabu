@@ -3465,15 +3465,18 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.appliedLoanAmt.setValue(PennantApplicationUtil.formateAmount(aFinanceMain.getAppliedLoanAmt(), format));
 		fillComboBox(this.subVentionFrom, aFinanceMain.getSubVentionFrom(), PennantStaticListUtil.getSubVentionFrom(),
 				"");
-		if (!financeType.isSubventionReq()) {
-			this.row_Subvention.setVisible(false);
-		} else {
+
+		this.row_Subvention.setVisible(financeType.isSubventionReq());
+
+		if (financeType.isSubventionReq()) {
 			onChangeSubVentionFrom();
 			if (!aFinanceMain.isNewRecord()) {
 				this.manufacturerDealer.setValue(aFinanceMain.getManufacturerDealerName(),
 						aFinanceMain.getManufacturerDealerCode());
-				if (aFinanceMain.getManufacturerDealerId() > 0) {
-					this.manufacturerDealer.setAttribute("DealerId", aFinanceMain.getManufacturerDealerId());
+				Long manufacturerDealerId = aFinanceMain.getManufacturerDealerId();
+
+				if (manufacturerDealerId != null && manufacturerDealerId > 0) {
+					this.manufacturerDealer.setAttribute("DealerId", manufacturerDealerId);
 				} else {
 					this.manufacturerDealer.setAttribute("DealerId", 0);
 				}
@@ -17450,6 +17453,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void refreshList() {
 		JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceMainListCtrl().getSearchObj();
+
+		boolean filterApplied = false;
+		for (Filter filter : soFinanceMain.getFilters()) {
+			if (filter != null) {
+				filterApplied = true;
+				break;
+			}
+		}
+		;
+
+		if (!filterApplied) {
+			return;
+		}
+
 		getFinanceMainListCtrl().pagingFinanceMainList.setActivePage(0);
 		getFinanceMainListCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);
 		if (getFinanceMainListCtrl().listBoxFinanceMain != null) {
@@ -17459,6 +17476,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	protected void refreshMaintainList() {
 		final JdbcSearchObject<FinanceMain> soFinanceMain = getFinanceSelectCtrl().getSearchObj(true);
+
+		boolean filterApplied = false;
+		for (Filter filter : soFinanceMain.getFilters()) {
+			if (filter != null) {
+				filterApplied = true;
+				break;
+			}
+		}
+		;
+
+		if (!filterApplied) {
+			return;
+		}
+
 		getFinanceSelectCtrl().getPagingFinanceList().setActivePage(0);
 		getFinanceSelectCtrl().getPagedListWrapper().setSearchObject(soFinanceMain);
 		if (getFinanceSelectCtrl().getListBoxFinance() != null) {

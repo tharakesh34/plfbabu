@@ -72,7 +72,7 @@ public class FinanceEnquiry implements Serializable {
 	private String custTypeCtg;
 	private BigDecimal nextDueAmount = BigDecimal.ZERO;
 	private Date nextDueDate;
-	private long mandateID;
+	private Long mandateID;
 	private String finRepayMethod;
 	private Date latestRpyDate;
 	private BigDecimal currentBalance;
@@ -406,11 +406,11 @@ public class FinanceEnquiry implements Serializable {
 		this.nextDueDate = nextDueDate;
 	}
 
-	public long getMandateID() {
+	public Long getMandateID() {
 		return mandateID;
 	}
 
-	public void setMandateID(long mandateID) {
+	public void setMandateID(Long mandateID) {
 		this.mandateID = mandateID;
 	}
 
