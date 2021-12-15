@@ -98,7 +98,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 	}
 
 	@Override
-	public Mandate getMnadateByID(long mandateID) {
+	public Mandate getMnadateByID(Long mandateID) {
 		Mandate mandate = mandateDAO.getMandateById(mandateID, "_View");
 		if (mandate != null && mandate.getDocumentRef() != null && mandate.getDocumentRef() > 0) {
 			byte[] data = getDocumentImage(mandate.getDocumentRef());
@@ -159,7 +159,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 			}
 		} else {
 			deleteMandate(finmain.getFinReference(), auditDetails);
-			finmain.setMandateID(0);
+			finmain.setMandateID(0L);
 		}
 		addAudit(auditHeader, auditDetails);
 		logger.debug(" Leaving ");
@@ -211,7 +211,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 					mandateStatus.setMandateID(mandate.getMandateID());
 					mandateStatus.setStatus(mandate.getStatus());
 					mandateStatus.setReason(mandate.getReason());
-					mandateStatus.setChangeDate(DateUtility.getAppDate());
+					mandateStatus.setChangeDate(SysParamUtil.getAppDate());
 					mandateStatusDAO.save(mandateStatus, "");
 
 					try {
@@ -256,7 +256,7 @@ public class FinMandateServiceImpl extends GenericService<Mandate> implements Fi
 
 			}
 		} else {
-			finmain.setMandateID(0);
+			finmain.setMandateID(0L);
 		}
 
 		deleteMandate(finmain.getFinReference(), auditDetails);

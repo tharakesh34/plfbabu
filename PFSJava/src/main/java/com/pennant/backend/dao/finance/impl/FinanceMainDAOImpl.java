@@ -767,7 +767,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					ps.setLong(index++, fm.getInitiateUser());
 					ps.setBoolean(index++, fm.isDeviationApproval());
 					ps.setString(index++, fm.getFinPreApprovedRef());
-					ps.setLong(index++, fm.getMandateID());
+					ps.setObject(index++, fm.getMandateID());
 					ps.setBoolean(index++, fm.isJointAccount());
 					ps.setLong(index++, fm.getJointCustId());
 					ps.setString(index++, fm.getRcdMaintainSts());
@@ -2331,7 +2331,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setMigratedFinance(rs.getBoolean("MigratedFinance"));
 			fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
 			fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
-			fm.setMandateID(rs.getLong("MandateID"));
+			fm.setMandateID(JdbcUtil.getLong(rs.getObject("MandateID")));
 			fm.setFinStatus(rs.getString("FinStatus"));
 			fm.setFinStsReason(rs.getString("FinStsReason"));
 			fm.setPromotionCode(rs.getString("PromotionCode"));
@@ -2388,7 +2388,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public void updateFinMandateId(long mandateId, long finID, String type) {
+	public void updateFinMandateId(Long mandateId, long finID, String type) {
 		StringBuilder sql = new StringBuilder("Update FinanceMain");
 		sql.append(type);
 		sql.append(" Set MandateId = ? Where FinID = ?");
@@ -3182,7 +3182,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			ps.setBoolean(index++, fm.isPlanEMICpz());
 			ps.setBigDecimal(index++, fm.getGrcMaxRate());
 			ps.setDate(index++, JdbcUtil.getDate(fm.getFirstDroplineDate()));
-			ps.setLong(index++, fm.getMandateID());
+			ps.setObject(index++, fm.getMandateID());
 			ps.setInt(index++, fm.getAvailedDefFrqChange());
 			ps.setBoolean(index++, fm.isCpzAtGraceEnd());
 			ps.setString(index++, fm.getStepPolicy());
@@ -4353,7 +4353,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setMigratedFinance(rs.getBoolean("MigratedFinance"));
 			fm.setScheduleMaintained(rs.getBoolean("ScheduleMaintained"));
 			fm.setScheduleRegenerated(rs.getBoolean("ScheduleRegenerated"));
-			fm.setMandateID(rs.getLong("MandateID"));
+			fm.setMandateID(JdbcUtil.getLong(rs.getObject("MandateID")));
 			fm.setFinStatus(rs.getString("FinStatus"));
 			fm.setDueBucket(rs.getInt("DueBucket"));
 			fm.setFinStsReason(rs.getString("FinStsReason"));
@@ -4740,7 +4740,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setEmployeeName(rs.getString("EmployeeName"));
 				fm.setOverrideLimit(rs.getBoolean("OverrideLimit"));
 				fm.setTdsStartDate(rs.getTimestamp("TdsStartDate"));
-				fm.setMandateID(rs.getLong("MandateID"));
+				fm.setMandateID(JdbcUtil.getLong(rs.getObject("MandateID")));
 				fm.setLimitValid(rs.getBoolean("LimitValid"));
 				fm.setApplicationNo(rs.getString("ApplicationNo"));
 				fm.setEligibilityMethod(rs.getLong("EligibilityMethod"));

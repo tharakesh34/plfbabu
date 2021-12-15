@@ -590,7 +590,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String productCategory;
 
 	/* Mandate */
-	private long mandateID = 0;
+	private Long mandateID;
 
 	private BigDecimal refundAmount = BigDecimal.ZERO;
 	private List<ErrorDetail> errorDetails = new ArrayList<ErrorDetail>();
@@ -3289,11 +3289,11 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		this.productCategory = productCategory;
 	}
 
-	public long getMandateID() {
+	public Long getMandateID() {
 		return mandateID;
 	}
 
-	public void setMandateID(long mandateID) {
+	public void setMandateID(Long mandateID) {
 		this.mandateID = mandateID;
 	}
 

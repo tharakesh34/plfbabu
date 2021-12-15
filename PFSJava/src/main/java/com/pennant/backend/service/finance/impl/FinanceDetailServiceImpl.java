@@ -531,7 +531,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		String finReference = fm.getFinReference();
 		long custID = fm.getCustID();
 		boolean tdsApplicable = fm.istDSApplicable();
-		long mandateID = fm.getMandateID();
+		Long mandateID = fm.getMandateID();
 		String offerId = fm.getOfferId();
 		String moduleName = FinanceConstants.MODULE_NAME;
 
@@ -602,7 +602,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		}
 
 		/* Mandate */
-		if (mandateID > 0) {
+		if (mandateID != null && mandateID > 0) {
 			fd.setMandate(finMandateService.getMnadateByID(mandateID));
 		}
 
@@ -6430,7 +6430,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		if (!feeIds.isEmpty()) {
 			schdData.setFinFeeReceipts(finFeeDetailService.getFinFeeReceiptsById(feeIds, type));
 		}
-		if (fm.getMandateID() != 0) {
+		if (fm.getMandateID() != null && fm.getMandateID() != 0) {
 			fd.setMandate(finMandateService.getMnadateByID(fm.getMandateID()));
 		}
 
