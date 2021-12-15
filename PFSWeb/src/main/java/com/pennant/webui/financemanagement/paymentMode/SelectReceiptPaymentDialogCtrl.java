@@ -853,16 +853,20 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			rch.setReceiptMode(this.receiptMode.getSelectedItem().getValue());
 		}
 
+		if (PennantConstants.List_Select.equals(rch.getReceiptMode())) {
+			rch.setReceiptMode("");
+		}
+
 		if (this.subReceiptMode.getSelectedIndex() >= 0) {
 			rch.setSubReceiptMode(this.subReceiptMode.getSelectedItem().getValue().toString());
 		} else {
-			rch.setSubReceiptMode(PennantConstants.List_Select);
+			rch.setSubReceiptMode("");
 		}
 
 		if (this.receiptChannel.getSelectedIndex() >= 0) {
 			rch.setReceiptChannel(this.receiptChannel.getSelectedItem().getValue().toString());
 		} else {
-			rch.setReceiptChannel(PennantConstants.List_Select);
+			rch.setReceiptChannel("");
 		}
 
 		if (this.row_tDSAmount.isVisible()) {

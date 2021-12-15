@@ -235,61 +235,64 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				ocrMaintenanceListCtrl = (OCRMaintenanceListCtrl) arguments.get("ocrMaintenanceListCtrl");
 			}
 
-			if (getFinanceDetail() != null) {
-				financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
-				FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
+			FinanceDetail fd = getFinanceDetail();
+			if (fd != null) {
+				financeType = fd.getFinScheduleData().getFinanceType();
+				FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 				OCRHeader ocrHeader = null;
 
-				if (financeMain != null) {
-					parentRef = financeMain.getParentRef();
+				if (fm != null) {
+					parentRef = fm.getParentRef();
 				}
 
-				if (getFinanceDetail().getFinOCRHeader() != null) {
-					if (financeMain != null && StringUtils.isNotEmpty(parentRef)) {
+				if (fd.getFinOCRHeader() != null) {
+					if (fm != null && StringUtils.isNotEmpty(parentRef)) {
 						this.totalDemand.setDisabled(true);
 					}
-					setFinOCRHeader(getFinanceDetail().getFinOCRHeader());
+					setFinOCRHeader(fd.getFinOCRHeader());
 				}
 
-				if (isFinanceProcess && financeMain != null && StringUtils.isNotEmpty(financeMain.getParentRef())
-						&& financeMain.isFinOcrRequired()) {
-					FinOCRHeader finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(financeMain.getFinID(),
+				FinOCRHeader finOCRHeader = null;
+				if (isFinanceProcess && fm != null && StringUtils.isNotEmpty(fm.getParentRef())
+						&& fm.isFinOcrRequired()) {
+					finOCRHeader = finOCRHeaderService.getApprovedFinOCRHeaderByRef(fm.getFinID(),
 							TableType.VIEW.getSuffix());
-					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
-							TableType.AVIEW.getSuffix());
-					if (getFinanceDetail() != null
-							&& StringUtils.equals(getFinanceDetail().getModuleDefiner(), FinServiceEvent.ORG)) {
-						setFinOCRHeader(copyOCRHeaderProperties(ocrHeader, finOCRHeader));
+
+					if (finOCRHeader != null) {
+						ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(finOCRHeader.getOcrID(),
+								TableType.AVIEW.getSuffix());
+						if (fd != null && StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)) {
+							setFinOCRHeader(copyOCRHeaderProperties(ocrHeader, finOCRHeader));
+						}
+						if (fd.getFinOCRHeader() != null
+								&& StringUtils.isNotEmpty(fd.getFinOCRHeader().getRecordStatus())) {
+							getFinOCRHeader().setNewRecord(false);
+							getFinOCRHeader().setHeaderID(fd.getFinOCRHeader().getHeaderID());
+							getFinOCRHeader().setTotalDemand(fd.getFinOCRHeader().getTotalDemand());
+							getFinOCRHeader().setFinOCRCapturesList(fd.getFinOCRHeader().getFinOCRCapturesList());
+							getFinOCRHeader().setRecordStatus(fd.getFinOCRHeader().getRecordStatus());
+						}
+
+						if (finOCRHeader.getTotalDemand() != null) {
+							getFinOCRHeader().setTotalDemand(finOCRHeader.getTotalDemand());
+						}
 					}
-					if (getFinanceDetail().getFinOCRHeader() != null
-							&& StringUtils.isNotEmpty(getFinanceDetail().getFinOCRHeader().getRecordStatus())) {
-						getFinOCRHeader().setNewRecord(false);
-						getFinOCRHeader().setHeaderID(getFinanceDetail().getFinOCRHeader().getHeaderID());
-						getFinOCRHeader().setTotalDemand(getFinanceDetail().getFinOCRHeader().getTotalDemand());
-						getFinOCRHeader()
-								.setFinOCRCapturesList(getFinanceDetail().getFinOCRHeader().getFinOCRCapturesList());
-						getFinOCRHeader().setRecordStatus(getFinanceDetail().getFinOCRHeader().getRecordStatus());
-					}
-					if ((finOCRHeader != null) && finOCRHeader.getTotalDemand() != null) {
-						getFinOCRHeader().setTotalDemand(finOCRHeader.getTotalDemand());
-					}
+
 					this.totalDemand.setDisabled(true);
 				} else if (isFinanceProcess && financeType != null
 						&& StringUtils.isNotEmpty(financeType.getDefaultOCR())
-						&& (getFinanceDetail().getFinOCRHeader() != null
-								&& (StringUtils.isEmpty(getFinanceDetail().getFinOCRHeader().getOcrID())
-										|| getFinanceDetail().getFinOCRHeader().isNewRecord()))) {
+						&& (fd.getFinOCRHeader() != null && (StringUtils.isEmpty(fd.getFinOCRHeader().getOcrID())
+								|| fd.getFinOCRHeader().isNewRecord()))) {
 					// get default OCR header details from loan type
 					ocrHeader = ocrHeaderService.getOCRHeaderByOCRId(financeType.getDefaultOCR(),
 							TableType.AVIEW.getSuffix());
 					setFinOCRHeader(copyOCRHeaderProperties(ocrHeader, null));
-					if (getFinanceDetail().getFinOCRHeader() != null
-							&& StringUtils.isNotEmpty(getFinanceDetail().getFinOCRHeader().getRecordStatus())) {
+					if (fd.getFinOCRHeader() != null
+							&& StringUtils.isNotEmpty(fd.getFinOCRHeader().getRecordStatus())) {
 						getFinOCRHeader().setNewRecord(false);
-						getFinOCRHeader().setHeaderID(getFinanceDetail().getFinOCRHeader().getHeaderID());
-						getFinOCRHeader().setTotalDemand(getFinanceDetail().getFinOCRHeader().getTotalDemand());
-						getFinOCRHeader()
-								.setFinOCRCapturesList(getFinanceDetail().getFinOCRHeader().getFinOCRCapturesList());
+						getFinOCRHeader().setHeaderID(fd.getFinOCRHeader().getHeaderID());
+						getFinOCRHeader().setTotalDemand(fd.getFinOCRHeader().getTotalDemand());
+						getFinOCRHeader().setFinOCRCapturesList(fd.getFinOCRHeader().getFinOCRCapturesList());
 					}
 				}
 			}
@@ -298,8 +301,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 				this.finOCRHeader.setNewRecord(true);
 			}
 
-			if (!isFinanceProcess && getFinanceDetail().getFinOCRHeader() != null) {
-				this.finOCRHeader.setWorkflowId(getFinanceDetail().getFinOCRHeader().getWorkflowId());
+			if (!isFinanceProcess && fd.getFinOCRHeader() != null) {
+				this.finOCRHeader.setWorkflowId(fd.getFinOCRHeader().getWorkflowId());
 			}
 
 			doLoadWorkFlow(this.finOCRHeader.isWorkflow(), this.finOCRHeader.getWorkflowId(),
@@ -906,7 +909,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 		final FinOCRHeader aFinOCRHeader = new FinOCRHeader();
 		BeanUtils.copyProperties(this.finOCRHeader, aFinOCRHeader);
 		aFinOCRHeader.setBefImage(this.finOCRHeader);
-		ArrayList<WrongValueException> wve = doWriteComponentsToBean(aFinOCRHeader);
+
+		List<WrongValueException> wve = doWriteComponentsToBean(aFinOCRHeader);
 		if (!wve.isEmpty() && tab != null) {
 			tab.setSelected(true);
 		}
@@ -1395,20 +1399,24 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 * Writes the showErrorDetails method for .<br>
 	 * displaying exceptions if occured
 	 */
-	private void showErrorDetails(ArrayList<WrongValueException> wve, Tab tab) {
+	private void showErrorDetails(List<WrongValueException> wve, Tab tab) {
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
 
 		if (!wve.isEmpty()) {
 			logger.debug("Throwing occured Errors By using WrongValueException");
+
 			if (tab != null) {
 				tab.setSelected(true);
 			}
+
 			WrongValueException[] wvea = new WrongValueException[wve.size()];
+
 			for (int i = 0; i < wve.size(); i++) {
 				wvea[i] = wve.get(i);
 			}
+
 			throw new WrongValuesException(wvea);
 		}
 

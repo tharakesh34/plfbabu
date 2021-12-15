@@ -506,7 +506,8 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 			try {
 				engine = new TemplateEngine(templatePath, templatePath);
 			} catch (Exception e) {
-				MessageUtil.showError("Path Not Found");
+				MessageUtil
+						.showError(String.format("[%s] template not found in [%s] location.", agreement, templatePath));
 				return;
 			}
 			String refNo = intCert.getFinReference();

@@ -1,3 +1,4 @@
+
 package com.pennant.backend.model.finance;
 
 import java.math.BigDecimal;
@@ -637,7 +638,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	}
 
 	public String getReceiptMode() {
-		return receiptMode;
+		return receiptMode == null || "#".equals(receiptMode) ? "" : receiptMode;
 	}
 
 	public void setReceiptMode(String receiptMode) {
@@ -1389,7 +1390,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	}
 
 	public String getSubReceiptMode() {
-		return subReceiptMode;
+		return subReceiptMode == null || "#".equals(subReceiptMode) ? "" : subReceiptMode;
 	}
 
 	public void setSubReceiptMode(String subReceiptMode) {
