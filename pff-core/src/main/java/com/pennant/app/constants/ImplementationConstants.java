@@ -29,7 +29,7 @@ public class ImplementationConstants {
 		Map<String, Object> extensions = getFeatureExtensions();
 
 		ALLOW_MULTI_CCY = getValueAsBoolean(extensions, "ALLOW_MULTI_CCY", false);
-		LIST_RENDER_ON_LOAD = getValueAsBoolean(extensions, "LIST_RENDER_ON_LOAD", true);
+		LIST_RENDER_ON_LOAD = getValueAsBoolean(extensions, "LIST_RENDER_ON_LOAD", false);
 		LIMIT_INTERNAL = getValueAsBoolean(extensions, "LIMIT_INTERNAL", true);
 		ONLINE_IRL_CHECK = getValueAsBoolean(extensions, "ONLINE_IRL_CHECK", false);
 		ALLOW_MULTIPLE_EMPLOYMENTS = getValueAsBoolean(extensions, "ALLOW_MULTIPLE_EMPLOYMENTS", true);
