@@ -39,6 +39,7 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -238,7 +239,12 @@ public class AbstractListController<T> extends AbstractController<T> {
 		if (comparator == null) {
 			if (pagedListWrapper != null && paging != null) {
 				pagedListWrapper.setPagedListService(pagedListService);
-				pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
+
+				if (!this.searchObject.getFilters().isEmpty()) {
+					pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
+				} else {
+					pagedListWrapper.clear();
+				}
 			}
 		} else {
 			final SearchResult<?> searchResult = pagedListService.getSRBySearchObject(this.searchObject);
@@ -296,26 +302,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	protected void doAddFilters() {
 		logger.debug(Literal.ENTERING);
 
-		boolean filterApplied = false;
-		for (SearchFilterControl searchControl : searchControls) {
-			Filter filter = searchControl.getFilter();
-
-			if (filter != null) {
-				filterApplied = true;
-				break;
-			}
-		}
-
-		if (!filterApplied) {
-			logger.debug(Literal.LEAVING);
-			return;
-		}
-
 		this.searchObject.clearFilters();
-
-		if (isWorkFlowEnabled() && !enqiryModule) {
-			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-		}
 
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
@@ -330,6 +317,12 @@ public class AbstractListController<T> extends AbstractController<T> {
 				} else {
 					this.searchObject.addFilter(filter);
 				}
+			}
+		}
+
+		if (ImplementationConstants.LIST_RENDER_ON_LOAD || !this.searchObject.getFilters().isEmpty()) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 			}
 		}
 

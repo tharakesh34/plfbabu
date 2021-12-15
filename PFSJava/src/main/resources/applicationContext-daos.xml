@@ -2100,7 +2100,6 @@
 		<property name="customerService" ref="customerService" />
 		<property name="bankDetailDAO" ref="bankDetailDAO" />
 		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
-		<property name="approvalStatusEnquiryService" ref="approvalStatusEnquiryService" />
 		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
 		<property name="beneficiaryDAO" ref="beneficiaryDAO" />
 		<property name="custTypePANMappingService" ref="custTypePANMappingService" />
