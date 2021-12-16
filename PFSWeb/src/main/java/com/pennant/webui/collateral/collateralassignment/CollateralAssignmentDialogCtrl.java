@@ -1182,7 +1182,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		whereClause.append(finType);
 		whereClause.append("'))");
 
-		whereClause.append(" OR ((DepositorId = ");
+		whereClause.append(" AND ((DepositorId = ");
 		whereClause.append(customerId).append(") ");
 		whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
 		whereClause.append(customerId).append(")) ) ");
