@@ -32,7 +32,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.FinanceWriteoffDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
-import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
 import com.pennant.backend.dao.pdc.ChequeHeaderDAO;
 import com.pennant.backend.dao.receipts.FinReceiptDetailDAO;
@@ -79,7 +78,6 @@ import com.pennant.backend.model.finance.RestructureDetail;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
-import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.fees.FeeDetailService;
@@ -190,7 +188,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private ChequeDetailDAO chequeDetailDAO;
 	private FinAdvancePaymentsDAO finAdvancePaymentsDAO;
 	private VASRecordingDAO vASRecordingDAO;
-	private InsuranceDetailDAO insuranceDetailDAO;
 	private VASConfigurationDAO vASConfigurationDAO;
 	private VASProviderAccDetailDAO vASProviderAccDetailDAO;
 	private NonLanReceiptService nonLanReceiptService;
@@ -2019,11 +2016,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		for (VASRecording vr : vrList) {
 			long paymentInsId = vr.getPaymentInsId();
-			InsurancePaymentInstructions ipi = insuranceDetailDAO.getInsurancePaymentInstructionStatus(paymentInsId);
-
-			if (ipi == null) {
-				continue;
-			}
 
 			vc = vASConfigurationDAO.getVASConfigurationByCode(vr.getProductCode(), "");
 
@@ -2041,9 +2033,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 
 			detail.setDisbAmount(vr.getFee());
-			// detail.setDisbDate(fap.getLlDate());
-			detail.setStatus(ipi.getStatus());
-			detail.setType(DisbursementConstants.CHANNEL_INSURANCE);
+			detail.setStatus(vr.getStatus());
+			detail.setType(DisbursementConstants.CHANNEL_VAS);
 			vasInstructions.add(detail);
 		}
 
@@ -2076,7 +2067,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = rd.getFinReference();
 		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 		rd.setFinID(finID);
-		
+
 		APIErrorHandlerService.logReference(finReference);
 
 		returnStatus = validateReqType(rd.getReqType());
@@ -3419,16 +3410,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Autowired
 	public void setvASRecordingDAO(VASRecordingDAO vASRecordingDAO) {
 		this.vASRecordingDAO = vASRecordingDAO;
-	}
-
-	@Autowired
-	public void setInsuranceDetailDAOImpl(InsuranceDetailDAO insuranceDetailDAO) {
-		this.insuranceDetailDAO = insuranceDetailDAO;
-	}
-
-	@Autowired
-	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
-		this.insuranceDetailDAO = insuranceDetailDAO;
 	}
 
 	@Autowired

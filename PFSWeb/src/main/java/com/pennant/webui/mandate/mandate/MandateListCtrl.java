@@ -136,7 +136,7 @@ public class MandateListCtrl extends GFCBaseListCtrl<Mandate> implements Seriali
 	protected void doAddFilters() {
 
 		super.doAddFilters();
-		if (!enqiryModule) {
+		if (!enqiryModule && !searchObject.getFilters().isEmpty()) {
 			searchObject.addFilterEqual("active", 1);
 			searchObject.addFilterNotEqual("Status", MandateConstants.STATUS_FIN);
 		}

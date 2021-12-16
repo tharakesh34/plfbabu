@@ -638,7 +638,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	}
 
 	public String getReceiptMode() {
-		return receiptMode == null || "#".equals(receiptMode) ? "" : receiptMode;
+		return receiptMode;
 	}
 
 	public void setReceiptMode(String receiptMode) {
@@ -1390,7 +1390,7 @@ public class FinReceiptHeader extends AbstractWorkflowEntity {
 	}
 
 	public String getSubReceiptMode() {
-		return subReceiptMode == null || "#".equals(subReceiptMode) ? "" : subReceiptMode;
+		return subReceiptMode;
 	}
 
 	public void setSubReceiptMode(String subReceiptMode) {

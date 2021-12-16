@@ -7948,7 +7948,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					if (CollectionUtils.isNotEmpty(afd.getPricingDetail().getFinanceMains())) {
 						for (FinanceMain childLoan : afd.getPricingDetail().getFinanceMains()) {
-							childLoan.setMandateID(0);
+							childLoan.setMandateID(0L);
 							childLoan.setFinAmount(childLoan.getFinAssetValue());
 							childLoan.setFinCurrAssetValue(childLoan.getFinAssetValue());
 
@@ -20732,8 +20732,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			Executions.createComponents("/WEB-INF/pages/Verification/FieldInvestigation/VerificationEnquiryDialog.zul",
 					null, map);
 		} else if (StringUtils.equals("FINMANDENQ", enquiryType)) {
-			long mandateID = financeMain.getMandateID();
-			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<Mandate>();
+			Long mandateID = financeMain.getMandateID();
+			JdbcSearchObject<Mandate> jdbcSearchObject = new JdbcSearchObject<>();
 			jdbcSearchObject.addTabelName("Mandates_View");
 			jdbcSearchObject.addFilterEqual("MandateID", mandateID);
 			jdbcSearchObject.setSearchClass(Mandate.class);

@@ -2936,7 +2936,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		finMandateService.saveOrUpdate(fd, auditHeader, type);
 
 		if (extMandateId == Long.MIN_VALUE || extMandateId == 0) {
-			long mandateId = fm.getMandateID();
+			Long mandateId = fm.getMandateID();
 			financeMainDAO.updateFinMandateId(mandateId, finID, type);
 		}
 		logger.debug(Literal.LEAVING);

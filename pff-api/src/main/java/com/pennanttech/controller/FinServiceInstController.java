@@ -57,7 +57,6 @@ import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.ReceiptResponseDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
-import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.partnerbank.PartnerBankDAO;
 import com.pennant.backend.dao.payorderissue.PayOrderIssueHeaderDAO;
 import com.pennant.backend.dao.pdc.ChequeDetailDAO;
@@ -124,7 +123,6 @@ import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
-import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -132,9 +130,7 @@ import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
 import com.pennant.backend.model.rmtmasters.FinanceType;
-import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.model.rulefactory.FeeRule;
-import com.pennant.backend.model.rulefactory.ReturnDataSet;
 import com.pennant.backend.service.applicationmaster.BankDetailService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.service.fees.FeeDetailService;
@@ -149,7 +145,6 @@ import com.pennant.backend.service.finance.ManualPaymentService;
 import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.service.finance.covenant.CovenantsService;
-import com.pennant.backend.service.insurance.InsuranceDetailService;
 import com.pennant.backend.service.lmtmasters.FinanceWorkFlowService;
 import com.pennant.backend.service.payorderissue.PayOrderIssueService;
 import com.pennant.backend.service.pdc.ChequeHeaderService;
@@ -229,8 +224,6 @@ public class FinServiceInstController extends SummaryDetailService {
 	private ChequeDetailDAO chequeDetailDAO;
 	private PayOrderIssueService payOrderIssueService;
 	private PayOrderIssueHeaderDAO payOrderIssueHeaderDAO;
-	private InsuranceDetailDAO insuranceDetailDAO;
-	private InsuranceDetailService insuranceDetailService;
 	private NonLanReceiptService nonLanReceiptService;
 	private FeeWaiverHeaderService feeWaiverHeaderService;
 	private RestructureService restructureService;
@@ -3436,62 +3429,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			finAdvancePaymensDAO.updateDisbursmentStatus(finAdvancePayments);
 		}
 
-		if (StringUtils.isNotBlank(type) && DisbursementConstants.CHANNEL_INSURANCE.equals(type)) {
-			InsurancePaymentInstructions insPayInst = insuranceDetailDAO
-					.getInsurancePaymentInstructionStatus(paymentId);
-			if (insPayInst == null) {
-				String[] valueParam = new String[1];
-				valueParam[0] = "PaymentId";
-				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
-			}
-
-			if (!DisbursementConstants.STATUS_AWAITCON.equals(insPayInst.getStatus())) {
-				String[] valueParam = new String[1];
-				valueParam[0] = "Insurance status already updated";
-				return APIErrorHandlerService.getFailedStatus("21005", valueParam);
-			}
-
-			InsurancePaymentInstructions instruction = insuranceDetailDAO.getInsurancePaymentInstructionById(paymentId);
-
-			if (instruction == null) {
-				String[] valueParam = new String[1];
-				valueParam[0] = "PaymentId";
-				return APIErrorHandlerService.getFailedStatus("90405", valueParam);
-			}
-
-			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
-			instruction.setUserDetails(userDetails);
-			instruction.setId(paymentId);
-			instruction.setStatus(disbRequest.getStatus());
-			instruction.setFinReference(finReference);
-			instruction.setTransactionRef(disbRequest.getTransactionRef());
-			instruction.setRespDate(disbRequest.getClearingDate());
-			instruction.setRealizationDate(disbRequest.getClearingDate());
-
-			if (PAID_STATUS.equals(disbRequest.getStatus())) {
-				instruction.setStatus(DisbursementConstants.STATUS_PAID);
-				if (SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					insuranceDetailService.executeVasPaymentsAccountingProcess(instruction);
-				}
-
-			} else {
-				if (!SysParamUtil.isAllowed(SMTParameterConstants.HOLD_INS_INST_POST)) {
-					AEEvent aeEvent = new AEEvent();
-					aeEvent.setLinkedTranId(instruction.getLinkedTranId());
-					List<ReturnDataSet> list = postingsPreparationUtil
-							.postReversalsByLinkedTranID(instruction.getLinkedTranId());
-					aeEvent.setReturnDataSet(list);
-					try {
-						aeEvent = postingsPreparationUtil.processPostings(aeEvent);
-					} catch (Exception e) {
-						APIErrorHandlerService.logUnhandledException(e);
-					}
-				}
-				instruction.setStatus(DisbursementConstants.STATUS_REJECTED);
-			}
-			insuranceDetailService.updatePaymentStatus(instruction);
-		}
-
 		logger.info(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 	}
@@ -4136,7 +4073,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					// subtracting the count to reduce the No.Of cheques in cheque Header
 
 					int result = chequeHeader.getNoOfCheques() - count;
-				
+
 					chequeHeader.setFinID(financeMain.getFinID());
 					chequeHeader.setFinReference(financeMain.getFinReference());
 
@@ -4719,14 +4656,6 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setPayOrderIssueService(PayOrderIssueService payOrderIssueService) {
 		this.payOrderIssueService = payOrderIssueService;
-	}
-
-	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
-		this.insuranceDetailDAO = insuranceDetailDAO;
-	}
-
-	public void setInsuranceDetailService(InsuranceDetailService insuranceDetailService) {
-		this.insuranceDetailService = insuranceDetailService;
 	}
 
 	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {

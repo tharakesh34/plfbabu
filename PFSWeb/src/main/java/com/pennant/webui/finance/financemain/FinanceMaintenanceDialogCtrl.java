@@ -119,6 +119,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -923,7 +924,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 				}
 				Object mandateID = this.mandateRef.getAttribute("mandateID");
 				if (mandateID != null) {
-					finMain.setMandateID((long) mandateID);
+					finMain.setMandateID(JdbcUtil.getLong(mandateID));
 				}
 			} catch (WrongValueException we) {
 				wve.add(we);

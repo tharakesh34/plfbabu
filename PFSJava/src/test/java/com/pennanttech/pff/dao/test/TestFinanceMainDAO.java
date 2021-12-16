@@ -163,7 +163,7 @@ public class TestFinanceMainDAO {
 		financeMainDAO.getFinanceBasicDetailByRef(5323, true);
 		financeMainDAO.getFinanceBasicDetailByRef(5323, false);
 
-		financeMainDAO.updateFinMandateId(347, 5222, "");
+		financeMainDAO.updateFinMandateId(347L, 5222, "");
 
 		financeMainDAO.getMandateIdByRef(5222, "");
 		financeMainDAO.getMandateIdByRef(500, "");

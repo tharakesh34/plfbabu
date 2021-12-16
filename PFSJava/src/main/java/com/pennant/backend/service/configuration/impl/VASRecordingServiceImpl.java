@@ -67,7 +67,6 @@ import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.dao.finance.ManualAdviseDAO;
 import com.pennant.backend.dao.finance.RepayInstructionDAO;
-import com.pennant.backend.dao.insurance.InsuranceDetailDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceCheckListReferenceDAO;
 import com.pennant.backend.dao.lmtmasters.FinanceReferenceDetailDAO;
 import com.pennant.backend.dao.rmtmasters.AccountingSetDAO;
@@ -103,7 +102,6 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.RepayInstruction;
-import com.pennant.backend.model.insurance.InsuranceDetails;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
 import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
@@ -177,7 +175,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 	private ExtendedFieldRenderDAO extendedFieldRenderDAO;
 	private AccountingSetDAO accountingSetDAO;
 	private ManualAdviseDAO manualAdviseDAO;
-	private InsuranceDetailDAO insuranceDetailDAO;
 	private FinanceTypeDAO financeTypeDAO;
 
 	/**
@@ -660,7 +657,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 				VASRecording recording = executeInsuranceAccountingProcess(auditHeader);
 				vASRecording.setManualAdviseId(recording.getManualAdviseId());
 				vASRecording.setReceivableAdviseId(recording.getReceivableAdviseId());
-				updateInsuranceDetails(vASRecording.getVasReference(), vASRecording.getVasStatus());
 			} else {
 				executeAccountingProcess(auditHeader, SysParamUtil.getAppDate());
 			}
@@ -742,10 +738,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 		logger.debug("Leaving");
 		return auditHeader;
 
-	}
-
-	private void updateInsuranceDetails(String reference, String status) {
-		insuranceDetailDAO.updateInsuranceDetails(reference, status);
 	}
 
 	/**
@@ -1789,19 +1781,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 			createInsurancePaymentAccounting(auditHeader, vASRecording);
 		}
 
-		// Insurance details for reversalling the reconciliation accounting
-		InsuranceDetails insuranceDetails = insuranceDetailDAO.getInsurenceDetailsByRef(vASRecording.getVasReference(),
-				TableType.MAIN_TAB.getSuffix());
-
-		if (insuranceDetails != null) {
-			if (insuranceDetails.getLinkedTranId() == Long.MIN_VALUE) {
-				insuranceDetails.setLinkedTranId(0);
-			}
-			if (insuranceDetails.getLinkedTranId() != 0) {
-				postingsPreparationUtil.postReversalsByLinkedTranID(insuranceDetails.getLinkedTranId());
-			}
-		}
-
 		logger.debug(Literal.LEAVING);
 		return vASRecording;
 	}
@@ -2840,10 +2819,6 @@ public class VASRecordingServiceImpl extends GenericService<VASRecording> implem
 
 	public void setManualAdviseDAO(ManualAdviseDAO manualAdviseDAO) {
 		this.manualAdviseDAO = manualAdviseDAO;
-	}
-
-	public void setInsuranceDetailDAO(InsuranceDetailDAO insuranceDetailDAO) {
-		this.insuranceDetailDAO = insuranceDetailDAO;
 	}
 
 	public void setFinanceTypeDAO(FinanceTypeDAO financeTypeDAO) {

@@ -298,7 +298,6 @@ import com.pennant.backend.model.financemanagement.ProvisionMovement;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditRevSubCategory;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
-import com.pennant.backend.model.insurance.InsuranceDetails;
 import com.pennant.backend.model.insurance.InsurancePaymentInstructions;
 import com.pennant.backend.model.interfacemapping.InterfaceFields;
 import com.pennant.backend.model.interfacemapping.InterfaceMapping;
@@ -3063,16 +3062,6 @@ public class PennantJavaUtil {
 				new ModuleMapping("VASRecording", VASRecording.class,
 						new String[] { "VASRecording", "VASRecording_AView" }, VASWF,
 						new String[] { "PrimaryLinkRef", "ProductCode" }, null, 300));
-		// Insurance Details
-		ModuleUtil.register("InsuranceDetails",
-				new ModuleMapping("InsuranceDetails", InsuranceDetails.class,
-						new String[] { "InsuranceDetails", "InsuranceDetails_AView" }, insuranceDetails,
-						new String[] { "Reference", "FinReference", "PolicyNumber" }, null, 600));
-		// Insurance Details Inquiry
-		ModuleUtil.register("InsuranceDetailsEnq",
-				new ModuleMapping("InsuranceDetails", InsuranceDetails.class,
-						new String[] { "InsuranceDetails", "InsuranceDetails_AView" }, null,
-						new String[] { "Reference", "FinReference", "PolicyNumber" }, null, 600));
 		// Insurance Payment Upload
 		ModuleUtil.register("InsurancePaymentInstructions",
 				new ModuleMapping("InsurancePaymentInstructions", InsurancePaymentInstructions.class,

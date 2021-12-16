@@ -286,7 +286,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		this.pagingEnquiryList.setDetailed(true);
 		this.listBoxEnquiryResult.setItemRenderer(new FinanceEnquiryListModelItemRenderer());
 
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 
 	}
 
@@ -294,9 +294,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * SetVisible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		getUserWorkspace().allocateAuthorities("FinanceEnquiryList");
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -305,22 +305,22 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearchCustomerCIF();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Showing Customer Search Window
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
 		map.put("searchObject", this.custCIFSearchObject);
 		Executions.createComponents("/WEB-INF/pages/CustomerMasters/Customer/CustomerSelect.zul", null, map);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -332,7 +332,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 */
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
@@ -351,7 +351,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$btnSearchFinType(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.oldVar_sortOperator_FinType == Filter.OP_IN || this.oldVar_sortOperator_FinType == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
@@ -373,7 +373,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -382,7 +382,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$btnSearchFinProduct(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.oldVar_sortOperator_FinProduct == Filter.OP_IN
 				|| this.oldVar_sortOperator_FinProduct == Filter.OP_NOT_IN) {
@@ -405,7 +405,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$btnSearchFinCcy(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.oldVar_sortOperator_FinCcy == Filter.OP_IN || this.oldVar_sortOperator_FinCcy == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
@@ -435,7 +435,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -444,7 +444,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$btnSearchFinRef(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		String selectedValues = null;
 		if (this.oldVar_sortOperator_FinCcy == Filter.OP_IN || this.oldVar_sortOperator_FinCcy == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
@@ -476,7 +476,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -485,7 +485,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$btnSearchBranch(Event event) {
-		logger.debug("Entering  " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.oldVar_sortOperator_Branch == Filter.OP_IN || this.oldVar_sortOperator_Branch == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
@@ -515,14 +515,14 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param event
 	 */
 	public void onClick$button_Search(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		doSearch();
 		this.pagingEnquiryList.setDetailed(true);
 		getPagedListWrapper().init(this.searchObj, this.listBoxEnquiryResult, this.pagingEnquiryList);
 		this.listBoxEnquiryResult.setItemRenderer(new FinanceEnquiryListModelItemRenderer());
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -532,12 +532,13 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$button_Print(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
+
 		if (this.listBoxEnquiryResult.getItemCount() > 0) {
 			new PTListReportUtils(this.enquiryType.getValue(), getSearchObj(),
 					this.pagingEnquiryList.getTotalSize() + 1);
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -547,7 +548,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$button_Reset(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
+
 		this.sortOperator_custCIF.setSelectedIndex(0);
 		this.sortOperator_Branch.setSelectedIndex(0);
 		this.sortOperator_StartDate.setSelectedIndex(0);
@@ -596,7 +598,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 		getPagedListWrapper().init(this.searchObj, this.listBoxEnquiryResult, this.pagingEnquiryList);
 		this.listBoxEnquiryResult.setItemRenderer(new FinanceEnquiryListModelItemRenderer());
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -605,7 +607,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @param list
 	 */
 	private void doFillFilterList(List<ValueLabel> list) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.menupopup_filter.getChildren().clear();
 		if (list != null && list.size() > 0) {
@@ -749,9 +751,10 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @return
 	 */
 	public void doSearch() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.searchObj = new JdbcSearchObject<FinanceEnquiry>(FinanceEnquiry.class);
+
 		rejectedList = false;
 		if (!"CHQPRNT".equals(enquiryType.getValue())) {
 			if (this.fromApproved.isSelected()) {
@@ -784,7 +787,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			}
 		}
 
-		this.searchObj.addSort("finReference", false);
+		this.searchObj.addSort("FinID", false);
 		if ("FINMANDENQ".equalsIgnoreCase(enquiryType.getValue())) {
 			List<ValueLabel> mandates = PennantStaticListUtil.getMandateTypeList();
 			List<String> list = new ArrayList<String>(mandates.size());
@@ -1042,7 +1045,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	}
 
 	private String setFinReferences() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String reference = StringUtils.trimToEmpty(finRef.getValue());
 
@@ -1085,9 +1088,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_FinanceEnquiry);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1097,54 +1100,57 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws Exception
 	 */
 	public void onLoanItemDoubleClicked(Event event) throws Exception {
-		logger.debug("Entering" + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		final Listitem item = this.listBoxEnquiryResult.getSelectedItem();
-		if (item != null) {
 
-			final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
-			if (!rejectedList) {
+		if (item == null) {
+			logger.debug(Literal.LEAVING);
+			return;
+		}
 
-				Map<String, Object> map = getDefaultArguments();
-				map.put("financeEnquiry", aFinanceEnquiry);
-				map.put("financeEnquiryListCtrl", this);
-				map.put("enquiryType", this.enquiryType.getValue());
-				if (!StringUtils.equals(enquiryType.getValue(), "CHQPRNT")) {
-					map.put("fromApproved", this.fromApproved.isChecked());
-				}
+		final FinanceEnquiry aFinanceEnquiry = (FinanceEnquiry) item.getAttribute("data");
+		if (!rejectedList) {
 
-				// call the ZUL-file with the parameters packed in a map
-				try {
-					Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
-							null, map);
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
-			} else {
-				ReinstateFinance aReinstateFinance = reinstateFinanceService
-						.getFinanceDetailsById(aFinanceEnquiry.getFinID());
-				// #Bug Fix 137580 without refresh the list opening Re-initiated loan
-				if (aReinstateFinance == null) {
-					MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
-					return;
-				}
-				Map<String, Object> arg = getDefaultArguments();
-				arg.put("reinstateFinance", aReinstateFinance);
-				arg.put("financeEnquiryListCtrl", this);
-				arg.put("enqModule", true);
-				arg.put("eventCode", FinServiceEvent.REINSTATE);
-				arg.put("rejectedList", rejectedList);
-				try {
+			Map<String, Object> map = getDefaultArguments();
+			map.put("financeEnquiry", aFinanceEnquiry);
+			map.put("financeEnquiryListCtrl", this);
+			map.put("enquiryType", this.enquiryType.getValue());
+			if (!StringUtils.equals(enquiryType.getValue(), "CHQPRNT")) {
+				map.put("fromApproved", this.fromApproved.isChecked());
+			}
 
-					Executions.createComponents("/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceDialog.zul",
-							null, arg);
+			// call the ZUL-file with the parameters packed in a map
+			try {
+				Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
+						null, map);
+			} catch (Exception e) {
+				MessageUtil.showError(e);
+			}
+		} else {
+			ReinstateFinance aReinstateFinance = reinstateFinanceService
+					.getFinanceDetailsById(aFinanceEnquiry.getFinID());
+			// #Bug Fix 137580 without refresh the list opening Re-initiated loan
+			if (aReinstateFinance == null) {
+				MessageUtil.showMessage(Labels.getLabel("info.record_not_exists"));
+				return;
+			}
+			Map<String, Object> arg = getDefaultArguments();
+			arg.put("reinstateFinance", aReinstateFinance);
+			arg.put("financeEnquiryListCtrl", this);
+			arg.put("enqModule", true);
+			arg.put("eventCode", FinServiceEvent.REINSTATE);
+			arg.put("rejectedList", rejectedList);
+			try {
 
-				} catch (Exception e) {
-					MessageUtil.showError(e);
-				}
+				Executions.createComponents("/WEB-INF/pages/Finance/ReinstateFinance/ReinstateFinanceDialog.zul", null,
+						arg);
+
+			} catch (Exception e) {
+				MessageUtil.showError(e);
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1154,9 +1160,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws Exception
 	 */
 	public void onCheck$fromApproved(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearch();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1166,9 +1172,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws Exception
 	 */
 	public void onCheck$fromWorkFlow(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearch();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1178,9 +1184,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws Exception
 	 */
 	public void onCheck$myRecords(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearch();
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1190,9 +1196,9 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * @throws Exception
 	 */
 	public void onCheck$myTeamRecords(Event event) throws Exception {
-		logger.debug(Literal.ENTERING + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearch();
-		logger.debug(Literal.LEAVING + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ******************************************************//

@@ -63,6 +63,7 @@ import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCre
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewDetails;
 import com.pennant.backend.model.financemanagement.bankorcorpcreditreview.FinCreditReviewSummary;
 import com.pennant.backend.service.GenericService;
+import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerEmploymentDetailService;
 import com.pennant.backend.service.customermasters.CustomerService;
@@ -102,6 +103,7 @@ public class CustomerController extends GenericService<Object> {
 	private DirectorDetailService directorDetailService;
 	private DMSService dMSService;
 	private CustomerIncomeDAO customerIncomeDAO;
+	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
 
 	private final String PROCESS_TYPE_SAVE = "Save";
 	private final String PROCESS_TYPE_UPDATE = "Update";
@@ -928,6 +930,11 @@ public class CustomerController extends GenericService<Object> {
 								response.getCustomer().getCustCtgCode(), null, response.getCustomer().getCustCIF()));
 
 				response.setReturnStatus(APIErrorHandlerService.getSuccessStatus());
+
+				if (approvalStatusEnquiryService != null) {
+					response.setCustomerFinanceDetailList(
+							approvalStatusEnquiryService.getListOfCustomerFinanceById(customerId, null));
+				}
 
 			} else {
 				response = new CustomerDetails();
@@ -2217,6 +2224,10 @@ public class CustomerController extends GenericService<Object> {
 
 	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
 		this.customerIncomeDAO = customerIncomeDAO;
+	}
+
+	public void setApprovalStatusEnquiryService(ApprovalStatusEnquiryService approvalStatusEnquiryService) {
+		this.approvalStatusEnquiryService = approvalStatusEnquiryService;
 	}
 
 }

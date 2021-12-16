@@ -35,7 +35,7 @@ public interface MandateDAO {
 
 	Mandate getNewMandate();
 
-	Mandate getMandateById(long id, String type);
+	Mandate getMandateById(Long id, String type);
 
 	Mandate getMandateByStatus(long id, String status, String type);
 
@@ -77,7 +77,7 @@ public interface MandateDAO {
 
 	boolean entityExistMandate(String entityCode, String type);
 
-	Mandate getMandateStatusById(String finReference, long mandateID);
+	Mandate getMandateStatusById(String finReference, Long mandateID);
 
 	int getMandateCount(long custID, long mandateID);
 

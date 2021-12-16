@@ -164,7 +164,6 @@ import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.model.systemmasters.Sector;
 import com.pennant.backend.model.systemmasters.SubSector;
 import com.pennant.backend.service.GenericService;
-import com.pennant.backend.service.approvalstatusenquiry.ApprovalStatusEnquiryService;
 import com.pennant.backend.service.collateral.CollateralSetupService;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
 import com.pennant.backend.service.customermasters.CustomerDocumentService;
@@ -282,7 +281,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private CustomerInterfaceService customerInterfaceService;
 	private CustomerDocumentService customerDocumentService;
-	private ApprovalStatusEnquiryService approvalStatusEnquiryService;
 	private CustTypePANMappingService custTypePANMappingService;
 
 	private CustomerRatingValidation customerRatingValidation;
@@ -522,11 +520,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (CollectionUtils.isNotEmpty(headerIdList)) {
 			customerDetails.getCustomerFinances().addAll(financeMainDAO.getAllFinanceDetailsByCustId(id));
-		}
-
-		if (approvalStatusEnquiryService != null) {
-			customerDetails
-					.setCustomerFinanceDetailList(approvalStatusEnquiryService.getListOfCustomerFinanceById(id, null));
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -8142,10 +8135,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	public void setCustomerDocumentService(CustomerDocumentService customerDocumentService) {
 		this.customerDocumentService = customerDocumentService;
-	}
-
-	public void setApprovalStatusEnquiryService(ApprovalStatusEnquiryService approvalStatusEnquiryService) {
-		this.approvalStatusEnquiryService = approvalStatusEnquiryService;
 	}
 
 	public void setCustTypePANMappingService(CustTypePANMappingService custTypePANMappingService) {

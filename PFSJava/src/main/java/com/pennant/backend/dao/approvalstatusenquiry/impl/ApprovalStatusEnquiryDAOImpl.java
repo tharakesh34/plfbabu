@@ -101,11 +101,10 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 		if (approvedFinance) {
 			sql.append(" and RecordStatus <> ?");
 		}
-		sql.append(" Order by AuditDate ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		return auditJdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
+		List<AuditTransaction> list = auditJdbcTemplate.getJdbcOperations().query(sql.toString(), ps -> {
 			int index = 1;
 			if (facility) {
 				for (String finReference : finReferences) {
@@ -140,6 +139,8 @@ public class ApprovalStatusEnquiryDAOImpl extends BasicDao<CustomerFinanceDetail
 			return auditTxn;
 		});
 
+		return list.stream().sorted((l1, l2) -> l1.getAuditDate().compareTo(l2.getAuditDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override

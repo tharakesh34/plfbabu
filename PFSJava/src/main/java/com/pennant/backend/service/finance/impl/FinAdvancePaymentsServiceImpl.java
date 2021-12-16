@@ -594,10 +594,10 @@ public class FinAdvancePaymentsServiceImpl extends GenericService<FinAdvancePaym
 
 		// for Overdraft loan types checking for mandate is approved or not. and validate for Expiry date.
 		if (isOverDraft && StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ADDDISB)
-				&& fm.getMandateID() != 0) {
+				&& fm.getMandateID() != null) {
 
 			Mandate mandate = new Mandate();
-			long mandateID = fm.getMandateID();
+			Long mandateID = fm.getMandateID();
 
 			mandate = mandateDAO.getMandateStatusById(finReference, mandateID);
 			if (mandate != null && !StringUtils.isEmpty(mandate.getStatus())

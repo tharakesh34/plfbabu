@@ -224,7 +224,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	public void onCreate$window_FinanceMainList(Event event) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		// Getting Menu Item Right Name
 		String menuItemName = getCurrentTab();
@@ -403,7 +403,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// ++ create the searchObject and initial sorting ++//
 		this.searchObj = new JdbcSearchObject<FinanceMain>(FinanceMain.class, getListRows());
 		this.searchObj.addSort("FinID", false);
-		// this.searchObj.addSort("PrevMntOn", true);
+		this.searchObj.addSort("PrevMntOn", true);
 
 		// Field Declarations for Fetching List Data
 		this.searchObj.addField("FinID");
@@ -440,8 +440,6 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addTabelName("FinanceMain_LView");
 		setSearchObj(this.searchObj);
 
-		doSearch();
-
 		// set the itemRenderer
 		this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
 
@@ -454,14 +452,15 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			fromEligibleScreen = false;
 			finEligibility = null;
 		}
-		logger.debug("Leaving " + event.toString());
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * SetVisible for components by checking if there's a right for it.
 	 */
 	private void doCheckRights() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		getUserWorkspace().allocateAuthorities("FinanceMainList");
 
 		this.button_FinanceMainList_NewFinanceMain
@@ -527,7 +526,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 					new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, valueParm),
 					getUserWorkspace().getUserLanguage());
 			MessageUtil.showError(errorDetails.getError());
-			logger.debug("Leaving " + event.toString());
+			logger.debug(Literal.LEAVING);
 			return;
 		}
 
@@ -612,7 +611,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			}
 		}
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -645,7 +644,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	private void validateCustExistance(FinanceDetail financeDetail) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
 		if (checkUserAccess(financeDetail)) {
@@ -682,7 +681,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param createFlag
 	 */
 	private void doReserveCIF(FinanceDetail financeDetail, String createFlag) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		Map<String, Object> map = getDefaultArguments();
 		map.put("financeDetail", financeDetail);
@@ -780,7 +779,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Call the FinanceMain dialog with a new empty entry. <br>
 	 */
 	public void onClick$button_FinanceMainList_NewFinanceMain(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		/*
 		 * we can call our SelectFinanceType ZUL-file with parameters. So we can call them with a object of the selected
@@ -817,7 +816,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		fromEligibleScreen = false;
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -828,7 +827,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @throws Exception
 	 */
 	protected void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
@@ -905,9 +904,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnHelp(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		MessageUtil.showHelpWindow(event, window_FinanceMainList);
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -919,7 +918,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @throws InterruptedException
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		this.sortOperator_custID.setSelectedIndex(0);
 		this.custCIF.setValue("");
 		this.sortOperator_finReference.setSelectedIndex(0);
@@ -962,16 +961,16 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.pagingFinanceMainList.setActivePage(0);
 		doSearch();
 
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for call the FinanceMain dialog
 	 */
 	public void onClick$button_FinanceMainList_FinanceMainSearchDialog(Event event) throws Exception {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearch();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -991,10 +990,11 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Method for Searching List based on Filters
 	 */
 	public void doSearch() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.searchObj.clearFilters();
 		this.searchObj.clearSorts();
+
 		if (usrfinRolesList == null || usrfinRolesList.isEmpty()) {
 			return;
 		}
@@ -1143,6 +1143,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
+
 		// finDOB
 		if (this.finDateofBirth.getValue() != null) {
 			searchObj = getSearchFilter(searchObj, sortOperator_finDateofBirth.getSelectedItem(),
@@ -1213,9 +1214,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		}
 
 		// Set the ListModel for the articles.
-		getPagedListWrapper().init(this.searchObj, this.listBoxFinanceMain, this.pagingFinanceMainList);
+		pagedListWrapper.init(this.searchObj, this.listBoxFinanceMain, this.pagingFinanceMainList);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1224,7 +1225,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onClick$btnSearchFinType(Event event) {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.oldVar_sortOperator_finType == Filter.OP_IN || this.oldVar_sortOperator_finType == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
@@ -1246,7 +1247,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -1255,7 +1256,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onClick$btnSearchBranch(Event event) {
-		logger.debug("Entering  " + event.toString());
+		logger.debug(Literal.ENTERING);
 
 		if (this.oldVar_sortOperator_Branch == Filter.OP_IN || this.oldVar_sortOperator_Branch == Filter.OP_NOT_IN) {
 			// Calling MultiSelection ListBox From DB
@@ -1276,7 +1277,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 				}
 			}
 		}
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	// ************************************************************************
@@ -1331,7 +1332,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
 			throws InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		this.custCIF.clearErrorMessage();
 		this.custCIFSearchObject = newSearchObject;
 
@@ -1350,16 +1351,16 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param event
 	 */
 	public void onClick$btnSearchCustCIF(Event event) throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering " + event.toString());
+		logger.debug(Literal.ENTERING);
 		doSearchCustomerCIF();
-		logger.debug("Leaving " + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
 	 * Method for Showing Customer Search Window
 	 */
 	private void doSearchCustomerCIF() throws SuspendNotAllowedException, InterruptedException {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		Map<String, Object> map = getDefaultArguments();
 		map.put("DialogCtrl", this);
 		map.put("filtertype", "Extended");
@@ -1383,7 +1384,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Method for Setting default properties
 	 */
 	private void doSetFieldProperties() {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		this.custID.setMaxlength(LengthConstants.LEN_CIF);
 		this.custCIF.setMaxlength(LengthConstants.LEN_CIF);
@@ -1404,7 +1405,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 */
 	public JdbcSearchObject<FinanceMain> setFinReferences(JdbcSearchObject<FinanceMain> searchObject,
 			String whereClause) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		String reference = StringUtils.trimToEmpty(finReference.getValue());
 

@@ -163,8 +163,6 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 
 		// Render the page and display no data when the page loaded for the first time.
 		doRenderPage();
-
-		search();
 	}
 
 	/**

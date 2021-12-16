@@ -151,7 +151,7 @@ public interface FinanceMainDAO {
 
 	int getFinCountByCustId(long custID);
 
-	void updateFinMandateId(long mandateId, long finID, String type);
+	void updateFinMandateId(Long mandateId, long finID, String type);
 
 	long getMandateIdByRef(long finID, String type);
 

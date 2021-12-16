@@ -79,7 +79,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public Mandate getMandateById(final long id, String type) {
+	public Mandate getMandateById(Long id, String type) {
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where MandateID = ?");
 
@@ -588,7 +588,7 @@ public class MandateDAOImpl extends SequenceDao<Mandate> implements MandateDAO {
 	}
 
 	@Override
-	public Mandate getMandateStatusById(String finReference, long mandateID) {
+	public Mandate getMandateStatusById(String finReference, Long mandateID) {
 		String sql = "Select Status, ExpiryDate From Mandates Where MandateID = ? and OrgReference = ? and Active = ?";
 
 		logger.debug(Literal.SQL + sql);
