@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SOAReportGenerationDialogCtrl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  23-09-2012   														*
- *                                                                  						*
- * Modified Date    :  23-09-2012      														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SOAReportGenerationDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 23-09-2012 * *
+ * Modified Date : 23-09-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 23-09-2012         Pennant	                 0.1                                        * 
- * 24-05-2018         Srikanth                  0.2           Merge the Code From Bajaj To Core                                                                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 23-09-2012 Pennant 0.1 * 24-05-2018 Srikanth 0.2 Merge the Code From Bajaj To Core * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports;
@@ -142,7 +124,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			}
 			doSetFieldProperties();
 			this.window_SOAReportGenerationDialogCtrl.doModal();
-			//setDialog(DialogType.EMBEDDED);
+			// setDialog(DialogType.EMBEDDED);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 			MessageUtil.showError(Labels.getLabel("label_ReportConfiguredError.error"));
@@ -177,8 +159,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -188,10 +169,10 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		}
 
 		else {
-			//Close the current window
+			// Close the current window
 			this.window_SOAReportGenerationDialogCtrl.onClose();
 
-			//Close the current menu item
+			// Close the current menu item
 			final Borderlayout borderlayout = (Borderlayout) Path.getComponent("/outerIndexWindow/borderlayoutMain");
 			final Tabbox tabbox = (Tabbox) borderlayout.getFellow("center").getFellow("divCenter")
 					.getFellow("tabBoxIndexCenter");
@@ -241,11 +222,10 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 
 				} else if (isAlwFlexi) {
 
-					ReportsUtil.generatePDF("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount,
-							list, userName, null);
+					ReportsUtil.generatePDF("FINENQ_StatementOfAccount_FinType_Hybrid", this.statementOfAccount, list,
+							userName, null);
 				} else {
-					ReportsUtil.generatePDF("FINENQ_StatementOfAccount", this.statementOfAccount, list, userName,
-							null);
+					ReportsUtil.generatePDF("FINENQ_StatementOfAccount", this.statementOfAccount, list, userName, null);
 
 				}
 			} catch (Exception e) {
@@ -295,7 +275,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
-		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
+		List<WrongValueException> wve = new ArrayList<>();
 		String finReference = "";
 		Date startDate = null;
 		Date endDate = null;
@@ -371,15 +351,17 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 		doClearMessage();
 		doRemoveValidation();
 
-		//Finance Type
+		// Finance Type
 		this.finReference.setConstraint(
 				new PTStringValidator(Labels.getLabel("label_SOAReportDialog_FinReference.value"), null, true, true));
 
-		//Date appStartDate = DateUtility.getAppDate();
+		// Date appStartDate = DateUtility.getAppDate();
 		Date appEndDate = SysParamUtil.getValueAsDate("APP_DFT_END_DATE");
 		// Start Date
 		if (!this.startDate.isDisabled()) {
-			//this.startDate.setConstraint(new PTDateValidator(Labels.getLabel("label_SOAReportDialog_StartDate.value"), true, appStartDate, appEndDate, true));
+			// this.startDate.setConstraint(new
+			// PTDateValidator(Labels.getLabel("label_SOAReportDialog_StartDate.value"), true, appStartDate, appEndDate,
+			// true));
 			this.startDate
 					.setConstraint(new PTDateValidator(Labels.getLabel("label_SOAReportDialog_StartDate.value"), true));
 		}
@@ -405,7 +387,7 @@ public class SOAReportGenerationDialogCtrl extends GFCBaseCtrl<StatementOfAccoun
 			byte[] buf = ReportsUtil.generatePDF(reportName, object, listData, userName);
 
 			boolean reportView = true;
-			//Assignments
+			// Assignments
 			if ("AssignmentUploadDetails".equals(reportName)) {
 				reportView = false;
 			}
