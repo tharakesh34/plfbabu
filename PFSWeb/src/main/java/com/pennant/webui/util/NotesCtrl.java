@@ -493,6 +493,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 			}
 
 			if (this.notesList == null) {
+				this.newNotes.setRoleCode(roleCode);
 				getNotesService().saveOrUpdate(this.newNotes);
 			} else {
 				this.newNotes.setUsrLogin(getUserWorkspace().getLoggedInUser().getUserName());

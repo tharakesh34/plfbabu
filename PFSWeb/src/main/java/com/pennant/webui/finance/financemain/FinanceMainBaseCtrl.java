@@ -2874,6 +2874,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			map.put("notes", getNotes(this.financeDetail.getFinScheduleData().getFinanceMain()));
 			map.put("control", this);
 			map.put("finHeaderList", getFinBasicDetails());
+			map.put("roleCode", getRole());
 			try {
 				Executions.createComponents("/WEB-INF/pages/notes/notes.zul",
 						getTabpanel(AssetConstants.UNIQUE_ID_RECOMMENDATIONS), map);

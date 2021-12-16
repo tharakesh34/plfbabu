@@ -354,6 +354,7 @@ public abstract class AbstractDialogController<T> extends AbstractController<T> 
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes(entity));
 		map.put("control", this);
+		map.put("userRole", getRole());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {

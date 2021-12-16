@@ -3116,6 +3116,7 @@ public class FinanceMaintenanceDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
 		map.put("control", this);
+		map.put("roleCode", getRole());
 
 		// call the ZUL-file with the parameters packed in a map
 		try {
