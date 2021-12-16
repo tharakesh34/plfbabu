@@ -248,6 +248,16 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			registerField("paymentType", listheader_ExcessType);
 			registerField("receiptMode", listheader_ReceiptMode, SortOrder.NONE, receiptMode, sortOperator_receiptMode,
 					Operators.DEFAULT);
+		} else {
+			try {
+				listheader_PayTypeRef.setSortDescending("");
+				listheader_PayTypeRef.setSortAscending("");
+
+				listheader_PartnerBank.setSortDescending("");
+				listheader_PartnerBank.setSortAscending("");
+
+			} catch (Exception e) {
+			}
 		}
 		// Bug fix while click on list header of knock off from in Knock off maker and approver
 		if (StringUtils.equals(this.module, FinanceConstants.KNOCKOFF_MAKER)
