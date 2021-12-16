@@ -6703,7 +6703,7 @@
 
 	<!-- (LFV) :: Linked Finance views are handle in single place start -->
 
-	<changeSet id="LFV_1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="LFV_1.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_aview');
@@ -6711,12 +6711,12 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="LFV_1" author="Gopal.p">
+	<changeSet id="LFV_1.1" author="Gopal.p">
 		<createView viewName="LINKEDFINANCES_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID, 
-					F.FINID,
-					F.FINREFERENCE,  
+					T1.FINID,
+					T1.FINREFERENCE,  
 					T1.LINKEDREFERENCE, 
 					F.FINTYPE LINKEDFINTYPE, 
 					T1.VERSION, 
@@ -6736,7 +6736,7 @@
 				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
 				UNION ALL 
 				SELECT T1.ID, 
-					F.FINID,
+					T1.FINID,
 					T1.FINREFERENCE,  
 					T1.LINKEDREFERENCE, 
 					F.FINTYPE LINKEDFINTYPE, 
@@ -6759,7 +6759,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="LFV_1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="LFV_1.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'linkedfinances_aview');
@@ -6767,7 +6767,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="LFV_2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="LFV_2.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_tview');
@@ -6775,11 +6775,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="LFV_2" author="Gopal.p">
+	<changeSet id="LFV_2.1" author="Gopal.p">
 		<createView viewName="LINKEDFINANCES_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID, 
-					F.FINID,
+					T1.FINID,
 					T1.FINREFERENCE,  
 					T1.LINKEDREFERENCE, 
 					F.FINTYPE LINKEDFINTYPE, 
@@ -6801,7 +6801,7 @@
 				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
 				UNION ALL 
 				SELECT T1.ID, 
-					F.FINID,
+					T1.FINID,
 					T1.FINREFERENCE,  
 					T1.LINKEDREFERENCE, 
 					F.FINTYPE LINKEDFINTYPE, 
@@ -6825,7 +6825,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="LFV_2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="LFV_2.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'linkedfinances_tview');
@@ -6833,7 +6833,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="LFV_3_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="LFV_3.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'linkedfinances_view');
@@ -6841,11 +6841,11 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="LFV_3" author="Gopal.p">
+	<changeSet id="LFV_3.1" author="Gopal.p">
 		<createView viewName="LINKEDFINANCES_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID, 
-					F.FINID,
+					T1.FINID,
 					T1.FINREFERENCE,  
 					T1.LINKEDREFERENCE, 
 					F.FINTYPE LINKEDFINTYPE, 
@@ -6866,7 +6866,7 @@
 				INNER JOIN CUSTOMERS C ON F.CUSTID = C.CUSTID
 				UNION ALL
 				SELECT	T1.ID, 
-					F.FINID,
+					T1.FINID,
 					T1.FINREFERENCE,  
 					T1.LINKEDREFERENCE, 
 					F.FINTYPE LINKEDFINTYPE, 
@@ -6889,7 +6889,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="LFV_3_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="LFV_3.1_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'linkedfinances_view');

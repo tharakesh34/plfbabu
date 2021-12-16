@@ -1100,9 +1100,8 @@ public class LinkedFinancesDialogCtrl extends GFCBaseCtrl<LinkedFinances> {
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
 		for (LinkedFinances linkedFin : financeDetail.getLinkedFinancesList()) {
-
+			linkedFin.setFinID(financeMain.getFinID());
 			linkedFin.setFinReference(financeMain.getFinReference());
-
 			linkedFin.setVersion(financeMain.getVersion() + 1);
 			linkedFin.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 			linkedFin.setLastMntOn(new Timestamp(System.currentTimeMillis()));
