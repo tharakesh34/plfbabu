@@ -440,6 +440,9 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addTabelName("FinanceMain_LView");
 		setSearchObj(this.searchObj);
 
+		// rendering the list page data required or not.
+		doSearch();
+
 		// set the itemRenderer
 		this.listBoxFinanceMain.setItemRenderer(new FinanceMainListModelItemRenderer());
 

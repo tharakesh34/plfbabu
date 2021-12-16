@@ -39,7 +39,6 @@ import org.zkoss.zul.Tabbox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -240,11 +239,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 			if (pagedListWrapper != null && paging != null) {
 				pagedListWrapper.setPagedListService(pagedListService);
 
-				if (!this.searchObject.getFilters().isEmpty()) {
-					pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
-				} else {
-					pagedListWrapper.clear();
-				}
+				pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
 			}
 		} else {
 			final SearchResult<?> searchResult = pagedListService.getSRBySearchObject(this.searchObject);
@@ -320,10 +315,8 @@ public class AbstractListController<T> extends AbstractController<T> {
 			}
 		}
 
-		if (ImplementationConstants.LIST_RENDER_ON_LOAD || !this.searchObject.getFilters().isEmpty()) {
-			if (isWorkFlowEnabled() && !enqiryModule) {
-				this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
-			}
+		if (isWorkFlowEnabled() && !enqiryModule) {
+			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
 		}
 
 		logger.debug(Literal.LEAVING);
