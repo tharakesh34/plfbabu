@@ -1198,10 +1198,11 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	private void createExternalLiabilitiesSheet(Sheet sheet, List<CustomerExtLiability> customerExtLiabilities) {
 		int rowCount = 0;
 		List<String> values = null;
+		Date appDate = SysParamUtil.getAppDate();
 		if (CollectionUtils.isNotEmpty(customerExtLiabilities)) {
 			for (CustomerExtLiability extLiability : customerExtLiabilities) {
 				// getting the default RTR upload list based on app date and loan start date for each record
-				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(extLiability);
+				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(extLiability, appDate);
 				if (CollectionUtils.isNotEmpty(paymentDetails)) {
 					// as per the UD we are not considering existing RTR details, so we are setting the default RTR's
 					extLiability.setExtLiabilitiesPayments(paymentDetails);
@@ -1244,9 +1245,10 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * @param customerExtLiability
 	 * @return
 	 */
-	public static List<ExtLiabilityPaymentdetails> getPaymentDetails(CustomerExtLiability customerExtLiability) {
+	public static List<ExtLiabilityPaymentdetails> getPaymentDetails(CustomerExtLiability customerExtLiability,
+			Date appDate) {
 		// getting the emi list between app date and loan start date
-		Date dtStartDate = DateUtil.addMonths(customerExtLiability.getFinDate(), -1);
+		Date dtStartDate = DateUtil.addMonths(appDate, -1);
 		Date dtEndDate = DateUtil.addMonths(dtStartDate, -6);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate,
 				customerExtLiability.getExtLiabilitiesPayments());
