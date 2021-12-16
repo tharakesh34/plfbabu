@@ -190,113 +190,110 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			// Manual Advise and Bounce Waivers
 			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(finID);
 
-			if (CollectionUtils.isNotEmpty(adviseList)) {
-				String taxComponent = null;
-				for (ManualAdvise ma : adviseList) {
+			String taxComponent = null;
+			for (ManualAdvise ma : adviseList) {
 
-					if (ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()))
-							.compareTo(BigDecimal.ZERO) <= 0) {
-						continue;
-					}
+				if (ma.getAdviseAmount().subtract(ma.getPaidAmount().add(ma.getWaivedAmount()))
+						.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
 
-					BigDecimal recAmount = ma.getAdviseAmount().subtract(ma.getWaivedAmount());
-					BigDecimal totPaidGst = ma.getPaidCGST()
-							.add(ma.getPaidIGST().add(ma.getPaidSGST().add(ma.getPaidUGST()).add(ma.getPaidCESS())));
+				BigDecimal recAmount = ma.getAdviseAmount().subtract(ma.getWaivedAmount());
+				BigDecimal totPaidGst = ma.getPaidCGST()
+						.add(ma.getPaidIGST().add(ma.getPaidSGST().add(ma.getPaidUGST()).add(ma.getPaidCESS())));
 
-					if (ma.getBounceID() != 0) {
-						ma.setAdviseID(-3);
-					}
+				if (ma.getBounceID() != 0) {
+					ma.setAdviseID(-3);
+				}
 
-					BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference,
-							ma.getAdviseID());
+				BigDecimal currWaiverGst = feeWaiverDetailDAO.getFeeWaiverDetailList(finReference, ma.getAdviseID());
 
-					if (ma.getBounceID() != 0) {
-						receivableAmt = receivableAmt.add(recAmount);
-						adviseAmt = receivableAmt;
-						receivedAmt = receivedAmt.add(ma.getPaidAmount());
-						gstAmt = gstAmt.add(totPaidGst);
-						waivedAmt = waivedAmt.add(ma.getWaivedAmount());
+				if (ma.getBounceID() != 0) {
+					receivableAmt = receivableAmt.add(recAmount);
+					adviseAmt = receivableAmt;
+					receivedAmt = receivedAmt.add(ma.getPaidAmount());
+					gstAmt = gstAmt.add(totPaidGst);
+					waivedAmt = waivedAmt.add(ma.getWaivedAmount());
 
-						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
-							waivedGstBounceAmt = currWaiverGst;
-						} else {
-							waivedGstAmt = BigDecimal.ZERO;
-							waivedGstBounceAmt = BigDecimal.ZERO;
-						}
+					if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
+						waivedGstBounceAmt = currWaiverGst;
 					} else {
-						fwd = new FeeWaiverDetail();
-						fwd.setFinID(finID);
-						fwd.setFinReference(finReference);
-						fwd.setNewRecord(true);
-						fwd.setAdviseId(ma.getAdviseID());
-						fwd.setFeeTypeCode(ma.getFeeTypeCode());
-						fwd.setFeeTypeDesc(ma.getFeeTypeDesc());
-						fwd.setWaivedAmount(ma.getWaivedAmount());
-						fwd.setTaxApplicable(ma.isTaxApplicable());
-						fwd.setTaxComponent(ma.getTaxComponent());
-						fwd.setReceivedAmount(ma.getPaidAmount());
-
-						taxComponent = fwd.getTaxComponent();
-						if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
-							waivedGstAmt = currWaiverGst;
-							fwd.setWaiverGST(waivedGstAmt);
-						}
-						TaxAmountSplit taxSplit = null;
-						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-							taxSplit = GSTCalculator.getExclusiveGST(ma.getAdviseAmount(), gstPercentages);
-						} else {
-							taxSplit = GSTCalculator.getInclusiveGST(ma.getAdviseAmount(), gstPercentages);
-						}
-
-						fwd.setAdviseAmount(ma.getBalanceAmt());
-						fwd.setAdviseGST(taxSplit.gettGST());
-
-						prepareGST(fwd, recAmount, gstPercentages);
-
-						if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-							fwd.setReceivedAmount(fwd.getReceivedAmount().add(totPaidGst));
-						}
-						fwd.setBalanceAmount(fwd.getReceivableAmount().subtract(fwd.getCurrWaiverAmount()));
-
-						detailList.add(fwd);
+						waivedGstAmt = BigDecimal.ZERO;
+						waivedGstBounceAmt = BigDecimal.ZERO;
 					}
-				}
-				// get Bounce charges
-				fwd = new FeeWaiverDetail();
-				fwd.setFinID(finID);
-				fwd.setFinReference(finReference);
-				fwd.setNewRecord(true);
-				fwd.setAdviseId(-3);
-				fwd.setFeeTypeCode(RepayConstants.ALLOCATION_BOUNCE);
-				FeeType bounce = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_BOUNCE);
-				if (bounce != null) {
-					fwd.setFeeTypeDesc(bounce.getFeeTypeDesc());
-					fwd.setTaxApplicable(bounce.isTaxApplicable());
-					fwd.setTaxComponent(bounce.getTaxComponent());
 				} else {
-					fwd.setFeeTypeDesc(Labels.getLabel("label_ReceiptDialog_BounceCharge.value"));
-				}
+					fwd = new FeeWaiverDetail();
+					fwd.setFinID(finID);
+					fwd.setFinReference(finReference);
+					fwd.setNewRecord(true);
+					fwd.setAdviseId(ma.getAdviseID());
+					fwd.setFeeTypeCode(ma.getFeeTypeCode());
+					fwd.setFeeTypeDesc(ma.getFeeTypeDesc());
+					fwd.setWaivedAmount(ma.getWaivedAmount());
+					fwd.setTaxApplicable(ma.isTaxApplicable());
+					fwd.setTaxComponent(ma.getTaxComponent());
+					fwd.setReceivedAmount(ma.getPaidAmount());
 
-				taxComponent = fwd.getTaxComponent();
-				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-					receivedAmt = receivedAmt.add(gstAmt);
-					gstAmt = BigDecimal.ZERO;
-				}
-				fwd.setReceivedAmount(receivedAmt);
+					taxComponent = fwd.getTaxComponent();
+					if (currWaiverGst != null && currWaiverGst.compareTo(BigDecimal.ZERO) > 0) {
+						waivedGstAmt = currWaiverGst;
+						fwd.setWaiverGST(waivedGstAmt);
+					}
+					TaxAmountSplit taxSplit = null;
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+						taxSplit = GSTCalculator.getExclusiveGST(ma.getAdviseAmount(), gstPercentages);
+					} else {
+						taxSplit = GSTCalculator.getInclusiveGST(ma.getAdviseAmount(), gstPercentages);
+					}
 
-				if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
-					TaxAmountSplit taxSplit = GSTCalculator.getExclusiveGST(adviseAmt, gstPercentages);
-					fwd.setAdviseAmount(adviseAmt);
-					fwd.setWaivedAmount(waivedAmt);
-					fwd.setWaiverGST(waivedGstBounceAmt);
+					fwd.setAdviseAmount(ma.getAdviseAmount());
 					fwd.setAdviseGST(taxSplit.gettGST());
-				}
-				prepareGST(fwd, receivableAmt, gstPercentages);
 
-				fwd.setWaivedAmount(waivedAmt);
-				fwd.setBalanceAmount(fwd.getReceivableAmount().subtract(fwd.getCurrWaiverAmount()));
-				detailList.add(fwd);
+					prepareGST(fwd, recAmount, gstPercentages);
+
+					if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+						fwd.setReceivedAmount(fwd.getReceivedAmount().add(totPaidGst));
+					}
+					fwd.setBalanceAmount(fwd.getReceivableAmount().subtract(fwd.getCurrWaiverAmount()));
+
+					detailList.add(fwd);
+				}
 			}
+			// get Bounce charges
+			fwd = new FeeWaiverDetail();
+			fwd.setFinID(finID);
+			fwd.setFinReference(finReference);
+			fwd.setNewRecord(true);
+			fwd.setAdviseId(-3);
+			fwd.setFeeTypeCode(RepayConstants.ALLOCATION_BOUNCE);
+			FeeType bounce = this.feeTypeDAO.getApprovedFeeTypeByFeeCode(RepayConstants.ALLOCATION_BOUNCE);
+			if (bounce != null) {
+				fwd.setFeeTypeDesc(bounce.getFeeTypeDesc());
+				fwd.setTaxApplicable(bounce.isTaxApplicable());
+				fwd.setTaxComponent(bounce.getTaxComponent());
+			} else {
+				fwd.setFeeTypeDesc(Labels.getLabel("label_ReceiptDialog_BounceCharge.value"));
+			}
+
+			taxComponent = fwd.getTaxComponent();
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+				receivedAmt = receivedAmt.add(gstAmt);
+				gstAmt = BigDecimal.ZERO;
+			}
+			fwd.setReceivedAmount(receivedAmt);
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxComponent)) {
+				TaxAmountSplit taxSplit = GSTCalculator.getExclusiveGST(adviseAmt, gstPercentages);
+				fwd.setAdviseAmount(adviseAmt);
+				fwd.setWaivedAmount(waivedAmt);
+				fwd.setWaiverGST(waivedGstBounceAmt);
+				fwd.setAdviseGST(taxSplit.gettGST());
+			}
+			prepareGST(fwd, receivableAmt, gstPercentages);
+
+			fwd.setWaivedAmount(waivedAmt);
+			fwd.setBalanceAmount(fwd.getReceivableAmount().subtract(fwd.getCurrWaiverAmount()));
+			detailList.add(fwd);
 			receivableAmt = BigDecimal.ZERO;
 			receivedAmt = BigDecimal.ZERO;
 			waivedAmt = BigDecimal.ZERO;
