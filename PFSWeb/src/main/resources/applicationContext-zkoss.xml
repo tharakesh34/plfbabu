@@ -93,7 +93,6 @@
 	<bean id="sendMessageDialogCtrl" class="com.pennant.webui.util.SendMessageDialogCtrl" parent="basisListCtrl"
 		scope="prototype">
 		<property name="messagesService" ref="messagesService" />
-		<property name="eventManager" ref="eventManager" />
 	</bean>
 
 	<!-- UserBarController -->
