@@ -25641,7 +25641,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="700_pre" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="700.1_pre" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'covenants_view');
@@ -25649,7 +25649,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="700" author="Gireesh.G">
+	<changeSet id="700.1" author="Gireesh.G">
 		<createView viewName="COVENANTS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
@@ -25752,7 +25752,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 
-	<changeSet id="700_Post" author="Gireesh.G" dbms="postgresql">
+	<changeSet id="700.1_Post" author="Gireesh.G" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'covenants_view');
@@ -26136,8 +26136,8 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 	<changeSet id="PSD#185083" author="NagaVamsi.P">
 		<sql>
 			<![CDATA[
-               UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTCIF' WHERE REPORTID IN(SELECT REPORTID FROM  REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5
-               UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTSHRTNAME' WHERE REPORTID IN(SELECT REPORTID FROM .REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5
+               UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTCIF' WHERE REPORTID IN(SELECT REPORTID FROM  REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5;
+               UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTSHRTNAME' WHERE REPORTID IN(SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5;
 			]]>
 		</sql>
 	</changeSet>
@@ -26154,26 +26154,6 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		<sql>
 			<![CDATA[
    		     	UPDATE REPORTLIST SET FIELDVALUES = 'FinType, LovDescProductCodeName, LovDescCustCIF, FinReference, FinBranch, FinStartDate, NumberOfTerms, MaturityDate, FinCcy, FinancingAmount, CurFinAmount, FinCurrAssetValue, FeeChargeAmt, TotalCpz, FinRepaymentAmount, SvAmount, DownPayment, ClosingStatus', FieldType = 'String, String, String, String, String, Date, int, Date, String, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, BigDecimal, String' WHERE  CODE ='FINENQ'
-        	 ]]>
-		</sql>
-	</changeSet>
-
-	<changeSet id="PSD#185083" author="NagaVamsi.P">
-		<sql>
-			<![CDATA[
-               UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTCIF' WHERE REPORTID IN(SELECT REPORTID FROM  REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5
-               UPDATE REPORTFILTERFIELDS SET LOVTEXTFIELDMETHOD ='GETCUSTSHRTNAME' WHERE REPORTID IN(SELECT REPORTID FROM .REPORTCONFIGURATION WHERE MENUITEMCODE ='MENU_ITEM_MANUALPAYMENTSDUE') AND FIELDID =5
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="PSD#185577" author="Gireesh">
-		<sql>
-			<![CDATA[
-   		     	UPDATE FINRECEIPTHEADER_TEMP SET SUBRECEIPTMODE = null WHERE SUBRECEIPTMODE = '#';
-				UPDATE FINRECEIPTHEADER SET SUBRECEIPTMODE = null WHERE SUBRECEIPTMODE = '#';
-				UPDATE FINRECEIPTHEADER_TEMP SET RECEIPTMODE = null WHERE RECEIPTMODE = '#';
-				UPDATE FINRECEIPTHEADER SET RECEIPTMODE = null WHERE RECEIPTMODE = '#';
         	 ]]>
 		</sql>
 	</changeSet>
