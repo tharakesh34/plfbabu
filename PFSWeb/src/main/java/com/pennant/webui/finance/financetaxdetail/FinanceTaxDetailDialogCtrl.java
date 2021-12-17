@@ -2087,7 +2087,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 			}
 			readOnlyComponent(true, this.custRef);
 		} else if (PennantConstants.TAXAPPLICABLEFOR_COAPPLICANT.equals(applicableFor)) {
-			readOnlyComponent(false, this.custRef);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
 			if (fromLoan) {
 				if (jntDialogCtrl != null) {
 					for (Customer customer : jntDialogCtrl.getJointAccountCustomers()) {
@@ -2100,7 +2100,7 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 				}
 			}
 		} else if (PennantConstants.TAXAPPLICABLEFOR_GUARANTOR.equals(applicableFor)) {
-			readOnlyComponent(false, this.custRef);
+			readOnlyComponent(isReadOnly("FinanceTaxDetailDialog_ApplicableFor"), this.custRef);
 			if (fromLoan) {
 				if (jntDialogCtrl != null) {
 					for (Customer jntDet : jntDialogCtrl.getGuarantorCustomers()) {

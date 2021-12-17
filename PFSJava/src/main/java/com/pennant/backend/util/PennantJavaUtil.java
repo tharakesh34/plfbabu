@@ -2678,7 +2678,7 @@ public class PennantJavaUtil {
 
 		ModuleUtil.register("FileBatchStatus",
 				new ModuleMapping("FileBatchStatus", FileBatchStatus.class,
-						new String[] { "FileBatchStatus", "FileBatchStatus_AView" }, null,
+						new String[] { "FileBatchStatus_AView", "FileBatchStatus_AView" }, null,
 						new String[] { "Id", "FileName" }, new Object[][] { { "FileName", "1", "" } }, 600));
 
 		/* DMS Document Details Module */
