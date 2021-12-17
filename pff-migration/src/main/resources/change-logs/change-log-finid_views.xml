@@ -18912,5 +18912,58 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#185424_pre" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rpt_manualpaymentsdue_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#185424" author="Gopal.p">
+		<createView viewName = "RPT_MANUALPAYMENTSDUE_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT BRANCHDESC FINBRANCH,
+					FINBRANCH BRANCHCODE,
+		            T1.CUSTCIF,
+		            T4.CUSTSHRTNAME,
+		            T.FINID,
+					T.FINREFERENCE, 
+					T1.FINCCY,
+					DEFSCHDDATE,
+					CCYEDITFIELD,
+					T1.FINISACTIVE,
+					T5.FINDIVISION,
+					CCYISRECEPROCAL,
+					CCYSPOTRATE,
+					CCYMINORCCYUNITS,
+					(SELECT CCYSPOTRATE TARGETCCYSPOTRATE FROM RMTCURRENCIES WHERE CCYCODE IN
+					(SELECT SYSPARMVALUE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_DFT_CURR')) TARGETCCYSPOTRATE,
+					PROFITSCHD,
+					SCHDPFTPAID,
+					PRINCIPALSCHD,
+					SCHDPRIPAID,
+					(SELECT cast(SYSPARMVALUE as date) FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_NEXT_BUS_DATE') BUSSDATE
+				FROM FINSCHEDULEDETAILS T
+				INNER JOIN FINPFTDETAILS T1 ON T.FINID = T1.FINID
+				INNER JOIN RMTCURRENCIES C ON C.CCYCODE = T1.FINCCY
+				INNER JOIN RMTBRANCHES T2 ON T2.BRANCHCODE = FINBRANCH 
+				INNER JOIN CUSTOMERS T4 ON T4.CUSTID = T1.CUSTID
+				INNER JOIN RMTFINANCETYPES T5 ON T5.FINTYPE = T1.FINTYPE
+				WHERE DEFSCHDDATE < (SELECT cast(SYSPARMVALUE as date) FROM SMTPARAMETERS WHERE SYSPARMCODE = 'APP_NEXT_BUS_DATE')
+				AND REPAYONSCHDATE = 1 AND ((PROFITSCHD - SCHDPFTPAID) > 0 OR (PRINCIPALSCHD - SCHDPRIPAID) > 0 )
+				AND (T1.CLOSINGSTATUS !='C' OR T1.CLOSINGSTATUS IS NULL)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#185424_post" author="Gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rpt_manualpaymentsdue_view');
+			]]>
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>

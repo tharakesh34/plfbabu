@@ -952,7 +952,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", ma.PaidAmount, ma.WaivedAmount, ma.ValueDate, ma.PostDate, ma.BounceID, ma.ReceiptID");
 		sql.append(", ma.ReservedAmt, ft.TaxComponent");
 		sql.append(", ft.FeeTypeCode, ft.FeeTypeDesc, coalesce(ft.TaxApplicable, 0) TaxApplicable, ma.DueCreation");
-		sql.append(", ma.PaidCGST, ma.PaidSGST, ma.PaidIGST, ma.PaidUGST, ma.PaidCESS");
+		sql.append(", ma.PaidCGST, ma.PaidSGST, ma.PaidIGST, ma.PaidUGST, ma.PaidCESS, ma.TdsPaid");
 		sql.append(", ma.WaivedCGST, ma.WaivedSGST, ma.WaivedIGST,  ma.WaivedUGST, ma.WaivedCESS");
 		sql.append(", ma.Remarks, ma.FinSource, ma.LinkedTranId");
 		sql.append(", ma.Version, ma.LastMntOn, ma.LastMntBy, ma.RecordStatus");
@@ -996,6 +996,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
 			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
 			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setTdsPaid(rs.getBigDecimal("TdsPaid"));
 			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
 			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
 			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
