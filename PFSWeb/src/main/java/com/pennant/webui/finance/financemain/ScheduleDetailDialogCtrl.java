@@ -2485,7 +2485,6 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		if (planEMIHDate.isChecked()) {
 			boolean isDateFound = false;
 			for (Date planDate : planEMIHDateList) {
-				isDateFound = false;
 				if (DateUtility.compare(schDate, planDate) == 0) {
 					isDateFound = true;
 				}
