@@ -26161,7 +26161,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 	<changeSet id="PSD#185572" author="Gireesh">
 		<sql>
 			<![CDATA[
-   		     	DELETE FROM REPORTSEARCHTEMPLATE WHERE ReportID = (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report')
+   		     	DELETE FROM REPORTSEARCHTEMPLATE WHERE ReportID = (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report');
         	 ]]>
 		</sql>
 	</changeSet>
