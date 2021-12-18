@@ -476,7 +476,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								PennantApplicationUtil.formateAmount(applicableEMI, ccyEditField),
 								finMain.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -493,7 +492,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									PennantApplicationUtil.formateAmount(priOutStanding, ccyEditField),
 									finMain.getFinCcy())));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				// Next schedule details
@@ -754,7 +752,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								PennantApplicationUtil.formateAmount(finMain.getFinAssetValue(), ccyEditField),
 								finMain.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -772,7 +769,6 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										PennantApplicationUtil.formateAmount(loanAmount, ccyEditField),
 										finMain.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

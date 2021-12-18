@@ -1176,11 +1176,14 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	}
 
 	private StringBuilder getWhereClause() {
-		StringBuilder whereClause = new StringBuilder();
+		String collateralTypes = financeTypeService.getAllowedCollateralTypes(finType);
 
-		whereClause.append("(CollateralType in (SELECT CollateralType From RMTFinanceTypes Where FinType = '");
-		whereClause.append(finType);
-		whereClause.append("'))");
+		StringBuilder whereClause = new StringBuilder();
+		if (StringUtils.isNotEmpty(collateralTypes)) {
+			whereClause.append("(CollateralType in ('");
+			whereClause.append(collateralTypes.replace(",", "' , '"));
+			whereClause.append("'))");
+		}
 
 		whereClause.append(" AND ((DepositorId = ");
 		whereClause.append(customerId).append(") ");
