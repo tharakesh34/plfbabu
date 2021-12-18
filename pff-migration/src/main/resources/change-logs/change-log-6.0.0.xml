@@ -26679,4 +26679,236 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#184604.1" author="Mounika.M">
+		<addColumn tableName="FINTAXUPLOADDETAIL">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="PSD#184604.2" author="Mounika.M">
+		<addColumn tableName="FINTAXUPLOADDETAIL_TEMP">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+
+	<changeSet id="PSD#184604.3" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_FINTAXUPLOADDETAIL_PID" referencedTableName="PINCODES"
+			referencedColumnNames="PinCodeId" baseTableName="FINTAXUPLOADDETAIL" baseColumnNames="PinCodeId" />
+	</changeSet>
+
+	<changeSet id="PSD#184604.4" author="Mounika.M">
+		<addForeignKeyConstraint constraintName="FK_FINTAXUPLOADDETAIL_T_PID" referencedTableName="PINCODES"
+			referencedColumnNames="PinCodeId" baseTableName="FINTAXUPLOADDETAIL_TEMP" baseColumnNames="PinCodeId" />
+	</changeSet>
+
+	<changeSet id="PSD#184604.5" author="Mounika.M">
+		<createIndex tableName="FINTAXUPLOADDETAIL" indexName="IDX_FINTAXUPLOADDETAIL_PID">
+			<column name="PinCodeId" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="PSD#184604.6" author="Mounika.M">
+		<createIndex tableName="FINTAXUPLOADDETAIL_TEMP" indexName="IDX_FINTAXUPLOADDETAIL_T_PID">
+			<column name="PinCodeId" type="bigint" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="PSD#184604.7" author="Mounika.M" dbms="postgresql, mssql">
+		<sql>
+			<![CDATA[
+				Update FINTAXUPLOADDETAIL set PinCodeId = p.PinCodeId from PinCodes p where p.PinCode = FINTAXUPLOADDETAIL.PinCode;
+				Update FINTAXUPLOADDETAIL_TEMP set PinCodeId = p.PinCodeId from PinCodes p where p.PinCode = FINTAXUPLOADDETAIL_TEMP.PinCode;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="PSD#184604.8" author="Mounika.M" dbms="oracle">
+		<sql>
+			<![CDATA[
+				MERGE INTO FINTAXUPLOADDETAIL B
+				USING PinCodes PC ON (PC.PinCode = B.PinCode)
+				WHEN MATCHED THEN UPDATE SET B.PinCodeId = PC.PinCodeId;
+				
+				MERGE INTO FINTAXUPLOADDETAIL_TEMP B
+				USING PinCodes PC ON (PC.PinCode = B.PinCode)
+				WHEN MATCHED THEN UPDATE SET B.PinCodeId = PC.PinCodeId;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.9_pre" author="Mounika.M">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_aview'); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.9" author="Mounika.M">
+		<createView viewName="FINTAXUPLOADDETAIL_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.BATCHREFERENCE,
+				    T1.TAXCODE,
+				    T1.AGGREMENTNO,
+				    T1.APPLICABLEFOR,
+				    T1.APPLICANT,
+				    T1.TAXEXEMPTED,
+				    T1.ADDRLINE1,
+				    T1.ADDRLINE2,
+				    T1.ADDRLINE3,
+				    T1.ADDRLINE4,
+				    T1.COUNTRY,
+				    T1.CITY,
+				    T1.PROVINCE,
+				    T1.PINCODE,
+				    T1.SEQNO,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.ROLECODE,
+				    T1.RECORDSTATUS,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.PINCODEID
+   				FROM FINTAXUPLOADDETAIL T1;
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.9_post" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_aview');	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.10_pre" author="Mounika.M">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_tview'); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.10" author="Mounika.M">
+		<createView viewName="FINTAXUPLOADDETAIL_TVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.BATCHREFERENCE,
+				    T1.TAXCODE,
+				    T1.AGGREMENTNO,
+				    T1.APPLICABLEFOR,
+				    T1.APPLICANT,
+				    T1.TAXEXEMPTED,
+				    T1.ADDRLINE1,
+				    T1.ADDRLINE2,
+				    T1.ADDRLINE3,
+				    T1.ADDRLINE4,
+				    T1.COUNTRY,
+				    T1.CITY,
+				    T1.PROVINCE,
+				    T1.PINCODE,
+				    T1.SEQNO,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.ROLECODE,
+				    T1.RECORDSTATUS,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.PINCODEID
+   				FROM FINTAXUPLOADDETAIL_TEMP T1;
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.10_post" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_tview');	
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.11_pre" author="Mounika.M">
+		<sql> 
+			<![CDATA[ 
+				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_view'); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.11" author="Mounika.M">
+		<createView viewName="FINTAXUPLOADDETAIL_VIEW" replaceIfExists="true">
+			<![CDATA[
+				 SELECT T1.BATCHREFERENCE,
+				    T1.TAXCODE,
+				    T1.AGGREMENTNO,
+				    T1.APPLICABLEFOR,
+				    T1.APPLICANT,
+				    T1.TAXEXEMPTED,
+				    T1.ADDRLINE1,
+				    T1.ADDRLINE2,
+				    T1.ADDRLINE3,
+				    T1.ADDRLINE4,
+				    T1.COUNTRY,
+				    T1.CITY,
+				    T1.PROVINCE,
+				    T1.PINCODE,
+				    T1.SEQNO,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.ROLECODE,
+				    T1.RECORDSTATUS,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.PINCODEID
+				FROM FINTAXUPLOADDETAIL_TEMP T1
+				UNION ALL
+				SELECT T1.BATCHREFERENCE,
+				    T1.TAXCODE,
+				    T1.AGGREMENTNO,
+				    T1.APPLICABLEFOR,
+				    T1.APPLICANT,
+				    T1.TAXEXEMPTED,
+				    T1.ADDRLINE1,
+				    T1.ADDRLINE2,
+				    T1.ADDRLINE3,
+				    T1.ADDRLINE4,
+				    T1.COUNTRY,
+				    T1.CITY,
+				    T1.PROVINCE,
+				    T1.PINCODE,
+				    T1.SEQNO,
+				    T1.LASTMNTBY,
+				    T1.LASTMNTON,
+				    T1.ROLECODE,
+				    T1.RECORDSTATUS,
+				    T1.NEXTROLECODE,
+				    T1.TASKID,
+				    T1.NEXTTASKID,
+				    T1.RECORDTYPE,
+				    T1.WORKFLOWID,
+				    T1.PINCODEID
+				FROM FINTAXUPLOADDETAIL T1
+				WHERE NOT (EXISTS ( SELECT 1 FROM FINTAXUPLOADDETAIL_TEMP WHERE FINTAXUPLOADDETAIL_TEMP.AGGREMENTNO = T1.AGGREMENTNO))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#184604.11_post" author="Mounika.M">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_view');	
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

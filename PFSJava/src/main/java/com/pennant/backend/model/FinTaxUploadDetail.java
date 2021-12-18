@@ -31,6 +31,7 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 	private LoggedInUser userDetails;
 	private FinTaxUploadDetail befImage;
 	private int seqNo;
+	private Long pinCodeID;
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
@@ -157,6 +158,14 @@ public class FinTaxUploadDetail extends AbstractWorkflowEntity {
 
 	public void setPinCode(String pinCode) {
 		this.pinCode = pinCode;
+	}
+
+	public Long getPinCodeID() {
+		return pinCodeID;
+	}
+
+	public void setPinCodeID(Long pinCodeID) {
+		this.pinCodeID = pinCodeID;
 	}
 
 	public LoggedInUser getUserDetails() {

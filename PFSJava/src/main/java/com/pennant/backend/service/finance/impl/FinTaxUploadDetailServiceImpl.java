@@ -491,62 +491,74 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			}
 
 			// pincode validations against the system .
-			if (taxuploadDetail.getPinCode() != null) {
-				PinCode pincode = pinCodeDAO.getPinCode(taxuploadDetail.getPinCode(), "_View");
+
+			PinCode pincode = null;
+			if (taxuploadDetail.getPinCodeID() != null) {
+				pincode = pinCodeDAO.getPinCodeById(taxuploadDetail.getPinCodeID(), "_AView");
+			} else if (taxuploadDetail.getPinCode() != null) {
+				int pinCodeCount = pinCodeDAO.getPinCodeCount(taxuploadDetail.getPinCode(), "_AView");
+				valueParm = new String[1];
+
+				switch (pinCodeCount) {
+				case 0:
+					valueParm[0] = "PinCode " + taxuploadDetail.getPinCode();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", "", valueParm)));
+					break;
+				case 1:
+					pincode = pinCodeDAO.getPinCode(taxuploadDetail.getPinCode(), "_AView");
+					String[] errParams = new String[2];
+					if (pincode == null) {
+						// if pin code is not available then validate
+						errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label") + ":"
+								+ taxuploadDetail.getPinCode();
+						errParams[1] = aggrementNo;
+						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+								new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
+								usrLanguage));
+					} else {
+						taxuploadDetail.setPinCodeID(pincode.getPinCodeId());
+					}
+					break;
+				default:
+					valueParm[0] = "PinCodeId";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("51004", "", valueParm)));
+				}
+			}
+
+			if (pincode != null) {
 				String[] errParams = new String[2];
-				if (pincode == null) {
-					// if pin code is not available then validate
-					errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label") + ":"
-							+ taxuploadDetail.getPinCode();
+				if (!StringUtils.equals(pincode.getCity(), taxuploadDetail.getCity())) {
+					errParams[0] = PennantJavaUtil.getLabel("listheader_City.label") + ":" + taxuploadDetail.getCity();
 					errParams[1] = aggrementNo;
 					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 							new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
-				} else {
-					// if pin code is available then validate against city and province and country
-					if (!StringUtils.equals(pincode.getCity(), taxuploadDetail.getCity())) {
-						errParams[0] = PennantJavaUtil.getLabel("listheader_City.label") + ":"
-								+ taxuploadDetail.getCity();
-						errParams[1] = aggrementNo;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
-								usrLanguage));
-					}
-					if (!StringUtils.equals(pincode.getPCProvince(), taxuploadDetail.getProvince())) {
-						errParams[0] = PennantJavaUtil.getLabel("listheader_Province.label") + ":"
-								+ taxuploadDetail.getProvince();
-						errParams[1] = aggrementNo;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
-								usrLanguage));
-					}
-					if (!StringUtils.equals(pincode.getpCCountry(), taxuploadDetail.getCountry())) {
-						errParams[0] = PennantJavaUtil.getLabel("listheader_Country.label") + ":"
-								+ taxuploadDetail.getCountry();
-						errParams[1] = aggrementNo;
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-								new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm),
-								usrLanguage));
-					}
-
 				}
-			} else {
-				// pin code no givne then validate
-				String[] errParams = new String[2];
-				errParams[0] = PennantJavaUtil.getLabel("listheader_PinCode.label");
-				errParams[1] = aggrementNo;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+
+				if (!StringUtils.equals(pincode.getPCProvince(), taxuploadDetail.getProvince())) {
+					errParams[0] = PennantJavaUtil.getLabel("listheader_Province.label") + ":"
+							+ taxuploadDetail.getProvince();
+					errParams[1] = aggrementNo;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+				}
+
+				if (!StringUtils.equals(pincode.getpCCountry(), taxuploadDetail.getCountry())) {
+					errParams[0] = PennantJavaUtil.getLabel("listheader_Country.label") + ":"
+							+ taxuploadDetail.getCountry();
+					errParams[1] = aggrementNo;
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+							new ErrorDetail(PennantConstants.KEY_FIELD, "99007", errParams, valueParm), usrLanguage));
+				}
 			}
 
-			FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_Temp");
-			if (financeTaxDetail != null) {
+			if (financeTaxDetailDAO.getFinanceTaxDetail(finID, "_Temp") != null) {
 				String[] errParams = new String[1];
 				errParams[0] = aggrementNo;
 				auditDetail.setErrorDetail(ErrorUtil
 						.getErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "GSTUPL001", errParams, null)));
 			}
-
 		}
+
 		return auditDetail;
 
 	}
@@ -804,6 +816,7 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 		ftd.setProvince(tud.getProvince());
 		ftd.setCity(tud.getCity());
 		ftd.setPinCode(tud.getPinCode());
+		ftd.setPinCodeId(tud.getPinCodeID());
 		ftd.setTaxExempted(tud.isTaxExempted());
 		ftd.setLastMntBy(tud.getLastMntBy());
 		ftd.setLastMntOn(tud.getLastMntOn());

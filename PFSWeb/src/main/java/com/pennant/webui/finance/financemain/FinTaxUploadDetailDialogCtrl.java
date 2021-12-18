@@ -265,6 +265,12 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		fintaxDetail.setCountry(getValue(nextRow.getCell(11, MissingCellPolicy.CREATE_NULL_AS_BLANK)));
 		fintaxDetail.setTaxExempted(
 				getValue(nextRow.getCell(12, MissingCellPolicy.CREATE_NULL_AS_BLANK)).equals("Y") ? true : false);
+		String pinCodeID = getValue(nextRow.getCell(13, MissingCellPolicy.CREATE_NULL_AS_BLANK));
+
+		if (StringUtils.trimToNull(pinCodeID) != null) {
+			fintaxDetail.setPinCodeID(Long.valueOf(pinCodeID));
+		}
+
 		finTaxUploadDetail.add(fintaxDetail);
 		return fintaxDetail;
 	}
@@ -337,6 +343,8 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getPinCode());
 				lc.setParent(item);
+				lc = new Listcell(String.valueOf(taxMappingDetail.getPinCodeID()));
+				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getCity());
 				lc.setParent(item);
 				lc = new Listcell(taxMappingDetail.getProvince());
@@ -382,6 +390,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		td.setProvince(tud.getProvince());
 		td.setCity(tud.getCity());
 		td.setPinCode(tud.getPinCode());
+		td.setPinCodeId(tud.getPinCodeID());
 		td.setTaxExempted(tud.isTaxExempted());
 
 		Map<String, Object> arg = new HashMap<String, Object>();

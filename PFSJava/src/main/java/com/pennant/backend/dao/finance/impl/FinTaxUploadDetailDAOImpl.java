@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ManualAdviseDAOImpl.java                                             * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  22-04-2017    														*
- *                                                                  						*
- * Modified Date    :  22-04-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ManualAdviseDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 22-04-2017 * * Modified
+ * Date : 22-04-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 22-04-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 22-04-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.finance.impl;
 
 import java.util.List;
@@ -83,7 +65,7 @@ public class FinTaxUploadDetailDAOImpl extends SequenceDao<FinTaxUploadHeader> i
 		StringBuilder sql = new StringBuilder();
 		sql.append(
 				" Select BatchReference, TaxCode, AggrementNo, ApplicableFor,Applicant,TaxExempted,AddrLine1,AddrLine2,AddrLine3,AddrLine4,"
-						+ "Country,City,PinCode,Province,SeqNo,");
+						+ "Country,City,PinCode, PinCodeId, Province,SeqNo,");
 		sql.append(
 				"  LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId");
 		sql.append(" From FinTaxUploadDetail");
@@ -164,16 +146,15 @@ public class FinTaxUploadDetailDAOImpl extends SequenceDao<FinTaxUploadHeader> i
 		StringBuilder insertSql = new StringBuilder();
 		insertSql.append("Insert Into finTaxUploadDetail");
 		insertSql.append(StringUtils.trimToEmpty(type));
-		insertSql.append(
-				" (BatchReference, TaxCode, AggrementNo, ApplicableFor,Applicant,TaxExempted,AddrLine1,AddrLine2,AddrLine3,AddrLine4,Country,");
-		insertSql.append(
-				" Province,City,PinCode,SeqNo,Version ,LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode,");
-		insertSql.append("	TaskId, NextTaskId, RecordType, WorkflowId)");
-		insertSql.append(
-				"  Values(:BatchReference, :TaxCode, :AggrementNo, :ApplicableFor,:Applicant,:TaxExempted,:AddrLine1,:AddrLine2,:AddrLine3,:AddrLine4,:Country,");
-		insertSql.append(
-				":Province, :City, :PinCode, :SeqNo,  :Version , :LastMntBy, :LastMntOn, :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
-
+		insertSql.append(" (BatchReference, TaxCode, AggrementNo, ApplicableFor, Applicant");
+		insertSql.append(", TaxExempted, AddrLine1, AddrLine2, AddrLine3, AddrLine4, Country");
+		insertSql.append(", Province, City, PinCode, PinCodeId, SeqNo, Version ,LastMntBy, LastMntOn");
+		insertSql.append(", RecordStatus, RoleCode, NextRoleCode");
+		insertSql.append(",	TaskId, NextTaskId, RecordType, WorkflowId)");
+		insertSql.append("  Values(:BatchReference, :TaxCode, :AggrementNo, :ApplicableFor, :Applicant");
+		insertSql.append(", :TaxExempted, :AddrLine1, :AddrLine2, :AddrLine3, :AddrLine4, :Country");
+		insertSql.append(", :Province, :City, :PinCode, :PinCodeID, :SeqNo,  :Version , :LastMntBy, :LastMntOn");
+		insertSql.append(", :RecordStatus, :RoleCode, :NextRoleCode, :TaskId, :NextTaskId, :RecordType, :WorkflowId)");
 		logger.debug("insertSql: " + insertSql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(taxUploadDetail);
@@ -217,14 +198,13 @@ public class FinTaxUploadDetailDAOImpl extends SequenceDao<FinTaxUploadHeader> i
 		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("update FinTaxUploadDetail");
 		sql.append(type);
-		sql.append(
-				" set BatchReference=:BatchReference , TaxCode=:TaxCode , AggrementNo=:AggrementNo, ApplicableFor=:ApplicableFor , Applicant=:Applicant ,SeqNo=:SeqNo,");
-		sql.append(
-				" TaxExempted=:TaxExempted ,AddrLine1=:AddrLine1, AddrLine2=:AddrLine2, AddrLine3=:AddrLine3, AddrLine4=:AddrLine4, Country=:Country, Province=:Province,City=:City,PinCode=:PinCode,");
-		sql.append(" Version = :Version , LastMntBy = :LastMntBy, LastMntOn = :LastMntOn, ");
-		sql.append(
-				" RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode, TaskId = :TaskId,");
-		sql.append(" NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
+		sql.append(" set BatchReference=:BatchReference , TaxCode=:TaxCode , AggrementNo=:AggrementNo");
+		sql.append(", ApplicableFor=:ApplicableFor , Applicant=:Applicant ,SeqNo=:SeqNo");
+		sql.append(", TaxExempted=:TaxExempted, AddrLine1=:AddrLine1, AddrLine2=:AddrLine2, AddrLine3=:AddrLine3");
+		sql.append(", AddrLine4=:AddrLine4, Country=:Country, Province=:Province, City=:City, PinCode=:PinCode");
+		sql.append(", PincodeId=:PinCodeID,  Version = :Version, LastMntBy = :LastMntBy, LastMntOn = :LastMntOn");
+		sql.append(",  RecordStatus= :RecordStatus, RoleCode = :RoleCode,NextRoleCode = :NextRoleCode");
+		sql.append(", TaskId = :TaskId, NextTaskId = :NextTaskId, RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where BatchReference =:BatchReference and SeqNo=:SeqNo");
 
 		// Execute the SQL, binding the arguments.

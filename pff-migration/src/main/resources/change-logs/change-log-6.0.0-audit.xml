@@ -3190,4 +3190,10 @@
 	
 	<!-- ST#1627 Non LAN Receipt changes end -->
 	
+	<changeSet id="PSD#184604.1" author="Mounika.M">
+		<addColumn tableName="ADTFINTAXUPLOADDETAIL">
+			<column name="PinCodeId" type="bigint" />
+		</addColumn>
+	</changeSet>
+	
 </databaseChangeLog>

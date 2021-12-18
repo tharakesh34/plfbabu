@@ -140,6 +140,7 @@
 									<listheader id="listheader_AddressLine4" visible="false" label="${c:l('listheader_AddressLine4.label')}"
 										sort="auto" hflex="min" />
 									<listheader id="listheader_PinCode" label="${c:l('listheader_PinCode.label')}" sort="auto" hflex="min" />
+									<listheader id="listheader_PinCodeID" label="${c:l('listheader_PinCodeID.label')}" sort="auto" hflex="min" />
 									<listheader id="listheader_City" label="${c:l('listheader_City.label')}" sort="auto" hflex="min" />
 									<listheader id="listheader_Province" label="${c:l('listheader_Province.label')}" sort="auto" hflex="min" />
 									<listheader id="listheader_Country" label="${c:l('listheader_Country.label')}" sort="auto" hflex="min" />
