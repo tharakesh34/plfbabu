@@ -1002,26 +1002,12 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		this.searchObj.addFilter(new Filter("InvestmentRef", "", Filter.OP_EQUAL));
 		this.searchObj.addFilter(new Filter("DeviationApproval", 0, Filter.OP_EQUAL));
-		if (FinServiceEvent.PREAPPROVAL.equals(this.requestSource)) {
-			this.searchObj.addFilter(new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_EQUAL));
-		} else {
 
-			if (StringUtils.equals(FinanceConstants.PRODUCT_CD, productCode)) {
-				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NOT_EQUAL);
-				filters[1] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NULL);
-				this.searchObj.addFilterOr(filters);
-				this.searchObj.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL));
-			} else {
-				Filter[] filters = new Filter[2];
-				filters[0] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NOT_EQUAL);
-				filters[1] = new Filter("FinPreApprovedRef", FinServiceEvent.PREAPPROVAL, Filter.OP_NULL);
-				this.searchObj.addFilterOr(filters);
-				this.searchObj
-						.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_NOT_EQUAL));
-			}
+		if (StringUtils.equals(FinanceConstants.PRODUCT_CD, productCode)) {
+			this.searchObj.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_EQUAL));
+		} else {
+			this.searchObj.addFilter(new Filter("ProductCategory", FinanceConstants.PRODUCT_CD, Filter.OP_NOT_EQUAL));
 		}
 
 		this.searchObj.addFilter(new Filter("RcdMaintainSts", "", Filter.OP_EQUAL));

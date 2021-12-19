@@ -198,7 +198,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where Reference = ? and Module = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		CollateralAssignmentRowMapper rowMapper = new CollateralAssignmentRowMapper(type);
 

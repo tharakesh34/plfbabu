@@ -74,6 +74,7 @@ import com.pennant.webui.customermasters.customer.model.CustomerSelectItemRender
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -109,8 +110,8 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	protected Listbox sortOperator_custTarget; // autowired
 	protected Combobox custCategory; // autowired
 	protected Listbox sortOperator_custCategory; // autowired
-	//protected Textbox 		phoneCountryCode; 						
-	//protected Textbox 		phoneAreaCode; 
+	// protected Textbox phoneCountryCode;
+	// protected Textbox phoneAreaCode;
 	protected Paging pagingCustomerList; // autowired
 	protected Listbox listBoxCustomer; // autowired
 	protected Grid searchGrid; // autowired
@@ -220,52 +221,51 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 		this.pagingCustomerList.setPageSize(getListRows());
 		this.pagingCustomerList.setDetailed(true);
 
-		if (searchObj != null) {
+		if (searchObj == null) {
+			showCustomerSeekDialog();
+			logger.debug(Literal.LEAVING);
+			return;
+		}
 
-			// Render Search Object
-			paging(searchObj);
+		// Render Search Object
+		paging(searchObj);
 
-			// get the filters from the searchObject
-			final List<Filter> ft = searchObj.getFilters();
-			for (final Filter filter : ft) {
-
-				// restore founded properties
-				if ("CustCIF".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custCIF, filter);
-					this.custCIF.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCIF));
-				} else if ("CustDOB".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custDob, filter);
-					this.custDob
-							.setValue(DateUtility.parse(filter.getValue().toString(), PennantConstants.DBDateFormat));
-				} else if ("CustShrtName".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custName, filter);
-					this.custName.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custName));
-				} else if ("PhoneNumber".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custMobile, filter);
-					this.custMobile.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custMobile));
-				} else if ("CustCRCPR".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custEID, filter);
-					this.custEid.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custEID));
-				} else if ("CustTypeCode".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custType, filter);
-					this.custType.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custType));
-				} else if ("CustNationality".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custNationality, filter);
-					this.custNationality
-							.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custNationality));
-				} else if ("Target".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custTarget, filter);
-					this.custTarget.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custTarget));
-				} else if ("CustCtgCode".equals(filter.getProperty())) {
-					SearchOperators.resetOperator(this.sortOperator_custCategory, filter);
-					this.custCategory
-							.setValue(restoreString(filter.getValue().toString(), this.sortOperator_custCategory));
-				}
+		// get the filters from the searchObject
+		for (final Filter filter : searchObj.getFilters()) {
+			// restore founded properties
+			String value = filter.getValue().toString();
+			if ("CustCIF".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custCIF, filter);
+				this.custCIF.setValue(restoreString(value, this.sortOperator_custCIF));
+			} else if ("CustDOB".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custDob, filter);
+				this.custDob.setValue(DateUtility.parse(value, PennantConstants.DBDateFormat));
+			} else if ("CustShrtName".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custName, filter);
+				this.custName.setValue(restoreString(value, this.sortOperator_custName));
+			} else if ("PhoneNumber".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custMobile, filter);
+				this.custMobile.setValue(restoreString(value, this.sortOperator_custMobile));
+			} else if ("CustCRCPR".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custEID, filter);
+				this.custEid.setValue(restoreString(value, this.sortOperator_custEID));
+			} else if ("CustTypeCode".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custType, filter);
+				this.custType.setValue(restoreString(value, this.sortOperator_custType));
+			} else if ("CustNationality".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custNationality, filter);
+				this.custNationality.setValue(restoreString(value, this.sortOperator_custNationality));
+			} else if ("Target".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custTarget, filter);
+				this.custTarget.setValue(restoreString(value, this.sortOperator_custTarget));
+			} else if ("CustCtgCode".equals(filter.getProperty())) {
+				SearchOperators.resetOperator(this.sortOperator_custCategory, filter);
+				this.custCategory.setValue(restoreString(value, this.sortOperator_custCategory));
 			}
 		}
 
 		showCustomerSeekDialog();
-		logger.debug("Leaving" + event.toString());
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void doSetTargetProperties() {
@@ -498,6 +498,12 @@ public class CustomerSelectCtrl extends GFCBaseCtrl<Customer> {
 	 * @param searchObj
 	 */
 	private void paging(JdbcSearchObject<Customer> searchObj) {
+
+		if (searchObj.getFilters().isEmpty()) {
+			MessageUtil.showError("Please enter at least one search criteria.");
+			return;
+		}
+
 		this.pagingCustomerList.setDetailed(true);
 		this.listBoxCustomer.setItemRenderer(new CustomerSelectItemRenderer(PennantAppUtil.getCustTargetValues()));
 		getPagedListWrapper().init(searchObj, this.listBoxCustomer, this.pagingCustomerList);
