@@ -177,12 +177,9 @@ public class FeeReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	@Override
 	protected void doAddFilters() {
 		super.doAddFilters();
-		StringBuilder whereClause = new StringBuilder(
-				" ReceiptModeStatus = '" + RepayConstants.PAYSTATUS_FEES + "' AND RecordType IS NOT NULL ");
-		// whereClause.append("AND ( ");
-		// whereClause.append(getUsrFinAuthenticationQry(false, searchObject.getTabelName()));
-		// whereClause.append(")");
-		this.searchObject.addWhereClause(whereClause.toString());
+
+		this.searchObject.addFilter(new Filter("ReceiptModeStatus", RepayConstants.PAYSTATUS_FEES, Filter.OP_EQUAL));
+		this.searchObject.addFilterNotNull("RecordType");
 	}
 
 	/**

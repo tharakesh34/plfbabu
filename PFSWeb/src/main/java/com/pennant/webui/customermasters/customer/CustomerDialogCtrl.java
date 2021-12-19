@@ -3329,7 +3329,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	protected void refreshList() {
-		getCustomerListCtrl().search();
+		getCustomerListCtrl().refreshList();
 	}
 
 	private void doDelete() throws InterruptedException, InterfaceException {

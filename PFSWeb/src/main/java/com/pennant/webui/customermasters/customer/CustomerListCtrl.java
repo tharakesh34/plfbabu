@@ -171,6 +171,11 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_CustomerList_CustomerSearchDialog(Event event) {
+		if (!isFilterApplied()) {
+			MessageUtil.showError("Please enter at least one search criteria.");
+			return;
+		}
+
 		search();
 	}
 
@@ -180,7 +185,15 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		applyDefaultFilter = false;
 		doReset();
+
+		pagedListWrapper.clear();
+		// search();
+	}
+
+	public void refreshList() {
+		applyDefaultFilter = false;
 		search();
 	}
 

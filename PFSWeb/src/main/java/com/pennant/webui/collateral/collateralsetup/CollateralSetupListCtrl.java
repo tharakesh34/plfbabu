@@ -191,8 +191,6 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 		// Render the page and display the data.
 		doRenderPage();
 
-		search();
-
 		if ("E".equals(module)) {
 			this.button_CollateralSetupList_NewCollateralSetup.setVisible(false);
 		}
@@ -204,6 +202,10 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_CollateralSetupList_CollateralSetupSearch(Event event) {
+		if (!isFilterApplied()) {
+			MessageUtil.showError("Please enter at least one search criteria.");
+			return;
+		}
 		search();
 	}
 
@@ -213,7 +215,15 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
+		applyDefaultFilter = false;
 		doReset();
+		
+		pagedListWrapper.clear();
+		//search();
+	}
+
+	public void refreshList() {
+		applyDefaultFilter = false;
 		search();
 	}
 

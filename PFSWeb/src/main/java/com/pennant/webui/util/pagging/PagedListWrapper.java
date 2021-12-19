@@ -141,19 +141,18 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 		clear();
 
 		final SearchResult<E> searchResult = getPagedListService().getSRBySearchObject(getSearchObject());
-		
-		if(getPaging() != null) {
+
+		if (getPaging() != null) {
 			getPaging().setTotalSize(searchResult.getTotalCount());
 		}
-		
+
 		addAll(searchResult.getResult());
 	}
 
 	/**
 	 * Refreshes the list by calling the DAO methode with the modified search object. <br>
 	 * 
-	 * @param start
-	 *            Row to start. <br>
+	 * @param start Row to start. <br>
 	 */
 	@SuppressWarnings("unchecked")
 	void refreshModel(int start) {
@@ -196,7 +195,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 	@SuppressWarnings("unchecked")
 	private void setListeners(Listbox listBox) {
 
-		//Remove Listener Events If Already Exists
+		// Remove Listener Events If Already Exists
 		Iterable<EventListener<? extends Event>> iter = getPaging().getEventListeners("onPaging");
 		if (iter != null && iter.iterator().hasNext()) {
 			getPaging().removeEventListener("onPaging", iter.iterator().next());
@@ -215,7 +214,7 @@ public class PagedListWrapper<E> extends ListModelList implements Serializable {
 
 				if (lheader.getSortAscending() != null || lheader.getSortDescending() != null) {
 
-					//Remove Listener Events If Already Exists
+					// Remove Listener Events If Already Exists
 					Iterable<EventListener<? extends Event>> sort = lheader.getEventListeners("onSort");
 					if (sort != null && sort.iterator().hasNext()) {
 						lheader.removeEventListener("onSort", sort.iterator().next());

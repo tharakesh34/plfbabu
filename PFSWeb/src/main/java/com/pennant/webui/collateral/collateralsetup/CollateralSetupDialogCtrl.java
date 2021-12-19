@@ -2821,7 +2821,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 	 * Refresh the list page with the filters that are applied in list page.
 	 */
 	protected void refreshList() {
-		collateralSetupListCtrl.search();
+		collateralSetupListCtrl.refreshList();
 	}
 
 	private String getTabID(String id) {

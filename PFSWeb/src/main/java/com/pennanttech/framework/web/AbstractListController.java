@@ -103,6 +103,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 	protected List<SearchFilterControl> searchControls = new ArrayList<>();
 	protected transient PagedListService pagedListService;
 	protected transient AuditHeaderDAO auditHeaderDAO;
+	protected boolean applyDefaultFilter = true;
 
 	protected AbstractListController() {
 		super();
@@ -315,11 +316,26 @@ public class AbstractListController<T> extends AbstractController<T> {
 			}
 		}
 
-		if (isWorkFlowEnabled() && !enqiryModule) {
-			this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+		if (applyDefaultFilter || isFilterApplied()) {
+			if (isWorkFlowEnabled() && !enqiryModule) {
+				this.searchObject.addFilterIn("nextRoleCode", getUserWorkspace().getUserRoles(), isFirstTask());
+			}
 		}
 
+		applyDefaultFilter = true;
+
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected boolean isFilterApplied() {
+		for (SearchFilterControl searchControl : searchControls) {
+			Filter filter = searchControl.getFilter();
+			if (filter != null) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	protected boolean doCheckAuthority(AbstractWorkflowEntity entity, String whereCond) {
