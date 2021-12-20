@@ -121,13 +121,13 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 			objects = new Object[] { moduleName, subModuleName };
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper();
 
 		try {
 
-			return this.jdbcOperations.queryForObject(sql.toString(), objects, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, objects);
 
 		} catch (EmptyResultDataAccessException e) {
 			//
