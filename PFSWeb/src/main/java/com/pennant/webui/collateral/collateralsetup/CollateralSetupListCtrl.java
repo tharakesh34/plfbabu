@@ -217,14 +217,20 @@ public class CollateralSetupListCtrl extends GFCBaseListCtrl<CollateralSetup> {
 	public void onClick$btnRefresh(Event event) {
 		applyDefaultFilter = false;
 		doReset();
-		
+
 		pagedListWrapper.clear();
-		//search();
+		// search();
 	}
 
 	public void refreshList() {
 		applyDefaultFilter = false;
 		search();
+	}
+
+	protected void applySearch() {
+		if (isFilterApplied()) {
+			pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
+		}
 	}
 
 	/**

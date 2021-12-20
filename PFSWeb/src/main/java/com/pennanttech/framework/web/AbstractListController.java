@@ -240,7 +240,7 @@ public class AbstractListController<T> extends AbstractController<T> {
 			if (pagedListWrapper != null && paging != null) {
 				pagedListWrapper.setPagedListService(pagedListService);
 
-				pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
+				applySearch();
 			}
 		} else {
 			final SearchResult<?> searchResult = pagedListService.getSRBySearchObject(this.searchObject);
@@ -251,6 +251,10 @@ public class AbstractListController<T> extends AbstractController<T> {
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	protected void applySearch() {
+		pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
 	}
 
 	protected void doReset() {

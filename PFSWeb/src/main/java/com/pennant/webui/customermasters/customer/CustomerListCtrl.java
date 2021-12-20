@@ -197,6 +197,12 @@ public class CustomerListCtrl extends GFCBaseListCtrl<Customer> {
 		search();
 	}
 
+	protected void applySearch() {
+		if (isFilterApplied()) {
+			pagedListWrapper.init(this.searchObject, this.listbox, this.paging);
+		}
+	}
+
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
