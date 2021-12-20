@@ -64,6 +64,7 @@ import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
 import org.zkoss.zul.Label;
+import org.zkoss.zul.Longbox;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
@@ -167,6 +168,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	protected Label label_FinanceMainDialog_FinType;
 
 	protected Textbox finType;
+	protected Longbox finId;
 	protected Textbox finReference;
 	protected Space space_finReference;
 	protected ExtendedCombobox finCcy;
@@ -1293,6 +1295,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		this.nextRepayCpzDate_two.setValue(aFinanceMain.getNextRepayCpzDate());
 		this.nextRepayPftDate_two.setValue(aFinanceMain.getNextRepayPftDate());
 
+		this.finId.setValue(aFinanceMain.getFinID());
 		this.finReference.setValue(aFinanceMain.getFinReference());
 		if (getFinanceDetail().getFinScheduleData().getFinanceType().isFinIsAlwDifferment()) {
 			this.defferments.setReadonly(false);
@@ -1379,10 +1382,11 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			if (StringUtils.isBlank(this.finReference.getValue())) {
 				this.finReference
 						.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
+				this.finId.setValue(aFinanceMain.getFinID());
 			}
-			aFinanceMain.setFinID(aFinanceMain.getFinID());
+			aFinanceMain.setFinID(this.finId.getValue());
 			aFinanceMain.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
-			aFinanceSchData.setFinID(aFinanceMain.getFinID());
+			aFinanceSchData.setFinID(this.finId.getValue());
 			aFinanceSchData.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 
 		} catch (WrongValueException we) {
