@@ -344,7 +344,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	protected Listbox listBoxCustomerLoanDetails;
 	protected Listbox listBoxCustomerVasDetails;
 	protected Listbox listBoxCustomerCollateralDetails;
-	protected Listbox listBoxDownloadsS;
 	protected Listbox listBoxCustomerOffers;
 	protected Listheader listheader_JointCust;
 
@@ -1190,7 +1189,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		// Piramal change to hide the employment details section based on system param
 		hbox_empDetails.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
 		listBoxCustomerEmploymentDetail.setVisible(ImplementationConstants.SHOW_CUST_EMP_DETAILS);
-		doFillDownload(prepareList());
 		logger.debug("Leaving");
 	}
 
@@ -3269,31 +3267,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return (Tab) tabsIndexCenter.getFellowIfAny(id);
 	}
 
-	public void doFillDownload(Map<String, String> customerFinanceDetail) {
-		logger.debug("Entering");
-		this.listBoxDownloadsS.getItems().clear();
-		Iterator<Map.Entry<String, String>> itr = customerFinanceDetail.entrySet().iterator();
-		while (itr.hasNext()) {
-			Map.Entry<String, String> entry = itr.next();
-			Listitem item = new Listitem();
-			Listcell lc;
-			lc = new Listcell(entry.getValue());
-			lc.setStyle("font-size:14px;font-weight: normal;");
-			lc.setParent(item);
-			Button download = new Button("Download");
-			download.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_Download_ClaimForms"));
-			download.addForward("onClick", self, "onClick_download");
-			download.setAttribute("data", entry);
-			lc = new Listcell();
-			lc.setStyle("font-size:14px;font-weight: normal;");
-			lc.appendChild(download);
-			lc.setParent(item);
-			item.setAttribute("data", entry);
-			this.listBoxDownloadsS.appendChild(item);
-		}
-
-	}
-
 	public void doFillCustomerOffers() {
 		logger.debug("Entering");
 
@@ -3332,17 +3305,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			}
 		}
 
-	}
-
-	public Map<String, String> prepareList() {
-		Map<String, String> map = new HashMap<>();
-		map.put("BCF", "BALIC Claim Form for Critical_illness");
-		map.put("DCF", "Dealth Claim Form ");
-		map.put("FGICF", "FGI CI Claim Form ");
-		map.put("FGNCF", "Future General New Claim Form ");
-		map.put("HDFCF", "HDFC  Claim Form ");
-		map.put("CDCICF", "Checklist for Dealth/Critical illness Claims");
-		return map;
 	}
 
 	public void onClick$downloadFaq(Event event) {

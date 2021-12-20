@@ -1073,27 +1073,6 @@
 													label="${c:l('listheader_HoldReason.label')}" sort="false" hflex="min" />
 											</listhead>
 										</listbox>
-										<hbox pack="stretch" style="border-style : none;" sclass="hboxRemoveWhiteStrips" width="100%" widths="100%,0%">
-											<toolbar height="100%" align="start" style="padding-top: 15px; background: white; border: none;">
-												<label value="${c:l('InsuranceClaimForm')}" sclass="kycheads" />
-											</toolbar>
-											<toolbar height="100%" align="end" sclass="toolbar-end"
-												style="padding-right: 18px; padding-top: 15px; background: white;">
-											</toolbar>
-											<toolbar height="100%" align="end" sclass="toolbar-end"
-												style="padding-right: 75px; padding-top: 15px; background: white;">
-											</toolbar>
-										</hbox>
-										<listbox id="listBoxDownloadsS" mold="paging" pageSize="10" span="true" sizedByContent="true"
-											style="zoom: 1; border: 1px solid #d7d7d7; border-radius: 7px;	box-shadow: 1px 1px 1px 1px #e6e6e6;" width="100%"
-											multiple="false" tooltiptext="${c:l('listbox.tooltiptext')}" emptyMessage="${c:l('listbox.emptyMessage')}">
-											<listhead sizable="true">
-												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_labels"
-													sort="false" hflex="min" />
-												<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Values"
-													sort="false" hflex="min" />
-											</listhead>
-										</listbox>
 									</div>
 									<div id="gb_additionalDetails" style="padding-left: 30px; padding-right: 30px;">
 										<tabbox tabscroll="false" width="100%" vflex="max" maximalHeight="true">
