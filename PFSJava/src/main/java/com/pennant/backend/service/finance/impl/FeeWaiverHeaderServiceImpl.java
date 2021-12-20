@@ -162,6 +162,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		if (!fwh.isNewRecord()) {
 			fwh = getFeeWaiverHeaderByFinRef(finID, "_TView");
+			setManualAdvise(fwh);
 		} else {
 			FeeWaiverDetail fwd;
 			BigDecimal receivableAmt = BigDecimal.ZERO;
@@ -423,6 +424,27 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		logger.debug(Literal.LEAVING);
 		return fwh;
+	}
+
+	private void setManualAdvise(FeeWaiverHeader fwh) {
+		List<FeeWaiverDetail> fwdList = fwh.getFeeWaiverDetails();
+		if (fwdList == null || fwdList.isEmpty()) {
+			return;
+		}
+
+		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID());
+		if (adviseList == null || adviseList.isEmpty()) {
+			return;
+		}
+
+		for (FeeWaiverDetail fwd : fwdList) {
+			for (ManualAdvise ma : adviseList) {
+				if (ma.getAdviseID() == fwd.getAdviseId()) {
+					fwd.setAdviseAmount(ma.getAdviseAmount());
+					break;
+				}
+			}
+		}
 	}
 
 	private void prepareGST(FeeWaiverDetail fwd, BigDecimal receivableAmt, Map<String, BigDecimal> gstPercentages) {
