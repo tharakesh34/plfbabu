@@ -978,7 +978,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			if (FinanceConstants.PLANEMIHMETHOD_FRQ.equals(fm.getPlanEMIHMethod())) {
 				schdData.setPlanEMIHmonths(finPlanEmiHolidayDAO.getPlanEMIHMonthsByRef(finID, tableType));
 			} else if (FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(fm.getPlanEMIHMethod())) {
-				schdData.setPlanEMIHDates(finPlanEmiHolidayDAO.getPlanEMIHDatesByRef(finID, ""));
+				schdData.setPlanEMIHDates(finPlanEmiHolidayDAO.getPlanEMIHDatesByRef(finID, tableType));
 			}
 		}
 
