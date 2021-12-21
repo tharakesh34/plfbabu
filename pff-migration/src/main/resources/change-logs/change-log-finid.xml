@@ -206,10 +206,10 @@
 		<dropForeignKeyConstraint baseTableName="finodcrecovery"
 			constraintName="fk_finodcrecovery_finmain" />
 	</changeSet>
-	<!-- <changeSet id="4.3_Pre.0018" author="murthy.y">
+	<changeSet id="4.3_Pre.0018" author="murthy.y">
 		<dropForeignKeyConstraint baseTableName="finoddetails"
 			constraintName="fk_finoddetails_finmain" />
-	</changeSet> -->
+	</changeSet>
 	<changeSet id="4.3_Pre.0019" author="murthy.y">
 		<dropForeignKeyConstraint baseTableName="finodpenaltyrates"
 			constraintName="fk_finodpenaltyrates_finmain" />

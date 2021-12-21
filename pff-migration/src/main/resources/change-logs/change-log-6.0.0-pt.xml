@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="add.schema" value=" " dbms="postgresql" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PFFBFSQCAudit.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()::timestamp" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp" author="satish" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="1.0" author="murthy.y">
+		<createIndex tableName="collateralassignment_temp" indexName="idx_collateral_asmnt_t_cr">
+			<column name="CollateralRef" type="varchar(20)"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="1.1" author="murthy.y">
+		<createIndex tableName="collateralassignment_temp" indexName="idx_collateral_asmnt_t_fr">
+			<column name="Reference" type="varchar(20)"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="2.0" author="murthy.y">
+		<createIndex tableName="collateralsetup_temp" indexName="idx_collateral_setup_t_did">
+			<column name="DepositorId" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="3.0" author="murthy.y">
+		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_temp_custid">
+			<column name="taxcustid" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="3.1" author="murthy.y">
+		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_custid">
+			<column name="taxcustid" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="4.0" author="murthy.y">
+		<createIndex tableName="customers" indexName="idx_customers_id" unique="true">
+			<column name="custid" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="4.1" author="murthy.y">
+		<createIndex tableName="customers_temp" indexName="idx_customers_temp_id" unique="true">
+			<column name="custid" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="5.0_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail');
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="5.0" author="murthy.y">
+		<modifyDataType tableName="fintaxdetail_temp" columnName="taxcustid" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="5.1" author="murthy.y">
+		<modifyDataType tableName="fintaxdetail" columnName="taxcustid" newDataType="bigint"/>
+	</changeSet>
+	<changeSet id="5.0_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxdetail');
+				select deps_restore_dependencies ('plf', 'fintaxdetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="6.0" author="murthy.y">
+		<createIndex tableName="customerAddresses" indexName="idx_ca_custid_addr_priority">
+			<column name="custid" type="bigint"/>
+			<column name="custaddrpriority" type="int"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="6.1" author="murthy.y">
+		<createIndex tableName="customerAddresses_temp" indexName="idx_ca_t_custid_addr_priority">
+			<column name="custid" type="bigint"/>
+			<column name="custaddrpriority" type="int"/>
+		</createIndex>
+	</changeSet>
+	
+</databaseChangeLog>

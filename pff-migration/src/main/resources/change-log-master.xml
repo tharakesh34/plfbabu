@@ -28,6 +28,7 @@
 	<include file="change-logs/change-log-db-based-scheduler.xml" />
 	<include file="change-logs/change-log-single_fee_accounting.xml" />
 	<include file="change-logs/change-log-finid.xml" />
+	<include file="change-logs/change-log-6.0.0-pt.xml" />
 	<include file="change-logs/change-log-finid_views.xml" />
 	<include file="change-logs/change-log-db-cleanup.xml" /> 
 	<include file="change-logs/change-log-security-seq-reseed.xml" />
@@ -35,5 +36,6 @@
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
 	<include file="change-logs/change-log-otp.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
+	
 	
 </databaseChangeLog>

@@ -747,8 +747,6 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 	 */
 	@Override
 	public Map<String, Object> getExtendedField(String reference, long instructionUID, String tableName, String type) {
-
-		Map<String, Object> renderMap = null;
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", reference);
 		source.addValue("InstructionUID", instructionUID);
@@ -773,14 +771,14 @@ public class ExtendedFieldRenderDAOImpl extends BasicDao<ExtendedFieldRender> im
 		}
 
 		logger.debug(Literal.SQL + selectSql.toString());
+
 		try {
-			renderMap = this.jdbcTemplate.queryForMap(selectSql.toString(), source);
+			return this.jdbcTemplate.queryForMap(selectSql.toString(), source);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			renderMap = null;
+			//
 		}
 
-		return renderMap;
+		return null;
 	}
 
 	@Override
