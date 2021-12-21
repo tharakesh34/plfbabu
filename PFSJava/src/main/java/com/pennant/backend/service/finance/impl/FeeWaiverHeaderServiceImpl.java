@@ -428,12 +428,13 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 	private void setManualAdvise(FeeWaiverHeader fwh) {
 		List<FeeWaiverDetail> fwdList = fwh.getFeeWaiverDetails();
-		if (fwdList == null || fwdList.isEmpty()) {
+
+		if (fwdList.isEmpty()) {
 			return;
 		}
 
 		List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(fwh.getFinID());
-		if (adviseList == null || adviseList.isEmpty()) {
+		if (adviseList.isEmpty()) {
 			return;
 		}
 
@@ -800,10 +801,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			serviceUID = fwh.getExtendedFieldRender().getInstructionUID();
 		}
 
+		Date appDate = SysParamUtil.getAppDate();
 		for (FinServiceInstruction finServInst : serviceInstructions) {
 			serviceUID = finServInst.getInstructionUID();
 			if (ObjectUtils.isEmpty(finServInst.getInitiatedDate())) {
-				finServInst.setInitiatedDate(SysParamUtil.getAppDate());
+				finServInst.setInitiatedDate(appDate);
 			}
 		}
 
@@ -837,8 +839,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					fwd.setWaiverId(fwh.getWaiverId());
 					TaxHeader taxHeader = fwd.getTaxHeader();
 					if (taxHeader != null && CollectionUtils.isNotEmpty(taxHeader.getTaxDetails())) {
-						taxHeaderDetailsService.doApprove(taxHeader, TableType.MAIN_TAB.getSuffix(),
-								auditHeader.getAuditTranType());
+						taxHeaderDetailsService.doApprove(taxHeader, "", auditHeader.getAuditTranType());
 						fwd.setTaxHeaderId(taxHeader.getHeaderId());
 					}
 
@@ -1355,6 +1356,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		}
 
 		fwh.setRpyList(rpyList);
+
 		logger.debug(Literal.LEAVING);
 		return movements;
 	}
@@ -1835,28 +1837,32 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		List<ManualAdviseMovements> movements = new ArrayList<>();
 
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
-			if (!RepayConstants.ALLOCATION_ODC.equals(fwd.getFeeTypeCode())
-					&& !RepayConstants.ALLOCATION_LPFT.equals(fwd.getFeeTypeCode())
-					&& !RepayConstants.ALLOCATION_PFT.equals(fwd.getFeeTypeCode())
+			String feeTypeCode = fwd.getFeeTypeCode();
+
+			if (!RepayConstants.ALLOCATION_ODC.equals(feeTypeCode)
+					&& !RepayConstants.ALLOCATION_LPFT.equals(feeTypeCode)
+					&& !RepayConstants.ALLOCATION_PFT.equals(feeTypeCode)
 					&& fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) > 0) {
 
 				BigDecimal curwaivedAmt = fwd.getCurrWaiverAmount();
 				BigDecimal curActualwaivedAmt = fwd.getCurrActualWaiver();
+
+				long adviseId = fwd.getAdviseId();
 				for (ManualAdvise advise : manualAdviseList) {
-					if (advise.getBounceID() != 0 && fwd.getAdviseId() == -3) {
-						ManualAdviseMovements movement = prepareAdviseWaiver(fwd, advise);
-						if (movement != null) {
-							movements.add(movement);
-						}
+					ManualAdviseMovements movement = null;
+					if (advise.getBounceID() != 0 && adviseId == -3) {
+						movement = prepareAdviseWaiver(fwd, advise);
 					} else {
-						if (advise.getAdviseID() == fwd.getAdviseId()) {
-							ManualAdviseMovements movement = prepareAdviseWaiver(fwd, advise);
-							if (movement != null) {
-								movements.add(movement);
-							}
+						if (advise.getAdviseID() == adviseId) {
+							movement = prepareAdviseWaiver(fwd, advise);
 						}
 					}
+
+					if (movement != null) {
+						movements.add(movement);
+					}
 				}
+
 				fwd.setCurrWaiverAmount(curwaivedAmt);
 				fwd.setCurrActualWaiver(curActualwaivedAmt);
 			}
@@ -2364,6 +2370,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 					} else {
 						waiverAmount = fwd.getCurrWaiverAmount();
 					}
+
 					if (waiverAmount.compareTo(totalPenalityBal) > 0) {
 						valueParm[0] = String.valueOf(
 								PennantApplicationUtil.amountFormate(waiverAmount, PennantConstants.defaultCCYDecPos));
