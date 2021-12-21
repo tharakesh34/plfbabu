@@ -3710,12 +3710,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="123.3" author="murthy.y">
-		<addForeignKeyConstraint constraintName="fk_linkedfinances_finid"
-			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="linkedfinances"
-			referencedColumnNames="FinID" />
-	</changeSet>
-
+	
 	<changeSet id="123.4" author="murthy.y">
 		<createIndex tableName="linkedfinances" indexName="idx_linkedfinances_finid">
 			<column name="FinID" type="bigint" />
