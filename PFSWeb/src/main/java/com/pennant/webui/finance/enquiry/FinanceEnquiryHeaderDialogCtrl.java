@@ -362,6 +362,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeEnquiryHeaderDialogCtrl", this);
+		map.put("isModelWindow", isModelWindow);
+
 		String path = "";
 		this.grid_BasicDetails.setVisible(true);
 		this.btnPrint.setVisible(!customer360);
@@ -1054,7 +1056,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 		} else if ("SCHENQ".equals(this.enquiryType)) {
 
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
+
 			FinScheduleListItemRenderer finRender;
 			if (finScheduleData != null) {
 
@@ -1150,6 +1153,11 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (StringUtils.equals(FinanceConstants.PRODUCT_ODFACILITY, financeMain.getProductCategory())) {
 					reportName = "ODFINENQ_ScheduleDetail";
 				}
+
+				Map<String, Object> aruments = new HashMap<>();
+				aruments.put("isModelWindow", isModelWindow);
+				list.add(aruments);
+
 				ReportsUtil.generatePDF(reportName, financeMain, list, userName, window_FinEnqHeaderDialog);
 				if (financeMain.getFinCategory() != null) {
 					if (financeMain.getFinCategory().equals(FinanceConstants.PRODUCT_CD)) {
