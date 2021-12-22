@@ -45,8 +45,6 @@ public class RepayEnquiryListModelItemRenderer implements ListitemRenderer<Finan
 			lc.setParent(item);
 			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinTotSchdPaid(), this.formatter));
 			lc.setParent(item);
-			lc = new Listcell(PennantAppUtil.amountFormate(repayment.getFinRefund(), this.formatter));
-			lc.setParent(item);
 		}
 	}
 
