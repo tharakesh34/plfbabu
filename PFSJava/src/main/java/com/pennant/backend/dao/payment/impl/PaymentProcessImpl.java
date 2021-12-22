@@ -52,8 +52,8 @@ public class PaymentProcessImpl implements PaymentProcess {
 
 			String paymentType = pi.getPaymentType();
 
-			//E -> PAID 
-			String status = pi.getStatus();
+			//E -> PAID
+			String status = pi.getClearingStatus();
 			if (PAID_STATUS.equals(status) || DisbursementConstants.STATUS_PAID.equals(status)) {
 				pi.setStatus(DisbursementConstants.STATUS_PAID);
 			} else if (REALIZED_STATUS.equals(status) || DisbursementConstants.STATUS_REALIZED.equals(status)) {
