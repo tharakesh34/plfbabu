@@ -7426,7 +7426,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Remaining Balance = Receipt Amount + To be Paid by Customer - Paid by
 		// Customer (Allocated)
 		BigDecimal remBalAfterAllocation = receiptData.getTotReceiptAmount().subtract(pd.getTotalPaid())
-				.subtract(adv.getTotalPaid()).subtract(fee.getTotalPaid());
+				.subtract(adv.getTotalPaid().subtract(adv.getTdsPaid())).subtract(fee.getTotalPaid());
 		if (remBalAfterAllocation.compareTo(BigDecimal.ZERO) <= 0) {
 			remBalAfterAllocation = BigDecimal.ZERO;
 			this.excessAdjustTo.setDisabled(true);
