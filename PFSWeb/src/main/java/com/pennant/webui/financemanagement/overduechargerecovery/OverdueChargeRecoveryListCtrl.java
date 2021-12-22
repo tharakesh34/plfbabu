@@ -24,6 +24,8 @@
  */
 package com.pennant.webui.financemanagement.overduechargerecovery;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -52,9 +54,18 @@ import org.zkoss.zul.Tabpanel;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
+import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
+import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinODDetailsDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
+import com.pennant.backend.dao.finance.FinanceScheduleDetailDAO;
 import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.finance.FinODDetails;
+import com.pennant.backend.model.finance.FinanceMain;
+import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.financemanagement.OverdueChargeRecovery;
 import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.financemanagement.OverdueChargeRecoveryService;
@@ -71,6 +82,7 @@ import com.pennant.webui.util.PTListReportUtils;
 import com.pennant.webui.util.searching.SearchOperatorListModelItemRenderer;
 import com.pennant.webui.util.searching.SearchOperators;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -144,7 +156,13 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 
 	private Textbox recoveryCode;
 	private String finReference = "";
+	private Long finID;
 	// private int ccyFormatter = 0;
+
+	private FinODDetailsDAO finODDetailsDAO;
+	private FinanceMainDAO financeMainDAO;
+	private FinanceScheduleDetailDAO financeScheduleDetailDAO;
+	private LatePayInterestService latePayInterestService;
 
 	/**
 	 * default constructor.<br>
@@ -165,6 +183,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	 * @param event
 	 * @throws Exception
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void onCreate$window_OverdueChargeRecoveryList(ForwardEvent event) throws Exception {
 		logger.debug("Entering" + event.toString());
 
@@ -176,6 +195,11 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		if (arguments.containsKey("finReference")) {
 			this.finReference = (String) arguments.get("finReference");
 		}
+
+		if (arguments.containsKey("finID")) {
+			this.finID = (Long) arguments.get("finID");
+		}
+		
 		/*
 		 * if (args.containsKey("ccyFormatter")) { this.ccyFormatter = (Integer) args.get("ccyFormatter"); }
 		 */
@@ -283,6 +307,26 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			}
 
 		}
+
+		List<OverdueChargeRecovery> ocrList = new ArrayList<>();
+
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "_View", false);
+		/*
+		 * If the enquiry type as a Interest over due enquiry, and past due calc method as a NotApplicable then no need
+		 * show the enquiry.
+		 */
+		if (!(PennantConstants.YES.equals(this.recoveryCode.getValue())
+				&& CalculationConstants.PDPFTCAL_NOTAPP.equals(fm.getPastduePftCalMthd()))) {
+			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finID);
+			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
+			Date appDate = DateUtil.addDays(SysParamUtil.getAppDate(), -1);
+
+			list.forEach(fod -> ocrList.addAll(latePayInterestService.computeLPI(fod, appDate, fm, schlist, null)));
+		}
+
+		this.listBoxOverdueChargeRecovery
+				.setModel(new GroupsModelArray(ocrList.toArray(), new OverdueChargeRecoveryComparator()));
+
 		// this.btnClose.setVisible(false);
 		logger.debug("Leaving");
 	}
@@ -637,4 +681,21 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 	public void setPagedListService(PagedListService pagedListService) {
 		this.pagedListService = pagedListService;
 	}
+
+	public void setFinODDetailsDAO(FinODDetailsDAO finODDetailsDAO) {
+		this.finODDetailsDAO = finODDetailsDAO;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	public void setFinanceScheduleDetailDAO(FinanceScheduleDetailDAO financeScheduleDetailDAO) {
+		this.financeScheduleDetailDAO = financeScheduleDetailDAO;
+	}
+
+	public void setLatePayInterestService(LatePayInterestService latePayInterestService) {
+		this.latePayInterestService = latePayInterestService;
+	}
+
 }

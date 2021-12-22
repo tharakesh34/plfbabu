@@ -2468,6 +2468,10 @@
 		parent="basisListCtrl" scope="prototype">
 		<property name="pagedListService" ref="pagedListService" />
 		<property name="overdueChargeRecoveryService" ref="overdueChargeRecoveryService" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="latePayInterestService" ref="latePayInterestService" />
 	</bean>
 
 	<bean id="overdueChargeRecoveryDialogCtrl" class="com.pennant.webui.financemanagement.overduechargerecovery.OverdueChargeRecoveryDialogCtrl"

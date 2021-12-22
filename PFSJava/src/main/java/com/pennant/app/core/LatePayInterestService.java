@@ -78,6 +78,7 @@ public class LatePayInterestService extends ServiceHelper {
 		OverdueChargeRecovery odcr = new OverdueChargeRecovery();
 
 		// Add Schedule Date to the ODC Recovery
+		odcr.setFinID(finID);
 		odcr.setFinReference(finReference);
 		odcr.setFinODSchdDate(odDate);
 		odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
@@ -134,6 +135,7 @@ public class LatePayInterestService extends ServiceHelper {
 
 		if (isAddTodayRcd) {
 			odcr = new OverdueChargeRecovery();
+			odcr.setFinID(finID);
 			odcr.setFinReference(finReference);
 			odcr.setFinODSchdDate(odDate);
 			odcr.setFinODFor(FinanceConstants.SCH_TYPE_LATEPAYPROFIT);
