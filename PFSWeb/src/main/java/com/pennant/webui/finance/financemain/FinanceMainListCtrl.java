@@ -406,6 +406,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		this.searchObj.addSort("PrevMntOn", true);
 
 		// Field Declarations for Fetching List Data
+		this.searchObj.addField("CustID");
 		this.searchObj.addField("FinID");
 		this.searchObj.addField("FinReference");
 		this.searchObj.addField("FinAssetValue");
@@ -494,19 +495,18 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 			screenEvent = FinServiceEvent.ORG;
 		}
 
-		boolean custInMaintain = checkCustomerStatus(afm.getCustCIF());
+		boolean custInMaintain = checkCustomerStatus(afm.getCustID());
 		if (custInMaintain) {
-			MessageUtil.showMessage("Customer is Maintainance");
+			MessageUtil.showMessage("Customer is under maintainance");
 			return;
 		}
 
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CHECK_COLL_MAINTENANCE)
-				&& FinServiceEvent.ORG.equals(screenEvent)) {
+		if (FinServiceEvent.ORG.equals(screenEvent)
+				&& SysParamUtil.isAllowed(SMTParameterConstants.CHECK_COLL_MAINTENANCE)) {
 			String finReference = afm.getFinReference();
-			List<CollateralAssignment> collateralAssignmentList = collateralAssignmentDAO
-					.getCollateralAssignmentByFinRef(finReference, FinanceConstants.MODULE_NAME,
-							TableType.TEMP_TAB.getSuffix());
-			for (CollateralAssignment collateralAssignment : collateralAssignmentList) {
+			List<CollateralAssignment> caList = collateralAssignmentDAO.getCollateralAssignmentByFinRef(finReference,
+					FinanceConstants.MODULE_NAME, TableType.TEMP_TAB.getSuffix());
+			for (CollateralAssignment collateralAssignment : caList) {
 				boolean isRcdMaintenance = collateralSetupDAO.isCollateralInMaintenance(
 						collateralAssignment.getCollateralRef(), TableType.TEMP_TAB.getSuffix());
 				if (isRcdMaintenance) {
@@ -623,13 +623,13 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * @param financeDetail
 	 * @return
 	 */
-	private boolean checkCustomerStatus(String custCif) {
+	private boolean checkCustomerStatus(Long custID) {
 
 		PagedListService pagedListService = (PagedListService) SpringUtil.getBean("pagedListService");
 
 		JdbcSearchObject<Customer> searchObject = new JdbcSearchObject<Customer>(Customer.class);
-		searchObject.addTabelName("customers_temp");
-		searchObject.addFilterEqual("custCif", custCif);
+		searchObject.addTabelName("Customers_Temp");
+		searchObject.addFilterEqual("CustID", custID);
 
 		List<Customer> rightList = pagedListService.getBySearchObject(searchObject);
 		if (rightList != null && !rightList.isEmpty()) {

@@ -5380,10 +5380,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		schdData.setFinReference(finReference);
 
 		List<FinReceiptDetail> rcdList = null;
-		if (SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)
-				&& FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose())
+		if (FinServiceEvent.SCHDRPY.equals(rch.getReceiptPurpose())
 				&& (RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())
-						|| RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus()))) {
+						|| RepayConstants.PAYSTATUS_CANCEL.equals(rch.getReceiptModeStatus()))
+				&& SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)) {
 			rcdList = finReceiptDetailDAO.getReceiptHeaderByID(receiptId, "_AView");
 		} else {
 			rcdList = finReceiptDetailDAO.getReceiptHeaderByID(receiptId, "_View");

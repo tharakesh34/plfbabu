@@ -219,14 +219,14 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(", AssignPerc AssignedPerc, BankValuation CollateralValue, TotAssignedPerc");
 		sql.append(", Coalesce(FinCurrAssetValue+FeeChargeAmt-FinRepaymentAmount, CmtUtilizedAmount)");
 		sql.append(" FinCurrAssetValue, Coalesce(FinAssetValue+FeeChargeAmt, CmtUtilizedAmount)");
-		sql.append(" FinAssetValue, CmtExpDate , Coalesce(FM.FinIsActive,Coalesce(CmtActive,0)) FinIsActive");
+		sql.append(" FinAssetValue, CmtExpDate , Coalesce(FM.FinIsActive, Coalesce(CmtActive,0)) FinIsActive");
 		sql.append(", TotalUtilized, FT.FinLTVCheck");
 		sql.append(" From CollateralAssignment CA");
 		sql.append(" Left Join FinanceMain FM on CA.Reference = FM.FinReference");
 		sql.append(" Left Join RMTFinanceTypes FT on  FM.FINTYPE = FT.FINTYPE");
 		sql.append(" Left Join Commitments CM on CM.CmtReference = CA.Reference");
 		sql.append(" Inner Join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef");
-		sql.append(" Left Join ( Select CollateralRef, SUM(AssignPerc) TotAssignedPerc");
+		sql.append(" Left Join (Select CollateralRef, SUM(AssignPerc) TotAssignedPerc");
 		sql.append(" From CollateralAssignment group by CollateralRef) T");
 		sql.append("  on T.CollateralRef = CA.CollateralRef");
 		sql.append(" LEFT JOIN (Select CA.Reference, SUM((CS.BankValuation * CA.AssignPerc)/100)");
@@ -235,7 +235,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" Group by CA.Reference) T1 on CA.Reference = T1.Reference");
 		sql.append(" Where CA.CollateralRef = ?");
 
-		logger.trace(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL, sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -445,7 +445,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" From CollateralMovement");
 		sql.append(" Where CollateralRef = :CollateralRef Order By MovementSeq");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(movement);
 		RowMapper<CollateralMovement> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralMovement.class);
@@ -472,15 +472,14 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where Reference = ? and CollateralRef = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		CollateralAssignmentRowMapper rowMapper = new CollateralAssignmentRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { reference, collateralRef },
-					rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, reference, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -504,7 +503,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(TableType);
 		sql.append(" Where Reference = :Reference");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
 
@@ -532,7 +531,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where CollateralRef = :CollateralRef and Reference = :Reference");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("CollateralRef", collateralRef);
@@ -562,31 +561,80 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(StringUtils.trimToEmpty(tableType.getSuffix()));
 		sql.append(" Where Reference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, Integer.class) > 0
-					? true
-					: false;
+			return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, finReference) > 0 ? true : false;
 		} catch (EmptyResultDataAccessException e) {
 			return false;
 		}
 	}
 
 	private StringBuilder getSqlQuery(String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Module, Reference, CollateralRef, AssignPerc, Active, HostReference");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId");
-		sql.append(", NextTaskId, RecordType, WorkflowId");
+		type = StringUtils.trimToEmpty(type);
+		type = type.toUpperCase();
 
-		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(", DepositorCIF, CollateralCcy, CollateralValue, BankValuation, TotAssignPerc TotAssignedPerc");
-			sql.append(", UtilizedAmount, BankLTV, SpecialLTV");
-			sql.append(", DepositorCIF, CollateralType");
+		StringBuilder sql = new StringBuilder("Select");
+
+		if (StringUtils.isEmpty(type)) {
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" FROM COLLATERALASSIGNMENT CA");
+		} else if (type.endsWith("_TEMP")) {
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
+		} else if (type.endsWith("_CTVIEW")) {
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
+			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
+			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
+			sql.append(" INNER JOIN COLLATERALSETUP_TEMP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
+			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
+		} else if (type.endsWith("_AVIEW")) {
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
+			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
+			sql.append(" FROM COLLATERALASSIGNMENT CA");
+			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
+			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
+		} else if (type.endsWith("_TVIEW")) {
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
+			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
+			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
+			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
+			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
+		} else if (type.endsWith("_VIEW")) {
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
+			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
+			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
+			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
+			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
+			sql.append(" Union all");
+			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
+			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
+			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
+			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
+			sql.append(" FROM COLLATERALASSIGNMENT CA");
+			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
+			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
+			sql.append(" WHERE NOT EXISTS (SELECT 1 FROM COLLATERALASSIGNMENT_TEMP");
+			sql.append(" WHERE COLLATERALREF = CA.COLLATERALREF AND MODULE = CA.MODULE AND REFERENCE = CA.REFERENCE)");
 		}
 
-		sql.append(" From CollateralAssignment");
-		sql.append(StringUtils.trimToEmpty(type));
 		return sql;
 	}
 
@@ -619,12 +667,16 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ca.setWorkflowId(rs.getLong("WorkflowId"));
 
 			if (StringUtils.trimToEmpty(type).contains("View")) {
-				ca.setDepositorCIF(rs.getString("DepositorCIF"));// added for Verification API
+				ca.setDepositorCIF(rs.getString("DepositorCIF"));
 				ca.setCollateralCcy(rs.getString("CollateralCcy"));
 				ca.setCollateralValue(rs.getBigDecimal("CollateralValue"));
 				ca.setBankValuation(rs.getBigDecimal("BankValuation"));
-				ca.setTotAssignedPerc(rs.getBigDecimal("TotAssignedPerc"));
-				// ca.setUtilizedAmount(rs.getBigDecimal("UtilizedAmount")); (Not availble in Bean)
+
+				BigDecimal assignPerc = ca.getAssignPerc();
+				BigDecimal totAssignedPerc = getTotalAssignedPerc(ca.getCollateralRef());
+
+				ca.setTotAssignedPerc(totAssignedPerc.subtract(assignPerc));
+
 				ca.setBankLTV(rs.getBigDecimal("BankLTV"));
 				ca.setSpecialLTV(rs.getBigDecimal("SpecialLTV"));
 				ca.setDepositorCIF(rs.getString("DepositorCIF"));
@@ -633,7 +685,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 			return ca;
 		}
-
 	}
 
 	@Override
@@ -647,7 +698,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" join financemain_view t3 on t2.reference = t3.finreference");
 		sql.append(" where t1.Reference = :Reference and t3.FINISACTIVE = 1");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Reference", finReference);
@@ -670,13 +721,35 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		sql.append(" Where CA.Reference = ?");
 		sql.append(" GROUP by CA.Reference");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference }, BigDecimal.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, finReference);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-			return BigDecimal.ZERO;
+			//
 		}
+
+		return BigDecimal.ZERO;
+	}
+
+	public BigDecimal getTotalAssignedPerc(String collateralRef) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select coalesce(ASSIGNPERC, 0) From COLLATERALASSIGNMENT_TEMP Where COLLATERALREF = ?");
+		sql.append(" union all");
+		sql.append(" Select coalesce(ASSIGNPERC, 0) From COLLATERALASSIGNMENT CA Where COLLATERALREF = ?");
+		sql.append(" and not exists (select 1 From COLLATERALASSIGNMENT_Temp");
+		sql.append(" Where COLLATERALREF = CA.COLLATERALREF and MODULE = CA.MODULE and REFERENCE = CA.REFERENCE)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] param = new Object[] { collateralRef, collateralRef };
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, param);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
 	}
 }

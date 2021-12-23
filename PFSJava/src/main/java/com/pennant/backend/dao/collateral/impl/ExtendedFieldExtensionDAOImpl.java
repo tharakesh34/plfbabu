@@ -112,35 +112,34 @@ public class ExtendedFieldExtensionDAOImpl extends SequenceDao<ExtendedFieldExte
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			extendedFieldExt = this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { externalRef, modeStatus, finEvent }, new RowMapper<ExtendedFieldExtension>() {
+			return this.jdbcOperations.queryForObject(sql.toString(), new RowMapper<ExtendedFieldExtension>() {
 
-						@Override
-						public ExtendedFieldExtension mapRow(ResultSet rs, int rowNum) throws SQLException {
-							ExtendedFieldExtension extendedFieldExt = new ExtendedFieldExtension();
-							extendedFieldExt.setId(rs.getLong("Id"));
-							extendedFieldExt.setExtenrnalRef(rs.getString("ExtenrnalRef"));
-							extendedFieldExt.setPurpose(rs.getString("Purpose"));
-							extendedFieldExt.setModeStatus(rs.getString("ModeStatus"));
-							extendedFieldExt.setInstructionUID(rs.getLong("InstructionUid"));
-							extendedFieldExt.setSequence(rs.getInt("Sequence"));
-							extendedFieldExt.setEvent(rs.getString("Event"));
-							extendedFieldExt.setVersion(rs.getInt("Version"));
-							extendedFieldExt.setLastMntOn(rs.getTimestamp("LastMntOn"));
-							extendedFieldExt.setLastMntBy(rs.getLong("LastMntBy"));
-							extendedFieldExt.setRecordStatus(rs.getString("RecordStatus"));
-							extendedFieldExt.setRoleCode(rs.getString("RoleCode"));
-							extendedFieldExt.setNextRoleCode(rs.getString("NextRoleCode"));
-							extendedFieldExt.setTaskId(rs.getString("TaskId"));
-							extendedFieldExt.setNextTaskId(rs.getString("NextTaskId"));
-							extendedFieldExt.setRecordType(rs.getString("RecordType"));
-							extendedFieldExt.setWorkflowId(rs.getLong("WorkflowId"));
+				@Override
+				public ExtendedFieldExtension mapRow(ResultSet rs, int rowNum) throws SQLException {
+					ExtendedFieldExtension extendedFieldExt = new ExtendedFieldExtension();
+					extendedFieldExt.setId(rs.getLong("Id"));
+					extendedFieldExt.setExtenrnalRef(rs.getString("ExtenrnalRef"));
+					extendedFieldExt.setPurpose(rs.getString("Purpose"));
+					extendedFieldExt.setModeStatus(rs.getString("ModeStatus"));
+					extendedFieldExt.setInstructionUID(rs.getLong("InstructionUid"));
+					extendedFieldExt.setSequence(rs.getInt("Sequence"));
+					extendedFieldExt.setEvent(rs.getString("Event"));
+					extendedFieldExt.setVersion(rs.getInt("Version"));
+					extendedFieldExt.setLastMntOn(rs.getTimestamp("LastMntOn"));
+					extendedFieldExt.setLastMntBy(rs.getLong("LastMntBy"));
+					extendedFieldExt.setRecordStatus(rs.getString("RecordStatus"));
+					extendedFieldExt.setRoleCode(rs.getString("RoleCode"));
+					extendedFieldExt.setNextRoleCode(rs.getString("NextRoleCode"));
+					extendedFieldExt.setTaskId(rs.getString("TaskId"));
+					extendedFieldExt.setNextTaskId(rs.getString("NextTaskId"));
+					extendedFieldExt.setRecordType(rs.getString("RecordType"));
+					extendedFieldExt.setWorkflowId(rs.getLong("WorkflowId"));
 
-							return extendedFieldExt;
-						}
-					});
+					return extendedFieldExt;
+				}
+			}, externalRef, modeStatus, finEvent);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return extendedFieldExt;
