@@ -26736,7 +26736,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#184604.9_pre" author="Mounika.M">
+	<changeSet id="PSD#184604.9_pre" author="Mounika.M" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_aview'); 
@@ -26777,7 +26777,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
-	<changeSet id="PSD#184604.9_post" author="Mounika.M">
+	<changeSet id="PSD#184604.9_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_aview');	
@@ -26785,7 +26785,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#184604.10_pre" author="Mounika.M">
+	<changeSet id="PSD#184604.10_pre" author="Mounika.M" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_tview'); 
@@ -26826,7 +26826,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
-	<changeSet id="PSD#184604.10_post" author="Mounika.M">
+	<changeSet id="PSD#184604.10_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_tview');	
@@ -26834,7 +26834,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="PSD#184604.11_pre" author="Mounika.M">
+	<changeSet id="PSD#184604.11_pre" author="Mounika.M" dbms="postgresql">
 		<sql> 
 			<![CDATA[ 
 				select deps_save_and_drop_dependencies ('plf', 'fintaxuploaddetail_view'); 
@@ -26903,7 +26903,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
-	<changeSet id="PSD#184604.11_post" author="Mounika.M">
+	<changeSet id="PSD#184604.11_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxuploaddetail_view');	
