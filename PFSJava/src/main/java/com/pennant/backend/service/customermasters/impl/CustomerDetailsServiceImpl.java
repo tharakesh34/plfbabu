@@ -520,6 +520,9 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 		if (CollectionUtils.isNotEmpty(headerIdList)) {
 			customerDetails.getCustomerFinances().addAll(financeMainDAO.getAllFinanceDetailsByCustId(id));
+		} else {
+			customerDetails.getFinanceMainList().forEach(fm -> customerDetails.getCustomerFinances().addAll(
+					customerDAO.getCustomerFinances(customer.getCustID(), fm.getFinID(), customer.getCustCtgCode())));
 		}
 
 		logger.debug(Literal.LEAVING);

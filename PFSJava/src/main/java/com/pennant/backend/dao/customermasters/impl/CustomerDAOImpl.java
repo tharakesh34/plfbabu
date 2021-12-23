@@ -2963,4 +2963,84 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		return cifs;
 	}
 
+	@Override
+	public List<FinanceEnquiry> getCustomerFinances(long custId, long finID, String segmentType) {
+		StringBuilder sql = new StringBuilder("Select fm.FinType, fm.FinID, fm.FinReference");
+		sql.append(", fm.FinStartDate, fm.FinApprovedDate, fm.FirstRepay, fm.RepayFrq");
+		sql.append(", fm.FinAssetValue, fm.NumberOfTerms, fm.MaturityDate, fm.ClosingStatus, fm.ClosedDate");
+		sql.append(", pd.totalpribal Future_Schedule_Prin, (pd.odprincipal + pd.odprofit) Instalment_Due");
+		sql.append(", pd.LatestRpyDate, (pd.totalpftpaid + pd.totalpripaid) Instalment_Paid, pd.CurReducingRate");
+		sql.append(", pd.totalprischd Total_Pri_Schd, pd.totalpripaid Total_Pri_Paid, pd.totalpftschd Total_Pft_Schd");
+		sql.append(", pd.totalpftpaid Total_Pft_Paid, pd.CurOdDays, ci.CustIncome, '' OwnerShip");
+		sql.append(", ma.Bounce_Due, ma.Bounce_Paid, fo.Late_Payment_Penalty_Due");
+		sql.append(", fo.Late_Payment_Penalty_Paid, fe.Excess_Amount, fe.Excess_Amt_Paid");
+		sql.append(" FROM FinanceMain fm");
+		sql.append(" INNER JOIN FinPftDetails pd ON pd.FinID = fm.FinID");
+		sql.append(" INNER JOIN CUSTOMERS c ON c.CustId = fm.CustId");
+		sql.append(" LEFT JOIN (SELECT fo1.finid, sum(fo1.totpenaltybal) late_payment_penalty_due");
+		sql.append(", sum(fo1.totpenaltypaid) late_payment_penalty_paid");
+		sql.append(" FROM finoddetails fo1 GROUP BY fo1.finid) fo ON fo.finid = fm.finid");
+		sql.append(" LEFT JOIN (SELECT ma_1.finid, sum(COALESCE(ma_1.adviseamount, 0) - COALESCE(ma_1.paidamount, 0) ");
+		sql.append(" - COALESCE(ma_1.waivedamount, 0)) bounce_due,");
+		sql.append(" sum(ma_1.paidamount) bounce_paid FROM manualadvise ma_1 WHERE ma_1.bounceid > 0");
+		sql.append(" GROUP BY ma_1.finid) ma ON ma.finid = fm.finid");
+		sql.append(" LEFT JOIN (SELECT fea.finid, sum(fea.amount)  excess_amount, sum(COALESCE(fea.utilisedamt, 0)");
+		sql.append(" + COALESCE(fea.reservedamt, 0)) excess_amt_paid ");
+		sql.append(" FROM finexcessamount fea GROUP BY fea.FinID) fe ON fe.FinID = fm.FinID");
+		sql.append(" LEFT JOIN (SELECT ci1.custid, COALESCE(sum(ci1.custincome), 0) custincome");
+		sql.append(" FROM customerincomes ci1 GROUP BY ci1.custid) ci ON ci.custid = fm.custid");
+		sql.append(" Where c.CustID = ? and c.CustCtgCode = ?");
+
+		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
+			sql.append(" and fm.FinID = ?");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, custId);
+			ps.setString(index++, segmentType);
+
+			if (PennantConstants.PFF_CUSTCTG_INDIV.equals(segmentType)) {
+				ps.setLong(index++, finID);
+			}
+		}, (rs, rowNum) -> {
+			FinanceEnquiry finEnqy = new FinanceEnquiry();
+
+			finEnqy.setFinType(rs.getString("FinType"));
+			finEnqy.setFinID(rs.getLong("FinID"));
+			finEnqy.setFinReference(rs.getString("FinReference"));
+			finEnqy.setFinStartDate(rs.getDate("FinStartDate"));
+			finEnqy.setFinApprovedDate(rs.getDate("FinApprovedDate"));
+			finEnqy.setFirstRepay(rs.getBigDecimal("FirstRepay"));
+			finEnqy.setRepayFrq(rs.getString("RepayFrq"));
+			finEnqy.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
+			finEnqy.setNumberOfTerms(rs.getInt("NumberOfTerms"));
+			finEnqy.setMaturityDate(rs.getDate("MaturityDate"));
+			finEnqy.setClosingStatus(rs.getString("ClosingStatus"));
+			finEnqy.setClosedDate(rs.getDate("ClosedDate"));
+			finEnqy.setFutureSchedulePrin(rs.getBigDecimal("Future_Schedule_Prin"));
+			finEnqy.setInstalmentDue(rs.getBigDecimal("Instalment_Due"));
+			finEnqy.setLatestRpyDate(rs.getDate("LatestRpyDate"));
+			finEnqy.setInstalmentPaid(rs.getBigDecimal("Instalment_Paid"));
+			finEnqy.setRepayProfitRate(rs.getBigDecimal("CurReducingRate"));
+			finEnqy.setTotalPriSchd(rs.getBigDecimal("Total_Pri_Schd"));
+			finEnqy.setTotalPriPaid(rs.getBigDecimal("Total_Pri_Paid"));
+			finEnqy.setTotalPftSchd(rs.getBigDecimal("Total_Pft_Schd"));
+			finEnqy.setTotalPftPaid(rs.getBigDecimal("Total_Pft_Paid"));
+			finEnqy.setCurODDays(rs.getInt("CurOdDays"));
+			finEnqy.setSvAmount(rs.getBigDecimal("CustIncome"));
+			finEnqy.setOwnership(rs.getString("OwnerShip"));
+			finEnqy.setBounceDue(rs.getBigDecimal("Bounce_Due"));
+			finEnqy.setBouncePaid(rs.getBigDecimal("Bounce_Paid"));
+			finEnqy.setLatePaymentPenaltyDue(rs.getBigDecimal("Late_Payment_Penalty_Due"));
+			finEnqy.setLatePaymentPenaltyPaid(rs.getBigDecimal("Late_Payment_Penalty_Paid"));
+			finEnqy.setExcessAmount(rs.getBigDecimal("Excess_Amount"));
+			finEnqy.setExcessAmtPaid(rs.getBigDecimal("Excess_Amt_Paid"));
+
+			return finEnqy;
+		});
+	}
 }

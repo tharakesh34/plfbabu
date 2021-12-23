@@ -7,25 +7,19 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.AMedia;
@@ -122,7 +116,6 @@ import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.external.util.StaticListUtil;
 
 import freemarker.template.Configuration;
-import freemarker.template.Template;
 
 /**
  * This is the controller class for the /customer.zul file.
@@ -378,7 +371,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	private List<DirectorDetail> directorList = new ArrayList<DirectorDetail>();
 	protected Label label_CustomerDialog_CustNationality;
 	private transient DirectorDetailService directorDetailService;
-	Date appDate = DateUtility.getAppDate();
+	Date appDate = SysParamUtil.getAppDate();
 	Date startDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
 
 	private boolean isFinanceProcess = false;
@@ -576,7 +569,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		int i = 0;
 		Customer aCustomer = aCustomerDetails.getCustomer();
 
-		if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_INDIV, customerDetails.getCustomer().getCustCtgCode())) {
+		String custCtgCde = customerDetails.getCustomer().getCustCtgCode();
+		if (PennantConstants.PFF_CUSTCTG_INDIV.equals(custCtgCde)) {
 			retails.setVisible(true);
 			Corporates.setVisible(false);
 
@@ -940,6 +934,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				listBoxCustomerEmploymentDetail.setVisible(false);
 				genderDesc.setValue(Labels.getLabel("label_CustomerDialog_CustTypeCode.value"));
 			}
+
 			doFillDocumentDetails(aCustomerDetails.getCustomerDocumentsList());
 			doFillCustomerAddressDetails(aCustomerDetails.getAddressList());
 			doFillCustomerEmploymentDetail(aCustomerDetails.getEmploymentDetailsList());
@@ -959,9 +954,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			doFillCustomerCollateralDetails(aCustomerDetails.getCollateraldetailList());
 			doFillCustomerloanApprovalDetails(aCustomerDetails.getCustomerFinanceDetailList());
 
-		} else if (StringUtils.equals(PennantConstants.PFF_CUSTCTG_CORP, customerDetails.getCustomer().getCustCtgCode())
-				|| StringUtils.equals(PennantConstants.PFF_CUSTCTG_SME,
-						customerDetails.getCustomer().getCustCtgCode())) {
+		} else if (PennantConstants.PFF_CUSTCTG_CORP.equals(custCtgCde)
+				|| PennantConstants.PFF_CUSTCTG_SME.equals(custCtgCde)) {
 			Corporates.setVisible(true);
 			retails.setVisible(false);
 			custCIFF2.setValue(aCustomer.getCustCIF());
@@ -2458,16 +2452,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				lc.setParent(item);
 				listheader_CreditNote.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_CreditNote"));
 
-				lc = new Listcell();
-				lc.setStyle("font-size:14px;font-weight: normal;");
-				Button cibil = new Button("Cibil");
-				cibil.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_Cibil"));
-				cibil.addForward("onClick", self, "onClickviewCibil");
-				cibil.setAttribute("financeMain", financeMain);
-				lc.appendChild(cibil);
-				lc.setParent(item);
-				listheader_Cibil.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_Cibil"));
-
 				item.setAttribute("data", financeMain);
 				ComponentsCtrl.applyForward(item, "onDoubleClick=onCustomerLoanDetailsItemDoubleClicked");
 				this.listBoxCustomerLoanDetails.appendChild(item);
@@ -2620,6 +2604,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			map.put("enquiryType", "DPDENQ");
 			map.put("fromApproved", true);
 			map.put("childDialog", true);
+			map.put("customer360", true);
 			// call the ZUL-file with the parameters packed in a map
 			try {
 				Executions.createComponents("/WEB-INF/pages/Enquiry/FinanceInquiry/FinanceEnquiryHeaderDialog.zul",
@@ -2627,6 +2612,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			} catch (Exception e) {
 				MessageUtil.showError(e);
 			}
+		} else {
+			MessageUtil.showMessage("Data Not Found.");
 		}
 		logger.debug(Literal.LEAVING);
 
@@ -2685,259 +2672,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 
 	}
-
-	/*
-	 * public void onClickviewCibil(ForwardEvent event) throws IOException { logger.debug(Literal.ENTERING); boolean
-	 * reportExit = false; Button cibil = (Button) event.getOrigin().getTarget(); FinanceMain financeMain =
-	 * (FinanceMain) cibil.getAttribute("financeMain"); List<InterfaceServiceDetails> interfaceDetails =
-	 * getInterfaceDetailService().getInterfaceDetailsServiceName( financeMain.getFinReference(),
-	 * InterfaceServiceDetails.class, BhflInterfaceConstants.cibilServiceName); if
-	 * (CollectionUtils.isNotEmpty(interfaceDetails)) { for (InterfaceServiceDetails interfaceServiceDetails :
-	 * interfaceDetails) { if (interfaceServiceDetails.getCif().equals(customerDetails.getCustomer().getCustCIF()) &&
-	 * interfaceServiceDetails.getCibilType().equals("Primary")) { InterfaceServiceDetails interfaceServiceDts =
-	 * interfaceServiceDetails; String jsonResponse = null; String reportType = null; String servicename =
-	 * BhflInterfaceConstants.cibilServiceName; String path = App.getResourcePath("config", "CIBILRawViewTemplate.FTL");
-	 * File ftlFile = new File(path); StringTemplateLoader loader = new StringTemplateLoader(); byte[] cibilRawFile =
-	 * FileUtils.readFileToByteArray(ftlFile); loader.putTemplate("CIBILRawViewTemplate.FTL", new String(cibilRawFile));
-	 * 
-	 * Configuration config = new Configuration(); config.setClassForTemplateLoading(InterfaceDetailDialogCtrl.class,
-	 * "CIBILRawViewTemplate.FTL"); config.setTemplateLoader(loader); config.setDefaultEncoding("UTF-8");
-	 * config.setLocale(Locale.getDefault());
-	 * config.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-	 * TEMPLATES.put("CIBILRawViewTemplate.FTL", config); String result = null; JSONObject json = null;
-	 * 
-	 * try { JSONParser parser = new JSONParser(); if (StringUtils.isNotEmpty(interfaceServiceDts.getResponse())) { json
-	 * = new JSONObject(); json = (JSONObject) parser.parse(interfaceServiceDts.getResponse());
-	 * 
-	 * json = processJsonForCibilRawReport(json); } } catch (Exception e) { logger.error("Exception", e); } try { if
-	 * (json != null) { result = FreeMarkerTemplateUtils
-	 * .processTemplateIntoString(getTemplate("CIBILRawViewTemplate.FTL"), json); Map<String, Object> detailMap = new
-	 * HashMap<String, Object>(); detailMap.put("reportData", result); detailMap.put("reportName", "CibilRawReport");
-	 * detailMap.put("mediaFormat", "html");
-	 * 
-	 * Executions.createComponents( "/WEB-INF/pages/InterfaceDetails/InterfaceReportsDialog.zul",
-	 * window_CustomerDialogg, detailMap); reportExit = true; } } catch (Exception e) { MessageUtil.showError(e); }
-	 * logger.debug(Literal.LEAVING); } } } if (!reportExit) { MessageUtil.showMessage("Cibil Details Not Found"); }
-	 * 
-	 * }
-	 */
-
-	private Template getTemplate(String templateName) throws Exception {
-		Configuration config = null;
-		config = TEMPLATES.get(templateName);
-
-		if (config == null) {
-			throw new Exception("Template not found for the name " + templateName);
-		}
-
-		return config.getTemplate(templateName);
-	}
-
-	@SuppressWarnings("unchecked")
-	private JSONObject processJsonForCibilRawReport(JSONObject json) throws ParseException {
-		logger.debug(Literal.ENTERING);
-		System.out.println(json);
-		int loanCount = 0;
-		int enquiryCount = 0;
-		if (null != json) {
-			logger.debug("Cibil Respone from BHFL" + json.toString());
-			Object accountObject = json.get("accountDetail");
-			if (null != accountObject && accountObject instanceof JSONArray) {
-				JSONArray accountArray = (JSONArray) accountObject;
-				loanCount = accountArray.size();
-			}
-			Object enquiryObject = json.get("enquiryDetails");
-			if (null != enquiryObject && enquiryObject instanceof JSONArray) {
-				JSONArray enquiryArray = (JSONArray) enquiryObject;
-				if (null != enquiryArray) {
-					for (Object enquiry : enquiryArray) {
-						if (null != enquiry && (enquiry instanceof JSONObject)) {
-							JSONObject object = (JSONObject) enquiry;
-							object.put("enquiryPurpose", cibilloanTypes.get((String) object.get("enquiryPurpose")));
-							String dateOFEnquiry = (String) object.get("dateOFEnquiry");
-
-							if (StringUtils.isNotEmpty(dateOFEnquiry)) {
-								Date dateEnquiry = new SimpleDateFormat("ddMMyyyy").parse(dateOFEnquiry);
-								dateOFEnquiry = (new SimpleDateFormat("dd/MM/yyyy").format(dateEnquiry));
-								object.put("dateOFEnquiry", dateOFEnquiry);
-
-							}
-						}
-					}
-				}
-				enquiryCount = enquiryArray.size();
-			}
-
-			Object consumerIdentityObject = json.get("consumerIdentity");
-			if (null != consumerIdentityObject && consumerIdentityObject instanceof JSONArray) {
-				JSONArray consumerIdentityArray = (JSONArray) consumerIdentityObject;
-				if (null != consumerIdentityArray) {
-					for (Object id : consumerIdentityArray) {
-						if (null != id && (id instanceof JSONObject)) {
-							JSONObject object = (JSONObject) id;
-							String idCode = (String) object.get("idType");
-							if (MapUtils.isNotEmpty(cibilIdTypes) && StringUtils.isNotBlank(idCode)) {
-								object.put("idType", cibilIdTypes.get(idCode));
-							}
-						}
-					}
-				}
-			}
-
-			Object consumerAddressObject = json.get("consumerAddress");
-			if (null != consumerAddressObject && consumerAddressObject instanceof JSONArray) {
-				JSONArray consumerAddressArray = (JSONArray) consumerAddressObject;
-				if (null != consumerAddressArray) {
-					for (Object id : consumerAddressArray) {
-						if (null != id && (id instanceof JSONObject)) {
-							JSONObject object = (JSONObject) id;
-							String adressCategory = (String) object.get("addressCategory");
-							if (MapUtils.isNotEmpty(cibilAddrCategory) && StringUtils.isNotBlank(adressCategory)) {
-								object.put("addressCategory", cibilAddrCategory.get(adressCategory));
-							}
-							String residenceCode = (String) object.get("residenceCode");
-							if (MapUtils.isNotEmpty(cibilResidenceCode) && StringUtils.isNotBlank(residenceCode)) {
-								object.put("residenceCode", cibilResidenceCode.get(residenceCode));
-							}
-							String dateReported = (String) object.get("dateReported");
-							if (StringUtils.isNotEmpty(dateReported)) {
-								Date dateReport = new SimpleDateFormat("ddMMyyyy").parse(dateReported);
-								dateReported = (new SimpleDateFormat("dd/MM/yyyy").format(dateReport));
-								object.put("dateReported", dateReported);
-
-							}
-						}
-					}
-				}
-			}
-
-			Object cibilHeader = json.get("cibilHeader");
-			if (null != cibilHeader && cibilHeader instanceof JSONObject) {
-				JSONObject cibilHeaderJson = (JSONObject) json.get("cibilHeader");
-				String dateProcess = (String) cibilHeaderJson.get("dateProcessed");
-				String timeProcess = (String) cibilHeaderJson.get("timeProcessed");
-
-				if (StringUtils.isNotEmpty(dateProcess)) {
-					Date startdate = new SimpleDateFormat("ddMMyyyy").parse(dateProcess);
-					dateProcess = (new SimpleDateFormat("dd/MM/yyyy").format(startdate));
-					cibilHeaderJson.put("dateProcessed", dateProcess);
-
-				}
-				if (StringUtils.isNotEmpty(timeProcess)) {
-					Date time = new SimpleDateFormat("HHmmss").parse(timeProcess);
-					timeProcess = (new SimpleDateFormat("HH:mm:ss").format(time));
-					cibilHeaderJson.put("timeProcessed", timeProcess);
-				}
-			}
-
-			Object consumerTelephone = json.get("consumerTelephone");
-			if (null != consumerTelephone && consumerTelephone instanceof JSONArray) {
-				JSONArray consumerTelephoneArray = (JSONArray) consumerTelephone;
-				if (null != consumerTelephoneArray) {
-					for (Object telePhone : consumerTelephoneArray) {
-						if (null != telePhone && (telePhone instanceof JSONObject)) {
-							JSONObject telephoneJson = (JSONObject) telePhone;
-							if (MapUtils.isNotEmpty(cibilPhoneTypes)
-									&& StringUtils.isNotBlank((String) telephoneJson.get("telType"))) {
-								telephoneJson.put("telType",
-										cibilPhoneTypes.get((String) telephoneJson.get("telType")));
-							}
-						}
-					}
-				}
-			}
-		}
-		Object employment = json.get("employment");
-		if (null != employment && (employment instanceof JSONObject)) {
-			JSONObject employmentJson = (JSONObject) employment;
-			if (MapUtils.isNotEmpty(cibilOccupationTypes)
-					&& StringUtils.isNotBlank((String) employmentJson.get("occupationCode"))) {
-				employmentJson.put("occupationCode",
-						cibilOccupationTypes.get((String) employmentJson.get("occupationCode")));
-			}
-		}
-		Object accountDetail = json.get("accountDetail");
-		if (null != accountDetail && (accountDetail instanceof JSONArray)) {
-			JSONArray accountDetailArray = (JSONArray) accountDetail;
-			if (null != accountDetailArray) {
-				for (Object accountDtl : accountDetailArray) {
-					if (null != accountDtl && (accountDtl instanceof JSONObject)) {
-						JSONObject accountDtlJson = (JSONObject) accountDtl;
-						if (MapUtils.isNotEmpty(cibilloanTypes)
-								&& StringUtils.isNotBlank((String) accountDtlJson.get("accountType"))) {
-							accountDtlJson.put("accountType",
-									cibilloanTypes.get((String) accountDtlJson.get("accountType")));
-						}
-						String paymentHistoryEndDate = (String) accountDtlJson.get("paymentHistoryEndDate");
-						if (StringUtils.isNotEmpty(paymentHistoryEndDate)) {
-							Date pyamentEndDate = new SimpleDateFormat("ddMMyyyy").parse(paymentHistoryEndDate);
-							paymentHistoryEndDate = (new SimpleDateFormat("dd/MM/yyyy").format(pyamentEndDate));
-							accountDtlJson.put("paymentHistoryEndDate", paymentHistoryEndDate);
-
-						}
-						String paymentHistoryStartDate = (String) accountDtlJson.get("paymentHistoryStartDate");
-						if (StringUtils.isNotEmpty(paymentHistoryStartDate)) {
-							Date pyamentStartDate = new SimpleDateFormat("ddMMyyyy").parse(paymentHistoryStartDate);
-							paymentHistoryStartDate = (new SimpleDateFormat("dd/MM/yyyy").format(pyamentStartDate));
-							accountDtlJson.put("paymentHistoryStartDate", paymentHistoryStartDate);
-
-						}
-						String dateReportedAndCert = (String) accountDtlJson.get("dateReportedAndCert");
-						if (StringUtils.isNotEmpty(dateReportedAndCert)) {
-							Date dateReport = new SimpleDateFormat("ddMMyyyy").parse(dateReportedAndCert);
-							dateReportedAndCert = (new SimpleDateFormat("dd/MM/yyyy").format(dateReport));
-							accountDtlJson.put("dateReportedAndCert", dateReportedAndCert);
-
-						}
-						String dateClosed = (String) accountDtlJson.get("dateClosed");
-						if (StringUtils.isNotEmpty(dateClosed)) {
-							Date dateClose = new SimpleDateFormat("ddMMyyyy").parse(dateClosed);
-							dateClosed = (new SimpleDateFormat("dd/MM/yyyy").format(dateClose));
-							accountDtlJson.put("dateClosed", dateClosed);
-
-						}
-						String dateLastPayment = (String) accountDtlJson.get("dateLastPayment");
-						if (StringUtils.isNotEmpty(dateLastPayment)) {
-							Date lastPaymentDate = new SimpleDateFormat("ddMMyyyy").parse(dateLastPayment);
-							dateLastPayment = (new SimpleDateFormat("dd/MM/yyyy").format(lastPaymentDate));
-							accountDtlJson.put("dateLastPayment", dateLastPayment);
-
-						}
-						String dateOpenedOrDisbursed = (String) accountDtlJson.get("dateOpenedOrDisbursed");
-
-						if (StringUtils.isNotEmpty(dateOpenedOrDisbursed)) {
-							Date openendDate = new SimpleDateFormat("ddMMyyyy").parse(dateOpenedOrDisbursed);
-							dateOpenedOrDisbursed = (new SimpleDateFormat("dd/MM/yyyy").format(openendDate));
-							accountDtlJson.put("dateOpenedOrDisbursed", dateOpenedOrDisbursed);
-
-						}
-
-					}
-
-				}
-			}
-
-		}
-
-		json.put("loanCount", loanCount);
-		json.put("enquiryCount", enquiryCount);
-		logger.debug("Processed Cibil Respone" + json.toString());
-		logger.debug(Literal.LEAVING);
-
-		return json;
-	}
-
-	/*
-	 * private void doPopulateCibilDetails() { if (MapUtils.isEmpty(cibilIdTypes)) { cibilIdTypes =
-	 * bhflCibilRequestService.loadCibilIdTypes(); } if (MapUtils.isEmpty(cibilPhoneTypes)) { cibilPhoneTypes =
-	 * bhflCibilRequestService.loadCibilPhoneTypes(); } if (MapUtils.isEmpty(cibilloanTypes)) { cibilloanTypes =
-	 * bhflCibilRequestService.loadCibilLoanTypes(); } } protected Map<String, Object> getDefaultArguments() {
-	 * Map<String, Object> aruments = new HashMap<>();
-	 * 
-	 * aruments.put("moduleCode", moduleCode); aruments.put("enqiryModule", enqiryModule);
-	 * 
-	 * return aruments; }
-	 */
 
 	public void doFillCustomerCollateralDetails(List<CollateralSetup> customercollateralDetails) {
 		logger.debug("Entering");

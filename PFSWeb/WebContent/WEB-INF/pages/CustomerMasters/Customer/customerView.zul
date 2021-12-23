@@ -1134,8 +1134,6 @@
 														label="${c:l('listheader_GSTInvoice.label')}" sort="false" hflex="min" />
 													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_CreditNote"
 														label="${c:l('listheader_CreditNote.label')}" sort="false" hflex="min" />
-													<listheader sclass="listheader-content" style="color: #B3B3B3; font-size: 15px;" id="listheader_Cibil"
-														label="${c:l('listheader_Cibil.label')}" sort="false" hflex="min" />
 												</listhead>
 											</listbox>
 

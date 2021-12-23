@@ -200,4 +200,5 @@ public interface CustomerDAO {
 
 	List<String> isDuplicateCRCPR(long custId, String custCRCPR, String custCtgCode);
 
+	List<FinanceEnquiry> getCustomerFinances(long custId, long finID, String segmentType);
 }
