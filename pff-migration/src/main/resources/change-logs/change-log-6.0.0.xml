@@ -26772,7 +26772,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				    T1.RECORDTYPE,
 				    T1.WORKFLOWID,
 				    T1.PINCODEID
-   				FROM FINTAXUPLOADDETAIL T1;
+   				FROM FINTAXUPLOADDETAIL T1
 			]]>
 		</createView>
 	</changeSet>
@@ -26821,7 +26821,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				    T1.RECORDTYPE,
 				    T1.WORKFLOWID,
 				    T1.PINCODEID
-   				FROM FINTAXUPLOADDETAIL_TEMP T1;
+   				FROM FINTAXUPLOADDETAIL_TEMP T1
 			]]>
 		</createView>
 	</changeSet>

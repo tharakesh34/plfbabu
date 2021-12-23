@@ -2905,7 +2905,6 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 
 		if (StringUtils.equals(reportMenuCode, "menu_Item_NoObjectionCertificate")) {
 			Filter[] nocFilter = new Filter[2];
-			nocFilter[0] = Filter.equalTo("FINISACTIVE", 0);
 			nocFilter[1] = Filter.in("CLOSINGSTATUS", FinanceConstants.CLOSE_STATUS_MATURED,
 					FinanceConstants.CLOSE_STATUS_EARLYSETTLE);
 			filters = nocFilter;
