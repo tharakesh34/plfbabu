@@ -128,7 +128,8 @@ public class GSTInvoiceGeneratorServiceImpl extends SequenceDao<DocumentDetails>
 				}
 			}
 		}
-		logger.debug(Literal.LEAVING + ":-generateInvoice");
+
+		logger.debug(Literal.LEAVING);
 	}
 
 	private void createGSTSequence(String gsTIN, String entityCode) {

@@ -24,9 +24,7 @@
 package com.pennant.backend.dao.finance.impl;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +37,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.PreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
 
 import com.pennant.backend.dao.finance.GSTInvoiceTxnDAO;
 import com.pennant.backend.model.finance.GSTInvoiceTxn;
@@ -63,7 +60,6 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public long save(GSTInvoiceTxn gsti) {
-
 		if (gsti.getInvoiceId() <= 0) {
 			gsti.setInvoiceId(getNextValue("Seq_Gst_Invoice_Txn"));
 		}
@@ -79,10 +75,10 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			jdbcOperations.update(sql.toString(), ps -> {
 				int index = 1;
 
 				ps.setLong(index++, gsti.getInvoiceId());
@@ -138,10 +134,10 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 			sql.append(" ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 			sql.append(")");
 
-			logger.trace(Literal.SQL + sql.toString());
-			try {
+			logger.debug(Literal.SQL + sql.toString());
 
-				jdbcTemplate.getJdbcOperations().update(sql.toString(), ps -> {
+			try {
+				jdbcOperations.update(sql.toString(), ps -> {
 					int index = 1;
 
 					ps.setLong(index++, gstid.getId());
@@ -170,39 +166,24 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public void updateGSTInvoiceNo(GSTInvoiceTxn invoice) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Update GST_Invoice_Txn Set InvoiceNo = ? Where InvoiceId = ?";
 
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" GST_Invoice_Txn");
-		sql.append(" Set InvoiceNo = ?");
-		sql.append(" Where InvoiceId = ?");
+		logger.debug(Literal.SQL + sql);
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		int recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
-				ps.setString(index++, invoice.getInvoiceNo());
-
-				ps.setLong(index++, invoice.getInvoiceId());
-			}
+		int recordCount = jdbcOperations.update(sql, ps -> {
+			int index = 1;
+			ps.setString(index++, invoice.getInvoiceNo());
+			ps.setLong(index++, invoice.getInvoiceId());
 		});
-		// Check for the concurrency failure.
+
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
 
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public List<GSTInvoiceTxn> getGSTInvoiceTxnList() {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" InvoiceId, TransactionID, InvoiceNo, InvoiceDate, Invoice_Amt, CompanyCode, CompanyName");
 		sql.append(", Company_GSTIN, Company_Address1, Company_Address2, Company_Address3, Company_PINCode");
@@ -212,7 +193,7 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		sql.append(" From GST_Invoice_Txn");
 		sql.append(" Where InvoiceNo is null");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		List<GSTInvoiceTxn> list = this.jdbcOperations.query(sql.toString(), ps -> {
 		}, (rs, i) -> {
@@ -256,18 +237,16 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public long saveSeqGSTInvoice(SeqGSTInvoice invoice) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Insert into");
 		sql.append(" GST_INVOICE_SEQUENCES");
 		sql.append(" (EntityCode, StateCode, TransactionType, MonthYear");
 		sql.append(") values(");
 		sql.append(" ?, ?, ?, ?)");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			jdbcTemplate.getJdbcOperations().update(sql.toString(), new PreparedStatementSetter() {
+			jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
 
 				@Override
 				public void setValues(PreparedStatement ps) throws SQLException {
@@ -282,16 +261,12 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 		} catch (DuplicateKeyException e) {
 			throw new ConcurrencyException(e);
 		}
-		logger.debug(Literal.LEAVING);
 
 		return invoice.getSeqNo();
 	}
 
 	@Override
 	public void updateSeqGSTInvoice(SeqGSTInvoice invoice) {
-		logger.debug(Literal.ENTERING);
-
-		// Prepare the SQL, ensure primary key will not be updated.
 		StringBuilder sql = new StringBuilder("Update");
 		sql.append(" GST_INVOICE_SEQUENCES");
 		sql.append(" Set SeqNo = ?");
@@ -302,112 +277,90 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 		sql.append(" Where ID = ?");
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		int recordCount = jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
+		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
 
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				int index = 1;
+			ps.setLong(index++, invoice.getSeqNo());
 
-				ps.setLong(index++, invoice.getSeqNo());
-
-				if (invoice.getMonthYear() != null) {
-					ps.setString(index++, invoice.getMonthYear());
-				}
-
-				ps.setLong(index, invoice.getID());
+			if (invoice.getMonthYear() != null) {
+				ps.setString(index++, invoice.getMonthYear());
 			}
+
+			ps.setLong(index, invoice.getID());
 		});
 
-		// Check for the concurrency failure.
 		if (recordCount == 0) {
 			throw new ConcurrencyException();
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public SeqGSTInvoice getSeqNoFromSeqGSTInvoice(SeqGSTInvoice invoice) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ID, EntityCode, StateCode, TransactionType, MonthYear, SeqNo");
 		sql.append(" from GST_INVOICE_SEQUENCES");
 		sql.append(" Where EntityCode = ? and StateCode = ? and TransactionType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
+
+		Object[] args = new Object[] { invoice.getEntityCode(), invoice.getStateCode(), invoice.getTransactionType() };
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(),
-					new Object[] { invoice.getEntityCode(), invoice.getStateCode(), invoice.getTransactionType() },
-					new RowMapper<SeqGSTInvoice>() {
-						@Override
-						public SeqGSTInvoice mapRow(ResultSet rs, int rowNum) throws SQLException {
-							SeqGSTInvoice gsi = new SeqGSTInvoice();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				SeqGSTInvoice gsi = new SeqGSTInvoice();
 
-							gsi.setID(rs.getLong("ID"));
-							gsi.setEntityCode(rs.getString("EntityCode"));
-							gsi.setStateCode(rs.getString("StateCode"));
-							gsi.setTransactionType(rs.getString("TransactionType"));
-							gsi.setMonthYear(rs.getString("MonthYear"));
-							gsi.setSeqNo(rs.getLong("SeqNo"));
+				gsi.setID(rs.getLong("ID"));
+				gsi.setEntityCode(rs.getString("EntityCode"));
+				gsi.setStateCode(rs.getString("StateCode"));
+				gsi.setTransactionType(rs.getString("TransactionType"));
+				gsi.setMonthYear(rs.getString("MonthYear"));
+				gsi.setSeqNo(rs.getLong("SeqNo"));
 
-							return gsi;
-						}
-					});
+				return gsi;
+			}, args);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public SeqGSTInvoice getSeqGSTInvoice(SeqGSTInvoice seqGSTInvoice) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" ID, EntityCode, StateCode, TransactionType, MonthYear, SeqNo");
 		sql.append(" from GST_INVOICE_SEQUENCES");
 		sql.append(" Where EntityCode = ? and StateCode = ? and TransactionType = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
+		Object[] args = new Object[] { seqGSTInvoice.getEntityCode(), seqGSTInvoice.getStateCode(),
+				seqGSTInvoice.getTransactionType() };
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { seqGSTInvoice.getEntityCode(),
-					seqGSTInvoice.getStateCode(), seqGSTInvoice.getTransactionType() }, new RowMapper<SeqGSTInvoice>() {
-						@Override
-						public SeqGSTInvoice mapRow(ResultSet rs, int rowNum) throws SQLException {
-							SeqGSTInvoice sgi = new SeqGSTInvoice();
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				SeqGSTInvoice sgi = new SeqGSTInvoice();
 
-							sgi.setID(rs.getLong("ID"));
-							sgi.setEntityCode(rs.getString("EntityCode"));
-							sgi.setStateCode(rs.getString("StateCode"));
-							sgi.setTransactionType(rs.getString("TransactionType"));
-							sgi.setMonthYear(rs.getString("MonthYear"));
-							sgi.setSeqNo(rs.getLong("SeqNo"));
+				sgi.setID(rs.getLong("ID"));
+				sgi.setEntityCode(rs.getString("EntityCode"));
+				sgi.setStateCode(rs.getString("StateCode"));
+				sgi.setTransactionType(rs.getString("TransactionType"));
+				sgi.setMonthYear(rs.getString("MonthYear"));
+				sgi.setSeqNo(rs.getLong("SeqNo"));
 
-							return sgi;
-						}
-					});
+				return sgi;
+			}, args);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
 	@Override
 	public boolean isGstInvoiceExist(String custCif, String finReference, String invoiceType, Date fromDate,
 			Date toDate) {
-		logger.debug(Literal.ENTERING);
-
-		List<GSTInvoiceTxn> list = new ArrayList<GSTInvoiceTxn>();
 
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" InvoiceId, InvoiceNo");
@@ -426,44 +379,35 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 			sql.append(" and InvoiceDate >= ? and InvoiceDate <= ?");
 		}
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			list = this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
+		List<GSTInvoiceTxn> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
 
-					ps.setString(index++, invoiceType);
+			ps.setString(index++, invoiceType);
 
-					if (StringUtils.isNotBlank(custCif)) {
-						ps.setString(index++, custCif);
-					}
+			if (StringUtils.isNotBlank(custCif)) {
+				ps.setString(index++, custCif);
+			}
 
-					if (StringUtils.isNotBlank(finReference)) {
-						ps.setString(index++, finReference);
-					}
+			if (StringUtils.isNotBlank(finReference)) {
+				ps.setString(index++, finReference);
+			}
 
-					if (fromDate != null && toDate != null) {
-						ps.setDate(index++, JdbcUtil.getDate(fromDate));
-						ps.setDate(index++, JdbcUtil.getDate(toDate));
+			if (fromDate != null && toDate != null) {
+				ps.setDate(index++, JdbcUtil.getDate(fromDate));
+				ps.setDate(index++, JdbcUtil.getDate(toDate));
 
-					}
-				}
-			}, new RowMapper<GSTInvoiceTxn>() {
-				@Override
-				public GSTInvoiceTxn mapRow(ResultSet rs, int rowNum) throws SQLException {
-					GSTInvoiceTxn git = new GSTInvoiceTxn();
+			}
+		}, (rs, rowNum) -> {
+			GSTInvoiceTxn git = new GSTInvoiceTxn();
 
-					git.setInvoiceId(rs.getLong("InvoiceId"));
-					git.setInvoiceNo(rs.getString("InvoiceNo"));
+			git.setInvoiceId(rs.getLong("InvoiceId"));
+			git.setInvoiceNo(rs.getString("InvoiceNo"));
 
-					return git;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
+			return git;
+		});
+
 		if (CollectionUtils.isNotEmpty(list)) {
 			for (GSTInvoiceTxn invoiceTxn : list) {
 				if (StringUtils.isNotBlank(invoiceTxn.getInvoiceNo())) {
@@ -472,70 +416,46 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 			}
 		}
 
-		logger.debug(Literal.LEAVING);
 		return false;
 	}
 
 	@Override
 	public void updateSeqNo() {
-		logger.debug(Literal.ENTERING);
+		String sql = "Update Seq_GST_Invoice Set SeqNo = ?";
 
-		// Prepare the SQL, ensure primary key will not be updated.
-		StringBuilder sql = new StringBuilder("Update");
-		sql.append(" Seq_GST_Invoice");
-		sql.append(" Set SeqNo = ?");
+		logger.debug(Literal.SQL + sql);
 
-		// Execute the SQL, binding the arguments.
-		logger.trace(Literal.SQL + sql.toString());
-
-		jdbcOperations.update(sql.toString(), new PreparedStatementSetter() {
-
-			@Override
-			public void setValues(PreparedStatement ps) throws SQLException {
-				ps.setLong(1, 0);
-			}
+		jdbcOperations.update(sql, ps -> {
+			ps.setLong(1, 0);
 		});
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public void deleteSeqGSTInvoice(SeqGSTInvoice invoice) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Delete From GST_INVOICE_SEQUENCES Where EntityCode = ? and StateCode = ? and TransactionType = ?";
 
-		StringBuilder sql = new StringBuilder("Delete From");
-		sql.append(" GST_INVOICE_SEQUENCES");
-		sql.append(" Where EntityCode = ? and StateCode = ? and TransactionType = ?");
+		logger.debug(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-
+		Object[] args = new Object[] { invoice.getEntityCode(), invoice.getStateCode(), invoice.getTransactionType() };
 		try {
-			jdbcOperations.update(sql.toString(),
-					new Object[] { invoice.getEntityCode(), invoice.getStateCode(), invoice.getTransactionType() });
+			jdbcOperations.update(sql, args);
 		} catch (DataAccessException e) {
 			throw new DependencyFoundException(e);
 		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
 	public Long getInvoiceIdByTranId(Long tranId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" InvoiceId");
-		sql.append(" from gst_invoice_txn");
-		sql.append("  Where TransactionId = ?");
+		String sql = "Select InvoiceId From gst_invoice_txn Where TransactionId = ?";
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { tranId },
-					(ResultSet rs, int rowNum) -> {
-
-						return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
-					});
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				return (JdbcUtil.getLong(rs.getLong("InvoiceId")));
+			}, tranId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records not found in gst_invoice_txn for the specified tranId {}", tranId);
+			//
 		}
 
 		return null;
@@ -543,52 +463,36 @@ public class GSTInvoiceTxnDAOImpl extends SequenceDao<GSTInvoiceTxn> implements 
 
 	@Override
 	public List<GSTInvoiceTxnDetails> getTxnListByInvoiceId(Long invoiceId) {
-
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, InvoiceId, FeeCode, FeeAmount, CGST_RATE, CGST_AMT, SGST_RATE, SGST_AMT, IGST_RATE");
 		sql.append(", IGST_AMT, UGST_RATE, UGST_AMT, CESS_RATE, CESS_AMT");
 		sql.append(" from gst_invoice_txn_details");
 		sql.append(" Where InvoiceId = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setLong(index, invoiceId);
-				}
-			}, new RowMapper<GSTInvoiceTxnDetails>() {
-				@Override
-				public GSTInvoiceTxnDetails mapRow(ResultSet rs, int rowNum) throws SQLException {
-					GSTInvoiceTxnDetails txndetails = new GSTInvoiceTxnDetails();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index, invoiceId);
+		}, (rs, rowNum) -> {
+			GSTInvoiceTxnDetails txndetails = new GSTInvoiceTxnDetails();
 
-					txndetails.setId(rs.getLong("Id"));
-					txndetails.setInvoiceId(rs.getLong("InvoiceId"));
-					txndetails.setFeeCode(rs.getString("FeeCode"));
-					txndetails.setFeeAmount(rs.getBigDecimal("FeeAmount"));
-					txndetails.setCGST_RATE(rs.getBigDecimal("CGST_RATE"));
-					txndetails.setCGST_AMT(rs.getBigDecimal("CGST_AMT"));
-					txndetails.setSGST_RATE(rs.getBigDecimal("SGST_RATE"));
-					txndetails.setSGST_AMT(rs.getBigDecimal("SGST_AMT"));
-					txndetails.setIGST_RATE(rs.getBigDecimal("IGST_RATE"));
-					txndetails.setIGST_AMT(rs.getBigDecimal("IGST_AMT"));
-					txndetails.setUGST_RATE(rs.getBigDecimal("UGST_RATE"));
-					txndetails.setUGST_AMT(rs.getBigDecimal("UGST_AMT"));
-					txndetails.setCESS_RATE(rs.getBigDecimal("CESS_RATE"));
-					txndetails.setCESS_AMT(rs.getBigDecimal("CESS_AMT"));
+			txndetails.setId(rs.getLong("Id"));
+			txndetails.setInvoiceId(rs.getLong("InvoiceId"));
+			txndetails.setFeeCode(rs.getString("FeeCode"));
+			txndetails.setFeeAmount(rs.getBigDecimal("FeeAmount"));
+			txndetails.setCGST_RATE(rs.getBigDecimal("CGST_RATE"));
+			txndetails.setCGST_AMT(rs.getBigDecimal("CGST_AMT"));
+			txndetails.setSGST_RATE(rs.getBigDecimal("SGST_RATE"));
+			txndetails.setSGST_AMT(rs.getBigDecimal("SGST_AMT"));
+			txndetails.setIGST_RATE(rs.getBigDecimal("IGST_RATE"));
+			txndetails.setIGST_AMT(rs.getBigDecimal("IGST_AMT"));
+			txndetails.setUGST_RATE(rs.getBigDecimal("UGST_RATE"));
+			txndetails.setUGST_AMT(rs.getBigDecimal("UGST_AMT"));
+			txndetails.setCESS_RATE(rs.getBigDecimal("CESS_RATE"));
+			txndetails.setCESS_AMT(rs.getBigDecimal("CESS_AMT"));
 
-					return txndetails;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return txndetails;
+		});
 	}
 }

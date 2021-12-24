@@ -47,7 +47,6 @@ import com.pennant.backend.model.collateral.AssignmentDetails;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.collateral.CollateralMovement;
 import com.pennanttech.pennapps.core.ConcurrencyException;
-import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -65,72 +64,40 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		super();
 	}
 
-	/**
-	 * This method Deletes the Record from the CollateralAssignment or CollateralAssignment_Temp. if Record not deleted
-	 * then throws DataAccessException with error 41003. delete Collateral Assignment by key AssignmentId
-	 * 
-	 * @param Collateral Assignment (collateralAssignment)
-	 * @param type       (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
-	public void delete(CollateralAssignment collateralAssignment, String type) {
-		logger.debug("Entering");
-		int recordCount = 0;
-
-		StringBuilder deleteSql = new StringBuilder("Delete from CollateralAssignment");
-		deleteSql.append(StringUtils.trimToEmpty(type));
-		deleteSql.append(" Where Reference = :Reference and Module = :Module and CollateralRef = :CollateralRef ");
-		logger.debug("deleteSql: " + deleteSql.toString());
-
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		try {
-			recordCount = this.jdbcTemplate.update(deleteSql.toString(), beanParameters);
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-		logger.debug("Leaving");
-	}
-
-	/**
-	 * 
-	 * @param reference
-	 * @param type
-	 */
-	@Override
-	public void deleteByReference(String reference, String type) {
-		logger.debug("Entering");
-
-		CollateralAssignment collateralAssignment = new CollateralAssignment();
-		collateralAssignment.setReference(reference);
-
+	public void delete(CollateralAssignment ca, String type) {
 		StringBuilder sql = new StringBuilder("Delete From CollateralAssignment");
 		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where Reference = :Reference");
+		sql.append(" Where Reference = ? and Module = ? and CollateralRef = ?");
 
-		logger.debug("deleteSql: " + sql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		this.jdbcTemplate.update(sql.toString(), beanParameters);
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("Leaving");
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, ca.getReference());
+			ps.setString(2, ca.getModule());
+			ps.setString(3, ca.getCollateralRef());
+		});
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
 	}
 
-	/**
-	 * This method insert new Records into CollateralAssignment or CollateralAssignment_Temp.
-	 *
-	 * save Collateral Assignment
-	 * 
-	 * @param Collateral Assignment (collateralAssignment)
-	 * @param type       (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
+	@Override
+	public void deleteByReference(String reference, String type) {
+		StringBuilder sql = new StringBuilder("Delete From CollateralAssignment");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where Reference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			ps.setString(1, reference);
+		});
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
 	@Override
 	public void save(CollateralAssignment collateralAssignment, String type) {
 		logger.debug("Entering");
@@ -151,16 +118,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		logger.debug("Leaving");
 	}
 
-	/**
-	 * This method updates the Record CollateralAssignment or CollateralAssignment_Temp. if Record not updated then
-	 * throws DataAccessException with error 41004.
-	 * 
-	 * @param Collateral Assignment (collateralAssignment)
-	 * @param type       (String) ""/_Temp/_View
-	 * @return void
-	 * @throws DataAccessException
-	 * 
-	 */
 	@Override
 	public void update(CollateralAssignment collateralAssignment, String type) {
 		int recordCount = 0;
@@ -195,8 +152,17 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	@Override
 	public List<CollateralAssignment> getCollateralAssignmentByFinRef(String reference, String moduleName,
 			String type) {
+
+		type = StringUtils.trimToEmpty(type);
+		type = type.toUpperCase();
+
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where Reference = ? and Module = ?");
+
+		if (type.endsWith("_VIEW")) {
+			sql.append(" And Reference = ? and Module = ?");
+		} else {
+			sql.append(" Where Reference = ? and Module = ?");
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -266,8 +232,17 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 */
 	@Override
 	public CollateralAssignment getCollateralAssignmentbyID(CollateralAssignment ca, String type) {
+
+		type = StringUtils.trimToEmpty(type);
+		type = type.toUpperCase();
+
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where Reference = ? and Module = ? and CollateralRef = ?");
+
+		if (type.endsWith("_VIEW")) {
+			sql.append(" And Reference = ? and Module = ? and CollateralRef = ?");
+		} else {
+			sql.append(" Where Reference = ? and Module = ? and CollateralRef = ?");
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -456,10 +431,17 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	@Override
 	public CollateralAssignment getCollateralAssignmentByFinReference(String reference, String collateralRef,
 			String type) {
-		logger.debug(Literal.ENTERING);
+
+		type = StringUtils.trimToEmpty(type);
+		type = type.toUpperCase();
 
 		StringBuilder sql = getSqlQuery(type);
-		sql.append(" Where Reference = ? and CollateralRef = ?");
+
+		if (type.endsWith("_VIEW")) {
+			sql.append(" And Reference = ? and CollateralRef = ?");
+		} else {
+			sql.append(" Where Reference = ? and CollateralRef = ?");
+		}
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -471,7 +453,6 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 
@@ -563,58 +544,58 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		type = StringUtils.trimToEmpty(type);
 		type = type.toUpperCase();
 
-		StringBuilder sql = new StringBuilder("Select");
+		StringBuilder sql = new StringBuilder();
 
 		if (StringUtils.isEmpty(type)) {
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(" FROM COLLATERALASSIGNMENT CA");
 		} else if (type.endsWith("_TEMP")) {
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
 		} else if (type.endsWith("_CTVIEW")) {
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
 			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
 			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
 			sql.append(" INNER JOIN COLLATERALSETUP_TEMP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
 			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
 		} else if (type.endsWith("_AVIEW")) {
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
 			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
 			sql.append(" FROM COLLATERALASSIGNMENT CA");
 			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
 			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
 		} else if (type.endsWith("_TVIEW")) {
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
 			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
 			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
 			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
 			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
 		} else if (type.endsWith("_VIEW")) {
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
 			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
 			sql.append(" FROM COLLATERALASSIGNMENT_TEMP CA");
 			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
 			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
 			sql.append(" Union all");
-			sql.append(" CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE, CA.HOSTREFERENCE");
-			sql.append(", CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS, CA.ROLECODE, CA.NEXTROLECODE");
-			sql.append(", CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
+			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
+			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
+			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
 			sql.append(", CS.COLLATERALCCY, CS.COLLATERALVALUE, CS.BANKVALUATION, CS.SPECIALLTV");
 			sql.append(", CS.BANKLTV, CU.CUSTCIF DEPOSITORCIF, CS.COLLATERALTYPE");
 			sql.append(" FROM COLLATERALASSIGNMENT CA");
