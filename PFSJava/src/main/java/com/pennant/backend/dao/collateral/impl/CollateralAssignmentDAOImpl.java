@@ -265,32 +265,21 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	 * Method for Fetching List of Assigned Collateral to the Reference based on Module and Collateral Reference
 	 */
 	@Override
-	public CollateralAssignment getCollateralAssignmentbyID(CollateralAssignment collateralAssignment, String type) {
-		logger.debug("Entering");
+	public CollateralAssignment getCollateralAssignmentbyID(CollateralAssignment ca, String type) {
+		StringBuilder sql = getSqlQuery(type);
+		sql.append(" Where Reference = ? and Module = ? and CollateralRef = ?");
 
-		CollateralAssignment collAssignment = null;
-		StringBuilder selectSql = new StringBuilder(
-				" Select Reference, Module, CollateralRef, AssignPerc, Active, HostReference, ");
-		if (type.contains("View")) {
-		}
-		selectSql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId,");
-		selectSql.append(" NextTaskId, RecordType, WorkflowId");
-		selectSql.append(" From CollateralAssignment");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where Reference =:Reference and Module = :Module and CollateralRef = :CollateralRef ");
+		logger.debug(Literal.SQL + sql.toString());
 
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(collateralAssignment);
-		RowMapper<CollateralAssignment> typeRowMapper = BeanPropertyRowMapper.newInstance(CollateralAssignment.class);
+		CollateralAssignmentRowMapper rowMapper = new CollateralAssignmentRowMapper(type);
 
 		try {
-			collAssignment = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, ca.getReference(), ca.getModule(),
+					ca.getCollateralRef());
 		} catch (EmptyResultDataAccessException e) {
-			logger.info(e);
-			collAssignment = null;
+			//
 		}
-		logger.debug("Leaving");
-		return collAssignment;
+		return null;
 	}
 
 	/**
@@ -733,12 +722,12 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	}
 
 	public BigDecimal getTotalAssignedPerc(String collateralRef) {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" Select coalesce(ASSIGNPERC, 0) From COLLATERALASSIGNMENT_TEMP Where COLLATERALREF = ?");
+		StringBuilder sql = new StringBuilder("Select sum(ASSIGNPERC) from (");
+		sql.append(" Select coalesce(ASSIGNPERC, 0) ASSIGNPERC From COLLATERALASSIGNMENT_TEMP Where COLLATERALREF = ?");
 		sql.append(" union all");
-		sql.append(" Select coalesce(ASSIGNPERC, 0) From COLLATERALASSIGNMENT CA Where COLLATERALREF = ?");
+		sql.append(" Select coalesce(ASSIGNPERC, 0) ASSIGNPERC From COLLATERALASSIGNMENT CA Where COLLATERALREF = ?");
 		sql.append(" and not exists (select 1 From COLLATERALASSIGNMENT_Temp");
-		sql.append(" Where COLLATERALREF = CA.COLLATERALREF and MODULE = CA.MODULE and REFERENCE = CA.REFERENCE)");
+		sql.append(" Where COLLATERALREF = CA.COLLATERALREF and MODULE = CA.MODULE and REFERENCE = CA.REFERENCE)) T");
 
 		logger.debug(Literal.SQL + sql.toString());
 
