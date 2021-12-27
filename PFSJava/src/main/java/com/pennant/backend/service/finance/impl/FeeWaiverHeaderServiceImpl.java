@@ -162,7 +162,11 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 
 		if (!fwh.isNewRecord()) {
 			fwh = getFeeWaiverHeaderByFinRef(finID, "_TView");
-			setManualAdvise(fwh);
+
+			if (fwh != null) {
+				setManualAdvise(fwh);
+			}
+
 		} else {
 			FeeWaiverDetail fwd;
 			BigDecimal receivableAmt = BigDecimal.ZERO;

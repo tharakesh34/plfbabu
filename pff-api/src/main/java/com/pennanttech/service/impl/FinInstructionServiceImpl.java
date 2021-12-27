@@ -3211,6 +3211,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
+		feeWaiverHeader.setFinID(fm.getFinID());
 		Date valueDate = feeWaiverHeader.getValueDate();
 		if (valueDate == null) {
 			String[] valueParm = new String[1];
