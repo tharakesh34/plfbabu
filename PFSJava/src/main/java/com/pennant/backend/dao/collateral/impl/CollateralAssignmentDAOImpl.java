@@ -626,7 +626,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ca.setRecordType(rs.getString("RecordType"));
 			ca.setWorkflowId(rs.getLong("WorkflowId"));
 
-			if (StringUtils.trimToEmpty(type).contains("View")) {
+			if (StringUtils.trimToEmpty(type).contains("VIEW")) {
 				ca.setDepositorCIF(rs.getString("DepositorCIF"));
 				ca.setCollateralCcy(rs.getString("CollateralCcy"));
 				ca.setCollateralValue(rs.getBigDecimal("CollateralValue"));
