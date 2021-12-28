@@ -43,28 +43,6 @@
 		</createIndex>
 	</changeSet>
 	
-	<changeSet id="3.0" author="murthy.y">
-		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_temp_custid">
-			<column name="taxcustid" type="bigint"/>
-		</createIndex>
-	</changeSet>
-	<changeSet id="3.1" author="murthy.y">
-		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_custid">
-			<column name="taxcustid" type="bigint"/>
-		</createIndex>
-	</changeSet>
-	
-	<changeSet id="4.0" author="murthy.y">
-		<createIndex tableName="customers" indexName="idx_customers_id" unique="true">
-			<column name="custid" type="bigint"/>
-		</createIndex>
-	</changeSet>
-	<changeSet id="4.1" author="murthy.y">
-		<createIndex tableName="customers_temp" indexName="idx_customers_temp_id" unique="true">
-			<column name="custid" type="bigint"/>
-		</createIndex>
-	</changeSet>
-	
 	<changeSet id="5.0_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -86,6 +64,17 @@
 				select deps_restore_dependencies ('plf', 'fintaxdetail_temp');
 			]]>
 		</sql>
+	</changeSet>
+
+	<changeSet id="3.0" author="murthy.y">
+		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_temp_custid">
+			<column name="taxcustid" type="bigint"/>
+		</createIndex>
+	</changeSet>
+	<changeSet id="3.1" author="murthy.y">
+		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_custid">
+			<column name="taxcustid" type="bigint"/>
+		</createIndex>
 	</changeSet>
 	
 	<changeSet id="6.0" author="murthy.y">
