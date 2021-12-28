@@ -895,10 +895,6 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.noOfSteps.setConstraint("");
 		this.noOfSteps.setErrorMessage("");
 
-		if (!this.financeDetail.isNewRecord()) {
-			this.alwManualSteps.setChecked(financeMain.isAlwManualSteps());
-		}
-
 		if (this.alwManualSteps.isChecked()) {
 			this.label_FinanceMainDialog_numberOfSteps.setVisible(true);
 			this.hbox_numberOfSteps.setVisible(true);
