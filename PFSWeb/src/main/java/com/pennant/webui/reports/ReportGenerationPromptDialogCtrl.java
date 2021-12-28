@@ -2723,7 +2723,11 @@ public class ReportGenerationPromptDialogCtrl extends GFCBaseCtrl<ReportConfigur
 		ReportFilterFields aReportFieldsDetails = reportConfiguration.getListReportFieldsDetails().get(0);
 		valueLabelMap.put(aReportFieldsDetails.getFieldDBName(), value);
 
-		if (StringUtils.equals(reportMenuCode, "menu_Item_GST_InvoiceReport")) {
+		if ("menu_Item_GST_InvoiceReport".equals(reportMenuCode)) {
+			if (aReportFieldsDetails.getFieldID() != Long.valueOf(component.getId())) {
+				return;
+			}
+
 			Row customerRow = (Row) dymanicFieldsRows.getFellow("row_GSTInv_2");
 			Row maniufacturerRow = (Row) dymanicFieldsRows.getFellow("row_GSTInv_3");
 			Row dealerRow = (Row) dymanicFieldsRows.getFellow("row_GSTInv_4");
