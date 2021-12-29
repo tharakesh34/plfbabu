@@ -158,11 +158,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		StringBuilder sql = getSqlQuery(type);
 
-		if (type.endsWith("_VIEW")) {
-			sql.append(" And Reference = ? and Module = ?");
-		} else {
-			sql.append(" Where Reference = ? and Module = ?");
-		}
+		sql.append(" Where Reference = ? and Module = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -238,11 +234,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		StringBuilder sql = getSqlQuery(type);
 
-		if (type.endsWith("_VIEW")) {
-			sql.append(" And Reference = ? and Module = ? and CollateralRef = ?");
-		} else {
-			sql.append(" Where Reference = ? and Module = ? and CollateralRef = ?");
-		}
+		sql.append(" Where Reference = ? and Module = ? and CollateralRef = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -437,11 +429,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		StringBuilder sql = getSqlQuery(type);
 
-		if (type.endsWith("_VIEW")) {
-			sql.append(" And Reference = ? and CollateralRef = ?");
-		} else {
-			sql.append(" Where Reference = ? and CollateralRef = ?");
-		}
+		sql.append(" Where Reference = ? and CollateralRef = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -584,6 +572,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			sql.append(" INNER JOIN COLLATERALSETUP CS ON CS.COLLATERALREF = CA.COLLATERALREF");
 			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
 		} else if (type.endsWith("_VIEW")) {
+			sql.append(" Select * FROM (");
 			sql.append(" Select CA.MODULE, CA.REFERENCE , CA.COLLATERALREF, CA.ASSIGNPERC, CA.ACTIVE");
 			sql.append(", CA.HOSTREFERENCE, CA.VERSION, CA.LASTMNTBY, CA.LASTMNTON, CA.RECORDSTATUS");
 			sql.append(", CA.ROLECODE, CA.NEXTROLECODE, CA.TASKID, CA.NEXTTASKID, CA.RECORDTYPE, CA.WORKFLOWID");
@@ -603,6 +592,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			sql.append(" INNER JOIN CUSTOMERS CU ON CU.CUSTID = CS.DEPOSITORID");
 			sql.append(" WHERE NOT EXISTS (SELECT 1 FROM COLLATERALASSIGNMENT_TEMP");
 			sql.append(" WHERE COLLATERALREF = CA.COLLATERALREF AND MODULE = CA.MODULE AND REFERENCE = CA.REFERENCE)");
+			sql.append(" ) T");
 		}
 
 		return sql;
@@ -636,7 +626,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ca.setRecordType(rs.getString("RecordType"));
 			ca.setWorkflowId(rs.getLong("WorkflowId"));
 
-			if (StringUtils.trimToEmpty(type).contains("View")) {
+			if (StringUtils.trimToEmpty(type).contains("VIEW")) {
 				ca.setDepositorCIF(rs.getString("DepositorCIF"));
 				ca.setCollateralCcy(rs.getString("CollateralCcy"));
 				ca.setCollateralValue(rs.getBigDecimal("CollateralValue"));

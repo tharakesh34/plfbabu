@@ -76,7 +76,7 @@
 							</row>
 							<row id="row_rateMargin">
 								<label id="label_FinStepPolicyDialog_RateMargin" value="${c:l('label_FinStepPolicyDialog_RateMargin.value')}" />
-								<hbox visible="false">
+								<hbox>
 									<space id="space_FinStepPolicyDialog_RateMargin" spacing="2px" />
 									<decimalbox id="rateMargin" width="150px" />
 								</hbox>
