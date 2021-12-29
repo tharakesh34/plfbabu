@@ -4,13 +4,13 @@
 
 	<groupId>com.pennanttech.pennapps.pff</groupId>
 	<artifactId>pff-aggregator</artifactId>
-	<version>6.0.0_R2.24</version>
+	<version>6.0.0_R2.25</version>
 	<packaging>pom</packaging>
 
 	<properties>
 		<pff.groupId>com.pennanttech.pennapps.pff</pff.groupId>
 		<client.code>core</client.code>
-		<pff.version>6.0.0_R2.24</pff.version>
+		<pff.version>6.0.0_R2.25</pff.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jdk.version>11</jdk.version>
 		<spring.version>5.3.8</spring.version>
