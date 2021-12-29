@@ -99,6 +99,7 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 
 	private String tableType = "_View";
 	private boolean fromRejectFinance = false;
+	private boolean isModelWindow = false;
 
 	/**
 	 * default constructor.<br>
@@ -144,6 +145,10 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 			if (arguments.containsKey("financeEnquiryHeaderDialogCtrl")) {
 				this.financeEnquiryHeaderDialogCtrl = (FinanceEnquiryHeaderDialogCtrl) arguments
 						.get("financeEnquiryHeaderDialogCtrl");
+			}
+
+			if (arguments.containsKey("isModelWindow")) {
+				isModelWindow = (Boolean) arguments.get("isModelWindow");
 			}
 
 			/*
@@ -322,6 +327,10 @@ public class PostingsEnquiryDialogCtrl extends GFCBaseCtrl<ReturnDataSet> {
 		if (!accountingDetails.isEmpty()) {
 			list.add(accountingDetails);
 		}
+
+		Map<String, Object> aruments = new HashMap<>();
+		aruments.put("isModelWindow", isModelWindow);
+		list.add(aruments);
 
 		ReportsUtil.generatePDF("FINENQ_AccountingDetail", enquiry, list, usrName, window);
 		logger.info(Literal.LEAVING);
