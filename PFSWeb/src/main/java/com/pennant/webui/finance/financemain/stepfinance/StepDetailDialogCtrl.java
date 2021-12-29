@@ -298,11 +298,16 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 		this.stepType.setReadonly(true);
 
 		this.stepPolicy.setProperties("StepPolicyHeader", "PolicyCode", "PolicyDesc", true, 8);
-		String[] alwdStepPolices = StringUtils.trimToEmpty(financeType.getAlwdStepPolicies()).split(",");
-		Filter filter[] = new Filter[1];
-		filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
-		this.stepPolicy.setFilters(filter);
+		String alwdStepPolicies = financeType.getAlwdStepPolicies();
 
+		if (StringUtils.isEmpty(alwdStepPolicies)) {
+			this.stepPolicy.setFilters(null);
+		} else {
+			String[] alwdStepPolices = StringUtils.trimToEmpty(alwdStepPolicies).split(",");
+			Filter filter[] = new Filter[1];
+			filter[0] = new Filter("PolicyCode", Arrays.asList(alwdStepPolices), Filter.OP_IN);
+			this.stepPolicy.setFilters(filter);
+		}
 	}
 
 	/**
