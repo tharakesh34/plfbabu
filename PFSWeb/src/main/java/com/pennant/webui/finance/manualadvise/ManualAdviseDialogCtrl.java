@@ -137,6 +137,7 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 
 	protected Tabs tabsIndexCenter;
 	protected Tabpanels tabpanelsBoxIndexCenter;
+	protected Tabpanel tabpanelBasicdetails;
 	protected Tab adviseDetails;
 
 	protected Hbox hbox_Sequence;
@@ -482,8 +483,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		String taxComp = (String) this.feeTypeID.getAttribute("TaxComponent");
 
 		if (taxApplicable) {
-
 			this.gb_GSTDetails.setVisible(true);
+			tabpanelBasicdetails.setHeight("100%");
 			FinanceDetail financeDetail = financeDetailService.getFinSchdDetailById(financeMain.getFinID(), "", false);
 
 			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
