@@ -7,6 +7,8 @@ import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
 import com.pennanttech.pennapps.core.job.AbstractJob;
+import com.pennanttech.pennapps.core.job.JobExecution;
+import com.pennanttech.pennapps.core.job.JobStatusMap.MapConstants;
 import com.pennanttech.pff.external.gst.GSTInvoiceGeneratorService;
 
 @PersistJobDataAfterExecution
@@ -15,8 +17,11 @@ public class GSTInvoiceGeneratorJob extends AbstractJob {
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
+		JobExecution jobExecution = getGSTInvoiceGeneratorService(context).generateInvoice();
 
-		getGSTInvoiceGeneratorService(context).generateInvoice();
+		if (jobExecution != null) {
+			context.put(MapConstants.JOB_EXECUTION, jobExecution);
+		}
 	}
 
 	private GSTInvoiceGeneratorService getGSTInvoiceGeneratorService(JobExecutionContext context) {
