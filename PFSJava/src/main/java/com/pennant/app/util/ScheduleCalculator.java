@@ -6510,7 +6510,7 @@ public class ScheduleCalculator {
 			}
 
 		} else {
-			curSchd.setPrincipalSchd(prvSchd.getClosingBalance());
+			curSchd.setPrincipalSchd(prvSchd.getClosingBalance().add(curSchd.getDisbAmount()));
 			curSchd.setRepayAmount(curSchd.getPrincipalSchd().add(curSchd.getProfitSchd()));
 
 			BigDecimal endBal = getClosingBalance(curSchd, prvSchd, repayRateBasis, cpzPOSIntact);
