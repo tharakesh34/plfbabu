@@ -212,7 +212,7 @@ public class ExtendedFieldDetailDAOImpl extends BasicDao<ExtendedFieldDetail> im
 		sql.append(", FieldMandatory = ?, FieldConstraint = ?, FieldSeqOrder = ?, Filters = ?");
 		sql.append(", FieldList = ?, FieldDefaultValue = ?, FieldMinValue = ?, FieldMaxValue = ?, Editable = ?");
 		sql.append(", ValFromScript = ?, Scriptlet = ?, FieldUnique = ?, MultiLine = ?, ParentTag = ?");
-		sql.append(", InputElement = ?, ExtendedType = ?, AllowInRule = ?,");
+		sql.append(", InputElement = ?, ExtendedType = ?, AllowInRule = ?");
 		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
 		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?, MaintAlwd = ?");
 		sql.append(" Where ModuleId = ? And FieldName = ? And ExtendedType = ?");

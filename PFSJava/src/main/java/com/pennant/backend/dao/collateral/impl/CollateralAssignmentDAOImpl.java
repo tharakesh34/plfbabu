@@ -90,12 +90,9 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		logger.debug(Literal.SQL + sql.toString());
 
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+		this.jdbcOperations.update(sql.toString(), ps -> {
 			ps.setString(1, reference);
 		});
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
 	}
 
 	@Override
