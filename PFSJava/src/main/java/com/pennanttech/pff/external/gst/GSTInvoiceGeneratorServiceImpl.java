@@ -22,6 +22,7 @@ import com.pennant.backend.model.finance.SeqGSTInvoice;
 import com.pennant.backend.model.systemmasters.Province;
 import com.pennant.backend.service.systemmasters.ProvinceService;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
+import com.pennanttech.pennapps.core.job.JobExecution;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
@@ -37,16 +38,26 @@ public class GSTInvoiceGeneratorServiceImpl extends SequenceDao<DocumentDetails>
 	 * generate Invoice number
 	 */
 	@Override
-	public void generateInvoice() {
+	public JobExecution generateInvoice() {
 		logger.debug(Literal.ENTERING);
+
+		JobExecution jobExecution = new JobExecution();
 
 		List<GSTInvoiceTxn> gstInvoiceList = this.gstInvoiceTxnDAO.getGSTInvoiceTxnList();
 
 		if (CollectionUtils.isEmpty(gstInvoiceList)) {
-			return;
+			return jobExecution;
 		}
 
+		jobExecution.setTotalRecords(gstInvoiceList.size());
+
+		int processedRecords = 0;
+		int successRecords = 0;
+		int failedRecords = 0;
+
 		for (GSTInvoiceTxn gstInvoiceTxn : gstInvoiceList) {
+			jobExecution.setProcessedRecords(++processedRecords);
+
 			String gsTIN = StringUtils.trimToNull(gstInvoiceTxn.getCompany_GSTIN());
 			String invoiceType = StringUtils.trimToNull(gstInvoiceTxn.getInvoiceType());
 			String companyCode = gstInvoiceTxn.getCompanyCode();
@@ -121,15 +132,19 @@ public class GSTInvoiceGeneratorServiceImpl extends SequenceDao<DocumentDetails>
 				this.gstInvoiceTxnDAO.updateSeqGSTInvoice(temp);
 
 				transManager.commit(txnStatus);
+				jobExecution.setSuccessRecords(++successRecords);
 			} catch (Exception e) {
 				logger.error(Literal.EXCEPTION, e);
 				if (txnStatus != null) {
 					transManager.rollback(txnStatus);
 				}
+
+				jobExecution.setFailedRecords(++failedRecords);
 			}
 		}
 
 		logger.debug(Literal.LEAVING);
+		return jobExecution;
 	}
 
 	private void createGSTSequence(String gsTIN, String entityCode) {
