@@ -3344,6 +3344,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rcd.setReceivedDate(fsi.getReceivedDate());
 			receiptData.setReceiptHeader(rch);
 
+			receiptData = calcuateDues(receiptData);
 			try {
 				if (!receiptData.getFinanceDetail().getFinScheduleData().getFinanceType().isAlwCloBefDUe()) {
 					Date firstInstDate = getFirstInstDate(
@@ -3359,7 +3360,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				logger.error(Literal.EXCEPTION, e);
 			}
 
-			receiptData = calcuateDues(receiptData);
 			if (receiptData != null) {
 				BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
 				BigDecimal totalBounces = rch.getTotalBounces().getTotalDue();
