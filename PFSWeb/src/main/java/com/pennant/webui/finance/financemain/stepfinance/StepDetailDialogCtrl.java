@@ -1057,7 +1057,7 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 
 	public void doSetStepFieldsData(FinanceType financeType, FinanceMain financeMain) {
 		boolean isNewFinance;
-		isNewFinance = this.financeDetail.isNewRecord();
+		isNewFinance = !stepReadonly;
 		String calcOfSteps = "";
 		calcOfSteps = isNewFinance ? financeType.getCalcOfSteps() : financeMain.getCalcOfSteps();
 		String stepsAppliedFor = "";
