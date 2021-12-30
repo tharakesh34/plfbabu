@@ -59,6 +59,7 @@ import com.pennant.backend.dao.applicationmaster.CurrencyDAO;
 import com.pennant.backend.model.applicationmaster.Currency;
 import com.pennant.backend.model.finance.FinTaxIncomeDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
+import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 
@@ -1048,4 +1049,36 @@ public class CalculationUtil implements Serializable {
 		return totWaivedGSTAmount;
 	}
 
+	public static BigDecimal getTotalPaidGST(ReceiptAllocationDetail rad) {
+		BigDecimal totPaidGSTAmount = BigDecimal.ZERO;
+		totPaidGSTAmount = totPaidGSTAmount.add(rad.getPaidCGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(rad.getPaidSGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(rad.getPaidUGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(rad.getPaidIGST());
+		totPaidGSTAmount = totPaidGSTAmount.add(rad.getPaidCESS());
+
+		return totPaidGSTAmount;
+	}
+
+	public static BigDecimal getTotalWaivedGST(ReceiptAllocationDetail rad) {
+		BigDecimal totWaivedGSTAmount = BigDecimal.ZERO;
+		totWaivedGSTAmount = totWaivedGSTAmount.add(rad.getWaivedCGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(rad.getWaivedSGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(rad.getWaivedUGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(rad.getWaivedIGST());
+		totWaivedGSTAmount = totWaivedGSTAmount.add(rad.getWaivedCESS());
+
+		return totWaivedGSTAmount;
+	}
+
+	public static BigDecimal getTotalGSTPerc(ReceiptAllocationDetail rad) {
+		BigDecimal totalPerc = BigDecimal.ZERO;
+		totalPerc = totalPerc.add(rad.getPercCGST());
+		totalPerc = totalPerc.add(rad.getPercSGST());
+		totalPerc = totalPerc.add(rad.getPercUGST());
+		totalPerc = totalPerc.add(rad.getPercIGST());
+		totalPerc = totalPerc.add(rad.getPercCESS());
+
+		return totalPerc;
+	}
 }
