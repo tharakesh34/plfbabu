@@ -26910,4 +26910,22 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#178395" author="Gireesh.g">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'prh.Id' WHERE REPORTID = (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 1 AND FIELDDBNAME = 'ID';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#178395.1" author="Gireesh.g">
+		<createView viewName="FILEBATCHSTATUS_AVIEW" replaceIfExists="true">
+			<![CDATA[
+			 	SELECT ID,
+			  		BATCH_NAME FILENAME
+				FROM PRESENTMENT_RESP_HEADER WHERE EVENT = 'PROCESS'
+			]]>
+		</createView>
+	</changeSet>
+	
 </databaseChangeLog>
