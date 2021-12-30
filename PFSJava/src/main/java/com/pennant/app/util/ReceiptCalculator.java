@@ -386,8 +386,7 @@ public class ReceiptCalculator {
 							if (allocate.getTotalDue().compareTo(alloc.getTotalDue()) != 0) {
 								receiptData.setFCDueChanged(true);
 							}
-							// BUGFIX 144481
-							allocate.setPaidAmount(alloc.getPaidAmount());
+
 							allocate.setWaivedAmount(alloc.getWaivedAmount());
 							BigDecimal dueAmount;
 							BigDecimal paidAmount;
@@ -395,7 +394,8 @@ public class ReceiptCalculator {
 							dueAmount = allocate.getTotalDue().subtract(alloc.getWaivedAmount());
 
 							// Waiver GST Calculation
-							if (StringUtils.isNotBlank(allocate.getTaxType())
+							String taxType = allocate.getTaxType();
+							if (StringUtils.isNotBlank(taxType)
 									&& allocate.getWaivedAmount().compareTo(BigDecimal.ZERO) > 0) {
 								calAllocationWaiverGST(receiptData.getFinanceDetail(), allocate.getWaivedAmount(),
 										allocate);
@@ -404,21 +404,33 @@ public class ReceiptCalculator {
 							if (dueAmount.compareTo(BigDecimal.ZERO) > 0) {
 								if (allocate.getPaidAmount().compareTo(dueAmount) >= 0) {
 									paidAmount = dueAmount;
-									BigDecimal totalPaid = getPaidAmount(allocate, paidAmount);
 									// Paid Amount GST calculations
-									if (StringUtils.isNotBlank(allocate.getTaxType())) {
+									if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
+										getInclusivePaidTaxDetails(paidAmount, allocate);
+									} else if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(taxType)) {
+										BigDecimal totalPaid = getPaidAmount(allocate, paidAmount);
 										allocate.setPaidCGST(BigDecimal.ZERO);
 										allocate.setPaidSGST(BigDecimal.ZERO);
 										allocate.setPaidIGST(BigDecimal.ZERO);
 										allocate.setPaidUGST(BigDecimal.ZERO);
 										allocate.setPaidGST(BigDecimal.ZERO);
+										allocate.setPaidCESS(BigDecimal.ZERO);
 										calAllocationPaidGST(receiptData.getFinanceDetail(), totalPaid, allocate,
-												allocate.getTaxType());
-
+												taxType);
 									}
+
 									allocate.setTdsPaid(allocate.getTdsPaid());
 									allocate.setTotalPaid(paidAmount.add(allocate.getTdsPaid()));
 									allocate.setPaidAmount(paidAmount);
+								}
+
+								if (allocate.getTotalDue().compareTo(allocate.getPaidAmount()) == 0) {
+									allocate.setPaidCGST(allocate.getDueCGST());
+									allocate.setPaidIGST(allocate.getDueIGST());
+									allocate.setPaidUGST(allocate.getDueUGST());
+									allocate.setPaidSGST(allocate.getDueSGST());
+									allocate.setPaidCESS(allocate.getDueCESS());
+									allocate.setPaidGST(allocate.getDueGST());
 								}
 							} else {
 								allocate.setPaidAmount(BigDecimal.ZERO);
@@ -2321,9 +2333,7 @@ public class ReceiptCalculator {
 	public BigDecimal getPaidAmount(ReceiptAllocationDetail allocate, BigDecimal netAmount) {
 		setSMTParms(new EventProperties());
 		BigDecimal paidAmount = BigDecimal.ZERO;
-		BigDecimal totalPerc = allocate.getPercCGST().add(allocate.getPercSGST())
-				.add(allocate.getPercUGST().add(allocate.getPercIGST())).add(allocate.getPercCESS())
-				.subtract(allocate.getPercTds());
+		BigDecimal totalPerc = CalculationUtil.getTotalGSTPerc(allocate).subtract(allocate.getPercTds());
 		BigDecimal percMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).add(totalPerc), 20,
 				RoundingMode.HALF_DOWN);
 		paidAmount = netAmount.multiply(percMultiplier);
@@ -4855,6 +4865,19 @@ public class ReceiptCalculator {
 		}
 
 		return repayments;
+	}
+
+	private void getInclusivePaidTaxDetails(BigDecimal taxableAmount, ReceiptAllocationDetail allocate) {
+		BigDecimal totalPerc = CalculationUtil.getTotalGSTPerc(allocate).subtract(allocate.getPercTds());
+
+		BigDecimal netAmount = GSTCalculator.getInclusiveAmount(taxableAmount, totalPerc);
+
+		allocate.setPaidCGST(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercCGST()));
+		allocate.setPaidSGST(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercSGST()));
+		allocate.setPaidIGST(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercIGST()));
+		allocate.setPaidUGST(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercUGST()));
+		allocate.setPaidCESS(GSTCalculator.getExclusiveTax(netAmount, allocate.getPercCESS()));
+		allocate.setPaidGST(CalculationUtil.getTotalPaidGST(allocate));
 	}
 
 	// ******************************************************//

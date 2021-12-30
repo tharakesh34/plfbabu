@@ -976,7 +976,11 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 
 	protected boolean doCustomDelete(final CollateralAssignment collateralAssignment, String tranType) {
 		tranType = PennantConstants.TRAN_DEL;
-		collateralAssignment.setNewRecord(true);
+
+		if (isWorkFlowEnabled()) {
+			collateralAssignment.setNewRecord(true);
+		}
+
 		AuditHeader auditHeader = newAssignmentDetailProcess(collateralAssignment, tranType);
 		auditHeader = ErrorControl.showErrorDetails(this.window_CollateralAssignmentDetailDialog, auditHeader);
 		int retValue = auditHeader.getProcessStatus();
@@ -1182,10 +1186,10 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		if (StringUtils.isNotEmpty(collateralTypes)) {
 			whereClause.append("(CollateralType in ('");
 			whereClause.append(collateralTypes.replace(",", "' , '"));
-			whereClause.append("'))");
+			whereClause.append("')) AND");
 		}
 
-		whereClause.append(" AND ((DepositorId = ");
+		whereClause.append(" ((DepositorId = ");
 		whereClause.append(customerId).append(") ");
 		whereClause.append(" OR (CollateralRef IN (Select CollateralRef from CollateralThirdParty WHERE CustomerId =");
 		whereClause.append(customerId).append(")) ) ");

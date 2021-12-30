@@ -217,7 +217,7 @@ public class NotesCtrl extends GFCBaseCtrl<Notes> {
 		this.remarks.setCustomConfigurationsPath(PTCKeditor.SIMPLE_LIST);
 
 		getBorderLayoutHeight();
-		listboxNotes.setHeight(getListBoxHeight(13));
+		listboxNotes.setHeight("100%");
 
 		// set Field Properties
 		doSetFieldProperties();
