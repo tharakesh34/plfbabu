@@ -55,6 +55,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.CalculationConstants;
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.LatePayInterestService;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
@@ -199,7 +200,7 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		if (arguments.containsKey("finID")) {
 			this.finID = (Long) arguments.get("finID");
 		}
-		
+
 		/*
 		 * if (args.containsKey("ccyFormatter")) { this.ccyFormatter = (Integer) args.get("ccyFormatter"); }
 		 */
@@ -315,13 +316,19 @@ public class OverdueChargeRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 		 * If the enquiry type as a Interest over due enquiry, and past due calc method as a NotApplicable then no need
 		 * show the enquiry.
 		 */
+
 		if (!(PennantConstants.YES.equals(this.recoveryCode.getValue())
 				&& CalculationConstants.PDPFTCAL_NOTAPP.equals(fm.getPastduePftCalMthd()))) {
 			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finID);
 			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
-			Date appDate = DateUtil.addDays(SysParamUtil.getAppDate(), -1);
 
-			list.forEach(fod -> ocrList.addAll(latePayInterestService.computeLPI(fod, appDate, fm, schlist, null)));
+			if (!ImplementationConstants.LPP_CALC_SOD) {
+				Date appDt = DateUtil.addDays(SysParamUtil.getAppDate(), -1);
+				list.forEach(fod -> ocrList.addAll(latePayInterestService.computeLPI(fod, appDt, fm, schlist, null)));
+			} else {
+				Date appDate = SysParamUtil.getAppDate();
+				list.forEach(fod -> ocrList.addAll(latePayInterestService.computeLPI(fod, appDate, fm, schlist, null)));
+			}
 		}
 
 		this.listBoxOverdueChargeRecovery
