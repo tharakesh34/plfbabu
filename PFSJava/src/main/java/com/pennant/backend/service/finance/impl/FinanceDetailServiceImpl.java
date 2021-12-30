@@ -4464,9 +4464,9 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 		}
 
-		if (fm.isPlanEMIHAlw()
-				&& (FinServiceEvent.ORG.equals(moduleDefiner) || FinServiceEvent.PLANNEDEMI.equals(moduleDefiner)
-						|| FinServiceEvent.CHGFRQ.equals(moduleDefiner))) {
+		if (fm.isPlanEMIHAlw() && (FinServiceEvent.ORG.equals(moduleDefiner)
+				|| FinServiceEvent.PLANNEDEMI.equals(moduleDefiner) || (FinServiceEvent.CHGFRQ.equals(moduleDefiner)
+						&& FinanceConstants.PLANEMIHMETHOD_ADHOC.equals(planEMIHMethod)))) {
 
 			List<FinPlanEmiHoliday> holidayList = new ArrayList<>();
 			int planEMIHMonth = 0;
