@@ -10460,7 +10460,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		for (FinanceMain fm : financeMains) {
 			fm.setFinStartDate(main.getFinStartDate());
 
-			String finType = financeMainDAO.getFinanceType(fm.getFinID(), TableType.TEMP_TAB);
+			String finType = fm.getFinType();
 			FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(finType,
 					FinServiceEvent.ORG, PennantConstants.WORFLOW_MODULE_FINANCE);
 			if (financeWorkFlow != null) {
@@ -10484,9 +10484,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			fm.setLastMntOn(main.getLastMntOn());
 			fm.setRecordStatus(main.getRecordStatus());
 			fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			
 			if (StringUtils.isNotBlank(fm.getParentRef())) {
 				fm.setInvestmentRef("");
 			}
+			
 			if (fm.isNewRecord()) {
 				financeMainDAO.save(fm, TableType.TEMP_TAB, false);
 			} else {

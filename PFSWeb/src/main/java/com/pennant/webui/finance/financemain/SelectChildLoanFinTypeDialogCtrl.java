@@ -106,8 +106,8 @@ public class SelectChildLoanFinTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail>
 	public void onClick$btnProceed(Event event) throws Exception {
 		doFieldValidation();
 		String finType = this.finType.getSelectedItem().getValue();
-		getPricingDetailListCtrl().setTopUpFinType(getPricingDetailService().getFinanceTypeById(finType));
-		getPricingDetailListCtrl().appendTopupLoan();
+		pricingDetailListCtrl.getTopUpFinType().put(finType, pricingDetailService.getFinanceTypeById(finType));
+		pricingDetailListCtrl.appendTopupLoan(finType);
 		closeDialog();
 	}
 

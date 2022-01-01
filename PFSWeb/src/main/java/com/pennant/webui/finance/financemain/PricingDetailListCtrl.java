@@ -85,10 +85,7 @@ import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReferenceGenerator;
 import com.pennant.app.util.ReferenceUtil;
-import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.model.configuration.VASRecording;
-import com.pennant.backend.model.customermasters.CustomerAddres;
 import com.pennant.backend.model.finance.CreditReviewData;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
@@ -102,7 +99,6 @@ import com.pennant.backend.service.PagedListService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.FinanceDetailService;
 import com.pennant.backend.service.finance.PricingDetailService;
-import com.pennant.backend.service.rulefactory.RuleService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
 import com.pennant.backend.util.PennantApplicationUtil;
@@ -149,14 +145,13 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	private Button btnNew_Insurance;
 	private Button btnRemove_RemovePricingTopUp;
 	private int topUpCount = 0;
-	protected FinanceType topUpFinType;
+	protected Map<String, FinanceType> topUpFinType = new HashMap<>();
 
 	private int finFormatter = PennantConstants.defaultCCYDecPos;
 	private PricingDetail pricingDetail;
 	public BigDecimal loanAmount_TopUp_0;
 	protected Textbox remarks;
 	private CreditReviewData creditReviewData;
-	private BigDecimal effectiveRate = BigDecimal.ZERO;
 
 	Map<String, String> finReferenceMap = new HashMap<String, String>();
 	Map<String, List<FinFeeDetail>> finFeeDetailMap = new HashMap<String, List<FinFeeDetail>>();
@@ -169,10 +164,6 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	private BigDecimal finAssetValue = BigDecimal.ZERO;
 
 	@Autowired
-	private RuleExecutionUtil ruleExecutionUtil;
-	@Autowired
-	private RuleService ruleService;
-	@Autowired
 	private FinFeeDetailService finFeeDetailService;
 	@Autowired
 	private FinanceDetailService financeDetailService;
@@ -180,7 +171,6 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	boolean splitted = false;
 	boolean partiallySplitted = false;
 	int noofTopUps;
-	private String role = "";
 	FinFeeDetailListCtrl finFeeDetailListCtrl = null;
 
 	public static final String FEE_UNIQUEID_CALCULATEDAMOUNT = "CALAMT";
@@ -296,14 +286,14 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 			FinScheduleData schdData = financeDetail.getFinScheduleData();
 			FinanceMain fm = schdData.getFinanceMain();
-			List<Long> finIdList = getPricingDetailService().getInvestmentRefifAny(fm.getFinReference(), "_Temp");
+			List<Long> finIdList = pricingDetailService.getInvestmentRefifAny(fm.getFinReference(), "_Temp");
 			if (CollectionUtils.isNotEmpty(finIdList)) {
 				partiallySplitted = true;
-				noofTopUps = 1;
+				noofTopUps = finIdList.size();
 			}
 
 			if (CollectionUtils.isEmpty(finIdList)) {
-				finIdList = getPricingDetailService().getParentRefifAny(fm.getFinReference(), "_Temp");
+				finIdList = pricingDetailService.getParentRefifAny(fm.getFinReference(), "_Temp");
 				if (CollectionUtils.isNotEmpty(finIdList)) {
 					partiallySplitted = true;
 					splitted = true;
@@ -319,19 +309,20 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				PricingDetail detail = new PricingDetail();
 
 				for (Long finID : finIdList) {
-					FinanceMain finMain = getPricingDetailService().getFinanceMain(finID, "_TView");
+					FinanceMain finMain = pricingDetailService.getFinanceMain(finID, "_TView");
 					tempList.add(finMain);
 
 					String finReference = finMain.getFinReference();
 
-					if (topUpFinType == null) {
-						topUpFinType = getPricingDetailService().getFinanceTypeById(finMain.getFinType());
+					if (!topUpFinType.containsKey(finMain.getFinType())) {
+						topUpFinType.put(finMain.getFinType(),
+								pricingDetailService.getFinanceTypeById(finMain.getFinType()));
 					}
 
 					finAssetValue = finAssetValue.add(finMain.getFinAssetValue());
 
 					detail.getFinanceMains().add(finMain);
-					List<FinFeeDetail> finFeeDetailList = getPricingDetailService().getFinFeeDetailById(finID, false,
+					List<FinFeeDetail> finFeeDetailList = pricingDetailService.getFinFeeDetailById(finID, false,
 							"_View");
 					finFeeDetailMap.put(finReference, finFeeDetailList);
 
@@ -339,8 +330,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 					detail.setTopUpFinFeeDetails(finFeeDetailList);
 					pricingDetail.setTopUpFinFeeDetails(finFeeDetailList);
 
-					List<VASRecording> vasList = getPricingDetailService().getVASRecordingsByLinkRef(finReference,
-							"_View");
+					List<VASRecording> vasList = pricingDetailService.getVASRecordingsByLinkRef(finReference, "_View");
 					vasRecordingMap.put(finReference, vasList);
 					tempVASList.addAll(vasList);
 					pricingDetail.setTopUpVasDetails(vasList);
@@ -637,11 +627,11 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		FinanceMain parentFinMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
-		FinanceMain finMain = null;
 		String topup_label = "";
 
-		Cloner cloner = new Cloner();
 		int count = topUpCount;
+
+		FinanceMain finMain = null;
 
 		List<FinanceMain> newFinMains = new ArrayList<FinanceMain>();
 		List<FinanceMain> oldFinMains = new ArrayList<FinanceMain>();
@@ -657,6 +647,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				topup_label = "TopUp_" + i;
 
 				CurrencyBox calBox = (CurrencyBox) listitem.getFellowIfAny("LoanAmount_" + topup_label);
+
 				Clients.clearWrongValue(calBox);
 
 				if (calBox.getActualValue().compareTo(BigDecimal.ZERO) <= 0 && !calBox.isReadonly()) {
@@ -665,17 +656,12 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 							Labels.getLabel("const_const_NO_NEGATIVE_ZERO", new String[] { "Loan Amount" }));
 				}
 
-				FinanceMain financeMain = (FinanceMain) calBox.getAttribute("finMain");
+				finMain = (FinanceMain) calBox.getAttribute("finMain");
 				String numberOnly = topup_label.replaceAll("[^0-9]", "");
 				int topUpCount = Integer.valueOf(numberOnly);
 				Checkbox checkbox = (Checkbox) listBoxPricingDetail.getItems().get(topUpCount)
 						.getFellowIfAny("RM_" + topUpCount);
 				if (checkbox == null || !checkbox.isChecked()) {
-					if (financeMain.isNewRecord()) {
-						finMain = cloner.deepClone(parentFinMain);
-					} else {
-						finMain = financeMain;
-					}
 
 					if (i > 0) {
 						finMain.setNewRecord((Boolean) calBox.getAttribute("newRecord"));
@@ -730,9 +716,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 						if (finMain.isNewRecord()) {
 							finMain.setSwiftBranchCode(parentFinMain.getFinReference().substring(1, 4));
 							finMain.setFinID(0);
-							finMain.setFinReference(ReferenceGenerator.generateFinRef(finMain, topUpFinType));
-							finMain.setFinType(topUpFinType.getFinType());
-							// finMain.setFinId(0);
+							finMain.setFinReference(
+									ReferenceGenerator.generateFinRef(finMain, topUpFinType.get(finMain.getFinType())));
 						}
 
 						if (!saveAction && !this.userAction.getSelectedItem().getLabel().contains("Resubmit")) {
@@ -740,16 +725,13 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 							if ((this.hbox_Split.isVisible() && this.split.isChecked())
 									|| (!finMain.isNewRecord() && StringUtils.isBlank(finMain.getInvestmentRef()))) {
 								finMain.setInvestmentRef("");
-								finMain.setParentRef(
-										getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+								finMain.setParentRef(parentFinMain.getFinReference());
 								finMain.setLoanSplitted(true);
 							} else {
-								finMain.setInvestmentRef(
-										getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+								finMain.setInvestmentRef(parentFinMain.getFinReference());
 							}
 						} else {
-							finMain.setInvestmentRef(
-									getFinanceDetail().getFinScheduleData().getFinanceMain().getFinReference());
+							finMain.setInvestmentRef(parentFinMain.getFinReference());
 							this.split.setChecked(false);
 							pricingDetail.setSplit(false);
 						}
@@ -1316,42 +1298,12 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 			return;
 		}
 
-		String taxRoundMode = SysParamUtil.getValue(CalculationConstants.TAX_ROUNDINGMODE).toString();
-		int taxRoundingTarget = SysParamUtil.getValueAsInt(CalculationConstants.TAX_ROUNDINGTARGET);
-
 		FinanceDetail fd = getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 
-		String branch = getUserWorkspace().getLoggedInUser().getBranchCode();
-		String fromBranchCode = fm.getFinBranch();
 		Long finID = fm.getFinID();
 		String finReference = fm.getFinReference();
-
-		String custDftBranch = null;
-		String highPriorityState = null;
-		String highPriorityCountry = null;
-		if (financeDetail.getCustomerDetails() != null) {
-			custDftBranch = financeDetail.getCustomerDetails().getCustomer().getCustDftBranch();
-			List<CustomerAddres> addressList = financeDetail.getCustomerDetails().getAddressList();
-			if (CollectionUtils.isNotEmpty(addressList)) {
-				for (CustomerAddres customerAddres : addressList) {
-					if (customerAddres.getCustAddrPriority() == Integer
-							.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH)) {
-						highPriorityState = customerAddres.getCustAddrProvince();
-						highPriorityCountry = customerAddres.getCustAddrCountry();
-						break;
-					}
-				}
-			}
-		}
-
-		/*
-		 * Map<String, Object> gstExecutionMap = this.finFeeDetailService.prepareGstMappingDetailsforPricing(
-		 * fromBranchCode, custDftBranch, highPriorityState, highPriorityCountry,
-		 * getFinanceDetail().getFinanceTaxDetail(), branch);
-		 * this.finFeeDetailService.calculateGstPercentage(finFeeDetail, financeMain.getFinCcy(), gstExecutionMap);
-		 */
 
 		fee.setNewRecord((Boolean) calBox.getAttribute("newRecord"));
 		fee.setFinID(finID);
@@ -1362,11 +1314,6 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		BigDecimal netAmount = actualAmount.subtract(fee.getWaivedAmount());
 
 		BigDecimal actualAmountOriginal = BigDecimal.ZERO;
-		/*
-		 * BigDecimal actualAmountOriginal = this.finFeeDetailService.calculateInclusivePercentage(actualAmount,
-		 * finFeeDetail.getCgst(), finFeeDetail.getSgst(), finFeeDetail.getUgst(), finFeeDetail.getIgst(), taxRoundMode,
-		 * taxRoundingTarget);
-		 */
 
 		fee.setActualAmountOriginal(actualAmountOriginal);
 		fee.setActualAmount(actualAmount);
@@ -1576,13 +1523,13 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				FinanceMain befImage = new FinanceMain();
 				BeanUtils.copyProperties(finMain, befImage);
 				finMain.setBefImage(befImage);
-				appendTopUpBasicDetails(finMain, false, i, topUpFinType);
+				appendTopUpBasicDetails(finMain, false, i, topUpFinType.get(finMain.getFinType()));
 				appendTopUpChargeDetails(finFeeDetailMap.get(finMain.getFinReference()), false, i);
 				if (topUpFinType == null) {
 					appendSavedVasDetails(vasRecordingMap.get(finMain.getFinReference()), false, i, new ArrayList<>());
 				} else {
 					appendSavedVasDetails(vasRecordingMap.get(finMain.getFinReference()), false, i,
-							topUpFinType.getFinTypeVASProductsList());
+							topUpFinType.get(finMain.getFinType()).getFinTypeVASProductsList());
 				}
 				doCheckRights();
 
@@ -1707,71 +1654,72 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		this.listBoxChargesDetail.getItems().clear();
 		listBoxChargesDetail.setVflex("max");
 
-		if (CollectionUtils.isNotEmpty(finFeeDetails)) {
-			for (FinFeeDetail finFeeDetail : finFeeDetails) {
-				if (StringUtils.isEmpty(finFeeDetail.getVasReference())) {
+		if (CollectionUtils.isEmpty(finFeeDetails)) {
+			return;
+		}
 
-					String taxComponent = null;
-
-					if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE,
-							finFeeDetail.getTaxComponent())) {
-						taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
-					} else if (StringUtils.equals(FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE,
-							finFeeDetail.getTaxComponent())) {
-						taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
-					} else {
-						taxComponent = Labels.getLabel("label_GST_NotApplicable");
-					}
-
-					String feeType = finFeeDetail.getFeeTypeDesc() + " - (" + taxComponent + ")";
-					if (StringUtils.isNotEmpty(finFeeDetail.getVasReference())) {
-						feeType = finFeeDetail.getVasReference();
-						finFeeDetail.setFeeTypeCode(feeType);
-						finFeeDetail.setFeeTypeDesc(feeType);
-					}
-
-					Listitem item = new Listitem();
-					Listcell lc;
-					String feeTypeDesc = StringUtils.trimToEmpty(finFeeDetail.getFeeTypeDesc());
-					lc = new Listcell(feeTypeDesc);
-					lc.setParent(item);
-
-					String topup_label = "TopUp_" + topUpCount;
-
-					Decimalbox calBox = new Decimalbox();
-					calBox.setId(finFeeDetail.getFeeTypeCode() + "_" + topup_label);
-					calBox.setAttribute("newRecord", isNew);
-					calBox.setMaxlength(18);
-					calBox.setFormat(PennantApplicationUtil.getAmountFormate(2));
-					calBox.setValue(PennantApplicationUtil.formateAmount(finFeeDetail.getActualAmount(), 2));
-					calBox.setAttribute("finFeeDetail", finFeeDetail);
-					calBox.setReadonly(readOnly);
-					lc = new Listcell();
-					lc.appendChild(calBox);
-					lc.setParent(item);
-					item.setParent(listBoxChargesDetail);
-
-					String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
-							+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
-							+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
-							+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + "," + ","
-							+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
-
-					Combobox modeOfColl = new Combobox();
-					fillComboBox(modeOfColl, finFeeDetail.getFeeScheduleMethod(),
-							PennantStaticListUtil.getRemFeeSchdMethods(), excludeFields);
-					modeOfColl.setId(finFeeDetail.getFeeTypeCode() + "_MOC_" + topup_label);
-					modeOfColl.setAttribute("finFeeDetail", finFeeDetail);
-					modeOfColl.setReadonly(true);
-					modeOfColl.setDisabled(readOnly);
-					lc = new Listcell();
-					lc.appendChild(modeOfColl);
-					lc.setParent(item);
-					item.setAttribute("parentFinFeeDetail", finFeeDetail);
-					item.setAttribute("isParent", true);
-					item.setParent(listBoxChargesDetail);
-				}
+		for (FinFeeDetail fee : finFeeDetails) {
+			if (StringUtils.isNotEmpty(fee.getVasReference())) {
+				continue;
 			}
+
+			String taxComponent = null;
+
+			if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(fee.getTaxComponent())) {
+				taxComponent = Labels.getLabel("label_FeeTypeDialog_Exclusive");
+			} else if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(fee.getTaxComponent())) {
+				taxComponent = Labels.getLabel("label_FeeTypeDialog_Inclusive");
+			} else {
+				taxComponent = Labels.getLabel("label_GST_NotApplicable");
+			}
+
+			String feeType = fee.getFeeTypeDesc() + " - (" + taxComponent + ")";
+			if (StringUtils.isNotEmpty(fee.getVasReference())) {
+				feeType = fee.getVasReference();
+				fee.setFeeTypeCode(feeType);
+				fee.setFeeTypeDesc(feeType);
+			}
+
+			Listitem item = new Listitem();
+			Listcell lc;
+			String feeTypeDesc = StringUtils.trimToEmpty(fee.getFeeTypeDesc());
+			lc = new Listcell(feeTypeDesc);
+			lc.setParent(item);
+
+			String topup_label = "TopUp_" + topUpCount;
+
+			Decimalbox calBox = new Decimalbox();
+			calBox.setId(fee.getFeeTypeCode() + "_" + topup_label);
+			calBox.setAttribute("newRecord", isNew);
+			calBox.setMaxlength(18);
+			calBox.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			calBox.setValue(PennantApplicationUtil.formateAmount(fee.getActualAmount(), 2));
+			calBox.setAttribute("finFeeDetail", fee);
+			calBox.setReadonly(readOnly);
+			lc = new Listcell();
+			lc.appendChild(calBox);
+			lc.setParent(item);
+			item.setParent(listBoxChargesDetail);
+
+			String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + "," + ","
+					+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+
+			Combobox modeOfColl = new Combobox();
+			fillComboBox(modeOfColl, fee.getFeeScheduleMethod(), PennantStaticListUtil.getRemFeeSchdMethods(),
+					excludeFields);
+			modeOfColl.setId(fee.getFeeTypeCode() + "_MOC_" + topup_label);
+			modeOfColl.setAttribute("finFeeDetail", fee);
+			modeOfColl.setReadonly(true);
+			modeOfColl.setDisabled(readOnly);
+			lc = new Listcell();
+			lc.appendChild(modeOfColl);
+			lc.setParent(item);
+			item.setAttribute("parentFinFeeDetail", fee);
+			item.setAttribute("isParent", true);
+			item.setParent(listBoxChargesDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1785,60 +1733,62 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		// this.listBoxVasDetail.getItems().clear();
 		listBoxVasDetail.setVflex("max");
 
-		if (CollectionUtils.isNotEmpty(vasList)) {
-			for (FinTypeVASProducts finTypeVASProducts : vasList) {
+		if (CollectionUtils.isEmpty(vasList)) {
+			return;
+		}
 
-				String productDesc = finTypeVASProducts.getVasProduct();
+		for (FinTypeVASProducts finTypeVASProducts : vasList) {
 
-				for (String vasRecProduct : productList) {
-					if (StringUtils.equals(vasRecProduct, productDesc)) {
-						count = 1;
-					}
+			String productDesc = finTypeVASProducts.getVasProduct();
+
+			for (String vasRecProduct : productList) {
+				if (StringUtils.equals(vasRecProduct, productDesc)) {
+					count = 1;
 				}
-
-				if (count == 1) {
-					count = 0;
-					continue;
-				}
-
-				Listitem item = new Listitem();
-				Listcell lc;
-				lc = new Listcell(productDesc);
-				lc.setParent(item);
-
-				String topup_label = "TopUp_" + topUpCount;
-
-				Decimalbox calBox = new Decimalbox();
-				calBox.setMaxlength(18);
-				calBox.setAttribute("newRecord", newRecord);
-				calBox.setFormat(PennantApplicationUtil.getAmountFormate(2));
-				// calBox.setValue(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), formatter));
-				calBox.setId(finTypeVASProducts.getVasProduct() + "_" + topup_label);
-				calBox.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
-				calBox.setReadonly(readOnly);
-
-				lc = new Listcell();
-				lc.appendChild(calBox);
-				lc.setParent(item);
-				item.setParent(listBoxVasDetail);
-
-				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
-						+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
-						+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
-						+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + "," + ","
-						+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
-
-				Combobox modeOfColl = new Combobox();
-				modeOfColl.setReadonly(true);
-				modeOfColl.setDisabled(readOnly);
-				fillComboBox(modeOfColl, "", PennantStaticListUtil.getRemFeeSchdMethods(), excludeFields);
-				lc = new Listcell();
-				lc.appendChild(modeOfColl);
-				lc.setParent(item);
-				item.setAttribute("parentVasDetail", finTypeVASProducts);
-				item.setAttribute("isParent", true);
-				item.setParent(listBoxVasDetail);
 			}
+
+			if (count == 1) {
+				count = 0;
+				continue;
+			}
+
+			Listitem item = new Listitem();
+			Listcell lc;
+			lc = new Listcell(productDesc);
+			lc.setParent(item);
+
+			String topup_label = "TopUp_" + topUpCount;
+
+			Decimalbox calBox = new Decimalbox();
+			calBox.setMaxlength(18);
+			calBox.setAttribute("newRecord", newRecord);
+			calBox.setFormat(PennantApplicationUtil.getAmountFormate(2));
+			// calBox.setValue(PennantApplicationUtil.formateAmount(financeMain.getFinAmount(), formatter));
+			calBox.setId(finTypeVASProducts.getVasProduct() + "_" + topup_label);
+			calBox.setValue(PennantApplicationUtil.formateAmount(BigDecimal.ZERO, finFormatter));
+			calBox.setReadonly(readOnly);
+
+			lc = new Listcell();
+			lc.appendChild(calBox);
+			lc.setParent(item);
+			item.setParent(listBoxVasDetail);
+
+			String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + "," + ","
+					+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+
+			Combobox modeOfColl = new Combobox();
+			modeOfColl.setReadonly(true);
+			modeOfColl.setDisabled(readOnly);
+			fillComboBox(modeOfColl, "", PennantStaticListUtil.getRemFeeSchdMethods(), excludeFields);
+			lc = new Listcell();
+			lc.appendChild(modeOfColl);
+			lc.setParent(item);
+			item.setAttribute("parentVasDetail", finTypeVASProducts);
+			item.setAttribute("isParent", true);
+			item.setParent(listBoxVasDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -1854,52 +1804,55 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		this.listBoxVasDetail.getItems().clear();
 		listBoxVasDetail.setVflex("max");
 		List<String> productList = new ArrayList<>();
-		if (CollectionUtils.isNotEmpty(vasList)) {
-			for (VASRecording vASRecording : vasList) {
-				Listitem item = new Listitem();
-				Listcell lc;
-				String productDesc = vASRecording.getProductCode();
-				productList.add(productDesc);
-				lc = new Listcell(productDesc);
-				lc.setParent(item);
 
-				Decimalbox calBox = new Decimalbox();
-				calBox.setMaxlength(18);
-				calBox.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
+		if (CollectionUtils.isEmpty(vasList)) {
+			return productList;
+		}
 
-				if (readOnly) {
-					readOnlyComponent(true, calBox);
-				}
+		for (VASRecording vASRecording : vasList) {
+			Listitem item = new Listitem();
+			Listcell lc;
+			String productDesc = vASRecording.getProductCode();
+			productList.add(productDesc);
+			lc = new Listcell(productDesc);
+			lc.setParent(item);
 
-				calBox.setValue(PennantApplicationUtil.formateAmount(vASRecording.getFee(), finFormatter));
+			Decimalbox calBox = new Decimalbox();
+			calBox.setMaxlength(18);
+			calBox.setFormat(PennantApplicationUtil.getAmountFormate(finFormatter));
 
-				calBox.setAttribute("newRecord", newRecord);
-				lc = new Listcell();
-				lc.appendChild(calBox);
-				lc.setParent(item);
-				item.setParent(listBoxVasDetail);
-
-				String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
-						+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
-						+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
-						+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + "," + ","
-						+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
-
-				Combobox modeOfColl = new Combobox();
-				if (readOnly) {
-					readOnlyComponent(true, modeOfColl);
-				}
-
-				fillComboBox(modeOfColl, vASRecording.getFeePaymentMode(), PennantStaticListUtil.getRemFeeSchdMethods(),
-						excludeFields);
-				lc = new Listcell();
-				lc.appendChild(modeOfColl);
-				lc.setParent(item);
-				item.setAttribute("isParent", true);
-				item.setAttribute("vasReference", vASRecording.getVasReference());
-				item.setAttribute("valueDate", vASRecording.getValueDate());
-				item.setParent(listBoxVasDetail);
+			if (readOnly) {
+				readOnlyComponent(true, calBox);
 			}
+
+			calBox.setValue(PennantApplicationUtil.formateAmount(vASRecording.getFee(), finFormatter));
+
+			calBox.setAttribute("newRecord", newRecord);
+			lc = new Listcell();
+			lc.appendChild(calBox);
+			lc.setParent(item);
+			item.setParent(listBoxVasDetail);
+
+			String excludeFields = "," + CalculationConstants.REMFEE_WAIVED_BY_BANK + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_FIRST_INSTALLMENT + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_ENTIRE_TENOR + "," + ","
+					+ CalculationConstants.REMFEE_SCHD_TO_N_INSTALLMENTS + "," + ","
+					+ CalculationConstants.REMFEE_PAID_BY_CUSTOMER + ",";
+
+			Combobox modeOfColl = new Combobox();
+			if (readOnly) {
+				readOnlyComponent(true, modeOfColl);
+			}
+
+			fillComboBox(modeOfColl, vASRecording.getFeePaymentMode(), PennantStaticListUtil.getRemFeeSchdMethods(),
+					excludeFields);
+			lc = new Listcell();
+			lc.appendChild(modeOfColl);
+			lc.setParent(item);
+			item.setAttribute("isParent", true);
+			item.setAttribute("vasReference", vASRecording.getVasReference());
+			item.setAttribute("valueDate", vASRecording.getValueDate());
+			item.setParent(listBoxVasDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -2003,9 +1956,9 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 				childLoanType.setAttribute("newRecord", newRecord);
 				childLoanType.setAttribute("finMain", financeMain);
 				if (!newRecord) {
-					childLoanType.setValue(topUpFinType.getFinType());
+					childLoanType.setValue(financeMain.getFinType());
 				} else {
-					childLoanType.setValue(topUpFinType.getFinType());
+					childLoanType.setValue(financeType.getFinType());
 				}
 				// calBox.addForward("onFulfill", window_PricingDetailList, "onChangeTopUpLoanAmount", calBox);
 				childLoanType.setReadonly(readOnly);
@@ -2458,7 +2411,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void appendTopupLoan() {
+	protected void appendTopupLoan(String finType) {
 		int topupCount = listBoxPricingDetail.getItemCount();
 		String topUpLabe = "";
 
@@ -2481,7 +2434,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		FinScheduleData finSchdData = financeDetail.getFinScheduleData();
 		Cloner cloner = new Cloner();
 		FinScheduleData topUpFinSchdData = cloner.deepClone(finSchdData);
-		doRenderItems(topUpFinSchdData, true);
+		doRenderItems(finType, topUpFinSchdData, true);
 
 		if (pricingDetail == null) {
 			logger.debug("priceDetail became null");
@@ -2628,19 +2581,31 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void doRenderItems(FinScheduleData topUpFinSchdData, boolean isnewRecord) {
+	private void doRenderItems(String finType, FinScheduleData topUpFinSchdData, boolean isnewRecord) {
 		logger.debug(Literal.ENTERING);
 
-		if (topUpFinType == null) {
-			MessageUtil.showError(
-					"No TopUp Loan Type was configured for " + topUpFinSchdData.getFinanceType().getFinType());
+		if (topUpFinType.isEmpty()) {
+			MessageUtil.showError("No TopUp Loan Type was configured for " + finType);
 			topUpCount--;
 			return;
 		}
-		appendTopUpBasicDetails(topUpFinSchdData.getFinanceMain(), isnewRecord, topUpCount, topUpFinType);
-		List<FinFeeDetail> finFeeDetail = convertToFinanceFees(topUpFinType.getFinTypeFeesList());
+
+		FinanceMain parentFm = topUpFinSchdData.getFinanceMain();
+
+		FinanceType financeType = topUpFinType.get(finType);
+
+		FinanceMain fm = new FinanceMain();
+
+		financeDetailService.setDefaultFinanceMain(fm, financeType);
+
+		fm.setCustID(parentFm.getCustID());
+		fm.setFinBranch(parentFm.getFinBranch());
+
+		appendTopUpBasicDetails(fm, isnewRecord, topUpCount, financeType);
+
+		List<FinFeeDetail> finFeeDetail = convertToFinanceFees(financeType.getFinTypeFeesList());
 		appendTopUpChargeDetails(finFeeDetail, true, topUpCount);
-		appendVasDetails(topUpFinType.getFinTypeVASProductsList(), topUpCount, true);
+		appendVasDetails(financeType.getFinTypeVASProductsList(), topUpCount, true);
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -2819,11 +2784,11 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		this.creditReviewData = creditReviewData;
 	}
 
-	public FinanceType getTopUpFinType() {
+	public Map<String, FinanceType> getTopUpFinType() {
 		return topUpFinType;
 	}
 
-	public void setTopUpFinType(FinanceType topUpFinType) {
+	public void setTopUpFinType(Map<String, FinanceType> topUpFinType) {
 		this.topUpFinType = topUpFinType;
 	}
 
