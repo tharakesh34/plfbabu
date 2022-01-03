@@ -2399,16 +2399,18 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				if (financeMain.isFinIsActive()) {
 					noc.setDisabled(true);
 				}
+
 				lc = new Listcell();
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				Button foreClosure = new Button("Action");
-				foreClosure.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_ForeClosure"));
+				foreClosure.setVisible(false);
 				foreClosure.addForward("onClick", self, "onClick_foreClosure");
 				foreClosure.setAttribute("financeMain", financeMain);
 				lc.appendChild(foreClosure);
 				lc.setParent(item);
 				listheader_ForeClosure
 						.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_ForeClosure"));
+				
 				lc = new Listcell();
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				Button interestCertficate = new Button("Action");
@@ -2546,31 +2548,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return aReportConfiguration;
 	}
 
-	public void onClick_foreClosure(ForwardEvent event) {
-		logger.debug(Literal.ENTERING);
-
-		Button soa = (Button) event.getOrigin().getTarget();
-		FinanceMain financeMain = (FinanceMain) soa.getAttribute("financeMain");
-		Map<String, Object> arg = getDefaultArguments();
-		arg.put("financeReference", financeMain.getFinReference());
-		ReportConfiguration reportConfiguration = null;
-		try {
-			reportConfiguration = getReportConfiguration("menu_Item_ForeclosureTerminationReport");
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
-		arg.put("ReportConfiguration", reportConfiguration);
-		arg.put("dialogWindowName", reportConfiguration.getReportHeading());
-		arg.put("dialogWindow", window_CustomerDialogg);
-		arg.put("customer360", true);
-		try {
-			Executions.createComponents("/WEB-INF/pages/Reports/ReportGenerationPromptDialog.zul", null, arg);
-		} catch (Exception e) {
-			MessageUtil.showError(e);
-		}
-		logger.debug(Literal.LEAVING);
-
-	}
 
 	public void onClick_interestCertficate(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
