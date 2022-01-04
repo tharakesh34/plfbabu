@@ -1452,7 +1452,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 			ps.setBigDecimal(index++, adt.getIGST());
 			ps.setBigDecimal(index++, adt.getCESS());
 			ps.setBigDecimal(index++, adt.getTotalGST());
-			ps.setObject(index, JdbcUtil.getLong(adt.getInvoiceID()));
+			ps.setObject(index, adt.getInvoiceID());
 		});
 
 	}
