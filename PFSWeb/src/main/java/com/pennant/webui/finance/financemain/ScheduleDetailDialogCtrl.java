@@ -2400,11 +2400,18 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		}
 
 		// Validate Planned EMI Holiday Months
+		FinScheduleData schdData = getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		Date firstInstalmentDate = ScheduleCalculator.getFirstInstalmentDate(schdData.getFinanceScheduleDetails());
+
+		Date dateAfterYear = DateUtility.addMonths(firstInstalmentDate, 12);
+
 		if (this.grid_monthDetails.isVisible()) {
 			int planEMiHCount = getPlanEMIHMonths().size();
-			if (planEMiHCount == 0 || planEMiHCount > getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear()) {
-				MessageUtil.showError(Labels.getLabel("label_Finance_Invalid_PlanEMIHMonths", new String[] {
-						String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear()) }));
+			if (planEMiHCount == 0 || planEMiHCount > fm.getPlanEMIHMaxPerYear()) {
+				MessageUtil.showError(Labels.getLabel("label_Finance_Invalid_PlanEMIHMonths",
+						new String[] { String.valueOf(fm.getPlanEMIHMaxPerYear()) }));
 				isValid = false;
 			}
 		}
@@ -2414,26 +2421,23 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 			if (getPlanEMIHDateList() == null || getPlanEMIHDateList().isEmpty()) {
 				MessageUtil.showError(Labels.getLabel("label_Finance_InvalidCount_PlanEMIHDates",
-						new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMax()) }));
+						new String[] { String.valueOf(fm.getPlanEMIHMax()) }));
 				isValid = false;
 			}
 
 			if (isValid) {
-
-				Date dateAfterYear = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getFinStartDate(), 12);
 				int markedEMIHMaxPerYear = 0;
 
 				// Per Year Validation
-				if (getPlanEMIHDateList().size() > getFinScheduleData().getFinanceMain().getPlanEMIHMax()) {
+				if (getPlanEMIHDateList().size() > fm.getPlanEMIHMax()) {
 					MessageUtil.showError(Labels.getLabel("label_Finance_InvalidCount_PlanEMIHDates",
-							new String[] { String.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMax()) }));
+							new String[] { String.valueOf(fm.getPlanEMIHMax()) }));
 					isValid = false;
 				}
 
 				if (isValid) {
 
-					Date planEMIHStart = DateUtility.addMonths(getFinScheduleData().getFinanceMain().getFinStartDate(),
-							getFinScheduleData().getFinanceMain().getPlanEMIHLockPeriod());
+					Date planEMIHStart = DateUtility.addMonths(firstInstalmentDate, fm.getPlanEMIHLockPeriod());
 
 					for (int i = 0; i < getPlanEMIHDateList().size(); i++) {
 						Date planEMIHDate = getPlanEMIHDateList().get(i);
@@ -2455,10 +2459,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 						// Yearly Validation as per Max Allowed
 						markedEMIHMaxPerYear = markedEMIHMaxPerYear + 1;
-						if (markedEMIHMaxPerYear > getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear()) {
-							MessageUtil.showError(
-									Labels.getLabel("label_Finance_Invalid_PlanEMIHDatesPerYear", new String[] { String
-											.valueOf(getFinScheduleData().getFinanceMain().getPlanEMIHMaxPerYear()) }));
+						if (markedEMIHMaxPerYear > fm.getPlanEMIHMaxPerYear()) {
+							MessageUtil.showError(Labels.getLabel("label_Finance_Invalid_PlanEMIHDatesPerYear",
+									new String[] { String.valueOf(fm.getPlanEMIHMaxPerYear()) }));
 							isValid = false;
 							break;
 						}

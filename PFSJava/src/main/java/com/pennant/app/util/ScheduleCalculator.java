@@ -851,6 +851,15 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
+	public static Date getFirstInstalmentDate(List<FinanceScheduleDetail> schedules) {
+		for (FinanceScheduleDetail schedule : schedules) {
+			if (schedule.getInstNumber() == 1) {
+				return schedule.getSchDate();
+			}
+		}
+		return null;
+	}
+
 	private FinScheduleData procGetFrqEMIHoliday(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -863,7 +872,8 @@ public class ScheduleCalculator {
 		}
 
 		int frqSize = finScheduleData.getPlanEMIHmonths().size();
-		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+		int sdSize = schedules.size();
 
 		int planEMIHMaxPerYear = finMain.getPlanEMIHMaxPerYear();
 		int planEMIHMax = finMain.getPlanEMIHMax();
@@ -872,12 +882,13 @@ public class ScheduleCalculator {
 		int markedEMIHMaxPerYear = 0;
 		int markedEMIHMax = 0;
 
-		Date datePlanEMIHLock = DateUtility.addMonths(finMain.getFinStartDate(), finMain.getPlanEMIHLockPeriod());
-		Date dateAfterYear = DateUtility.addMonths(finMain.getFinStartDate(), 12);
+		Date firstInstalmentDate = getFirstInstalmentDate(schedules);
+		Date datePlanEMIHLock = DateUtility.addMonths(firstInstalmentDate, finMain.getPlanEMIHLockPeriod());
+		Date dateAfterYear = DateUtility.addMonths(firstInstalmentDate, 12);
 		boolean maxReached = false;
 
 		for (int i = 0; i < sdSize - 1; i++) {
-			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(i);
+			FinanceScheduleDetail curSchd = schedules.get(i);
 			Date schdDate = curSchd.getSchDate();
 
 			// Before Lock Period do not mark holiday
@@ -1009,7 +1020,8 @@ public class ScheduleCalculator {
 		}
 
 		int hdSize = finScheduleData.getPlanEMIHDates().size();
-		int sdSize = finScheduleData.getFinanceScheduleDetails().size();
+		List<FinanceScheduleDetail> schedules = finScheduleData.getFinanceScheduleDetails();
+		int sdSize = schedules.size();
 
 		int planEMIHMaxPerYear = finMain.getPlanEMIHMaxPerYear();
 		int planEMIHMax = finMain.getPlanEMIHMax();
@@ -1018,12 +1030,13 @@ public class ScheduleCalculator {
 		int markedEMIHMaxPerYear = 0;
 		int markedEMIHMax = 0;
 
-		Date datePlanEMIHLock = DateUtility.addMonths(finMain.getFinStartDate(), finMain.getPlanEMIHLockPeriod());
-		Date dateAfterYear = DateUtility.addMonths(finMain.getFinStartDate(), 12);
+		Date firstInstalmentDate = getFirstInstalmentDate(schedules);
+		Date datePlanEMIHLock = DateUtility.addMonths(firstInstalmentDate, finMain.getPlanEMIHLockPeriod());
+		Date dateAfterYear = DateUtility.addMonths(firstInstalmentDate, 12);
 		Collections.sort(finScheduleData.getPlanEMIHDates());
 
 		for (int j = 0; j < sdSize - 1; j++) {
-			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails().get(j);
+			FinanceScheduleDetail curSchd = schedules.get(j);
 			Date schdDate = curSchd.getSchDate();
 
 			// First payment date also cannot be allowed in planned EMI holiday
