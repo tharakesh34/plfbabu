@@ -17530,7 +17530,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.57.1_pre" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.57.2_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finoverdueenquiry_view');
@@ -17538,7 +17538,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.57.1" author="Mounika.M">
+	<changeSet id="ST#556.57.2" author="Mounika.M">
 		<createView viewName="FINOVERDUEENQUIRY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -17583,8 +17583,8 @@
 				    T1.TOTALCPZ,
 				    T2.NOINST
 				FROM FINANCEMAIN T1
+				INNER JOIN FINPFTDETAILS T2 ON T2.FINID = T1.FINID
 			    JOIN RMTFINANCETYPES T5 ON T1.FINTYPE = T5.FINTYPE
-			    LEFT JOIN FINPFTDETAILS T2 ON T2.FINID  = T2.FINID 
 			    JOIN CUSTOMERS T6 ON T1.CUSTID = T6.CUSTID
 			    JOIN RMTBRANCHES T7 ON T1.FINBRANCH = T7.BRANCHCODE
 			    JOIN RMTCUSTTYPES T8 ON T6.CUSTTYPECODE = T8.CUSTTYPECODE
@@ -17593,7 +17593,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#556.57.1_post" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.57.2_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'finoverdueenquiry_view');

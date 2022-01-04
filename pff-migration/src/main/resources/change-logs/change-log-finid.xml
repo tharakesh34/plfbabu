@@ -114,13 +114,13 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-		
+
 	<changeSet id="4.1" author="murthy.y_pre">
 		<addColumn tableName="FinanceMain_Temp">
 			<column name="FinID" type="bigint" />
 		</addColumn>
-	</changeSet>	
-	
+	</changeSet>
+
 	<changeSet id="4.2" author="murthy.y">
 		<sql>
 			<![CDATA[
@@ -129,15 +129,15 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="4.7.0" author="murthy.y">
 		<addNotNullConstraint tableName="FinanceMain" columnName="FinID" columnDataType="bigint" />
 	</changeSet>
-	
+
 	<changeSet id="4.8.0" author="murthy.y">
 		<addNotNullConstraint tableName="FinanceMain_Temp" columnName="FinID" columnDataType="bigint" />
 	</changeSet>
-	
+
 	<changeSet id="4.3_Pre.0001" author="murthy.y">
 		<dropForeignKeyConstraint baseTableName="fincollaterals"
 			constraintName="fk_fincollaterals_finmain" />
@@ -2264,7 +2264,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="71.4" author="murthy.y">
 		<createIndex tableName="financechecklistref" indexName="idx_financechklistref_finid">
 			<column name="FinID" type="bigint" />
@@ -3051,21 +3051,21 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="101.2" author="murthy.y" dbms="postgresql,mssql"> 
+
+	<changeSet id="101.2" author="murthy.y" dbms="postgresql,mssql">
 		<sql> 
 			<![CDATA[ 	
 				Update finoddetails_snapshot set FinID =  m.FinID from FINID_MAPPING m where finoddetails_snapshot.FinReference = m.FinReference; 
-			]]> 
-		</sql> 
-	</changeSet>	
-	
-	<changeSet id="101.2" author="murthy.y" dbms="oracle"> 
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="101.2" author="murthy.y" dbms="oracle">
 		<sql> 
 			<![CDATA[ 	
 				Update finoddetails_snapshot set FinID = (select m.FinID from FINID_MAPPING m where finoddetails_snapshot.FinReference = m.FinReference); 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
 	<changeSet id="101.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finoddetails_snap_finid"
@@ -3155,29 +3155,42 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
+	
+	<changeSet id="104.5" author="Mounika.M">
+		<dropPrimaryKey tableName="finpftdetails" />
+	</changeSet>
+
+	<changeSet id="104.6" author="Mounika.M">
+		<addUniqueConstraint tableName="finpftdetails" columnNames="FinReference"
+			constraintName="UK_FPD_FinReference" />
+	</changeSet>
+
+	<changeSet id="104.7" author="Mounika.M">
+		<addPrimaryKey tableName="finpftdetails" columnNames="FinID" constraintName="PK_finpftdetails" />
+	</changeSet>
 
 	<changeSet id="105" author="murthy.y">
 		<addColumn tableName="finpftdetails_snapshot">
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="105.2" author="murthy.y" dbms="postgresql,mssql"> 
+
+	<changeSet id="105.2" author="murthy.y" dbms="postgresql,mssql">
 		<sql> 	
 			<![CDATA[ 
 				Update finpftdetails_snapshot set FinID = m.FinID from FINID_MAPPING m where finpftdetails_snapshot.FinReference = m.FinReference; 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
-	<changeSet id="105.2" author="murthy.y" dbms="oracle"> 
+
+	<changeSet id="105.2" author="murthy.y" dbms="oracle">
 		<sql> 	
 			<![CDATA[ 
 				Update finpftdetails_snapshot set FinID = (select m.FinID from FINID_MAPPING m where finpftdetails_snapshot.FinReference = m.FinReference); 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="105.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finpftdetails_snap_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="finpftdetails_snapshot"
@@ -3321,12 +3334,12 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	<changeSet id="110.2" author="murthy.y"> 
+	<changeSet id="110.2" author="murthy.y">
 		<sql> 
 			<![CDATA[ 
 				Update finrepayinstruction_log set FinID = (select m.FinID from FINID_MAPPING m where finrepayinstruction_log.FinReference = m.FinReference); 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
 	<changeSet id="110.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_finrepayinstrion_log_finid"
@@ -3345,21 +3358,21 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="111.2" author="murthy.y" dbms="postgresql,mssql"> 
+
+	<changeSet id="111.2" author="murthy.y" dbms="postgresql,mssql">
 		<sql> 	
 			<![CDATA[ 
 				Update finscheduledetails_log set FinID = m.FinID from FINID_MAPPING m where finscheduledetails_log.FinReference = m.FinReference; 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
-	<changeSet id="111.2" author="murthy.y" dbms="oracle"> 
+
+	<changeSet id="111.2" author="murthy.y" dbms="oracle">
 		<sql> 	
 			<![CDATA[ 
 				Update finscheduledetails_log set FinID = (select m.FinID from FINID_MAPPING m where finscheduledetails_log.FinReference = m.FinReference); 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
 	<changeSet id="111.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_scheduledetails_log_finid"
@@ -3372,12 +3385,8 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	<!-- <changeSet id="111.5" author="murthy.y">
-		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_schdate" unique="true">
-			<column name="FinID" type="bigint" />
-			<column name="SchDate" type="datetime" />
-		</createIndex>
-	</changeSet> -->
+	<!-- <changeSet id="111.5" author="murthy.y"> <createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_schdate" 
+		unique="true"> <column name="FinID" type="bigint" /> <column name="SchDate" type="datetime" /> </createIndex> </changeSet> -->
 	<changeSet id="111.6" author="murthy.y">
 		<createIndex tableName="finscheduledetails_log" indexName="idx_scheduleslg_fid_priPaid">
 			<column name="FinID" type="bigint" />
@@ -3710,7 +3719,7 @@
 			]]>
 		</sql>
 	</changeSet>
-	
+
 	<changeSet id="123.4" author="murthy.y">
 		<createIndex tableName="linkedfinances" indexName="idx_linkedfinances_finid">
 			<column name="FinID" type="bigint" />
@@ -3889,23 +3898,23 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="130.2" author="murthy.y" dbms="postgresql,mssql"> 
+
+	<changeSet id="130.2" author="murthy.y" dbms="postgresql,mssql">
 		<sql> 
 			<![CDATA[ 
 				Update manualadvise_snapshot set FinID = m.FinID from FINID_MAPPING m where manualadvise_snapshot.FinReference = m.FinReference; 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
-	<changeSet id="130.2" author="murthy.y" dbms="oracle"> 
+
+	<changeSet id="130.2" author="murthy.y" dbms="oracle">
 		<sql> 
 			<![CDATA[ 
 				Update manualadvise_snapshot set FinID = (select m.FinID from FINID_MAPPING m where manualadvise_snapshot.FinReference = m.FinReference); 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="130.3" author="murthy.y">
 		<addForeignKeyConstraint constraintName="fk_manualadvise_snap_finid"
 			referencedTableName="FinanceMain" baseColumnNames="FinID" baseTableName="manualadvise_snapshot"
@@ -4202,23 +4211,23 @@
 			<column name="FinID" type="bigint" />
 		</addColumn>
 	</changeSet>
-	
-	<changeSet id="141.2" author="murthy.y" dbms="postgresql,mssql"> 
+
+	<changeSet id="141.2" author="murthy.y" dbms="postgresql,mssql">
 		<sql> 
 			<![CDATA[ 
 				Update postings set FinID = m.FinID from FINID_MAPPING m where postings.FinReference = m.FinReference; 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
-	<changeSet id="141.2" author="murthy.y" dbms="oracle"> 
+
+	<changeSet id="141.2" author="murthy.y" dbms="oracle">
 		<sql> 
 			<![CDATA[ 
 				Update postings set FinID = (select m.FinID from FINID_MAPPING m where postings.FinReference = m.FinReference); 
-			]]> 
-		</sql> 
+			]]>
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="141.4" author="murthy.y">
 		<createIndex tableName="postings" indexName="idx_postings_finid">
 			<column name="FinID" type="bigint" />
@@ -5664,7 +5673,7 @@
 			<column name="FinID" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="PSD#182454" author="saikiran.n">
 		<sql>
 			<![CDATA[
@@ -5672,23 +5681,23 @@
 				UPDATE SECRIGHTS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='SecurityUserDialog_RM_reportingto';
 				UPDATE SECRIGHTS SET PAGE ='SecurityUserDialog_RM' WHERE RIGHTNAME ='button_SecurityUserDialog_RM_btnDelete';
 			]]>
-		</sql>	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="PSD#182510" author="Gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE REPORTLIST SET REPORTHEADING = 'WorkFlow Details' WHERE CODE = 'WorkFlowDetails';
 			]]>
-		</sql>	
+		</sql>
 	</changeSet>
-	
+
 	<changeSet id="198" author="saikiran.n">
 		<sql>
 			<![CDATA[
 				UPDATE REPORTFILTERFIELDS SET FIELDTYPE='LOVSEARCH' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE='menu_Item_MiscellaneouspostUploadStsrpt') AND FIELDID=2;
 			]]>
-		</sql>	
+		</sql>
 	</changeSet>
-	
+
 </databaseChangeLog>
