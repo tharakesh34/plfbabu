@@ -7929,7 +7929,10 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (editable) {
-				boolean proceed = pricingDetailListCtrl.doSave(afd, pricingTab, recSave);
+				boolean proceed = false;
+				if (StringUtils.isBlank(moduleDefiner) || moduleDefiner.equals(FinServiceEvent.ORG)) {
+					proceed = pricingDetailListCtrl.doSave(afd, pricingTab, recSave);
+				}
 
 				if (!proceed) {
 					return;
@@ -13707,11 +13710,13 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					}
 				}
 
-				if (aFinanceMain.getMaturityDate() != null && !FinServiceEvent.CHGFRQ.equals(moduleDefiner)) {
+				if (aFinanceMain.getMaturityDate() == null || this.maturityDate_two.getValue() == null) {
+					aFinanceMain.setNumberOfTerms(noterms);
+				} else if ((StringUtils.isBlank(moduleDefiner) || moduleDefiner.equals(FinServiceEvent.ORG))) {
 					aFinanceMain.setNumberOfTerms(FrequencyUtil.getTerms(aFinanceMain.getRepayFrq(),
 							aFinanceMain.getNextRepayDate(), aFinanceMain.getMaturityDate(), true, true).getTerms());
 				} else {
-					aFinanceMain.setNumberOfTerms(noterms);
+					aFinanceMain.setNumberOfTerms(aFinanceMain.getCalTerms());
 				}
 			}
 		} catch (WrongValueException we) {
