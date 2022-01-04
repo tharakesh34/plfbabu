@@ -11593,6 +11593,7 @@
 		<property name="disbursementService" ref="disbursementService" />
 		<property name="transactionManager" ref="transactionManager" />
 		<property name="dataEngineConfig" ref="dataEngineConfig" />
+		<property name="covenantsDAO" ref="covenantsDAO" />
 	</bean>
 	<!-- Data Engine -->
 	<bean id="dataEngineConfig" class="com.pennanttech.dataengine.config.DataEngineConfig">

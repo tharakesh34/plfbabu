@@ -21,11 +21,14 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.finance.FinCovenantTypeDAO;
+import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
 import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinCovenantType;
+import com.pennant.backend.model.finance.covenant.Covenant;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.dataengine.config.DataEngineConfig;
@@ -40,6 +43,7 @@ import com.pennanttech.pennapps.core.ftp.SftpClient;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
+import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.core.disbursement.PaymentChannel;
 import com.pennanttech.pff.core.disbursement.model.DisbursementRequest;
 import com.pennanttech.pff.external.disbursement.dao.DisbursementDAO;
@@ -54,6 +58,7 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 	private IMPSDisbursement impsDisbursement;
 	private DataEngineConfig dataEngineConfig;
 	private PlatformTransactionManager transactionManager;
+	protected CovenantsDAO covenantsDAO;
 	private static Map<Long, Map<String, EventProperties>> eventProperties = new HashMap<>();
 	private static String ONLINE = "ONLINE";
 	private static final String ERROR_MESSAGE = "Unable to process the disbursement requests, please contact administrator.";
@@ -673,10 +678,20 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 				disbursements.add(finAdvancePayments);
 			} else {
 				String finReference = finAdvancePayments.getFinReference();
-				List<FinCovenantType> covenants = finCovenantTypesDAO.getFinCovenantDocTypeByFinRef(finReference, "",
-						false);
+				List<FinCovenantType> covenants = new ArrayList<>();
+				List<Covenant> covenantsList = new ArrayList<>();
+
 				boolean isAddReq = false;
-				if (CollectionUtils.isNotEmpty(covenants)) {
+				if (ImplementationConstants.COVENANT_MODULE_NEW) {
+					covenantsList = covenantsDAO.getCovenants(finReference, "Loan", TableType.AVIEW);
+					for (Covenant covenant : covenantsList) {
+						if (covenant.isOtc() && covenant.getDocumentReceivedDate() == null) {
+							isAddReq = true;
+							break;
+						}
+					}
+				} else {
+					covenants = finCovenantTypesDAO.getFinCovenantDocTypeByFinRef(finReference, "", false);
 					for (FinCovenantType finCovenantType : covenants) {
 						if (finCovenantType.isAlwOtc()) {
 							isAddReq = true;
@@ -799,6 +814,10 @@ public class DisbursementRequestServiceImpl implements DisbursementRequestServic
 
 	public void setFinCovenantTypesDAO(FinCovenantTypeDAO finCovenantTypesDAO) {
 		this.finCovenantTypesDAO = finCovenantTypesDAO;
+	}
+
+	public void setCovenantsDAO(CovenantsDAO covenantsDAO) {
+		this.covenantsDAO = covenantsDAO;
 	}
 
 }
