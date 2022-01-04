@@ -24,6 +24,7 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -129,7 +130,7 @@ public class LimitCheckDetails {
 			throws InterfaceException, InterruptedException {
 		logger.debug("Entering");
 
-		// checking for whether Predeal check Request already sent or not 
+		// checking for whether Predeal check Request already sent or not
 		LimitUtilization limitUtil = doValidation(limitUtilReq);
 
 		if (limitUtil != null) {
@@ -219,7 +220,7 @@ public class LimitCheckDetails {
 		limitUtilReq.setDealType(lmtActType);
 		limitUtilReq.setCustomerReference(financeMain.getLovDescCustCIF());
 		limitUtilReq.setLimitRef(financeMain.getFinLimitRef());
-		//limitUtilReq.setUserID(String.valueOf(financeMain.getUserDetails().getLoginUsrID()));
+		// limitUtilReq.setUserID(String.valueOf(financeMain.getUserDetails().getLoginUsrID()));
 		limitUtilReq.setUserID("Test");
 		limitUtilReq.setDealAmount(financeMain.getFinAmount());
 		limitUtilReq.setDealCcy(financeMain.getFinCcy());
@@ -238,8 +239,7 @@ public class LimitCheckDetails {
 	 * 
 	 * @param financeMain
 	 * @param lmtActionType
-	 * @param intLimitType(Interface
-	 *            limit process constant)
+	 * @param intLimitType(Interface limit process constant)
 	 * @throws InterfaceException
 	 */
 	public void doProcessLimits(FinanceMain financeMain, String intLimitType) throws InterfaceException {
@@ -404,9 +404,9 @@ public class LimitCheckDetails {
 				notification.setStage(financeMain.getRoleCode());
 
 				try {
-					notificationService.sendNotifications(notification, financeMain, "", null); //FIXME
+					notificationService.sendNotifications(notification, financeMain, "", null); // FIXME
 				} catch (Exception e) {
-					logger.debug(e);
+					throw new AppException("Unable to process the mail.", e);
 				}
 
 			}
@@ -522,7 +522,7 @@ public class LimitCheckDetails {
 	private LimitUtilization doValidation(LimitUtilization limitUtilReq) {
 		logger.debug("Entering");
 
-		//check ReserveUtilization request already sent or not
+		// check ReserveUtilization request already sent or not
 		FinanceLimitProcess limitProcess = getCustomerLimitIntefaceService()
 				.getLimitUtilDetails(getFinanceLimitProcess(limitUtilReq));
 

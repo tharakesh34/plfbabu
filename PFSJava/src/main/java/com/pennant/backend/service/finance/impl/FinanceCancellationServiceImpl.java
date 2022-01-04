@@ -97,6 +97,7 @@ import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.VASConsatnts;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -575,15 +576,15 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		notification.setStage(PennantConstants.REC_ON_APPR);
 		notification.setReceivedBy(fm.getLastMntBy());
 		fm.setWorkflowId(tempWorkflowId);
-		try {
 
-			if (notificationService != null) {
+		if (notificationService != null) {
+			try {
 				notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
+			} catch (Exception e) {
+				throw new AppException("Unable to process the mail.", e);
 			}
-
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
+
 		cancelChildLoan(finReference);
 
 		logger.debug("Leaving");

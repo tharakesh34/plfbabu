@@ -883,7 +883,7 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 						notificationService.sendNotifications(notification, aVASRecording,
 								aVASRecording.getProductCode(), null);
 					} catch (Exception e) {
-						logger.debug(e);
+						throw new AppException("Unable to process the mail.", e);
 					}
 
 				}

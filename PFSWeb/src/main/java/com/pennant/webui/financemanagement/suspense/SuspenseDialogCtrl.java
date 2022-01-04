@@ -939,7 +939,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
 								aFinanceDetail.getDocumentDetailsList());
 					} catch (Exception e) {
-						logger.debug(e);
+						throw new AppException("Unable to process the mail.", e);
 					}
 
 				}

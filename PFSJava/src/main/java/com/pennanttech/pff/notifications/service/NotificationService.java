@@ -62,6 +62,7 @@ import com.pennant.backend.model.finance.FinAdvancePayments;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -77,6 +78,7 @@ import com.pennant.backend.model.limit.LimitHeader;
 import com.pennant.backend.model.loanquery.QueryDetail;
 import com.pennant.backend.model.mail.MailTemplate;
 import com.pennant.backend.model.mail.MailTemplateData;
+import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennant.backend.model.rulefactory.Notifications;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.drawingpower.DrawingPowerService;
@@ -257,7 +259,7 @@ public class NotificationService extends GenericService<Notification> {
 			sendNotifications(notification, object, null, documents);
 
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw new AppException("Unable to process the mail.", e);
 		}
 		logger.debug(Literal.LEAVING);
 	}
@@ -327,6 +329,8 @@ public class NotificationService extends GenericService<Notification> {
 			return;
 		}
 
+		boolean stageReq = "Y".equalsIgnoreCase(SysParamUtil.getValueAsString("STAGE_REQ_FOR_MAIL_CHECK"));
+
 		for (Notifications mailNotification : notifications) {
 			boolean sendNotification = false;
 			boolean emailAlreadySent = false;
@@ -336,10 +340,7 @@ public class NotificationService extends GenericService<Notification> {
 			if (resendNotifications) {
 				sendNotification = true;
 			} else {
-				// checking for mail already sent or not
-				String stageReq = SysParamUtil.getValueAsString("STAGE_REQ_FOR_MAIL_CHECK");
-
-				if ("Y".equalsIgnoreCase(stageReq)) {
+				if (stageReq) {
 					emailAlreadySent = emailEngine.isMailExist(finReference, module, finEvent, notificationId, role);
 					smsAlreadySent = smsEngine.isSmsExist(finReference, module, finEvent, notificationId, role);
 
@@ -377,7 +378,7 @@ public class NotificationService extends GenericService<Notification> {
 					try {
 						parseMail(template, data);
 					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
+						throw new AppException("Unable to process the mail.", e);
 					}
 				} else {
 					template = null;
@@ -533,12 +534,13 @@ public class NotificationService extends GenericService<Notification> {
 			} catch (Exception e) {
 				throw new Exception("Error While Preparing NotificationData", e);
 			}
-
 			try {
 				result = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
 			} catch (IOException e) {
 				throw new AppException("Unable to read or process freemarker configuration or template", e);
 			} catch (TemplateException e) {
+				logger.error("Template {}", template);
+				logger.error("Data Map {}", model);
 				throw new AppException("Problem initializing freemarker or rendering template ", e);
 			}
 
@@ -768,175 +770,177 @@ public class NotificationService extends GenericService<Notification> {
 		return data.getDeclaredFieldValues();
 	}
 
-	/**
-	 * Method for Data Preparion
-	 * 
-	 * @param data
-	 * @param main
-	 * @return
-	 */
-	private Map<String, Object> getTemplData(FinanceDetail financeDetail, FinReceiptHeader receiptHeader) {
+	private Map<String, Object> getTemplData(FinanceDetail fd, FinReceiptHeader rch) {
 		MailTemplateData data = new MailTemplateData();
-		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
-		List<CustomerAddres> custAddressList = financeDetail.getCustomerDetails().getAddressList();
-		List<CustomerEMail> customerEmailList = financeDetail.getCustomerDetails().getCustomerEMailList();
-		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
-		List<FinServiceInstruction> servInstructions = financeDetail.getFinScheduleData().getFinServiceInstructions();
-		int format = CurrencyUtil.getFormat(main.getFinCcy());
-		// Finance Data Preparation For Notifications
-		data.setCustCIF(financeDetail.getCustomerDetails().getCustomer().getCustCIF());
-		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
-		data.setFinReference(main.getFinReference());
-		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
-		data.setDownPayment(PennantApplicationUtil.amountFormate(main.getDownPayment(), format));
-		data.setFeeAmount(PennantApplicationUtil.amountFormate(main.getFeeChargeAmt(), format));
-		data.setFinCcy(main.getFinCcy());
-		data.setFinStartDate(DateUtility.formatToLongDate(main.getFinStartDate()));
-		data.setMaturityDate(DateUtility.formatToLongDate(main.getMaturityDate()));
-		data.setNumberOfTerms(String.valueOf(main.getNumberOfTerms()));
-		data.setGraceTerms(String.valueOf(main.getGraceTerms()));
-		data.setTotalTenor(String.valueOf(main.getNumberOfTerms() + main.getGraceTerms()));
-		data.setFinCurrAssetValue(PennantApplicationUtil.amountFormate(main.getFinCurrAssetValue(), format));
-		data.setRepaymentFrequency(main.getRepayFrq());
-		data.setGraceBaseRate(main.getGraceBaseRate());
-		data.setGraceSpecialRate(main.getGraceSpecialRate());
-		data.setRepayBaseRate(main.getRepayBaseRate());
-		data.setRepaySpecialRate(main.getRepaySpecialRate());
-		data.setRepayMargin(PennantApplicationUtil.amountFormate(main.getRepayMargin(), format));
-		data.setFinBranch(main.getFinBranch());
-		data.setFinCcy(main.getFinCcy());
-		data.setFinDivision(main.getLovDescFinDivision());
-		data.setAccountsOfficerDesc(main.getLovDescAccountsOfficer());
-		data.setDsaCode(main.getDsaCode());
-		data.setDsaDesc(main.getDsaCodeDesc());
-		data.setdMACodeDesc(main.getDmaCodeDesc());
-		data.setTotalProfit(PennantApplicationUtil.amountFormate(main.getTotalProfit(), format));
-		data.setFirstRepay(PennantApplicationUtil.amountFormate(main.getFirstRepay(), format));
-		data.setLastRepay(PennantApplicationUtil.amountFormate(main.getLastRepay(), format));
-		data.setUserName(main.getUserDetails().getUserName());
-		data.setUserBranch(main.getUserDetails().getBranchName());
-		data.setUserDepartment(main.getUserDetails().getDepartmentName());
 
-		// Finance Branch Details
-		Branch branch = branchDAO.getBranchById(main.getFinBranch(), "_AView");
-		if (branch != null) {
-			data.setFinBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
-			data.setFinBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
-			data.setFinBranchAddrHNbr(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
-			data.setFinBranchAddrFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
-			data.setFinBranchAddrStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
-			data.setFinBranchAddrCountry(StringUtils.trimToEmpty(branch.getBranchCountry()));
-			data.setFinBranchAddrCity(StringUtils.trimToEmpty(branch.getBranchCity()));
-			data.setFinBranchAddrProvince(StringUtils.trimToEmpty(branch.getBranchProvince()));
-			data.setFinBranchAddrDistrict("");
-			data.setFinBranchAddrPincode(StringUtils.trimToEmpty(branch.getPinCode()));
-			data.setFinBranchPhone(StringUtils.trimToEmpty(branch.getBranchTel()));
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		CustomerDetails custDtls = fd.getCustomerDetails();
+		List<CustomerAddres> addresses = custDtls.getAddressList();
+		List<CustomerEMail> emails = custDtls.getCustomerEMailList();
+		List<CustomerPhoneNumber> mobiles = custDtls.getCustomerPhoneNumList();
+		List<FinServiceInstruction> servInstructions = schdData.getFinServiceInstructions();
+		int format = CurrencyUtil.getFormat(fm.getFinCcy());
+
+		data.setCustCIF(custDtls.getCustomer().getCustCIF());
+		data.setCustShrtName(custDtls.getCustomer().getCustShrtName());
+		data.setFinReference(fm.getFinReference());
+		data.setFinAmount(PennantApplicationUtil.amountFormate(fm.getFinAmount(), format));
+		data.setDownPayment(PennantApplicationUtil.amountFormate(fm.getDownPayment(), format));
+		data.setFeeAmount(PennantApplicationUtil.amountFormate(fm.getFeeChargeAmt(), format));
+		data.setFinCcy(fm.getFinCcy());
+		data.setFinStartDate(DateUtil.formatToLongDate(fm.getFinStartDate()));
+		data.setMaturityDate(DateUtil.formatToLongDate(fm.getMaturityDate()));
+		data.setNumberOfTerms(String.valueOf(fm.getNumberOfTerms()));
+		data.setGraceTerms(String.valueOf(fm.getGraceTerms()));
+		data.setTotalTenor(String.valueOf(fm.getNumberOfTerms() + fm.getGraceTerms()));
+		data.setFinCurrAssetValue(PennantApplicationUtil.amountFormate(fm.getFinCurrAssetValue(), format));
+		data.setRepaymentFrequency(fm.getRepayFrq());
+		data.setGraceBaseRate(fm.getGraceBaseRate());
+		data.setGraceSpecialRate(fm.getGraceSpecialRate());
+		data.setRepayBaseRate(fm.getRepayBaseRate());
+		data.setRepaySpecialRate(fm.getRepaySpecialRate());
+		data.setRepayMargin(PennantApplicationUtil.amountFormate(fm.getRepayMargin(), format));
+		data.setFinBranch(fm.getFinBranch());
+		data.setFinCcy(fm.getFinCcy());
+		data.setFinDivision(fm.getLovDescFinDivision());
+		data.setAccountsOfficerDesc(fm.getLovDescAccountsOfficer());
+		data.setDsaCode(fm.getDsaCode());
+		data.setDsaDesc(fm.getDsaCodeDesc());
+		data.setdMACodeDesc(fm.getDmaCodeDesc());
+		data.setTotalProfit(PennantApplicationUtil.amountFormate(fm.getTotalProfit(), format));
+		data.setFirstRepay(PennantApplicationUtil.amountFormate(fm.getFirstRepay(), format));
+		data.setLastRepay(PennantApplicationUtil.amountFormate(fm.getLastRepay(), format));
+		data.setUserName(fm.getUserDetails().getUserName());
+		data.setUserBranch(fm.getUserDetails().getBranchName());
+		data.setUserDepartment(fm.getUserDetails().getDepartmentName());
+
+		Branch branch = branchDAO.getBranchById(fm.getFinBranch(), "_AView");
+		if (branch == null) {
+			branch = new Branch();
 		}
+
+		data.setFinBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+		data.setFinBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+		data.setFinBranchAddrHNbr(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+		data.setFinBranchAddrFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+		data.setFinBranchAddrStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+		data.setFinBranchAddrCountry(StringUtils.trimToEmpty(branch.getBranchCountry()));
+		data.setFinBranchAddrCity(StringUtils.trimToEmpty(branch.getBranchCity()));
+		data.setFinBranchAddrProvince(StringUtils.trimToEmpty(branch.getBranchProvince()));
+		data.setFinBranchAddrDistrict("");
+		data.setFinBranchAddrPincode(StringUtils.trimToEmpty(branch.getPinCode()));
+		data.setFinBranchPhone(StringUtils.trimToEmpty(branch.getBranchTel()));
 
 		// User Branch Details
-		if (!StringUtils.equals(main.getFinBranch(), main.getUserDetails().getBranchCode())) {
-			branch = branchDAO.getBranchById(main.getUserDetails().getBranchCode(), "_AView");
-		}
-		if (branch != null) {
-			data.setUserBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
-			data.setUserBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
-			data.setUserBranchAddrHNbr(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
-			data.setUserBranchAddrFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
-			data.setUserBranchAddrStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
-			data.setUserBranchAddrCountry(StringUtils.trimToEmpty(branch.getBranchCountry()));
-			data.setUserBranchAddrCity(StringUtils.trimToEmpty(branch.getBranchCity()));
-			data.setUserBranchAddrProvince(StringUtils.trimToEmpty(branch.getBranchProvince()));
-			data.setUserBranchAddrDistrict("");
-			data.setUserBranchAddrPincode(StringUtils.trimToEmpty(branch.getPinCode()));
-			data.setUserBranchPhone(StringUtils.trimToEmpty(branch.getBranchTel()));
+		if (!StringUtils.equals(fm.getFinBranch(), fm.getUserDetails().getBranchCode())) {
+			branch = branchDAO.getBranchById(fm.getUserDetails().getBranchCode(), "_AView");
 		}
 
-		// Customer Address
+		if (branch == null) {
+			branch = new Branch();
+		}
+
+		data.setUserBranchAddrLine1(StringUtils.trimToEmpty(branch.getBranchAddrLine1()));
+		data.setUserBranchAddrLine2(StringUtils.trimToEmpty(branch.getBranchAddrLine2()));
+		data.setUserBranchAddrHNbr(StringUtils.trimToEmpty(branch.getBranchAddrHNbr()));
+		data.setUserBranchAddrFlatNo(StringUtils.trimToEmpty(branch.getBranchFlatNbr()));
+		data.setUserBranchAddrStreet(StringUtils.trimToEmpty(branch.getBranchAddrStreet()));
+		data.setUserBranchAddrCountry(StringUtils.trimToEmpty(branch.getBranchCountry()));
+		data.setUserBranchAddrCity(StringUtils.trimToEmpty(branch.getBranchCity()));
+		data.setUserBranchAddrProvince(StringUtils.trimToEmpty(branch.getBranchProvince()));
+		data.setUserBranchAddrDistrict("");
+		data.setUserBranchAddrPincode(StringUtils.trimToEmpty(branch.getPinCode()));
+		data.setUserBranchPhone(StringUtils.trimToEmpty(branch.getBranchTel()));
+
 		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
-		for (CustomerAddres customerAddress : custAddressList) {
-			if (priority != customerAddress.getCustAddrPriority()) {
+		for (CustomerAddres ca : addresses) {
+			if (priority != ca.getCustAddrPriority()) {
 				continue;
 			}
-			data.setCustAddrLine1(customerAddress.getCustAddrLine1());
-			data.setCustAddrLine2(customerAddress.getCustAddrLine2());
-			data.setCustAddrHNo(customerAddress.getCustAddrHNbr());
-			data.setCustAddrFlatNo(customerAddress.getCustFlatNbr());
-			data.setCustAddrStreet(StringUtils.trimToEmpty(customerAddress.getCustAddrStreet()));
-			data.setCustAddrCountry(customerAddress.getCustAddrCountry());
-			data.setCustAddrProvince(customerAddress.getCustAddrProvince());
-			data.setCustAddrDistrict(customerAddress.getCustDistrict());
-			data.setCustAddrCity(customerAddress.getCustAddrCity());
-			data.setCustAddrPincode(customerAddress.getCustPOBox());
+
+			data.setCustAddrLine1(ca.getCustAddrLine1());
+			data.setCustAddrLine2(ca.getCustAddrLine2());
+			data.setCustAddrHNo(ca.getCustAddrHNbr());
+			data.setCustAddrFlatNo(ca.getCustFlatNbr());
+			data.setCustAddrStreet(StringUtils.trimToEmpty(ca.getCustAddrStreet()));
+			data.setCustAddrCountry(ca.getCustAddrCountry());
+			data.setCustAddrProvince(ca.getCustAddrProvince());
+			data.setCustAddrDistrict(ca.getCustDistrict());
+			data.setCustAddrCity(ca.getCustAddrCity());
+			data.setCustAddrPincode(ca.getCustPOBox());
 
 			break;
 		}
-		// Customer Email
-		for (CustomerEMail customerEMail : customerEmailList) {
-			if (priority != customerEMail.getCustEMailPriority()) {
+
+		for (CustomerEMail email : emails) {
+			if (priority != email.getCustEMailPriority()) {
 				continue;
 			}
-			data.setCustEmailId(customerEMail.getCustEMail());
-			break;
-		}
-		// Customer Contact Number
-		for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
-			if (priority != customerPhoneNumber.getPhoneTypePriority()) {
-				continue;
-			}
-			data.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
+
+			data.setCustEmailId(email.getCustEMail());
 			break;
 		}
 
-		if (main.getEffectiveRateOfReturn() != null) {
-			data.setEffectiveRate(PennantApplicationUtil.formatRate(main.getEffectiveRateOfReturn().doubleValue(), 2));
-		} else {
-			data.setEffectiveRate("");
+		for (CustomerPhoneNumber phone : mobiles) {
+			if (priority != phone.getPhoneTypePriority()) {
+				continue;
+			}
+
+			data.setCustMobileNumber(phone.getPhoneNumber());
+			break;
 		}
+
+		data.setEffectiveRate("");
+		data.setRepayRate("");
+		data.setCustId(fm.getCustID());
+		data.setCustCIF(fm.getLovDescCustCIF());
+		data.setFinType(fm.getFinType());
+		data.setFinTypeDesc(fm.getLovDescFinTypeName());
+		data.setNextRepayDate(DateUtil.format(fm.getNextRepayDate(), DateFormat.LONG_DATE));
+		data.setPriority(fm.getPriority());
+
+		if (fm.getEffectiveRateOfReturn() != null) {
+			data.setEffectiveRate(PennantApplicationUtil.formatRate(fm.getEffectiveRateOfReturn().doubleValue(), 2));
+		}
+
 		try {
-			RateDetail details = RateUtil.rates(main.getRepayBaseRate(), main.getFinCcy(), main.getRepaySpecialRate(),
-					main.getRepayMargin(), main.getRpyMinRate(), main.getRpyMaxRate());
+			RateDetail details = RateUtil.rates(fm.getRepayBaseRate(), fm.getFinCcy(), fm.getRepaySpecialRate(),
+					fm.getRepayMargin(), fm.getRpyMinRate(), fm.getRpyMaxRate());
 			data.setRepayRate(PennantApplicationUtil.formatRate(details.getNetRefRateLoan().doubleValue(), 2));
 		} catch (Exception e) {
-			e.printStackTrace();
-			data.setRepayRate("");
+			logger.error(Literal.EXCEPTION, e);
 		}
-		if (main.getRepayProfitRate() != null) {
-			data.setRepayRate(PennantApplicationUtil.formatRate(main.getRepayProfitRate().doubleValue(), 2));
-		} else {
-			data.setRepayRate("");
-		}
-		data.setCustId(main.getCustID());
-		data.setCustCIF(main.getLovDescCustCIF());
-		data.setFinType(main.getFinType());
-		if (StringUtils.isNotEmpty(main.getLovDescFinTypeName())
-				&& StringUtils.contains(main.getLovDescFinTypeName(), "-")) {
-			String splitLoanType = StringUtils.substring(main.getLovDescFinTypeName(), 3);
-			data.setFinTypeDesc(splitLoanType);
-		} else {
-			data.setFinTypeDesc(main.getLovDescFinTypeName());
-		}
-		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
-		data.setPriority(main.getPriority());
 
-		// Role Code For Alert Notification
-		List<SecurityRole> securityRoles = securityRoleDAO.getSecurityRole(main.getRoleCode());
+		if (fm.getRepayProfitRate() != null) {
+			data.setRepayRate(PennantApplicationUtil.formatRate(fm.getRepayProfitRate().doubleValue(), 2));
+		}
+
+		if (StringUtils.isNotEmpty(fm.getLovDescFinTypeName())
+				&& StringUtils.contains(fm.getLovDescFinTypeName(), "-")) {
+			String splitLoanType = StringUtils.substring(fm.getLovDescFinTypeName(), 3);
+			data.setFinTypeDesc(splitLoanType);
+		}
+
+		List<SecurityRole> securityRoles = securityRoleDAO.getSecurityRole(fm.getRoleCode());
 		data.setRoleCode(securityRoles.size() > 0 ? securityRoles.get(0).getRoleDesc() : "");
 
 		// user Details
-		SecurityUser secUser = getSecurityUserById(main.getLastMntBy());
+		SecurityUser secUser = getSecurityUserById(fm.getLastMntBy());
 		String secUsrFullName = PennantApplicationUtil.getFullName(secUser.getUsrFName(), secUser.getUsrMName(),
 				secUser.getUsrLName());
 		data.setUsrName(secUsrFullName);
 		data.setNextUsrName("");
 		data.setPrevUsrName(secUsrFullName);
 
-		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
-			WorkFlowDetails workFlowDetails = workFlowDetailsDAO.getWorkFlowDetailsByID(main.getWorkflowId());
+		if (!PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
+			WorkFlowDetails workFlowDetails = workFlowDetailsDAO.getWorkFlowDetailsByID(fm.getWorkflowId());
 			data.setWorkflowType(workFlowDetails == null ? "" : workFlowDetails.getWorkFlowType());
 		}
 
-		data.setNextUsrRoleCode(main.getNextRoleCode());
-		List<SecurityRole> securityNextRoles = securityRoleDAO.getSecurityRole(main.getNextRoleCode());
+		data.setNextUsrRoleCode(fm.getNextRoleCode());
+		List<SecurityRole> securityNextRoles = securityRoleDAO.getSecurityRole(fm.getNextRoleCode());
+
 		String nextRoleCode = "";
 		for (SecurityRole securityRole : securityNextRoles) {
 			if (StringUtils.isNotEmpty(nextRoleCode)) {
@@ -945,58 +949,57 @@ public class NotificationService extends GenericService<Notification> {
 				nextRoleCode = securityRole.getRoleDesc();
 			}
 		}
+
 		data.setNextUsrRole(nextRoleCode);
-		data.setPrevUsrRole(main.getLastMntBy());
-		data.setUsrRole(main.getRoleCode());
-		data.setFinCommitmentRef(main.getFinCommitmentRef());
-		data.setRcdMaintainSts(main.getRcdMaintainSts());
+		data.setPrevUsrRole(fm.getLastMntBy());
+		data.setUsrRole(fm.getRoleCode());
+		data.setFinCommitmentRef(fm.getFinCommitmentRef());
+		data.setRcdMaintainSts(fm.getRcdMaintainSts());
 
 		Notes note = new Notes();
 		note.setModuleName(PennantConstants.NOTES_MODULE_FINANCEMAIN);
-		note.setReference(main.getFinReference());
-		List<Notes> list = notesDAO.getNotesListByRole(note, false, new String[] { main.getRoleCode() });
+		note.setReference(fm.getFinReference());
+		List<Notes> list = notesDAO.getNotesListByRole(note, false, new String[] { fm.getRoleCode() });
 		StringBuilder recommendations = new StringBuilder();
-		for (Notes notes : list) {
-			recommendations.append(notes.getRemarks());
-		}
+		list.forEach(l1 -> recommendations.append(l1.getRemarks()));
+
 		data.setRecommendations(recommendations.toString());
-		data.setRecordStatus(main.getRecordStatus());
-		data.setReceiptPurpose(main.getReceiptPurpose());
+		data.setRecordStatus(fm.getRecordStatus());
+		data.setReceiptPurpose(fm.getReceiptPurpose());
 
-		if (receiptHeader != null) {
-			data.setReceiptAmount(PennantApplicationUtil.amountFormate(receiptHeader.getReceiptAmount(), format));
-			data.setBounceDate(DateUtility.formatToLongDate(receiptHeader.getBounceDate()));
-			Date bounceDateValue = receiptHeader.getBounceDate();
-			if (bounceDateValue != null) {
-				data.setBounceReason(receiptHeader.getManualAdvise().getBounceCodeDesc());
-			}
-			data.setCancellationReason(receiptHeader.getCancelReason());
-			Date valueDate = receiptHeader.getReceiptDate();
-			BigDecimal modeAmount = BigDecimal.ZERO;
-			if (receiptHeader.getReceiptDetails() != null && !receiptHeader.getReceiptDetails().isEmpty()) {
-				for (int i = 0; i < receiptHeader.getReceiptDetails().size(); i++) {
-					FinReceiptDetail receiptDetail = receiptHeader.getReceiptDetails().get(i);
-					if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
-							&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
-							&& !StringUtils.equals(receiptDetail.getPaymentType(),
-									RepayConstants.RECEIPTMODE_PAYABLE)) {
-						valueDate = receiptDetail.getReceivedDate();
-						modeAmount = receiptDetail.getAmount();
+		data.setReceiptAmount(PennantApplicationUtil.amountFormate(rch.getReceiptAmount(), format));
+		data.setBounceDate(DateUtility.formatToLongDate(rch.getBounceDate()));
+		Date bounceDateValue = rch.getBounceDate();
+		if (bounceDateValue != null) {
+			data.setBounceReason(rch.getManualAdvise().getBounceCodeDesc());
+		}
+		data.setCancellationReason(rch.getCancelReason());
+		Date valueDate = rch.getReceiptDate();
+		BigDecimal modeAmount = BigDecimal.ZERO;
+		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
+			for (int i = 0; i < rch.getReceiptDetails().size(); i++) {
+				FinReceiptDetail receiptDetail = rch.getReceiptDetails().get(i);
+				if (!StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EXCESS)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_EMIINADV)
+						&& !StringUtils.equals(receiptDetail.getPaymentType(), RepayConstants.RECEIPTMODE_PAYABLE)) {
+					valueDate = receiptDetail.getReceivedDate();
+					modeAmount = receiptDetail.getAmount();
 
-					}
 				}
 			}
-			data.setValueDate(DateUtility.formatToLongDate(valueDate));
-			data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
-		} else if (servInstructions != null && !servInstructions.isEmpty()) {
+		}
+		data.setValueDate(DateUtility.formatToLongDate(valueDate));
+		data.setAmount(PennantApplicationUtil.amountFormate(modeAmount, format));
 
+		if (CollectionUtils.isNotEmpty(servInstructions)
+				&& (data.getValueDate() == null || StringUtils.isEmpty(data.getAmount()))) {
 			FinServiceInstruction instruction = servInstructions.get(0);
-			if (!StringUtils.equals(instruction.getFinEvent(), FinServiceEvent.ORG)) {
+			if (!FinServiceEvent.ORG.equals(instruction.getFinEvent())) {
 				data.setValueDate(DateUtility.formatToLongDate(instruction.getFromDate()));
 				data.setAmount(PennantApplicationUtil.amountFormate(instruction.getAmount(), format));
 			}
-
 		}
+
 		return data.getDeclaredFieldValues();
 	}
 
@@ -1158,89 +1161,81 @@ public class NotificationService extends GenericService<Notification> {
 		return data;
 	}
 
-	// New Methods
-	private Map<String, Object> getTemplateData(FinanceDetail aFinanceDetail, FinReceiptHeader receiptHeader) {
-		FinanceMain main = aFinanceDetail.getFinScheduleData().getFinanceMain();
-		Customer customer = aFinanceDetail.getCustomerDetails().getCustomer();
-		int format = CurrencyUtil.getFormat(main.getFinCcy());
-		// Role Code For Alert Notification
-		if (!StringUtils.equals(PennantConstants.FINSOURCE_ID_API, main.getFinSourceID())) {
-			if (StringUtils.isNotEmpty(main.getRoleCode())) {
-				main.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(main.getRoleCode()));
-
-				// user Details
-				main.setSecUsrFullName(PennantApplicationUtil.getUserDesc(main.getLastMntBy()));
-				main.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(main.getWorkflowId()));
-			}
-
+	private Map<String, Object> getTemplateData(FinanceDetail fd, FinReceiptHeader rch) {
+		if (rch == null) {
+			rch = new FinReceiptHeader();
 		}
-		Map<String, Object> declaredFieldValues = main.getDeclaredFieldValues();
-		declaredFieldValues.put("fm_recordStatus", main.getRecordStatus());
-		declaredFieldValues.putAll(customer.getDeclaredFieldValues());
+
+		Promotion promotion = fd.getPromotion();
+		if (promotion == null) {
+			promotion = new Promotion();
+		}
+
+		FinOption finOption = fd.getFinOption();
+		if (finOption == null) {
+			finOption = new FinOption();
+		}
+
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		Customer customer = fd.getCustomerDetails().getCustomer();
+		int format = CurrencyUtil.getFormat(fm.getFinCcy());
+		String roleCode = fm.getRoleCode();
+
+		if (!PennantConstants.FINSOURCE_ID_API.equals(fm.getFinSourceID())) {
+			if (StringUtils.isNotEmpty(roleCode)) {
+				fm.setNextRoleCodeDesc(PennantApplicationUtil.getSecRoleCodeDesc(roleCode));
+				fm.setSecUsrFullName(PennantApplicationUtil.getUserDesc(fm.getLastMntBy()));
+				fm.setWorkFlowType(PennantApplicationUtil.getWorkFlowType(fm.getWorkflowId()));
+			}
+		}
+
+		Map<String, Object> dataMap = fm.getDeclaredFieldValues();
+
+		dataMap.put("fm_recordStatus", fm.getRecordStatus());
+		dataMap.putAll(customer.getDeclaredFieldValues());
+
 		try {
-			declaredFieldValues.putAll(getTemplData(aFinanceDetail, receiptHeader));
+			dataMap.putAll(getTemplData(fd, rch));
 		} catch (Exception e) {
-
-		}
-		LMSServiceLog lmsServiceLog = aFinanceDetail.getLmsServiceLog();
-		if (lmsServiceLog != null && lmsServiceLog.getEvent() != null) {
-			declaredFieldValues.putAll(lmsServiceLog.getDeclaredFieldValues());
-			declaredFieldValues.put("rc_" + "effectiveDate",
-					DateUtility.formatToLongDate(lmsServiceLog.getEffectiveDate()));
+			logger.error(Literal.EXCEPTION, e);
 		}
 
-		if (receiptHeader != null) {
-			declaredFieldValues.put("recordStatus", receiptHeader.getRecordStatus());
-			declaredFieldValues.put("rh_receiptPurpose", receiptHeader.getReceiptPurpose());
-			declaredFieldValues.put("rh_receiptAmount",
-					PennantApplicationUtil.amountFormate(receiptHeader.getReceiptAmount(), format));
-			declaredFieldValues.put("rh_receiptDate", DateUtility.formatToLongDate(receiptHeader.getReceiptDate()));
-			declaredFieldValues.put("rh_balAmount",
-					PennantApplicationUtil.amountFormate(receiptHeader.getBalAmount(), format));
-		}
-		if (aFinanceDetail.getPromotion() != null) {
-			declaredFieldValues.put("rh_actualInterestRate", aFinanceDetail.getPromotion().getActualInterestRate());
-		}
-		// put call email template datamap added
-		FinOption finOption = aFinanceDetail.getFinOption();
-		declaredFieldValues.putAll(DataMapUtil.getDataMap(aFinanceDetail));
-		if (finOption != null) {
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("code"), finOption.getOptionType());
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("description"), finOption.getOptionType());
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("nextFrequencyDate"),
-					DateUtility.formatToLongDate(finOption.getNextOptionDate()));
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("nextOptionDate"),
-					DateUtility.formatToLongDate(finOption.getNextOptionDate()));
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("currentOptionDate"),
-					DateUtility.formatToLongDate(finOption.getCurrentOptionDate()));
-			declaredFieldValues.put(FieldPrefix.Putcall.getPrefix().concat("appDate"),
-					DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
-		}
+		LMSServiceLog lmsServiceLog = fd.getLmsServiceLog();
+		String finReference = fd.getFinReference();
+		String drwingPwr = PennantApplicationUtil.amountFormate(drawingPowerService.getDrawingPower(finReference), 2);
+		BigDecimal emiOnFinAssetValue = ScheduleCalculator.getEMIOnFinAssetValue(fd);
+		String prefix = FieldPrefix.Putcall.getPrefix();
 
-		// Adding the customer drawing power
+		dataMap.putAll(lmsServiceLog.getDeclaredFieldValues());
+		dataMap.putAll(DataMapUtil.getDataMap(fd));
+		dataMap.put("rc_" + "effectiveDate", DateUtil.formatToLongDate(lmsServiceLog.getEffectiveDate()));
+		dataMap.put("recordStatus", rch.getRecordStatus());
+		dataMap.put("rh_receiptPurpose", rch.getReceiptPurpose());
+		dataMap.put("rh_receiptAmount", PennantApplicationUtil.amountFormate(rch.getReceiptAmount(), format));
+		dataMap.put("rh_receiptDate", DateUtility.formatToLongDate(rch.getReceiptDate()));
+		dataMap.put("rh_balAmount", PennantApplicationUtil.amountFormate(rch.getBalAmount(), format));
+		dataMap.put("rh_actualInterestRate", promotion.getActualInterestRate());
+		dataMap.put(prefix.concat("code"), finOption.getOptionType());
+		dataMap.put(prefix.concat("description"), finOption.getOptionType());
+		dataMap.put(prefix.concat("nextFrequencyDate"), DateUtil.formatToLongDate(finOption.getNextOptionDate()));
+		dataMap.put(prefix.concat("nextOptionDate"), DateUtil.formatToLongDate(finOption.getNextOptionDate()));
+		dataMap.put(prefix.concat("currentOptionDate"), DateUtil.formatToLongDate(finOption.getCurrentOptionDate()));
+		dataMap.put(prefix.concat("appDate"), DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
+		dataMap.put("drawingPower", drwingPwr);
+		dataMap.put("currentDate", DateUtil.formatToLongDate(SysParamUtil.getAppDate()));
+		dataMap.put("emiOnTotalLoanAmt", PennantApplicationUtil.amountFormate(emiOnFinAssetValue, 2));
+		dataMap.put("ct_custSalutationCode", StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
+		dataMap.put("di_paymentType", "");
 
-		BigDecimal drawingPowerVal = drawingPowerService.getDrawingPower(aFinanceDetail.getFinReference());
-		declaredFieldValues.put("drawingPower",
-				drawingPowerVal == null ? BigDecimal.ZERO : PennantApplicationUtil.amountFormate(drawingPowerVal, 2));
-		declaredFieldValues.put("currentDate", DateUtility.formatToLongDate(SysParamUtil.getAppDate()));
-		declaredFieldValues.put("emiOnTotalLoanAmt",
-				PennantApplicationUtil.amountFormate(ScheduleCalculator.getEMIOnFinAssetValue(aFinanceDetail), 2));
-		declaredFieldValues.put("ct_custSalutationCode",
-				StringUtils.trimToEmpty(customer.getLovDescCustSalutationCodeName()));
-		// setting the disbursement type to notification rule fields
-		if (CollectionUtils.isNotEmpty(aFinanceDetail.getAdvancePaymentsList())) {
-			for (FinAdvancePayments advancePayments : aFinanceDetail.getAdvancePaymentsList()) {
-				String paymentType = StringUtils.trimToEmpty(advancePayments.getPaymentType());
-				declaredFieldValues.put("di_paymentType", paymentType);
-				// if multiple instructions are available considering only CHEQUE
-				if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
-					break;
-				}
+		for (FinAdvancePayments fap : fd.getAdvancePaymentsList()) {
+			String paymentType = StringUtils.trimToEmpty(fap.getPaymentType());
+			dataMap.put("di_paymentType", paymentType);
+			if (DisbursementConstants.PAYMENT_TYPE_CHEQUE.equals(paymentType)) {
+				break;
 			}
-		} else {
-			declaredFieldValues.put("di_paymentType", "");
 		}
-		return declaredFieldValues;
+
+		return dataMap;
 	}
 
 	private void sendEmailNotification(Notification emailMessage) {

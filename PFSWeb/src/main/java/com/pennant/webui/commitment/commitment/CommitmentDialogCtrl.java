@@ -152,6 +152,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -2853,7 +2854,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 					try {
 						notificationService.sendNotifications(notification, aCommitment, finType, null);
 					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
+						throw new AppException("Unable to process the mail.", e);
 					}
 
 				}

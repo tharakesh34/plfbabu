@@ -2200,7 +2200,7 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 						notificationService.sendNotifications(notification, aCollateralSetup.getCustomerDetails(),
 								aCollateralSetup.getCollateralType(), null);
 					} catch (Exception e) {
-						logger.error(Literal.EXCEPTION, e);
+						throw new AppException("Unable to process the mail.", e);
 					}
 				}
 

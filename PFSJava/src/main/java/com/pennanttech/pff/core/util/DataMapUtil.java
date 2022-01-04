@@ -2,6 +2,7 @@ package com.pennanttech.pff.core.util;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,14 +37,8 @@ public final class DataMapUtil {
 	}
 
 	public enum FieldPrefix {
-		FinanceMain("fm_"),
-		Customer("ct_"),
-		CustomerAddress("cta_"),
-		CustomerEmail("cte_"),
-		CustomerPhoneNumber("ctp_"),
-		Covenant("cvnt_"),
-		Putcall("pc_"),
-		CollateralLTVBreachs("cltvb_");
+		FinanceMain("fm_"), Customer("ct_"), CustomerAddress("cta_"), CustomerEmail("cte_"),
+		CustomerPhoneNumber("ctp_"), Covenant("cvnt_"), Putcall("pc_"), CollateralLTVBreachs("cltvb_");
 
 		private String prefix;
 
@@ -57,34 +52,35 @@ public final class DataMapUtil {
 		}
 	}
 
-	public static Map<String, String> getDataMap(FinanceDetail financeDetail) {
+	public static Map<String, String> getDataMap(FinanceDetail fd) {
 		Map<String, String> data = new HashMap<>();
 		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
 
-		FinanceMain fm = financeDetail.getFinScheduleData().getFinanceMain();
-		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
+		CustomerDetails customerDetails = fd.getCustomerDetails();
 
 		Customer cu = null;
-		List<CustomerAddres> custAddressList = null;
-		List<CustomerEMail> customerEmailList = null;
-		List<CustomerPhoneNumber> custMobiles = null;
+		List<CustomerAddres> addresses = new ArrayList<>();
+		List<CustomerEMail> emails = new ArrayList<>();
+		List<CustomerPhoneNumber> mobiles = new ArrayList<>();
+
 		Covenant covenant = null;
 		FinOption finOption = null;
 		CollateralRevaluation collateralRevaluation = null;
 
 		if (customerDetails != null) {
 			cu = customerDetails.getCustomer();
-			custAddressList = customerDetails.getAddressList();
-			customerEmailList = customerDetails.getCustomerEMailList();
-			custMobiles = customerDetails.getCustomerPhoneNumList();
+			addresses = customerDetails.getAddressList();
+			emails = customerDetails.getCustomerEMailList();
+			mobiles = customerDetails.getCustomerPhoneNumList();
 		}
 
 		data.putAll(getDataMap(fm, FieldPrefix.FinanceMain.getPrefix()));
 		data.putAll(getDataMap(cu, FieldPrefix.Customer.getPrefix()));
 
 		// Customer Address Details
-		if (CollectionUtils.isNotEmpty(custAddressList)) {
-			for (CustomerAddres customerAddress : custAddressList) {
+		if (CollectionUtils.isNotEmpty(addresses)) {
+			for (CustomerAddres customerAddress : addresses) {
 				if (priority != customerAddress.getCustAddrPriority()) {
 					continue;
 				}
@@ -94,8 +90,8 @@ public final class DataMapUtil {
 		}
 
 		// Customer Email Details
-		if (CollectionUtils.isNotEmpty(customerEmailList)) {
-			for (CustomerEMail customerEMail : customerEmailList) {
+		if (CollectionUtils.isNotEmpty(emails)) {
+			for (CustomerEMail customerEMail : emails) {
 				if (priority != customerEMail.getCustEMailPriority()) {
 					continue;
 				}
@@ -105,8 +101,8 @@ public final class DataMapUtil {
 		}
 
 		// Customer Contact Details
-		if (CollectionUtils.isNotEmpty(custMobiles)) {
-			for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
+		if (CollectionUtils.isNotEmpty(mobiles)) {
+			for (CustomerPhoneNumber customerPhoneNumber : mobiles) {
 				if (priority != customerPhoneNumber.getPhoneTypePriority()) {
 					continue;
 				}
@@ -115,13 +111,13 @@ public final class DataMapUtil {
 			}
 		}
 
-		covenant = financeDetail.getCovenant();
+		covenant = fd.getCovenant();
 		data.putAll(getDataMap(covenant, FieldPrefix.Covenant.getPrefix()));
 
-		finOption = financeDetail.getFinOption();
+		finOption = fd.getFinOption();
 		data.putAll(getDataMap(finOption, FieldPrefix.Putcall.getPrefix()));
 
-		collateralRevaluation = financeDetail.getCollateralRevaluation();
+		collateralRevaluation = fd.getCollateralRevaluation();
 		data.putAll(getDataMap(collateralRevaluation, FieldPrefix.CollateralLTVBreachs.getPrefix()));
 
 		return data;

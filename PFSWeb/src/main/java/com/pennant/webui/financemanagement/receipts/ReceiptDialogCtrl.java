@@ -3154,8 +3154,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 						notificationService.sendNotifications(notification, receiptData, financeMain.getFinType(),
 								getFinanceDetail().getDocumentDetailsList());
 					} catch (Exception e) {
-						logger.debug(Literal.EXCEPTION, e);
-
+						throw new AppException("Unable to process the mail.", e);
 					}
 
 				}

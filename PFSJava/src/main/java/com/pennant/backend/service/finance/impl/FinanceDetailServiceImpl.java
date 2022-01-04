@@ -4780,16 +4780,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			notification.setStage(PennantConstants.REC_ON_APPR);
 			notification.setReceivedBy(fm.getLastMntBy());
 			fm.setWorkflowId(tempWorkflowId);
-			try {
 
-				if (notificationService != null) {
+			if (notificationService != null) {
+				try {
 					notificationService.sendNotifications(notification, fd, fm.getFinType(),
 							fd.getDocumentDetailsList());
+				} catch (Exception e) {
+					throw new AppException("Unable to process the mail.", e);
 				}
-
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
 			}
+
 			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {
 				fm.setWorkflowId(0);
 			}
@@ -10484,11 +10484,11 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			fm.setLastMntOn(main.getLastMntOn());
 			fm.setRecordStatus(main.getRecordStatus());
 			fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-			
+
 			if (StringUtils.isNotBlank(fm.getParentRef())) {
 				fm.setInvestmentRef("");
 			}
-			
+
 			if (fm.isNewRecord()) {
 				financeMainDAO.save(fm, TableType.TEMP_TAB, false);
 			} else {

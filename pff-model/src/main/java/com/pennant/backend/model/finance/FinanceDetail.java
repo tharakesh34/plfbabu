@@ -263,7 +263,7 @@ public class FinanceDetail extends AbstractWorkflowEntity {
 	private List<InterfaceServiceDetails> interfaceDetailList = new ArrayList<>();
 	private boolean validateUpfrontFees;
 	private CollateralRevaluation collateralRevaluation = new CollateralRevaluation();
-	private LMSServiceLog lmsServiceLog;
+	private LMSServiceLog lmsServiceLog = new LMSServiceLog();
 	private PaymentTransaction paymentTransaction;
 	private boolean pdApprovalTab = false;
 	private boolean pdInitTab = false;

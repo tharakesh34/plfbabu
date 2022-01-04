@@ -936,7 +936,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
 								aFinanceDetail.getDocumentDetailsList());
 					} catch (Exception e) {
-						logger.debug(e);
+						throw new AppException("Unable to process the mail.", e);
 					}
 
 				}
