@@ -799,7 +799,12 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 
 		String finreference = this.insertFinReference.getValue();
-		long finID = presentmentDetailService.getFinID(finreference);
+		Long finID = presentmentDetailService.getFinID(finreference);
+
+		if (finID == null) {
+			throw new WrongValueException(this.insertFinReference,
+					Labels.getLabel("Presentment_IncldeExclude_Invalid_FinReference"));
+		}
 
 		PresentmentDetail presentmentDetail = this.presentmentDetailService.getPresentmentDetailByFinRefAndPresID(finID,
 				this.presentmentHeader.getId());
@@ -833,7 +838,12 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		}
 
 		String finreference = this.insertFinReference.getValue();
-		long finID = presentmentDetailService.getFinID(finreference);
+		Long finID = presentmentDetailService.getFinID(finreference);
+
+		if (finID == null) {
+			throw new WrongValueException(this.insertFinReference,
+					Labels.getLabel("Presentment_IncldeExclude_Invalid_FinReference"));
+		}
 
 		PresentmentDetail presentmentDetail = this.presentmentDetailService.getPresentmentDetailByFinRefAndPresID(finID,
 				this.presentmentHeader.getId());
@@ -932,7 +942,15 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 		List<Long> excludeList = new ArrayList<>();
 
 		for (PresentmentDetail pd : presentmentDetailList) {
-			pd.setFinID(financeMainDAO.getFinIDByFinReference(pd.getFinReference(), "", false));
+
+			Long finID = financeMainDAO.getFinIDByFinReference(pd.getFinReference(), "", false);
+
+			if (finID == null) {
+				MessageUtil.showError("Please Provide Valid Reference:" + pd.getFinReference());
+				return;
+			}
+
+			pd.setFinID(finID);
 			PresentmentDetail presentmentDetail2 = this.presentmentDetailService
 					.getPresentmentDetailByFinRefAndPresID(pd.getFinID(), this.presentmentHeader.getId());
 			if (presentmentDetail2 == null) {

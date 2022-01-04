@@ -84,7 +84,7 @@ public interface PresentmentDetailService {
 
 	void setProperties(PresentmentDetailExtract pde);
 
-	long getFinID(String finreference);
+	Long getFinID(String finreference);
 
 	PresentmentDetail getRePresentmentDetails(String presentmentRef);
 }

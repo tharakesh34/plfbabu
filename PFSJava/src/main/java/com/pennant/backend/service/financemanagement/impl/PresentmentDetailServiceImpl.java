@@ -917,7 +917,7 @@ public class PresentmentDetailServiceImpl extends GenericService<PresentmentHead
 	}
 
 	@Override
-	public long getFinID(String finreference) {
+	public Long getFinID(String finreference) {
 		return financeMainDAO.getFinID(finreference, TableType.MAIN_TAB);
 	}
 
