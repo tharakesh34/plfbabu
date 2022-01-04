@@ -974,24 +974,33 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving");
 	}
 
-	protected boolean doCustomDelete(final CollateralAssignment collateralAssignment, String tranType) {
-		tranType = PennantConstants.TRAN_DEL;
-
-		if (isWorkFlowEnabled()) {
+	protected void onDoDelete(final CollateralAssignment collateralAssignment) {
+		String tranType = PennantConstants.TRAN_WF;
+		if (StringUtils.isBlank(collateralAssignment.getRecordType())) {
+			collateralAssignment.setVersion(collateralAssignment.getVersion() + 1);
+			collateralAssignment.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			collateralAssignment.setNewRecord(true);
-		}
 
-		AuditHeader auditHeader = newAssignmentDetailProcess(collateralAssignment, tranType);
-		auditHeader = ErrorControl.showErrorDetails(this.window_CollateralAssignmentDetailDialog, auditHeader);
-		int retValue = auditHeader.getProcessStatus();
-		if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
-			if (getCollateralHeaderDialogCtrl() != null) {
-				getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments, true);
+			if (isWorkFlowEnabled()) {
+				tranType = PennantConstants.TRAN_WF;
+			} else {
+				tranType = PennantConstants.TRAN_DEL;
 			}
-			return true;
 		}
-
-		return false;
+		try {
+			tranType = PennantConstants.TRAN_DEL;
+			AuditHeader auditHeader = newAssignmentDetailProcess(collateralAssignment, tranType);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CollateralAssignmentDetailDialog, auditHeader);
+			int retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE || retValue == PennantConstants.porcessOVERIDE) {
+				if (getCollateralHeaderDialogCtrl() != null) {
+					getCollateralHeaderDialogCtrl().doFillCollateralDetails(this.collateralAssignments, true);
+				}
+				closeDialog();
+			}
+		} catch (DataAccessException e) {
+			MessageUtil.showError(e);
+		}
 	}
 
 	private void doDelete() throws InterruptedException, IllegalAccessException, IllegalArgumentException,
