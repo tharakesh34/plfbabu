@@ -35,8 +35,6 @@
 package com.pennant.backend.dao.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,7 +52,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	private static Logger logger = LogManager.getLogger(NotesDAOImpl.class);
@@ -142,14 +139,8 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	}
 
 	public static List<Notes> sortNotes(List<Notes> notes) {
-		Collections.sort(notes, new Comparator<Notes>() {
-			@Override
-			public int compare(Notes detail1, Notes detail2) {
-				return DateUtil.compare(detail1.getInputDate(), detail2.getInputDate());
-			}
-		});
-
-		return notes;
+		return notes.stream().sorted((l1, l2) -> l1.getInputDate().compareTo(l2.getInputDate()))
+				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -204,10 +195,7 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 			return item;
 		});
 
-		sortNotes(list);
-
-		return list;
-
+		return sortNotes(list);
 	}
 
 	public List<Notes> getNotesListAsc(String reference, List<String> moduleNames) {

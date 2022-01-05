@@ -245,9 +245,8 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		final AuditTransaction auditTransaction = (AuditTransaction) btnNotes.getAttribute("data");
 		int i = 0;
 		while (i < notesList.size() && notesList.get(i).getInputDate().before(auditTransaction.getAuditDate())) {
-			if (StringUtils.equals(notesList.get(i).getRoleCode(), auditTransaction.getRoleCode())) {
+			if (notesList.get(i).getInputBy() == auditTransaction.getLastMntBy()) {
 				userNotesList.add(notesList.get(i));
-				break;
 			}
 			i++;
 		}
