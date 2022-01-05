@@ -380,28 +380,32 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 
 		error = " RateChange From Date should be after ";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
-			if (rcu.getFromDate() != null) {
-				StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-				FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
-				List<Date> dates = new ArrayList<>();
-				List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
-				for (FinanceScheduleDetail fsd : finSchdDetails) {
-					if (fsd.getPresentmentId() > 0) {
-						dates.add(fsd.getSchDate());
 
-					}
+			if (rcu.getFromDate() == null) {
+				rcu.setFromDate(SysParamUtil.getAppDate());
+			}
+
+			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
+			FinanceDetail fd = financeDetailService.getFinSchdDetailByRef(rcu.getFinReference(), "_AView", false);
+			List<Date> dates = new ArrayList<>();
+			List<FinanceScheduleDetail> finSchdDetails = fd.getFinScheduleData().getFinanceScheduleDetails();
+			for (FinanceScheduleDetail fsd : finSchdDetails) {
+				if (fsd.getPresentmentId() > 0) {
+					dates.add(fsd.getSchDate());
+
 				}
-				for (Date lastPaidDate : dates) {
-					if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) <= 0) {
-						if (remarks.length() > 0) {
-							remarks.append(",");
-						}
-						lastPaidDate = dates.get(dates.size() - 1);
-						remarks.append(error + DateUtil.formatToLongDate(lastPaidDate));
-						rcu.setUploadStatusRemarks(remarks.toString());
-						rcu.setErrorDetail(getErrorDetail("RCU003", error));
-						break;
+			}
+
+			for (Date lastPaidDate : dates) {
+				if (DateUtil.compare(rcu.getFromDate(), lastPaidDate) <= 0) {
+					if (remarks.length() > 0) {
+						remarks.append(",");
 					}
+					lastPaidDate = dates.get(dates.size() - 1);
+					remarks.append(error + DateUtil.formatToLongDate(lastPaidDate));
+					rcu.setUploadStatusRemarks(remarks.toString());
+					rcu.setErrorDetail(getErrorDetail("RCU003", error));
+					break;
 				}
 			}
 
