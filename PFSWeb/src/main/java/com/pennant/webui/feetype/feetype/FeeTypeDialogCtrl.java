@@ -503,7 +503,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		// ### START SFA_20210405 -->
 		this.feeIncomeOrExpense.setWidth("200px");
 		this.feeIncomeOrExpense.setModuleName("AccountType");
-		//this.feeIncomeOrExpense.setMandatoryStyle(true);
+		// this.feeIncomeOrExpense.setMandatoryStyle(true);
 		this.feeIncomeOrExpense.setValueColumn("AcType");
 		this.feeIncomeOrExpense.setDescColumn("AcTypeDesc");
 		this.feeIncomeOrExpense.setDisplayStyle(2);
@@ -525,7 +525,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 		this.feeTypeDesc.setValue(aFeeType.getFeeTypeDesc());
 		this.manualAdvice.setChecked(aFeeType.isManualAdvice());
 		this.hostFeeTypeCode.setValue(aFeeType.getHostFeeTypeCode());
-		this.refundableFee.setValue(aFeeType.isrefundable());
+		this.refundableFee.setValue(aFeeType.isRefundable());
 		fillComboBox(this.adviseType, String.valueOf(aFeeType.getAdviseType()), listAdviseType, "");
 
 		this.dueAccReq.setChecked(aFeeType.isDueAccReq());
@@ -628,7 +628,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 			this.amortzReq.setDisabled(false);
 			this.btnSave.setVisible(true);
 		}
-		
+
 		this.feeIncomeOrExpense.setValue(aFeeType.getFeeIncomeOrExpense());
 		this.feeIncomeOrExpense.setObject(new AccountType(aFeeType.getFeeIncomeOrExpense()));
 
@@ -686,7 +686,7 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		// Refundable fee
 		try {
-			aFeeType.setrefundable(this.refundableFee.isChecked());
+			aFeeType.setRefundable(this.refundableFee.isChecked());
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
@@ -970,8 +970,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		// ### START SFA_20210405 -->
 		this.feeIncomeOrExpense.setReadonly(isReadOnly("FeeTypeDialog_FeeIncomeOrExpense"));
-		//this.feeWaiver.setReadonly(isReadOnly("FeeTypeDialog_FeeWaiver"));
-		//this.feeRefund.setReadonly(isReadOnly("FeeTypeDialog_FeeRefund"));
+		// this.feeWaiver.setReadonly(isReadOnly("FeeTypeDialog_FeeWaiver"));
+		// this.feeRefund.setReadonly(isReadOnly("FeeTypeDialog_FeeRefund"));
 		// ### END SFA_20210405 <--
 
 		if (isWorkFlowEnabled()) {
@@ -1042,8 +1042,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 
 		// ### START SFA_20210405 -->
 		this.feeIncomeOrExpense.setValue("");
-		//this.feeWaiver.setValue("");
-		//this.feeRefund.setValue("");
+		// this.feeWaiver.setValue("");
+		// this.feeRefund.setValue("");
 		// ### END SFA_20210405 <--
 
 		logger.debug("Leaving");

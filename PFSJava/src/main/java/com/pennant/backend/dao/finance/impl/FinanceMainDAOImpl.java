@@ -3467,8 +3467,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			sql.append(" inner join CustomerAddresses_View ca on ca.CustId = cu.CustId");
 		}
 
-		sql.append(" and custaddrpriority = ?");
-		sql.append(" Where cu.CustId = ?");
+		sql.append(" Where cu.CustId = ? and custaddrpriority = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -3480,7 +3479,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				map.put("ResidentialStatus", rs.getString("ResidentialStatus"));
 				map.put("CustResidentialSts", rs.getString("CustResidentialSts"));
 				return map;
-			}, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH), custId);
+			}, custId, Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH));
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

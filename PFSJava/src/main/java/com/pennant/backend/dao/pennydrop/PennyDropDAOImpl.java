@@ -64,10 +64,10 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 		sql.append(" from PENNY_DROP_STATUS");
 		sql.append(" Where AcctNum = ? And IFSC = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { accNum, ifsc }, (rs, i) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, i) -> {
 				BankAccountValidation pds = new BankAccountValidation();
 
 				pds.setID(rs.getLong("ID"));
@@ -78,9 +78,9 @@ public class PennyDropDAOImpl extends SequenceDao<BankAccountValidation> impleme
 				pds.setReason(rs.getString("Reason"));
 
 				return pds;
-			});
+			}, accNum, ifsc);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record is not found in PENNY_DROP_STATUS  AcctNum >> {}, IFSC >> {}", accNum, ifsc);
+			//
 		}
 
 		return null;

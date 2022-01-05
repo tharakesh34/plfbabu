@@ -27,8 +27,7 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 	 *
 	 * save cust_kyv_validation
 	 * 
-	 * @param PrimaryAccount
-	 *            (primaryAccount)
+	 * @param PrimaryAccount (primaryAccount)
 	 * 
 	 * @return void
 	 * @throws DataAccessException
@@ -100,21 +99,21 @@ public class PrimaryAccountDAOImpl extends BasicDao<PrimaryAccount> implements P
 		StringBuilder sql = new StringBuilder("Select Document_Number, Document_Name");
 		sql.append(" from CUST_KYC_VALIDATION");
 		sql.append(" Where Document_Number = ?");
-		
+
 		logger.debug(Literal.SQL + sql.toString());
-		
+
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[]{primaryID}, (rs, rowNum)->{
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				PrimaryAccount pa = new PrimaryAccount();
 				pa.setDocumentNumber(rs.getString("Document_Number"));
 				pa.setDocumentName(rs.getString("Document_Name"));
-				
+
 				return pa;
-			});
+			}, primaryID);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not exists with the below parameters \n");
+			//
 		}
-		
+
 		return null;
 	}
 }

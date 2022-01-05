@@ -65,46 +65,74 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		super();
 	}
 
-	/**
-	 * Fetch the Record FeeType details by key field
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return FeeType
-	 */
 	@Override
-	public FeeType getFeeTypeById(final long id, String type) {
-		logger.debug("Entering");
+	public FeeType getFeeTypeById(final long feeTypeId, String type) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FeeTypeID, FeeTypeCode, FeeTypeDesc, Active, ManualAdvice, Refundable, AdviseType");
+		sql.append(", AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense");
+		sql.append(", HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq");
 
-		FeeType feeType = new FeeType();
-		feeType.setId(id);
-		StringBuilder selectSql = new StringBuilder();
-
-		selectSql.append(
-				" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice,refundable, AdviseType, AccountSetId, TaxComponent, TaxApplicable");
-		selectSql.append(", FeeIncomeOrExpense,");
 		if (type.contains("View")) {
-			selectSql.append(" AccountSetCode, AccountSetCodeName, 	DueAcctSetCode, DueAcctSetCodeName,  AcType, AcTypeDesc,");
+			sql.append(", AccountSetCode, AccountSetCodeName, DueAcctSetCode, DueAcctSetCodeName, AcType, AcTypeDesc");
 		}
-		selectSql.append(
-				" Version, LastMntOn, LastMntBy,RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId, RecordType, WorkflowId,HostFeeTypeCode, AmortzReq, DueAccReq, DueAccSet, TdsReq");
-		selectSql.append(" From FeeTypes");
-		selectSql.append(StringUtils.trimToEmpty(type));
-		selectSql.append(" Where FeeTypeID =:FeeTypeID");
 
-		logger.debug("sql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(feeType);
-		RowMapper<FeeType> typeRowMapper = BeanPropertyRowMapper.newInstance(FeeType.class);
+		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
+		sql.append(" From FeeTypes");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where FeeTypeID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			feeType = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FeeType fee = new FeeType();
+
+				fee.setFeeTypeID(rs.getLong("FeeTypeID"));
+				fee.setFeeTypeCode(rs.getString("FeeTypeCode"));
+				fee.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+				fee.setActive(rs.getBoolean("Active"));
+				fee.setManualAdvice(rs.getBoolean("ManualAdvice"));
+				fee.setRefundable(rs.getBoolean("Refundable"));
+				fee.setAdviseType(rs.getInt("AdviseType"));
+				fee.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
+				fee.setTaxComponent(rs.getString("TaxComponent"));
+				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+				fee.setFeeIncomeOrExpense(rs.getString("FeeIncomeOrExpense"));
+				fee.setHostFeeTypeCode(rs.getString("HostFeeTypeCode"));
+				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
+				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
+				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
+				fee.setTdsReq(rs.getBoolean("TdsReq"));
+
+				if (type.contains("View")) {
+					fee.setAccountSetCode(rs.getString("AccountSetCode"));
+					fee.setAccountSetCodeName(rs.getString("AccountSetCodeName"));
+					fee.setDueAcctSetCode(rs.getString("DueAcctSetCode"));
+					fee.setDueAcctSetCodeName(rs.getString("DueAcctSetCodeName"));
+					fee.setAcType(rs.getString("AcType"));
+					fee.setAcTypeDesc(rs.getString("AcTypeDesc"));
+				}
+
+				fee.setVersion(rs.getInt("Version"));
+				fee.setLastMntBy(rs.getLong("LastMntBy"));
+				fee.setLastMntOn(rs.getTimestamp("LastMntOn"));
+				fee.setRecordStatus(rs.getString("RecordStatus"));
+				fee.setRoleCode(rs.getString("RoleCode"));
+				fee.setNextRoleCode(rs.getString("NextRoleCode"));
+				fee.setTaskId(rs.getString("TaskId"));
+				fee.setNextTaskId(rs.getString("NextTaskId"));
+				fee.setRecordType(rs.getString("RecordType"));
+				fee.setWorkflowId(rs.getLong("WorkflowId"));
+
+				return fee;
+
+			}, feeTypeId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Exception: ", e);
-			feeType = null;
+			//
 		}
 
-		logger.debug("Leaving");
-		return feeType;
+		return null;
 	}
 
 	@Override
@@ -274,7 +302,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				fee.setAmortzReq(rs.getBoolean("AmortzReq"));
 				fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 				fee.setTaxComponent(rs.getString("TaxComponent"));
-				fee.setrefundable(rs.getBoolean("Refundable"));
+				fee.setRefundable(rs.getBoolean("Refundable"));
 				fee.setDueAccReq(rs.getBoolean("DueAccReq"));
 				fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 				fee.setTdsReq(rs.getBoolean("TdsReq"));
@@ -363,7 +391,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 				f.setAccountSetId(JdbcUtil.getLong(rs.getObject("AccountSetId")));
 				f.setFeeTypeCode(rs.getString("FeeTypeCode"));
 				f.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
-				f.setrefundable(rs.getBoolean("Refundable"));
+				f.setRefundable(rs.getBoolean("Refundable"));
 				f.setTdsReq(rs.getBoolean("TdsReq"));
 
 				return f;
@@ -505,7 +533,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 					fee.setAmortzReq(rs.getBoolean("AmortzReq"));
 					fee.setTaxApplicable(rs.getBoolean("TaxApplicable"));
 					fee.setTaxComponent(rs.getString("TaxComponent"));
-					fee.setrefundable(rs.getBoolean("Refundable"));
+					fee.setRefundable(rs.getBoolean("Refundable"));
 					fee.setDueAccReq(rs.getBoolean("DueAccReq"));
 					fee.setDueAccSet(JdbcUtil.getLong(rs.getObject("DueAccSet")));
 					fee.setTdsReq(rs.getBoolean("TdsReq"));
@@ -535,6 +563,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 
 		return null;
 	}
+
 	@Override
 	public List<FeeType> getFeeTypeListByIds(List<Long> feeTypeIds, String type) {
 		logger.debug(Literal.ENTERING);
@@ -547,8 +576,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, ");
-		selectSql.append(
-				" AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense,");
+		selectSql.append(" AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense,");
 		if (type.contains("View")) {
 			selectSql.append(" AccountSetCode, AccountSetCodeName, AcType, AcTypeDesc,");
 		}
@@ -582,8 +610,7 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		StringBuilder selectSql = new StringBuilder();
 
 		selectSql.append(" Select feeTypeID, feeTypeCode, feeTypeDesc, active, manualAdvice, ");
-		selectSql.append(
-				" AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense,");
+		selectSql.append(" AdviseType, AccountSetId, TaxComponent, TaxApplicable, FeeIncomeOrExpense,");
 		if (type.contains("View")) {
 			selectSql.append(" AccountSetCode, AccountSetCodeName, AcType, AcTypeDesc,");
 		}
@@ -604,6 +631,5 @@ public class FeeTypeDAOImpl extends SequenceDao<FeeType> implements FeeTypeDAO {
 		logger.debug(Literal.LEAVING);
 		return feeTypeList;
 	}
-
 
 }

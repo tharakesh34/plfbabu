@@ -101,7 +101,7 @@ public class FeeType extends AbstractWorkflowEntity {
 		entity.setTaxApplicable(this.taxApplicable);
 		entity.setTaxComponent(this.taxComponent);
 		entity.setAmortzReq(this.amortzReq);
-		entity.setrefundable(this.refundable);
+		entity.setRefundable(this.refundable);
 		entity.setDueAccReq(this.dueAccReq);
 		entity.setDueAccSet(this.dueAccSet);
 		entity.setDueAcctSetCode(this.dueAcctSetCode);
@@ -275,11 +275,11 @@ public class FeeType extends AbstractWorkflowEntity {
 		this.taxComponent = taxComponent;
 	}
 
-	public boolean isrefundable() {
+	public boolean isRefundable() {
 		return refundable;
 	}
 
-	public void setrefundable(boolean refundable) {
+	public void setRefundable(boolean refundable) {
 		this.refundable = refundable;
 	}
 
@@ -322,6 +322,7 @@ public class FeeType extends AbstractWorkflowEntity {
 	public void setTdsReq(boolean tdsReq) {
 		this.tdsReq = tdsReq;
 	}
+
 	public String getAcType() {
 		return acType;
 	}
