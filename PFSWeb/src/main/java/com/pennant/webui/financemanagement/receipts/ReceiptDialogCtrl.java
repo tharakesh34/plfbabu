@@ -3543,12 +3543,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		}
 		this.listBoxPastdues.getItems().clear();
 
-		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		if (TDSCalculator.isTDSApplicable(fm)) {
-			listheader_ReceiptDialog_TDS.setVisible(true);
-			listheader_ReceiptDialog_PaidTDS.setVisible(true);
-		}
-
 		// Get Receipt Purpose to Make Waiver amount Editable
 		String label = Labels.getLabel("label_RecceiptDialog_AllocationType_");
 		boolean isManAdv = false;
