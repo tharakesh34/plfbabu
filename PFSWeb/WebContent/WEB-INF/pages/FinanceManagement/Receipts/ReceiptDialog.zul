@@ -558,7 +558,7 @@
 												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivableGST.label')}" align="right"
 													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_TDS.label')}"  id="listheader_ReceiptDialog_TDS" align="right"
-													sort="false" hflex="min" visible="false" />
+													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_CurrentReceivable.label')}" align="right"
 													sort="false" hflex="min" />
 												<listheader label="${c:l('listheader_ReceiptDialog_PaidAmount.label')}" align="right" sort="false"

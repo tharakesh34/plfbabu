@@ -1532,7 +1532,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_6_Pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_6.1_Pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financemain_dataview');
@@ -1540,7 +1540,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FMV_6" author="Gopal.p">
+	<changeSet id="FMV_6.1" author="Gopal.p">
 		<createView viewName="FINANCEMAIN_DATAVIEW" replaceIfExists="true"> 
 			<![CDATA[
 				SELECT T1.FINID,
@@ -1564,7 +1564,8 @@
 					T1.ESCROW,
 					T1.CUSTBANKID,
 					CB.ACCOUNTNUMBER CUSTACCTNUMBER,
-					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME
+					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME,
+					T1.TDSTYPE,
 				FROM FINANCEMAIN T1
 				JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID
 				LEFT JOIN AMTVEHICLEDEALER T3 ON T1.MANUFACTURERDEALERID = T3.DEALERID
@@ -1573,7 +1574,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FMV_6_Post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FMV_6.1_Post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financemain_dataview');

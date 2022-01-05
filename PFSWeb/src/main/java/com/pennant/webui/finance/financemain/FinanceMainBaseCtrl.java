@@ -289,7 +289,6 @@ import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.ExtendedFieldConstants;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.JdbcSearchObject;
-import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
@@ -343,7 +342,6 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.dms.service.DMSService;
 import com.pennanttech.pennapps.jdbc.search.Filter;
-import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pennapps.pff.document.DocumentCategories;
 import com.pennanttech.pennapps.pff.service.spreadsheet.SpreadSheetService;
 import com.pennanttech.pennapps.pff.verification.Decision;
@@ -8301,34 +8299,6 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				autoDownloadMap = null;
-
-				// Mail Alert Notification for Customer/Dealer/Provider...etc
-				if (!"Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())) {
-
-					FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-					Notification notification = new Notification();
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_AE);
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_CN);
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_SP);
-					notification.getTemplates().add(NotificationConstants.TEMPLATE_FOR_DSAN);
-					notification.setModule("LOAN_ORG");
-
-					String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner;
-					notification.setSubModule(finEvent);
-					notification.setKeyReference(financeMain.getFinReference());
-					notification.setStage(financeMain.getRoleCode());
-					notification.setReceivedBy(getUserWorkspace().getUserId());
-
-					if (getScheduleDetailDialogCtrl() != null) {
-						afd.getFinScheduleData().setPlanEMIHmonths(getScheduleDetailDialogCtrl().getPlanEMIHMonths());
-					}
-					try {
-						notificationService.sendNotifications(notification, afd, financeMain.getFinType(),
-								financeDetail.getDocumentDetailsList());
-					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
-					}
-				}
 
 				// User Notifications Message/Alert
 				FinanceMain fm = afd.getFinScheduleData().getFinanceMain();
