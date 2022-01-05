@@ -32,6 +32,7 @@ import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pff.constants.FinServiceEvent;
 import com.rits.cloning.Cloner;
 
 public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruction>
@@ -262,6 +263,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getMaturityDate());
 		scheduleData.getFinanceMain().setRecalType(CalculationConstants.RPYCHG_ADJMDT);
 		scheduleData.getFinanceMain().setPftIntact(finServiceInst.isPftIntact());
+		scheduleData.getFinanceMain().setProcMethod(FinServiceEvent.CHGFRQ);
 
 		// Schedule Recalculation Depends on Frequency Change
 		scheduleData = ScheduleCalculator.reCalSchd(scheduleData, financeMain.getScheduleMethod());
@@ -270,7 +272,7 @@ public class ChangeFrequencyServiceImpl extends GenericService<FinServiceInstruc
 		if (scheduleData.getFinanceMain().isPlanEMIHAlw()) {
 			scheduleData.getFinanceMain().setEventFromDate(eventFromdate);
 			scheduleData.getFinanceMain().setEventToDate(scheduleData.getFinanceMain().getCalMaturity());
-			scheduleData.getFinanceMain().setRecalFromDate(eventFromdate);
+			scheduleData.getFinanceMain().setRecalFromDate(scheduleData.getFinanceMain().getCalMaturity());
 			scheduleData.getFinanceMain().setRecalToDate(scheduleData.getFinanceMain().getCalMaturity());
 			scheduleData.getFinanceMain().setRecalSchdMethod(scheduleData.getFinanceMain().getScheduleMethod());
 

@@ -1107,11 +1107,15 @@ public class ScheduleCalculator {
 				}
 			}
 		}
-
-		if (finScheduleData.getFinanceType() != null) {
-			finMain.setEqualRepay(finScheduleData.getFinanceType().isEqualRepayment());
-		} else {
-			finMain.setEqualRepay(true);
+		
+		if(FinServiceEvent.CHGFRQ.equals(finMain.getProcMethod())){
+			finMain.setEqualRepay(false);
+		}else {
+			if (finScheduleData.getFinanceType() != null) {
+				finMain.setEqualRepay(finScheduleData.getFinanceType().isEqualRepayment());
+			} else {
+				finMain.setEqualRepay(true);
+			}
 		}
 		finMain.setCalculateRepay(true);
 
