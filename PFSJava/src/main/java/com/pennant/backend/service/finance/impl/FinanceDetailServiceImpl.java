@@ -10396,11 +10396,16 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						collateralAssignment = new CollateralAssignment();
 						collateralAssignment.setReference(fm.getFinReference());
 						collateralAssignment.setCollateralRef(parentColAssignment.getCollateralRef());
+						BigDecimal colPerForChild = setCollateralAssignmenForChildLoans(fm, totalLoanAmt,
+								parentColAssignment.getAssignPerc());
 
-						collateralAssignment.setAssignPerc(setCollateralAssignmenForChildLoans(fm, totalLoanAmt,
-								parentColAssignment.getAssignPerc()));
-						parentColAssignment.setAssignPerc(
-								parentColAssignment.getAssignPerc().subtract(collateralAssignment.getAssignPerc()));
+						BigDecimal remPer = collateralAssignment.getAssignPerc()
+								.subtract(parentColAssignment.getAssper());
+						if (colPerForChild.compareTo(remPer) > 1) {
+							colPerForChild = remPer;
+						}
+
+						collateralAssignment.setAssignPerc(colPerForChild);
 						collateralAssignment.setModule(FinanceConstants.MODULE_NAME);
 						collateralAssignment.setWorkflowId(0);
 						collateralAssignment.setVersion(main.getVersion());
@@ -10408,12 +10413,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						collateralAssignment.setLastMntOn(main.getLastMntOn());
 						collateralAssignment.setRecordStatus(main.getRecordStatus());
 						collateralAssignment.setRecordType(main.getRecordType());
-
 						collateralAssignmentDAO.save(collateralAssignment, "_Temp");
-						collateralAssignmentDAO.update(parentColAssignment, "_Temp");
-
+						parentColAssignment
+								.setAssper(collateralAssignment.getAssignPerc().add(parentColAssignment.getAssper()));
 					}
 				}
+
 				List<JointAccountDetail> jointAccountDetailList = financeDetail.getJointAccountDetailList();
 				if (CollectionUtils.isNotEmpty(jointAccountDetailList)) {
 					for (JointAccountDetail details : jointAccountDetailList) {
@@ -10452,7 +10457,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						}
 					}
 				}
+			}
 
+			for (CollateralAssignment parentColAssignment : financeDetail.getCollateralAssignmentList()) {
+				parentColAssignment
+						.setAssignPerc(parentColAssignment.getAssignPerc().subtract(parentColAssignment.getAssper()));
+				collateralAssignmentDAO.update(parentColAssignment, "_Temp");
 			}
 
 		}
