@@ -4777,7 +4777,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			String finEvent = StringUtils.isEmpty(moduleDefiner) ? FinServiceEvent.ORG : moduleDefiner;
 			notification.setSubModule(finEvent);
 			notification.setKeyReference(finReference);
-			notification.setStage(PennantConstants.REC_ON_APPR);
+			notification.setStage(fm.getRoleCode());
 			notification.setReceivedBy(fm.getLastMntBy());
 			fm.setWorkflowId(tempWorkflowId);
 

@@ -1176,6 +1176,11 @@ public class NotificationService extends GenericService<Notification> {
 			finOption = new FinOption();
 		}
 
+		LMSServiceLog lmsServiceLog = fd.getLmsServiceLog();
+		if (lmsServiceLog == null) {
+			lmsServiceLog = new LMSServiceLog();
+		}
+
 		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		Customer customer = fd.getCustomerDetails().getCustomer();
 		int format = CurrencyUtil.getFormat(fm.getFinCcy());
@@ -1200,8 +1205,7 @@ public class NotificationService extends GenericService<Notification> {
 			logger.error(Literal.EXCEPTION, e);
 		}
 
-		LMSServiceLog lmsServiceLog = fd.getLmsServiceLog();
-		String finReference = fd.getFinReference();
+		String finReference = fm.getFinReference();
 		String drwingPwr = PennantApplicationUtil.amountFormate(drawingPowerService.getDrawingPower(finReference), 2);
 		BigDecimal emiOnFinAssetValue = ScheduleCalculator.getEMIOnFinAssetValue(fd);
 		String prefix = FieldPrefix.Putcall.getPrefix();
