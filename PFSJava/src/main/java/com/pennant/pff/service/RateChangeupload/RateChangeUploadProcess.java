@@ -377,12 +377,12 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 				rcu.setErrorDetail(getErrorDetail("RCU003", error));
 			}
 		}
-
+		Date appDate = SysParamUtil.getAppDate();
 		error = " RateChange From Date should be after ";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 
 			if (rcu.getFromDate() == null) {
-				rcu.setFromDate(SysParamUtil.getAppDate());
+				rcu.setFromDate(appDate);
 			}
 
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
