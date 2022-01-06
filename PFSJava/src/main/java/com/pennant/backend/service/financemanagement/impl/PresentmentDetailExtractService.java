@@ -198,6 +198,10 @@ public class PresentmentDetailExtractService {
 			pd.setBpiTreatment(rs.getString("BPITREATMENT"));
 		}
 
+		if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
+			pd.setSchDate(pd.getDefSchdDate());
+		}
+
 		doCalculations(ph, pd);
 
 		presentments.add(pd);
@@ -269,6 +273,10 @@ public class PresentmentDetailExtractService {
 			pd.setGrcPeriodEndDate(rs.getDate("GRCPERIODENDDATE"));
 			pd.setBpiOrHoliday(rs.getString("BPIORHOLIDAY"));
 			pd.setBpiTreatment(rs.getString("BPITREATMENT"));
+		}
+
+		if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
+			pd.setSchDate(pd.getDefSchdDate());
 		}
 
 		doPDCCalculations(ph, pd);
