@@ -168,33 +168,22 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		}, rowMapper);
 	}
 
-	/**
-	 * Method for Fetching List of Assigned Collateral to the Reference based on Module
-	 */
+	// FIXME Commitments needs to be handled, Removed the Commitments, for the performance changes
 	@Override
 	public List<AssignmentDetails> getCollateralAssignmentByColRef(String collateralRef, String collateralType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" Module, CA.Reference, Coalesce(FM.FinCcy, CM.CmtCcy) Currency");
-		sql.append(", AssignPerc AssignedPerc, BankValuation CollateralValue, TotAssignedPerc");
-		sql.append(", Coalesce(FinCurrAssetValue+FeeChargeAmt-FinRepaymentAmount, CmtUtilizedAmount)");
-		sql.append(" FinCurrAssetValue, Coalesce(FinAssetValue+FeeChargeAmt, CmtUtilizedAmount)");
-		sql.append(" FinAssetValue, CmtExpDate , Coalesce(FM.FinIsActive, Coalesce(CmtActive,0)) FinIsActive");
-		sql.append(", TotalUtilized, FT.FinLTVCheck");
-		sql.append(" From CollateralAssignment CA");
-		sql.append(" Left Join FinanceMain FM on CA.Reference = FM.FinReference");
-		sql.append(" Left Join RMTFinanceTypes FT on  FM.FINTYPE = FT.FINTYPE");
-		sql.append(" Left Join Commitments CM on CM.CmtReference = CA.Reference");
-		sql.append(" Inner Join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef");
-		sql.append(" Left Join (Select CollateralRef, SUM(AssignPerc) TotAssignedPerc");
-		sql.append(" From CollateralAssignment group by CollateralRef) T");
-		sql.append("  on T.CollateralRef = CA.CollateralRef");
-		sql.append(" LEFT JOIN (Select CA.Reference, SUM((CS.BankValuation * CA.AssignPerc)/100)");
-		sql.append(" TotalUtilized from CollateralAssignment CA");
-		sql.append(" Inner Join CollateralSetUp CS on CS.CollateralRef = CA.CollateralRef");
-		sql.append(" Group by CA.Reference) T1 on CA.Reference = T1.Reference");
-		sql.append(" Where CA.CollateralRef = ?");
+		sql.append(" Module, ca.Reference, fm.FinCcy Currency");
+		sql.append(", AssignPerc AssignedPerc, BankValuation CollateralValue");
+		sql.append(", (FinCurrAssetValue+FeeChargeAmt-FinRepaymentAmount) FinCurrAssetValue");
+		sql.append(", (FinAssetValue+FeeChargeAmt) FinAssetValue");
+		sql.append(", fm.FinIsActive FinIsActive, ft.FinLTVCheck");
+		sql.append(" From CollateralAssignment ca");
+		sql.append(" Inner Join FinanceMain fm on fm.FinReference = ca.Reference");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FINTYPE = fm.FINTYPE");
+		sql.append(" Inner Join CollateralSetUp cs on cs.CollateralRef = ca.CollateralRef");
+		sql.append(" Where ca.CollateralRef = ?");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
@@ -207,13 +196,13 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ad.setCurrency(rs.getString("Currency"));
 			ad.setAssignedPerc(rs.getBigDecimal("AssignedPerc"));
 			ad.setCollateralValue(rs.getBigDecimal("CollateralValue"));
-			ad.setAssignedPerc(rs.getBigDecimal("TotAssignedPerc"));
 			ad.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 			ad.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
-			ad.setCmtExpDate(JdbcUtil.getDate(rs.getDate("CmtExpDate")));
 			ad.setFinIsActive(rs.getBoolean("FinIsActive"));
-			ad.setTotalUtilized(rs.getBigDecimal("TotalUtilized"));
 			ad.setFinLTVCheck(rs.getString("FinLTVCheck"));
+
+			ad.setAssignedPerc(getAssignedPerc(collateralRef));
+			ad.setTotalUtilized(getTotalUtilized(ad.getReference()));
 
 			return ad;
 		});
@@ -630,7 +619,7 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 				ca.setBankValuation(rs.getBigDecimal("BankValuation"));
 
 				BigDecimal assignPerc = ca.getAssignPerc();
-				BigDecimal totAssignedPerc = getTotalAssignedPerc(ca.getCollateralRef());
+				BigDecimal totAssignedPerc = getAssignedPercFromView(ca.getCollateralRef());
 
 				ca.setTotAssignedPerc(totAssignedPerc.subtract(assignPerc));
 
@@ -689,13 +678,28 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		return BigDecimal.ZERO;
 	}
 
-	public BigDecimal getTotalAssignedPerc(String collateralRef) {
-		StringBuilder sql = new StringBuilder("Select sum(ASSIGNPERC) from (");
-		sql.append(" Select coalesce(ASSIGNPERC, 0) ASSIGNPERC From COLLATERALASSIGNMENT_TEMP Where COLLATERALREF = ?");
+	private BigDecimal getAssignedPerc(String collateralRef) {
+		StringBuilder sql = new StringBuilder("Select sum(coalesce(AssignPerc, 0)) AssignPerc");
+		sql.append(" From CollateralAssignment Where CollateralRef = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, collateralRef);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	private BigDecimal getAssignedPercFromView(String collateralRef) {
+		StringBuilder sql = new StringBuilder("Select sum(AssignPerc) From (");
+		sql.append(" Select coalesce(AssignPerc, 0) AssignPerc From CollateralAssignment_Temp Where CollateralRef = ?");
 		sql.append(" union all");
-		sql.append(" Select coalesce(ASSIGNPERC, 0) ASSIGNPERC From COLLATERALASSIGNMENT CA Where COLLATERALREF = ?");
-		sql.append(" and not exists (select 1 From COLLATERALASSIGNMENT_Temp");
-		sql.append(" Where COLLATERALREF = CA.COLLATERALREF and MODULE = CA.MODULE and REFERENCE = CA.REFERENCE)) T");
+		sql.append(" Select coalesce(AssignPerc, 0) AssignPerc From CollateralAssignment ca Where CollateralRef = ?");
+		sql.append(" and not exists (select 1 From CollateralAssignment_Temp");
+		sql.append(" Where CollateralRef = ca.CollateralRef and Module = ca.Module and Reference = ca.Reference)) T");
 
 		logger.debug(Literal.SQL + sql.toString());
 
@@ -703,6 +707,23 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 
 		try {
 			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, param);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return BigDecimal.ZERO;
+	}
+
+	private BigDecimal getTotalUtilized(String reference) {
+		StringBuilder sql = new StringBuilder("Select sum((cs.BankValuation * ca.AssignPerc)/100)");
+		sql.append(" From CollateralAssignment ca");
+		sql.append(" Inner Join CollateralSetUp cs on cs.CollateralRef = ca.CollateralRef");
+		sql.append(" Where ca.Reference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, reference);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}

@@ -61,7 +61,6 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 	}
 
 	public List<Notes> getNotesList(Notes notes, boolean isNotes) {
-		logger.debug("Entering");
 		StringBuilder selectSql = new StringBuilder(" Select NoteId, ModuleName, Reference, ");
 		selectSql.append(" RemarkType, AlignType, T1.RoleCode, T1.Version, Remarks, InputBy, InputDate, ");
 		selectSql.append(" T2.UsrLogin, T2.UsrFName , T2.UsrMName , T2.UsrLName From Notes T1 ");
@@ -74,10 +73,9 @@ public class NotesDAOImpl extends SequenceDao<Notes> implements NotesDAO {
 		}
 		selectSql.append(" ORDER BY InputDate Desc ");
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug(Literal.SQL + selectSql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(notes);
 		RowMapper<Notes> typeRowMapper = BeanPropertyRowMapper.newInstance(Notes.class);
-		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), beanParameters, typeRowMapper);
 	}
 

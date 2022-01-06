@@ -809,14 +809,12 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 	@Override
 	public String getAllowedRolesByCode(String finType, int finRefType, String limitCode, String finEvent) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" MandInputInStage");
 		sql.append(" from LMTFinRefDetail");
 		sql.append(" Where FinType = ? and FinRefType = ?");
 		sql.append(" and isActive = ? and FinRefId in (");
-		sql.append(" Select LimitId from LimitCodeDetail");
+		sql.append(" Select LimitId From LimitCodeDetail");
 		sql.append(" Where LimitCode = ?)");
 
 		if (StringUtils.isNotBlank(finEvent)) {
@@ -825,19 +823,18 @@ public class FinanceReferenceDetailDAOImpl extends SequenceDao<FinanceReferenceD
 
 		logger.trace(Literal.SQL + sql.toString());
 
-		logger.debug(Literal.LEAVING);
 		try {
 			Object[] args = new Object[] { finType, finRefType, 1, limitCode };
+
 			if (StringUtils.isNotBlank(finEvent)) {
 				args = new Object[] { finType, finRefType, 1, limitCode, finEvent };
 			}
 
-			return this.jdbcOperations.queryForObject(sql.toString(), args, String.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, args);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("The mandatatory input statge not available for Fin Type {}, Fin Ref Type {}, Limit Code {}",
-					finType, finRefType, limitCode);
+			//
 		}
-		logger.debug(Literal.LEAVING);
+
 		return null;
 	}
 

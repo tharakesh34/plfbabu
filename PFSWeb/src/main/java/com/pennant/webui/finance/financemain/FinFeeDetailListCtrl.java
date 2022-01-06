@@ -2950,7 +2950,6 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 			return;
 		}
 
-		Map<String, BigDecimal> taxPercentages = getTaxPercentages();
 		String subventionFeeCode = PennantConstants.FEETYPE_SUBVENTION;
 
 		for (FinFeeDetail finFeeDetail : getFinFeeDetailList()) {
