@@ -1248,7 +1248,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	public static List<ExtLiabilityPaymentdetails> getPaymentDetails(CustomerExtLiability customerExtLiability,
 			Date appDate) {
 		// getting the emi list between app date and loan start date
-		Date dtStartDate = DateUtil.addMonths(appDate, -1);
+		Date dtStartDate = DateUtil.addMonths(appDate, 0);
 		Date dtEndDate = DateUtil.addMonths(dtStartDate, -6);
 		List<ExtLiabilityPaymentdetails> months = getFrequency(dtStartDate, dtEndDate,
 				customerExtLiability.getExtLiabilitiesPayments());
