@@ -169,11 +169,12 @@ public class FinCovenantMaintanceServiceImpl extends GenericService<FinMaintainI
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
 
 		FinMaintainInstruction fmi = new FinMaintainInstruction();
+
+		BeanUtils.copyProperties((FinMaintainInstruction) auditDetail.getModelData(), fmi);
+
 		long finMaintainId = fmi.getFinMaintainId();
 
 		long finID = fmi.getFinID();
-
-		BeanUtils.copyProperties((FinMaintainInstruction) auditDetail.getModelData(), fmi);
 
 		if (!PennantConstants.RECORD_TYPE_NEW.equals(fmi.getRecordType())) {
 			auditDetail.setBefImage(finMaintainInstructionDAO.getFinMaintainInstructionById(finMaintainId, ""));
