@@ -894,6 +894,11 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 
 		existingcovenantDocs = covenantsDialogCtrl.getCovenantDocuments();
 
+		if (aCovenantDocument.isNewRecord() && PennantConstants.RCD_ADD.equals(aCovenantDocument.getRecordType())) {
+			covenantDocuments.add(aCovenantDocument);
+			return auditHeader;
+		}
+
 		if (CollectionUtils.isNotEmpty(existingcovenantDocs)) {
 			for (int i = 0; i < existingcovenantDocs.size(); i++) {
 				CovenantDocument covenantDocument = existingcovenantDocs.get(i);

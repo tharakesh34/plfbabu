@@ -1244,6 +1244,10 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		final Covenant aCovenant = new Covenant();
 		BeanUtils.copyProperties(getCovenant(), aCovenant);
 
+		if (StringUtils.isBlank(aCovenant.getRecordType())) {
+			aCovenant.setNewRecord(true);
+		}
+
 		final String keyReference = Labels.getLabel("FinCovenantType_CovenantType") + " : "
 				+ aCovenant.getCovenantTypeCode();
 
@@ -1951,7 +1955,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 			MessageUtil.showError(Labels.getLabel("common_NoMaintainance"));
 
 		} else {
-			covenantDocument.setNewRecord(false);
+			covenantDocument.setNewRecord(covenantDocument.isNewRecord());
 
 			showCovenantDocumentView(covenantDocument);
 		}
