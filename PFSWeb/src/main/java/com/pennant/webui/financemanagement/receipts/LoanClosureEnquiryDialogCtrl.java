@@ -449,19 +449,20 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Preparation of Finance Enquiry Data
-		FinReceiptHeader frh = receiptData.getReceiptHeader();
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
 		FinanceEnquiry fe = new FinanceEnquiry();
-		fe.setFinID(frh.getFinID());
-		fe.setFinReference(frh.getReference());
-		fe.setFinType(frh.getFinType());
-		fe.setLovDescFinTypeName(frh.getFinTypeDesc());
-		fe.setFinCcy(frh.getFinCcy());
-		fe.setScheduleMethod(frh.getScheduleMethod());
-		fe.setProfitDaysBasis(frh.getPftDaysBasis());
-		fe.setFinBranch(frh.getFinBranch());
-		fe.setLovDescFinBranchName(frh.getFinBranchDesc());
-		fe.setLovDescCustCIF(frh.getCustCIF());
-		fe.setFinIsActive(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
+		fe.setFinID(fm.getFinID());
+		fe.setFinReference(fm.getFinReference());
+		fe.setFinType(fm.getFinType());
+		fe.setLovDescFinTypeName(fm.getLovDescFinTypeName());
+		fe.setFinCcy(fm.getFinCcy());
+		fe.setScheduleMethod(fm.getScheduleMethod());
+		fe.setProfitDaysBasis(fm.getProfitDaysBasis());
+		fe.setFinBranch(fm.getFinBranch());
+		fe.setLovDescFinBranchName(fm.getLovDescFinBranchName());
+		fe.setLovDescCustCIF(fm.getCustCIF());
+		fe.setFinIsActive(fm.isFinIsActive());
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("moduleCode", moduleCode);

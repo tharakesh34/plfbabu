@@ -753,26 +753,26 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Preparation of Finance Enquiry Data
-		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
-		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
-		aFinanceEnq.setFinID(finReceiptHeader.getFinID());
-		aFinanceEnq.setFinReference(finReceiptHeader.getReference());
-		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
-		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());
-		aFinanceEnq.setFinCcy(finReceiptHeader.getFinCcy());
-		aFinanceEnq.setScheduleMethod(finReceiptHeader.getScheduleMethod());
-		aFinanceEnq.setProfitDaysBasis(finReceiptHeader.getPftDaysBasis());
-		aFinanceEnq.setFinBranch(finReceiptHeader.getFinBranch());
-		aFinanceEnq.setLovDescFinBranchName(finReceiptHeader.getFinBranchDesc());
-		aFinanceEnq.setLovDescCustCIF(finReceiptHeader.getCustCIF());
-		aFinanceEnq
-				.setFinIsActive(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().isFinIsActive());
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+
+		FinanceEnquiry finenq = new FinanceEnquiry();
+		finenq.setFinID(fm.getFinID());
+		finenq.setFinReference(fm.getFinReference());
+		finenq.setFinType(fm.getFinType());
+		finenq.setLovDescFinTypeName(fm.getLovDescFinTypeName());
+		finenq.setFinCcy(fm.getFinCcy());
+		finenq.setScheduleMethod(fm.getScheduleMethod());
+		finenq.setProfitDaysBasis(fm.getProfitDaysBasis());
+		finenq.setFinBranch(fm.getFinBranch());
+		finenq.setLovDescFinBranchName(fm.getLovDescFinBranchName());
+		finenq.setLovDescCustCIF(fm.getCustCIF());
+		finenq.setFinIsActive(fm.isFinIsActive());
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("moduleCode", moduleCode);
 		map.put("fromApproved", true);
 		map.put("childDialog", true);
-		map.put("financeEnquiry", aFinanceEnq);
+		map.put("financeEnquiry", finenq);
 		map.put("ReceiptDialog", this);
 		map.put("isModelWindow", true);
 		map.put("enquiryType", "FINENQ");

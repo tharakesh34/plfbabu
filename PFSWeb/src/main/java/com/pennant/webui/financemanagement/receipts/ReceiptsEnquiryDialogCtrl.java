@@ -526,24 +526,27 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		// Preparation of Finance Enquiry Data
-		FinReceiptHeader finReceiptHeader = receiptData.getReceiptHeader();
-		FinanceEnquiry aFinanceEnq = new FinanceEnquiry();
-		aFinanceEnq.setFinID(finReceiptHeader.getFinID());
-		aFinanceEnq.setFinReference(finReceiptHeader.getReference());
-		aFinanceEnq.setFinType(finReceiptHeader.getFinType());
-		aFinanceEnq.setLovDescFinTypeName(finReceiptHeader.getFinTypeDesc());
-		aFinanceEnq.setFinCcy(finReceiptHeader.getFinCcy());
-		aFinanceEnq.setScheduleMethod(finReceiptHeader.getScheduleMethod());
-		aFinanceEnq.setProfitDaysBasis(finReceiptHeader.getPftDaysBasis());
-		aFinanceEnq.setFinBranch(finReceiptHeader.getFinBranch());
-		aFinanceEnq.setLovDescFinBranchName(finReceiptHeader.getFinBranchDesc());
-		aFinanceEnq.setLovDescCustCIF(finReceiptHeader.getCustCIF());
+		FinReceiptHeader frh = receiptData.getReceiptHeader();
+		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+		
+		FinanceEnquiry finEnq = new FinanceEnquiry();
+		
+		finEnq.setFinID(frh.getFinID());
+		finEnq.setFinReference(frh.getReference());
+		finEnq.setFinType(frh.getFinType());
+		finEnq.setLovDescFinTypeName(frh.getFinTypeDesc());
+		finEnq.setFinCcy(frh.getFinCcy());
+		finEnq.setScheduleMethod(fm.getScheduleMethod());
+		finEnq.setProfitDaysBasis(fm.getProfitDaysBasis());
+		finEnq.setFinBranch(fm.getFinBranch());
+		finEnq.setLovDescFinBranchName(fm.getLovDescFinBranchName());
+		finEnq.setLovDescCustCIF(frh.getCustCIF());
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("moduleCode", moduleCode);
 		map.put("fromApproved", true);
 		map.put("childDialog", true);
-		map.put("financeEnquiry", aFinanceEnq);
+		map.put("financeEnquiry", finEnq);
 		map.put("ReceiptDialog", this);
 		map.put("enquiryType", "FINENQ");
 		map.put("isModelWindow", true);

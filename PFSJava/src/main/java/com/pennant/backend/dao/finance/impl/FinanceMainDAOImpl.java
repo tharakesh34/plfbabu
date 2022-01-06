@@ -4500,6 +4500,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", LovDescFinTypeName, LovDescFinMaxAmt, LovDescFinMinAmount, LovDescFinBranchName");
 
+			if (StringUtils.trimToEmpty(type).contains("AView")) {
+				sql.append(", LovDescCustCIF");
+			}
+
 			if (!wif) {
 				sql.append(", LovDescFinScheduleOn, LovDescAccruedTillLBD, CustStsDescription");
 				sql.append(", LovDescSourceCity, LovDescFinDivision, FinBranchProvinceCode, LovDescStepPolicyName");
@@ -4798,6 +4802,10 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				// fm.setLovDescFinMaxAmt(rs.getBigDecimal("LovDescFinMaxAmt")); //(Not available in Bean)
 				// fm.setLovDescFinMinAmount(rs.getBigDecimal("LovDescFinMinAmount")); //(Not available in Bean)
 				fm.setLovDescFinBranchName(rs.getString("LovDescFinBranchName"));
+
+				if (StringUtils.trimToEmpty(type).contains("AView")) {
+					fm.setLovDescCustCIF(rs.getString("LovDescCustCIF"));
+				}
 
 				if (!wIf) {
 					fm.setLovDescFinScheduleOn(rs.getString("LovDescFinScheduleOn"));
