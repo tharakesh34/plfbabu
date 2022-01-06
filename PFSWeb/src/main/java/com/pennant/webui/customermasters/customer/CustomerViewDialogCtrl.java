@@ -2408,9 +2408,8 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				foreClosure.setAttribute("financeMain", financeMain);
 				lc.appendChild(foreClosure);
 				lc.setParent(item);
-				listheader_ForeClosure
-						.setVisible(getUserWorkspace().isAllowed("button_CustomerViewDialog_ForeClosure"));
-				
+				listheader_ForeClosure.setVisible(false);
+
 				lc = new Listcell();
 				lc.setStyle("font-size:14px;font-weight: normal;");
 				Button interestCertficate = new Button("Action");
