@@ -603,6 +603,8 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 	 */
 	private void calculateTDS() {
 		boolean tdsApplicable = (boolean) this.feeTypeID.getAttribute("TDSApplicable");
+		boolean taxApplicable = (boolean) this.feeTypeID.getAttribute("TaxApplicable");
+		String taxComp = (String) this.feeTypeID.getAttribute("TaxComponent");
 
 		if (!TDSCalculator.isTDSApplicable(financeMain, tdsApplicable)) {
 			this.gb_TDSDetails.setVisible(false);
@@ -622,8 +624,23 @@ public class ManualAdviseDialogCtrl extends GFCBaseCtrl<ManualAdvise> {
 		if (this.adviseAmount.getActualValue() != null) {
 			adviseAmountVal = PennantApplicationUtil.unFormateAmount(this.adviseAmount.getActualValue(), formatter);
 		}
+		
+		FinFeeDetail fee = new FinFeeDetail();
+		fee.setCalculatedAmount(adviseAmountVal);
+		fee.setTaxComponent(taxComp);
+		fee.setTaxApplicable(taxApplicable);
+		
+		FinTypeFees feeType = new FinTypeFees();
+		feeType.setTaxComponent(taxComp);
+		feeType.setTaxApplicable(taxApplicable);
+		feeType.setAmount(adviseAmountVal);
+		
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
 
-		tdsAmount = TDSCalculator.getTDSAmount(adviseAmountVal);
+		finFeeDetailService.convertGSTFinTypeFees(fee, feeType, fd, taxPercentages);
+		finFeeDetailService.calculateFees(fee, financeMain, taxPercentages);
+
+		tdsAmount = TDSCalculator.getTDSAmount(fee.getNetAmountOriginal());
 
 		this.tds.setFormat(PennantApplicationUtil.getAmountFormate(formatter));
 		this.tds.setValue(PennantApplicationUtil.formateAmount(tdsAmount, formatter));
