@@ -10400,7 +10400,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 								parentColAssignment.getAssignPerc());
 
 						BigDecimal remPer = collateralAssignment.getAssignPerc()
-								.subtract(parentColAssignment.getAssper());
+								.subtract(parentColAssignment.getAssignPercent());
 						if (colPerForChild.compareTo(remPer) > 1) {
 							colPerForChild = remPer;
 						}
@@ -10414,8 +10414,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 						collateralAssignment.setRecordStatus(main.getRecordStatus());
 						collateralAssignment.setRecordType(main.getRecordType());
 						collateralAssignmentDAO.save(collateralAssignment, "_Temp");
-						parentColAssignment
-								.setAssper(collateralAssignment.getAssignPerc().add(parentColAssignment.getAssper()));
+						parentColAssignment.setAssignPercent(
+								collateralAssignment.getAssignPerc().add(parentColAssignment.getAssignPercent()));
 					}
 				}
 
@@ -10460,8 +10460,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			}
 
 			for (CollateralAssignment parentColAssignment : financeDetail.getCollateralAssignmentList()) {
-				parentColAssignment
-						.setAssignPerc(parentColAssignment.getAssignPerc().subtract(parentColAssignment.getAssper()));
+				parentColAssignment.setAssignPerc(
+						parentColAssignment.getAssignPerc().subtract(parentColAssignment.getAssignPercent()));
 				collateralAssignmentDAO.update(parentColAssignment, "_Temp");
 			}
 
