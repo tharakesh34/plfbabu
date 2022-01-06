@@ -63,7 +63,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.searchdialogs.ExtendedMultipleSearchListBox;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -960,14 +959,8 @@ public class FinanceCancellationDialogCtrl extends FinanceBaseCtrl<FinanceMain> 
 					notification.setKeyReference(financeMain.getFinReference());
 					notification.setStage(financeMain.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
-
-					try {
-						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
-								aFinanceDetail.getDocumentDetailsList());
-					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
-					}
-
+					notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+							aFinanceDetail.getDocumentDetailsList());
 				}
 
 				// User Notifications Message/Alert

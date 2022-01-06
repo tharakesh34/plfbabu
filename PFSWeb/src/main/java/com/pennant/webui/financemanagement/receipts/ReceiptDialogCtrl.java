@@ -3149,14 +3149,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					notification.setKeyReference(financeMain.getFinReference());
 					notification.setStage(receiptData.getReceiptHeader().getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
-
-					try {
-						notificationService.sendNotifications(notification, receiptData, financeMain.getFinType(),
-								getFinanceDetail().getDocumentDetailsList());
-					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
-					}
-
+					notificationService.sendNotifications(notification, receiptData, financeMain.getFinType(),
+							getFinanceDetail().getDocumentDetailsList());
 				}
 
 				// User Notifications Message/Alert

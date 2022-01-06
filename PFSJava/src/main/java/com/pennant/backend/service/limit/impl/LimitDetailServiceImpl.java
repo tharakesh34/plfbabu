@@ -475,67 +475,64 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 
 	protected void sendMailNotification(LimitHeader imitHeader, String notifType) {
 		logger.debug(Literal.ENTERING);
-		try {
-			Notification notification = new Notification();
-			notification.setKeyReference(imitHeader.getCustCIF());
-			notification.setModule("LOAN");
-			notification.setSubModule("ORIGINATION");
-			if (notifType == "Email") {
-				notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION);
-			} else if (notifType == "SMS") {
-				notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION_SMS);
-			}
-
-			CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(imitHeader.getCustomerId(),
-					"_AView");
-			if (customerDetails == null) {
-				return;
-			}
-
-			if (customerDetails.getCustomer() == null) {
-				return;
-			}
-
-			// Customer Email
-			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
-			if (CollectionUtils.isEmpty(emailList)) {
-				return;
-			}
-
-			String emailId = null;
-			for (CustomerEMail email : emailList) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
-					emailId = email.getCustEMail();
-					break;
-				}
-			}
-
-			if (StringUtils.isEmpty(emailId)) {
-				return;
-			}
-
-			List<String> emails = new ArrayList<>();
-			emails.add(emailId);
-			notification.setEmails(emails);
-
-			// Customer Contact Number
-			String mobileNumber = null;
-			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
-			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
-						.getPhoneTypePriority()) {
-					mobileNumber = customerPhoneNumber.getPhoneNumber();
-					break;
-				}
-			}
-
-			List<String> mobileNumberList = new ArrayList<>();
-			mobileNumberList.add(mobileNumber);
-			notification.setMobileNumbers(mobileNumberList);
-			notificationService.sendNotification(notification, imitHeader);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		Notification notification = new Notification();
+		notification.setKeyReference(imitHeader.getCustCIF());
+		notification.setModule("LOAN");
+		notification.setSubModule("ORIGINATION");
+		if (notifType == "Email") {
+			notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION);
+		} else if (notifType == "SMS") {
+			notification.setTemplateCode(NotificationConstants.LIMITHEADER_SUCCESS_NOTIFICATION_SMS);
 		}
+
+		CustomerDetails customerDetails = customerDetailsService.getCustomerChildDetails(imitHeader.getCustomerId(),
+				"_AView");
+		if (customerDetails == null) {
+			return;
+		}
+
+		if (customerDetails.getCustomer() == null) {
+			return;
+		}
+
+		// Customer Email
+		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
+		if (CollectionUtils.isEmpty(emailList)) {
+			return;
+		}
+
+		String emailId = null;
+		for (CustomerEMail email : emailList) {
+			if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
+				emailId = email.getCustEMail();
+				break;
+			}
+		}
+
+		if (StringUtils.isEmpty(emailId)) {
+			return;
+		}
+
+		List<String> emails = new ArrayList<>();
+		emails.add(emailId);
+		notification.setEmails(emails);
+
+		// Customer Contact Number
+		String mobileNumber = null;
+		List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
+			if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
+					.getPhoneTypePriority()) {
+				mobileNumber = customerPhoneNumber.getPhoneNumber();
+				break;
+			}
+		}
+
+		List<String> mobileNumberList = new ArrayList<>();
+		mobileNumberList.add(mobileNumber);
+		notification.setMobileNumbers(mobileNumberList);
+		notificationService.sendNotification(notification, imitHeader);
+
 		logger.debug(Literal.LEAVING);
 	}
 

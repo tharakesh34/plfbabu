@@ -578,11 +578,7 @@ public class FinanceCancellationServiceImpl extends GenericFinanceDetailService 
 		fm.setWorkflowId(tempWorkflowId);
 
 		if (notificationService != null) {
-			try {
-				notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
-			} catch (Exception e) {
-				throw new AppException("Unable to process the mail.", e);
-			}
+			notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
 		}
 
 		cancelChildLoan(finReference);

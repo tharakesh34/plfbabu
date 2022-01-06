@@ -2196,12 +2196,8 @@ public class CollateralSetupDialogCtrl extends GFCBaseCtrl<CollateralSetup> {
 					notification.setStage(aCollateralSetup.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					try {
-						notificationService.sendNotifications(notification, aCollateralSetup.getCustomerDetails(),
-								aCollateralSetup.getCollateralType(), null);
-					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
-					}
+					notificationService.sendNotifications(notification, aCollateralSetup.getCustomerDetails(),
+							aCollateralSetup.getCollateralType(), null);
 				}
 
 				// User Notifications Message/Alert

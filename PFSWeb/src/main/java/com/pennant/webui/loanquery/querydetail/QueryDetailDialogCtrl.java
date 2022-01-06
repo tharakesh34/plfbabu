@@ -853,27 +853,23 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		// Mail ID details preparation
 		if (this.notifyTo.getValue() != null && !this.notifyTo.getValue().isEmpty()) {
 			String str[] = this.notifyTo.getValue().split(",");
-			try {
-				Notification notification = new Notification();
-				notification.setKeyReference(queryDetail.getFinReference());
-				notification.setModule("LOAN");
-				notification.setSubModule("QRY_MGMT");
-				notification.setTemplateCode(SMTParameterConstants.QRY_MGMT_TEMPLATE);
-				List<String> emails = Arrays.asList(str);
-				notification.setEmails(emails);
+			Notification notification = new Notification();
+			notification.setKeyReference(queryDetail.getFinReference());
+			notification.setModule("LOAN");
+			notification.setSubModule("QRY_MGMT");
+			notification.setTemplateCode(SMTParameterConstants.QRY_MGMT_TEMPLATE);
+			List<String> emails = Arrays.asList(str);
+			notification.setEmails(emails);
 
-				List<DocumentDetails> documents = queryDetail.getDocumentDetailsList();
-				Map<String, byte[]> map = new HashMap<String, byte[]>();
-				for (DocumentDetails documentDetail : documents) {
-					map.put(documentDetail.getDocName(), documentDetail.getDocImage());
-				}
-
-				notification.setAttachments(map);
-				notificationService.sendNotification(notification, queryDetail);
-
-			} catch (Exception e) {
-				logger.error("Exception: ", e);
+			List<DocumentDetails> documents = queryDetail.getDocumentDetailsList();
+			Map<String, byte[]> map = new HashMap<String, byte[]>();
+			for (DocumentDetails documentDetail : documents) {
+				map.put(documentDetail.getDocName(), documentDetail.getDocImage());
 			}
+
+			notification.setAttachments(map);
+
+			notificationService.sendNotification(notification, queryDetail);
 		}
 		logger.debug(Literal.LEAVING);
 	}

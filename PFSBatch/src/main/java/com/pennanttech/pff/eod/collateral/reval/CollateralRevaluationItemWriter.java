@@ -181,14 +181,8 @@ public class CollateralRevaluationItemWriter extends BasicDao<CollateralRevaluat
 			return 0;
 		}
 
-		try {
-			notificationService.sendNotification(notification, financeDetail);
-			return notification.getId();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return 0;
+		notificationService.sendNotification(notification, financeDetail);
+		return notification.getId();
 	}
 
 	@Autowired

@@ -24,7 +24,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.NotificationConstants;
 import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.notification.Notification;
 import com.pennanttech.pff.notifications.service.NotificationService;
@@ -403,12 +402,7 @@ public class LimitCheckDetails {
 				notification.setKeyReference(financeMain.getFinReference());
 				notification.setStage(financeMain.getRoleCode());
 
-				try {
-					notificationService.sendNotifications(notification, financeMain, "", null); // FIXME
-				} catch (Exception e) {
-					throw new AppException("Unable to process the mail.", e);
-				}
-
+				notificationService.sendNotifications(notification, financeMain, "", null);
 			}
 		}
 

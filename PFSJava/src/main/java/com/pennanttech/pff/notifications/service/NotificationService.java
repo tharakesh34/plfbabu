@@ -133,27 +133,31 @@ public class NotificationService extends GenericService<Notification> {
 	private DocumentTypeDAO documentTypeDAO;
 
 	private PresentmentBounceService presentmentBounceService;
+	private final String ERROR_MESSAGE = "Unable to parse the email template, please check the configured email template";
 
 	public NotificationService() {
 		super();
 	}
 
-	public void sendNotification(Notification mailKeyData, Object object) throws Exception {
+	public void sendNotification(Notification mailKeyData, Object object) throws AppException {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> data = null;
+
+		String code = mailKeyData.getTemplateCode();
+		MailTemplate template = mailTemplateDAO.getMailTemplateByCode(code, "_AView");
+
+		if (template == null || !template.isActive()) {
+			return;
+		}
 
 		if (object instanceof QueryDetail) {
 			QueryDetail queryDetail = (QueryDetail) object;
 			data = getTemplateData(queryDetail);
 		} else if (object instanceof PresentmentDetail) {
-			if (presentmentBounceService != null) {
-				if (presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()) != null) {
-					mailKeyData
-							.setTemplateCode(presentmentBounceService.getTemplateCode(mailKeyData.getTemplateCode()));
-				}
+			if (presentmentBounceService != null && presentmentBounceService.getTemplateCode(code) != null) {
+				mailKeyData.setTemplateCode(presentmentBounceService.getTemplateCode(code));
 			}
-			PresentmentDetail presentmentDetail = (PresentmentDetail) object;
-			data = getTemplateData(presentmentDetail);
+			data = getTemplateData((PresentmentDetail) object);
 		} else if (object instanceof FinanceDetail) {
 			FinanceDetail financeDetail = (FinanceDetail) object;
 			data = getTemplateData(financeDetail, null);
@@ -163,18 +167,12 @@ public class NotificationService extends GenericService<Notification> {
 		}
 
 		Map<String, byte[]> attachements = mailKeyData.getAttachments();
-		MailTemplate template = mailTemplateDAO.getMailTemplateByCode(mailKeyData.getTemplateCode(), "_AView");
 
-		if (template != null && template.isActive()) {
-			try {
-				parseMail(template, data);
-			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
-		}
-
-		if (template == null || !template.isActive()) {
-			return;
+		try {
+			parseMail(template, data);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException("999", ERROR_MESSAGE);
 		}
 
 		if (MapUtils.isNotEmpty(attachements)) {
@@ -196,7 +194,7 @@ public class NotificationService extends GenericService<Notification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void sendNotifications(String moduleCode, Object object) throws Exception {
+	public void sendNotifications(String moduleCode, Object object) throws AppException {
 		logger.debug(Literal.ENTERING);
 
 		Notification notification = new Notification();
@@ -206,66 +204,67 @@ public class NotificationService extends GenericService<Notification> {
 		String role = null;
 		notification.setModule(moduleCode);
 		notification.setSubModule(moduleCode);
-		try {
-			FinanceDetail financeDetail;
-			FinanceMain financeMain;
-			if (object instanceof FinanceDetail) {
-				financeDetail = (FinanceDetail) object;
-				financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-				documents = financeDetail.getDocumentDetailsList();
-				keyReference = financeMain.getFinReference();
-				role = financeMain.getRoleCode();
-			} else if (object instanceof Facility) {
-				Facility facility = (Facility) object;
-				documents = facility.getDocumentDetailsList();
-				keyReference = facility.getCAFReference();
-				role = facility.getRoleCode();
-			} else if (object instanceof FinCreditReviewDetails) {
-				FinCreditReviewDetails finCreditReviewDetails = (FinCreditReviewDetails) object;
-				keyReference = finCreditReviewDetails.getLovDescCustCIF();
-			} else if (object instanceof RepayData) {
-				RepayData repayData = (RepayData) object;
-				financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-				documents = repayData.getFinanceDetail().getDocumentDetailsList();
-				keyReference = repayData.getFinReference();
-				role = financeMain.getRoleCode();
-			} else if (object instanceof FinanceWriteoffHeader) {
-				FinanceWriteoffHeader writeoffHeader = (FinanceWriteoffHeader) object;
-				financeMain = writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain();
-				keyReference = writeoffHeader.getFinReference();
-				role = financeMain.getRoleCode();
-			} else if (object instanceof Provision) {
-				Provision provision = (Provision) object;
-				keyReference = provision.getFinReference();
-				role = provision.getRoleCode();
-			} else if (object instanceof FinanceSuspHead) {
-				FinanceSuspHead suspHead = (FinanceSuspHead) object;
-				keyReference = suspHead.getFinReference();
-				role = suspHead.getRoleCode();
-			} else if (object instanceof QueryDetail) {
-				QueryDetail queryDetail = (QueryDetail) object;
-				documents = queryDetail.getDocumentDetailsList();
-				keyReference = queryDetail.getFinReference();
-				role = queryDetail.getRoleCode();
-			} else if (object instanceof VehicleDealer) {
-				VehicleDealer vehicleDealer = (VehicleDealer) object;
-				keyReference = String.valueOf(vehicleDealer.getCode());
-				role = vehicleDealer.getRoleCode();
-			}
 
-			notification.setKeyReference(keyReference);
-			notification.setStage(role);
-
-			sendNotifications(notification, object, null, documents);
-
-		} catch (Exception e) {
-			throw new AppException("Unable to process the mail.", e);
+		FinanceDetail financeDetail;
+		FinanceMain financeMain;
+		if (object instanceof FinanceDetail) {
+			financeDetail = (FinanceDetail) object;
+			financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+			documents = financeDetail.getDocumentDetailsList();
+			keyReference = financeMain.getFinReference();
+			role = financeMain.getRoleCode();
+		} else if (object instanceof Facility) {
+			Facility facility = (Facility) object;
+			documents = facility.getDocumentDetailsList();
+			keyReference = facility.getCAFReference();
+			role = facility.getRoleCode();
+		} else if (object instanceof FinCreditReviewDetails) {
+			FinCreditReviewDetails finCreditReviewDetails = (FinCreditReviewDetails) object;
+			keyReference = finCreditReviewDetails.getLovDescCustCIF();
+		} else if (object instanceof RepayData) {
+			RepayData repayData = (RepayData) object;
+			financeMain = repayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
+			documents = repayData.getFinanceDetail().getDocumentDetailsList();
+			keyReference = repayData.getFinReference();
+			role = financeMain.getRoleCode();
+		} else if (object instanceof FinanceWriteoffHeader) {
+			FinanceWriteoffHeader writeoffHeader = (FinanceWriteoffHeader) object;
+			financeMain = writeoffHeader.getFinanceDetail().getFinScheduleData().getFinanceMain();
+			keyReference = writeoffHeader.getFinReference();
+			role = financeMain.getRoleCode();
+		} else if (object instanceof Provision) {
+			Provision provision = (Provision) object;
+			keyReference = provision.getFinReference();
+			role = provision.getRoleCode();
+		} else if (object instanceof FinanceSuspHead) {
+			FinanceSuspHead suspHead = (FinanceSuspHead) object;
+			keyReference = suspHead.getFinReference();
+			role = suspHead.getRoleCode();
+		} else if (object instanceof QueryDetail) {
+			QueryDetail queryDetail = (QueryDetail) object;
+			documents = queryDetail.getDocumentDetailsList();
+			keyReference = queryDetail.getFinReference();
+			role = queryDetail.getRoleCode();
+		} else if (object instanceof VehicleDealer) {
+			VehicleDealer vehicleDealer = (VehicleDealer) object;
+			keyReference = String.valueOf(vehicleDealer.getCode());
+			role = vehicleDealer.getRoleCode();
 		}
+
+		notification.setKeyReference(keyReference);
+		notification.setStage(role);
+
+		try {
+			sendNotifications(notification, object, null, documents);
+		} catch (Exception e) {
+			throw e;
+		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
 	public void sendNotifications(Notification mailKeyData, Object object, String finType,
-			List<DocumentDetails> documents) throws IOException, TemplateException {
+			List<DocumentDetails> documents) throws AppException {
 		boolean resendNotifications = false;
 		String finReference = mailKeyData.getKeyReference();
 		String finEvent = mailKeyData.getSubModule();
@@ -378,7 +377,10 @@ public class NotificationService extends GenericService<Notification> {
 					try {
 						parseMail(template, data);
 					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
+						logger.error("Template {}", template);
+						logger.error("Data {}", data);
+						logger.error(Literal.EXCEPTION, e);
+						throw new AppException("999", ERROR_MESSAGE);
 					}
 				} else {
 					template = null;
@@ -613,69 +615,73 @@ public class NotificationService extends GenericService<Notification> {
 
 	public void sendMailtoCustomer(long templateId, String mailId, Object vo) throws TemplateException, Exception {
 		logger.debug(Literal.ENTERING);
-		MailTemplate template = null;
+		MailTemplate template = mailTemplateDAO.getMailTemplateById(templateId, "_AView");
+
+		if (template == null || !template.isActive()) {
+			return;
+		}
+
+		template.getEmailIds().add(mailId);
+
+		MailTemplateData mailData = new MailTemplateData();
+
+		if (vo instanceof SysNotificationDetails) {
+			SysNotificationDetails notification = (SysNotificationDetails) vo;
+			mailData.setFinReference(notification.getFinReference());
+			mailData.setFinBranch(notification.getFinBranch());
+			mailData.setFinCcy(notification.getFinCcy());
+			mailData.setCustShrtName(notification.getCustShrtName());
+			mailData.setCustCIF(notification.getCustCIF());
+			mailData.setFinCurODAmt(notification.getFinCurODAmtInStr());
+			mailData.setFinCurODDays(notification.getFinCurODDays());
+			mailData.setFinPurpose(notification.getFinPurpose());
+			mailData.setUsrName(getSecurityUserById(notification.getLastMntBy()).getUsrFName());
+		}
+
+		Map<String, Object> data = mailData.getDeclaredFieldValues();
 		try {
-			template = mailTemplateDAO.getMailTemplateById(templateId, "_AView");
-			if (template != null && template.isActive()) {
+			parseMail(template, data);
+		} catch (Exception e) {
+			logger.error("Template {}", template);
+			logger.error("Data {}", data);
+			logger.error(Literal.EXCEPTION, e);
+			throw new AppException("999", ERROR_MESSAGE);
+		}
 
-				template.getEmailIds().add(mailId);
-				// Template Fields Bean Preparation
-				MailTemplateData templateData = new MailTemplateData();
-				if (vo instanceof SysNotificationDetails) {
-					SysNotificationDetails notification = (SysNotificationDetails) vo;
+		if (!template.isEmailTemplate() || CollectionUtils.isEmpty(template.getEmailIds())) {
+			return;
+		}
 
-					templateData.setFinReference(notification.getFinReference());
-					templateData.setFinBranch(notification.getFinBranch());
-					templateData.setFinCcy(notification.getFinCcy());
-					templateData.setCustShrtName(notification.getCustShrtName());
-					templateData.setCustCIF(notification.getCustCIF());
-					templateData.setFinCurODAmt(notification.getFinCurODAmtInStr());
-					templateData.setFinCurODDays(notification.getFinCurODDays());
-					templateData.setFinPurpose(notification.getFinPurpose());
+		Notification emailMessage = new Notification();
+		emailMessage.setKeyReference(mailData.getFinReference());
+		emailMessage.setModule("SYS_NOTIFICATION");
+		emailMessage.setSubModule("SYS_NOTIFICATION");
+		emailMessage.setNotificationId(templateId);
+		emailMessage.setStage("");
+		emailMessage.setSubject(template.getEmailSubject());
+		emailMessage.setContent(template.getEmailMessage().getBytes(Charset.forName("UTF-8")));
 
-					// user Details
-					SecurityUser secUser = getSecurityUserById(notification.getLastMntBy());
-					templateData.setUsrName(secUser.getUsrFName());
+		if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
+			emailMessage.setContentType(EmailBodyType.HTML.getKey());
+		} else {
+			emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
+		}
 
-				}
+		for (String emailId : template.getEmailIds()) {
+			MessageAddress address = new MessageAddress();
+			address.setEmailId(emailId);
+			address.setRecipientType(RecipientType.TO.getKey());
+			emailMessage.getAddressesList().add(address);
+		}
 
-				parseMail(template, templateData.getDeclaredFieldValues());
-				if (template.isEmailTemplate() && CollectionUtils.isNotEmpty(template.getEmailIds())) {
-
-					Notification emailMessage = new Notification();
-					emailMessage.setKeyReference(templateData.getFinReference());
-					emailMessage.setModule("SYS_NOTIFICATION");
-					emailMessage.setSubModule("SYS_NOTIFICATION");
-					emailMessage.setNotificationId(templateId);
-					emailMessage.setStage("");
-					emailMessage.setSubject(template.getEmailSubject());
-					emailMessage.setContent(template.getEmailMessage().getBytes(Charset.forName("UTF-8")));
-
-					if (NotificationConstants.TEMPLATE_FORMAT_HTML.equals(template.getEmailFormat())) {
-						emailMessage.setContentType(EmailBodyType.HTML.getKey());
-					} else {
-						emailMessage.setContentType(EmailBodyType.PLAIN.getKey());
-					}
-
-					for (String emailId : template.getEmailIds()) {
-						MessageAddress address = new MessageAddress();
-						address.setEmailId(emailId);
-						address.setRecipientType(RecipientType.TO.getKey());
-						emailMessage.getAddressesList().add(address);
-					}
-
-					emailEngine.sendEmail(emailMessage);
-				}
-				if (template.isSmsTemplate()) {
-					// sendSMS(mailTemplate); //not implemented yet
-				}
-			}
+		try {
+			emailEngine.sendEmail(emailMessage);
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
-			throw e;
+			throw new AppException("Unable to save the email notification", e);
 		}
-		logger.debug(Literal.LEAVING);
 
+		logger.debug(Literal.LEAVING);
 	}
 
 	private Map<String, Object> getTemplateData(QueryDetail detail) {
@@ -686,62 +692,55 @@ public class NotificationService extends GenericService<Notification> {
 		return data.getDeclaredFieldValues();
 	}
 
-	/**
-	 * Preparing the template data for Presentemet bounce email processing
-	 * 
-	 * @param presentmentDetail
-	 * @return
-	 */
-	private Map<String, Object> getTemplateData(PresentmentDetail presentmentDetail) {
-
+	private Map<String, Object> getTemplateData(PresentmentDetail pd) {
 		MailTemplateData data = new MailTemplateData();
 
-		FinanceDetail financeDetail = presentmentDetail.getFinanceDetail();
-		FinanceMain main = financeDetail.getFinScheduleData().getFinanceMain();
-		List<CustomerEMail> customerEmailList = financeDetail.getCustomerDetails().getCustomerEMailList();
-		List<CustomerPhoneNumber> custMobiles = financeDetail.getCustomerDetails().getCustomerPhoneNumList();
-		int format = CurrencyUtil.getFormat(main.getFinCcy());
+		FinanceDetail fd = pd.getFinanceDetail();
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+		CustomerDetails cd = fd.getCustomerDetails();
+		List<CustomerEMail> emails = cd.getCustomerEMailList();
+		List<CustomerPhoneNumber> mobiles = cd.getCustomerPhoneNumList();
 
-		data.setCustShrtName(financeDetail.getCustomerDetails().getCustomer().getCustShrtName());
-		data.setCustSalutation(StringUtils
-				.trimToEmpty(financeDetail.getCustomerDetails().getCustomer().getLovDescCustSalutationCodeName()));
-		data.setFinReference(main.getFinReference());
-		data.setFinAmount(PennantApplicationUtil.amountFormate(main.getFinAmount(), format));
-		if (presentmentBounceService != null) {
-			int finccy = CurrencyUtil.getFormat(main.getFinCcy());
-			data.setLimitAmount(PennantApplicationUtil.amountFormate(
-					presentmentBounceService.getLimitAmount(financeDetail.getCustomerDetails().getCustID()), finccy));
-		}
+		int format = CurrencyUtil.getFormat(fm.getFinCcy());
 		int priority = Integer.parseInt(PennantConstants.KYC_PRIORITY_VERY_HIGH);
 
-		// Customer Email
-		for (CustomerEMail customerEMail : customerEmailList) {
-			if (priority != customerEMail.getCustEMailPriority()) {
+		data.setCustShrtName(cd.getCustomer().getCustShrtName());
+		data.setCustSalutation(StringUtils.trimToEmpty(cd.getCustomer().getLovDescCustSalutationCodeName()));
+		data.setFinReference(fm.getFinReference());
+		data.setFinAmount(PennantApplicationUtil.amountFormate(fm.getFinAmount(), format));
+		if (presentmentBounceService != null) {
+			data.setLimitAmount(PennantApplicationUtil
+					.amountFormate(presentmentBounceService.getLimitAmount(cd.getCustID()), format));
+		}
+
+		for (CustomerEMail email : emails) {
+			if (priority != email.getCustEMailPriority()) {
 				continue;
 			}
-			data.setCustEmailId(customerEMail.getCustEMail());
+			data.setCustEmailId(email.getCustEMail());
 			break;
 		}
 
 		// Customer Contact Number
-		for (CustomerPhoneNumber customerPhoneNumber : custMobiles) {
-			if (priority != customerPhoneNumber.getPhoneTypePriority()) {
+		for (CustomerPhoneNumber mobile : mobiles) {
+			if (priority != mobile.getPhoneTypePriority()) {
 				continue;
 			}
-			data.setCustMobileNumber(customerPhoneNumber.getPhoneNumber());
+			data.setCustMobileNumber(mobile.getPhoneNumber());
 			break;
 		}
 
-		data.setCustId(main.getCustID());
-		data.setCustCIF(main.getLovDescCustCIF());
-		data.setFinType(main.getFinType());
-		data.setFinTypeDesc(main.getLovDescFinTypeName());
-		data.setNextRepayDate(DateUtil.format(main.getNextRepayDate(), DateFormat.LONG_DATE));
-		data.setPriority(main.getPriority());
+		data.setCustId(fm.getCustID());
+		data.setCustCIF(fm.getLovDescCustCIF());
+		data.setFinType(fm.getFinType());
+		data.setFinTypeDesc(fm.getLovDescFinTypeName());
+		data.setNextRepayDate(DateUtil.format(fm.getNextRepayDate(), DateFormat.LONG_DATE));
+		data.setPriority(fm.getPriority());
 
-		data.setValueDate(DateUtility.formatToLongDate(presentmentDetail.getSchDate()));
-		data.setAmount(PennantApplicationUtil.amountFormate(presentmentDetail.getPresentmentAmt(), format));
-		data.setBounceReason(presentmentDetail.getBounceCode());
+		data.setValueDate(DateUtility.formatToLongDate(pd.getSchDate()));
+		data.setAmount(PennantApplicationUtil.amountFormate(pd.getPresentmentAmt(), format));
+		data.setBounceReason(pd.getBounceCode());
 
 		return data.getDeclaredFieldValues();
 	}
@@ -1246,7 +1245,7 @@ public class NotificationService extends GenericService<Notification> {
 		try {
 			emailEngine.sendEmail(emailMessage);
 		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			throw new AppException("Unable to save the email notification", e);
 		}
 	}
 
@@ -1257,7 +1256,7 @@ public class NotificationService extends GenericService<Notification> {
 			try {
 				smsEngine.sendSms(smsNotification);
 			} catch (Exception e) {
-				logger.error(Literal.EXCEPTION, e);
+				throw new AppException("Unable to save the sms notification", e);
 			}
 		}
 	}

@@ -1685,12 +1685,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 			if (doProcess(aVehicleDealer, tranType)) {
 				// Mail Alert Notification for Dealer
 				if (StringUtils.isEmpty(aVehicleDealer.getNextTaskId())) {
-					try {
-						notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_PROVIDER,
-								aVehicleDealer);
-					} catch (Exception e) {
-						logger.debug(e);
-					}
+					notificationService.sendNotifications(NotificationConstants.MAIL_MODULE_PROVIDER, aVehicleDealer);
 				}
 
 				refreshList();

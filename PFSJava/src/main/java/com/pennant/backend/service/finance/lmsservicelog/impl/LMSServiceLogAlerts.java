@@ -101,14 +101,9 @@ public class LMSServiceLogAlerts {
 			logger.debug("Customer Emails are not available for the customer: " + customerDetails.getCustID());
 			return 0;
 		}
-		try {
-			notificationService.sendNotification(notification, financeDetail);
-			return notification.getId();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-		logger.debug(Literal.LEAVING);
-		return 0;
+
+		notificationService.sendNotification(notification, financeDetail);
+		return notification.getId();
 	}
 
 	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {

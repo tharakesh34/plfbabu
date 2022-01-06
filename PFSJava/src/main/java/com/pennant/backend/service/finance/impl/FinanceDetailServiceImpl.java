@@ -2564,16 +2564,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			processLimitSaveOrUpdate(aAuditHeader, false);
 		}
 
-		// E-mail notification for Create Loan API.
-		try {
-			if (ImplementationConstants.SEND_NOTIFICATION_ON_CREATE_LOAN_API
-					&& PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(fm.getFinSourceID()) && fm.isNewRecord()) {
-				sendMailNotification(fd);
-			}
-		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
-		}
+		sendMailNotification(fd);
 
 		// Saving the reasons
 		saveReasonDetails(fd);
@@ -2840,68 +2831,64 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
 
-		try {
-			Notification notification = new Notification();
-			notification.setKeyReference(financeMain.getFinReference());
-			notification.setModule("LOAN");
-			notification.setSubModule(FinServiceEvent.ORG);
-			notification.setTemplateCode(NotificationConstants.CREATE_LOAN_API_MAIL_NOTIFICATION);
+		Notification notification = new Notification();
+		notification.setKeyReference(financeMain.getFinReference());
+		notification.setModule("LOAN");
+		notification.setSubModule(FinServiceEvent.ORG);
+		notification.setTemplateCode(NotificationConstants.CREATE_LOAN_API_MAIL_NOTIFICATION);
 
-			CustomerDetails customerDetails = financeDetail.getCustomerDetails();
-			if (customerDetails == null) {
-				return;
+		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
+		if (customerDetails == null) {
+			return;
+		}
+
+		if (customerDetails.getCustomer() == null) {
+			return;
+		}
+		// For Customers marked as DND true are not allow to Trigger a Mail.
+		if (customerDetails.getCustomer().isDnd()) {
+			return;
+		}
+
+		// Customer E-mails
+		List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
+		if (CollectionUtils.isEmpty(emailList)) {
+			return;
+		}
+
+		String emailId = null;
+		for (CustomerEMail email : emailList) {
+			if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
+				emailId = email.getCustEMail();
+				break;
 			}
+		}
 
-			if (customerDetails.getCustomer() == null) {
-				return;
+		if (StringUtils.isEmpty(emailId)) {
+			return;
+		}
+
+		List<String> emails = new ArrayList<>();
+		emails.add(emailId);
+		notification.setEmails(emails);
+
+		// Customer Contact Number
+		String mobileNumber = null;
+		List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
+		for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
+			if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
+					.getPhoneTypePriority()) {
+				mobileNumber = customerPhoneNumber.getPhoneNumber();
+				break;
 			}
-			// For Customers marked as DND true are not allow to Trigger a Mail.
-			if (customerDetails.getCustomer().isDnd()) {
-				return;
-			}
+		}
 
-			// Customer E-mails
-			List<CustomerEMail> emailList = customerDetails.getCustomerEMailList();
-			if (CollectionUtils.isEmpty(emailList)) {
-				return;
-			}
+		List<String> mobileNumberList = new ArrayList<>();
+		mobileNumberList.add(mobileNumber);
+		notification.setMobileNumbers(mobileNumberList);
 
-			String emailId = null;
-			for (CustomerEMail email : emailList) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == email.getCustEMailPriority()) {
-					emailId = email.getCustEMail();
-					break;
-				}
-			}
-
-			if (StringUtils.isEmpty(emailId)) {
-				return;
-			}
-
-			List<String> emails = new ArrayList<>();
-			emails.add(emailId);
-			notification.setEmails(emails);
-
-			// Customer Contact Number
-			String mobileNumber = null;
-			List<CustomerPhoneNumber> customerPhoneNumbers = customerDetails.getCustomerPhoneNumList();
-			for (CustomerPhoneNumber customerPhoneNumber : customerPhoneNumbers) {
-				if (Integer.valueOf(PennantConstants.KYC_PRIORITY_VERY_HIGH) == customerPhoneNumber
-						.getPhoneTypePriority()) {
-					mobileNumber = customerPhoneNumber.getPhoneNumber();
-					break;
-				}
-			}
-
-			List<String> mobileNumberList = new ArrayList<>();
-			mobileNumberList.add(mobileNumber);
-			notification.setMobileNumbers(mobileNumberList);
-
-			if (notificationService != null) {
-				notificationService.sendNotification(notification, financeDetail);
-			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+		if (notificationService != null) {
+			notificationService.sendNotification(notification, financeDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -4782,12 +4769,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 			fm.setWorkflowId(tempWorkflowId);
 
 			if (notificationService != null) {
-				try {
-					notificationService.sendNotifications(notification, fd, fm.getFinType(),
-							fd.getDocumentDetailsList());
-				} catch (Exception e) {
-					throw new AppException("Unable to process the mail.", e);
-				}
+				notificationService.sendNotifications(notification, fd, fm.getFinType(), fd.getDocumentDetailsList());
 			}
 
 			if (!recordType.equals(PennantConstants.RECORD_TYPE_DEL)) {

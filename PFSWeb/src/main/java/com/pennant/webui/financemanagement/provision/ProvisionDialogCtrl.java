@@ -931,14 +931,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 					notification.setKeyReference(financeMain.getFinReference());
 					notification.setStage(financeMain.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
-
-					try {
-						notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
-								aFinanceDetail.getDocumentDetailsList());
-					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
-					}
-
+					notificationService.sendNotifications(notification, aFinanceDetail, financeMain.getFinType(),
+							aFinanceDetail.getDocumentDetailsList());
 				}
 
 				// User Notifications Message/Alert

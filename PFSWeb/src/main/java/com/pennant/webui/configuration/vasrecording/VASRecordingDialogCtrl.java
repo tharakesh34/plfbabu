@@ -879,13 +879,8 @@ public class VASRecordingDialogCtrl extends GFCBaseCtrl<VASRecording> {
 					notification.setStage(aVASRecording.getRoleCode());
 					notification.setReceivedBy(getUserWorkspace().getUserId());
 
-					try {
-						notificationService.sendNotifications(notification, aVASRecording,
-								aVASRecording.getProductCode(), null);
-					} catch (Exception e) {
-						throw new AppException("Unable to process the mail.", e);
-					}
-
+					notificationService.sendNotifications(notification, aVASRecording, aVASRecording.getProductCode(),
+							null);
 				}
 
 				// User Notifications Message/Alert

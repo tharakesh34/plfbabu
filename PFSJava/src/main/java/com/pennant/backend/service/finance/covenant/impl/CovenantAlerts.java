@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import com.pennant.app.util.DateUtility;
+import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserDAO;
 import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.dao.finance.covenant.CovenantsDAO;
@@ -156,18 +157,12 @@ public class CovenantAlerts extends BasicDao<Covenant> {
 			return 0;
 		}
 
-		try {
-			notificationService.sendNotification(notification, financeDetail);
-			return notification.getId();
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		return 0;
+		notificationService.sendNotification(notification, financeDetail);
+		return notification.getId();
 	}
 
 	private void loadAppDate() {
-		appDate = DateUtil.getDatePart(DateUtility.getAppDate());
+		appDate = DateUtil.getDatePart(SysParamUtil.getAppDate());
 	}
 
 	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
