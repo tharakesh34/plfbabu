@@ -7927,7 +7927,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 
 			if (editable) {
-				boolean proceed = false;
+				boolean proceed = true;
 				if (StringUtils.isBlank(moduleDefiner) || moduleDefiner.equals(FinServiceEvent.ORG)) {
 					proceed = pricingDetailListCtrl.doSave(afd, pricingTab, recSave);
 				}
@@ -7935,8 +7935,9 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				if (!proceed) {
 					return;
 				}
-				if (afd.getPricingDetail() != null) {
-					FinanceMain parentFinanceMain = afd.getPricingDetail().getFinanceMain();
+				PricingDetail pricingDetail = afd.getPricingDetail();
+				if (pricingDetail != null) {
+					FinanceMain parentFinanceMain = pricingDetail.getFinanceMain();
 
 					if (parentFinanceMain != null) {
 						afd.getFinScheduleData().getFinanceMain()
@@ -7948,8 +7949,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					}
 
-					if (CollectionUtils.isNotEmpty(afd.getPricingDetail().getFinanceMains())) {
-						for (FinanceMain childLoan : afd.getPricingDetail().getFinanceMains()) {
+					if (CollectionUtils.isNotEmpty(pricingDetail.getFinanceMains())) {
+						for (FinanceMain childLoan : pricingDetail.getFinanceMains()) {
 							childLoan.setMandateID(0L);
 							childLoan.setFinAmount(childLoan.getFinAssetValue());
 							childLoan.setFinCurrAssetValue(childLoan.getFinAssetValue());
@@ -7964,7 +7965,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 				}
 
 				for (FinFeeDetail finFeeDetail : afd.getFinScheduleData().getFinFeeDetailList()) {
-					for (VASRecording vasRecording : afd.getPricingDetail().getActualVasDetails()) {
+					for (VASRecording vasRecording : pricingDetail.getActualVasDetails()) {
 						if (StringUtils.isNotBlank(finFeeDetail.getVasReference())) {
 							if (finFeeDetail.getVasReference().equals(vasRecording.getVasReference()))
 								finFeeDetail.setActualAmount(vasRecording.getFee());
@@ -7976,9 +7977,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 				}
 
-				if (CollectionUtils.isNotEmpty(afd.getPricingDetail().getFinanceMains())) {
-
-					for (FinanceMain childFinanceMain : afd.getPricingDetail().getFinanceMains()) {
+				if (pricingDetail != null && CollectionUtils.isNotEmpty(pricingDetail.getFinanceMains())) {
+					for (FinanceMain childFinanceMain : pricingDetail.getFinanceMains()) {
 						// financeMain.setRepayMargin(BigDecimal.ZERO);
 
 						FinanceType childfinType = financeTypeService.getFinanceType(childFinanceMain.getFinType());
