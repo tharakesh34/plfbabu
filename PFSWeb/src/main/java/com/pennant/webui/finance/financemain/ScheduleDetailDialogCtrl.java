@@ -2407,6 +2407,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 
 		Date dateAfterYear = DateUtility.addMonths(firstInstalmentDate, 12);
 
+		Collections.sort(getPlanEMIHDateList());
+
 		if (this.grid_monthDetails.isVisible()) {
 			int planEMiHCount = getPlanEMIHMonths().size();
 			if (planEMiHCount == 0 || planEMiHCount > fm.getPlanEMIHMaxPerYear()) {
