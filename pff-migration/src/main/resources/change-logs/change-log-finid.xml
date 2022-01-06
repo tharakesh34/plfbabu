@@ -3149,13 +3149,7 @@
 			]]>
 		</sql>
 	</changeSet>
-
-	<changeSet id="104.4" author="murthy.y">
-		<createIndex tableName="finpftdetails" indexName="idx_finpftdetails_finid">
-			<column name="FinID" type="bigint" />
-		</createIndex>
-	</changeSet>
-	
+    
 	<changeSet id="104.5" author="Mounika.M">
 		<dropPrimaryKey tableName="finpftdetails" />
 	</changeSet>
@@ -3164,9 +3158,20 @@
 		<addUniqueConstraint tableName="finpftdetails" columnNames="FinReference"
 			constraintName="UK_FPD_FinReference" />
 	</changeSet>
-
+	
+	<changeSet id="104.7.1" author="Mounika.M">
+		<addNotNullConstraint tableName="finpftdetails"
+			columnName="FinID" columnDataType="bigint" />
+	</changeSet>
+	
 	<changeSet id="104.7" author="Mounika.M">
 		<addPrimaryKey tableName="finpftdetails" columnNames="FinID" constraintName="PK_finpftdetails" />
+	</changeSet>
+	
+	<changeSet id="104.7.3" author="Mounika.M" dbms="postgresql">
+		<createIndex tableName="finpftdetails" indexName="idx_finpftdetails_finid">
+			<column name="FinID" type="bigint" />
+		</createIndex>
 	</changeSet>
 
 	<changeSet id="105" author="murthy.y">
