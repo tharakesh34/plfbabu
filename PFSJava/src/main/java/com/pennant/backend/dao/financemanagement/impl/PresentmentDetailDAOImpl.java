@@ -1909,14 +1909,11 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public List<String> getStatusListByHeader(Long id) {
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT PD.Status FROM PresentmentDetails PD");
-		sql.append(" INNER JOIN PresentmentHeader PH ON PH.ID = PD.PRESENTMENTID");
-		sql.append(" WHERE PH.ID = ?");
+		String sql = "Select Status From PresentmentDetails Where PresentmentID = ? and PresentmentAmt > ?";
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
 
-		return jdbcOperations.queryForList(sql.toString(), String.class, id);
+		return jdbcOperations.queryForList(sql, String.class, id, 0);
 	}
 
 	@Override
