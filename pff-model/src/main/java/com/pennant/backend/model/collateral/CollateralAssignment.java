@@ -63,6 +63,7 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	private String lovValue;
 	private CollateralAssignment befImage;
 	private String hostReference;
+	private BigDecimal assper = BigDecimal.ZERO;
 
 	// ### 16-05-2018 Start Development Item 82
 	private BigDecimal specialLTV = BigDecimal.ZERO;
@@ -279,4 +280,13 @@ public class CollateralAssignment extends AbstractWorkflowEntity {
 	public void setCollateralType(String collateralType) {
 		this.collateralType = collateralType;
 	}
+
+	public BigDecimal getAssper() {
+		return assper;
+	}
+
+	public void setAssper(BigDecimal assper) {
+		this.assper = assper;
+	}
+
 }

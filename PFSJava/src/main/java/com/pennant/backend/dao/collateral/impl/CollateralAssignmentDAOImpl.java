@@ -28,7 +28,9 @@ import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -171,6 +173,10 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 	// FIXME Commitments needs to be handled, Removed the Commitments, for the performance changes
 	@Override
 	public List<AssignmentDetails> getCollateralAssignmentByColRef(String collateralRef, String collateralType) {
+
+		BigDecimal assignedPerc = getAssignedPerc(collateralRef);
+		Map<String, Object> utilizationByLOan = getTotalUtilized(collateralRef);
+
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Module, ca.Reference, fm.FinCcy Currency");
 		sql.append(", AssignPerc AssignedPerc, BankValuation CollateralValue");
@@ -200,9 +206,13 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 			ad.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
 			ad.setFinIsActive(rs.getBoolean("FinIsActive"));
 			ad.setFinLTVCheck(rs.getString("FinLTVCheck"));
+			ad.setAssignedPerc(assignedPerc);
 
-			ad.setAssignedPerc(getAssignedPerc(collateralRef));
-			ad.setTotalUtilized(getTotalUtilized(ad.getReference()));
+			if (utilizationByLOan.containsKey(ad.getReference())) {
+				ad.setTotalUtilized((BigDecimal) utilizationByLOan.get(ad.getReference()));
+			} else {
+				ad.setTotalUtilized(BigDecimal.ZERO);
+			}
 
 			return ad;
 		});
@@ -714,20 +724,26 @@ public class CollateralAssignmentDAOImpl extends SequenceDao<CollateralMovement>
 		return BigDecimal.ZERO;
 	}
 
-	private BigDecimal getTotalUtilized(String reference) {
-		StringBuilder sql = new StringBuilder("Select sum((cs.BankValuation * ca.AssignPerc)/100)");
+	private Map<String, Object> getTotalUtilized(String collateralRef) {
+		Map<String, Object> map = new HashMap<>();
+
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ca.Reference, coalesce(sum((cs.BankValuation * ca.AssignPerc)/100), 0) TotalUtilized");
 		sql.append(" From CollateralAssignment ca");
 		sql.append(" Inner Join CollateralSetUp cs on cs.CollateralRef = ca.CollateralRef");
-		sql.append(" Where ca.Reference = ?");
+		sql.append(" Where ca.CollateralRef = ? group by ca.Reference");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), BigDecimal.class, reference);
+			this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+				map.put(rs.getString("Reference"), rs.getBigDecimal("TotalUtilized"));
+				return map;
+			}, collateralRef);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
 
-		return BigDecimal.ZERO;
+		return map;
 	}
 }
