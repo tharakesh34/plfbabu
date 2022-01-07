@@ -72,7 +72,6 @@ import com.pennant.webui.administration.securityuser.SecurityUserListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -681,56 +680,51 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		boolean deleteNotes = false;
 		SecurityUser aSecurityUser = (SecurityUser) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
 
-				if (StringUtils.isBlank(method)) {
+				auditHeader = getSecurityUserOperationsService().saveOrUpdate(auditHeader);
 
-					auditHeader = getSecurityUserOperationsService().saveOrUpdate(auditHeader);
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = getSecurityUserOperationsService().doApprove(auditHeader);
+
+					if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteNotes = true;
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = getSecurityUserOperationsService().doReject(auditHeader);
+					if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
+					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getSecurityUserOperationsService().doApprove(auditHeader);
-
-						if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSecurityUserOperationsService().doReject(auditHeader);
-						if (aSecurityUser.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.win_SecurityUserOperationsDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.win_SecurityUserOperationsDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.securityUserOperations), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.win_SecurityUserOperationsDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.warn("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.win_SecurityUserOperationsDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.securityUserOperations), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

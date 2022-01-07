@@ -93,7 +93,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -1585,61 +1584,57 @@ public class JVPostingDialogCtrl extends GFCBaseCtrl<JVPosting> {
 		boolean deleteNotes = false;
 
 		JVPosting aJVPosting = (JVPosting) auditHeader.getAuditDetail().getModelData();
-		try {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getJVPostingService().delete(auditHeader);
+			if (StringUtils.isBlank(method)) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getJVPostingService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getJVPostingService().saveOrUpdate(auditHeader);
+				}
+
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getJVPostingService().doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aJVPosting.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getJVPostingService().saveOrUpdate(auditHeader);
+					}
+
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getJVPostingService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aJVPosting.getRecordType())) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getJVPostingService().doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aJVPosting.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getJVPostingService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aJVPosting.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_JVPostingDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_JVPostingDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("JVPosting", String.valueOf(aJVPosting.getBatchReference()),
-								aJVPosting.getVersion()), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_JVPostingDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_JVPostingDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes("JVPosting", String.valueOf(aJVPosting.getBatchReference()),
+							aJVPosting.getVersion()), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

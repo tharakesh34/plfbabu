@@ -66,7 +66,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.customermasters.customer.CustomerSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -725,7 +724,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -739,7 +738,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	 * 
 	 */
 	protected boolean doProcess(CustomerIdentity aCustomerIdentity, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -812,7 +811,7 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 			auditHeader = getAuditHeader(aCustomerIdentity, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -827,66 +826,61 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		CustomerIdentity aCustomerIdentity = (CustomerIdentity) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getCustomerIdentityService().delete(auditHeader);
-						deleteNotes = true;
-					} else {
-						auditHeader = getCustomerIdentityService().saveOrUpdate(auditHeader);
-					}
-
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = getCustomerIdentityService().delete(auditHeader);
+					deleteNotes = true;
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getCustomerIdentityService().doApprove(auditHeader);
-						if (aCustomerIdentity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getCustomerIdentityService().doReject(auditHeader);
-						if (aCustomerIdentity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_CustomerIdentityDialog, auditHeader);
-						logger.debug("Leaving");
-						return processCompleted;
-					}
+					auditHeader = getCustomerIdentityService().saveOrUpdate(auditHeader);
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(this.window_CustomerIdentityDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.customerIdentity), true);
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = getCustomerIdentityService().doApprove(auditHeader);
+					if (aCustomerIdentity.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteNotes = true;
 					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = getCustomerIdentityService().doReject(auditHeader);
+					if (aCustomerIdentity.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
+					}
+				} else {
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_CustomerIdentityDialog, auditHeader);
+					logger.debug("Leaving");
+					return processCompleted;
 				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustomerIdentityDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.customerIdentity), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
-		logger.debug("Leaving");
+		setOverideMap(auditHeader.getOverideMap());
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

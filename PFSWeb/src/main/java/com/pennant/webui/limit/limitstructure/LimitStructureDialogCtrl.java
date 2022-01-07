@@ -1595,50 +1595,47 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 		LimitStructure aLimitStructure = (LimitStructure) auditHeader.getAuditDetail().getModelData();
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getLimitStructureService().delete(auditHeader);
+
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getLimitStructureService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getLimitStructureService().saveOrUpdate(auditHeader);
+				}
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getLimitStructureService().doApprove(auditHeader);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aLimitStructure.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getLimitStructureService().saveOrUpdate(auditHeader);
+					}
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getLimitStructureService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aLimitStructure.getRecordType())) {
+						deleteNotes = true;
 					}
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getLimitStructureService().doApprove(auditHeader);
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aLimitStructure.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getLimitStructureService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aLimitStructure.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else {
-						retValue = ErrorControl.showErrorControl(this.window_LimitStructureDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_LimitStructureDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.limitStructure), true);
-					}
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					retValue = ErrorControl.showErrorControl(this.window_LimitStructureDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LimitStructureDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.limitStructure), true);
+				}
+			}
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

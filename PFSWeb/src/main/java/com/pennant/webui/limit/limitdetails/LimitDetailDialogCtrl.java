@@ -1412,50 +1412,47 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 		LimitHeader aLimitHeader = (LimitHeader) auditHeader.getAuditDetail().getModelData();
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getLimitDetailService().delete(auditHeader);
+
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getLimitDetailService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getLimitDetailService().saveOrUpdate(auditHeader);
+				}
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getLimitDetailService().doApprove(auditHeader, true);
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aLimitHeader.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getLimitDetailService().saveOrUpdate(auditHeader);
+					}
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getLimitDetailService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aLimitHeader.getRecordType())) {
+						deleteNotes = true;
 					}
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getLimitDetailService().doApprove(auditHeader, true);
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aLimitHeader.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getLimitDetailService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aLimitHeader.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_LimitHeaderDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_LimitHeaderDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.limitHeader), true);
-					}
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_LimitHeaderDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LimitHeaderDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.limitHeader), true);
+				}
+			}
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 		logger.debug("return Value:" + processCompleted);

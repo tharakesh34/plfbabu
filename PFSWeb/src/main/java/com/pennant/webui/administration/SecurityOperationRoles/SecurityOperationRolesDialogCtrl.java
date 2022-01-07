@@ -71,7 +71,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.pagging.PagedListWrapper;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -652,57 +651,52 @@ public class SecurityOperationRolesDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		boolean deleteNotes = false;
 		SecurityOperation aSecurityOperation = (SecurityOperation) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
 
-				if (StringUtils.isBlank(method)) {
+				auditHeader = getSecurityOperationRolesService().saveOrUpdate(auditHeader);
+				// }
 
-					auditHeader = getSecurityOperationRolesService().saveOrUpdate(auditHeader);
-					// }
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = getSecurityOperationRolesService().doApprove(auditHeader);
+
+					if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteNotes = true;
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = getSecurityOperationRolesService().doReject(auditHeader);
+					if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
+					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getSecurityOperationRolesService().doApprove(auditHeader);
-
-						if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getSecurityOperationRolesService().doReject(auditHeader);
-						if (aSecurityOperation.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.win_Operation_Roles_Dialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.win_Operation_Roles_Dialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.securityOperation), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.win_Operation_Roles_Dialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.win_Operation_Roles_Dialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.securityOperation), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

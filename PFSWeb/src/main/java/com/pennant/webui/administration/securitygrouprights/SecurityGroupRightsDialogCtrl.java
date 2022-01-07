@@ -40,7 +40,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.administration.securityuserroles.model.SecurityGroupRightModelItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -504,24 +503,20 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				auditHeader = getSecurityGroupRightsService().save(auditHeader);
-				retValue = ErrorControl.showErrorControl(this.win_SecGroupRightsDialog, auditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			auditHeader = getSecurityGroupRightsService().save(auditHeader);
+			retValue = ErrorControl.showErrorControl(this.win_SecGroupRightsDialog, auditHeader);
 
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
-				}
-				setOverideMap(auditHeader.getOverideMap());
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
+			setOverideMap(auditHeader.getOverideMap());
 		}
 		return processCompleted;
 	}

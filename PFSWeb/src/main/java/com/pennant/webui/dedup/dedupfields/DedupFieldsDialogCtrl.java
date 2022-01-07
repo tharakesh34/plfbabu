@@ -572,7 +572,7 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 	}
 
 	protected boolean doProcess(DedupFields aDedupFields, String tranType) {
-		logger.debug("Enterring");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -650,12 +650,12 @@ public class DedupFieldsDialogCtrl extends GFCBaseCtrl<DedupFields> {
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Enterring");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 

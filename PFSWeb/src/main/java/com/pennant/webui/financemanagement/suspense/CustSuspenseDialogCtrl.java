@@ -69,7 +69,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -820,84 +819,80 @@ public class CustSuspenseDialogCtrl extends GFCBaseCtrl<Customer> {
 		Customer aCustomer = (Customer) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						// auditHeader = getCustomerService().delete(auditHeader);
-						deleteNotes = true;
-					} else {
-						getCustomerService().updateCustSuspenseDetails(aCustomer, "");
-					}
-
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					// auditHeader = getCustomerService().delete(auditHeader);
+					deleteNotes = true;
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					getCustomerService().updateCustSuspenseDetails(aCustomer, "");
+				}
 
-						if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
-							// Remove customer from Suspense mode
-							aCustomer.setCustSuspSts(false);
-							aCustomer.setCustSuspDate(null);
-							aCustomer.setCustSuspTrigger("");
+					if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 
-							// Save Customer Suspense movements
-							aCustomer.setCustSuspMvtType("N");
-							aCustomer.setCustSuspAprDate(DateUtility.getTimestamp(new Date()));
-							aCustomer.setCustSuspEffDate(DateUtility.getTimestamp(new Date()));
-							getCustomerService().saveCustSuspMovements(aCustomer);
-							deleteNotes = true;
-						}
-						// while Record Approve
-						aCustomer.setTaskId("");
-						aCustomer.setNextTaskId("");
-						aCustomer.setRoleCode("");
-						aCustomer.setNextRoleCode("");
-						aCustomer.setRecordType("");
-						aCustomer.setWorkflowId(0);
-
-						getCustomerService().updateCustSuspenseDetails(aCustomer, "");
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+						// Remove customer from Suspense mode
 						aCustomer.setCustSuspSts(false);
 						aCustomer.setCustSuspDate(null);
 						aCustomer.setCustSuspTrigger("");
-						getCustomerService().updateCustSuspenseDetails(aCustomer, "");
 
-						if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_CustSuspenseDialog, auditHeader);
-						return processCompleted;
+						// Save Customer Suspense movements
+						aCustomer.setCustSuspMvtType("N");
+						aCustomer.setCustSuspAprDate(DateUtility.getTimestamp(new Date()));
+						aCustomer.setCustSuspEffDate(DateUtility.getTimestamp(new Date()));
+						getCustomerService().saveCustSuspMovements(aCustomer);
+						deleteNotes = true;
 					}
-				}
+					// while Record Approve
+					aCustomer.setTaskId("");
+					aCustomer.setNextTaskId("");
+					aCustomer.setRoleCode("");
+					aCustomer.setNextRoleCode("");
+					aCustomer.setRecordType("");
+					aCustomer.setWorkflowId(0);
 
-				auditHeader = ErrorControl.showErrorDetails(this.window_CustSuspenseDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
+					getCustomerService().updateCustSuspenseDetails(aCustomer, "");
 
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aCustomer.setCustSuspSts(false);
+					aCustomer.setCustSuspDate(null);
+					aCustomer.setCustSuspTrigger("");
+					getCustomerService().updateCustSuspenseDetails(aCustomer, "");
 
-					if (deleteNotes) {
-						deleteNotes(getNotes(), true);
+					if (aCustomer.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
-				}
 
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+				} else {
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_CustSuspenseDialog, auditHeader);
+					return processCompleted;
 				}
 			}
 
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			auditHeader = ErrorControl.showErrorDetails(this.window_CustSuspenseDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
+
+		setOverideMap(auditHeader.getOverideMap());
 		logger.debug("Leaving");
 		return processCompleted;
 

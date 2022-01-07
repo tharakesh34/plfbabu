@@ -877,62 +877,58 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 			}
 		}
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						aAuditHeader = feeWaiverHeaderService.delete(aAuditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					aAuditHeader = feeWaiverHeaderService.delete(aAuditHeader);
+					deleteNotes = true;
+				} else {
+					aAuditHeader = feeWaiverHeaderService.saveOrUpdate(aAuditHeader);
+				}
+
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aAuditHeader = feeWaiverHeaderService.doApprove(aAuditHeader);
+
+					if (aFeeWaiverHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						aAuditHeader = feeWaiverHeaderService.saveOrUpdate(aAuditHeader);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aAuditHeader = feeWaiverHeaderService.doReject(aAuditHeader);
+
+					if (aFeeWaiverHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						aAuditHeader = feeWaiverHeaderService.doApprove(aAuditHeader);
-
-						if (aFeeWaiverHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						aAuditHeader = feeWaiverHeaderService.doReject(aAuditHeader);
-
-						if (aFeeWaiverHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_feeWaiverHeaderDialog, aAuditHeader);
-						return processCompleted;
-					}
-				}
-
-				aAuditHeader = ErrorControl.showErrorDetails(this.window_feeWaiverHeaderDialog, aAuditHeader);
-				retValue = aAuditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.feeWaiverHeader), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					aAuditHeader.setOveride(true);
-					aAuditHeader.setErrorMessage(null);
-					aAuditHeader.setInfoMessage(null);
-					aAuditHeader.setOverideMessage(null);
+					aAuditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_feeWaiverHeaderDialog, aAuditHeader);
+					return processCompleted;
 				}
 			}
 
-			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+			aAuditHeader = ErrorControl.showErrorDetails(this.window_feeWaiverHeaderDialog, aAuditHeader);
+			retValue = aAuditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.feeWaiverHeader), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				aAuditHeader.setOveride(true);
+				aAuditHeader.setErrorMessage(null);
+				aAuditHeader.setInfoMessage(null);
+				aAuditHeader.setOverideMessage(null);
+			}
 		}
+
+		setOverideMap(aAuditHeader.getOverideMap());
 		logger.debug("Leaving");
 		return processCompleted;
 	}

@@ -819,61 +819,55 @@ public class ClusterHierarcheyDialogCtrl extends GFCBaseCtrl<ClusterHierarchy> {
 		ClusterHierarchy aClusterHierarchey = (ClusterHierarchy) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = clusterHierarchyService.delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = clusterHierarchyService.saveOrUpdate(auditHeader);
+				}
 
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = clusterHierarchyService.delete(auditHeader);
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = clusterHierarchyService.doApprove(auditHeader);
+
+					if (aClusterHierarchey.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						auditHeader = clusterHierarchyService.saveOrUpdate(auditHeader);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = clusterHierarchyService.doReject(auditHeader);
+					if (aClusterHierarchey.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = clusterHierarchyService.doApprove(auditHeader);
-
-						if (aClusterHierarchey.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = clusterHierarchyService.doReject(auditHeader);
-						if (aClusterHierarchey.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						ErrorControl.showErrorControl(this.window_ClusterHierarcheyDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_ClusterHierarcheyDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.clusterHierarchey), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					ErrorControl.showErrorControl(this.window_ClusterHierarcheyDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			MessageUtil.showError(e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_ClusterHierarcheyDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.clusterHierarchey), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

@@ -62,7 +62,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1120,59 +1119,54 @@ public class AccountTypeDialogCtrl extends GFCBaseCtrl<AccountType> {
 		AccountType aAccountType = (AccountType) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getAccountTypeService().delete(auditHeader);
-						deleteNotes = true;
-					} else {
-						auditHeader = getAccountTypeService().saveOrUpdate(auditHeader);
-					}
-
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = getAccountTypeService().delete(auditHeader);
+					deleteNotes = true;
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getAccountTypeService().doApprove(auditHeader);
-
-						if (aAccountType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getAccountTypeService().doReject(auditHeader);
-						if (aAccountType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_AccountTypeDialog, auditHeader);
-						return processCompleted;
-					}
+					auditHeader = getAccountTypeService().saveOrUpdate(auditHeader);
 				}
 
-				retValue = ErrorControl.showErrorControl(this.window_AccountTypeDialog, auditHeader);
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = getAccountTypeService().doApprove(auditHeader);
 
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.accountType), true);
+					if (aAccountType.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteNotes = true;
 					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = getAccountTypeService().doReject(auditHeader);
+					if (aAccountType.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
+					}
+				} else {
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_AccountTypeDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			retValue = ErrorControl.showErrorControl(this.window_AccountTypeDialog, auditHeader);
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.accountType), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
+		setOverideMap(auditHeader.getOverideMap());
 		logger.debug("Leaving");
 		return processCompleted;
 	}

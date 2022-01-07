@@ -133,7 +133,6 @@ import com.pennant.webui.finance.financemain.stepfinance.StepDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.App;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -4142,79 +4141,73 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		FinanceDetail afinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
 		FinanceMain afinanceMain = afinanceDetail.getFinScheduleData().getFinanceMain();
 
-		try {
+		if (afinanceMain.getMaturityDate() != null && afinanceMain.getMaturityDate().compareTo(endDate) > 0) {
+			auditHeader
+					.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("Label_Exceed"), null));
+			ErrorControl.showErrorControl(this.window_WIFFinanceMainDialog, auditHeader);
+			return processCompleted;
+		}
 
-			if (afinanceMain.getMaturityDate() != null && afinanceMain.getMaturityDate().compareTo(endDate) > 0) {
-				auditHeader.setErrorDetails(
-						new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("Label_Exceed"), null));
-				ErrorControl.showErrorControl(this.window_WIFFinanceMainDialog, auditHeader);
-				return processCompleted;
-			}
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = getFinanceDetailService().delete(auditHeader, true);
+					deleteNotes = true;
+				} else {
+					auditHeader = getFinanceDetailService().saveOrUpdate(auditHeader, true);
+				}
 
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getFinanceDetailService().delete(auditHeader, true);
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = getFinanceDetailService().doApprove(auditHeader, true);
+
+					if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getFinanceDetailService().saveOrUpdate(auditHeader, true);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = getFinanceDetailService().doReject(auditHeader, true, false);
+					if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getFinanceDetailService().doApprove(auditHeader, true);
-
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getFinanceDetailService().doReject(auditHeader, true, false);
-						if (afinanceMain.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_WIFFinanceMainDialog, auditHeader);
-						return processCompleted;
-					}
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_WIFFinanceMainDialog, auditHeader);
+					return processCompleted;
 				}
+			}
 
-				auditHeader = ErrorControl.showErrorDetails(this.window_WIFFinanceMainDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
+			auditHeader = ErrorControl.showErrorDetails(this.window_WIFFinanceMainDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
 
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
 
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.financeDetail.getFinScheduleData().getFinanceMain()), true);
-					}
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.financeDetail.getFinScheduleData().getFinanceMain()), true);
 				}
+			}
 
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
 
-					if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckLimits)) {
+				if (StringUtils.trimToEmpty(method).contains(PennantConstants.method_doCheckLimits)) {
 
-						if (overideMap.containsKey("Limit")) {
-							FinanceDetail tfinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
-							tfinanceDetail.getFinScheduleData().getFinanceMain().setOverrideLimit(true);
-							auditHeader.getAuditDetail().setModelData(tfinanceDetail);
-						}
+					if (overideMap.containsKey("Limit")) {
+						FinanceDetail tfinanceDetail = (FinanceDetail) auditHeader.getAuditDetail().getModelData();
+						tfinanceDetail.getFinScheduleData().getFinanceMain().setOverrideLimit(true);
+						auditHeader.getAuditDetail().setModelData(tfinanceDetail);
 					}
 				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");

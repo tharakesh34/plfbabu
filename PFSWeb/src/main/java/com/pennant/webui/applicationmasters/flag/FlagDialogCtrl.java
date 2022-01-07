@@ -52,7 +52,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -620,7 +619,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -674,7 +673,7 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 			processCompleted = doSaveProcess(getAuditHeader(aFlag, tranType), null);
 		}
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -695,65 +694,60 @@ public class FlagDialogCtrl extends GFCBaseCtrl<Flag> {
 
 		Flag aFlag = (Flag) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getFlagService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getFlagService().saveOrUpdate(auditHeader);
+				}
 
-				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getFlagService().delete(auditHeader);
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getFlagService().doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aFlag.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getFlagService().saveOrUpdate(auditHeader);
+					}
+
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getFlagService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aFlag.getRecordType())) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getFlagService().doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aFlag.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getFlagService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aFlag.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_FlagDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_FlagDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("Flag", aFlag.getFlagCode(), aFlag.getVersion()), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_FlagDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_FlagDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes("Flag", aFlag.getFlagCode(), aFlag.getVersion()), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

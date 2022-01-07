@@ -1460,30 +1460,27 @@ public class IndicativeTermDetailDialogCtrl extends GFCBaseCtrl<IndicativeTermDe
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 		IndicativeTermDetail aIndicativeTermDetail = (IndicativeTermDetail) auditHeader.getAuditDetail().getModelData();
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-				} else {
-				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_IndTermDetailDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.indicativeTermDetail), true);
-					}
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+			} else {
+			}
+			auditHeader = ErrorControl.showErrorDetails(this.window_IndTermDetailDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.indicativeTermDetail), true);
 				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
+		setOverideMap(auditHeader.getOverideMap());
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");
 		return processCompleted;

@@ -314,25 +314,21 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				auditHeader = getSecurityUserService().changePassword(auditHeader);
-				auditHeader = ErrorControl.showErrorDetails(this.win_SecurityUserChangePasswordDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
-				}
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			auditHeader = getSecurityUserService().changePassword(auditHeader);
+			auditHeader = ErrorControl.showErrorDetails(this.win_SecurityUserChangePasswordDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
 			}
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
+		setOverideMap(auditHeader.getOverideMap());
 		return processCompleted;
 	}
 

@@ -276,7 +276,7 @@ public class FeeCalculator {
 					&& StringUtils.isNotBlank(finFeeConfig.getPercRule())) {
 				BigDecimal feeResult = BigDecimal.ZERO;
 
-				Rule feeRules = ruleDAO.getRuleByID(finFeeConfig.getPercRuleId(), "");
+				Rule feeRules = ruleDAO.getRuleByID(finFeeConfig.getReferenceId(), "");
 				if (feeRules != null) {
 					finFeeConfig.setPercRuleId(feeRules.getRuleId());
 					Map<String, String> ruleSqlMap = new HashMap<String, String>();

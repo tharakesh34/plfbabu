@@ -105,7 +105,6 @@ import com.pennant.webui.dedup.dedupparm.ShowDedupListBox;
 import com.pennant.webui.util.ButtonStatusCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -1752,51 +1751,47 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 		Facility aFacility = (Facility) auditHeader.getAuditDetail().getModelData();
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getFacilityService().delete(auditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getFacilityService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getFacilityService().saveOrUpdate(auditHeader);
+				}
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getFacilityService().doApprove(auditHeader);
+					aFacility = (Facility) auditHeader.getAuditDetail().getModelData();
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aFacility.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getFacilityService().saveOrUpdate(auditHeader);
+					}
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getFacilityService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aFacility.getRecordType())) {
+						deleteNotes = true;
 					}
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getFacilityService().doApprove(auditHeader);
-						aFacility = (Facility) auditHeader.getAuditDetail().getModelData();
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aFacility.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getFacilityService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aFacility.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_FacilityDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_FacilityDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-					if (deleteNotes) {
-						deleteNotes(getNotes("Facility", aFacility.getCAFReference(), aFacility.getVersion()), true);
-					}
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_FacilityDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			auditHeader = ErrorControl.showErrorDetails(this.window_FacilityDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+				if (deleteNotes) {
+					deleteNotes(getNotes("Facility", aFacility.getCAFReference(), aFacility.getVersion()), true);
+				}
+			}
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 		logger.debug("return Value:" + processCompleted);

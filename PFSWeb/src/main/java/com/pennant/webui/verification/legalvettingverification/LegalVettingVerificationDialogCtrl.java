@@ -81,7 +81,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.finance.financemain.DocumentDetailDialogCtrl;
 import com.pennant.webui.lmtmasters.financechecklistreference.FinanceCheckListReferenceDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
@@ -1322,52 +1321,48 @@ public class LegalVettingVerificationDialogCtrl extends GFCBaseCtrl<LegalVetting
 		int retValue = PennantConstants.porcessOVERIDE;
 		LegalVetting legalVetting = (LegalVetting) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = legalVettingService.delete(auditHeader);
+
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = legalVettingService.delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = legalVettingService.saveOrUpdate(auditHeader);
+				}
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = legalVettingService.doApprove(auditHeader);
+					if (legalVetting.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						auditHeader = legalVettingService.saveOrUpdate(auditHeader);
+					}
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = legalVettingService.doReject(auditHeader);
+					if (legalVetting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = legalVettingService.doApprove(auditHeader);
-						if (legalVetting.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = legalVettingService.doReject(auditHeader);
-						if (legalVetting.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_LegalVettingVerificationDialog,
-								auditHeader);
-						return processCompleted;
-					}
-				}
-				auditHeader = ErrorControl.showErrorDetails(this.window_LegalVettingVerificationDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.legalVetting), true);
-					}
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_LegalVettingVerificationDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error(Literal.EXCEPTION, e);
+			auditHeader = ErrorControl.showErrorDetails(this.window_LegalVettingVerificationDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.legalVetting), true);
+				}
+			}
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 		logger.debug(Literal.LEAVING);

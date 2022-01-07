@@ -1042,7 +1042,7 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 	}
 
 	protected boolean doProcess(FinCreditRevSubCategory aFinCreditRevSubCategory, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1118,12 +1118,12 @@ public class FinCreditRevSubCategoryDialogCtrl extends GFCBaseCtrl<FinCreditRevS
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;

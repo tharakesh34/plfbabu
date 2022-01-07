@@ -94,7 +94,6 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennant.webui.util.searchdialogs.MultiSelectionSearchListBox;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -2057,58 +2056,53 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		LimitFilterQuery aLimitRule = (LimitFilterQuery) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
-
-				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = getLimitRuleService().delete(auditHeader);
-						deleteNotes = true;
-					} else {
-						auditHeader = getLimitRuleService().saveOrUpdate(auditHeader);
-					}
-
+			if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = getLimitRuleService().delete(auditHeader);
+					deleteNotes = true;
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = getLimitRuleService().doApprove(auditHeader);
-						if (aLimitRule.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = getLimitRuleService().doReject(auditHeader);
-						if (aLimitRule.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_LimitRuleDialog, auditHeader);
-						return processCompleted;
-					}
+					auditHeader = getLimitRuleService().saveOrUpdate(auditHeader);
 				}
 
-				retValue = ErrorControl.showErrorControl(this.window_LimitRuleDialog, auditHeader);
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.limitRule), true);
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = getLimitRuleService().doApprove(auditHeader);
+					if (aLimitRule.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+						deleteNotes = true;
 					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = getLimitRuleService().doReject(auditHeader);
+					if (aLimitRule.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
+					}
+				} else {
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_LimitRuleDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error(e);
+
+			retValue = ErrorControl.showErrorControl(this.window_LimitRuleDialog, auditHeader);
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.limitRule), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
+		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
 		logger.debug("Leaving");

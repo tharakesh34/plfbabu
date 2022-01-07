@@ -88,7 +88,6 @@ import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.framework.web.components.SearchFilterControl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -1036,55 +1035,51 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		int retValue = PennantConstants.porcessOVERIDE;
 		ReceiptUploadHeader aReceiptUploadHeader = (ReceiptUploadHeader) auditHeader.getAuditDetail().getModelData();
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-				if (StringUtils.isBlank(method)) {
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = receiptUploadHeaderService.delete(auditHeader);
-					} else {
-						auditHeader = receiptUploadHeaderService.saveOrUpdate(auditHeader);
+			if (StringUtils.isBlank(method)) {
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = receiptUploadHeaderService.delete(auditHeader);
+				} else {
+					auditHeader = receiptUploadHeaderService.saveOrUpdate(auditHeader);
+				}
+
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					auditHeader = receiptUploadHeaderService.doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aReceiptUploadHeader.getRecordType())) {
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					auditHeader = receiptUploadHeaderService.doReject(auditHeader);
+
+					if (aReceiptUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						auditHeader = receiptUploadHeaderService.doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aReceiptUploadHeader.getRecordType())) {
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						auditHeader = receiptUploadHeaderService.doReject(auditHeader);
-
-						if (aReceiptUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_ReceiptUploadList, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_ReceiptUploadList, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_ReceiptUploadList, auditHeader);
+					return processCompleted;
 				}
 			}
-			setOverideMap(auditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_ReceiptUploadList, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
+		setOverideMap(auditHeader.getOverideMap());
 		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}

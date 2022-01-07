@@ -10481,6 +10481,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				fm.setInvestmentRef("");
 			}
 
+			fm.setCustID(main.getCustID());
+
 			if (fm.isNewRecord()) {
 				financeMainDAO.save(fm, TableType.TEMP_TAB, false);
 			} else {

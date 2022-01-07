@@ -59,7 +59,6 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -724,61 +723,56 @@ public class DeviationParamDialogCtrl extends GFCBaseCtrl<DeviationParam> {
 
 		DeviationParam aDeviationParam = (DeviationParam) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getDeviationParamService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getDeviationParamService().saveOrUpdate(auditHeader);
+				}
 
-				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getDeviationParamService().delete(auditHeader);
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getDeviationParamService().doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aDeviationParam.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getDeviationParamService().saveOrUpdate(auditHeader);
+					}
+
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getDeviationParamService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aDeviationParam.getRecordType())) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getDeviationParamService().doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aDeviationParam.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getDeviationParamService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aDeviationParam.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_DeviationParamDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_DeviationParamDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("DeviationParam", aDeviationParam.getCode(), aDeviationParam.getVersion()),
-								true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_DeviationParamDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_DeviationParamDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes("DeviationParam", aDeviationParam.getCode(), aDeviationParam.getVersion()),
+							true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

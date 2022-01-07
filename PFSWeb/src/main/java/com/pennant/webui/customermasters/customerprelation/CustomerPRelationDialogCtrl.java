@@ -1231,7 +1231,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * 
 	 */
 	protected boolean doProcess(CustomerPRelation aCustomerPRelation, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		AuditHeader auditHeader = null;
 		String nextRoleCode = "";
@@ -1304,7 +1304,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 			auditHeader = getAuditHeader(aCustomerPRelation, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -1319,7 +1319,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 	 * 
 	 */
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		CustomerPRelation aCustomerPRelation = (CustomerPRelation) auditHeader.getAuditDetail().getModelData();
@@ -1375,7 +1375,7 @@ public class CustomerPRelationDialogCtrl extends GFCBaseCtrl<CustomerPRelation> 
 		} catch (AppException e) {
 			logger.error("Exception: ", e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

@@ -1114,7 +1114,7 @@ public class ReportingManagerDialogCtrl extends GFCBaseCtrl<ReportingManager> {
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

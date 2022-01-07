@@ -863,62 +863,58 @@ public class CovenantsListCtrl extends GFCBaseCtrl<FinanceDetail> {
 				.getModelData();
 		boolean deleteNotes = false;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						aAuditHeader = finCovenantMaintanceService.delete(aAuditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					aAuditHeader = finCovenantMaintanceService.delete(aAuditHeader);
+					deleteNotes = true;
+				} else {
+					aAuditHeader = finCovenantMaintanceService.saveOrUpdate(aAuditHeader);
+				}
+
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aAuditHeader = finCovenantMaintanceService.doApprove(aAuditHeader);
+
+					if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						aAuditHeader = finCovenantMaintanceService.saveOrUpdate(aAuditHeader);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aAuditHeader = finCovenantMaintanceService.doReject(aAuditHeader);
+
+					if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						aAuditHeader = finCovenantMaintanceService.doApprove(aAuditHeader);
-
-						if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						aAuditHeader = finCovenantMaintanceService.doReject(aAuditHeader);
-
-						if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.covenantListWindow, aAuditHeader);
-						return processCompleted;
-					}
-				}
-
-				aAuditHeader = ErrorControl.showErrorDetails(this.covenantListWindow, aAuditHeader);
-				retValue = aAuditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.finMaintainInstruction), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					aAuditHeader.setOveride(true);
-					aAuditHeader.setErrorMessage(null);
-					aAuditHeader.setInfoMessage(null);
-					aAuditHeader.setOverideMessage(null);
+					aAuditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.covenantListWindow, aAuditHeader);
+					return processCompleted;
 				}
 			}
 
-			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			aAuditHeader = ErrorControl.showErrorDetails(this.covenantListWindow, aAuditHeader);
+			retValue = aAuditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.finMaintainInstruction), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				aAuditHeader.setOveride(true);
+				aAuditHeader.setErrorMessage(null);
+				aAuditHeader.setInfoMessage(null);
+				aAuditHeader.setOverideMessage(null);
+			}
 		}
+
+		setOverideMap(aAuditHeader.getOverideMap());
 		logger.debug("Leaving");
 		return processCompleted;
 	}
