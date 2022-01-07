@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -321,39 +320,33 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
 			// searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
-			if (StringUtils.equals(module, FinanceConstants.REALIZATION_APPROVER)
-					|| StringUtils.equals(module, FinanceConstants.RECEIPT_APPROVER)) {
+			if (FinanceConstants.REALIZATION_APPROVER.equals(module)
+					|| FinanceConstants.RECEIPT_APPROVER.equals(module)) {
 				List<String> filterList = new ArrayList<>();
 
-				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.REALIZATION_APPROVER)) {
+				Set<String> userRoleSet = getUserWorkspace().getUserRoleSet();
+
+				if (userRoleSet.contains(FinanceConstants.REALIZATION_APPROVER)) {
 					filterList.add(FinanceConstants.REALIZATION_APPROVER);
 				}
 
-				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.RECEIPT_APPROVER)) {
+				if (userRoleSet.contains(FinanceConstants.RECEIPT_APPROVER)) {
 					filterList.add(FinanceConstants.RECEIPT_APPROVER);
 				}
 
 				searchObject.addFilterIn("NEXTROLECODE", filterList);
 				searchObject.addWhereClause(" PAYAGAINSTID = 0");
 
-				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.REALIZATION_APPROVER)) {
-					filterList.add(FinanceConstants.REALIZATION_APPROVER);
-				}
-
-				if (getUserWorkspace().getUserRoleSet().contains(FinanceConstants.RECEIPT_APPROVER)) {
-					filterList.add(FinanceConstants.RECEIPT_APPROVER);
-				}
-
-			} else if (StringUtils.equals(module, FinanceConstants.REALIZATION_MAKER)) {
+			} else if (FinanceConstants.REALIZATION_MAKER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID = 0 AND ((RECEIPTMODESTATUS IN ('R', 'D')  AND RECEIPTPURPOSE = 'SchdlRepayment' and ((NEXTROLECODE is null Or NEXTROLECODE = '') or NEXTROLECODE='REALIZATION_MAKER')) OR NEXTROLECODE ='"
 								+ module + "')");
 
-			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_MAKER)) {
+			} else if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment' and ((RECEIPTMODESTATUS = 'R' and ReceiptMode != 'ADVINT' and (NEXTROLECODE is null Or NEXTROLECODE = '')) or NEXTROLECODE='"
 								+ module + "')");
-			} else if (StringUtils.equals(module, FinanceConstants.KNOCKOFFCAN_APPROVER)) {
+			} else if (FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 				searchObject.addWhereClause(
 						" PAYAGAINSTID > 0 And RECEIPTPURPOSE = 'SchdlRepayment'  and (NEXTROLECODE='" + module + "')");
 			} else {
@@ -362,12 +355,21 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					searchObject.addWhereClause(" PAYAGAINSTID = 0");
 				}
 			}
-			List<Long> receiptIdList = receiptService.getInProcessMultiReceiptRecord();
-			if (receiptIdList != null && CollectionUtils.isNotEmpty(receiptIdList)) {
-				Filter fil = new Filter("ReceiptID", receiptIdList, Filter.OP_NOT_IN);
-				searchObject.addFilter(fil);
+
+			if (searchObject.getWhereClause() == null) {
+				searchObject.addWhereClause(" PAYAGAINSTID = 0");
 			}
+
+			searchObject
+					.addWhereClause(" ReceiptID not in (Select ReceiptId From FinReceiptQueueLog Where Progress = 0)");
+
+			/*
+			 * List<Long> receiptIdList = receiptService.getInProcessMultiReceiptRecord(); if (receiptIdList != null &&
+			 * CollectionUtils.isNotEmpty(receiptIdList)) { Filter fil = new Filter("ReceiptID", receiptIdList,
+			 * Filter.OP_NOT_IN); searchObject.addFilter(fil); }
+			 */
 		}
+
 		searchObject.addFilter(
 				new Filter("ReceiptPurpose", RepayConstants.NONLAN_RECEIPT_NOTAPPLICABLE, Filter.OP_NOT_EQUAL));
 		logger.debug("Leaving");
