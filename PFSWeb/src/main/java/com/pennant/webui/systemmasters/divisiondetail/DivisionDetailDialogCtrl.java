@@ -58,7 +58,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -845,61 +844,57 @@ public class DivisionDetailDialogCtrl extends GFCBaseCtrl<DivisionDetail> {
 
 		DivisionDetail aDivisionDetail = (DivisionDetail) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getDivisionDetailService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getDivisionDetailService().saveOrUpdate(auditHeader);
+				}
 
-				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getDivisionDetailService().delete(auditHeader);
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getDivisionDetailService().doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aDivisionDetail.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getDivisionDetailService().saveOrUpdate(auditHeader);
+					}
+
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getDivisionDetailService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aDivisionDetail.getRecordType())) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getDivisionDetailService().doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aDivisionDetail.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getDivisionDetailService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aDivisionDetail.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_DivisionDetailDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_DivisionDetailDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("DivisionDetail", aDivisionDetail.getDivisionCode(),
-								aDivisionDetail.getVersion()), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_DivisionDetailDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_DivisionDetailDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(
+							getNotes("DivisionDetail", aDivisionDetail.getDivisionCode(), aDivisionDetail.getVersion()),
+							true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

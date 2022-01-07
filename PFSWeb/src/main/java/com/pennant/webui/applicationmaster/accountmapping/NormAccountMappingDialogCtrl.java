@@ -27,7 +27,6 @@ import com.pennant.component.Uppercasebox;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -709,62 +708,58 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 		AccountMapping aAccountMapping = (AccountMapping) aAuditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						aAuditHeader = accountMappingService.delete(aAuditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					aAuditHeader = accountMappingService.delete(aAuditHeader);
+					deleteNotes = true;
+				} else {
+					aAuditHeader = accountMappingService.saveOrUpdate(aAuditHeader);
+				}
+
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aAuditHeader = accountMappingService.doApprove(aAuditHeader);
+
+					if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						aAuditHeader = accountMappingService.saveOrUpdate(aAuditHeader);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aAuditHeader = accountMappingService.doReject(aAuditHeader);
+
+					if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						aAuditHeader = accountMappingService.doApprove(aAuditHeader);
-
-						if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						aAuditHeader = accountMappingService.doReject(aAuditHeader);
-
-						if (aAccountMapping.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_NormAccountMappingDialog, aAuditHeader);
-						return processCompleted;
-					}
-				}
-
-				aAuditHeader = ErrorControl.showErrorDetails(this.window_NormAccountMappingDialog, aAuditHeader);
-				retValue = aAuditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.accountMapping), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					aAuditHeader.setOveride(true);
-					aAuditHeader.setErrorMessage(null);
-					aAuditHeader.setInfoMessage(null);
-					aAuditHeader.setOverideMessage(null);
+					aAuditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_NormAccountMappingDialog, aAuditHeader);
+					return processCompleted;
 				}
 			}
 
-			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			aAuditHeader = ErrorControl.showErrorDetails(this.window_NormAccountMappingDialog, aAuditHeader);
+			retValue = aAuditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.accountMapping), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				aAuditHeader.setOveride(true);
+				aAuditHeader.setErrorMessage(null);
+				aAuditHeader.setInfoMessage(null);
+				aAuditHeader.setOverideMessage(null);
+			}
 		}
+
+		setOverideMap(aAuditHeader.getOverideMap());
 		logger.debug("Leaving");
 		return processCompleted;
 	}

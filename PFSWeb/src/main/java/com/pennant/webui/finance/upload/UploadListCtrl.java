@@ -73,7 +73,6 @@ import com.pennant.webui.finance.upload.model.UploadListModelItemRenderer;
 import com.pennant.webui.util.GFCBaseListCtrl;
 import com.pennanttech.framework.core.SearchOperator.Operators;
 import com.pennanttech.framework.core.constants.SortOrder;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -693,40 +692,35 @@ public class UploadListCtrl extends GFCBaseListCtrl<UploadHeader> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		AuditHeader aAuditHeader = auditHeader;
 
-		try {
-			if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+		if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
 
-				aAuditHeader = uploadHeaderService.doApprove(aAuditHeader);
+			aAuditHeader = uploadHeaderService.doApprove(aAuditHeader);
 
-			} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-				aAuditHeader = uploadHeaderService.doReject(aAuditHeader);
+		} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+			aAuditHeader = uploadHeaderService.doReject(aAuditHeader);
 
-			} else {
-				aAuditHeader.setErrorDetails(
-						new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-				retValue = ErrorControl.showErrorControl(this.window_UploadList, aAuditHeader);
-				return processCompleted;
-			}
-
-			aAuditHeader = ErrorControl.showErrorDetails(this.window_UploadList, aAuditHeader);
-			retValue = aAuditHeader.getProcessStatus();
-
-			if (retValue == PennantConstants.porcessCONTINUE) {
-				processCompleted = true;
-			}
-
-			if (retValue == PennantConstants.porcessOVERIDE) {
-				aAuditHeader.setOveride(true);
-				aAuditHeader.setErrorMessage(null);
-				aAuditHeader.setInfoMessage(null);
-				aAuditHeader.setOverideMessage(null);
-			}
-
-			setOverideMap(aAuditHeader.getOverideMap());
-
-		} catch (AppException e) {
-			logger.error(Literal.EXCEPTION, e);
+		} else {
+			aAuditHeader.setErrorDetails(
+					new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+			retValue = ErrorControl.showErrorControl(this.window_UploadList, aAuditHeader);
+			return processCompleted;
 		}
+
+		aAuditHeader = ErrorControl.showErrorDetails(this.window_UploadList, aAuditHeader);
+		retValue = aAuditHeader.getProcessStatus();
+
+		if (retValue == PennantConstants.porcessCONTINUE) {
+			processCompleted = true;
+		}
+
+		if (retValue == PennantConstants.porcessOVERIDE) {
+			aAuditHeader.setOveride(true);
+			aAuditHeader.setErrorMessage(null);
+			aAuditHeader.setInfoMessage(null);
+			aAuditHeader.setOverideMessage(null);
+		}
+
+		setOverideMap(aAuditHeader.getOverideMap());
 
 		logger.debug(Literal.LEAVING);
 

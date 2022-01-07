@@ -55,7 +55,6 @@ import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -703,7 +702,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -718,7 +717,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	 */
 
 	protected boolean doProcess(VASProductType aVASProductType, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		aVASProductType.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
 		aVASProductType.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -757,7 +756,7 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 			processCompleted = doSaveProcess(getAuditHeader(aVASProductType, tranType), null);
 		}
 		logger.debug("return value :" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -771,73 +770,69 @@ public class VASProductTypeDialogCtrl extends GFCBaseCtrl<VASProductType> {
 	 */
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
 		boolean deleteNotes = false;
 
 		VASProductType aVASProductType = (VASProductType) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getVASProductTypeService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getVASProductTypeService().saveOrUpdate(auditHeader);
+				}
 
-				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getVASProductTypeService().delete(auditHeader);
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getVASProductTypeService().doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aVASProductType.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getVASProductTypeService().saveOrUpdate(auditHeader);
+					}
+
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getVASProductTypeService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aVASProductType.getRecordType())) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getVASProductTypeService().doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aVASProductType.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getVASProductTypeService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aVASProductType.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_VASProductTypeDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_VASProductTypeDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("VASProductType", aVASProductType.getProductType(),
-								aVASProductType.getVersion()), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_VASProductTypeDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_VASProductTypeDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(
+							getNotes("VASProductType", aVASProductType.getProductType(), aVASProductType.getVersion()),
+							true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

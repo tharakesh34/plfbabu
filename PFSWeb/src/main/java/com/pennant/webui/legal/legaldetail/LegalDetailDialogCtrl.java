@@ -105,7 +105,6 @@ import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.webui.finance.financemain.FinCovenantTypeListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.engine.workflow.Operation;
 import com.pennanttech.pennapps.core.engine.workflow.ProcessUtil;
 import com.pennanttech.pennapps.core.engine.workflow.model.ServiceTask;
@@ -1365,59 +1364,56 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		int retValue = PennantConstants.porcessOVERIDE;
 		LegalDetail aLegalDetail = (LegalDetail) auditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				switch (Operation.methodOf(operation)) {
-				case DEFAULT:
-					if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						auditHeader = legalDetailService.delete(auditHeader);
-						deleteNotes = true;
-					} else {
-						auditHeader = legalDetailService.saveOrUpdate(auditHeader);
-					}
 
-					break;
-				case APPROVE:
-					auditHeader = legalDetailService.doApprove(auditHeader);
-
-					if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-						deleteNotes = true;
-					}
-
-					break;
-				case REJECT:
-					auditHeader = legalDetailService.doReject(auditHeader);
-
-					if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-						deleteNotes = true;
-					}
-
-					break;
-				default:
-					auditHeader.setErrorDetails(
-							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
-					retValue = ErrorControl.showErrorControl(this.window_LegalDetailDialog, auditHeader);
-
-					return processCompleted;
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			switch (Operation.methodOf(operation)) {
+			case DEFAULT:
+				if (auditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					auditHeader = legalDetailService.delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = legalDetailService.saveOrUpdate(auditHeader);
 				}
 
-				auditHeader = ErrorControl.showErrorDetails(this.window_LegalDetailDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.legalDetail), true);
-					}
+				break;
+			case APPROVE:
+				auditHeader = legalDetailService.doApprove(auditHeader);
+
+				if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
+					deleteNotes = true;
 				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+
+				break;
+			case REJECT:
+				auditHeader = legalDetailService.doReject(auditHeader);
+
+				if (aLegalDetail.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+					deleteNotes = true;
+				}
+
+				break;
+			default:
+				auditHeader.setErrorDetails(
+						new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+				retValue = ErrorControl.showErrorControl(this.window_LegalDetailDialog, auditHeader);
+
+				return processCompleted;
+			}
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_LegalDetailDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.legalDetail), true);
 				}
 			}
-		} catch (AppException e) {
-			logger.error(Literal.EXCEPTION, e);
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 

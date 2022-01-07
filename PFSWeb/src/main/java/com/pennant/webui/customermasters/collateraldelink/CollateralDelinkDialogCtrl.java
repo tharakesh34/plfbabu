@@ -78,7 +78,6 @@ import com.pennant.webui.finance.financemain.FinBasicDetailsCtrl;
 import com.pennant.webui.finance.financemain.FinanceMainBaseCtrl;
 import com.pennant.webui.finance.financemain.FinanceSelectCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -398,7 +397,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		} catch (Exception e) {
 			MessageUtil.showError(e);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	public void doWriteBeanToComponents() {
@@ -499,7 +498,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 			auditHeader = getAuditHeader(aFinMaintainInstruction, tranType);
 			processCompleted = doSaveProcess(auditHeader, null);
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
@@ -520,63 +519,59 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 				.getModelData();
 		boolean deleteNotes = false;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						aAuditHeader = finCollateralDelinkService.delete(aAuditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					aAuditHeader = finCollateralDelinkService.delete(aAuditHeader);
+					deleteNotes = true;
+				} else {
+					aAuditHeader = finCollateralDelinkService.saveOrUpdate(aAuditHeader);
+				}
+
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aAuditHeader = finCollateralDelinkService.doApprove(aAuditHeader);
+
+					if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						aAuditHeader = finCollateralDelinkService.saveOrUpdate(aAuditHeader);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aAuditHeader = finCollateralDelinkService.doReject(aAuditHeader);
+
+					if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						aAuditHeader = finCollateralDelinkService.doApprove(aAuditHeader);
-
-						if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						aAuditHeader = finCollateralDelinkService.doReject(aAuditHeader);
-
-						if (aFinMaintainInstruction.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_CollateralDelinkDialog, aAuditHeader);
-						return processCompleted;
-					}
-				}
-
-				aAuditHeader = ErrorControl.showErrorDetails(this.window_CollateralDelinkDialog, aAuditHeader);
-				retValue = aAuditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.finMaintainInstruction), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					aAuditHeader.setOveride(true);
-					aAuditHeader.setErrorMessage(null);
-					aAuditHeader.setInfoMessage(null);
-					aAuditHeader.setOverideMessage(null);
+					aAuditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_CollateralDelinkDialog, aAuditHeader);
+					return processCompleted;
 				}
 			}
 
-			setOverideMap(aAuditHeader.getOverideMap());
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			aAuditHeader = ErrorControl.showErrorDetails(this.window_CollateralDelinkDialog, aAuditHeader);
+			retValue = aAuditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.finMaintainInstruction), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				aAuditHeader.setOveride(true);
+				aAuditHeader.setErrorMessage(null);
+				aAuditHeader.setInfoMessage(null);
+				aAuditHeader.setOverideMessage(null);
+			}
 		}
-		logger.debug("Leaving");
+
+		setOverideMap(aAuditHeader.getOverideMap());
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

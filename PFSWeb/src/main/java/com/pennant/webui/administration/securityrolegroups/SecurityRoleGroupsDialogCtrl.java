@@ -705,25 +705,21 @@ public class SecurityRoleGroupsDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 		logger.debug("Entering ");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-				auditHeader = getSecurityRoleGroupsService().save(auditHeader);
-				auditHeader = ErrorControl.showErrorDetails(this.win_SecRoleGroupsDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-				}
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
-				}
-				setOverideMap(auditHeader.getOverideMap());
+			auditHeader = getSecurityRoleGroupsService().save(auditHeader);
+			auditHeader = ErrorControl.showErrorDetails(this.win_SecRoleGroupsDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
 			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
+			setOverideMap(auditHeader.getOverideMap());
 		}
 		logger.debug("Leaving ");
 		return processCompleted;

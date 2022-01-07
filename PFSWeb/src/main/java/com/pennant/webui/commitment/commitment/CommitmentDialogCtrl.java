@@ -2671,7 +2671,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		} catch (DataAccessException e) {
 			MessageUtil.showError(e);
 		}
-
+		logger.debug(Literal.LEAVING);
 	}
 
 	/**
@@ -2933,7 +2933,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 */
 
 	protected boolean doProcess(Commitment aCommitment, String tranType) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		aCommitment.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
@@ -2984,12 +2984,12 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 		logger.debug("return value :" + processCompleted);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 
 	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -2997,72 +2997,66 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 		Commitment aCommitment = (Commitment) auditHeader.getAuditDetail().getModelData();
 
-		try {
+		while (retValue == PennantConstants.porcessOVERIDE) {
 
-			while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = getCommitmentService().delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = getCommitmentService().saveOrUpdate(auditHeader);
+				}
 
-				if (StringUtils.isBlank(method)) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = getCommitmentService().delete(auditHeader);
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getCommitmentService().doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aCommitment.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = getCommitmentService().saveOrUpdate(auditHeader);
+					}
+
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = getCommitmentService().doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aCommitment.getRecordType())) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getCommitmentService().doApprove(auditHeader);
+					// auditHeader.setErrorDetails(new
+					// ErrorDetails(PennantConstants.ERR_9999,
+					// Labels.getLabel("InvalidWorkFlowMethod"),
+					// null,PennantConstants.ERR_SEV_ERROR));
+					auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
+							Labels.getLabel("InvalidWorkFlowMethod"), null, null));
 
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aCommitment.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = getCommitmentService().doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aCommitment.getRecordType())) {
-							deleteNotes = true;
-						}
-
-					} else {
-						// auditHeader.setErrorDetails(new
-						// ErrorDetails(PennantConstants.ERR_9999,
-						// Labels.getLabel("InvalidWorkFlowMethod"),
-						// null,PennantConstants.ERR_SEV_ERROR));
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null, null));
-
-						retValue = ErrorControl.showErrorControl(this.window_CommitmentDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_CommitmentDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("Commitment", aCommitment.getCmtReference(), aCommitment.getVersion()),
-								true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					retValue = ErrorControl.showErrorControl(this.window_CommitmentDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (Exception e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_CommitmentDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes("Commitment", aCommitment.getCmtReference(), aCommitment.getVersion()), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 		setOverideMap(auditHeader.getOverideMap());
 
 		logger.debug("return Value:" + processCompleted);
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 		return processCompleted;
 	}
 

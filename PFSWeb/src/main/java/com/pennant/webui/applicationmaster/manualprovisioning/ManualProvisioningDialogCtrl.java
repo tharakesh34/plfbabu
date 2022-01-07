@@ -55,7 +55,6 @@ import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.constraint.PTListValidator;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -914,61 +913,57 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 		Provision aProvision = (Provision) aAuditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						aAuditHeader = this.provisionService.delete(aAuditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					aAuditHeader = this.provisionService.delete(aAuditHeader);
+					deleteNotes = true;
+				} else {
+					aAuditHeader = this.provisionService.saveOrUpdate(aAuditHeader);
+				}
+
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+					aAuditHeader = this.provisionService.doApprove(aAuditHeader);
+
+					if (aProvision.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						aAuditHeader = this.provisionService.saveOrUpdate(aAuditHeader);
+					}
+
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aAuditHeader = this.provisionService.doReject(aAuditHeader);
+
+					if (aProvision.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-						aAuditHeader = this.provisionService.doApprove(aAuditHeader);
-
-						if (aProvision.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						aAuditHeader = this.provisionService.doReject(aAuditHeader);
-
-						if (aProvision.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-
-					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_ManualProvisioningDialog, aAuditHeader);
-						return processCompleted;
-					}
-				}
-
-				aAuditHeader = ErrorControl.showErrorDetails(this.window_ManualProvisioningDialog, aAuditHeader);
-				retValue = aAuditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.provision), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					aAuditHeader.setOveride(true);
-					aAuditHeader.setErrorMessage(null);
-					aAuditHeader.setInfoMessage(null);
-					aAuditHeader.setOverideMessage(null);
+					aAuditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_ManualProvisioningDialog, aAuditHeader);
+					return processCompleted;
 				}
 			}
 
-		} catch (AppException e) {
-			logger.error(Literal.EXCEPTION, e);
+			aAuditHeader = ErrorControl.showErrorDetails(this.window_ManualProvisioningDialog, aAuditHeader);
+			retValue = aAuditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.provision), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				aAuditHeader.setOveride(true);
+				aAuditHeader.setErrorMessage(null);
+				aAuditHeader.setInfoMessage(null);
+				aAuditHeader.setOverideMessage(null);
+			}
 		}
+
 		setOverideMap(aAuditHeader.getOverideMap());
 		logger.debug(Literal.LEAVING);
 		return processCompleted;

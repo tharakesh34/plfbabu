@@ -100,7 +100,6 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.rmtmasters.financetype.FinTypeAccountingListCtrl;
 import com.pennant.webui.rmtmasters.financetype.FinTypeFeesListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
@@ -2264,56 +2263,51 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 
 		Promotion aPromotion = (Promotion) auditHeader.getAuditDetail().getModelData();
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
-					if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
-						auditHeader = this.promotionService.delete(auditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.trimToEmpty(method).equalsIgnoreCase("")) {
+				if (PennantConstants.TRAN_DEL.equals(auditHeader.getAuditTranType())) {
+					auditHeader = this.promotionService.delete(auditHeader);
+					deleteNotes = true;
+				} else {
+					auditHeader = this.promotionService.saveOrUpdate(auditHeader);
+				}
+			} else {
+				if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = this.promotionService.doApprove(auditHeader);
+
+					if (PennantConstants.RECORD_TYPE_DEL.equals(aPromotion.getRecordType())) {
 						deleteNotes = true;
-					} else {
-						auditHeader = this.promotionService.saveOrUpdate(auditHeader);
+					}
+				} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
+					auditHeader = this.promotionService.doReject(auditHeader);
+					if (PennantConstants.RECORD_TYPE_NEW.equals(aPromotion.getRecordType())) {
+						deleteNotes = true;
 					}
 				} else {
-					if (PennantConstants.method_doApprove.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = this.promotionService.doApprove(auditHeader);
-
-						if (PennantConstants.RECORD_TYPE_DEL.equals(aPromotion.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else if (PennantConstants.method_doReject.equalsIgnoreCase(StringUtils.trimToEmpty(method))) {
-						auditHeader = this.promotionService.doReject(auditHeader);
-						if (PennantConstants.RECORD_TYPE_NEW.equals(aPromotion.getRecordType())) {
-							deleteNotes = true;
-						}
-					} else {
-						auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_PromotionDialog, auditHeader);
-						return processCompleted;
-					}
-				}
-
-				auditHeader = ErrorControl.showErrorDetails(this.window_PromotionDialog, auditHeader);
-				retValue = auditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes("Promotion", aPromotion.getPromotionCode(), aPromotion.getVersion()),
-								true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					auditHeader.setOveride(true);
-					auditHeader.setErrorMessage(null);
-					auditHeader.setInfoMessage(null);
-					auditHeader.setOverideMessage(null);
+					auditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_PromotionDialog, auditHeader);
+					return processCompleted;
 				}
 			}
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+
+			auditHeader = ErrorControl.showErrorDetails(this.window_PromotionDialog, auditHeader);
+			retValue = auditHeader.getProcessStatus();
+
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes("Promotion", aPromotion.getPromotionCode(), aPromotion.getVersion()), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				auditHeader.setOveride(true);
+				auditHeader.setErrorMessage(null);
+				auditHeader.setInfoMessage(null);
+				auditHeader.setOverideMessage(null);
+			}
 		}
 
 		setOverideMap(auditHeader.getOverideMap());

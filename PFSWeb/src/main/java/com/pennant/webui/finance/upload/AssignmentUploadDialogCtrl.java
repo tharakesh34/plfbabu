@@ -61,7 +61,6 @@ import com.pennant.util.ErrorControl;
 import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
-import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -1288,65 +1287,60 @@ public class AssignmentUploadDialogCtrl extends GFCBaseCtrl<UploadHeader> {
 		UploadHeader aUploadHeader = (UploadHeader) aAuditHeader.getAuditDetail().getModelData();
 		boolean deleteNotes = false;
 
-		try {
-			while (retValue == PennantConstants.porcessOVERIDE) {
-				if (StringUtils.isBlank(method)) {
-					if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
-						aAuditHeader = uploadHeaderService.delete(aAuditHeader);
+		while (retValue == PennantConstants.porcessOVERIDE) {
+			if (StringUtils.isBlank(method)) {
+				if (aAuditHeader.getAuditTranType().equals(PennantConstants.TRAN_DEL)) {
+					aAuditHeader = uploadHeaderService.delete(aAuditHeader);
+					deleteNotes = true;
+				} else {
+					aAuditHeader = uploadHeaderService.saveOrUpdate(aAuditHeader);
+				}
+			} else {
+				if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
+
+					if (!uploadHeader.isFileDownload()
+							&& !PennantConstants.RECORD_TYPE_DEL.equals(aUploadHeader.getRecordType())) {
+						throw new InterfaceException("Error", "File should be downloaded at least once.");
+					}
+
+					aAuditHeader = uploadHeaderService.doApprove(aAuditHeader);
+					if (aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 						deleteNotes = true;
-					} else {
-						aAuditHeader = uploadHeaderService.saveOrUpdate(aAuditHeader);
+					}
+				} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
+					aAuditHeader = uploadHeaderService.doReject(aAuditHeader);
+
+					if (aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
+						deleteNotes = true;
 					}
 				} else {
-					if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doApprove)) {
-
-						if (!uploadHeader.isFileDownload()
-								&& !PennantConstants.RECORD_TYPE_DEL.equals(aUploadHeader.getRecordType())) {
-							throw new InterfaceException("Error", "File should be downloaded at least once.");
-						}
-
-						aAuditHeader = uploadHeaderService.doApprove(aAuditHeader);
-						if (aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
-							deleteNotes = true;
-						}
-					} else if (StringUtils.trimToEmpty(method).equalsIgnoreCase(PennantConstants.method_doReject)) {
-						aAuditHeader = uploadHeaderService.doReject(aAuditHeader);
-
-						if (aUploadHeader.getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
-							deleteNotes = true;
-						}
-					} else {
-						aAuditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_9999,
-								Labels.getLabel("InvalidWorkFlowMethod"), null));
-						retValue = ErrorControl.showErrorControl(this.window_AssignmentUploadDialog, aAuditHeader);
-						return processCompleted;
-					}
-				}
-
-				aAuditHeader = ErrorControl.showErrorDetails(this.window_AssignmentUploadDialog, aAuditHeader);
-				retValue = aAuditHeader.getProcessStatus();
-
-				if (retValue == PennantConstants.porcessCONTINUE) {
-					processCompleted = true;
-
-					if (deleteNotes) {
-						deleteNotes(getNotes(this.uploadHeader), true);
-					}
-				}
-
-				if (retValue == PennantConstants.porcessOVERIDE) {
-					aAuditHeader.setOveride(true);
-					aAuditHeader.setErrorMessage(null);
-					aAuditHeader.setInfoMessage(null);
-					aAuditHeader.setOverideMessage(null);
+					aAuditHeader.setErrorDetails(
+							new ErrorDetail(PennantConstants.ERR_9999, Labels.getLabel("InvalidWorkFlowMethod"), null));
+					retValue = ErrorControl.showErrorControl(this.window_AssignmentUploadDialog, aAuditHeader);
+					return processCompleted;
 				}
 			}
 
-			setOverideMap(aAuditHeader.getOverideMap());
+			aAuditHeader = ErrorControl.showErrorDetails(this.window_AssignmentUploadDialog, aAuditHeader);
+			retValue = aAuditHeader.getProcessStatus();
 
-		} catch (AppException e) {
-			logger.error("Exception: ", e);
+			if (retValue == PennantConstants.porcessCONTINUE) {
+				processCompleted = true;
+
+				if (deleteNotes) {
+					deleteNotes(getNotes(this.uploadHeader), true);
+				}
+			}
+
+			if (retValue == PennantConstants.porcessOVERIDE) {
+				aAuditHeader.setOveride(true);
+				aAuditHeader.setErrorMessage(null);
+				aAuditHeader.setInfoMessage(null);
+				aAuditHeader.setOverideMessage(null);
+			}
 		}
+
+		setOverideMap(aAuditHeader.getOverideMap());
 
 		logger.debug(Literal.LEAVING);
 
