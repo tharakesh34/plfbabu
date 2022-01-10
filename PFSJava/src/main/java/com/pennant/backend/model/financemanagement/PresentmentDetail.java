@@ -64,6 +64,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 	@XmlElement(name = "instDate")
 	private Date schDate;
 	private Date defSchdDate;
+	private Date originalSchDate;
 	private long mandateId;
 	private BigDecimal schAmtDue;
 	private BigDecimal schPriDue;
@@ -153,6 +154,7 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 		entity.setHostReference(this.hostReference);
 		entity.setSchDate(this.schDate);
 		entity.setDefSchdDate(this.defSchdDate);
+		entity.setOriginalSchDate(this.originalSchDate);
 		entity.setMandateId(this.mandateId);
 		entity.setSchAmtDue(this.schAmtDue);
 		entity.setSchPriDue(this.schPriDue);
@@ -313,6 +315,14 @@ public class PresentmentDetail extends AbstractWorkflowEntity {
 
 	public void setDefSchdDate(Date defSchdDate) {
 		this.defSchdDate = defSchdDate;
+	}
+
+	public Date getOriginalSchDate() {
+		return originalSchDate;
+	}
+
+	public void setOriginalSchDate(Date originalSchDate) {
+		this.originalSchDate = originalSchDate;
 	}
 
 	public BigDecimal getSchAmtDue() {

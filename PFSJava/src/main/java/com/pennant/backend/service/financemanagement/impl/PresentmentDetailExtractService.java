@@ -119,7 +119,14 @@ public class PresentmentDetailExtractService {
 			return;
 		}
 
+		for (PresentmentDetail pd : includeList) {
+			if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
+				pd.setSchDate(pd.getOriginalSchDate());
+			}
+		}
+
 		presentmentDetailDAO.updateSchdWithPresentmentId(includeList);
+
 		if (MandateConstants.TYPE_PDC.equals(ph.getMandateType())) {
 			chequeDetailDAO.updateChequeStatus(includeList);
 		}
@@ -199,6 +206,7 @@ public class PresentmentDetailExtractService {
 		}
 
 		if (FinanceConstants.FLAG_HOLDEMI.equals(pd.getBpiOrHoliday())) {
+			pd.setOriginalSchDate(pd.getSchDate());
 			pd.setSchDate(pd.getDefSchdDate());
 		}
 
