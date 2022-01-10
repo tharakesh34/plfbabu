@@ -111,7 +111,10 @@ public class LinkedFinancesServiceImpl extends GenericService<FinanceDetail> imp
 			fmi.setEvent(FinServiceEvent.LINKDELINK);
 			// Setting work FLow Details for child
 			for (LinkedFinances linkedFin : fd.getLinkedFinancesList()) {
-				linkedFin.setNewRecord(linkedFin.isNewRecord());
+				if (!linkedFin.isNewRecord()) {
+					linkedFin.setNewRecord(fmi.isNewRecord());
+				}
+
 				linkedFin.setRoleCode(fmi.getRoleCode());
 				linkedFin.setNextRoleCode(fmi.getNextRoleCode());
 				linkedFin.setTaskId(fmi.getTaskId());

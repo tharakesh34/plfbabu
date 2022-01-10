@@ -1909,7 +1909,7 @@ public class PresentmentDetailDAOImpl extends SequenceDao<PresentmentHeader> imp
 
 	@Override
 	public List<String> getStatusListByHeader(Long id) {
-		String sql = "Select Status From PresentmentDetails Where PresentmentID = ? and PresentmentAmt > ?";
+		String sql = "Select Status From PresentmentDetails Where PresentmentID = ? and ExcludeReason = ?";
 
 		logger.debug(Literal.SQL + sql);
 
