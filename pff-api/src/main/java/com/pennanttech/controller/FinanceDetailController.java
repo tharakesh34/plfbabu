@@ -637,10 +637,19 @@ public class FinanceDetailController extends SummaryDetailService {
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
 			return response;
 		}
+
 		logger.debug(Literal.LEAVING);
 
 		return response;
 
+	}
+
+	public void setFinanceDetailService(FinanceDetailService financeDetailService) {
+		this.financeDetailService = financeDetailService;
+	}
+
+	public void setFeeDetailService(FeeDetailService feeDetailService) {
+		this.feeDetailService = feeDetailService;
 	}
 
 }

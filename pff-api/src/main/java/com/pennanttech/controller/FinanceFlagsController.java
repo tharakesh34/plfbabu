@@ -179,4 +179,8 @@ public class FinanceFlagsController extends ExtendedTestClass {
 		this.financeFlagsService = financeFlagsService;
 	}
 
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }
