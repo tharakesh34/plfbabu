@@ -57,6 +57,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.cache.util.AccountingConfigCache;
 import com.pennant.cache.util.FinanceConfigCache;
+import com.pennanttech.dataengine.model.DataEngineLog;
 import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.pennapps.core.AppException;
@@ -569,7 +570,14 @@ public class PresentmentResponseProcess implements Runnable {
 		}
 		presentmentDetailDAO.logRespDetailError(headerId, pd.getId(), errorCode, errorDesc);
 
-		presentmentDetailDAO.updateDataEngineLog(deStatus.getId(), pd.getPresentmentRef(), errorCode, errorDesc);
+		if (deStatus.getId() > 0) {
+			presentmentDetailDAO.updateDataEngineLog(deStatus.getId(), pd.getPresentmentRef(), errorCode, errorDesc);
+		} else {
+			DataEngineLog dataEngineLog = new DataEngineLog();
+			dataEngineLog.setReason(errorDesc);
+			deStatus.getDataEngineLogList().add(dataEngineLog);
+
+		}
 	}
 
 	private void updatePresentmentDetail(PresentmentDetail pd) {

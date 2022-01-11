@@ -231,6 +231,10 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 	public void processingPrsentments(long importHeaderId, String batchReference) {
 		logger.info(Literal.ENTERING);
 
+		if (deStatus == null) {
+			deStatus = new DataEngineStatus();
+		}
+
 		deStatus.setRemarks("Start processing...");
 
 		logger.info("Creating the header for processing..");
@@ -377,6 +381,8 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 				if (RepayConstants.PEXC_SUCCESS.equals(sts) || RepayConstants.PEXC_BOUNCE.equals(sts)) {
 					successCount++;
 				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
+					failedCount++;
+				} else {
 					failedCount++;
 				}
 			}
