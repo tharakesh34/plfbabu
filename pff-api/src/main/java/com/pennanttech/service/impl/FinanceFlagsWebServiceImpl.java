@@ -114,6 +114,8 @@ public class FinanceFlagsWebServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
+		financeFlag.setFinID(finID);
+
 		// validate FlagsService details as per the API specification
 		AuditDetail auditDetail = financeFlagsService.doValidations(financeFlag);
 
@@ -158,6 +160,8 @@ public class FinanceFlagsWebServiceImpl extends ExtendedTestClass
 			valueParm[0] = financeFlag.getFinReference();
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
+
+		financeFlag.setFinID(finID);
 
 		// validate finReference in Flags
 		FinanceFlag finFlag = financeFlagsService.getApprovedFinanceFlagsById(finID);
