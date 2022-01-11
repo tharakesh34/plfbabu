@@ -19023,5 +19023,169 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="PSD#187337_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finflagsheader_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#187337" author="Gireesh.G">
+		<createView viewName="FINFLAGSHEADER_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T2.FINTYPE,
+					T3.FINTYPEDESC,
+					T3.FINCATEGORY,
+					T4.CUSTCIF,
+					T2.FINBRANCH,
+					T5.BRANCHDESC,
+					T2.FINSTARTDATE,
+					T2.NUMBEROFTERMS,
+					T2.GRACETERMS,
+					T2.MATURITYDATE,
+					T2.FINCCY,
+					T2.FINAMOUNT,
+					T2.FINREPAYMENTAMOUNT,
+					T2.SCHEDULEMETHOD,
+					T2.FEECHARGEAMT,
+					T2.DOWNPAYBANK,
+					T2.DOWNPAYSUPL,
+					T2.EFFECTIVERATEOFRETURN,
+					T2.TOTALPROFIT,
+					T2.PROFITDAYSBASIS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.FINDIVISION AS LOVDESCFINDIVISION
+				FROM FINFLAGSHEADER_TEMP T1
+				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+				LEFT JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+				JOIN CUSTOMERS T4 ON T2.CUSTID = T4.CUSTID
+				JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+				UNION ALL
+				SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T2.FINTYPE,
+					T3.FINTYPEDESC,
+					T3.FINCATEGORY,
+					T4.CUSTCIF,
+					T2.FINBRANCH,
+					T5.BRANCHDESC,
+					T2.FINSTARTDATE,
+					T2.NUMBEROFTERMS,
+					T2.GRACETERMS,
+					T2.MATURITYDATE,
+					T2.FINCCY,
+					T2.FINAMOUNT,
+					T2.FINREPAYMENTAMOUNT,
+					T2.SCHEDULEMETHOD,
+					T2.FEECHARGEAMT,
+					T2.DOWNPAYBANK,
+					T2.DOWNPAYSUPL,
+					T2.EFFECTIVERATEOFRETURN,
+					T2.TOTALPROFIT,
+					T2.PROFITDAYSBASIS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.FINDIVISION AS LOVDESCFINDIVISION
+				FROM FINFLAGSHEADER T1
+				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+				LEFT JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+				JOIN CUSTOMERS T4 ON T2.CUSTID = T4.CUSTID
+				JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+				WHERE NOT (EXISTS ( SELECT 1 AS EXPR1 FROM FINFLAGSHEADER_TEMP WHERE FINFLAGSHEADER_TEMP.FINID = T1.FINID))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#187337_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finflagsheader_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#187337.1_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'finflagsheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#187337.1" author="Gireesh.G">
+		<createView viewName="FINFLAGSHEADER_TVIEW" replaceIfExists="true">
+			<![CDATA[
+					SELECT T1.FINID,
+					T1.FINREFERENCE,
+					T2.FINTYPE,
+					T3.FINTYPEDESC,
+					T3.FINCATEGORY,
+					T4.CUSTCIF,
+					T2.FINBRANCH,
+					T5.BRANCHDESC,
+					T2.FINSTARTDATE,
+					T2.NUMBEROFTERMS,
+					T2.GRACETERMS,
+					T2.MATURITYDATE,
+					T2.FINCCY,
+					T2.FINAMOUNT,
+					T2.FINREPAYMENTAMOUNT,
+					T2.SCHEDULEMETHOD,
+					T2.FEECHARGEAMT,
+					T2.DOWNPAYBANK,
+					T2.DOWNPAYSUPL,
+					T2.EFFECTIVERATEOFRETURN,
+					T2.TOTALPROFIT,
+					T2.PROFITDAYSBASIS,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.FINDIVISION AS LOVDESCFINDIVISION
+				FROM FINFLAGSHEADER_TEMP T1
+				JOIN FINANCEMAIN T2 ON T1.FINID = T2.FINID
+				LEFT JOIN RMTFINANCETYPES T3 ON T2.FINTYPE = T3.FINTYPE
+				JOIN CUSTOMERS T4 ON T2.CUSTID = T4.CUSTID
+				JOIN RMTBRANCHES T5 ON T2.FINBRANCH = T5.BRANCHCODE
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#187337.1_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'finflagsheader_tview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	
 
 </databaseChangeLog>
