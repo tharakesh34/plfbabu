@@ -4442,7 +4442,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
-			if (FinServiceEvent.PLANNEDEMI.equals(moduleDefiner) && fm.isPlanEMIHAlw()) {
+			if ((FinServiceEvent.PLANNEDEMI.equals(moduleDefiner)
+					|| (FinServiceEvent.CHGFRQ.equals(moduleDefiner))) && fm.isPlanEMIHAlw()) {
 				if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, "");
 				} else if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_ADHOC)) {

@@ -20,6 +20,7 @@ import com.pennant.backend.model.financemanagement.PresentmentHeader;
 import com.pennant.backend.service.financemanagement.PresentmentDetailService;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.RepayConstants;
+import com.pennanttech.dataengine.model.DataEngineStatus;
 import com.pennanttech.interfacebajaj.fileextract.PresentmentDetailExtract;
 import com.pennanttech.model.presentment.Presentment;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -288,6 +289,13 @@ public class PresentmentServiceController extends ExtendedTestClass {
 			presentmentDetailDAO.logRequest(headerId, presentment);
 
 			pde.processingPrsentments(headerId, presentment.getBatchId());
+
+			DataEngineStatus status = pde.getStatus();
+
+			if ("F".equals(status.getStatus())) {
+				return APIErrorHandlerService.getFailedStatus("30550",
+						status.getDataEngineLogList().get(0).getStatus());
+			}
 
 		} catch (Exception e) {
 			logger.debug(Literal.EXCEPTION, e);
