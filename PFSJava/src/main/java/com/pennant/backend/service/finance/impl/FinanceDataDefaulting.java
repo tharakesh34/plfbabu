@@ -188,10 +188,6 @@ public class FinanceDataDefaulting {
 		String repayCpzFrq = fm.getRepayCpzFrq();
 		String bpiTreatment = fm.getBpiTreatment();
 
-		CustomerDetails cd = fd.getCustomerDetails();
-		Customer customer = cd.getCustomer();
-		String custBranch = customer.getCustDftBranch();
-
 		if (!StringUtils.isBlank(finType)) {
 			financeType = financeTypeDAO.getOrgFinanceTypeByID(finType, "_ORGView");
 			if (financeType == null) {
@@ -221,10 +217,12 @@ public class FinanceDataDefaulting {
 			}
 		}
 
-		String alwdStepPolicies = financeType.getAlwdStepPolicies();
 		String calcOfSteps = financeType.getCalcOfSteps();
 
 		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup) && StringUtils.isBlank(finBranch)) {
+			CustomerDetails cd = fd.getCustomerDetails();
+			Customer customer = cd.getCustomer();
+			String custBranch = customer.getCustDftBranch();
 			finBranch = custBranch;
 			fm.setFinBranch(custBranch);
 		}
