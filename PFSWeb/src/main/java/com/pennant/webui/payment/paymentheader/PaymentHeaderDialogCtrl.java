@@ -1171,9 +1171,16 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 
 		PaymentDetail pd = null;
 		List<PaymentDetail> detailList = new ArrayList<PaymentDetail>();
-		List<FinExcessAmount> finExcessAmountList = this.paymentHeaderService
-				.getfinExcessAmount(this.financeMain.getFinID());
-		if (finExcessAmountList != null && !finExcessAmountList.isEmpty()) {
+
+		List<FinExcessAmount> finExcessAmountList = new ArrayList<>();
+
+		if (!this.enqiryModule) {
+			finExcessAmountList = this.paymentHeaderService.getfinExcessAmount(this.financeMain.getFinID());
+		} else if (!DisbursementConstants.STATUS_REJECTED.equals(aPaymentHeader.getPaymentInstruction().getStatus())) {
+			finExcessAmountList = this.paymentHeaderService.getfinExcessAmount(this.financeMain.getFinID());
+		}
+
+		if (!finExcessAmountList.isEmpty()) {
 			finExcessAmountList = processFinExcessAmount(finExcessAmountList);
 			for (FinExcessAmount finExcessAmount : finExcessAmountList) {
 				pd = new PaymentDetail();

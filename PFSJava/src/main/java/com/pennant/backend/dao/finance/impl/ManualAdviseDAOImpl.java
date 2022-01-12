@@ -710,7 +710,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 	public void reverseUtilise(long adviseID, BigDecimal amount) {
 		String sql = "Update ManualAdvise Set PaidAmount = PaidAmount - ?, BalanceAmt = BalanceAmt + ?, HoldDue = ? Where AdviseID = ?";
 
-		logger.debug(Literal.SQL);
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = this.jdbcOperations.update(sql, ps -> {
 			int index = 1;
