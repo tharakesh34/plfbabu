@@ -54,8 +54,8 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 
 		StringBuilder sql = new StringBuilder();
 		if (type.contains("view")) {
-			sql.append(" select id, linkId, seqno, custid, cu.custcif, cu.custshrtname,");
-			sql.append(" fintype, el.fintypedesc, findate, loanbank, loanbankname,");
+			sql.append(" select id, linkId, seqno, custid, custcif, custshrtname,");
+			sql.append(" fintype, fintypedesc, findate, loanbank, loanbankname,");
 			sql.append(" rateofinterest, tenure, originalamount, instalmentamount,");
 			sql.append(" outstandingbalance, balancetenure, bounceinstalments, principaloutstanding,");
 			sql.append(" overdueamount, finstatus, custstsdescription,");
