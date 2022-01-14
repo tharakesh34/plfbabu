@@ -1028,7 +1028,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 					if (tableType == TableType.TEMP_TAB) {
 						ps.setTimestamp(index++, fm.getPrevMntOn());
 					} else {
-						ps.setInt(index++, fm.getVersion());
+						ps.setInt(index++, fm.getVersion() - 1);
 					}
 				}
 			});
