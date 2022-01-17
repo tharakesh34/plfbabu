@@ -831,6 +831,13 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 				Long finID = financeMainDAO.getActiveFinID(fd.getFinScheduleData().getFinReference(),
 						TableType.TEMP_TAB);
 
+				// throw validation error
+				if (finID == null) {
+					String[] valueParam = new String[1];
+					valueParam[0] = "finreference: " + fd.getFinScheduleData().getFinReference();
+
+					return APIErrorHandlerService.getFailedStatus("90266", valueParam);
+				}
 				fm.setFinID(finID);
 				fd.getFinScheduleData().setFinID(finID);
 				fd.getFinScheduleData().setFinanceMain(fm);
