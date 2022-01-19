@@ -1283,6 +1283,20 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail manualPayment(FinServiceInstruction fsi) throws ServiceException {
 		try {
 			String moduleDefiner = FinServiceEvent.SCHDRPY;
+
+			String chqNo = fsi.getReceiptDetail().getChequeAcNo();
+
+			if (chqNo != null && RepayConstants.RECEIPTMODE_CHEQUE.equals(fsi.getPaymentMode()) && chqNo.length() > 6) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+
+				String[] valueParam = new String[2];
+				valueParam[0] = "Cheque Number: " + chqNo;
+				valueParam[1] = "6";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30508", valueParam));
+				return response;
+			}
+
 			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
 			return fd;
 		} catch (AppException ex) {
