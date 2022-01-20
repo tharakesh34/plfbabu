@@ -1617,7 +1617,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return response;
 		}
 
-		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.VIEW);
 		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
