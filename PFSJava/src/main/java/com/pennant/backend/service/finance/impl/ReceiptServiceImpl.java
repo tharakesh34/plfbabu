@@ -3168,8 +3168,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinServiceInstruction fsi = toUpperCase(schdData.getFinServiceInstruction());
 		String finReference = fsi.getFinReference();
 		String receiptPurpose = fsi.getReceiptPurpose();
+		String sourceID = fd.getFinScheduleData().getFinanceMain().getFinSourceID();
 		String parm1 = null;
 		String eventCode = null;
+		boolean finSource = PennantConstants.FINSOURCE_ID_API.equals(sourceID);
 		BigDecimal amount = new BigDecimal(
 				PennantApplicationUtil.amountFormate(fsi.getAmount(), 2).replaceAll(",", ""));
 
@@ -3287,6 +3289,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
+		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode) && fsi.getFavourNumber() == null) {
+			setErrorToFSD(schdData, "90502", "Cheque Number");
+			return receiptData;
+		}
+
 		int count = financeMainDAO.getCountByBlockedFinances(finID);
 		if (count > 0) {
 			parm1 = "FinReference: " + finReference;
@@ -3316,8 +3323,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			schdData.setFinServiceInstruction(tempFsi);
 		}
 		Date valueDate = fsi.getValueDate();
-		if (fsi.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) && fsi.isReceiptUpload()
-				&& !StringUtils.equals(fsi.getReqType(), "Post")) {
+		if (fsi.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) && (fsi.isReceiptUpload() || finSource)
+				&& (!StringUtils.equals(fsi.getReqType(), "Post") || finSource)) {
 			FinReceiptDetail rcd = fsi.getReceiptDetail();
 			FinScheduleData fsd = fd.getFinScheduleData();
 			FinanceMain fm = fsd.getFinanceMain();
@@ -4921,7 +4928,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String[] valueParm = new String[1];
 		valueParm[0] = parm0;
 		ErrorDetail errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
-		errorDetail.setMessage(parm0);
 		finScheduleData.setErrorDetail(errorDetail);
 		return finScheduleData;
 	}
