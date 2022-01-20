@@ -1790,16 +1790,26 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 		List<FinanceStatusEnquiry> responseList = new ArrayList<>();
 
 		for (FinanceStatusEnquiry detail : enquiryDetails) {
-			if (StringUtils.isBlank(detail.getFinReference())) {
+			String finReference = detail.getFinReference();
+			if (StringUtils.isBlank(finReference)) {
 				lsd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", new String[] { "Finreference" }));
 				return lsd;
 			} else {
+				Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 
-				FinanceStatusEnquiry fse = financeMainDAO.getLoanStatusDetailsByFinReference(detail.getFinID());
+				if (finID == null) {
+					String[] valueParam = new String[1];
+					valueParam[0] = finReference;
+					lsd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+					return lsd;
+				}
+
+				FinanceStatusEnquiry fse = financeMainDAO.getLoanStatusDetailsByFinReference(finID);
 				if (fse == null) {
 					fse = new FinanceStatusEnquiry();
 					fse.setStatus("No Loan Are Available for the Reference");
 				}
+				fse.setFinID(finID);
 				// set Finance closing status
 				if (StringUtils.isBlank(fse.getClosingStatus()) && StringUtils.isBlank(fse.getStatus())) {
 					fse.setClosingStatus(APIConstants.CLOSE_STATUS_ACTIVE);
