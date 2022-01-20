@@ -344,6 +344,19 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 								}
 							}
 						}
+
+						// If presentment Extracted
+						if (schDetail.getPresentmentId() > 0) {
+							if (DateUtil.compare(fsi.getFromDate(), schDetail.getSchDate()) < 0) {
+								String[] valueParm = new String[3];
+								valueParm[0] = "FromDate :" + DateUtil.formatToShortDate(fsi.getFromDate());
+								valueParm[1] = DateUtil.formatToShortDate(schDetail.getSchDate());
+								valueParm[2] = "Maturitydate:" + DateUtil.formatToShortDate(fm.getMaturityDate());
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
+							}
+						}
+
 					}
 
 					if (!isValidRecalFromDate && (CalculationConstants.RPYCHG_TILLMDT.equals(recalType)
