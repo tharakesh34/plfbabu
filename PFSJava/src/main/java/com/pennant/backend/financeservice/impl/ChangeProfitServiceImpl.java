@@ -136,6 +136,14 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 
+		/* ToDate shouldn't be before fromdate */
+		if (DateUtil.compare(fromDate, toDate) == 1) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "To Date:" + DateUtility.formatToShortDate(toDate);
+			valueParm[1] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
+		}
+
 		logger.debug("Leaving");
 		return auditDetail;
 	}
