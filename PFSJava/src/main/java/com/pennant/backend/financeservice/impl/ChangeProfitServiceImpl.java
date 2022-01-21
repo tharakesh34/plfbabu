@@ -21,6 +21,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class ChangeProfitServiceImpl extends GenericService<FinServiceInstruction> implements ChangeProfitService {
 
@@ -69,24 +70,24 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 	/**
 	 * Validate Change profit service instruction fields.
 	 * 
-	 * @param finServiceInstruction
+	 * @param fsi
 	 * @return AuditDetail
 	 */
 	@Override
-	public AuditDetail doValidations(FinServiceInstruction finServiceInstruction) {
+	public AuditDetail doValidations(FinServiceInstruction fsi) {
 		logger.debug("Entering");
 
 		AuditDetail auditDetail = new AuditDetail();
 		String lang = "EN";
 
 		// validate Instruction details
-		boolean isWIF = finServiceInstruction.isWif();
-		String finReference = finServiceInstruction.getFinReference();
+		boolean isWIF = fsi.isWif();
+		String finReference = fsi.getFinReference();
 
 		FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", isWIF);
 
 		// validate from date
-		Date fromDate = finServiceInstruction.getFromDate();
+		Date fromDate = fsi.getFromDate();
 
 		// It should be valid schedule date
 		boolean isFromDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(fm.getFinID(), fromDate, isWIF);
@@ -111,13 +112,13 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		// validate To date
-		Date toDate = finServiceInstruction.getToDate();
+		Date toDate = fsi.getToDate();
 
 		// ToDate should be valid schedule date
 		boolean isToDateExists = financeScheduleDetailDAO.getFinScheduleCountByDate(fm.getFinID(), toDate, isWIF);
 		if (!isToDateExists) {
 			String[] valueParm = new String[1];
-			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			valueParm[0] = "To Date:" + DateUtil.formatToShortDate(toDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
 		}
 
@@ -133,6 +134,14 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 			String[] valueParm = new String[1];
 			valueParm[0] = "From Date:" + DateUtility.formatToShortDate(fromDate);
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91111", "", valueParm), lang));
+		}
+
+		/* ToDate shouldn't be before fromdate */
+		if (DateUtil.compare(fromDate, toDate) == 1) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "To Date:" + DateUtility.formatToShortDate(toDate);
+			valueParm[1] = "From Date:" + DateUtility.formatToShortDate(fromDate);
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
 		}
 
 		logger.debug("Leaving");
