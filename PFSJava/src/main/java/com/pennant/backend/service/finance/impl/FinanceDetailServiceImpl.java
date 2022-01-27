@@ -5856,6 +5856,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			if (StringUtils.isEmpty(fd.getModuleDefiner())
 					|| StringUtils.equals(fd.getModuleDefiner(), FinServiceEvent.ORG)) {
+				serviceInstruction.setFinEvent(FinServiceEvent.ORG);
 
 				if (!StringUtils.equals(serviceInstruction.getFinEvent(), FinServiceEvent.ORG)
 						&& !StringUtils.contains(serviceInstruction.getFinEvent(), "_O")) {

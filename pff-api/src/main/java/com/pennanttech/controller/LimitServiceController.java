@@ -491,18 +491,24 @@ public class LimitServiceController extends ExtendedTestClass {
 	 * @return
 	 */
 	private FinanceDetail doPrepareLimitTransData(LimitTransactionDetail limitTransDetail) {
-		FinanceMain financeMain = financeMainService.getFinanceMainById(limitTransDetail.getFinID(), true);
+		FinanceMain financeMain = financeMainService.getFinanceMainById(limitTransDetail.getFinID(), false);
 		Customer customer = customerDetailsService.getCustomerByCIF(limitTransDetail.getCustCIF());
 		// user details
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
 		List<FinanceDisbursement> finDisbursements = new ArrayList<FinanceDisbursement>(1);
-		FinanceType financeType = null;
-		if (financeMain != null) {
-			financeType = financeTypeService.getApprovedFinanceTypeById(financeMain.getFinType());
-			financeMain.setUserDetails(userDetails);
-			finDisbursements = financeDetailService.getFinanceDisbursements(financeMain.getFinID(), "", true);
+
+		if (financeMain == null) {
+			String[] valueParam = new String[1];
+			FinanceDetail fd = new FinanceDetail();
+			valueParam[0] = limitTransDetail.getReferenceNumber();
+			fd.setReturnStatus(APIErrorHandlerService.getFailedStatus("90201", valueParam));
+			return fd;
 		}
+
+		FinanceType financeType = financeTypeService.getApprovedFinanceTypeById(financeMain.getFinType());
+		financeMain.setUserDetails(userDetails);
+		finDisbursements = financeDetailService.getFinanceDisbursements(financeMain.getFinID(), "", false);
 
 		if (customer != null) {
 			financeMain.setCustID(customer.getCustID());

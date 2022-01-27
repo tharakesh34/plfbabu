@@ -139,13 +139,13 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		Date appDate = SysParamUtil.getAppDate();
-		FinanceMain financeMain = financeMainDAO.getFinanceMainById(finID, "", isWIF);
+		FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", isWIF);
 
 		if (StringUtils.equals(UploadConstants.RATE_CHANGE_UPLOAD, fsi.getReqFrom())) {
-			fsi.setPftDaysBasis(financeMain.getProfitDaysBasis());
+			fsi.setPftDaysBasis(fm.getProfitDaysBasis());
 
 			if (fsi.getToDate() == null) {
-				fsi.setToDate(financeMain.getMaturityDate());
+				fsi.setToDate(fm.getMaturityDate());
 			}
 
 			if (fsi.getFromDate() == null) {
@@ -159,22 +159,21 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 
 		// validate from date with finStart date and maturity date
 		if (DateUtil.compare(fsi.getFromDate(), appDate) < 0
-				|| fsi.getFromDate().compareTo(financeMain.getMaturityDate()) >= 0) {
+				|| fsi.getFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "From date";
 			valueParm[1] = "application date:" + DateUtil.formatToShortDate(appDate);
-			valueParm[2] = "maturity date:" + DateUtil.formatToShortDate(financeMain.getMaturityDate());
+			valueParm[2] = "maturity date:" + DateUtil.formatToShortDate(fm.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			return auditDetail;
 		}
 
 		// validate to date
-		if (fsi.getToDate().compareTo(financeMain.getMaturityDate()) > 0
-				|| fsi.getToDate().compareTo(fsi.getFromDate()) <= 0) {
+		if (fsi.getToDate().compareTo(fm.getMaturityDate()) > 0 || fsi.getToDate().compareTo(fsi.getFromDate()) <= 0) {
 			String[] valueParm = new String[3];
 			valueParm[0] = "ToDate";
 			valueParm[1] = "From date:" + DateUtil.formatToShortDate(fsi.getFromDate());
-			valueParm[2] = "Maturity date:" + DateUtil.formatToShortDate(financeMain.getMaturityDate());
+			valueParm[2] = "Maturity date:" + DateUtil.formatToShortDate(fm.getMaturityDate());
 			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("65031", "", valueParm), lang));
 			return auditDetail;
 		}
@@ -211,7 +210,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		}
 
 		// Over Draft Loan Type validation for recalType
-		if (FinanceConstants.PRODUCT_ODFACILITY.equals(financeMain.getProductCategory())) {
+		if (FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())) {
 			// validate recalType
 			if (StringUtils.isNotBlank(recalType)) {
 				if (!CalculationConstants.RPYCHG_ADJMDT.equals(recalType)) {
@@ -235,10 +234,10 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				valueParm[0] = "RecalFromDate:" + DateUtil.formatToShortDate(fsi.getRecalFromDate());
 				valueParm[1] = "FromDate:" + DateUtil.formatToShortDate(fsi.getFromDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm), lang));
-			} else if (fsi.getRecalFromDate().compareTo(financeMain.getMaturityDate()) > 0) {
+			} else if (fsi.getRecalFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtil.formatToShortDate(fsi.getRecalFromDate());
-				valueParm[1] = DateUtil.formatToShortDate(financeMain.getMaturityDate());
+				valueParm[1] = DateUtil.formatToShortDate(fm.getMaturityDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91114", "", valueParm), lang));
 			}
 		}
@@ -262,7 +261,7 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		boolean isValidToDate = false;
 		boolean isValidRecalFromDate = false;
 		boolean isValidRecalToDate = false;
-		if (!financeMain.isRateChgAnyDay()) {
+		if (!fm.isRateChgAnyDay()) {
 			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 			if (schedules != null) {
 				for (FinanceScheduleDetail schDetail : schedules) {
@@ -345,6 +344,19 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 								}
 							}
 						}
+
+						// If presentment Extracted
+						if (schDetail.getPresentmentId() > 0) {
+							if (DateUtil.compare(fsi.getFromDate(), schDetail.getSchDate()) < 0) {
+								String[] valueParm = new String[3];
+								valueParm[0] = "FromDate :" + DateUtil.formatToShortDate(fsi.getFromDate());
+								valueParm[1] = DateUtil.formatToShortDate(schDetail.getSchDate());
+								valueParm[2] = "Maturitydate:" + DateUtil.formatToShortDate(fm.getMaturityDate());
+								auditDetail.setErrorDetail(
+										ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
+							}
+						}
+
 					}
 
 					if (!isValidRecalFromDate && (CalculationConstants.RPYCHG_TILLMDT.equals(recalType)

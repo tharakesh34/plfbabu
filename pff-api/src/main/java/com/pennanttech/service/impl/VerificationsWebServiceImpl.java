@@ -1617,7 +1617,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 			return response;
 		}
 
-		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.BOTH_TAB);
+		Long finID = financeMainDAO.getActiveFinID(keyReference, TableType.VIEW);
 		if (finID == null) {
 			String[] valueParam = new String[1];
 			valueParam[0] = keyReference;
@@ -2312,10 +2312,16 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				valueParm[2] = requestTypeMap.toString();
 				return getErrorDetails("21005", valueParm);
 			}
+			Long reason = vrf.getReason();
 			if (vrf.getRequestType() == RequestType.INITIATE.getKey()) {
 				// Reason values are set to be null in case values are processed with API
-				if (vrf.getReason() != null || vrf.getReason() > 0) {
+				
+				if(reason == null){
+					reason = 1L;
+				}
+				if ( reason > 0) {
 					vrf.setReason(null);
+					reason = null;
 				}
 				if (vrf.getAgency() == null || vrf.getAgency() < 0) {
 					String[] valueParm = new String[1];
@@ -2341,15 +2347,15 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 				if (vrf.getAgency() != null || vrf.getAgency() > 0) {
 					vrf.setAgency(null);
 				}
-				if (vrf.getReason() == null || vrf.getReason() < 0) {
+				if (reason == null || reason < 0) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "Reason";
 					return getErrorDetails("90502", valueParm);
 				} else {
-					ReasonCode reasonCode = getReasonCode(vrf.getReason(), WaiverReasons.RCUWRES.getKey());
+					ReasonCode reasonCode = getReasonCode(reason, WaiverReasons.RCUWRES.getKey());
 					if (reasonCode == null) {
 						String[] valueParm = new String[1];
-						valueParm[0] = String.valueOf(vrf.getReason());// value should provide from Reasons_AView id
+						valueParm[0] = String.valueOf(reason);// value should provide from Reasons_AView id
 						return getErrorDetails("RU0040", valueParm);
 					} else {
 						vrf.setReasonName(reasonCode.getReasonTypeDesc());

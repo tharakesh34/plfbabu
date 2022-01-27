@@ -15,6 +15,7 @@ public class ExtLiabilityPaymentdetails extends AbstractWorkflowEntity {
 	private long liabilityId;
 	@XmlElement
 	private String emiType;
+	@XmlElement
 	private int emiClearedDay;
 	private ExtLiabilityPaymentdetails befImage;
 	private LoggedInUser userDetails;

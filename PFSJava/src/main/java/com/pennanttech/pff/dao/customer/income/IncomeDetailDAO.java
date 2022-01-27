@@ -21,5 +21,7 @@ public interface IncomeDetailDAO {
 
 	void deletebyLinkId(long linkId, String type);
 
+	void deletebyIncomeType(long linkId, String incomeType);
+
 	List<CustomerIncome> getTotalIncomeBySamplingId(long id);
 }

@@ -1283,6 +1283,20 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail manualPayment(FinServiceInstruction fsi) throws ServiceException {
 		try {
 			String moduleDefiner = FinServiceEvent.SCHDRPY;
+
+			String chqNo = fsi.getReceiptDetail().getChequeAcNo();
+
+			if (chqNo != null && RepayConstants.RECEIPTMODE_CHEQUE.equals(fsi.getPaymentMode()) && chqNo.length() > 6) {
+				FinanceDetail response = new FinanceDetail();
+				doEmptyResponseObject(response);
+
+				String[] valueParam = new String[2];
+				valueParam[0] = "Cheque Number: " + chqNo;
+				valueParam[1] = "6";
+				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30508", valueParam));
+				return response;
+			}
+
 			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
 			return fd;
 		} catch (AppException ex) {
@@ -1344,6 +1358,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		schdData.setFinServiceInstruction(fsi);
 		fd = validateInstructions(fd, moduleDefiner, eventCode);
 		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
+		FinanceMain finMain = new FinanceMain();
+		finMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
+		fd.getFinScheduleData().setFinanceMain(finMain);
 		FinReceiptData receiptData = receiptService.doReceiptValidations(fd, moduleDefiner);
 		fd = receiptData.getFinanceDetail();
 		schdData = fd.getFinScheduleData();
@@ -1713,6 +1730,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
+		td.setFinID(finID);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -1771,6 +1789,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
+		td.setFinID(finID);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -1857,7 +1876,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		returnStatus = validateDisbursementResponse(disbRequest);
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
@@ -2266,6 +2285,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				} else {
 					schdData.setFinanceMain(fm);
+					fd.setFinID(fm.getFinID());
 				}
 				returnStatus = isWriteoffLoan(fm.getFinID());
 				if (returnStatus != null) {
@@ -2433,6 +2453,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
+			Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
+			if (finID == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "finReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+
+			financeDetail.setFinID(finID);
 			errorDetails = chequeHeaderService.chequeValidationInMaintainence(financeDetail,
 					PennantConstants.method_Update, "");
 			for (ErrorDetail errorDetail : errorDetails) {
@@ -3036,7 +3065,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParam[0] = "";
 			return APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
 		}
-		return new WSReturnStatus();
+		return null;
 	}
 
 	@Override

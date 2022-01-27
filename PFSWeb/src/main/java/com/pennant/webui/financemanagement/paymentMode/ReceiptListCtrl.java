@@ -356,18 +356,15 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				}
 			}
 
-			if (searchObject.getWhereClause() == null) {
-				searchObject.addWhereClause(" PAYAGAINSTID = 0");
+			StringBuilder whereClause = new StringBuilder();
+			if (StringUtils.isEmpty(searchObject.getWhereClause())) {
+				whereClause.append(" PAYAGAINSTID = 0");
+			} else {
+				whereClause.append(searchObject.getWhereClause());
 			}
 
-			searchObject
-					.addWhereClause(" ReceiptID not in (Select ReceiptId From FinReceiptQueueLog Where Progress = 0)");
-
-			/*
-			 * List<Long> receiptIdList = receiptService.getInProcessMultiReceiptRecord(); if (receiptIdList != null &&
-			 * CollectionUtils.isNotEmpty(receiptIdList)) { Filter fil = new Filter("ReceiptID", receiptIdList,
-			 * Filter.OP_NOT_IN); searchObject.addFilter(fil); }
-			 */
+			whereClause.append(" AND ReceiptID not in (Select ReceiptId From FinReceiptQueueLog Where Progress = 0)");
+			searchObject.addWhereClause(whereClause.toString());
 		}
 
 		searchObject.addFilter(

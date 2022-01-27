@@ -88,15 +88,16 @@ public class FeePostingWebServiceImpl extends ExtendedTestClass
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90502", param));
 			return response;
 		}
-		boolean isExist = financeDetailService.isFinReferenceExits(advise.getFinReference(), "", false);
-		if (!isExist) {
+
+		Long finID = financeDetailService.getFinID(advise.getFinReference());
+		if (finID == null) {
 			response = new ManualAdviseResponse();
 			String[] param = new String[1];
 			param[0] = advise.getFinReference();
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90266", param));
 			return response;
 		}
-
+		advise.setFinID(finID);
 		// validate Manual Advise Detail
 		response = feePostingController.validateAdviseDetail(advise);
 		if (response != null && response.getReturnStatus() != null) {

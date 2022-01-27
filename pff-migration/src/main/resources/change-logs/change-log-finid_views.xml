@@ -19186,6 +19186,143 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#188161_pre" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financedeviations_view');
+			]]>
+		</sql>
+	</changeSet>
 	
-
+	<changeSet id="PSD#188161" author="Mounika.M">
+		<createView viewName="FINANCEDEVIATIONS_VIEW" replaceIfExists="true">
+			<![CDATA[
+					SELECT T1.DEVIATIONID,
+						T1.FINID,
+    					T1.FINREFERENCE,
+    					T1.MODULE,
+   						T1.DEVIATIONCODE,
+    					T1.DEVIATIONTYPE,
+    					T1.USERROLE,
+    					T1.DEVIATIONVALUE,
+    					T1.DELEGATIONROLE,
+    					T1.APPROVALSTATUS,
+    					T1.DEVIATIONCATEGORY,
+    					T1.REMARKS,
+    					T1.DEVIATIONDESC,
+    					T1.MARKDELETED,
+    					T1.DEVIATIONDATE,
+					    T1.DEVIATIONUSERID,
+					    T1.DELEGATEDUSERID,
+					    T1.RAISEDUSER,
+					    T1.MITIGANTS
+   					FROM FINANCEDEVIATIONS_TEMP T1
+					UNION ALL
+ 					SELECT T1.DEVIATIONID,
+ 						T1.FINID,
+					    T1.FINREFERENCE,
+					    T1.MODULE,
+					    T1.DEVIATIONCODE,
+					    T1.DEVIATIONTYPE,
+					    T1.USERROLE,
+					    T1.DEVIATIONVALUE,
+					    T1.DELEGATIONROLE,
+					    T1.APPROVALSTATUS,
+					    T1.DEVIATIONCATEGORY,
+					    T1.REMARKS,
+					    T1.DEVIATIONDESC,
+					    T1.MARKDELETED,
+					    T1.DEVIATIONDATE,
+					    T1.DEVIATIONUSERID,
+					    T1.DELEGATEDUSERID,
+					    T1.RAISEDUSER,
+					    T1.MITIGANTS
+   					FROM FINANCEDEVIATIONS T1
+  					WHERE NOT (EXISTS ( SELECT 1 FROM FINANCEDEVIATIONS_TEMP WHERE FINANCEDEVIATIONS_TEMP.DEVIATIONID = T1.DEVIATIONID))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#188161_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financedeviations_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="PSD#187907_pre" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financededup_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+    <changeSet id="PSD#187907" author="Gireesh.G">
+		<createView viewName="FINANCEDEDUP_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.FINID,
+					T1.FINREFERENCE, 
+					T1.FINREFERENCE DUPREFERENCE, 
+					T1.CUSTID,
+		            T2.CUSTCIF, 
+		            T2.CUSTFNAME, 
+		            T2.CUSTLNAME, 
+		            T2.CUSTMNAME, 
+		            T2.CUSTSHRTNAME, 
+		            T2.CUSTDOB, 
+		            T2.CUSTNATIONALITY, 
+	                T2.CUSTPARENTCOUNTRY, 
+	                T2.CUSTCRCPR, 
+	                T1.FINSTARTDATE STARTDATE,
+	                T1.FINAMOUNT FINANCEAMOUNT, 
+	                T1.TOTALGROSSPFT PROFITAMOUNT,
+	                T1.NEXTROLECODE STAGE, 
+	                T4.ROLEDESC STAGEDESC, 
+	                '' DEDUPERULE, 
+	                T1.FINTYPE FINANCETYPE, 
+	                T2.CUSTTRADELICENCENUM TRADELICENCENO,
+	                T1.FINLIMITREF, 
+	                COALESCE(CASE WHEN T2.PHONENUMBER = ' ' THEN NULL ELSE T2.PHONENUMBER
+			        	END, T3.PHONENUMBER) MOBILENUMBER,
+	                T2.CUSTMOTHERMAIDEN FATHERNAME, 
+	                T2.CUSTSHRTNAMELCLLNG MOTHERNAME,
+	                CDA.CUSTDOCTITLE AADHARNUMBER,
+			        CDP.CUSTDOCTITLE PANNUMBER,
+	                CDVI.CUSTDOCTITLE VOTERID,
+	                CDRC.CUSTDOCTITLE RATIONCARD,
+	                CDLPG.CUSTDOCTITLE LPGNUMBER,
+	                CDPP.CUSTDOCTITLE CUSTPASSPORTNO, 
+	                CDDL.CUSTDOCTITLE DRIVINGLICENCENO
+				FROM FINANCEMAIN_TEMP T1 
+	            INNER JOIN CUSTOMERS T2 ON T1.CUSTID = T2.CUSTID  
+	            LEFT OUTER JOIN SECROLES T4 ON T1.NEXTROLECODE = T4.ROLECD
+	            LEFT JOIN CUSTOMERDOCUMENTS CDA ON CDA.CUSTID = T2.CUSTID AND CDA.CUSTDOCCATEGORY in (
+	            	((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'AADHAAR')))
+	            LEFT JOIN CUSTOMERDOCUMENTS CDP ON CDP.CUSTID = T2.CUSTID AND CDP.CUSTDOCCATEGORY in (
+	           		((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'PAN')))
+		        LEFT JOIN CUSTOMERDOCUMENTS CDPP ON CDPP.CUSTID = T2.CUSTID AND CDPP.CUSTDOCCATEGORY in (
+		       		((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'PASSPORT')))
+	            LEFT JOIN CUSTOMERDOCUMENTS CDVI ON CDVI.CUSTID = T2.CUSTID AND CDVI.CUSTDOCCATEGORY in (
+	           		((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'VOTER_ID')))
+	            LEFT JOIN CUSTOMERDOCUMENTS CDRC ON CDRC.CUSTID = T2.CUSTID AND CDRC.CUSTDOCCATEGORY in (
+	           		((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'RATION_CARD')))
+	            LEFT JOIN CUSTOMERDOCUMENTS CDLPG ON CDLPG.CUSTID = T2.CUSTID AND CDLPG.CUSTDOCCATEGORY in (
+	           		((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'LPG_NUMBER')))
+	            LEFT JOIN CUSTOMERDOCUMENTS CDDL ON CDDL.CUSTID = T2.CUSTID AND CDDL.CUSTDOCCATEGORY in (
+	           		((SELECT MASTER_DEF.KEY_CODE FROM MASTER_DEF WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
+	            LEFT JOIN CUSTOMERPHONENUMBERS T3 ON T2.CUSTID = T3.PHONECUSTID
+           ]]>
+       </createView>
+	</changeSet>
+	
+	<changeSet id="PSD#187907_post" author="Gireesh.G" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financededup_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

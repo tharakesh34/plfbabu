@@ -108,8 +108,10 @@ public class BeneficiaryWebServiceImpl extends ExtendedTestClass
 		// beanValidation
 		validationUtility.validate(beneficiary, UpdateValidationGroup.class);
 		Beneficiary beneficiaryDetails = beneficiaryService.getApprovedBeneficiaryById(beneficiary.getBeneficiaryId());
+
 		WSReturnStatus returnStatus = null;
-		if (beneficiaryDetails != null) {
+		if (beneficiaryDetails != null
+				&& StringUtils.equals(beneficiary.getCustCIF(), beneficiaryDetails.getCustCIF())) {
 			returnStatus = doBeneficiaryValidation(beneficiary);
 			if (StringUtils.isBlank(returnStatus.getReturnCode())) {
 				returnStatus = beneficiaryController.updateBeneficiary(beneficiary);

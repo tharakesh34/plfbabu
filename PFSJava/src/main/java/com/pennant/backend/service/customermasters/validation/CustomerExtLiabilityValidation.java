@@ -1,5 +1,6 @@
 package com.pennant.backend.service.customermasters.validation;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -241,6 +242,132 @@ public class CustomerExtLiabilityValidation {
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90224", "", valueParam));
 				auditDetail.setErrorDetail(errorDetail);
 			}
+		}
+
+		if (liability.getLoanPurpose() == null) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "End of  Funds";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+		}
+
+		if (liability.getRepayBank() == null) {
+			String[] valueParam = new String[1];
+			valueParam[0] = "Repayment";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+		}
+
+		if (liability.getRateOfInterest().compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "ROI";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getPrincipalOutstanding().compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "POS";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getMob() < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "Months On Book(MOB)";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getImputedEmi().compareTo(BigDecimal.ZERO) < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "ImputedEmI";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getOverdueAmount().compareTo(BigDecimal.ZERO) < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "OverdueAmount";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getCurrentOverDue().compareTo(BigDecimal.ZERO) < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "CurrentOverDue";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getNoOfBouncesInSixMonths() < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "NoOfBouncesInSixMonths";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getNoOfBouncesInTwelveMonths() < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "NoOfBouncesInTwelveMonths";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getBalanceTenure() <= 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "BalanceTenure";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getOutstandingBalance().compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "OutstandingBalance";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
+		if (liability.getOriginalAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = "OriginalAmount";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
 		}
 
 		if (StringUtils.isNotBlank(liability.getLoanPurpose())) {

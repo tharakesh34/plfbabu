@@ -1383,6 +1383,12 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 						.setValue(String.valueOf(ReferenceGenerator.generateFinRef(aFinanceMain, financeType)));
 				this.finId.setValue(aFinanceMain.getFinID());
 			}
+
+			if (this.finId.getValue() == 0) {
+				ReferenceGenerator.generateFinID(aFinanceMain);
+				this.finId.setValue(aFinanceMain.getFinID());
+			}
+
 			aFinanceMain.setFinID(this.finId.getValue());
 			aFinanceMain.setFinReference(StringUtils.trimToEmpty(this.finReference.getValue()));
 			aFinanceSchData.setFinID(this.finId.getValue());
@@ -6058,7 +6064,7 @@ public class WIFFinanceMainDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 			// validate finance reference number
 			if (!this.finReference.isReadonly() && this.finReference.getValue() != null) {
-				if (getFinanceDetailService().isFinReferenceExits(this.finReference.getValue(), "_View", false)) {
+				if (getFinanceDetailService().isFinReferenceExits(this.finReference.getValue(), "_View", true)) {
 
 					errorList.add(new ErrorDetail("finReference", "30506",
 							new String[] { Labels.getLabel("label_FinanceMainDialog_FinReference.value"),
