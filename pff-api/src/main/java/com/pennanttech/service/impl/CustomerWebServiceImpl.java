@@ -24,6 +24,7 @@ import com.pennant.backend.dao.customermasters.CustomerCardSalesInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerChequeInfoDAO;
 import com.pennant.backend.dao.customermasters.CustomerDAO;
 import com.pennant.backend.dao.customermasters.CustomerExtLiabilityDAO;
+import com.pennant.backend.dao.customermasters.CustomerIncomeDAO;
 import com.pennant.backend.dao.customermasters.FinCreditRevSubCategoryDAO;
 import com.pennant.backend.dao.dedup.DedupFieldsDAO;
 import com.pennant.backend.dao.dedup.DedupParmDAO;
@@ -156,6 +157,7 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	private ApprovalStatusEnquiryDAO approvalStatusEnquiryDAO;
 	private JointAccountDetailDAO jointAccountDetailDAO;
 	private LimitDetailService limitDetailService;
+	private CustomerIncomeDAO customerIncomeDAO;
 
 	/**
 	 * Method for create customer in PLF system.
@@ -1752,6 +1754,8 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				customerIncome.setIncomeType(customerIncomeDetail.getCustIncomeType());
 				customerIncome.setCategory(customerIncomeDetail.getCategory());
 				customerIncome.setIncomeExpense(customerIncomeDetail.getIncomeExpense());
+				customerIncome.setLinkId(customerIncomeDAO.getLinkId(customer.getCustID()));
+
 				// for logging purpose
 				APIErrorHandlerService.logReference(customerIncomeDetail.getCif());
 			}
@@ -4196,4 +4200,10 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 	public void setLimitDetailService(LimitDetailService limitDetailService) {
 		this.limitDetailService = limitDetailService;
 	}
+
+	@Autowired
+	public void setCustomerIncomeDAO(CustomerIncomeDAO customerIncomeDAO) {
+		this.customerIncomeDAO = customerIncomeDAO;
+	}
+
 }
