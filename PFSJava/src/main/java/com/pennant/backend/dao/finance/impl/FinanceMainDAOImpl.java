@@ -5768,12 +5768,35 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	public Long getFinID(String finReference, TableType tableType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID From FinanceMain").append(tableType.getSuffix());
-		sql.append(" Where FinReference = ?");
+		Object[] object = new Object[] { finReference };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+		case AVIEW:
+			sql.append(" Select FinID From FinanceMain fm Where FinReference = ?");
+			break;
+		case TEMP_TAB:
+		case TVIEW:
+			sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ?");
+			break;
+		case BOTH_TAB:
+		case VIEW:
+			object = new Object[] { finReference, finReference };
+
+			sql.append("Select FinID From (");
+			sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ?");
+			sql.append(" Union All");
+			sql.append(" Select FinID From FinanceMain fm Where FinReference = ?");
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+			sql.append(" ) fm");
+			break;
+		default:
+			break;
+		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, object);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -5782,12 +5805,35 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	public Long getActiveFinID(String finReference, TableType tableType) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinID From FinanceMain").append(tableType.getSuffix());
-		sql.append(" Where FinReference = ? and FinIsActive = ?");
+		Object[] object = new Object[] { finReference, 1 };
+
+		StringBuilder sql = new StringBuilder();
+		switch (tableType) {
+		case MAIN_TAB:
+		case AVIEW:
+			sql.append(" Select FinID From FinanceMain fm Where FinReference = ? and FinIsActive = ?");
+			break;
+		case TEMP_TAB:
+		case TVIEW:
+			sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ? and FinIsActive = ?");
+			break;
+		case BOTH_TAB:
+		case VIEW:
+			object = new Object[] { finReference, 1, finReference, 1 };
+
+			sql.append("Select FinID From (");
+			sql.append(" Select FinID From FinanceMain_Temp fm Where FinReference = ? and FinIsActive = ?");
+			sql.append(" Union All");
+			sql.append(" Select FinID From FinanceMain fm Where FinReference = ? and FinIsActive = ?");
+			sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = fm.FinID)");
+			sql.append(" ) fm");
+			break;
+		default:
+			break;
+		}
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, 1);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, object);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
