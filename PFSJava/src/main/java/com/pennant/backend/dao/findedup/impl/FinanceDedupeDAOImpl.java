@@ -228,7 +228,7 @@ public class FinanceDedupeDAOImpl extends BasicDao<FinanceDedup> implements Fina
 	public List<FinanceDedup> fetchFinanceDedup(FinanceDedup dedup, String queryCode) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustCIF, FinanceType, FinID, FinReference");
-		sql.append(" From FinanceDedup_View");
+		sql.append(" From FinanceDedup_View ");
 		sql.append(queryCode.trim());
 
 		logger.debug(Literal.SQL + sql.toString());
