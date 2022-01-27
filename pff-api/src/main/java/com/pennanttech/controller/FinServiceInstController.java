@@ -4669,4 +4669,9 @@ public class FinServiceInstController extends SummaryDetailService {
 	public void setRestructureService(RestructureService restructureService) {
 		this.restructureService = restructureService;
 	}
+
+	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
+		this.chequeHeaderService = chequeHeaderService;
+	}
+
 }
