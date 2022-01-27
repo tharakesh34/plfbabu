@@ -494,6 +494,8 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			return stmtResp;
 		}
 
+		stmtReq.setFinID(finID);
+
 		if (APIConstants.REPORT_TEMPLATE_API.equals(stmtReq.getTemplate())) {
 			if (StringUtils.equals(requestType, APIConstants.REPORT_SOA)
 					|| StringUtils.equals(requestType, APIConstants.REPORT_SOA_REPORT)) {
