@@ -2283,6 +2283,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 				} else {
 					schdData.setFinanceMain(fm);
+					fd.setFinID(fm.getFinID());
 				}
 				returnStatus = isWriteoffLoan(fm.getFinID());
 				if (returnStatus != null) {
@@ -2450,6 +2451,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
+			Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
+
+			if (finID == null) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "finReference";
+				return returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			}
+
+			financeDetail.setFinID(finID);
 			errorDetails = chequeHeaderService.chequeValidationInMaintainence(financeDetail,
 					PennantConstants.method_Update, "");
 			for (ErrorDetail errorDetail : errorDetails) {
@@ -3053,7 +3063,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParam[0] = "";
 			return APIErrorHandlerService.getFailedStatus("FWF001", valueParam);
 		}
-		return new WSReturnStatus();
+		return null;
 	}
 
 	@Override
