@@ -1876,7 +1876,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		returnStatus = validateDisbursementResponse(disbRequest);
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 

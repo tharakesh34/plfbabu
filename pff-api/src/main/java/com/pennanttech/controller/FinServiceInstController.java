@@ -3387,14 +3387,15 @@ public class FinServiceInstController extends SummaryDetailService {
 				}
 				fm.setEntityCode(financeMainDAO.getLovDescEntityCode(finID, "_View"));
 				fm.setLovDescEntityCode(fm.getEntityCode());
-				FinanceDetail financeDetail = new FinanceDetail();
+				FinanceDetail fd = new FinanceDetail();
 				List<FinAdvancePayments> finAdvList = new ArrayList<FinAdvancePayments>();
 
 				finAdvList.add(finAdv);
-				financeDetail.setAdvancePaymentsList(finAdvList);
+				fd.setAdvancePaymentsList(finAdvList);
+				fd.getFinScheduleData().setFinanceMain(fm);
 
-				List<FinAdvancePayments> advancePaymentsList = financeDetail.getAdvancePaymentsList();
-				AccountingEngine.post(AccountingEvent.DISBINS, financeDetail, fm.getFinBranch());
+				List<FinAdvancePayments> advancePaymentsList = fd.getAdvancePaymentsList();
+				AccountingEngine.post(AccountingEvent.DISBINS, fd, fm.getFinBranch());
 
 				List<FinAdvancePayments> advPayList = advancePaymentsList;
 
