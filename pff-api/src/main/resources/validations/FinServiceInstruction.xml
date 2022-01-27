@@ -148,7 +148,7 @@
 			<constraint annotation="javax.validation.constraints.Min">
 				<message>amount should be greater than zero</message>
 				<groups>
-					<value>com.pennant.validation.ChangeRepaymentGroup</value>
+					<!-- <value>com.pennant.validation.ChangeRepaymentGroup</value> -->
 					<value>com.pennant.validation.ChangeInterestGroup</value>
 					<value>com.pennant.validation.AddDisbursementGroup</value>
 					<value>com.pennant.validation.PartialSettlementGroup</value>
