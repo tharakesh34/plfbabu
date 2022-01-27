@@ -26930,4 +26930,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
+	
+	<changeSet id="PSD#187420" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				DELETE from ErrorDetails WHERE code='90599';
+				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('90599', 'EN', 'E', '{0} is not valid for Customer: {1}', null, 'Approved', null, null, null, null, null, 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

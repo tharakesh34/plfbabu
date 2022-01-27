@@ -154,15 +154,15 @@ public class ExtendedFieldHeaderDAOImpl extends SequenceDao<ExtendedFieldHeader>
 		StringBuilder sql = getSqlQuery(type);
 		sql.append(" Where ModuleName = ? and SubModuleName = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		ExtendedFieldRowMapper rowMapper = new ExtendedFieldRowMapper();
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { moduleName, subModuleName },
-					rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper,
+					 moduleName, subModuleName );
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return null;
