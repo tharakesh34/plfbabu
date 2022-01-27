@@ -755,7 +755,7 @@ public class FinanceValidationService {
 					}
 				}
 
-				//validate periodicity
+				// validate periodicity
 				if (StringUtils.isNotBlank(mandate.getPeriodicity())) {
 					ErrorDetail errorDetail = FrequencyUtil.validateFrequency(mandate.getPeriodicity());
 					if (errorDetail != null && StringUtils.isNotBlank(errorDetail.getCode())) {
@@ -765,7 +765,7 @@ public class FinanceValidationService {
 					}
 				}
 
-				//validate status
+				// validate status
 				if (StringUtils.isNotBlank(mandate.getStatus())) {
 					List<ValueLabel> status = PennantStaticListUtil
 							.getStatusTypeList(SysParamUtil.getValueAsString(MandateConstants.MANDATE_CUSTOM_STATUS));
@@ -922,14 +922,12 @@ public class FinanceValidationService {
 						checkExistingDSA = true;
 					}
 				}
-				if (!checkExistingDSA) {
-					String[] valueParm = new String[1];
-					valueParm[0] = financeMain.getDsaCode();
-					returnStatus = getErrorDetails("90501", valueParm);
-					returnStatus.setReturnText(returnStatus.getReturnText().replace("code", "dsa code"));
-					return returnStatus;
-				}
-
+				/*
+				 * if (!checkExistingDSA) { String[] valueParm = new String[1]; valueParm[0] = financeMain.getDsaCode();
+				 * returnStatus = getErrorDetails("90501", valueParm);
+				 * returnStatus.setReturnText(returnStatus.getReturnText().replace("code", "dsa code")); return
+				 * returnStatus; }
+				 */
 			}
 			/*
 			 * if (StringUtils.isNotBlank(financeMain.getSalesDepartment())) { GeneralDepartment generalDepartment =

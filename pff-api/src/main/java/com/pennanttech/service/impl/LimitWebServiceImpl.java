@@ -492,6 +492,7 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 				return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 			}
 
+			limitTransDetail.setFinID(fm.getFinID());
 			if (!fm.isFinIsActive()) {
 				String[] valueParm = new String[1];
 				valueParm[0] = finReference;

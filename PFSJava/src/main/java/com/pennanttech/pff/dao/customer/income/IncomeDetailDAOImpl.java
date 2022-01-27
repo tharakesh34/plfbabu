@@ -264,4 +264,18 @@ public class IncomeDetailDAOImpl extends SequenceDao<Sampling> implements Income
 			return new ArrayList<>();
 		}
 	}
+
+	@Override
+	public void deletebyIncomeType(long linkId, String incomeType) {
+		String sql = "Delete From Income_Details  Where LinkId = ? and IncomeType = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		this.jdbcOperations.update(sql, ps -> {
+			int index = 1;
+
+			ps.setLong(index++, linkId);
+			ps.setString(index++, incomeType);
+		});
+	}
 }

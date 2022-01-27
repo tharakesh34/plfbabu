@@ -1587,8 +1587,8 @@ public class FinStatementController extends SummaryDetailService {
 			String whereCond1 = null;
 			Date sqlFromdate = null;
 			Date sqltodate = null;
-			if (StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA)
-					|| StringUtils.equals(statementRequest.getType(), APIConstants.REPORT_SOA_REPORT)) {
+			if (APIConstants.REPORT_SOA.equals(statementRequest.getType())
+					|| APIConstants.REPORT_SOA_REPORT.equals(statementRequest.getType())) {
 				try {
 					String reportName = statementRequest.getTemplate();
 					Date fromdate = statementRequest.getFromDate();

@@ -246,7 +246,11 @@ public class CustomerIncomeServiceImpl extends GenericService<CustomerIncome> im
 
 		if (customerIncome.getRecordType().equals(PennantConstants.RECORD_TYPE_DEL)) {
 			tranType = PennantConstants.TRAN_DEL;
-			incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(), "");
+			if (PennantConstants.FINSOURCE_ID_API.equals(customerIncome.getSourceId())) {
+				incomeDetailDAO.deletebyIncomeType(customerIncome.getLinkId(), customerIncome.getIncomeType());
+			}else {
+				incomeDetailDAO.deletebyLinkId(customerIncome.getLinkId(), "");
+			}
 		} else {
 			customerIncome.setRoleCode("");
 			customerIncome.setNextRoleCode("");

@@ -1159,6 +1159,8 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
 		} else if (moduleDefiner.equals(FinServiceEvent.HOLDEMI)) {
 			whereClause.append(" AND ProductCategory != '" + FinanceConstants.PRODUCT_ODFACILITY + "'");
+			whereClause.append("AND FinReference NOT IN (select  FinReference from FinanceMain where finrepaymethod="
+					+ "'" + FinanceConstants.REPAYMTH_MANUAL + "')");
 		} else if (moduleDefiner.equals(FinServiceEvent.CHGSCHDMETHOD)) {
 			whereClause
 					.append(" AND RepayRateBasis <> '" + CalculationConstants.RATE_BASIS_D + "' AND StepFinance = 0 ");

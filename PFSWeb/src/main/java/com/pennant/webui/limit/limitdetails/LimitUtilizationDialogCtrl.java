@@ -36,7 +36,6 @@ import com.pennant.backend.service.limitservice.impl.LimitManagement;
 import com.pennant.backend.service.limitservice.impl.LimitRuleManagement;
 import com.pennant.backend.util.LimitConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -170,7 +169,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException, DatatypeConfigurationException {
 		logger.debug("Entering" + event.toString());
-		//doDelete();
+		// doDelete();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -183,7 +182,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	 */
 	public void onClick$btnSave(Event event) throws InterruptedException, DatatypeConfigurationException {
 		logger.debug("Entering" + event.toString());
-		//	doSave();
+		// doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
@@ -202,8 +201,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -212,8 +210,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */
@@ -322,19 +319,19 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 				avialable = sactioned.subtract(utilisied);
 			}
 
-			lc = new Listcell(PennantAppUtil.amountFormate(sactioned, ccyFormat));
+			lc = new Listcell(CurrencyUtil.format(sactioned, ccyFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(reserved, ccyFormat));
+			lc = new Listcell(CurrencyUtil.format(reserved, ccyFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(utilisied, ccyFormat));
+			lc = new Listcell(CurrencyUtil.format(utilisied, ccyFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(osPriBal, ccyFormat));
+			lc = new Listcell(CurrencyUtil.format(osPriBal, ccyFormat));
 			lc.setParent(item);
 
-			lc = new Listcell(PennantAppUtil.amountFormate(avialable, ccyFormat));
+			lc = new Listcell(CurrencyUtil.format(avialable, ccyFormat));
 			lc.setParent(item);
 
 			lc = new Listcell(DateUtility.formatToShortDate(limitDetails.getExpiryDate()));
@@ -409,7 +406,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	 */
 	private void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		this.listBoxLimitDetail.setHeight(getListBoxHeight(4));
 		if (getLimitHeader().getRuleCode() != null) {
 			gb_CustomerDetails.setVisible(false);
@@ -433,8 +430,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aLimitHeader
-	 *            LimitHeader
+	 * @param aLimitHeader LimitHeader
 	 */
 	public void doWriteBeanToComponents(LimitHeader aLimitHeader) {
 		logger.debug("Entering");
