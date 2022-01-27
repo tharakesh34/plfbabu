@@ -19186,6 +19186,69 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="PSD#188161_pre" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'financedeviations_view');
+			]]>
+		</sql>
+	</changeSet>
 	
-
+	<changeSet id="PSD#188161" author="Mounika.M">
+		<createView viewName="FINANCEDEVIATIONS_VIEW" replaceIfExists="true">
+			<![CDATA[
+					SELECT T1.DEVIATIONID,
+						T1.FINID,
+    					T1.FINREFERENCE,
+    					T1.MODULE,
+   						T1.DEVIATIONCODE,
+    					T1.DEVIATIONTYPE,
+    					T1.USERROLE,
+    					T1.DEVIATIONVALUE,
+    					T1.DELEGATIONROLE,
+    					T1.APPROVALSTATUS,
+    					T1.DEVIATIONCATEGORY,
+    					T1.REMARKS,
+    					T1.DEVIATIONDESC,
+    					T1.MARKDELETED,
+    					T1.DEVIATIONDATE,
+					    T1.DEVIATIONUSERID,
+					    T1.DELEGATEDUSERID,
+					    T1.RAISEDUSER,
+					    T1.MITIGANTS
+   					FROM FINANCEDEVIATIONS_TEMP T1
+					UNION ALL
+ 					SELECT T1.DEVIATIONID,
+ 						T1.FINID,
+					    T1.FINREFERENCE,
+					    T1.MODULE,
+					    T1.DEVIATIONCODE,
+					    T1.DEVIATIONTYPE,
+					    T1.USERROLE,
+					    T1.DEVIATIONVALUE,
+					    T1.DELEGATIONROLE,
+					    T1.APPROVALSTATUS,
+					    T1.DEVIATIONCATEGORY,
+					    T1.REMARKS,
+					    T1.DEVIATIONDESC,
+					    T1.MARKDELETED,
+					    T1.DEVIATIONDATE,
+					    T1.DEVIATIONUSERID,
+					    T1.DELEGATEDUSERID,
+					    T1.RAISEDUSER,
+					    T1.MITIGANTS
+   					FROM FINANCEDEVIATIONS T1
+  					WHERE NOT (EXISTS ( SELECT 1 FROM FINANCEDEVIATIONS_TEMP WHERE FINANCEDEVIATIONS_TEMP.DEVIATIONID = T1.DEVIATIONID))
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="PSD#188161_post" author="Mounika.M" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'financedeviations_view');
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>
