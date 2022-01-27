@@ -386,9 +386,9 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		sql.append(", rch.ReceiptAmount, rch.ReceivedDate");
 		sql.append(" From FinReceiptHeader rch");
 		sql.append(" Inner Join FinReceiptDetail rcd on rcd.ReceiptID = rch.ReceiptID");
-		sql.append(" Where Reference = :Reference");
+		sql.append(" Where Reference = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			FinReceiptDetail rcd = new FinReceiptDetail();
