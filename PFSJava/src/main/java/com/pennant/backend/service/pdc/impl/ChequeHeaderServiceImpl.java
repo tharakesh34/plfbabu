@@ -1333,7 +1333,7 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		ChequeHeader ch = fd.getChequeHeader();
 		List<Date> Chequedate = new ArrayList<>();
 
-		long finID = ch.getFinID();
+		long finID = fd.getFinID();
 		String finReference = fd.getFinReference();
 
 		if (ch != null) {
