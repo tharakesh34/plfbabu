@@ -3165,13 +3165,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData receiptData = new FinReceiptData();
 		receiptData.setFinanceDetail(fd);
 		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain financemain = schdData.getFinanceMain();
 		FinServiceInstruction fsi = toUpperCase(schdData.getFinServiceInstruction());
 		String finReference = fsi.getFinReference();
 		String receiptPurpose = fsi.getReceiptPurpose();
-		String sourceID = fd.getFinScheduleData().getFinanceMain().getFinSourceID();
 		String parm1 = null;
+		String parm2 = null;
 		String eventCode = null;
-		boolean finSource = PennantConstants.FINSOURCE_ID_API.equals(sourceID);
+		boolean finSource = false;
+		if (financemain != null) {
+			finSource = PennantConstants.FINSOURCE_ID_API.equals(financemain.getFinSourceID());
+		}
 		BigDecimal amount = new BigDecimal(
 				PennantApplicationUtil.amountFormate(fsi.getAmount(), 2).replaceAll(",", ""));
 
@@ -3289,8 +3293,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
-		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode) && fsi.getFavourNumber() == null) {
+		String chqNo = StringUtils.trimToEmpty(fsi.getReceiptDetail().getFavourNumber());
+
+		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode) && StringUtils.isEmpty(chqNo)) {
 			setErrorToFSD(schdData, "90502", "Cheque Number");
+			return receiptData;
+		}
+
+		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(fsi.getPaymentMode()) && chqNo.length() > 6) {
+			parm1 = "Cheque Number: " + chqNo;
+			parm2 = "6";
+			setErrorToFSD(schdData, "30508", parm1, parm2);
 			return receiptData;
 		}
 
@@ -3735,6 +3748,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		FinServiceInstruction fsi = finScheduleData.getFinServiceInstruction();
 		FinanceMain financeMain = finScheduleData.getFinanceMain();
+		String finSourceId = financeMain.getFinSourceID();
 
 		// FinanceMain is Null. No Loans Available
 		if (financeMain == null) {
@@ -3800,7 +3814,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		if (receiptUpload && SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+		if ((receiptUpload || PennantConstants.FINSOURCE_ID_API.equals(finSourceId))
+				&& SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
 			BigDecimal recAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), formatter);
 			BigDecimal cashLimit = new BigDecimal(
 					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
