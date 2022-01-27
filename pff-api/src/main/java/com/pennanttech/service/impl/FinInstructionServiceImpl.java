@@ -1730,6 +1730,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
+		td.setFinID(finID);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -1788,6 +1789,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
+		td.setFinID(finID);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
