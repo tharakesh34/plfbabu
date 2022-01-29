@@ -1745,7 +1745,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
@@ -1798,13 +1798,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParm[0] = finReference;
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
-
+		
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
 
 		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
