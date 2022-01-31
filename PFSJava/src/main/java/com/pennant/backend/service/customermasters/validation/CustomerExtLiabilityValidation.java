@@ -370,6 +370,16 @@ public class CustomerExtLiabilityValidation {
 
 		}
 
+		if (liability.getBounceInstalments() < 0) {
+			String[] valueParam = new String[2];
+			valueParam[0] = " Number of Bounces in last 3 months(bounceInstalments)";
+			valueParam[1] = "Zero";
+			errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParam));
+			auditDetail.setErrorDetail(errorDetail);
+			return auditDetail;
+
+		}
+
 		if (StringUtils.isNotBlank(liability.getLoanPurpose())) {
 			auditDetail
 					.setErrorDetail(validateMasterCode("LoanPurposes", "LoanPurposeCode", liability.getLoanPurpose()));
