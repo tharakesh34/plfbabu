@@ -1867,10 +1867,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		if (StringUtils.isNotBlank(isWriteoffLoan(finID).getReturnCode())) {
-			return returnStatus;
-		}
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (isWriteoffLoan(finID) != null) {
 			return returnStatus;
 		}
 
