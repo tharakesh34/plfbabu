@@ -2529,6 +2529,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			String finReference = financeDetail.getFinReference();
 			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
+			Long finID = financeMainDAO.getFinID(finReference);
+
+			financeDetail.setFinID(finID);
+
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
 			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_Update,
@@ -2546,10 +2550,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 
 			List<FinanceScheduleDetail> schedules = null;
-			FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
+			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, tableType, false);
 			FinScheduleData schdData = financeDetail.getFinScheduleData();
 			schdData.setFinanceMain(fm);
-			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
+			schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, tableType, false);
 			schdData.setFinanceScheduleDetails(schedules);
 
 			validateChequeDetails(financeDetail);
