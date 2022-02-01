@@ -1388,6 +1388,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				return errorDetails;
 			} else {
 				BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
+
+				if (bankBranch == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "BankBranchID";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+
 				if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "BankBranch";
