@@ -85,7 +85,6 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("CUST_ADDR_AUTO_FILL", true);
 		customConstants.put("HOLD_DISB_INST_POST", true);
 		customConstants.put("VAS_INST_ON_DISB", true);
-		customConstants.put("FEE_SERVICEING_STAMPIN_ON_ORG", true);
 		customConstants.put("ALLOW_BUILDER_BENEFICIARY_DETAILS", true);
 		customConstants.put("POPULATE_DFT_INCOME_DETAILS", true);
 		customConstants.put("ALLOW_SINGLE_FEE_CONFIG", true);

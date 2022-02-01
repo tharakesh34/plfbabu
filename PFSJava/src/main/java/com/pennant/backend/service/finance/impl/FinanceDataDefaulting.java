@@ -74,7 +74,7 @@ public class FinanceDataDefaulting {
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 		fm.setUserDetails(userDetails);
 
-		if (PennantConstants.VLD_CRT_LOAN.equals(vldGroup)) {
+		if (!PennantConstants.VLD_CRT_SCHD.equals(vldGroup) || StringUtils.isNotEmpty(fm.getCustCIF())) {
 			if (StringUtils.isNotBlank(coreBankId)) {
 				if (!customerDAO.getCustomerByCoreBankId(coreBankId)) {
 					String[] valueParm = new String[2];

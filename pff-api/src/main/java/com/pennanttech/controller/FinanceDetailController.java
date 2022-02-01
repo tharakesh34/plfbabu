@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pennant.app.util.APIHeader;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -150,6 +151,11 @@ public class FinanceDetailController extends SummaryDetailService {
 			fd.setUserAction("");
 			fd.setExtSource(false);
 			fd.setModuleDefiner(FinServiceEvent.ORG);
+
+			if (fm.getCustID() > 0) {
+				CustomerDetails custDetails = customerDetailsService.getApprovedCustomerById(fm.getCustID());
+				fd.setCustomerDetails(custDetails);
+			}
 
 			schdData.setFinID(fm.getFinID());
 			schdData.setFinReference(fm.getFinReference());
@@ -650,6 +656,11 @@ public class FinanceDetailController extends SummaryDetailService {
 
 	public void setFeeDetailService(FeeDetailService feeDetailService) {
 		this.feeDetailService = feeDetailService;
+	}
+
+	@Autowired
+	public void setCustomerDetailsService(CustomerDetailsService customerDetailsService) {
+		this.customerDetailsService = customerDetailsService;
 	}
 
 }
