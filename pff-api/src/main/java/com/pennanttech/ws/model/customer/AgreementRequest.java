@@ -12,6 +12,7 @@ public class AgreementRequest implements Serializable {
 
 	@XmlElement
 	private String finReference;
+	@XmlElement
 	private String cif;
 	@XmlElement
 	private String agreementType;
