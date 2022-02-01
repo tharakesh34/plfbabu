@@ -930,11 +930,11 @@ public class JVPostingServiceImpl extends GenericService<JVPosting> implements J
 				return errorsList;
 			}
 
-			if (txnAmount.compareTo(BigDecimal.ZERO) == 0) {
-				String[] valueParm = new String[1];
+			if (txnAmount.compareTo(BigDecimal.ZERO) <= 0) {
+				String[] valueParm = new String[2];
 				valueParm[0] = "transactionAmount";
-
-				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("90127", valueParm)));
+				valueParm[1] = "Zero";
+				errorsList.add(ErrorUtil.getErrorDetail(new ErrorDetail("91121", valueParm)));
 
 				return errorsList;
 			}

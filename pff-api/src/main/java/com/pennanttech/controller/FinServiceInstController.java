@@ -3567,14 +3567,14 @@ public class FinServiceInstController extends SummaryDetailService {
 						DocumentDetails existingDoc = doctypeMap.get(covenantDocument.getDoctype());
 						existingDoc.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						existingDoc.setVersion(1);
-						existingDoc.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						existingDoc.setRecordType("");
 						existingDoc.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 						existingDoc.setLastMntBy(userDetails.getUserId());
 						existingDoc.setNewRecord(false);
 						existingDoc.setCustId(financeMain.getCustID());
 						existingDoc.setDocCategory(covenantDocument.getDoctype());
 
-						covenantDocument.setRecordType(PennantConstants.RECORD_TYPE_UPD);
+						covenantDocument.setRecordType("");
 						covenantDocument.setNewRecord(false);
 						covenantDocument.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 						covenantDocument.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);

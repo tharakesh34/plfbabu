@@ -654,4 +654,9 @@ public class LimitWebServiceImpl extends ExtendedTestClass implements LimitRestS
 		this.limitTransactionDetailDAO = limitTransactionDetailDAO;
 	}
 
+	@Autowired
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
 }

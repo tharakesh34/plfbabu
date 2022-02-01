@@ -5619,7 +5619,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
-		sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
+		sql.append(", fm.RecordStatus, fm.RecordType, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 		sql.append(" From FinanceMain").append(tableType).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -5885,6 +5885,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 			fm.setRecordStatus(rs.getString("RecordStatus"));
+			fm.setRecordType(rs.getString("RecordType"));
 			fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 			fm.setRoleCode(rs.getString("RoleCode"));
 			fm.setNextRoleCode(rs.getString("NextRoleCode"));

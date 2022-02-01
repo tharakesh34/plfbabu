@@ -3197,6 +3197,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 
+		if (finID == null) {
+			parm1 = fsi.getFinReference();
+			setErrorToFSD(schdData, "90201", parm1);
+			return receiptData;
+		}
+
 		// FIXME: Temporary Fix for API
 		String receiptMode = fsi.getPaymentMode();
 		// if (!fsi.isReceiptUpload()) {
