@@ -3351,6 +3351,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			schdData = fd.getFinScheduleData();
 			schdData.setFinServiceInstruction(tempFsi);
 		}
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		rch.setPanNumber(fsi.getPanNumber());
+
 		Date valueDate = fsi.getValueDate();
 		if (fsi.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) && (fsi.isReceiptUpload() || finSource)
 				&& (!StringUtils.equals(fsi.getReqType(), "Post") || finSource)) {
@@ -3363,12 +3367,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			receiptData = getFinReceiptDataById(finReference, eventCode, FinServiceEvent.RECEIPT, "");
-			FinReceiptHeader rch = receiptData.getReceiptHeader();
+			rch = receiptData.getReceiptHeader();
 
 			rch.setFinID(receiptData.getFinID());
 			rch.setReference(finReference);
 			rch.setReceiptAmount(amount);
 			rch.setReceiptPurpose(receiptPurpose);
+
 			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
 				int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
