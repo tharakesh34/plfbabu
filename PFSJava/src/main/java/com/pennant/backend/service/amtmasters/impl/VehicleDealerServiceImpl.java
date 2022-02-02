@@ -592,24 +592,21 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 
 		// validating Fax
 		String dealerFax = vehicleDealer.getDealerFax();
-		if (dealerFax != null) {
+		if (StringUtils.isNotBlank(dealerFax)) {
 			String regex = PennantRegularExpressions.REGEX_FAX;
 			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regex));
 			Matcher matcher = pattern.matcher(dealerFax);
 			if (!matcher.matches()) {
-				if (!(dealerFax.matches(regex))) {
-					String[] valueParm = new String[1];
-					valueParm[0] = dealerFax;
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90405", "", valueParm)));
-				}
+				String[] valueParm = new String[1];
+				valueParm[0] = dealerFax;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90405", "", valueParm)));
 			}
-		}
-
-		if (StringUtils.isNotBlank(dealerFax) && dealerFax.length() > 10) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Fax: " + dealerFax;
-			valueParm[1] = "10";
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30508", "", valueParm)));
+			if (dealerFax.length() > 10) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Fax: " + dealerFax;
+				valueParm[1] = "10";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30508", "", valueParm)));
+			}
 		}
 
 		// validate account no
