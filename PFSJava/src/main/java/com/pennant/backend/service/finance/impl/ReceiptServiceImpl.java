@@ -3313,6 +3313,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
+		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)) {
+			String regex = PennantRegularExpressions.REGEX_NUMERIC;
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regex));
+
+			if (!pattern.matcher(chqNo).matches()) {
+				setErrorToFSD(schdData, "90405", chqNo);
+				return receiptData;
+			}
+		}
+
 		int count = financeMainDAO.getCountByBlockedFinances(finID);
 		if (count > 0) {
 			parm1 = "FinReference: " + finReference;
