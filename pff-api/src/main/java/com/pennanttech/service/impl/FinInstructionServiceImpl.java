@@ -1790,7 +1790,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			valueParm[0] = finReference;
 			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
-		
+
 		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 			return returnStatus;
 		}
@@ -2359,7 +2359,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
 						date = true;
 						chequeDetail.seteMIRefNo(fsd.getInstNumber());
-						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
+						if (fsd.getRepayAmount().subtract(fsd.getTDSAmount())
+								.compareTo(chequeDetail.getAmount()) != 0) {
 							// {0} Should be equal To {1}
 							String[] valueParm = new String[2];
 							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
