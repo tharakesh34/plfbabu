@@ -190,9 +190,12 @@ public class SubventionKnockOffService extends BasicDao<Subvention> {
 		}
 
 		logger.info("Extracting partner bank details...");
+
 		for (Subvention subv : subvention.getSubventions()) {
-			PartnerBank bankDetails = partnerBankDAO.getPartnerBankById(subv.getPartnerBankId(), "");
-			subv.setPartnerBank(bankDetails);
+			if (subv.getPartnerBankId() != null) {
+				PartnerBank bankDetails = partnerBankDAO.getPartnerBankById(subv.getPartnerBankId(), "");
+				subv.setPartnerBank(bankDetails);
+			}
 		}
 	}
 
