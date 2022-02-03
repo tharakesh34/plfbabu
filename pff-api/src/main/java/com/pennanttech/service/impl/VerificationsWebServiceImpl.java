@@ -2027,6 +2027,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 		for (Verification vrf : verificationsList) {
 			vrf.setVerificationType(verification.getVerificationType());
 			vrf.setReferenceFor(vrf.getCollRef());
+			vrf.setKeyReference(verification.getKeyReference());
 
 			Long verificationID = getVerificationId(vrf, VerificationType.TV);
 			if (verificationID != null) {
