@@ -1344,6 +1344,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		schdData.setFinServiceInstruction(fsi);
 		fd = validateInstructions(fd, moduleDefiner, eventCode);
 		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
+
+		String finReference = fsi.getFinReference();
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		FinanceMain fm = financeMainDAO.getEntityNEntityDesc(finID, "", false);
+		fm.setFinID(finID);
+		fm.setFinReference(finReference);
+		fd.getFinScheduleData().setFinanceMain(fm);
+
 		FinReceiptData receiptData = receiptService.doReceiptValidations(fd, moduleDefiner);
 		fd = receiptData.getFinanceDetail();
 		schdData = fd.getFinScheduleData();
