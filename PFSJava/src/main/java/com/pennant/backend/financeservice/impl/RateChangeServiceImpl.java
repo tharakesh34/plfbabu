@@ -249,11 +249,12 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				valueParm[0] = recalType;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91108", "", valueParm), lang));
 				return auditDetail;
-			} else if (fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "To Date:" + DateUtil.formatToShortDate(fsi.getRecalToDate());
-				valueParm[1] = " From Date:" + DateUtil.formatToShortDate(fsi.getRecalFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm), lang));
+			} else if (fsi.getRecalToDate().compareTo(fm.getMaturityDate()) >= 0 || fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) <= 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "To Date: " + DateUtil.formatToShortDate(fsi.getRecalToDate());
+				valueParm[1] = " From Date: " + DateUtil.formatToShortDate(fsi.getRecalFromDate());
+				valueParm[2] = " Maturity Date: " + DateUtil.formatToShortDate(fsi.getMaturityDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			}
 		}
 
