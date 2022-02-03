@@ -2111,7 +2111,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
 			fd.setReturnStatus(returnStatus);

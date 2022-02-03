@@ -509,13 +509,12 @@ public class CustomerWebServiceImpl extends ExtendedTestClass implements Custome
 				valueParm[0] = customerDetails.getCustCIF();
 				return APIErrorHandlerService.getFailedStatus("90101", valueParm);
 			}
-		}
-
-		if (!StringUtils.equals(customerDetails.getCustCtgCode(), customer.getCustCtgCode())) {
-			String[] valueParm = new String[2];
-			valueParm[0] = customerDetails.getCustCtgCode();
-			valueParm[1] = customerDetails.getCustCIF();
-			return APIErrorHandlerService.getFailedStatus("90599", valueParm);
+			if (!StringUtils.equals(customerDetails.getCustCtgCode(), customer.getCustCtgCode())) {
+				String[] valueParm = new String[2];
+				valueParm[0] = customerDetails.getCustCtgCode();
+				valueParm[1] = customerDetails.getCustCIF();
+				return APIErrorHandlerService.getFailedStatus("90599", valueParm);
+			}
 		}
 
 		// for logging purpose
