@@ -2284,6 +2284,7 @@ public class VerificationsWebServiceImpl implements VerificationsRestService {
 
 		for (Verification vrf : verificationsList) {
 			vrf.setVerificationType(verification.getVerificationType());
+			vrf.setKeyReference(verification.getKeyReference());
 
 			if (StringUtils.isBlank(vrf.getReferenceFor())) {
 				String[] valueParm = new String[1];
