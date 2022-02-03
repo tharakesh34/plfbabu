@@ -415,6 +415,15 @@ public class CustomerExtLiabilityValidation {
 						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParam));
 						auditDetail.setErrorDetail(errorDetail);
 					}
+					
+					int clearDay = extLiabilityPaymentdetails.getEmiClearedDay();
+					if (PennantConstants.CLEARED.equals(extLiabilityPaymentdetails.getEmiClearance())
+							&& clearDay == 0) {
+						String[] valueParam = new String[1];
+						valueParam[0] = "EmiClearedDay";
+						errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("30561", "", valueParam));
+						auditDetail.setErrorDetail(errorDetail);
+					}
 				}
 				String date = DateUtility.format(DateUtility.getSysDate(), PennantConstants.DBDateFormat);
 				List<ExtLiabilityPaymentdetails> paymentDetails = getPaymentDetails(DateUtility.getDBDate(date),
