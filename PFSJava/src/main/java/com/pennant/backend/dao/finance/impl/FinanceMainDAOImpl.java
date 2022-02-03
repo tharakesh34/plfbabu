@@ -4419,8 +4419,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", cu.CustShrtName, cu.PhoneNumber");
 		sql.append(" FROM Financemain_Temp fm");
 		sql.append(" Inner Join Secroles sr On sr.Rolecd = fm.NextRoleCode");
+		sql.append(" Inner Join SecUsers su on su.UsrId = fm.LastMntBy");
 		sql.append(" Inner Join Customers cu On cu.CustID = fm.CustID");
-		sql.append(" Where fm.NextRoleCode = ?");
+		sql.append(" Where fm.LastMntBy = ? and fm.NextRoleCode = ?");
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			UserPendingCases pc = new UserPendingCases();
@@ -4437,7 +4438,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			return pc;
 
-		}, roleCode);
+		}, usrId, roleCode);
 	}
 
 	private String getFinMainAllQuery(String type, boolean wif) {
