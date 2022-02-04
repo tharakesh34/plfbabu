@@ -191,26 +191,18 @@ public class CustomerExtLiabilityDAOImpl extends SequenceDao<CustomerExtLiabilit
 	}
 
 	@Override
-	public int getVersion(long custId, int liabilitySeq) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder();
-		sql.append(" select version from customer_ext_liabilities cel");
-		sql.append(" inner join external_liabilities el on el.linkid = cel.linkid");
-		sql.append(" where custid = :custid and seqno = :seqno");
-		logger.trace(Literal.SQL + sql.toString());
-
+	public int getVersion(long linkId, int liabilitySeq) {
 		int recordCount = 0;
-		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
-		mapSqlParameterSource.addValue("custid", custId);
-		mapSqlParameterSource.addValue("seqno", liabilitySeq);
+		String sql = "Select Version From External_Liabilities where LinkId = ? and seqno = ? ";
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			recordCount = this.jdbcTemplate.queryForObject(sql.toString(), mapSqlParameterSource, Integer.class);
+			recordCount = this.jdbcOperations.queryForObject(sql.toString(), Integer.class, linkId, liabilitySeq);
 		} catch (EmptyResultDataAccessException dae) {
 			recordCount = 0;
 		}
-		logger.debug(Literal.LEAVING);
+
 		return recordCount;
 
 	}
