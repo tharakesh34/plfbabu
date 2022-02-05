@@ -2300,7 +2300,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			if (chequeHeader == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Cheque Details ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return  APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
 			// for logging purpose
