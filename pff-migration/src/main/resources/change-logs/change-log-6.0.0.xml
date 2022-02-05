@@ -24433,7 +24433,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'customersdedup_view');
@@ -24441,7 +24441,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188" author="Gopal.p">
+	<changeSet id="PSD#172188.1" author="Gopal.p">
 		<createView viewName="CUSTOMERSDEDUP_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.CUSTID,
@@ -24504,7 +24504,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
 		    LEFT JOIN CUSTOMEREMAILS T6 ON T1.CUSTID = T6.CUSTID AND T6.CUSTEMAILPRIORITY = 5
-		    LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID
+		    LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID AND T7.PHONETYPEPRIORITY = 5
 			UNION ALL
 		 	SELECT T1.CUSTID,
 			    T1.CUSTCIF,
@@ -24565,14 +24565,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
 		   LEFT JOIN CUSTOMEREMAILS T6 ON T1.CUSTID = T6.CUSTID AND T6.CUSTEMAILPRIORITY = 5
-		   LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID
+		   LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID AND T7.PHONETYPEPRIORITY = 5
 		   WHERE NOT (EXISTS ( SELECT 1 FROM CUSTOMERS_TEMP
 				WHERE CUSTOMERS_TEMP.CUSTID = T1.CUSTID))
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#172188_post" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.1_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'customersdedup_view');
