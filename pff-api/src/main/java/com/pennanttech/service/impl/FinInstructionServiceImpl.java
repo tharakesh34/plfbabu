@@ -1776,26 +1776,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus updateGSTDetails(final FinanceTaxDetail td) throws ServiceException {
-		logger.info(Literal.ENTERING);
-
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
-		td.setFinID(finID);
-
-		WSReturnStatus returnStatus = new WSReturnStatus();
-
+		
 		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
+		
+		td.setFinID(finID);
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			return returnStatus;
-		}
-
-		returnStatus = isWriteoffLoan(finID);
+		WSReturnStatus returnStatus = isWriteoffLoan(finID);
 		if (returnStatus != null) {
 			return returnStatus;
 		}
@@ -1804,8 +1797,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (CollectionUtils.isNotEmpty(validationErrors)) {
 			for (ErrorDetail ed : validationErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 			}
 		}
 
@@ -1814,16 +1806,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		if (currentFinanceTaxData == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
-			return returnStatus;
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 
 		List<ErrorDetail> coApplicantErrors = financeTaxDetailService.verifyCoApplicantDetails(td);
 
 		if (CollectionUtils.isNotEmpty(coApplicantErrors)) {
 			for (ErrorDetail ed : coApplicantErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 			}
 		}
 
@@ -1834,11 +1824,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
-		returnStatus = finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
-
-		logger.info(Literal.LEAVING);
-
-		return returnStatus;
+		
+		return finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
 	}
 
 	@Override
