@@ -2432,19 +2432,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail();
 
 		String param = "Grace";
-		boolean alwFlexi = false;
-		if (financeDetail.getFinScheduleData().getFinanceMain().isAlwFlexi()) {
-			alwFlexi = true;
-			param = "PureFlexi";
-		}
-
-		if (!alwFlexi) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Change Gestation";
-			valueParm[1] = "LoanType: " + financeType.getFinType();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
-			return auditDetail;
-		}
 
 		if (financeType.getMinGrcTerms() > 0 && financeType.getMaxGrcTerms() > 0) {
 			if (finServiceInstruction.getGrcTerms() < financeType.getMinGrcTerms()
@@ -2457,7 +2444,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				return auditDetail;
 			}
 		}
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		if (financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()
 				.before(DateUtility.addDays(curBussDate, 1))) {
 			String[] valueParm = new String[2];
