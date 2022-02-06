@@ -1344,9 +1344,15 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		schdData.setFinServiceInstruction(fsi);
 		fd = validateInstructions(fd, moduleDefiner, eventCode);
 		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
-		FinanceMain finMain = new FinanceMain();
-		finMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-		fd.getFinScheduleData().setFinanceMain(finMain);
+
+		String finReference = fsi.getFinReference();
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		FinanceMain fm = financeMainDAO.getEntityNEntityDesc(finID, "", false);
+		fm.setFinID(finID);
+		fm.setFinReference(finReference);
+		fd.getFinScheduleData().setFinanceMain(fm);
+
 		FinReceiptData receiptData = receiptService.doReceiptValidations(fd, moduleDefiner);
 		fd = receiptData.getFinanceDetail();
 		schdData = fd.getFinScheduleData();
@@ -1770,26 +1776,19 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus updateGSTDetails(final FinanceTaxDetail td) throws ServiceException {
-		logger.info(Literal.ENTERING);
-
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
-		td.setFinID(finID);
-
-		WSReturnStatus returnStatus = new WSReturnStatus();
-
+		
 		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 		
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			return returnStatus;
-		}
+		td.setFinID(finID);
 
-		returnStatus = isWriteoffLoan(finID);
+		WSReturnStatus returnStatus = isWriteoffLoan(finID);
 		if (returnStatus != null) {
 			return returnStatus;
 		}
@@ -1798,8 +1797,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (CollectionUtils.isNotEmpty(validationErrors)) {
 			for (ErrorDetail ed : validationErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 			}
 		}
 
@@ -1808,16 +1806,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		if (currentFinanceTaxData == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
-			return returnStatus;
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 
 		List<ErrorDetail> coApplicantErrors = financeTaxDetailService.verifyCoApplicantDetails(td);
 
 		if (CollectionUtils.isNotEmpty(coApplicantErrors)) {
 			for (ErrorDetail ed : coApplicantErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 			}
 		}
 
@@ -1828,11 +1824,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
-		returnStatus = finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
-
-		logger.info(Literal.LEAVING);
-
-		return returnStatus;
+		
+		return finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
 	}
 
 	@Override
@@ -2105,7 +2098,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
 			fd.setReturnStatus(returnStatus);
@@ -2307,7 +2300,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			if (chequeHeader == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Cheque Details ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return  APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
 			// for logging purpose
@@ -2345,27 +2338,33 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
+		
 		for (ChequeDetail chequeDetail : chequeDetailsList) {
-			// schedules validation
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())) {
+			if (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType())) {
 				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : schedules) {
 					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
 						date = true;
 						chequeDetail.seteMIRefNo(fsd.getInstNumber());
-						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
+						if (fsd.getRepayAmount().subtract(fsd.getTDSAmount())
+								.compareTo(chequeDetail.getAmount()) != 0) {
 							// {0} Should be equal To {1}
 							String[] valueParm = new String[2];
 							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
 							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 							return;
-
-						} else {
+						}else {
 							break;
 						}
 
-					} else {
+					} else if(chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())){
+						String[] valueParm = new String[2];
+						valueParm[0] = "Cheque ";
+						valueParm[1] = "Cheque Date : " + fsd.getSchDate();
+						schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+						return;
+					}	else {
 						date = false;
 					}
 				}
@@ -2375,10 +2374,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					valueParm[1] = "ScheduleDates";
 					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 					return;
-
 				}
+				
+				
 			}
-
 		}
 
 		return;

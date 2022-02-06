@@ -21,7 +21,7 @@ public interface CustomerExtLiabilityDAO {
 
 	int getCustomerExtLiabilityByBank(String code, String string);
 
-	int getVersion(long custId, int liabilitySeq);
+	int getVersion(long linkId, int liabilitySeq);
 
 	BigDecimal getExternalLiabilitySum(long custId);
 

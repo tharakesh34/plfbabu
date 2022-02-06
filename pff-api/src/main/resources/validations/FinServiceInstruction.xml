@@ -323,7 +323,7 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if(_this.actualRate > 0){
+					if(_this.actualRate >= 0){
 					if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
 					false;
 					}else{
@@ -333,8 +333,27 @@
 					if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
 					true;
 					}else{
+					if(_this.actualRate != null){
+					true;
+					}else{
 					false;
 					}
+					}
+					}
+				</element>
+			</constraint>
+			<constraint annotation="org.hibernate.validator.constraints.ScriptAssert">
+				<message>actualRate should be Positive</message>
+				<groups>
+					<value>com.pennant.validation.AddRateChangeGroup</value>
+					<value>com.pennant.validation.ReSchedulingGroup</value>
+				</groups>
+				<element name="lang">javascript</element>
+				<element name="script">
+					if(_this.actualRate >= 0){
+					true;
+					}else{
+					false;
 					}
 				</element>
 			</constraint>

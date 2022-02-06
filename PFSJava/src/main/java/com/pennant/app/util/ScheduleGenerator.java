@@ -288,10 +288,12 @@ public class ScheduleGenerator {
 			if (DateUtility.compare(curSchd.getSchDate(), financeMain.getGrcPeriodEndDate()) < 0) {
 				// Bugfix:Removed '=' condition to fix ROI Issue in Change Moratorium at GraceEnd
 				if (DateUtility.compare(curSchd.getSchDate(), newSchdAfter) >= 0) {
-					curSchd.setActRate(prvSchd.getActRate());
-					curSchd.setBaseRate(prvSchd.getBaseRate());
-					curSchd.setSplRate(prvSchd.getSplRate());
-					curSchd.setMrgRate(prvSchd.getMrgRate());
+					if (prvSchd != null) {
+						curSchd.setActRate(prvSchd.getActRate());
+						curSchd.setBaseRate(prvSchd.getBaseRate());
+						curSchd.setSplRate(prvSchd.getSplRate());
+						curSchd.setMrgRate(prvSchd.getMrgRate());
+					}
 				}
 
 				curSchd.setSchdMethod(newGrcSchdMethod);

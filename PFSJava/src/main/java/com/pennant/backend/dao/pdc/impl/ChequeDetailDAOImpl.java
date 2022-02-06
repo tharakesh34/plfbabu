@@ -44,6 +44,7 @@ package com.pennant.backend.dao.pdc.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,6 +68,7 @@ import com.pennant.backend.model.mandate.Mandate;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.core.TableType;
@@ -443,5 +445,14 @@ public class ChequeDetailDAOImpl extends SequenceDao<Mandate> implements ChequeD
 		}
 
 		logger.debug(Literal.LEAVING);
+	}
+
+	@Override
+	public boolean isChequeExists(long headerID, Date chequeDate) {
+		String sql = "Select count(ChequeDetailsID) From ChequeDetail_View Where HeaderID = ? and ChequeDate = ?";
+		
+		logger.debug(Literal.SQL + sql);
+		
+		return jdbcOperations.queryForObject(sql, Integer.class, headerID, JdbcUtil.getDate(chequeDate)) > 0;
 	}
 }

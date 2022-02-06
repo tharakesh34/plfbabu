@@ -249,11 +249,12 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 				valueParm[0] = recalType;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91108", "", valueParm), lang));
 				return auditDetail;
-			} else if (fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) <= 0) {
-				String[] valueParm = new String[2];
-				valueParm[0] = "To Date:" + DateUtil.formatToShortDate(fsi.getRecalToDate());
-				valueParm[1] = " From Date:" + DateUtil.formatToShortDate(fsi.getRecalFromDate());
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91125", "", valueParm), lang));
+			} else if (fsi.getRecalToDate().compareTo(fm.getMaturityDate()) >= 0 || fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) <= 0) {
+				String[] valueParm = new String[3];
+				valueParm[0] = "To Date: " + DateUtil.formatToShortDate(fsi.getRecalToDate());
+				valueParm[1] = " From Date: " + DateUtil.formatToShortDate(fsi.getRecalFromDate());
+				valueParm[2] = " Maturity Date: " + DateUtil.formatToShortDate(fsi.getMaturityDate());
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 			}
 		}
 
@@ -261,8 +262,21 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 		boolean isValidToDate = false;
 		boolean isValidRecalFromDate = false;
 		boolean isValidRecalToDate = false;
+		List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
+		// If presentment Extracted
+		for (FinanceScheduleDetail schDetail : schedules) {
+			if (schDetail.getPresentmentId() > 0) {
+				if (DateUtil.compare(fsi.getFromDate(), schDetail.getSchDate()) < 0) {
+					String[] valueParm = new String[3];
+					valueParm[0] = "FromDate :" + DateUtil.formatToShortDate(fsi.getFromDate());
+					valueParm[1] = DateUtil.formatToShortDate(schDetail.getSchDate());
+					valueParm[2] = "Maturitydate:" + DateUtil.formatToShortDate(fm.getMaturityDate());
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
+				}
+			}
+		}
+
 		if (!fm.isRateChgAnyDay()) {
-			List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "", isWIF);
 			if (schedules != null) {
 				for (FinanceScheduleDetail schDetail : schedules) {
 					// FromDate
@@ -321,8 +335,6 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 			}
 		} else {
 			if (!CalculationConstants.RPYCHG_ADJMDT.equals(recalType)) {
-				List<FinanceScheduleDetail> schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, "",
-						isWIF);
 				if (schedules != null) {
 					for (FinanceScheduleDetail schDetail : schedules) {
 						// RecalFromDate
@@ -342,18 +354,6 @@ public class RateChangeServiceImpl extends GenericService<FinServiceInstruction>
 								if (checkIsValidRepayDate(auditDetail, schDetail, "RecalToDate") != null) {
 									return auditDetail;
 								}
-							}
-						}
-
-						// If presentment Extracted
-						if (schDetail.getPresentmentId() > 0) {
-							if (DateUtil.compare(fsi.getFromDate(), schDetail.getSchDate()) < 0) {
-								String[] valueParm = new String[3];
-								valueParm[0] = "FromDate :" + DateUtil.formatToShortDate(fsi.getFromDate());
-								valueParm[1] = DateUtil.formatToShortDate(schDetail.getSchDate());
-								valueParm[2] = "Maturitydate:" + DateUtil.formatToShortDate(fm.getMaturityDate());
-								auditDetail.setErrorDetail(
-										ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm), lang));
 							}
 						}
 

@@ -8,6 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.SessionUserDetails;
@@ -208,7 +211,6 @@ public class DisbursementController extends ExtendedTestClass {
 				long disbReqId = request.getId();
 				String channel = request.getChannel();
 				long disbInstId = request.getDisbInstId();
-				String disbParty = request.getDisbParty();
 
 				DisbursementRequest disb = disbursementDAO.getDisbRequest(disbReqId);
 				if (disb == null) {
@@ -258,9 +260,13 @@ public class DisbursementController extends ExtendedTestClass {
 					return APIErrorHandlerService.getFailedStatus("30550", valueParm);
 				}
 
+				FinAdvancePayments fa = null;
+				FinanceMain fm = null;
+				PaymentInstruction pi = null;
+				
 				switch (channel) {
 				case DisbursementConstants.CHANNEL_DISBURSEMENT:
-					FinAdvancePayments fa = disbursementDAO.getDisbursementInstruction(disbReqId);
+					 fa = disbursementDAO.getDisbursementInstruction(disbReqId);
 
 					if (fa == null) {
 						String valueParm[] = new String[4];
@@ -296,15 +302,15 @@ public class DisbursementController extends ExtendedTestClass {
 
 					Long finID = financeMainDAO.getActiveFinID(finReference, TableType.MAIN_TAB);
 
-					FinanceMain fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.MAIN_TAB);
+					 fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.MAIN_TAB);
 
 					if (fm == null) {
 						fm = disbursementProcess.getDisbursmentFinMainById(finID, TableType.TEMP_TAB);
 					}
-
+					
 					break;
 				case DisbursementConstants.CHANNEL_PAYMENT:
-					PaymentInstruction pi = disbursementDAO.getPaymentInstruction(disbReqId);
+					pi = disbursementDAO.getPaymentInstruction(disbReqId);
 
 					if (pi == null) {
 						String valueParm[] = new String[4];
@@ -337,7 +343,7 @@ public class DisbursementController extends ExtendedTestClass {
 					break;
 				}
 
-				updateRequest(request);
+				processDispResponse(request, fa, pi, fm);
 			}
 
 		} catch (Exception e) {
@@ -348,9 +354,47 @@ public class DisbursementController extends ExtendedTestClass {
 			return APIErrorHandlerService.getFailedStatus("41004", valueParm);
 
 		}
+		
 		logger.info(Literal.LEAVING);
 		return APIErrorHandlerService.getSuccessStatus();
 
+	}
+
+	private void processDispResponse(DisbursementRequest request, FinAdvancePayments fa, PaymentInstruction pi,
+			FinanceMain fm) {
+		TransactionStatus txStatus = null;
+		int count = 0;
+		
+		try {
+			DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
+			txDef.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+			txStatus = transactionManager.getTransaction(txDef);
+
+			if(fa != null) {
+				count = disbursementProcess.processDisbursement(fm, fa);
+			}
+			
+			if(pi != null) {
+				count = paymentProcess.processPayment(pi);
+			}
+			
+			if (count == 1) {
+				count = updateRequest(request);
+				if (count == 0 || count > 1) {
+					transactionManager.rollback(txStatus);
+				} else {
+					transactionManager.commit(txStatus);
+				}
+			} else {
+				transactionManager.rollback(txStatus);
+			}
+
+		} catch (Exception e) {
+			transactionManager.rollback(txStatus);
+			logger.error(Literal.EXCEPTION, e);
+			throw e;
+		}
 	}
 
 	private int updateRequest(DisbursementRequest request) {

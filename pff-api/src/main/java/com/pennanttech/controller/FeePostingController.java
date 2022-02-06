@@ -226,8 +226,8 @@ public class FeePostingController extends ExtendedTestClass {
 			return error;
 		} else {
 			// validate FeeTypeCode
-			long feeId = feeTypeDAO.getFinFeeTypeIdByFeeType(manualAdvise.getFeeTypeCode(), "_AView");
-			if (feeId == Long.MIN_VALUE) {
+			Long feeId = feeTypeDAO.getFinFeeTypeIdByFeeType(manualAdvise.getFeeTypeCode(), "_AView");
+			if (feeId == null) {
 				String[] param = new String[2];
 				param[0] = "feeType";
 				param[1] = manualAdvise.getFeeTypeCode();

@@ -2432,19 +2432,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		AuditDetail auditDetail = new AuditDetail();
 
 		String param = "Grace";
-		boolean alwFlexi = false;
-		if (financeDetail.getFinScheduleData().getFinanceMain().isAlwFlexi()) {
-			alwFlexi = true;
-			param = "PureFlexi";
-		}
-
-		if (!alwFlexi) {
-			String[] valueParm = new String[2];
-			valueParm[0] = "Change Gestation";
-			valueParm[1] = "LoanType: " + financeType.getFinType();
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90329", valueParm)));
-			return auditDetail;
-		}
 
 		if (financeType.getMinGrcTerms() > 0 && financeType.getMaxGrcTerms() > 0) {
 			if (finServiceInstruction.getGrcTerms() < financeType.getMinGrcTerms()
@@ -2457,7 +2444,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				return auditDetail;
 			}
 		}
-		Date curBussDate = DateUtility.getAppDate();
+		Date curBussDate = SysParamUtil.getAppDate();
 		if (financeDetail.getFinScheduleData().getFinanceMain().getGrcPeriodEndDate()
 				.before(DateUtility.addDays(curBussDate, 1))) {
 			String[] valueParm = new String[2];
@@ -3805,80 +3792,76 @@ public class FinServiceInstController extends SummaryDetailService {
 				new HashMap<String, List<ErrorDetail>>());
 	}
 
-	public WSReturnStatus processChequeDetail(FinanceDetail financeDetail, String tableType) {
+	public WSReturnStatus processChequeDetail(FinanceDetail fd, String tableType) {
 		logger.debug(Literal.ENTERING);
 		WSReturnStatus response = null;
-		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
-		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
+		ChequeHeader ch = fd.getChequeHeader();
+		FinanceMain fm = fd.getFinScheduleData().getFinanceMain();
 		try {
 
 			LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
 
-			// defaulting record values to cheque Header
-
-			chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+			ch.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			if (StringUtils.isNotBlank(tableType)) {
-				chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-				chequeHeader.setNewRecord(true);
-				chequeHeader.setVersion(1);
+				ch.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
+				ch.setNewRecord(true);
+				ch.setVersion(1);
 			} else {
-				chequeHeader.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				chequeHeader.setNewRecord(false);
-				chequeHeader.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-
+				ch.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
+				ch.setNewRecord(false);
+				ch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			}
-			chequeHeader.setLastMntBy(userDetails.getUserId());
-			chequeHeader.setRecordStatus(financeMain.getRecordStatus());
-			chequeHeader.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-			chequeHeader.setTaskId(financeMain.getTaskId());
-			chequeHeader.setNextTaskId(financeMain.getNextTaskId());
-			chequeHeader.setRoleCode(financeMain.getRoleCode());
-			chequeHeader.setNextRoleCode(financeMain.getNextRoleCode());
-			chequeHeader.setWorkflowId(financeMain.getWorkflowId());
-			chequeHeader.setActive(true);
-			chequeHeader.setSourceId(PennantConstants.FINSOURCE_ID_API);
+			
+			ch.setLastMntBy(userDetails.getUserId());
+			ch.setRecordStatus(fm.getRecordStatus());
+			ch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+			ch.setTaskId(fm.getTaskId());
+			ch.setNextTaskId(fm.getNextTaskId());
+			ch.setRoleCode(fm.getRoleCode());
+			ch.setNextRoleCode(fm.getNextRoleCode());
+			ch.setWorkflowId(fm.getWorkflowId());
+			ch.setActive(true);
+			ch.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
-			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
-			int chequeSerialNum = chequeHeader.getChequeSerialNo();
-			chequeHeader.setTotalAmount(BigDecimal.ZERO);
-			for (ChequeDetail chequeDetail : chequeDetails) {
-				// defaulting record values to cheque detail
-				chequeDetail.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-				chequeDetail.setNewRecord(true);
-				chequeDetail.setLastMntBy(userDetails.getUserId());
-				chequeDetail.setRecordStatus(financeMain.getRecordStatus());
-				chequeDetail.setVersion(2);
-				chequeDetail.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				chequeDetail.setTaskId(financeMain.getTaskId());
-				chequeDetail.setNextTaskId(financeMain.getNextTaskId());
-				chequeDetail.setRoleCode(financeMain.getRoleCode());
-				chequeDetail.setNextRoleCode(financeMain.getNextRoleCode());
-				chequeDetail.setWorkflowId(financeMain.getWorkflowId());
-
-				chequeDetail.setChequeSerialNo(chequeSerialNum);
-				chequeSerialNum++;
-
-				// setting the values to the cheque Detail by excluding at the cheque header
-				chequeDetail.setBankBranchID(chequeHeader.getBankBranchID());
-				chequeDetail.setAccHolderName(chequeHeader.getAccHolderName());
-				chequeDetail.setAccountNo(chequeHeader.getAccountNo());
-
-				// setting the reference
-				chequeHeader.setFinID(financeMain.getFinID());
-				chequeHeader.setFinReference(financeMain.getFinReference());
-				chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));
-				// setting the default values
-				chequeDetail.setStatus(PennantConstants.CHEQUESTATUS_NEW);
-				chequeDetail.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
-				chequeDetail.setChequeCcy(SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY));
-				chequeDetail.setActive(true);
-
+			List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
+			int chequeSerialNum = ch.getChequeSerialNo();
+			
+			BigDecimal totalChequeAmount = BigDecimal.ZERO;
+			String chequeCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
+			
+			for (ChequeDetail cd : chequeDetails) {
+				cd.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+				cd.setNewRecord(true);
+				cd.setLastMntBy(userDetails.getUserId());
+				cd.setRecordStatus(fm.getRecordStatus());
+				cd.setVersion(2);
+				cd.setLastMntOn(new Timestamp(System.currentTimeMillis()));
+				cd.setTaskId(fm.getTaskId());
+				cd.setNextTaskId(fm.getNextTaskId());
+				cd.setRoleCode(fm.getRoleCode());
+				cd.setNextRoleCode(fm.getNextRoleCode());
+				cd.setWorkflowId(fm.getWorkflowId());
+				cd.setChequeSerialNo(chequeSerialNum++);
+				cd.setBankBranchID(ch.getBankBranchID());
+				cd.setAccHolderName(ch.getAccHolderName());
+				cd.setAccountNo(ch.getAccountNo());
+				cd.setStatus(PennantConstants.CHEQUESTATUS_NEW);
+				cd.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
+				cd.setChequeCcy(chequeCcy);
+				cd.setActive(true);
+				
+				totalChequeAmount = totalChequeAmount.add(cd.getAmount());
 			}
+			
+			ch.setFinID(fm.getFinID());
+			ch.setFinReference(fm.getFinReference());
+			ch.setTotalAmount(ch.getTotalAmount().add(totalChequeAmount));
+			
 			response = new WSReturnStatus();
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
 					.get(APIHeader.API_HEADER_KEY);
-			AuditHeader auditHeader = getAuditHeader(chequeHeader, PennantConstants.TRAN_WF);
+			AuditHeader auditHeader = getAuditHeader(ch, PennantConstants.TRAN_WF);
 			auditHeader.setApiHeader(reqHeaderDetails);
 
 			if (StringUtils.isNotBlank(tableType)) {
@@ -4117,6 +4100,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					chequeDetail.setAccHolderName(chequeHeader.getAccHolderName());
 					chequeDetail.setAccountNo(chequeHeader.getAccountNo());
 
+					chequeHeader.setFinID(financeMain.getFinID());
 					// setting the reference
 					chequeHeader.setFinReference(financeMain.getFinReference());
 					chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));

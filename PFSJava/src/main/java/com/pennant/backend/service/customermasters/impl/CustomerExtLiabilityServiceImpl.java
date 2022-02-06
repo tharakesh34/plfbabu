@@ -93,8 +93,8 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 	}
 
 	@Override
-	public int getVersion(long custId, int liabilitySeq) {
-		return customerExtLiabilityDAO.getVersion(custId, liabilitySeq);
+	public int getVersion(long linkId, int liabilitySeq) {
+		return customerExtLiabilityDAO.getVersion(linkId, liabilitySeq);
 	}
 
 	@Override

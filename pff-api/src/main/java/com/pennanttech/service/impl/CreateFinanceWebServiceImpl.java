@@ -953,8 +953,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 			fd.setFinReference(finReference);
 			if (StringUtils.isNotBlank(finReference)) {
 				FinanceMain fm = financeMainDAO.getRejectFinanceMainByRef(finReference);
-				Long finID = fm.getFinID();
-				if (finID == null) {
+				if (fm == null) {
 					fd = new FinanceDetail();
 					String[] valueParm = new String[1];
 					valueParm[0] = finReference;
@@ -963,7 +962,7 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					return fd;
 				}
 
-				fd.setFinID(finID);
+				fd.setFinID(fm.getFinID());
 			} else {
 				FinanceMain fm = financeMainDAO.getFinanceMainByHostReference(externalReference, false);
 
@@ -971,16 +970,14 @@ public class CreateFinanceWebServiceImpl extends ExtendedTestClass
 					String[] valueParm = new String[1];
 					valueParm[0] = externalReference;
 					returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-				} else {
-					fd.setFinReference(fm.getFinReference());
-					fd.setFinID(fm.getFinID());
-				}
 
-				if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
 					fd = new FinanceDetail();
 					fd.setReturnStatus(returnStatus);
 					return fd;
 				}
+			
+				fd.setFinReference(fm.getFinReference());
+				fd.setFinID(fm.getFinID());
 			}
 
 			if (StringUtils.isNotBlank(schdData.getOldFinReference())) {
