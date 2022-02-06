@@ -2338,9 +2338,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
+		
 		for (ChequeDetail chequeDetail : chequeDetailsList) {
-			// schedules validation
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())) {
+			if (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType())) {
 				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : schedules) {
 					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
@@ -2354,12 +2354,17 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
 							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 							return;
-
-						} else {
+						}else {
 							break;
 						}
 
-					} else {
+					} else if(chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())){
+						String[] valueParm = new String[2];
+						valueParm[0] = "Cheque ";
+						valueParm[1] = "Cheque Date : " + fsd.getSchDate();
+						schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+						return;
+					}	else {
 						date = false;
 					}
 				}
@@ -2369,10 +2374,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					valueParm[1] = "ScheduleDates";
 					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 					return;
-
 				}
+				
+				
 			}
-
 		}
 
 		return;

@@ -42,6 +42,7 @@
 */
 package com.pennant.backend.dao.pdc;
 
+import java.util.Date;
 import java.util.List;
 
 import com.pennant.backend.model.finance.ChequeDetail;
@@ -70,5 +71,7 @@ public interface ChequeDetailDAO {
 	void batchUpdateChequeStatus(List<Long> chequeDetailsId, String chequestatus);
 
 	int updateChequeStatus(List<PresentmentDetail> presentments);
+	
+	boolean isChequeExists(long headerID, Date chequeDate);
 
 }
