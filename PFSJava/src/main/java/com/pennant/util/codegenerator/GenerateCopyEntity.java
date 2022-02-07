@@ -11,12 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class GenerateCopyEntity {
 	private static Object object = null;
+	private static final Logger logger = LogManager.getLogger(GenerateCopyEntity.class);
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException {
@@ -100,7 +105,7 @@ public class GenerateCopyEntity {
 					}
 				} catch (ClassCastException e) {
 					System.out.println(fieldName);
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 					builder.append("\n");
 				}
 				continue;

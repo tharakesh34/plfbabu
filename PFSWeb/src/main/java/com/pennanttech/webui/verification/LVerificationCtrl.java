@@ -1390,7 +1390,7 @@ public class LVerificationCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			doSave(financeDetail, null, recSave, lv);
 		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		} catch (WrongValueException e) {
 			MessageUtil.showError(e.getMessage());
 			return;

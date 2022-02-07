@@ -1037,8 +1037,7 @@ public class PresentmentDetailDialogCtrl extends GFCBaseCtrl<PresentmentHeader> 
 			this.presentmentDetailService.saveModifiedPresentments(excludeList, includeList,
 					this.presentmentHeader.getId(), partnerBankId);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		doWriteBeanToComponents(this.presentmentHeader);
 	}

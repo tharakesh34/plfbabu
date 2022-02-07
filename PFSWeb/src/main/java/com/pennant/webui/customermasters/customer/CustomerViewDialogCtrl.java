@@ -2491,8 +2491,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			reportConfiguration = getReportConfiguration("menu_Item_NoObjectionCertificate");
 		} catch (Exception e1) {
-
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		}
 		arg.put("ReportConfiguration", reportConfiguration);
 		arg.put("dialogWindowName", reportConfiguration.getReportHeading());
@@ -2546,7 +2545,6 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 		return aReportConfiguration;
 	}
-
 
 	public void onClick_interestCertficate(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
@@ -2607,7 +2605,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			reportConfiguration = getReportConfiguration("menu_Item_GST_InvoiceReport");
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		}
 		arg.put("ReportConfiguration", reportConfiguration);
 		arg.put("dialogWindowName", reportConfiguration.getReportHeading());
@@ -2634,7 +2632,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			reportConfiguration = getReportConfiguration("menu_Item_CreditReport");
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		}
 		arg.put("ReportConfiguration", reportConfiguration);
 		arg.put("dialogWindowName", reportConfiguration.getReportHeading());
@@ -3026,7 +3024,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			try {
 				byteArray = IOUtils.toByteArray(input);
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			if (byteArray != null) {
 				Map<String, Object> auditMap = new HashMap<String, Object>(4);
@@ -3035,7 +3033,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 				Executions.createComponents("/WEB-INF/pages/Reports/ReportView.zul", null, auditMap);
 			}
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

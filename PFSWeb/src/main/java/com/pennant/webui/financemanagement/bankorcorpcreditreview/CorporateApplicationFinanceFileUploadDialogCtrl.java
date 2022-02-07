@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  WIFinanceTypeSelectListCtrl.java                                     * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  10-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  10-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : WIFinanceTypeSelectListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-10-2011 * *
+ * Modified Date : 10-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.bankorcorpcreditreview;
@@ -432,8 +414,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -617,7 +598,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return mapValues;
@@ -1282,8 +1263,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {
@@ -1301,8 +1281,7 @@ public class CorporateApplicationFinanceFileUploadDialogCtrl extends GFCBaseCtrl
 	/**
 	 * Get the window for entering Notes
 	 * 
-	 * @param event
-	 *            (Event)
+	 * @param event (Event)
 	 * 
 	 * @throws Exception
 	 */

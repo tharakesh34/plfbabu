@@ -43,6 +43,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -118,6 +120,7 @@ import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.core.util.SpringBeanUtil;
 import com.pennanttech.pennapps.jdbc.search.Filter;
@@ -129,6 +132,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 
 public class PennantAppUtil {
 	private static final SearchProcessor SEARCH_PROCESSOR = getSearchProcessor();
+	private static final Logger logger = LogManager.getLogger(PennantAppUtil.class);
 
 	public static ArrayList<ValueLabel> getProductByCtg(Filter[] filters) {
 		ArrayList<ValueLabel> productList = new ArrayList<ValueLabel>();
@@ -2019,14 +2023,14 @@ public class PennantAppUtil {
 		for (int i = 0; i < appList.size(); i++) {
 			ValueLabel pftRateLabel = new ValueLabel(appList.get(i).getFieldCodeValue(), appList.get(i).getValueDesc());
 			coApplicants.add(pftRateLabel);
-			
+
 			if (appList.get(i).isSystemDefault()) {
 				lovFieldDetail.setFieldCodeValue(appList.get(i).getFieldCodeValue());
 			}
 		}
-		
+
 		lovFieldDetail.setValueLabelList(coApplicants);
-		
+
 		return lovFieldDetail;
 	}
 
@@ -2319,7 +2323,7 @@ public class PennantAppUtil {
 				}
 			}
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return false;
 	}

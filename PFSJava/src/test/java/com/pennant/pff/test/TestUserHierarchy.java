@@ -1,17 +1,23 @@
 package com.pennant.pff.test;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.pennant.backend.model.administration.ReportingManager;
 import com.pennant.backend.model.administration.SecurityUser;
 import com.pennant.backend.service.administration.SecurityUserHierarchyService;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class TestUserHierarchy {
+	private static final Logger logger = LogManager.getLogger(TestUserHierarchy.class);
 
 	public static void main(String[] args) {
+
 		ApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext("classpath:user_hierarchy_test.xml");
@@ -31,7 +37,7 @@ public class TestUserHierarchy {
 			securityUser.setReportingManagersList(repotingManagers);
 			service.refreshUserHierarchy(securityUser);
 
-			//murthy
+			// murthy
 			repotingManagers = new ArrayList<>();
 			reportingManager = new ReportingManager();
 			reportingManager.setUserId(2);
@@ -51,7 +57,7 @@ public class TestUserHierarchy {
 			service.refreshUserHierarchy(securityUser);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

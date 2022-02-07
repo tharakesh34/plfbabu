@@ -213,7 +213,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 			if (MessageUtil.YES == MessageUtil.confirm(PennantConstants.RCD_STATUS_RESUBMITTED.equals(recordAction)
 					? Labels.getLabel(msg, new String[] { recordAction.substring(0, recordAction.length() - 3) })
 					: Labels.getLabel(msg, new String[] { recordAction.substring(0, recordAction.length() - 1) }))) {
-				doProcess(); //processing records
+				doProcess(); // processing records
 			} else {
 				this.window_SelectNonLanReceiptDialog.onClose(); // closing
 																	// window
@@ -600,7 +600,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 					if (RepayConstants.PAYSTATUS_REALIZED.equals(finReceiptHeader.getReceiptModeStatus())) {
 						receiptHeader.setRealizationDate(finReceiptDetail.getDepositDate());
 
-						// getting Receipts which already been realized 
+						// getting Receipts which already been realized
 						if (RepayConstants.PAYSTATUS_REALIZED.equals(receiptHeader.getReceiptModeStatus())
 								&& PennantConstants.RCD_STATUS_APPROVED.equals(receiptHeader.getRecordStatus())) {
 							receiptIdList.add(String.valueOf(receiptHeader.getReceiptID()));
@@ -718,9 +718,11 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 				return;
 			}
 
-			receiptService.saveMultiReceiptLog(finReceiptQueueList); // Saving all selected records in FinReceiptQueueLog
+			receiptService.saveMultiReceiptLog(finReceiptQueueList); // Saving all selected records in
+																		// FinReceiptQueueLog
 
-			Thread thread = new Thread(new MultiReceiptRunnable(frchMap, auditHeaderList, batchId)); // Starting Thread Process
+			Thread thread = new Thread(new MultiReceiptRunnable(frchMap, auditHeaderList, batchId)); // Starting Thread
+																										// Process
 			thread.start();
 			Thread.sleep(1000);
 		} catch (Exception e) {
@@ -903,9 +905,10 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 		@Override
 		public void run() {
 			try {
-				threadProcess.processThread(finReceiptHeaderMap, auditHeaderList, batchId);// Initializing Thread Processing
+				threadProcess.processThread(finReceiptHeaderMap, auditHeaderList, batchId);// Initializing Thread
+																							// Processing
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}

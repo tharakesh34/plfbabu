@@ -576,7 +576,7 @@ public class SpreadsheetCtrl extends GFCBaseCtrl<CreditReviewData> {
 					financeMainDialogCtrl.getClass().getMethod("setTotalEmiConsideredObligations", BigDecimal.class)
 							.invoke(financeMainDialogCtrl, totalEmi);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 		}

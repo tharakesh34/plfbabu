@@ -199,7 +199,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		if (!enqiryModule && StringUtils.equals("Approved",
 				financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus())) {
-			//renderVerificationForAddDisbursement(financeDetail.getCollateralAssignmentList(), financeDetail);
+			// renderVerificationForAddDisbursement(financeDetail.getCollateralAssignmentList(), financeDetail);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -301,7 +301,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			}
 		}
 
-		//Get Document Value from collateral extended fields.
+		// Get Document Value from collateral extended fields.
 
 		for (Verification veri : verifications) {
 			String collRef = veri.getReferenceFor();
@@ -428,7 +428,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		// Set the old verification fields back.
 		List<Verification> oldVerifications = getOldVerifications();
-		//PSD#157163 UAT2 : TV Initiation : able to initiate TV for deleted collateral.
+		// PSD#157163 UAT2 : TV Initiation : able to initiate TV for deleted collateral.
 		List<Verification> tempOldVerifications = new ArrayList<>();
 		if (enqiryModule) {
 			collaterals = Collections.emptyList();
@@ -451,7 +451,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				continue;
 			}
 
-			//create new Verification if initiated Collateral has Changed
+			// create new Verification if initiated Collateral has Changed
 			Verification current = collateralMap.get(previous.getReferenceFor());
 			if (current != null) {
 				for (CollateralAssignment collateral : collaterals) {
@@ -483,8 +483,8 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				exists = false;
 				current.setId(previous.getId());
 
-				if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner) && (StringUtils
-						.equals("Approved", financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus()))) {
+				if (StringUtils.equals(FinServiceEvent.ADDDISB, moduleDefiner) && (StringUtils.equals("Approved",
+						financeDetail.getFinScheduleData().getFinanceMain().getRecordStatus()))) {
 					current.setNewRecord(true);
 				} else {
 					current.setNewRecord(false);
@@ -848,10 +848,10 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 		deletedList.clear();
 
-		//set Initiated flag to initiated Records
+		// set Initiated flag to initiated Records
 		setInitiated(verifications);
 
-		//Render Verifications
+		// Render Verifications
 		int i = 0;
 		for (Verification vrf : verifications) {
 			if (PennantConstants.RECORD_TYPE_DEL.equals(vrf.getRecordType())) {
@@ -946,7 +946,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 			requestType.setParent(listCell);
 			listCell.setParent(item);
 
-			//Verification Category
+			// Verification Category
 			listCell = new Listcell();
 			listCell.setId("VerificationCategory".concat(String.valueOf(i)));
 			Combobox verificationCategory = new Combobox();
@@ -1223,7 +1223,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		list.remove(3);
 		fillComboBox(requestType, RequestType.INITIATE.getKey(), list, "");
 
-		//Verification Category
+		// Verification Category
 		Combobox verificationCategory = new Combobox();
 		if (SysParamUtil.isAllowed(SMTParameterConstants.VERIFICATION_CATEGORY_REQUIRED)) {
 			listCell = new Listcell();
@@ -1266,7 +1266,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		listCell.appendChild(agency);
 		listCell.setParent(item);
 
-		//Reason
+		// Reason
 		listCell = new Listcell();
 		listCell.setId("Reason".concat(String.valueOf(i)));
 		ExtendedCombobox reason = new ExtendedCombobox();
@@ -1443,9 +1443,9 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 					agencies[0] = VerificationCategory.INTERNAL.getValue();
 					agencies[1] = VerificationCategory.ONEPAGER.getValue();
 					agencyFilter[1] = new Filter("DealerName", agencies, Filter.OP_NOT_IN);
-					//Commented the below lines to fix the external agency filter issue as per the core version
-					//agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
-					//agencyFilter[2] = new Filter("DealerCity", collateralCity.get(collRef), Filter.OP_EQUAL);
+					// Commented the below lines to fix the external agency filter issue as per the core version
+					// agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
+					// agencyFilter[2] = new Filter("DealerCity", collateralCity.get(collRef), Filter.OP_EQUAL);
 
 				}
 			}
@@ -1834,7 +1834,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 							valAmounts.put(verification.getReferenceFor(), verification.getFinalValAmt());
 						}
 
-						//For request type waive skip the collateral validations 
+						// For request type waive skip the collateral validations
 						if (verification.getRequestType() != 2 || verification.getRequestType() != 3) {
 							if (!"OK".equals(verification.getFinalValDecision())) {
 								MessageUtil.showError("Collateral final valuation not met.");
@@ -1859,7 +1859,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 						PennantConstants.defaultCCYDecPos);
 				String formatLoanAmt = PennantApplicationUtil.amountFormate(loanAmt, PennantConstants.defaultCCYDecPos);
 				for (Verification verification : verificationList) {
-					//For request type waive skip the collateral validations
+					// For request type waive skip the collateral validations
 					if (!(verification.getRequestType() == RequestType.REQUEST.getKey()
 							|| verification.getRequestType() == RequestType.WAIVE.getKey())) {
 						if (finalvalAmt.compareTo(loanAmt) < 0) {
@@ -1873,7 +1873,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 				BigDecimal collAssignment = BigDecimal.ZERO;
 
 				for (Verification verification : verificationList) {
-					//For request type waive skip the collateral validations
+					// For request type waive skip the collateral validations
 					if (!(verification.getRequestType() == RequestType.REQUEST.getKey())
 							&& !(verification.getRequestType() == RequestType.WAIVE.getKey())
 							&& !(verification.getRequestType() == RequestType.NOT_REQUIRED.getKey())) {
@@ -1945,7 +1945,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	//++++++++++Technical verification initiation out side the loan start++++++++++++++++++++//
+	// ++++++++++Technical verification initiation out side the loan start++++++++++++++++++++//
 	/*
 	 * Saving the Technical verification initiation out side the loan.
 	 */
@@ -1954,7 +1954,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			doSave(financeDetail, null, recSave, tv);
 		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		}
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.TV, PennantConstants.TRAN_WF, initType);
@@ -1977,7 +1977,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		doClose(this.btnTVInitiateSave.isVisible());
 	}
 
-	//++++++++++Technical verification initiation out side the loan end++++++++++++++++++++//
+	// ++++++++++Technical verification initiation out side the loan end++++++++++++++++++++//
 	public void doSetLabels(ArrayList<Object> finHeaderList) {
 		finBasicDetailsCtrl.doWriteBeanToComponents(finHeaderList);
 	}

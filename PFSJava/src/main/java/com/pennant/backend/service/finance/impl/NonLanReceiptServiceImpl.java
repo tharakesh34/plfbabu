@@ -805,7 +805,7 @@ public class NonLanReceiptServiceImpl extends GenericFinanceDetailService implem
 		} catch (Exception e) {
 			flag = true;
 			error = e.getMessage();
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		if (flag) {
 			valueMap.put("uploadStatus", UploadConstants.UPLOAD_STATUS_FAIL);

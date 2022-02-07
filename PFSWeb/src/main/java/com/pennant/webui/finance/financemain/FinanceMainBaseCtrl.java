@@ -4471,8 +4471,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			try {
 				tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year + 1));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			this.tDSEndDate.setValue(tdsformateEndDate);
 		} else {
@@ -4480,8 +4479,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			try {
 				tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			this.tDSEndDate.setValue(tdsformateEndDate);
 		}
@@ -4760,7 +4758,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 							"/WEB-INF/pages/Finance/FinanceMain/FinanceExtCreditReviewSpreadSheet.zul",
 							getTabpanel(AssetConstants.UNIQUE_ID_FIN_CREDITREVIEW_SUMMARY), map);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 		} else {

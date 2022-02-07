@@ -60,6 +60,7 @@ import com.pennant.backend.model.rulefactory.AEEvent;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
 
 public class SuspensePostingUtil implements Serializable {
@@ -141,7 +142,7 @@ public class SuspensePostingUtil implements Serializable {
 			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
 		} catch (AccountNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		isPostingSuccess = aeEvent.isPostingSucess();

@@ -1941,7 +1941,7 @@ public class FinStatementController extends SummaryDetailService {
 				logger.debug(Literal.LEAVING);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			if (con != null) {
 				con.close();

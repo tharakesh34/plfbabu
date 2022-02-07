@@ -1981,14 +1981,14 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 												vasMap.put("VAS_EXT_" + extendedDetail.getAgrField().toUpperCase(),
 														DateUtil.formatToLongDate(initialDate));
 											} catch (ParseException e) {
-												e.printStackTrace();
+												logger.error(Literal.EXCEPTION, e);
 												try {
 													DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 													Date initialDate = dateFormatter.parse(vas_ext_dobn2);
 													vasMap.put("VAS_EXT_" + extendedDetail.getAgrField().toUpperCase(),
 															DateUtil.formatToLongDate(initialDate));
 												} catch (ParseException exception) {
-													e.printStackTrace();
+													logger.error(Literal.EXCEPTION, e);
 												}
 											}
 										} else {
@@ -3319,7 +3319,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				agreement.getDocuments().add(document);
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -3429,7 +3429,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

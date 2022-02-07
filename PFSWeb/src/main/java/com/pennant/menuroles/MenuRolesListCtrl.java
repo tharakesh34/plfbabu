@@ -157,7 +157,7 @@ public class MenuRolesListCtrl extends GFCBaseListCtrl<MenuItem> {
 		try {
 			createFile();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug(Literal.LEAVING);

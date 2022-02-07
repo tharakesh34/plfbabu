@@ -4,14 +4,20 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.pennanttech.pennapps.core.resource.Literal;
+
 public class RestReturnStatus {
+	private static final Logger logger = LogManager.getLogger(RestReturnStatus.class);
 
 	public static Map<String, Object> convertStringToMap(String payload) {
+
 		ObjectMapper obj = new ObjectMapper();
 
 		Map<String, Object> map = null;
@@ -19,11 +25,11 @@ public class RestReturnStatus {
 			map = obj.readValue(payload, new TypeReference<Map<String, Object>>() {
 			});
 		} catch (JsonParseException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		} catch (JsonMappingException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return map;
 

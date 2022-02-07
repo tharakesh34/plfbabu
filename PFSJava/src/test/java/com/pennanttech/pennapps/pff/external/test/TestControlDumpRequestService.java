@@ -4,16 +4,20 @@ import java.util.Date;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.pff.external.controldump.ControlDumpExtract;
 
 public class TestControlDumpRequestService {
+	private static final Logger logger = LogManager.getLogger(TestControlDumpRequestService.class);
 
 	DataSource dataSource;
 
@@ -25,7 +29,8 @@ public class TestControlDumpRequestService {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			dataSource = context.getBean(BasicDataSource.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 	}
 
@@ -35,7 +40,7 @@ public class TestControlDumpRequestService {
 			Date date = DateUtil.getDate(2017, 9, 3);
 			new ControlDumpExtract(dataSource, new Long(1000), date, date).process("CONTROL_DUMP_REQUEST");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

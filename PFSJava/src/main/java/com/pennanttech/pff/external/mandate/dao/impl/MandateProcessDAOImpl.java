@@ -217,7 +217,7 @@ public class MandateProcessDAOImpl extends SequenceDao<Object> implements Mandat
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			throw new AppException();
 		}
 

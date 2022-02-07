@@ -210,8 +210,7 @@ public class DMSIdentificationServiceImpl implements DMSIdentificationService {
 				dmsIdentificationDao.saveDMSDocumentReferences(dmsDocumentDetailList);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.debug(Literal.EXCEPTION, e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		logger.debug("Leaving");
