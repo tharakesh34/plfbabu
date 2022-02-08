@@ -264,8 +264,7 @@ public class SuspensePostingUtil implements Serializable {
 		try {
 			aeEvent = getPostingsPreparationUtil().processPostingDetails(aeEvent);
 		} catch (AccountNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		long linkedTranId = aeEvent.getLinkedTranId();

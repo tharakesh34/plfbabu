@@ -1481,7 +1481,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
