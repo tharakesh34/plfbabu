@@ -3194,12 +3194,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 
-		if (finID == null) {
-			parm1 = fsi.getFinReference();
-			setErrorToFSD(schdData, "90201", parm1);
-			return receiptData;
-		}
-
 		// FIXME: Temporary Fix for API
 		String receiptMode = fsi.getPaymentMode();
 		// if (!fsi.isReceiptUpload()) {
@@ -3835,8 +3829,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		if ((receiptUpload || PennantConstants.FINSOURCE_ID_API.equals(finSourceId))
-				&& SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
 			BigDecimal recAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), formatter);
 			BigDecimal cashLimit = new BigDecimal(
 					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
@@ -7210,7 +7203,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} catch (Exception e) {
 			flag = true;
 			error = e.getMessage();
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		if (flag) {
 			valueMap.put("uploadStatus", UploadConstants.UPLOAD_STATUS_FAIL);

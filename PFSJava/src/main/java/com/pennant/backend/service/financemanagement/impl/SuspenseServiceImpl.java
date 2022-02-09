@@ -244,7 +244,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 				aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 			} catch (AccountNotFoundException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 			if (!aeEvent.isPostingSucess()) {

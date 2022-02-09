@@ -54,7 +54,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 	public void processCashFlowDetails() {
 		logger.debug(Literal.ENTERING);
 		List<CashFlow> cashFlows = cashFlowReportDAO.getCashFlowDetails();
-		//null check
+		// null check
 		if (cashFlows != null) {
 			processDetails(cashFlows);
 		}
@@ -65,11 +65,11 @@ public class CashFlowServiceImpl implements CashFlowService {
 		logger.debug(Literal.ENTERING);
 		List<CashFlow> cashFlowList = new ArrayList<>();
 		for (CashFlow cashFlow : cashFlows) {
-			//process disbursement details
+			// process disbursement details
 			processDisbursementDetails(cashFlow, cashFlowList);
-			//process Schedule repayments details
+			// process Schedule repayments details
 			processScheduleDetails(cashFlow, cashFlowList);
-			//process repayments
+			// process repayments
 			processRepayHeaderDetails(cashFlow, cashFlowList);
 		}
 		createFile(cashFlowList);
@@ -119,7 +119,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 	}
 
 	private void processScheduleDetails(CashFlow cashFlowIn, List<CashFlow> cashFlowList) {
-		//Schedule Details
+		// Schedule Details
 		List<FinanceScheduleDetail> fsds = cashFlowReportDAO.getFinScheduleDetails(cashFlowIn.getLan(), "");
 		List<FinODDetails> fods = cashFlowReportDAO.getFinODDetailsByFinRef(cashFlowIn.getLan(), "");
 		BigDecimal schdPriPaid = BigDecimal.ZERO;
@@ -128,7 +128,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 		if (CollectionUtils.isNotEmpty(fsds)) {
 			for (FinanceScheduleDetail fsd : fsds) {
 				CashFlow cashFlow = new CashFlow();
-				//Pre EMI
+				// Pre EMI
 				if ((CalculationConstants.SCH_SPECIFIER_GRACE.equals(fsd.getSpecifier())
 						|| CalculationConstants.SCH_SPECIFIER_GRACE_END.equals(fsd.getSpecifier())
 								&& fsd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0)) {
@@ -160,7 +160,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 						}
 						cashFlowList.add(cashFlow);
 					}
-					//EMI Collection
+					// EMI Collection
 				} else if ((CalculationConstants.SCH_SPECIFIER_REPAY.equals(fsd.getSpecifier())
 						|| CalculationConstants.SCH_SPECIFIER_MATURITY.equals(fsd.getSpecifier()))
 						&& fsd.getPartialPaidAmt().compareTo(BigDecimal.ZERO) == 0) {
@@ -222,16 +222,16 @@ public class CashFlowServiceImpl implements CashFlowService {
 		Sheet sheet = null;
 		String path = App.getResourcePath(PATH) + "/CashFlowReport.xlsx";
 		try {
-			//Reading the template
+			// Reading the template
 			File file = new File(path);
 			fileInputStream = new FileInputStream(file);
 			workbook = new XSSFWorkbook(fileInputStream);
-			//Getting the CashFlowReportSheet sheet at index 0
+			// Getting the CashFlowReportSheet sheet at index 0
 			sheet = workbook.getSheetAt(0);
 			if (sheet == null) {
 				logger.error("File not exist");
 			} else {
-				//writing the data to existing template
+				// writing the data to existing template
 				createCashFlowReportSheet(sheet, list);
 				fileInputStream.close();
 				String appDate = SysParamUtil.getAppDate("dd.MM.yyyy");
@@ -252,16 +252,16 @@ public class CashFlowServiceImpl implements CashFlowService {
 		} catch (FileNotFoundException e) {
 			logger.error("File not exist");
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		} catch (Exception e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		} finally {
 			try {
 				if (workbook != null) {
 					workbook.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		logger.debug(Literal.LEAVING);
@@ -284,7 +284,7 @@ public class CashFlowServiceImpl implements CashFlowService {
 					Comparator<CashFlow> comp = new BeanComparator<CashFlow>("lan");
 					Collections.sort(cashFlowCompareByDate, comp);
 				}
-				//preparing the list of values with format
+				// preparing the list of values with format
 				values = prepareCashFlowValuesFromObject(cashFlowCompareByDate.get(i));
 
 				writeData(row, values);

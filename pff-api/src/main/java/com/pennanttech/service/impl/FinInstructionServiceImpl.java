@@ -1348,6 +1348,20 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = fsi.getFinReference();
 		Long finID = financeMainDAO.getFinID(finReference);
 
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
 		FinanceMain fm = financeMainDAO.getEntityNEntityDesc(finID, "", false);
 		fm.setFinID(finID);
 		fm.setFinReference(finReference);
@@ -1779,13 +1793,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
-		
+
 		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
 			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
-		
+
 		td.setFinID(finID);
 
 		WSReturnStatus returnStatus = isWriteoffLoan(finID);
@@ -1824,7 +1838,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
-		
+
 		return finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
 	}
 
@@ -2300,7 +2314,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			if (chequeHeader == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Cheque Details ";
-				return  APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
 			// for logging purpose
@@ -2338,7 +2352,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
-		
+
 		for (ChequeDetail chequeDetail : chequeDetailsList) {
 			if (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType())) {
 				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
@@ -2346,25 +2360,23 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
 						date = true;
 						chequeDetail.seteMIRefNo(fsd.getInstNumber());
-						if (fsd.getRepayAmount().subtract(fsd.getTDSAmount())
-								.compareTo(chequeDetail.getAmount()) != 0) {
+						if (fsd.getRepayAmount().compareTo(chequeDetail.getAmount()) != 0) {
 							// {0} Should be equal To {1}
 							String[] valueParm = new String[2];
 							valueParm[0] = new SimpleDateFormat("yyyy-MM-dd").format(fsd.getSchDate());
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
 							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 							return;
-						}else {
+						} else if (chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Cheque ";
+							valueParm[1] = "Cheque Date : " + fsd.getSchDate();
+							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+							return;
+						} else {
 							break;
 						}
-
-					} else if(chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())){
-						String[] valueParm = new String[2];
-						valueParm[0] = "Cheque ";
-						valueParm[1] = "Cheque Date : " + fsd.getSchDate();
-						schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
-						return;
-					}	else {
+					} else {
 						date = false;
 					}
 				}
@@ -2375,8 +2387,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 					return;
 				}
-				
-				
+
 			}
 		}
 
@@ -3513,7 +3524,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		try {
 			financeDetail = finServiceInstController.doProcessNonLanReceipt(receiptData, eventCode);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			finScheduleData = nonLanReceiptService.setErrorToFSD(finScheduleData, "90502", e.getMessage());
 		}
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {

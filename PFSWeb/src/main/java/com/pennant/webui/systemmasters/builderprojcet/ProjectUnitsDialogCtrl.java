@@ -954,7 +954,7 @@ public class ProjectUnitsDialogCtrl extends GFCBaseCtrl<ProjectUnits> {
 		} catch (final DataAccessException e) {
 			MessageUtil.showError(e);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 	}

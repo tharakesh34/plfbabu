@@ -704,7 +704,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		agencyFilter[0] = new Filter("DealerType", Agencies.FIAGENCY.getKey(), Filter.OP_EQUAL);
 		if (ImplementationConstants.VER_AGENCY_FILTER_BY_CITY && StringUtils.isNotBlank(city)) {
 			agencyFilter = Arrays.copyOf(agencyFilter, agencyFilter.length + 1);
-			//Applying city filter based on customer Address city code
+			// Applying city filter based on customer Address city code
 			agencyFilter[1] = new Filter("DealerCity", city, Filter.OP_EQUAL);
 		}
 		agency.setFilters(agencyFilter);
@@ -882,8 +882,8 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		verifications.addAll(oldVerifications);
 
 		for (Verification item : verifications) {
-			if ((deleteSet.contains(item.getReferenceFor())
-					&& (item.isNewRecord() || !verificationService.isVerificationInRecording(item, VerificationType.FI)))) {
+			if ((deleteSet.contains(item.getReferenceFor()) && (item.isNewRecord()
+					|| !verificationService.isVerificationInRecording(item, VerificationType.FI)))) {
 				item.setRecordType(PennantConstants.RECORD_TYPE_DEL);
 			}
 		}
@@ -984,7 +984,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		item.setVerificationType(VerificationType.FI.getKey());
 		item.setCreatedBy(getUserWorkspace().getLoggedInUser().getUserId());
 		item.setModule(Module.LOAN.getKey());
-		//to set Agency Filter based on customer address city
+		// to set Agency Filter based on customer address city
 		item.setCity(address.getCustAddrCity());
 		verification.setCreatedOn(SysParamUtil.getAppDate());
 
@@ -1325,7 +1325,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 			if (days > 0) {
 				int diff = DateUtil.getDaysBetween(appDate, verification.getVerificationDate());
-				//FI Verification validity check
+				// FI Verification validity check
 				if (verification.getDecision() == Decision.APPROVE.getKey() && diff > days && !recSave) {
 					StringBuilder error = new StringBuilder("For ");
 					error.append(Labels.getLabel("listheader_FIVerification_ApplicantType.label")).append(": ")
@@ -1414,7 +1414,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 
 	}
 
-	//++++++++++Technical verification initiation out side the loan start++++++++++++++++++++//
+	// ++++++++++Technical verification initiation out side the loan start++++++++++++++++++++//
 	/*
 	 * Saving the Technical verification initiation out side the loan.
 	 */
@@ -1423,7 +1423,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		try {
 			doSave(financeDetail, null, recSave, fi);
 		} catch (InterruptedException e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		}
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.FI, PennantConstants.TRAN_WF, initType);

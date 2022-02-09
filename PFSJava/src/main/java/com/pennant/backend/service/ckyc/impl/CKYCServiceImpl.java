@@ -636,7 +636,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		addrRemove = 0;
 
 		// IN Query need to add CKYC Column
-		//		String ckycNo = ckycDAO.getCkycNo(customer.getCustID());
+		// String ckycNo = ckycDAO.getCkycNo(customer.getCustID());
 		String ckycNo = customer.getCkycOrRefNo();
 		List<CustomerAddres> addres = ckycDAO.getCustomerAddresById(customer.getCustID(), ckycNo);
 		List<CustomerPhoneNumber> phoneNumbers = ckycDAO.getCustomerPhoneNumberById(customer.getCustID(), ckycNo);
@@ -1307,7 +1307,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		return ckycDtl70;
 	}
 
-	//For Piramal - To get customer KYC documents from DMS based on leadID.
+	// For Piramal - To get customer KYC documents from DMS based on leadID.
 	private List<CKYCDtl70> getDocDetailsFromDMS(Customer customer, String ckycNo) {
 		List<CKYCDtl70> ckycDtl70 = new ArrayList<>();
 		Map<String, Object> docTypeMasterMap = new HashMap<>();
@@ -1481,7 +1481,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -1500,9 +1500,9 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			zos.close();
 			fos.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

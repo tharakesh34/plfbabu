@@ -144,8 +144,7 @@ public abstract class SoapClient<T> {
 
 			return message;
 		} catch (Exception e) {
-			logger.error("Error", e);
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			throw new InterfaceException("8902", e.getMessage());
 		}
 	}
@@ -159,8 +158,7 @@ public abstract class SoapClient<T> {
 			serviceDetail
 					.setResponceData((T) unmarshaller.unmarshal(response.getSOAPBody().extractContentAsDocument()));
 		} catch (Exception e) {
-			logger.error("Error", e);
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			throw new InterfaceException("8903", e.getMessage());
 		}
 		logger.debug(Literal.LEAVING);

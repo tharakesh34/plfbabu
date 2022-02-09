@@ -4,10 +4,14 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.app.util.SysParamUtil;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class AbstractFileExtractService {
+	private static final Logger logger = LogManager.getLogger(AbstractFileExtractService.class);
 
 	public void backUpFile(File file) {
 		try {
@@ -21,7 +25,7 @@ public class AbstractFileExtractService {
 			}
 			file.deleteOnExit();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

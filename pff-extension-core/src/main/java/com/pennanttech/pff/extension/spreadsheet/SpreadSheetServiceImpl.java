@@ -511,7 +511,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 
 		for (FinCreditReviewDetails id : idList) {
 			Map<String, Object> tempMap1 = new HashMap<>();
-			//tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
+			// tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId(), id.getAuditYear());
 			tempMap1 = dataAccess.getFinCreditRevSummaryDetails(id.getId());
 
 			for (String str : tempMap1.keySet()) {
@@ -544,7 +544,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (CollectionUtils.isNotEmpty(coAppidList)) {
 					for (FinCreditReviewDetails id : coAppidList) {
 						Map<String, Object> tempMap2 = new HashMap<>();
-						//	tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId(),id.getAuditYear());
+						// tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId(),id.getAuditYear());
 						tempMap2 = dataAccess.getFinCreditRevSummaryDetails(id.getId());
 
 						for (String str : tempMap2.keySet()) {
@@ -660,7 +660,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
 				spreadSheet.setAddlVar4(
 						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-				//industry margin
+				// industry margin
 				spreadSheet.setAddlVar5(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
 				setCoApplicantFiStatus(fd, cu, fd.getJointAccountDetailList().get(i).getCustCIF(), i, dataMap);
@@ -674,7 +674,7 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 						getExtFieldDesc("clix_segment", extendedMapValues.get(0).get("segment").toString()));
 				spreadSheet.setAddlVar9(
 						getExtFieldDesc("clix_product", extendedMapValues.get(0).get("product").toString()));
-				//industry margin
+				// industry margin
 				spreadSheet.setAddlVar10(getExtFieldIndustryMargin("clix_industrymargin", spreadSheet.getAddlVar1(),
 						spreadSheet.getAddlVar2(), spreadSheet.getAddlVar3(), spreadSheet.getAddlVar4()));
 				setCoApplicantFiStatus(fd, cu, fd.getJointAccountDetailList().get(i).getCustCIF(), i, dataMap);
@@ -700,14 +700,14 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (mapValues.containsKey("product")) {
 					cu.setCustAddlVar11(getExtFieldDesc("clix_product", mapValues.get("product").toString()));
 				}
-				//industry margin
+				// industry margin
 				cu.setCustAddlVar89(getExtFieldIndustryMargin("clix_industrymargin", cu.getCustAddlVar8(),
 						cu.getCustAddlVar9(), cu.getCustAddlVar10(), cu.getCustAddlVar11()));
 
 				setMainApplicantFiStatus(fd, fd.getCustomerDetails().getCustomer().getCustCIF(), dataMap);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

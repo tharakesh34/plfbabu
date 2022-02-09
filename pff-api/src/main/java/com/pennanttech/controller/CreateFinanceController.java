@@ -772,7 +772,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						return documentDetails.getReturnStatus();
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 				agenDocList.add(documentDetails);
 

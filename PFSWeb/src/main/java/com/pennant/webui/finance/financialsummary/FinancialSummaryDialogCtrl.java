@@ -583,8 +583,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 							NotificationConstants.DEFAULT_CHARSET));
 				}
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		if (isbasicDetailsVisible) {
@@ -864,7 +863,7 @@ public class FinancialSummaryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 					this.cmtOnCollateralDtls.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 			synopsisDetails.setEndUse(this.endUse.getValue().getBytes(NotificationConstants.DEFAULT_CHARSET));
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		synopsisDetails.setFinID(fm.getFinID());
 		synopsisDetails.setFinReference(fm.getFinReference());

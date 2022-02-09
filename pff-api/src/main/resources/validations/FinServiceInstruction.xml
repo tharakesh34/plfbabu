@@ -323,7 +323,7 @@
 				</groups>
 				<element name="lang">javascript</element>
 				<element name="script">
-					if(_this.actualRate >= 0){
+					if(_this.actualRate > 0){
 					if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
 					false;
 					}else{
@@ -333,11 +333,7 @@
 					if((_this.baseRate != null) &amp;&amp; (_this.baseRate != "")){
 					true;
 					}else{
-					if(_this.actualRate != null){
-					true;
-					}else{
 					false;
-					}
 					}
 					}
 				</element>

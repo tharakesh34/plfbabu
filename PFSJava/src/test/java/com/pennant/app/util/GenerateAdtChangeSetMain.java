@@ -9,8 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class GenerateAdtChangeSetMain {
+	private static final Logger logger = LogManager.getLogger(GenerateAdtChangeSetMain.class);
+
 	static final String DB_URL = "jdbc:postgresql://192.168.120.26:5432/plf_core_finid_dev";
 	static final String USER = "postgres";
 	static final String PASS = "Pennant_123";
@@ -35,7 +41,7 @@ public class GenerateAdtChangeSetMain {
 
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 	}

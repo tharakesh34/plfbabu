@@ -6,14 +6,18 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.disbursment.DisbursemenIMPSRequestProcess;
 
 public class TestImps {
+	private static final Logger logger = LogManager.getLogger(TestImps.class);
 
 	private DataSource dataSource;
 
@@ -25,7 +29,8 @@ public class TestImps {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			dataSource = (DataSource) context.getBean("dataSource");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 	}
 
@@ -39,7 +44,7 @@ public class TestImps {
 			// impsRequest.setDisbursments(list);
 			impsRequest.process("DISB_EXPORT_IMPS");
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 }

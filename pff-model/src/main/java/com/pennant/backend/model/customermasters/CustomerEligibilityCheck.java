@@ -8,7 +8,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.pennanttech.pennapps.core.resource.Literal;
+
 public class CustomerEligibilityCheck implements Serializable {
+	private static final Logger logger = LogManager.getLogger(CustomerEligibilityCheck.class);
 
 	private static final long serialVersionUID = -2098118727197998806L;
 
@@ -95,9 +101,9 @@ public class CustomerEligibilityCheck implements Serializable {
 	private int activeLoansOnFinType = 0;
 	private int totalLoansOnFinType = 0;
 
-	//Payment type check
+	// Payment type check
 	private boolean chequeOrDDAvailable;
-	private boolean neftAvailable; //If NEFT/IMPS/RTGS Available
+	private boolean neftAvailable; // If NEFT/IMPS/RTGS Available
 
 	private BigDecimal cibilScore;
 	private String custCity;
@@ -554,7 +560,7 @@ public class CustomerEligibilityCheck implements Serializable {
 							this.getClass().getDeclaredFields()[i].get(this));
 				}
 			} catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		return customerEligibityMap;

@@ -202,8 +202,7 @@ public class ProvisionCalculationUtil implements Serializable {
 				try {
 					aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 				} catch (AccountNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 
 				isPostingsSuccess = aeEvent.isPostingSucess();

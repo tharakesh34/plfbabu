@@ -785,7 +785,7 @@ public class PromotionDialogCtrl extends GFCBaseCtrl<Promotion> {
 		try {
 			setEffectiveRate();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		this.recordStatus.setValue(aPromotion.getRecordStatus());

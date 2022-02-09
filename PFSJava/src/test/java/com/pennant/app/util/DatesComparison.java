@@ -8,10 +8,14 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.pennant.backend.model.finance.FinanceDisbursement;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class DatesComparison {
+	private static final Logger logger = LogManager.getLogger(DatesComparison.class);
 
 	public static void main(String args[]) {
 		try {
@@ -31,7 +35,7 @@ public class DatesComparison {
 			}
 
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

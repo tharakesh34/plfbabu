@@ -83,6 +83,7 @@ import com.pennant.util.Constraint.PTDecimalValidator;
 import com.pennant.webui.finance.financemain.FinFeeDetailListCtrl;
 import com.pennant.webui.finance.financemain.ScheduleDetailDialogCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -1128,7 +1129,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 				}
 			} catch (NoSuchMethodException | SecurityException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		logger.debug("Leaving");

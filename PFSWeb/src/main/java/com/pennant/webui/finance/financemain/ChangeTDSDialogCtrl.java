@@ -1039,8 +1039,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			try {
 				tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year + 1));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			this.tdsEndDate.setValue(tdsformateEndDate);
 		} else {
@@ -1048,8 +1047,7 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 			try {
 				tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (year));
 			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			this.tdsEndDate.setValue(tdsformateEndDate);
 		}
@@ -1076,16 +1074,14 @@ public class ChangeTDSDialogCtrl extends GFCBaseCtrl<FinMaintainInstruction> {
 				try {
 					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear + 1));
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			} else {
 
 				try {
 					tdsformateEndDate = new SimpleDateFormat("dd/MM/yyyy").parse("31/03/" + (startDateyear));
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 			tdsEndDate = this.tdsEndDate.getValue();

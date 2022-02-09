@@ -20,9 +20,12 @@ import com.pennant.backend.service.finance.NonLanReceiptService;
 import com.pennant.backend.service.finance.ReceiptService;
 import com.pennant.backend.util.ReceiptUploadConstants;
 import com.pennant.eod.constants.EodConstants;
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class MultiReceiptThreadProcess {
 	private static final Logger logger_ = LogManager.getLogger(MultiReceiptThreadProcess.class);
+	private static final Logger logger = LogManager.getLogger(MultiReceiptThreadProcess.class);
+
 	private ReceiptService receiptService;
 	private NonLanReceiptService nonLanReceiptService;
 
@@ -55,7 +58,7 @@ public class MultiReceiptThreadProcess {
 					receiptService.saveMultiReceipt(auditHeader);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 			logger_.debug("Runnable ended Receiptd:"
@@ -79,16 +82,19 @@ public class MultiReceiptThreadProcess {
 		noOfThreads = noOfThreads > 100 ? 100 : noOfThreads;
 
 		try {
-			ExecutorService executor = Executors.newFixedThreadPool(noOfThreads); // Creating Fixed size of thread pool for executing the task parallel
+			ExecutorService executor = Executors.newFixedThreadPool(noOfThreads); // Creating Fixed size of thread pool
+																					// for executing the task parallel
 			for (AuditHeader audiHead : auditHeaderList) {
 				FinReceiptHeader receiptHeader = ((FinReceiptData) audiHead.getAuditDetail().getModelData())
 						.getReceiptHeader();
-				executor.execute(new MultiReceiptThread(audiHead, receiptHeader.getReceiptType())); // submitting task to executor thread pool
+				executor.execute(new MultiReceiptThread(audiHead, receiptHeader.getReceiptType())); // submitting task
+																									// to executor
+																									// thread pool
 				sucReceiptIdList.add(receiptHeader.getReceiptID()); // adding into success list
 			}
 			executor.shutdown();
 		} catch (RejectedExecutionException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		receiptKeyList.removeAll(sucReceiptIdList); // getting Rejected receipt from executor pool

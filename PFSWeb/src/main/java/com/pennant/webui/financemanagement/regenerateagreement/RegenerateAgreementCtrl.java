@@ -40,6 +40,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.AgreementEngine;
 import com.pennant.util.AgreementGeneration;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
 
@@ -320,7 +321,7 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			displayDocDetails(docDetails);
 		} catch (Exception e) {
 			MessageUtil.showError("Template does not exists");
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 	}

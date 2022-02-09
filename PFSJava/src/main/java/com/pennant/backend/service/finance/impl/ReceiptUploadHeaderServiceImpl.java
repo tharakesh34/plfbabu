@@ -491,7 +491,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			logger.info("Thread Execution for the pool thread{} to thread{} ended", startThread + 1, endThread);
 
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -577,7 +577,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		try {
 			fileImport.backUpFile();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		saveRecord(ruh, rut);

@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
@@ -17,9 +19,12 @@ import com.pennant.backend.model.customermasters.CustomerEMail;
 import com.pennant.backend.model.customermasters.CustomerPhoneNumber;
 import com.pennanttech.model.DedupCustomerDetail;
 import com.pennanttech.model.DedupCustomerResponse;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.CustomerDedupService;
 
 public class TestCustomerDedupService {
+	private static final Logger logger = LogManager.getLogger(TestCustomerDedupService.class);
+
 	SimpleDateFormat dateFormater = new SimpleDateFormat("dd-MMM-yyyy");
 
 	private CustomerDedupService customerDedupService;
@@ -32,7 +37,8 @@ public class TestCustomerDedupService {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			customerDedupService = context.getBean(CustomerDedupService.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 	}
 
@@ -75,7 +81,8 @@ public class TestCustomerDedupService {
 			response = customerDedupService.invokeDedup(customerDetails);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 		System.out.println(response.toString());
 
@@ -120,7 +127,7 @@ public class TestCustomerDedupService {
 			response = customerDedupService.invokeDedup(customerDetails);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		System.out.println(response.toString());
 
@@ -165,7 +172,7 @@ public class TestCustomerDedupService {
 			response = customerDedupService.invokeDedup(customerDetails);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		System.out.println(response.toString());
 
