@@ -19,5 +19,5 @@
 	<context:component-scan base-package="com.pennant, com.pennanttech" />
 
 	<bean id="pennantJavaUtil" class="com.pennant.backend.util.PennantJavaUtil" init-method="init"></bean>
-	<!-- <bean id="metricesServer" class="com.pennapps.web.observability.MetricesServer"></bean> -->
+	<bean id="metricesServer" class="com.pennapps.web.observability.MetricesServer"/>
 </beans>
