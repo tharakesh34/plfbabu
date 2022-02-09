@@ -1348,6 +1348,20 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = fsi.getFinReference();
 		Long finID = financeMainDAO.getFinID(finReference);
 
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
 		FinanceMain fm = financeMainDAO.getEntityNEntityDesc(finID, "", false);
 		fm.setFinID(finID);
 		fm.setFinReference(finReference);
