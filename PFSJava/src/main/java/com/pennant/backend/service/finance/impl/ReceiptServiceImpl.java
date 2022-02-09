@@ -3835,8 +3835,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		if ((receiptUpload || PennantConstants.FINSOURCE_ID_API.equals(finSourceId))
-				&& SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
 			BigDecimal recAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), formatter);
 			BigDecimal cashLimit = new BigDecimal(
 					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
