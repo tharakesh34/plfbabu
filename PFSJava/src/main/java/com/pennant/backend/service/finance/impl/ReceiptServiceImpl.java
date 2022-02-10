@@ -3522,7 +3522,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String parm0 = null;
 		String parm1 = null;
 		boolean autoReceipt = false;
-		String entityDesc = finScheduleData.getFinanceMain().getEntityDesc();
 
 		Date appDate = SysParamUtil.getAppDate();
 
@@ -3671,7 +3670,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Cheque OR DD
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
-			rcd.setFavourName(entityDesc);
+			rcd.setFavourName(finScheduleData.getFinanceMain().getEntityDesc());
 			finScheduleData = validateForChequeOrDD(rcd, finScheduleData);
 		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
