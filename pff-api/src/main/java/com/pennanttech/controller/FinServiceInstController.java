@@ -3811,7 +3811,7 @@ public class FinServiceInstController extends SummaryDetailService {
 				ch.setNewRecord(false);
 				ch.setRecordType(PennantConstants.RECORD_TYPE_UPD);
 			}
-			
+
 			ch.setLastMntBy(userDetails.getUserId());
 			ch.setRecordStatus(fm.getRecordStatus());
 			ch.setLastMntOn(new Timestamp(System.currentTimeMillis()));
@@ -3825,10 +3825,10 @@ public class FinServiceInstController extends SummaryDetailService {
 
 			List<ChequeDetail> chequeDetails = ch.getChequeDetailList();
 			int chequeSerialNum = ch.getChequeSerialNo();
-			
+
 			BigDecimal totalChequeAmount = BigDecimal.ZERO;
 			String chequeCcy = SysParamUtil.getValueAsString(PennantConstants.LOCAL_CCY);
-			
+
 			for (ChequeDetail cd : chequeDetails) {
 				cd.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 				cd.setNewRecord(true);
@@ -3849,14 +3849,14 @@ public class FinServiceInstController extends SummaryDetailService {
 				cd.setChequeStatus(PennantConstants.CHEQUESTATUS_NEW);
 				cd.setChequeCcy(chequeCcy);
 				cd.setActive(true);
-				
+
 				totalChequeAmount = totalChequeAmount.add(cd.getAmount());
 			}
-			
+
 			ch.setFinID(fm.getFinID());
 			ch.setFinReference(fm.getFinReference());
 			ch.setTotalAmount(ch.getTotalAmount().add(totalChequeAmount));
-			
+
 			response = new WSReturnStatus();
 
 			APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
@@ -4022,8 +4022,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
 		FinanceMain financeMain = financeDetail.getFinScheduleData().getFinanceMain();
-		List<ErrorDetail> errorDetails = null;
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
 		WSReturnStatus response = null;
 		try {
 			int count = 1;
@@ -4044,7 +4042,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			chequeHeader.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
 			List<ChequeDetail> chequeDetails = chequeHeader.getChequeDetailList();
-			int chequeSerialNum = chequeHeader.getChequeSerialNo();
 			chequeHeader.setTotalAmount(BigDecimal.ZERO);
 
 			List<ChequeDetail> dbChqueDetailList = chequeDetailDAO.getChequeDetailList(chequeHeader.getHeaderID(),
@@ -4657,6 +4654,10 @@ public class FinServiceInstController extends SummaryDetailService {
 
 	public void setChequeHeaderService(ChequeHeaderService chequeHeaderService) {
 		this.chequeHeaderService = chequeHeaderService;
+	}
+
+	public void setChequeDetailDAO(ChequeDetailDAO chequeDetailDAO) {
+		this.chequeDetailDAO = chequeDetailDAO;
 	}
 
 }
