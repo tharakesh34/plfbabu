@@ -3670,7 +3670,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// Cheque OR DD
 		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
-			rcd.setFavourName(finScheduleData.getFinanceMain().getEntityDesc());
+			rcd.setFavourName(rcd.getTransactionRef());
 			finScheduleData = validateForChequeOrDD(rcd, finScheduleData);
 		} else if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
 				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)) {
