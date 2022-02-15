@@ -320,6 +320,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			searchObject.addFilterNotIn("RECEIPTPURPOSE", filterList);
 			// searchObject.addWhereClause(" PAYAGAINSTID = 0");
 		} else if (!enqiryModule) {
+			searchObject.addWhereClause("");
 			if (FinanceConstants.REALIZATION_APPROVER.equals(module)
 					|| FinanceConstants.RECEIPT_APPROVER.equals(module)) {
 				List<String> filterList = new ArrayList<>();
@@ -355,15 +356,16 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 					searchObject.addWhereClause(" PAYAGAINSTID = 0");
 				}
 			}
-
+			
 			StringBuilder whereClause = new StringBuilder();
-			if (StringUtils.isEmpty(searchObject.getWhereClause())) {
-				whereClause.append(" PAYAGAINSTID = 0");
-			} else {
-				whereClause.append(searchObject.getWhereClause());
+			whereClause.append(StringUtils.trimToEmpty(searchObject.getWhereClause()));
+			
+			if(whereClause.length() > 0) {
+				whereClause.append(" and ");
 			}
 
-			whereClause.append(" AND ReceiptID not in (Select ReceiptId From FinReceiptQueueLog Where Progress = 0)");
+			whereClause.append("ReceiptID not in (Select ReceiptId From FinReceiptQueueLog Where Progress = 0)");
+			
 			searchObject.addWhereClause(whereClause.toString());
 		}
 

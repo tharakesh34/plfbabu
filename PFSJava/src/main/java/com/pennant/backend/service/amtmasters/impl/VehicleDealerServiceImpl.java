@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -53,6 +55,7 @@ import com.pennant.backend.service.amtmasters.VehicleDealerService;
 import com.pennant.backend.service.bmtmasters.BankBranchService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
+import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -584,6 +587,25 @@ public class VehicleDealerServiceImpl extends GenericService<VehicleDealer> impl
 				valueParm[0] = "Account Type";
 				valueParm[1] = vehicleDealer.getAccountType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90701", "", valueParm)));
+			}
+		}
+
+		// validating Fax
+		String dealerFax = vehicleDealer.getDealerFax();
+		if (StringUtils.isNotBlank(dealerFax)) {
+			String regex = PennantRegularExpressions.REGEX_FAX;
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regex));
+			Matcher matcher = pattern.matcher(dealerFax);
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = dealerFax;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90405", "", valueParm)));
+			}
+			if (dealerFax.length() > 10) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Fax: " + dealerFax;
+				valueParm[1] = "10";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30508", "", valueParm)));
 			}
 		}
 

@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -20,7 +22,11 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import com.pennanttech.pennapps.core.resource.Literal;
+
 public class GenerateTableList {
+	private static final Logger logger = LogManager.getLogger(GenerateTableList.class);
+
 	static final String DB_URL = "jdbc:postgresql://192.168.120.26:5432/plf_core_finid_dev";
 	static final String USER = "postgres";
 	static final String PASS = "Pennant_123";
@@ -43,7 +49,7 @@ public class GenerateTableList {
 
 			FileUtils.writeLines(f, tables, true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		System.out.println("Preparing FinanceMain Data from All tables...");
@@ -51,7 +57,7 @@ public class GenerateTableList {
 		try {
 			getFinIdData(tables);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		System.out.println("Process Completed...");
@@ -74,10 +80,10 @@ public class GenerateTableList {
 					}
 				}
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 
 		List<String> names = new ArrayList<>();
@@ -126,7 +132,7 @@ public class GenerateTableList {
 				conn = getConnection();
 				stmt = conn.createStatement();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 			for (String tableName : tableNames) {
@@ -163,7 +169,7 @@ public class GenerateTableList {
 						cell.setCellValue(rs.getString(2));
 					}
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 
 			}
@@ -173,7 +179,7 @@ public class GenerateTableList {
 			workbook.write(bos);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			throw e;
 		} finally {
 			if (bos != null) {

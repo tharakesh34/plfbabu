@@ -204,7 +204,7 @@ public class AddRepaymentServiceImpl extends GenericService<FinServiceInstructio
 				valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				valueParm[1] = DateUtility.formatToShortDate(finServiceInstruction.getToDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91106", "", valueParm), lang));
-			} else if (finServiceInstruction.getRecalFromDate().compareTo(fm.getMaturityDate()) > 0) {
+			} else if (finServiceInstruction.getRecalFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(finServiceInstruction.getRecalFromDate());
 				valueParm[1] = DateUtility.formatToShortDate(fm.getMaturityDate());

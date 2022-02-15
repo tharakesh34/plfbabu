@@ -408,8 +408,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 														financeProfitDetail.getTotalPriPaid(), ccyEditField),
 												finMain.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			statementOfAccount.setTotalPftPaid(
 					PennantApplicationUtil.formateAmount(financeProfitDetail.getTotalPftPaid(), ccyEditField));
@@ -423,8 +422,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 														financeProfitDetail.getTotalPftPaid(), ccyEditField),
 												finMain.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			statementOfAccount.setPaidTotal(PennantApplicationUtil.formateAmount(paidTotal, ccyEditField));
 
@@ -476,7 +474,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								PennantApplicationUtil.formateAmount(applicableEMI, ccyEditField),
 								finMain.getFinCcy())));
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 			if (StringUtils.equalsIgnoreCase("Y", SysParamUtil.getValueAsString("CUSTOMIZED_SOAREPORT"))
@@ -492,7 +490,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									PennantApplicationUtil.formateAmount(priOutStanding, ccyEditField),
 									finMain.getFinCcy())));
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 				// Next schedule details
 				statementOfAccount.setNoOfEmiOverDue(odTerm);
@@ -511,8 +509,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 															financeProfitDetail.getTotalPriBal(), ccyEditField),
 													finMain.getFinCcy())));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 
@@ -752,7 +749,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 								PennantApplicationUtil.formateAmount(finMain.getFinAssetValue(), ccyEditField),
 								finMain.getFinCcy())));
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		} else {
 			if (ImplementationConstants.ALW_DOWNPAY_IN_LOANENQ_AND_SOA) {
@@ -769,7 +766,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 										PennantApplicationUtil.formateAmount(loanAmount, ccyEditField),
 										finMain.getFinCcy())));
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		statementOfAccount.setPreferredCardLimit(
@@ -1443,8 +1440,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 							: WordUtils.capitalize(NumberToEnglishWords
 									.getAmountInText(PennantApplicationUtil.formateAmount(due, 2), fm.getFinCcy())));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 			overDue = BigDecimal.ZERO;
@@ -1489,8 +1485,7 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 									PennantApplicationUtil.formateAmount(totalCharges.subtract(unAdjustedAmt), 2),
 									fm.getFinCcy())));
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			}
 		} else {
@@ -1512,16 +1507,14 @@ public class SOAReportGenerationServiceImpl extends GenericService<StatementOfAc
 						: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
 								PennantApplicationUtil.formateAmount(totalCharges, 2), fm.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 			try {
 				report.setDueInWords(report.getDue() == BigDecimal.ZERO ? ""
 						: WordUtils.capitalize(NumberToEnglishWords.getAmountInText(
 								PennantApplicationUtil.formateAmount(report.getDue(), 2), fm.getFinCcy())));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 

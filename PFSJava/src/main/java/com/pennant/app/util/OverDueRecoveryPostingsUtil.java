@@ -1096,8 +1096,7 @@ public class OverDueRecoveryPostingsUtil implements Serializable {
 				try {
 					aeEvent = postingsPreparationUtil.processPostingDetails(aeEvent);
 				} catch (AccountNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 
 				isPostingSuccess = aeEvent.isPostingSucess();

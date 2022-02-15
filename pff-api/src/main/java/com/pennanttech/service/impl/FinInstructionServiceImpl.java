@@ -1283,20 +1283,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	public FinanceDetail manualPayment(FinServiceInstruction fsi) throws ServiceException {
 		try {
 			String moduleDefiner = FinServiceEvent.SCHDRPY;
-
-			String chqNo = fsi.getReceiptDetail().getChequeAcNo();
-
-			if (chqNo != null && RepayConstants.RECEIPTMODE_CHEQUE.equals(fsi.getPaymentMode()) && chqNo.length() > 6) {
-				FinanceDetail response = new FinanceDetail();
-				doEmptyResponseObject(response);
-
-				String[] valueParam = new String[2];
-				valueParam[0] = "Cheque Number: " + chqNo;
-				valueParam[1] = "6";
-				response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30508", valueParam));
-				return response;
-			}
-
 			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
 			return fd;
 		} catch (AppException ex) {
@@ -1358,9 +1344,29 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		schdData.setFinServiceInstruction(fsi);
 		fd = validateInstructions(fd, moduleDefiner, eventCode);
 		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
-		FinanceMain finMain = new FinanceMain();
-		finMain.setFinSourceID(APIConstants.FINSOURCE_ID_API);
-		fd.getFinScheduleData().setFinanceMain(finMain);
+
+		String finReference = fsi.getFinReference();
+		Long finID = financeMainDAO.getFinID(finReference);
+
+		WSReturnStatus returnStatus = new WSReturnStatus();
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+		}
+
+		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+			doEmptyResponseObject(fd);
+			fd.setReturnStatus(returnStatus);
+			return fd;
+		}
+
+		FinanceMain fm = financeMainDAO.getEntityNEntityDesc(finID, "", false);
+		fm.setFinID(finID);
+		fm.setFinReference(finReference);
+		fd.getFinScheduleData().setFinanceMain(fm);
+
 		FinReceiptData receiptData = receiptService.doReceiptValidations(fd, moduleDefiner);
 		fd = receiptData.getFinanceDetail();
 		schdData = fd.getFinScheduleData();
@@ -1730,7 +1736,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
-		td.setFinID(finID);
 
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
@@ -1744,8 +1749,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
+		td.setFinID(finID);
 		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
@@ -1784,27 +1790,20 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 	@Override
 	public WSReturnStatus updateGSTDetails(final FinanceTaxDetail td) throws ServiceException {
-		logger.info(Literal.ENTERING);
-
 		String finReference = td.getFinReference();
 
 		Long finID = financeMainDAO.getActiveFinID(finReference);
-		td.setFinID(finID);
-
-		WSReturnStatus returnStatus = new WSReturnStatus();
 
 		if (finID == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
+			return APIErrorHandlerService.getFailedStatus("90201", valueParm);
 		}
 
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			return returnStatus;
-		}
+		td.setFinID(finID);
 
-		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		WSReturnStatus returnStatus = isWriteoffLoan(finID);
+		if (returnStatus != null) {
 			return returnStatus;
 		}
 
@@ -1812,8 +1811,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (CollectionUtils.isNotEmpty(validationErrors)) {
 			for (ErrorDetail ed : validationErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 			}
 		}
 
@@ -1822,16 +1820,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		if (currentFinanceTaxData == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90266", valueParm);
-			return returnStatus;
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
 		}
 
 		List<ErrorDetail> coApplicantErrors = financeTaxDetailService.verifyCoApplicantDetails(td);
 
 		if (CollectionUtils.isNotEmpty(coApplicantErrors)) {
 			for (ErrorDetail ed : coApplicantErrors) {
-				returnStatus = APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
-				return returnStatus;
+				return APIErrorHandlerService.getFailedStatus(ed.getCode(), ed.getParameters());
 			}
 		}
 
@@ -1842,11 +1838,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			return APIErrorHandlerService.getFailedStatus("90248", valueParm);
 		}
-		returnStatus = finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
 
-		logger.info(Literal.LEAVING);
-
-		return returnStatus;
+		return finServiceInstController.rejuvenateGSTDetails(td, currentFinanceTaxData.getVersion());
 	}
 
 	@Override
@@ -1867,10 +1860,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		if (StringUtils.isNotBlank(isWriteoffLoan(finID).getReturnCode())) {
-			return returnStatus;
-		}
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (isWriteoffLoan(finID) != null) {
 			return returnStatus;
 		}
 
@@ -2122,7 +2112,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		returnStatus = isWriteoffLoan(finID);
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
+		if (returnStatus != null) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
 			fd.setReturnStatus(returnStatus);
@@ -2240,6 +2230,34 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
+			FinanceMain fmMainTab = null;
+
+			boolean mainTable = false;
+			boolean tempTable = false;
+			if (StringUtils.isBlank(financeMain.getRecordType())) {
+				mainTable = true;
+			} else {
+				tempTable = true;
+				fmMainTab = financeMainDAO.getFinanceMain(finReference, TableType.MAIN_TAB);
+			}
+			if (fmMainTab != null) {
+				mainTable = true;
+			}
+
+			if (mainTable && origination == true) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Orgination";
+				valueParm[1] = "false, Because Loan is in LMS ";
+				return APIErrorHandlerService.getFailedStatus("41000", valueParm);
+			}
+
+			if (!mainTable && tempTable && !origination) {
+				String[] valueParm = new String[2];
+				valueParm[0] = "Orgination";
+				valueParm[1] = "true, Because Loan is in LOS ";
+				return APIErrorHandlerService.getFailedStatus("41000", valueParm);
+			}
+
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
 			// If Origination(true) Validations for the LOS, If not Validations For LMS
@@ -2296,7 +2314,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			if (chequeHeader == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = "Cheque Details ";
-				return returnStatus = APIErrorHandlerService.getFailedStatus("90502", valueParm);
+				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
 
 			// for logging purpose
@@ -2312,7 +2330,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(fd);
+			validateChequeDetails(fd, PennantConstants.method_save);
 
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
@@ -2329,14 +2347,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return returnStatus;
 	}
 
-	private void validateChequeDetails(FinanceDetail financeDetail) {
+	private void validateChequeDetails(FinanceDetail financeDetail, String method) {
 		boolean date = true;
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 		List<ChequeDetail> chequeDetailsList = chequeHeader.getChequeDetailList();
+
 		for (ChequeDetail chequeDetail : chequeDetailsList) {
-			// schedules validation
-			if (StringUtils.equals(FinanceConstants.REPAYMTH_PDC, chequeDetail.getChequeType())) {
+			if (FinanceConstants.REPAYMTH_PDC.equals(chequeDetail.getChequeType())) {
 				List<FinanceScheduleDetail> schedules = financeDetail.getFinScheduleData().getFinanceScheduleDetails();
 				for (FinanceScheduleDetail fsd : schedules) {
 					if (DateUtil.compare(fsd.getSchDate(), chequeDetail.getChequeDate()) == 0) {
@@ -2349,11 +2367,16 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 							valueParm[1] = String.valueOf(fsd.getRepayAmount() + "INR");
 							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 							return;
-
+						} else if (PennantConstants.method_save.equals(method)
+								&& chequeDetailDAO.isChequeExists(chequeHeader.getHeaderID(), fsd.getSchDate())) {
+							String[] valueParm = new String[2];
+							valueParm[0] = "Cheque ";
+							valueParm[1] = "Cheque Date : " + fsd.getSchDate();
+							schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("41018", valueParm)));
+							return;
 						} else {
 							break;
 						}
-
 					} else {
 						date = false;
 					}
@@ -2364,10 +2387,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 					valueParm[1] = "ScheduleDates";
 					schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30570", valueParm)));
 					return;
-
 				}
-			}
 
+			}
 		}
 
 		return;
@@ -2425,7 +2447,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			List<FinanceScheduleDetail> schedules = null;
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), tableType, false);
 			schdData.setFinanceScheduleDetails(schedules);
-			validateChequeDetails(financeDetail);
+			validateChequeDetails(financeDetail, PennantConstants.method_save);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
@@ -2492,7 +2514,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(financeDetail);
+			validateChequeDetails(financeDetail, PennantConstants.method_Update);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
@@ -2518,6 +2540,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			String finReference = financeDetail.getFinReference();
 			ChequeHeader chequeHeader = financeDetail.getChequeHeader();
 
+			Long finID = financeMainDAO.getFinID(finReference);
+
+			financeDetail.setFinID(finID);
+
 			// for logging purpose
 			APIErrorHandlerService.logReference(finReference);
 			errorDetails = chequeHeaderService.chequeValidationForUpdate(financeDetail, PennantConstants.method_Update,
@@ -2535,13 +2561,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 
 			List<FinanceScheduleDetail> schedules = null;
-			FinanceMain fm = financeMainDAO.getFinanceMainByRef(finReference, "", false);
+			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, tableType, false);
 			FinScheduleData schdData = financeDetail.getFinScheduleData();
 			schdData.setFinanceMain(fm);
-			schedules = financeScheduleDetailDAO.getFinScheduleDetails(fm.getFinID(), "", false);
+			schedules = financeScheduleDetailDAO.getFinScheduleDetails(finID, tableType, false);
 			schdData.setFinanceScheduleDetails(schedules);
 
-			validateChequeDetails(financeDetail);
+			validateChequeDetails(financeDetail, PennantConstants.method_Update);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				for (ErrorDetail errorDetail : schdData.getErrorDetails()) {
 					return APIErrorHandlerService.getFailedStatus(errorDetail.getCode(), errorDetail.getError());
@@ -3499,7 +3525,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		try {
 			financeDetail = finServiceInstController.doProcessNonLanReceipt(receiptData, eventCode);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			finScheduleData = nonLanReceiptService.setErrorToFSD(finScheduleData, "90502", e.getMessage());
 		}
 		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {

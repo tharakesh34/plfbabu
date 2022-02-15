@@ -424,9 +424,9 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 						parTab.setSelected(true);
 					}
 				}
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 
@@ -801,9 +801,9 @@ public class PMAYDialogCtrl extends GFCBaseCtrl<PMAY> {
 							parTab.setSelected(true);
 						}
 					}
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 			} else {
 				mapValues = customerDetails.getExtendedFieldRender().getMapValues();

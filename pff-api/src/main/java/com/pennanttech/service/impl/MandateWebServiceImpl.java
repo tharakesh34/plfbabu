@@ -163,6 +163,13 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			// for logging purpose
 			APIErrorHandlerService.logReference(String.valueOf(mandate.getMandateID()));
 
+			if (MandateConstants.STATUS_APPROVED.equals(mandateDetails.getStatus())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "Approved";
+				returnStatus = APIErrorHandlerService.getFailedStatus("90345", valueParm);
+				return returnStatus;
+			}
+
 			returnStatus = doMandateValidation(mandate);
 			if (StringUtils.isNotBlank(mandate.getMandateRef())) {
 				String[] paramValue = new String[2];
@@ -436,6 +443,13 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 
 		}
 
+		if (StringUtils.isNotEmpty(mandate.getCustCIF()) && StringUtils.isNotEmpty(mandate.getEntityCode())
+				&& StringUtils.isEmpty(mandate.getOrgReference())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "FinReference";
+			return getErrorDetails("90502", valueParm);
+		}
+
 		// validate finance reference
 		/*
 		 * if(StringUtils.isBlank(mandate.getOrgReference())){ String[] valueParm = new String[1]; valueParm[0] =
@@ -467,7 +481,7 @@ public class MandateWebServiceImpl extends ExtendedTestClass implements MandateR
 			List<Long> finRefList = financeMainService.getFinanceMainbyCustId(customer.getCustID(), type);
 			boolean validFinrefernce = true;
 			for (Long id : finRefList) {
-				if (id == finID) {
+				if (id.compareTo(finID) == 0) {
 					validFinrefernce = false;
 					break;
 				}

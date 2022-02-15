@@ -636,7 +636,13 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90353", "", valueParm)));
 			}
 		}
-
+		// validating amount
+		if (feePostings.getPostingAmount().compareTo(BigDecimal.ZERO) <= 0) {
+			String[] valueParm = new String[2];
+			valueParm[0] = "Amount";
+			valueParm[1] = "Zero";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91121", "", valueParm)));
+		}
 		return auditDetail;
 	}
 

@@ -180,7 +180,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 												summary.getFinSchdPriPaid().add(summary.getFinSchdPftPaid()), format),
 										"")));
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 		} else {
@@ -215,8 +215,7 @@ public class InterestCertificateServiceImpl extends GenericService<InterestCerti
 						: WordUtils.capitalize(NumberToEnglishWords
 								.getAmountInText(PennantApplicationUtil.formateAmount(emiAmount, format), "")));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 		}

@@ -772,7 +772,7 @@ public class CreateFinanceController extends SummaryDetailService {
 						return documentDetails.getReturnStatus();
 					}
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(Literal.EXCEPTION, e);
 				}
 				agenDocList.add(documentDetails);
 
@@ -4348,8 +4348,8 @@ public class CreateFinanceController extends SummaryDetailService {
 		if (aDeviation == null) {
 			String[] valueParm = new String[1];
 			valueParm[0] = finReference + " and " + deviationId;
-			response = APIErrorHandlerService.getFailedStatus("90266", valueParm);
-			return response;
+			return APIErrorHandlerService.getFailedStatus("90266", valueParm);
+
 		}
 
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());

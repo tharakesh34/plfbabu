@@ -4419,8 +4419,9 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", cu.CustShrtName, cu.PhoneNumber");
 		sql.append(" FROM Financemain_Temp fm");
 		sql.append(" Inner Join Secroles sr On sr.Rolecd = fm.NextRoleCode");
+		sql.append(" Inner Join SecUsers su on su.UsrId = fm.LastMntBy");
 		sql.append(" Inner Join Customers cu On cu.CustID = fm.CustID");
-		sql.append(" Where fm.NextRoleCode = ?");
+		sql.append(" Where fm.LastMntBy = ? and fm.NextRoleCode = ?");
 
 		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
 			UserPendingCases pc = new UserPendingCases();
@@ -4437,7 +4438,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 			return pc;
 
-		}, roleCode);
+		}, usrId, roleCode);
 	}
 
 	private String getFinMainAllQuery(String type, boolean wif) {
@@ -5619,7 +5620,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.QuickDisb, FinAssetValue, FinCurrAssetValue");
 		sql.append(", fm.FinIsActive, RcdMaintainSts, ClosingStatus, MaturityDate, CalMaturity");
 		sql.append(", FinAssetValue, FinCurrAssetValue");
-		sql.append(", fm.RecordStatus, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
+		sql.append(", fm.RecordStatus, fm.RecordType, fm.RoleCode, fm.NextRoleCode, fm.WorkflowId");
 		sql.append(" From FinanceMain").append(tableType).append(" fm");
 		sql.append(" Inner Join RmtFinanceTypes ft On ft.FinType = fm.FinType");
 		sql.append(" Inner Join SMTDivisionDetail dd On dd.DivisionCode = ft.FinDivision");
@@ -5885,6 +5886,7 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 			fm.setFinAssetValue(rs.getBigDecimal("FinAssetValue"));
 			fm.setFinCurrAssetValue(rs.getBigDecimal("FinCurrAssetValue"));
 			fm.setRecordStatus(rs.getString("RecordStatus"));
+			fm.setRecordType(rs.getString("RecordType"));
 			fm.setRcdMaintainSts(rs.getString("RcdMaintainSts"));
 			fm.setRoleCode(rs.getString("RoleCode"));
 			fm.setNextRoleCode(rs.getString("NextRoleCode"));

@@ -184,7 +184,7 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 			}
 			firstTaskOwnersAndActors.add(actrors.substring(0, actrors.length() - 1));
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return firstTaskOwnersAndActors;
 	}
@@ -259,8 +259,7 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	 * getRoleCodes method gives the ordered RoleCodes through activities and do the commenting steps in the
 	 * getRoleCodes method<br>
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return roles
 	 */
@@ -325,8 +324,7 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	/**
 	 * To get the Roles with count i.e the number of times the Respective Record has met the same Role.
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return rolesWithCount.
 	 */
@@ -400,8 +398,7 @@ public class WorkFlowWebServiceImpl extends ExtendedTestClass implements WorkFlo
 	/**
 	 * getUniqueNextRoleCodes method is to filter the unique nextRoleCodes from the activities
 	 * 
-	 * @param activities
-	 *            (List<Activity>)
+	 * @param activities (List<Activity>)
 	 * 
 	 * @return uniqueRoles.
 	 */

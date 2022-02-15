@@ -24433,7 +24433,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.1_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'customersdedup_view');
@@ -24441,7 +24441,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188" author="Gopal.p">
+	<changeSet id="PSD#172188.1" author="Gopal.p">
 		<createView viewName="CUSTOMERSDEDUP_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.CUSTID,
@@ -24504,7 +24504,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		          FROM MASTER_DEF
 		         WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
 		    LEFT JOIN CUSTOMEREMAILS T6 ON T1.CUSTID = T6.CUSTID AND T6.CUSTEMAILPRIORITY = 5
-		    LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID
+		    LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID AND T7.PHONETYPEPRIORITY = 5
 			UNION ALL
 		 	SELECT T1.CUSTID,
 			    T1.CUSTCIF,
@@ -24565,14 +24565,14 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		         FROM MASTER_DEF
 		        WHERE MASTER_DEF.MASTER_TYPE = 'DOC_TYPE' AND MASTER_DEF.KEY_TYPE = 'DRIVING_LICENCE')))
 		   LEFT JOIN CUSTOMEREMAILS T6 ON T1.CUSTID = T6.CUSTID AND T6.CUSTEMAILPRIORITY = 5
-		   LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID
+		   LEFT JOIN CUSTOMERPHONENUMBERS T7 ON T1.CUSTID = T7.PHONECUSTID AND T7.PHONETYPEPRIORITY = 5
 		   WHERE NOT (EXISTS ( SELECT 1 FROM CUSTOMERS_TEMP
 				WHERE CUSTOMERS_TEMP.CUSTID = T1.CUSTID))
 			]]>
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#172188_post" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.1_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'customersdedup_view');
@@ -25300,7 +25300,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
-	<changeSet id="ST#2031.85.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2031.85.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'legaldetails_view');
@@ -25308,7 +25308,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#2031.85.1" author="Gopal.p">
+	<changeSet id="ST#2031.85.2" author="Gopal.p">
 		<createView viewName="LEGALDETAILS_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.LEGALID,
@@ -25344,7 +25344,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				JOIN RMTBRANCHES T2 ON T1.BRANCH = T2.BRANCHCODE
 				JOIN FINANCEMAIN_TEMP T3 ON T3.FINREFERENCE = T1.LOANREFERENCE
 				JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T3.FINTYPE
-				INNER JOIN SECROLES T5 ON T5.ROLECD = T1.NEXTROLECODE
+				LEFT JOIN SECROLES T5 ON T5.ROLECD = T1.NEXTROLECODE
 				LEFT JOIN (SELECT PROPERTYOWNERSNAME, LEGALID FROM LEGALAPPLICANTDETAILS_TEMP LDT1 
 					WHERE LDT1.LEGALAPPLICANTID = (SELECT MIN(LDT2.LEGALAPPLICANTID) FROM LEGALAPPLICANTDETAILS_TEMP LDT2 
 						WHERE LDT2.LEGALID = LDT1.LEGALID)) T6 ON T6.LEGALID = T1.LEGALID
@@ -25383,7 +25383,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 				JOIN RMTBRANCHES T2 ON T1.BRANCH = T2.BRANCHCODE
 				JOIN FINANCEMAIN_VIEW T3 ON T3.FINREFERENCE = T1.LOANREFERENCE
 				JOIN RMTFINANCETYPES T4 ON T4.FINTYPE = T3.FINTYPE
-				INNER JOIN SECROLES T5 ON T5.ROLECD = T1.NEXTROLECODE
+				LEFT JOIN SECROLES T5 ON T5.ROLECD = T1.NEXTROLECODE
 				LEFT JOIN (SELECT PROPERTYOWNERSNAME, LEGALID FROM LEGALAPPLICANTDETAILS LDT1
 					WHERE LDT1.LEGALAPPLICANTID = (SELECT MIN(LDT2.LEGALAPPLICANTID) FROM LEGALAPPLICANTDETAILS LDT2 
 						WHERE LDT2.LEGALID = LDT1.LEGALID)) T6 ON T6.LEGALID = T1.LEGALID
@@ -25394,7 +25394,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#2031.85.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="ST#2031.85.2_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'legaldetails_view');

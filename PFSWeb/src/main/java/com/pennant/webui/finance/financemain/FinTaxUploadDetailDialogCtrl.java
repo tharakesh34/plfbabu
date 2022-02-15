@@ -43,6 +43,7 @@ import org.zkoss.zul.Window;
 
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.FinTaxUploadDetail;
 import com.pennant.backend.model.FinTaxUploadHeader;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -95,6 +96,7 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 	private transient FinTaxUploadDetailService finTaxUploadDetailService;
 
 	private boolean isvalidData = true;
+	private FinanceMainDAO financeMainDAO;
 
 	@Override
 	protected void doSetProperties() {
@@ -376,7 +378,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 		logger.debug(Literal.ENTERING);
 
 		FinanceTaxDetail td = new FinanceTaxDetail();
-		td.setFinID(tud.getFinID());
+
+		Long finID = financeMainDAO.getActiveFinID(tud.getAggrementNo());
+
+		td.setFinID(finID);
 		td.setFinReference(tud.getAggrementNo());
 		td.setApplicableFor(tud.getApplicableFor());
 		td.setCustCIF(tud.getApplicant());
@@ -839,6 +844,10 @@ public class FinTaxUploadDetailDialogCtrl extends GFCBaseCtrl<FinTaxUploadHeader
 
 	public void setFinTaxUploadDetailService(FinTaxUploadDetailService finTaxUploadDetailService) {
 		this.finTaxUploadDetailService = finTaxUploadDetailService;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }

@@ -1053,7 +1053,7 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				this.documnetName.setAttribute("data", documentDetails);
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error(Literal.EXCEPTION, ex);
 		}
 		logger.debug("Leaving");
 	}

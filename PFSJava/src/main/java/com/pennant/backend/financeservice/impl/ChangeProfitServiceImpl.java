@@ -137,11 +137,12 @@ public class ChangeProfitServiceImpl extends GenericService<FinServiceInstructio
 		}
 
 		/* ToDate shouldn't be before fromdate */
-		if (DateUtil.compare(fromDate, toDate) == 1) {
-			String[] valueParm = new String[2];
+		if (DateUtil.compare(fromDate, toDate) >= 0) {
+			String[] valueParm = new String[3];
 			valueParm[0] = "To Date:" + DateUtility.formatToShortDate(toDate);
 			valueParm[1] = "From Date:" + DateUtility.formatToShortDate(fromDate);
-			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("30509", "", valueParm), lang));
+			valueParm[2] = "Maturity Date:" + DateUtility.formatToShortDate(fm.getMaturityDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90350", "", valueParm), lang));
 		}
 
 		logger.debug("Leaving");

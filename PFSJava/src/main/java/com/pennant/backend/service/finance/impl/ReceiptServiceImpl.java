@@ -3172,10 +3172,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String parm1 = null;
 		String parm2 = null;
 		String eventCode = null;
-		boolean finSource = false;
-		if (financemain != null) {
-			finSource = PennantConstants.FINSOURCE_ID_API.equals(financemain.getFinSourceID());
-		}
+
 		BigDecimal amount = new BigDecimal(
 				PennantApplicationUtil.amountFormate(fsi.getAmount(), 2).replaceAll(",", ""));
 
@@ -3307,6 +3304,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return receiptData;
 		}
 
+		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)) {
+			String regex = PennantRegularExpressions.REGEX_NUMERIC;
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regex));
+
+			if (!pattern.matcher(chqNo).matches()) {
+				setErrorToFSD(schdData, "90405", chqNo);
+				return receiptData;
+			}
+		}
+
 		int count = financeMainDAO.getCountByBlockedFinances(finID);
 		if (count > 0) {
 			parm1 = "FinReference: " + finReference;
@@ -3335,9 +3342,29 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			schdData = fd.getFinScheduleData();
 			schdData.setFinServiceInstruction(tempFsi);
 		}
+
+		FinReceiptHeader rch = receiptData.getReceiptHeader();
+		rch.setPanNumber(fsi.getPanNumber());
+
 		Date valueDate = fsi.getValueDate();
-		if (fsi.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) && (fsi.isReceiptUpload() || finSource)
-				&& (!StringUtils.equals(fsi.getReqType(), "Post") || finSource)) {
+		try {
+			if (fsi.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE)
+					&& !receiptData.getFinanceDetail().getFinScheduleData().getFinanceType().isAlwCloBefDUe()) {
+				Date firstInstDate = getFirstInstDate(
+						receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
+				if (firstInstDate != null && valueDate.compareTo(firstInstDate) < 0) {
+					schdData = setErrorToFSD(schdData, "21005",
+							"Not allowed to do Early Settlement before first installment");
+					receiptData.getFinanceDetail().setFinScheduleData(schdData);
+					return receiptData;
+				}
+			}
+		} catch (NullPointerException e) {
+			logger.error(Literal.EXCEPTION, e);
+		}
+
+		if (fsi.getReceiptPurpose().equals(FinServiceEvent.EARLYSETTLE) && fsi.isReceiptUpload()
+				&& !StringUtils.equals(fsi.getReqType(), "Post")) {
 			FinReceiptDetail rcd = fsi.getReceiptDetail();
 			FinScheduleData fsd = fd.getFinScheduleData();
 			FinanceMain fm = fsd.getFinanceMain();
@@ -3347,12 +3374,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			receiptData = getFinReceiptDataById(finReference, eventCode, FinServiceEvent.RECEIPT, "");
-			FinReceiptHeader rch = receiptData.getReceiptHeader();
+			rch = receiptData.getReceiptHeader();
 
 			rch.setFinID(receiptData.getFinID());
 			rch.setReference(finReference);
 			rch.setReceiptAmount(amount);
 			rch.setReceiptPurpose(receiptPurpose);
+
 			if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
 					|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)) {
 				int defaultClearingDays = SysParamUtil.getValueAsInt("EARLYSETTLE_CHQ_DFT_DAYS");
@@ -3365,20 +3393,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			receiptData.setReceiptHeader(rch);
 
 			receiptData = calcuateDues(receiptData);
-			try {
-				if (!receiptData.getFinanceDetail().getFinScheduleData().getFinanceType().isAlwCloBefDUe()) {
-					Date firstInstDate = getFirstInstDate(
-							receiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
-					if (firstInstDate != null && valueDate.compareTo(firstInstDate) < 0) {
-						fsd = setErrorToFSD(fsd, "21005",
-								"Not allowed to do Early Settlement before first installment");
-						receiptData.getFinanceDetail().setFinScheduleData(fsd);
-						return receiptData;
-					}
-				}
-			} catch (NullPointerException e) {
-				logger.error(Literal.EXCEPTION, e);
-			}
 
 			if (receiptData != null) {
 				BigDecimal pastDues = rch.getTotalPastDues().getTotalDue();
@@ -3814,8 +3828,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		int formatter = CurrencyUtil.getFormat(financeMain.getFinCcy());
 
-		if ((receiptUpload || PennantConstants.FINSOURCE_ID_API.equals(finSourceId))
-				&& SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
+		if (SysParamUtil.isAllowed(SMTParameterConstants.RECEIPT_CASH_PAN_MANDATORY)) {
 			BigDecimal recAmount = PennantApplicationUtil.formateAmount(fsi.getAmount(), formatter);
 			BigDecimal cashLimit = new BigDecimal(
 					SysParamUtil.getSystemParameterObject("RECEIPT_CASH_PAN_LIMIT").getSysParmValue());
@@ -7189,7 +7202,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		} catch (Exception e) {
 			flag = true;
 			error = e.getMessage();
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		if (flag) {
 			valueMap.put("uploadStatus", UploadConstants.UPLOAD_STATUS_FAIL);

@@ -818,7 +818,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 				Filedownload.save(data, "application/vnd.ms-excel", "ExternalLiabilities");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -1013,14 +1013,14 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 			MessageUtil.showError(Labels.getLabel("label_File_Not_Exists_Message").concat(path));
 			return null;
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			logger.error(Literal.EXCEPTION, e1);
 		} finally {
 			try {
 				if (workbook != null) {
 					workbook.close();
 				}
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 		return null;

@@ -69,10 +69,8 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 				externalLiabilityDAO.update(customerExtLiability, "");
 				if (customerExtLiability.getExtLiabilitiesPayments() != null
 						&& !customerExtLiability.getExtLiabilitiesPayments().isEmpty()) {
-					for (ExtLiabilityPaymentdetails extLiabilityPaymentdetails : customerExtLiability
-							.getExtLiabilitiesPayments()) {
-						customerExtLiabilityDAO.update(extLiabilityPaymentdetails, "");
-					}
+					customerExtLiabilityDAO.delete(customerExtLiability.getExtLiabilitiesPayments(), "");
+					customerExtLiabilityDAO.save(customerExtLiability.getExtLiabilitiesPayments(), "");
 
 				}
 			}
@@ -93,8 +91,8 @@ public class CustomerExtLiabilityServiceImpl implements CustomerExtLiabilityServ
 	}
 
 	@Override
-	public int getVersion(long custId, int liabilitySeq) {
-		return customerExtLiabilityDAO.getVersion(custId, liabilitySeq);
+	public int getVersion(long linkId, int liabilitySeq) {
+		return customerExtLiabilityDAO.getVersion(linkId, liabilitySeq);
 	}
 
 	@Override

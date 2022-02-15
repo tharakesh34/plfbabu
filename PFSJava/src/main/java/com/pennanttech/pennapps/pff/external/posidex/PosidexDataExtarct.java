@@ -469,7 +469,7 @@ public class PosidexDataExtarct extends DatabaseDataEngine implements PosidexPro
 				destinationJdbcTemplate.update(sql.toString(), beanParameters);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 
 		}
 

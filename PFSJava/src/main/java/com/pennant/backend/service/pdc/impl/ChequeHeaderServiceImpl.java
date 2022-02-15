@@ -1334,7 +1334,6 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 		List<Date> Chequedate = new ArrayList<>();
 
 		long finID = fd.getFinID();
-		String finReference = fd.getFinReference();
 
 		if (ch != null) {
 			ChequeHeader dbChequeHeader = chequeHeaderDAO.getChequeHeaderByRef(finID, tableType);
@@ -1388,6 +1387,14 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 				return errorDetails;
 			} else {
 				BankBranch bankBranch = bankBranchDAO.getBankBranchById(ch.getBankBranchID(), "");
+
+				if (bankBranch == null) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "BankBranchID";
+					errorDetails.add(ErrorUtil.getErrorDetail(new ErrorDetail("RU0040", valueParm)));
+					return errorDetails;
+				}
+
 				if (bankBranch.getBankBranchID() != ch.getBankBranchID()) {
 					String[] valueParm = new String[1];
 					valueParm[0] = "BankBranch";
@@ -1428,6 +1435,9 @@ public class ChequeHeaderServiceImpl extends GenericService<ChequeHeader> implem
 						return errorDetails;
 					}
 				}
+				
+				ch.setNoOfCheques(ch.getNoOfCheques() + dbChequeHeader.getNoOfCheques());
+				ch.setTotalAmount(dbChequeHeader.getTotalAmount());
 			}
 			for (ChequeDetail chequeDetail : chequeDetails) {
 				// ChequeType

@@ -729,22 +729,19 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public Customer getCustomerByCIF(String cifId, String type) {
-		logger.debug(Literal.ENTERING);
-
 		StringBuilder sql = selectCustomerBasicInfo(type);
 		sql.append(" Where CustCIF = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		CustomerRowMapper rowMapper = new CustomerRowMapper(type);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { cifId }, rowMapper);
+			return this.jdbcOperations.queryForObject(sql.toString(), rowMapper, cifId);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.debug(Literal.LEAVING);
 		return null;
 	}
 

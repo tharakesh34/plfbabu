@@ -716,7 +716,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 		try {
 			financeEndDate = new SimpleDateFormat("dd/MM/yyyy").parse(financeStartDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return financeEndDate;
 	}

@@ -24,6 +24,7 @@ import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class PostponementServiceImpl extends GenericService<FinServiceInstruction> implements PostponementService {
 
@@ -252,6 +253,15 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 			return auditDetail;
 		}
 
+		if (fsi.getToDate().compareTo(fsi.getFromDate()) <= 0) {
+			String[] valueParm = new String[3];
+			valueParm[0] = "ToDate";
+			valueParm[1] = DateUtil.formatToShortDate(fsi.getFromDate());
+			valueParm[2] = DateUtil.formatToShortDate(fm.getMaturityDate());
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91102", "", valueParm), lang));
+			return auditDetail;
+		}
+
 		// validate RecalType
 		if (StringUtils.isNotBlank(fsi.getRecalType())) {
 			if (!StringUtils.equals(fsi.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)
@@ -288,7 +298,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
 				valueParm[1] = DateUtility.formatToShortDate(fsi.getToDate());
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91106", "", valueParm), lang));
-			} else if (fsi.getRecalFromDate().compareTo(fm.getMaturityDate()) > 0) {
+			} else if (fsi.getRecalFromDate().compareTo(fm.getMaturityDate()) >= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalFromDate());
 				valueParm[1] = DateUtility.formatToShortDate(fm.getMaturityDate());
@@ -303,7 +313,7 @@ public class PostponementServiceImpl extends GenericService<FinServiceInstructio
 				valueParm[0] = fsi.getRecalType();
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("91108", "", valueParm), lang));
 				return auditDetail;
-			} else if (fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) < 0) {
+			} else if (fsi.getRecalToDate().compareTo(fsi.getRecalFromDate()) <= 0) {
 				String[] valueParm = new String[2];
 				valueParm[0] = DateUtility.formatToShortDate(fsi.getRecalToDate());
 				valueParm[1] = DateUtility.formatToShortDate(fsi.getRecalFromDate());

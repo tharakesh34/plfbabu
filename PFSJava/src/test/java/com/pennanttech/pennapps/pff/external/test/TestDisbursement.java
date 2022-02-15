@@ -3,15 +3,19 @@ package com.pennanttech.pennapps.pff.external.test;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.pennant.backend.model.finance.FinAdvancePayments;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.external.DisbursementRequest;
 
 public class TestDisbursement {
+	private static final Logger logger = LogManager.getLogger(TestDisbursement.class);
 
 	private DisbursementRequest disbursementRequest;
 
@@ -23,7 +27,8 @@ public class TestDisbursement {
 			context = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
 			disbursementRequest = context.getBean(DisbursementRequest.class);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 	}
 
@@ -108,7 +113,8 @@ public class TestDisbursement {
 			disbursementRequest.sendReqest("PBD", list, new Long(1000));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
+
 		}
 	}
 

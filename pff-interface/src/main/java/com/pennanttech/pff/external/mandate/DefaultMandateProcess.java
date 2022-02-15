@@ -1014,7 +1014,7 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 				}
 			});
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 

@@ -65,6 +65,7 @@ import com.pennant.util.Constraint.StaticListValidator;
 import com.pennant.webui.financemanagement.paymentMode.ReceiptListCtrl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.jdbc.DataType;
@@ -197,7 +198,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (FinanceConstants.REALIZATION_APPROVER.equals(module) || FinanceConstants.DEPOSIT_APPROVER.equals(module)) {
 			String msg = "label_SelectReceiptDialog_Msg1.value";
 			if (MessageUtil.YES == MessageUtil.confirm(Labels.getLabel(msg, new String[] { recordAction }))) {
-				doProcess(); //processing records
+				doProcess(); // processing records
 			} else {
 				this.window_SelectReceiptDialog.onClose(); // closing window
 				return;
@@ -547,7 +548,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					if (RepayConstants.PAYSTATUS_REALIZED.equals(finReceiptHeader.getReceiptModeStatus())) {
 						receiptHeader.setRealizationDate(finReceiptDetail.getDepositDate());
 
-						// getting Receipts which already been realized 
+						// getting Receipts which already been realized
 						if (RepayConstants.PAYSTATUS_REALIZED.equals(receiptHeader.getReceiptModeStatus())) {
 							receiptIdList.add(String.valueOf(receiptHeader.getReceiptID()));
 							continue;
@@ -658,14 +659,15 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				return;
 			}
 
-			receiptService.saveMultiReceiptLog(finReceiptQueueList); // Saving all selected records in FinReceiptQueueLog
+			receiptService.saveMultiReceiptLog(finReceiptQueueList); // Saving all selected records in
+																		// FinReceiptQueueLog
 
 			Thread thread = new Thread(new MultiReceiptRunnable(finReceiptHeaderMap, auditHeaderList, batchId));
 			thread.start();
 			Thread.sleep(1000);
 		} catch (Exception e) {
 			flag = false;
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 			MessageUtil.showError(e);
 		}
 
@@ -732,8 +734,7 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYRPY)) {
 				eventCode = AccountingEvent.EARLYPAY;
 
-			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(),
-					FinServiceEvent.EARLYSETTLE)) {
+			} else if (StringUtils.equals(receiptHeader.getReceiptPurpose(), FinServiceEvent.EARLYSETTLE)) {
 				eventCode = AccountingEvent.EARLYSTL;
 
 			}
@@ -862,9 +863,10 @@ public class SelectReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		@Override
 		public void run() {
 			try {
-				threadprocess.processThread(finReceiptHeaderMap, auditHeaderList, batchId);// Initializing Thread Processing
+				threadprocess.processThread(finReceiptHeaderMap, auditHeaderList, batchId);// Initializing Thread
+																							// Processing
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 		}
 	}

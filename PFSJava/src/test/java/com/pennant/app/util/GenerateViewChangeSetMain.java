@@ -13,8 +13,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.pennanttech.pennapps.core.resource.Literal;
 
 public class GenerateViewChangeSetMain {
+	private static final Logger logger = LogManager.getLogger(GenerateViewChangeSetMain.class);
+
 	static final String DB_URL = "jdbc:postgresql://192.168.120.26:5432/plf_core_finid_dev";
 	static final String USER = "postgres";
 	static final String PASS = "Pennant_123";
@@ -72,7 +78,7 @@ public class GenerateViewChangeSetMain {
 				FileUtils.write(new File("D:/change-log-finid_views.xml"), "\n", true);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			}
 
 		}

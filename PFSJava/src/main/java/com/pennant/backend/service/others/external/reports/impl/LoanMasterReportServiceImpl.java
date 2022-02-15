@@ -307,7 +307,7 @@ public class LoanMasterReportServiceImpl extends GenericService<LoanReport> impl
 			outStandingAmts.put(LOAN, loanReport.getLoanOutStanding());
 			outStandingAmts.put(VAS, loanReport.getVasOutStanding());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		}
 		logger.debug(Literal.LEAVING);
 		return outStandingAmts;

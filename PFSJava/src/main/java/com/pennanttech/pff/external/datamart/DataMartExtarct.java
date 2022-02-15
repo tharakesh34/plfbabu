@@ -410,7 +410,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -465,7 +465,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -497,7 +497,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_ADDRESS_DETAILS", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -528,7 +527,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -560,7 +559,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_GOLDLOANPOLICY", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -591,7 +589,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -624,7 +622,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_GOLDLOANSTATEPOLICY", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -655,7 +652,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -687,7 +684,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_GOLDRATE", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -718,7 +714,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -750,7 +746,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_PROMOTIONS", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -781,7 +776,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -814,7 +809,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_PROMOTIONALSLABWISERATES", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -845,7 +839,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -878,7 +872,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_PROMOTIONBRANCHES", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -909,7 +902,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -942,7 +935,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_PROMOTIONSTATES", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -973,7 +965,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1005,7 +997,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_ORNAMENTTYPE", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -1036,7 +1027,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1068,7 +1059,6 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 							}
 						} catch (Exception e) {
 							logger.error(Literal.EXCEPTION, e);
-							e.printStackTrace();
 							String keyId = getKeyId("DM_ORNAMENTDETAILS", rs, keyFields);
 							executionStatus.setFailedRecords(failedCount++);
 							saveBatchLog(keyId, "F", e.getMessage());
@@ -1102,7 +1092,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1167,7 +1157,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1231,7 +1221,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1296,7 +1286,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1361,7 +1351,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1427,7 +1417,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1492,7 +1482,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1558,7 +1548,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1625,7 +1615,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1690,7 +1680,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1757,7 +1747,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1822,7 +1812,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1888,7 +1878,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -1953,7 +1943,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2017,7 +2007,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2079,7 +2069,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2144,7 +2134,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2208,7 +2198,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2272,7 +2262,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2338,7 +2328,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2401,7 +2391,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2467,7 +2457,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			try {
 				txnStatus = extract(sql, paramMap);
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(Literal.EXCEPTION, e);
 			} finally {
 				conclude(txnStatus);
 			}
@@ -2537,7 +2527,7 @@ public class DataMartExtarct extends DatabaseDataEngine implements DataMartProce
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(Literal.EXCEPTION, e);
 		} finally {
 			if (txnStatus != null) {
 				txnStatus.flush();
