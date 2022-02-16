@@ -27,7 +27,32 @@ public class FeeRule {
 	private int scheduleTerms;
 
 	public FeeRule() {
+		super();
+	}
 
+	public FeeRule copyEntity() {
+		FeeRule entity = new FeeRule();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setSchDate(this.schDate);
+		entity.setFeeCode(this.feeCode);
+		entity.setFeeCodeDesc(this.feeCodeDesc);
+		entity.setCalFeeAmount(this.calFeeAmount);
+		entity.setFeeAmount(this.feeAmount);
+		entity.setWaiverAmount(this.waiverAmount);
+		entity.setPaidAmount(this.paidAmount);
+		entity.setFinEvent(this.finEvent);
+		entity.setSeqNo(this.SeqNo);
+		entity.setFeeOrder(this.feeOrder);
+		entity.setAllowWaiver(this.allowWaiver);
+		entity.setWaiverPerc(this.waiverPerc);
+		entity.setCalFeeModify(this.calFeeModify);
+		entity.setNewFee(this.isNewFee);
+		entity.setExcludeFromRpt(this.excludeFromRpt);
+		entity.setFeeToFinance(this.feeToFinance);
+		entity.setFeeMethod(this.feeMethod);
+		entity.setScheduleTerms(this.scheduleTerms);
+		return entity;
 	}
 
 	public long getFinID() {
@@ -37,7 +62,7 @@ public class FeeRule {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public void setFinReference(String finReference) {
 		this.finReference = finReference;
 	}

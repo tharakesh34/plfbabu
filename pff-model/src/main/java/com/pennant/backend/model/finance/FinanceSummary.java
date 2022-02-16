@@ -26,6 +26,7 @@ package com.pennant.backend.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -211,6 +212,115 @@ public class FinanceSummary implements Serializable {
 
 	public FinanceSummary() {
 		super();
+	}
+
+	public FinanceSummary copyEntity() {
+		FinanceSummary entity = new FinanceSummary();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setTotalDisbursement(this.totalDisbursement);
+		entity.setTotalPriSchd(this.totalPriSchd);
+		entity.setTotalPftSchd(this.totalPftSchd);
+		entity.setPrincipalSchd(this.principalSchd);
+		entity.setProfitSchd(this.profitSchd);
+		entity.setSchdPftPaid(this.schdPftPaid);
+		entity.setCurrentFinanceAmount(this.currentFinanceAmount);
+		entity.setSchdPriPaid(this.schdPriPaid);
+		entity.setTotalDownPayment(this.totalDownPayment);
+		entity.setDownPaymentToBank(this.downPaymentToBank);
+		entity.setDownPaymentToSpplier(this.downPaymentToSpplier);
+		entity.setProfitSuspended(this.profitSuspended);
+		entity.setTotalCpz(this.totalCpz);
+		entity.setFinCurODDays(this.finCurODDays);
+		entity.setAssetCode(this.assetCode);
+		entity.setFinODTotPenaltyAmt(this.finODTotPenaltyAmt);
+		entity.setFinODTotWaived(this.finODTotWaived);
+		entity.setFinODTotPenaltyPaid(this.finODTotPenaltyPaid);
+		entity.setFinODTotPenaltyBal(this.finODTotPenaltyBal);
+		entity.setNextSchDate(this.nextSchDate);
+		entity.setSchDate(this.schDate);
+		entity.setTotalFees(this.totalFees);
+		entity.setTotalWaiverFee(this.totalWaiverFee);
+		entity.setTotalPaidFee(this.totalPaidFee);
+		entity.setFinType(this.finType);
+		entity.setFinBranch(this.finBranch);
+		entity.setFinCcy(this.finCcy);
+		entity.setCustID(this.custID);
+		entity.setFinStartDate(this.finStartDate);
+		entity.setMaturityDate(this.maturityDate);
+		entity.setFinStatus(this.finStatus);
+		entity.setFinRate(this.finRate);
+		entity.setFinLastRepayDate(this.finLastRepayDate);
+		entity.setOutStandPrincipal(this.outStandPrincipal);
+		entity.setOutStandProfit(this.outStandProfit);
+		entity.setTotalOutStanding(this.totalOutStanding);
+		entity.setPrincipal(this.principal);
+		entity.setFuturePrincipal(this.futurePrincipal);
+		entity.setInterest(this.interest);
+		entity.setFutureInterest(this.futureInterest);
+		entity.setTotalOriginal(this.totalOriginal);
+		entity.setTotalPaid(this.totalPaid);
+		entity.setUnPaidPrincipal(this.unPaidPrincipal);
+		entity.setUnPaidProfit(this.unPaidProfit);
+		entity.setTotalUnPaid(this.totalUnPaid);
+		entity.setOverDuePrincipal(this.overDuePrincipal);
+		entity.setOverDueProfit(this.overDueProfit);
+		entity.setTotalOverDue(this.totalOverDue);
+		entity.setOverDueCharges(this.overDueCharges);
+		entity.setTotalOverDueIncCharges(this.totalOverDueIncCharges);
+		entity.setEarnedPrincipal(this.earnedPrincipal);
+		entity.setEarnedProfit(this.earnedProfit);
+		entity.setTotalEarned(this.totalEarned);
+		entity.setUnEarnedPrincipal(this.unEarnedPrincipal);
+		entity.setUnEarnedProfit(this.unEarnedProfit);
+		entity.setTotalUnEarned(this.totalUnEarned);
+		entity.setPayOffPrincipal(this.payOffPrincipal);
+		entity.setPayOffProfit(this.payOffProfit);
+		entity.setTotalPayOff(this.totalPayOff);
+		entity.setOverDueInstlments(this.overDueInstlments);
+		entity.setOverDueInstlementPft(this.overDueInstlementPft);
+		entity.setPaidInstlments(this.paidInstlments);
+		entity.setPaidInstlementPft(this.paidInstlementPft);
+		entity.setUnPaidInstlments(this.unPaidInstlments);
+		entity.setUnPaidInstlementPft(this.unPaidInstlementPft);
+		entity.setNumberOfTerms(this.numberOfTerms);
+		entity.setNOInst(this.NOInst);
+		entity.setCustCIF(this.custCIF);
+		entity.setTotalRepayAmt(this.totalRepayAmt);
+		entity.setFinCommitmentRef(this.finCommitmentRef);
+		entity.setCmtTitle(this.cmtTitle);
+		entity.setCmtAmount(this.cmtAmount);
+		entity.setCmtAvailable(this.cmtAvailable);
+		entity.setCmtExpiryDate(this.CmtExpiryDate);
+		entity.setUtilizedDefCnt(this.utilizedDefCnt);
+		entity.setEffectiveRateOfReturn(this.effectiveRateOfReturn);
+		entity.setTotalGracePft(this.totalGracePft);
+		entity.setTotalGraceCpz(this.totalGraceCpz);
+		entity.setTotalGrossGrcPft(this.totalGrossGrcPft);
+		entity.setTotalProfit(this.totalProfit);
+		entity.setFeeChargeAmt(this.feeChargeAmt);
+		entity.setLoanTenor(this.loanTenor);
+		entity.setFirstDisbDate(this.firstDisbDate);
+		entity.setLastDisbDate(this.lastDisbDate);
+		entity.setNextRepayAmount(this.nextRepayAmount);
+		entity.setFirstEmiAmount(this.firstEmiAmount);
+		entity.setFutureInst(this.futureInst);
+		entity.setFutureTenor(this.futureTenor);
+		entity.setFirstInstDate(this.firstInstDate);
+		entity.setPaidTotal(this.paidTotal);
+		entity.setAdvPaymentAmount(this.advPaymentAmount);
+		if (finODDetail != null) {
+			entity.setFinODDetail(new ArrayList<>());
+			this.finODDetail.stream().forEach(e -> entity.getFinODDetail().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setFullyDisb(this.fullyDisb);
+		entity.setSanctionAmt(this.sanctionAmt);
+		entity.setUtilizedAmt(this.utilizedAmt);
+		entity.setAvailableAmt(this.availableAmt);
+		entity.setDueCharges(this.dueCharges);
+		entity.setOverDueAmount(this.overDueAmount);
+
+		return entity;
 	}
 
 	public long getFinID() {

@@ -38,13 +38,20 @@ public class IRRScheduleDetail implements Serializable {
 	private BigDecimal repayAmount = BigDecimal.ZERO;
 	private BigDecimal closingBalance = BigDecimal.ZERO;
 	private BigDecimal gapInterst = BigDecimal.ZERO;
+	private boolean nonSchdRcd = false;
 
-	public long getFinID() {
-		return finID;
-	}
-
-	public void setFinID(long finID) {
-		this.finID = finID;
+	public IRRScheduleDetail copyEntity() {
+		IRRScheduleDetail entity = new IRRScheduleDetail();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setSchDate(this.schDate);
+		entity.setProfitCalc(this.profitCalc);
+		entity.setPrincipalCalc(this.principalCalc);
+		entity.setRepayAmount(this.repayAmount);
+		entity.setClosingBalance(this.closingBalance);
+		entity.setGapInterst(this.gapInterst);
+		entity.setNonSchdRcd(this.nonSchdRcd);
+		return entity;
 	}
 
 	public String getFinReference() {
@@ -101,5 +108,21 @@ public class IRRScheduleDetail implements Serializable {
 
 	public void setGapInterst(BigDecimal gapInterst) {
 		this.gapInterst = gapInterst;
+	}
+
+	public boolean isNonSchdRcd() {
+		return nonSchdRcd;
+	}
+
+	public void setNonSchdRcd(boolean nonSchdRcd) {
+		this.nonSchdRcd = nonSchdRcd;
+	}
+
+	public long getFinID() {
+		return finID;
+	}
+
+	public void setFinID(long finID) {
+		this.finID = finID;
 	}
 }

@@ -74,6 +74,87 @@ public class Covenant extends CovenantType {
 		this.setId(id);
 	}
 
+	public Covenant copyEntity() {
+		Covenant entity = new Covenant();
+		entity.setKeyReference(this.keyReference);
+		entity.setReceivableDate(this.receivableDate);
+		entity.setDocumentReceived(this.documentReceived);
+		entity.setDocumentReceivedDate(this.documentReceivedDate);
+		entity.setNextFrequencyDate(this.nextFrequencyDate);
+		entity.setGraceDueDate(this.graceDueDate);
+		entity.setInternalUse(this.internalUse);
+		entity.setExtendedDate(this.extendedDate);
+		entity.setRemarks(this.remarks);
+		entity.setRemarks1(this.remarks1);
+		entity.setAdditionalField1(this.additionalField1);
+		entity.setAdditionalField2(this.additionalField2);
+		entity.setAdditionalField3(this.additionalField3);
+		entity.setAdditionalField4(this.additionalField4);
+		entity.setMandatoryRole(this.mandatoryRole);
+		entity.setMandRoleDescription(this.mandRoleDescription);
+		entity.setAllowWaiver(this.allowWaiver);
+		entity.setNotifyTo(this.notifyTo);
+		entity.setModule(this.module);
+		entity.setCovenantTypeDescription(this.covenantTypeDescription);
+		entity.setCovenantTypeId(this.covenantTypeId);
+		entity.setLos(this.los);
+		entity.setOtc(this.otc);
+		entity.setPdd(this.pdd);
+		entity.setCovenantTypeCode(this.covenantTypeCode);
+		this.covenantDocuments.stream()
+				.forEach(e -> entity.getCovenantDocuments().add(e == null ? null : e.copyEntity()));
+		this.documentDetails.stream().forEach(e -> entity.getDocumentDetails().add(e == null ? null : e.copyEntity()));
+		entity.setAlertsentOn(this.alertsentOn);
+		entity.setStrPdd(this.strPdd);
+		entity.setStrOtc(this.strOtc);
+		entity.setStrDocumentReceived(this.strDocumentReceived);
+
+		entity.setId(super.getId());
+		entity.setCode(super.getCode());
+		entity.setDescription(super.getDescription());
+		entity.setCategory(super.getCategory());
+		entity.setCategoryName(super.getCategoryName());
+		entity.setDocType(super.getDocType());
+		entity.setDocTypeName(super.getDocTypeName());
+		entity.setAllowPostPonement(super.isAllowPostPonement());
+		entity.setMaxAllowedDays(super.getMaxAllowedDays());
+		entity.setAllowedPaymentModes(super.getAllowedPaymentModes());
+		entity.setAlertsRequired(super.isAlertsRequired());
+		entity.setFrequency(super.getFrequency());
+		entity.setGraceDays(super.getGraceDays());
+		entity.setAlertDays(super.getAlertDays());
+		entity.setAlertType(super.getAlertType());
+		entity.setAlertTypeName(super.getAlertTypeName());
+		entity.setAlertToRoles(super.getAlertToRoles());
+		entity.setAlertToRolesName(super.getAlertToRolesName());
+		entity.setUserTemplate(super.getUserTemplate());
+		entity.setUserTemplateCode(super.getUserTemplateCode());
+		entity.setUserTemplateName(super.getUserTemplateName());
+		entity.setCustomerTemplate(super.getCustomerTemplate());
+		entity.setCustomerTemplateCode(super.getCustomerTemplateCode());
+		entity.setCustomerTemplateName(super.getCustomerTemplateName());
+		entity.setLovValue(super.getLovValue());
+		entity.setBefImage(super.getBefImage() == null ? null : super.getBefImage().copyEntity());
+		entity.setUserDetails(super.getUserDetails());
+		entity.setCovenantType(super.getCovenantType());
+		entity.setStrAlertsRequired(super.getStrAlertsRequired());
+		entity.setlGraceDays(super.getlGraceDays());
+		entity.setlAlertDays(super.getlAlertDays());
+		entity.setStrAllowPostPonement(super.getStrAllowPostPonement());
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	@Override
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();

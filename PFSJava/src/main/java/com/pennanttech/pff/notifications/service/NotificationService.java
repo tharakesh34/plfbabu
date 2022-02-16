@@ -1206,7 +1206,7 @@ public class NotificationService extends GenericService<Notification> {
 
 		String finReference = fm.getFinReference();
 		String drwingPwr = PennantApplicationUtil.amountFormate(drawingPowerService.getDrawingPower(finReference), 2);
-		BigDecimal emiOnFinAssetValue = ScheduleCalculator.getEMIOnFinAssetValue(fd);
+		BigDecimal emiOnFinAssetValue = ScheduleCalculator.getEMIOnFinAssetValue(fd.getFinScheduleData());
 		String prefix = FieldPrefix.Putcall.getPrefix();
 
 		dataMap.putAll(lmsServiceLog.getDeclaredFieldValues());

@@ -4480,7 +4480,7 @@ public class AgreementGeneration extends GenericService<AgreementDetail> impleme
 
 			BigDecimal emi = BigDecimal.ZERO;
 			if (ImplementationConstants.CUSTOMIZED_TEMPLATES) {
-				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail);
+				emi = ScheduleCalculator.getEMIOnFinAssetValue(detail.getFinScheduleData());
 			}
 			agreement.setRepayOnLoanAmt(CurrencyUtil.format(emi, formatter));
 			agreement.setRepayOnLoanAmtInWords(emi == BigDecimal.ZERO ? ""

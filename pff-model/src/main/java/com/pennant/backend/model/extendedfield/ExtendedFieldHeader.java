@@ -89,6 +89,44 @@ public class ExtendedFieldHeader extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public ExtendedFieldHeader copyEntity() {
+		ExtendedFieldHeader entity = new ExtendedFieldHeader();
+		entity.setModuleId(this.moduleId);
+		entity.setModuleName(this.moduleName);
+		entity.setSubModuleName(this.subModuleName);
+		entity.setEvent(this.event);
+		entity.setTabHeading(this.tabHeading);
+		entity.setNumberOfColumns(this.numberOfColumns);
+		entity.setLovValue(this.lovValue);
+		entity.setPreValidationReq(this.preValidationReq);
+		entity.setPostValidationReq(this.postValidationReq);
+		entity.setPreValidation(this.preValidation);
+		entity.setPostValidation(this.postValidation);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		this.extendedFieldDetailList.stream()
+				.forEach(e -> entity.getExtendedFieldDetails().add(e == null ? null : e.copyEntity()));
+		if (technicalValuationDetailList != null) {
+			entity.setTechnicalValuationDetailList(new ArrayList<ExtendedFieldDetail>());
+			this.technicalValuationDetailList.stream()
+					.forEach(e -> entity.getTechnicalValuationDetailList().add(e == null ? null : e.copyEntity()));
+		}
+
+		entity.setReturnStatus(this.returnStatus == null ? null : this.returnStatus.copyEntity());
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("returnStatus");

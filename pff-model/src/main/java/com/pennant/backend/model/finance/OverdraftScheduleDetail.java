@@ -48,6 +48,33 @@ public class OverdraftScheduleDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public OverdraftScheduleDetail copyEntity() {
+		OverdraftScheduleDetail entity = new OverdraftScheduleDetail();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setDroplineDate(this.droplineDate);
+		entity.setActualRate(this.actualRate);
+		entity.setBaseRate(this.baseRate);
+		entity.setSplRate(this.splRate);
+		entity.setMargin(this.margin);
+		entity.setDroplineRate(this.droplineRate);
+		entity.setLimitDrop(this.limitDrop);
+		entity.setODLimit(this.oDLimit);
+		entity.setLimitIncreaseAmt(this.limitIncreaseAmt);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public long getFinID() {
 		return finID;
 	}

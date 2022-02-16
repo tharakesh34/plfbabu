@@ -54,6 +54,58 @@ public class FinOption extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public FinOption copyEntity() {
+		FinOption entity = new FinOption();
+		entity.setId(this.id);
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setOptionType(this.optionType);
+		entity.setFrequency(this.frequency);
+		entity.setCurrentOptionDate(this.currentOptionDate);
+		entity.setOptionExercise(this.optionExercise);
+		entity.setNoticePeriodDays(this.noticePeriodDays);
+		entity.setAlertDays(this.alertDays);
+		entity.setNextOptionDate(this.nextOptionDate);
+		entity.setAlertType(this.alertType);
+		entity.setAlertsentOn(this.alertsentOn);
+		entity.setTotalPriBal(this.totalPriBal);
+		entity.setPenaltyPaid(this.penaltyPaid);
+		entity.setTotalAmt(this.totalAmt);
+		entity.setAlertTypeName(this.alertTypeName);
+		entity.setAlertToRoles(this.alertToRoles);
+		entity.setAlertToRolesName(this.alertToRolesName);
+		entity.setUserTemplate(this.userTemplate);
+		entity.setUserTemplateName(this.userTemplateName);
+		entity.setCustomerTemplate(this.customerTemplate);
+		entity.setCustomerTemplateName(this.customerTemplateName);
+		entity.setUserTemplateCode(this.userTemplateCode);
+		entity.setCustomerTemplateCode(this.customerTemplateCode);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRemarks(this.remarks);
+		entity.setPftAmz(this.pftAmz);
+		entity.setTdSchdPftBal(this.tdSchdPftBal);
+		entity.setPftAccrued(this.pftAccrued);
+		entity.setTotPenal(this.totPenal);
+		entity.setPenaltyDue(this.penaltyDue);
+		entity.setInterestInclAccrued(this.interestInclAccrued);
+		entity.setPenaltyWaived(this.penaltyWaived);
+		entity.setOtherChargers(this.otherChargers);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("alertTypeName");
@@ -85,7 +137,7 @@ public class FinOption extends AbstractWorkflowEntity {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}

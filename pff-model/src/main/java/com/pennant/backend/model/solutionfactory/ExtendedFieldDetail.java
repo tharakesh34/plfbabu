@@ -117,9 +117,55 @@ public class ExtendedFieldDetail extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
+	public ExtendedFieldDetail copyEntity() {
+		ExtendedFieldDetail entity = new ExtendedFieldDetail();
+		entity.setModuleId(this.moduleId);
+		entity.setLovDescModuleName(this.lovDescModuleName);
+		entity.setLovDescSubModuleName(this.lovDescSubModuleName);
+		entity.setLovDescTableName(this.lovDescTableName);
+		entity.setFieldName(this.fieldName);
+		entity.setFieldType(this.fieldType);
+		entity.setFieldLength(this.fieldLength);
+		entity.setFieldPrec(this.fieldPrec);
+		entity.setFieldLabel(this.fieldLabel);
+		entity.setFieldMandatory(this.fieldMandatory);
+		entity.setFieldConstraint(this.fieldConstraint);
+		entity.setFieldSeqOrder(this.fieldSeqOrder);
+		entity.setFieldList(this.fieldList);
+		entity.setFieldDefaultValue(this.fieldDefaultValue);
+		entity.setFieldMinValue(this.fieldMinValue);
+		entity.setFieldMaxValue(this.fieldMaxValue);
+		entity.setFieldUnique(this.fieldUnique);
+		entity.setFilters(this.filters);
+		entity.setExtendedType(this.extendedType);
+		entity.setMultiLine(this.multiLine);
+		entity.setInputElement(this.inputElement);
+		entity.setParentTag(this.parentTag);
+		entity.setEditable(this.editable);
+		entity.setLovValue(this.lovValue);
+		entity.setLovDescErroDesc(this.lovDescErroDesc);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setAllowInRule(this.allowInRule);
+		entity.setScriptlet(this.scriptlet);
+		entity.setVisible(this.visible);
+		entity.setValFromScript(this.valFromScript);
+		entity.setDefValue(this.defValue);
+		entity.setAgrField(this.agrField);
+		entity.setMaintAlwd(this.maintAlwd);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
 
 	public long getId() {
 		return moduleId;

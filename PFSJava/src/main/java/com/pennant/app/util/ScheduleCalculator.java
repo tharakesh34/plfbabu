@@ -67,7 +67,6 @@ import com.pennant.backend.model.applicationmaster.SplRate;
 import com.pennant.backend.model.configuration.VASRecording;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinScheduleData;
-import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceDisbursement;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
@@ -89,7 +88,6 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
-import com.rits.cloning.Cloner;
 
 public class ScheduleCalculator {
 	private static final Logger logger = LogManager.getLogger(ScheduleCalculator.class);
@@ -398,8 +396,7 @@ public class ScheduleCalculator {
 	private FinScheduleData procDownpaySchd(FinScheduleData finScheduleData) {
 		logger.debug("Entering");
 
-		Cloner cloner = new Cloner();
-		FinScheduleData dpScheduleData = cloner.deepClone(finScheduleData);
+		FinScheduleData dpScheduleData = finScheduleData.copyEntity();
 		FinanceMain finMain = dpScheduleData.getFinanceMain();
 		finMain.setRecalIdx(-1);
 
@@ -892,17 +889,17 @@ public class ScheduleCalculator {
 			Date schdDate = curSchd.getSchDate();
 
 			// Before Lock Period do not mark holiday
-			if (DateUtility.compare(schdDate, datePlanEMIHLock) <= 0) {
+			if (DateUtil.compare(schdDate, datePlanEMIHLock) <= 0) {
 				continue;
 			}
 
 			// Before Grace Period should not mark as Holiday if EMI Holiday not required
-			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0 && !finMain.isPlanEMIHAlwInGrace()) {
+			if (DateUtil.compare(schdDate, finMain.getGrcPeriodEndDate()) <= 0 && !finMain.isPlanEMIHAlwInGrace()) {
 				continue;
 			}
 
 			// In Repay Period should not mark as Holiday if Plan EMI Holiday not required
-			if (DateUtility.compare(schdDate, finMain.getGrcPeriodEndDate()) > 0 && !finMain.isPlanEMIHAlw()) {
+			if (DateUtil.compare(schdDate, finMain.getGrcPeriodEndDate()) > 0 && !finMain.isPlanEMIHAlw()) {
 				continue;
 			}
 
@@ -1107,10 +1104,10 @@ public class ScheduleCalculator {
 				}
 			}
 		}
-		
-		if(FinServiceEvent.CHGFRQ.equals(finMain.getProcMethod())){
+
+		if (FinServiceEvent.CHGFRQ.equals(finMain.getProcMethod())) {
 			finMain.setEqualRepay(false);
-		}else {
+		} else {
 			if (finScheduleData.getFinanceType() != null) {
 				finMain.setEqualRepay(finScheduleData.getFinanceType().isEqualRepayment());
 			} else {
@@ -2232,11 +2229,9 @@ public class ScheduleCalculator {
 			BigDecimal newFeeAmt, boolean utilizeGrcEndDisb) {
 		logger.debug("Entering");
 
-		// Create Cloner for calculation purpose. If calculation is successful
+		// Create duplicate fsDATA for calculation purpose. If calculation is successful
 		// send back calculated DATA else send original data with errors
-		FinScheduleData finScheduleData = null;
-		Cloner cloner = new Cloner();
-		finScheduleData = cloner.deepClone(orgFinScheduleData);
+		FinScheduleData finScheduleData = orgFinScheduleData.copyEntity();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		List<FinanceDisbursement> finDisbDetails = finScheduleData.getDisbursementDetails();
@@ -2449,11 +2444,9 @@ public class ScheduleCalculator {
 			boolean utilizeGrcEndDisb, boolean isLoanNotApproved, FinanceDisbursement finDisb, boolean feeAmtInclude) {
 		logger.debug("Entering");
 
-		// Create Cloner for calculation purpose. If calculation is successful
+		// Create duplicate fsDATA for calculation purpose. If calculation is successful
 		// send back calculated DATA else send original data with errors
-		FinScheduleData finScheduleData = null;
-		Cloner cloner = new Cloner();
-		finScheduleData = cloner.deepClone(orgFinScheduleData);
+		FinScheduleData finScheduleData = orgFinScheduleData.copyEntity();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		List<FinanceDisbursement> finDisbDetails = finScheduleData.getDisbursementDetails();
@@ -2908,9 +2901,9 @@ public class ScheduleCalculator {
 	private FinScheduleData procAddTerm(FinScheduleData orgFinScheduleData, int noOfTerms, boolean isRepayOnSchd) {
 		logger.debug("Entering");
 
-		FinScheduleData finScheduleData = null;
-		Cloner cloner = new Cloner();
-		finScheduleData = cloner.deepClone(orgFinScheduleData);
+		// Create duplicate fsDATA for calculation purpose. If calculation is successful
+		// send back calculated DATA else send original data with errors
+		FinScheduleData finScheduleData = orgFinScheduleData.copyEntity();
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 		FinanceType ft = finScheduleData.getFinanceType();
@@ -2977,8 +2970,8 @@ public class ScheduleCalculator {
 				null, null, false);
 
 		// Calculate Effective Rate after Change profit
-		Cloner cloner = new Cloner();
-		FinScheduleData orgFinScheduleData = cloner.deepClone(finScheduleData);
+		// Create duplicate fsDATA for calculation purpose
+		FinScheduleData orgFinScheduleData = finScheduleData.copyEntity();
 		FinanceMain orgFinMain = orgFinScheduleData.getFinanceMain();
 
 		// isProtectSchdPft = true; TODO check by pradeep, is it needed or not
@@ -4037,7 +4030,8 @@ public class ScheduleCalculator {
 		finMain.setTotalGrossGrcPft(finMain.getTotalGraceCpz().add(finMain.getTotalGracePft()));
 		finMain.setTotalGrossPft(finMain.getTotalProfit().add(finMain.getTotalCpz()));
 
-		IRRCalculator.calculateXIRRAndIRR(finScheduleData, true);
+		boolean isXIRRCalc = SysParamUtil.isAllowed(SMTParameterConstants.CALC_EFFRATE_ON_XIRR);
+		IRRCalculator.calculateXIRRAndIRR(finScheduleData, null, isXIRRCalc);
 
 		logger.debug("Leaving");
 		return finScheduleData;
@@ -4233,7 +4227,7 @@ public class ScheduleCalculator {
 				finMain.setAdjustClosingBal(true);
 			}
 
-			finScheduleData = calEqualPayment(finScheduleData);
+			finScheduleData = calEqualInst(finScheduleData);
 			// equalRepayCal(finScheduleData);
 		} else {
 			if (!isFirstRun) {
@@ -5800,9 +5794,7 @@ public class ScheduleCalculator {
 
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
-		FinScheduleData orgFinScheduleData = null;
-		Cloner cloner = new Cloner();
-		orgFinScheduleData = cloner.deepClone(finScheduleData);
+		FinScheduleData orgFinScheduleData = finScheduleData.copyEntity();
 
 		finMain.setCompareToExpected(false);
 		finMain.setCompareExpectedResult(BigDecimal.ZERO);
@@ -7097,11 +7089,13 @@ public class ScheduleCalculator {
 					finMain.getRoundingTarget());
 
 			if (repayAmountLow.compareTo(approxEMI) == 0 || repayAmountHigh.compareTo(approxEMI) == 0) {
+				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
 				break;
 			}
 
 			diff_Low_High = (repayAmountHigh.subtract(repayAmountLow)).abs();
 			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
+				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
 				break;
 			}
 
@@ -7125,12 +7119,14 @@ public class ScheduleCalculator {
 			}
 
 			if (comparisionToAmount.compareTo(comparisionAmount) == 0) {
+				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
 				logger.debug("Leaving");
 				return finScheduleData;
 			}
 
 			diff_Low_High = (comparisionToAmount.subtract(comparisionAmount)).abs();
 			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
+				logger.info("NUMBER OF LOOPS IN GOAL SEEK  : " + i);
 				logger.debug("Leaving");
 				return finScheduleData;
 			}
@@ -7216,81 +7212,241 @@ public class ScheduleCalculator {
 		return finScheduleData;
 	}
 
-	private FinScheduleData calEqualStepPayment(FinScheduleData finScheduleData) {
-		logger.debug("Entering");
+	// This is a new method introduced to calculate Equal Installment Amount for the given dates
+	// Algorithm used Linear Interpolation Method
+	private FinScheduleData calEqualInst(FinScheduleData schdData) {
+		logger.debug(Literal.ENTERING);
 
-		FinanceMain finMain = finScheduleData.getFinanceMain();
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
-		List<RepayInstruction> repayInstructions = finScheduleData.getRepayInstructions();
-		List<FinanceStepPolicyDetail> stepPolicyDetails = finScheduleData.getStepPolicyDetails();
+		// STEP0: Set required variables
+		FinanceMain fm = schdData.getFinanceMain();
+		List<RepayInstruction> instructions = schdData.getRepayInstructions();
+		boolean isAdjustClosingBal = fm.isAdjustClosingBal();
 
-		int sdSize = finSchdDetails.size();
-		int riSize = repayInstructions.size();
-		int stepSize = stepPolicyDetails.size();
+		// Find repay instruction index
+		int idxRI = 0;
+		for (int i = 0; i < instructions.size(); i++) {
+			if (DateUtil.compare(instructions.get(i).getRepayDate(), fm.getRecalFromDate()) >= 0) {
+				idxRI = i;
+				break;
+			}
+		}
+
+		// STEP1: Get the First Co-ordinates for approximation
+		// Set New EMI Guess using PMT Calculation
+
+		BigDecimal newEmiGuess = BigDecimal.ZERO;
+		BigDecimal curEmiGuess = BigDecimal.ZERO;
+		BigDecimal curEmiDiff = BigDecimal.ZERO;
+
+		RepayInstruction ri = instructions.get(idxRI);
+		boolean isEmiCheck = false;
+		String repaySchdMethod = ri.getRepaySchdMethod();
+
+		if (CalculationConstants.SCHMTHD_EQUAL.equals(repaySchdMethod)) {
+			newEmiGuess = getApproxPMT(schdData);
+			isEmiCheck = true;
+		} else if (CalculationConstants.SCHMTHD_PRI.equals(repaySchdMethod)
+				|| CalculationConstants.SCHMTHD_PRI_PFT.equals(repaySchdMethod)
+				|| CalculationConstants.SCHMTHD_MAN_PRI.equals(repaySchdMethod)) {
+			newEmiGuess = calEqualPri(schdData);
+		}
+
+		for (int iLoop = 0; iLoop < 50; iLoop++) {
+			// STEP2: Set Repay instructions with emiGuess and calculate the schedule
+			instructions.get(idxRI).setRepayAmount(newEmiGuess);
+			fm.setAdjustClosingBal(isAdjustClosingBal);
+			schdData = getRpyInstructDetails(schdData);
+			schdData = graceSchdCal(schdData);
+			schdData = repaySchdCal(schdData, false);
+
+			// STEP3: Find the Difference in EMI.
+			// Difference in Average EMI for the period = emiGuess * terms - (Sum of Repayments)
+			BigDecimal prvEmiGuess = curEmiGuess;
+			BigDecimal prvEmiDiff = curEmiDiff;
+
+			curEmiGuess = newEmiGuess;
+			curEmiDiff = calAvgEMIDifference(schdData, idxRI, isEmiCheck);
+
+			// STEP4: Find New EMI Guess
+			if (iLoop == 0) {
+				newEmiGuess = curEmiGuess.add(curEmiDiff);
+				continue;
+			} else {
+				newEmiGuess = prvEmiDiff.negate().multiply((curEmiGuess.subtract(prvEmiGuess)));
+				newEmiGuess = newEmiGuess.divide((curEmiDiff.subtract(prvEmiDiff)), 0, RoundingMode.HALF_DOWN);
+				newEmiGuess = newEmiGuess.add(prvEmiGuess);
+				newEmiGuess = CalculationUtil.roundAmount(newEmiGuess, fm.getCalRoundingMode(), fm.getRoundingTarget());
+			}
+
+			// STEP6: Check if new EMI is Final guess
+			if (curEmiDiff.compareTo(BigDecimal.ZERO) == 0 || newEmiGuess.compareTo(curEmiGuess) == 0
+					|| newEmiGuess.compareTo(prvEmiGuess) == 0) {
+				break;
+			}
+
+		}
+
+		logger.debug(Literal.LEAVING);
+		return schdData;
+	}
+
+	private BigDecimal calAvgEMIDifference(FinScheduleData schdData, int idxRI, boolean isEmiCheck) {
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		List<RepayInstruction> instructions = schdData.getRepayInstructions();
+
+		BigDecimal emiSum = BigDecimal.ZERO;
+		Date recalFromDate = fm.getRecalFromDate();
+		Date recalToDate = fm.getRecalToDate();
+		int calTerms = 0;
+		int sdSize = schedules.size();
+
+		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
+			sdSize = sdSize - fm.getAdvTerms();
+		}
+
+		for (int iFsd = 0; iFsd < schedules.size(); iFsd++) {
+			FinanceScheduleDetail curSchd = schedules.get(iFsd);
+
+			if (DateUtil.compare(curSchd.getSchDate(), recalFromDate) < 0) {
+				continue;
+			}
+			if (DateUtil.compare(curSchd.getSchDate(), recalToDate) > 0) {
+				break;
+			}
+			if (!curSchd.isRepayOnSchDate()) {
+				continue;
+			}
+			calTerms = calTerms + 1;
+			if (isEmiCheck) {
+				emiSum = emiSum.add(curSchd.getRepayAmount());
+			} else {
+				emiSum = emiSum.add(curSchd.getPrincipalSchd());
+			}
+
+		}
+
+		BigDecimal bgCalTerms = BigDecimal.valueOf(calTerms);
+
+		BigDecimal totEmiGuess = instructions.get(idxRI).getRepayAmount();
+		totEmiGuess = totEmiGuess.multiply(bgCalTerms);
+		BigDecimal avgEMIDiff = totEmiGuess.subtract(emiSum);
+		avgEMIDiff = avgEMIDiff.divide(bgCalTerms, 0, RoundingMode.HALF_DOWN);
+		avgEMIDiff = CalculationUtil.roundAmount(avgEMIDiff, fm.getCalRoundingMode(), fm.getRoundingTarget());
+
+		return avgEMIDiff;
+	}
+
+	private BigDecimal calEqualPri(FinScheduleData schdData) {
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		boolean isAdjustClosingBal = fm.isAdjustClosingBal();
+
+		BigDecimal equalPri = BigDecimal.ZERO;
+
+		int sdSize = schedules.size();
+
+		if (!isAdjustClosingBal && AdvanceType.hasAdvEMI(fm.getAdvType())
+				&& AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
+			sdSize = schedules.size() - fm.getAdvTerms();
+		}
+
+		Date recalFromDate = fm.getRecalFromDate();
+		Date recalToDate = fm.getRecalToDate();
+		BigDecimal closingBal = BigDecimal.ZERO;
+		int calTerms = 0;
+
+		for (int iFsd = 0; iFsd < sdSize; iFsd++) {
+			FinanceScheduleDetail curSchd = schedules.get(iFsd);
+			Date schDate = curSchd.getSchDate();
+			if (DateUtil.compare(schDate, recalFromDate) < 0) {
+				closingBal = curSchd.getClosingBalance();
+				continue;
+			}
+
+			if (DateUtil.compare(schDate, recalToDate) > 0) {
+				break;
+			}
+
+			if (!curSchd.isRepayOnSchDate()) {
+				continue;
+			}
+
+			calTerms = calTerms + 1;
+		}
+
+		if (calTerms > 0) {
+			equalPri = closingBal.divide(BigDecimal.valueOf(calTerms));
+			equalPri = CalculationUtil.roundAmount(equalPri, fm.getCalRoundingMode(), fm.getRoundingTarget());
+		}
+
+		return equalPri;
+	}
+
+	private FinScheduleData calEqualStepPayment(FinScheduleData schdData) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		List<RepayInstruction> instructions = schdData.getRepayInstructions();
+		List<FinanceStepPolicyDetail> fspd = schdData.getStepPolicyDetails();
+
+		int sdSize = schedules.size();
+		int riSize = instructions.size();
+		int stepSize = fspd.size();
 		int iRpyInst = 0;
 		int iCompare = 0;
 
-		BigDecimal repayAmountLow = BigDecimal.ZERO;
-		BigDecimal repayAmountHigh = BigDecimal.ZERO;
-
 		// Setting Compare to Expected defaults to false for Further actions
-		finMain.setCompareToExpected(false);
-		BigDecimal comparisionAmount = BigDecimal.ZERO;
-		BigDecimal comparisionToAmount = BigDecimal.ZERO;
-		String schdMethod = finMain.getScheduleMethod();
-		BigDecimal approxEMI = BigDecimal.ZERO;
-		BigDecimal iCompareEMI = BigDecimal.ZERO;
-		BigDecimal stepEMI = BigDecimal.ZERO;
+		fm.setCompareToExpected(false);
+		String schdMethod = fm.getScheduleMethod();
+
 		boolean isComapareWithEMI = false;
 
-		if (!schdMethod.equals(CalculationConstants.SCHMTHD_EQUAL)
-				&& !schdMethod.equals(CalculationConstants.SCHMTHD_PRI_PFT)
-				&& !schdMethod.equals(CalculationConstants.SCHMTHD_PRI)) {
-			logger.debug("Leaving");
-			return finScheduleData;
+		if (!CalculationConstants.SCHMTHD_EQUAL.equals(schdMethod)
+				&& !CalculationConstants.SCHMTHD_PRI_PFT.equals(schdMethod)
+				&& !CalculationConstants.SCHMTHD_PRI.equals(schdMethod)) {
+			logger.debug(Literal.LEAVING);
+			return schdData;
 		}
 
-		if (StringUtils.equals(CalculationConstants.SCHMTHD_EQUAL, schdMethod)) {
+		if (CalculationConstants.SCHMTHD_EQUAL.equals(schdMethod)) {
 			isComapareWithEMI = true;
 		}
 
 		iRpyInst = riSize - 1;
 		iCompare = sdSize - 1;
 
-		approxEMI = finMain.getMiscAmount();
-		approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
-
-		comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
+		BigDecimal approxEMI = fm.getMiscAmount();
+		approxEMI = CalculationUtil.roundAmount(approxEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 		// SET COMPARISION TO REPAYMENT or PRINCIPAL
+		FinanceScheduleDetail curSchd = schedules.get(iCompare);
+
+		BigDecimal iCompareEMI = schedules.get(sdSize - 1).getPrincipalSchd();
 		if (isComapareWithEMI) {
-			comparisionToAmount = finSchdDetails.get(iCompare).getRepayAmount();
-			iCompareEMI = finSchdDetails.get(sdSize - 1).getRepayAmount();
-		} else {
-			comparisionToAmount = finSchdDetails.get(iCompare).getPrincipalSchd();
-			iCompareEMI = finSchdDetails.get(sdSize - 1).getPrincipalSchd();
+			iCompareEMI = schedules.get(sdSize - 1).getRepayAmount();
 		}
 
 		BigDecimal bd100 = BigDecimal.valueOf(100);
-		FinanceStepPolicyDetail stepDetail = stepPolicyDetails.get(stepPolicyDetails.size() - 1);
+		FinanceStepPolicyDetail stepDetail = fspd.get(fspd.size() - 1);
 		if (stepDetail.getEmiSplitPerc().compareTo(BigDecimal.ZERO) > 0) {
 			iCompareEMI = iCompareEMI.multiply(bd100).divide(stepDetail.getEmiSplitPerc(), 0, RoundingMode.HALF_DOWN);
 		} else {
 			iCompareEMI = stepDetail.getSteppedEMI();
 		}
 
-		if (approxEMI.compareTo(iCompareEMI) == 1) {
+		BigDecimal repayAmountLow = approxEMI;
+		BigDecimal repayAmountHigh = iCompareEMI;
+
+		if (approxEMI.compareTo(iCompareEMI) > 0) {
 			repayAmountLow = iCompareEMI;
 			repayAmountHigh = approxEMI;
-		} else {
-			repayAmountLow = approxEMI;
-			repayAmountHigh = iCompareEMI;
 		}
 
 		BigDecimal lastTriedEMI = BigDecimal.ZERO;
 		BigDecimal number2 = new BigDecimal(2);
 		int int100 = 100;
-		BigDecimal diff_Low_High = BigDecimal.ZERO;
 
 		for (int i = 0; i < 50; i++) {
 			approxEMI = (repayAmountLow.add(repayAmountHigh)).divide(number2, 0, RoundingMode.HALF_DOWN);
@@ -7299,58 +7455,57 @@ public class ScheduleCalculator {
 				break;
 			}
 
-			diff_Low_High = (repayAmountHigh.subtract(repayAmountLow)).abs();
-			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
+			BigDecimal diffLowHigh = (repayAmountHigh.subtract(repayAmountLow)).abs();
+			if (diffLowHigh.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
 				break;
 			}
 
 			lastTriedEMI = approxEMI;
 			// Step case for Grace Allowed
 			int k = 0;
-			if (DateUtility.compare(finMain.getFinStartDate(), finMain.getGrcPeriodEndDate()) != 0) {
+			if (DateUtil.compare(fm.getFinStartDate(), fm.getGrcPeriodEndDate()) != 0) {
 				k = 1;
 			}
 
 			for (int j = 0; j < stepSize; j++) {
-				stepDetail = stepPolicyDetails.get(j);
-				stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
-						RoundingMode.HALF_DOWN);
+				stepDetail = fspd.get(j);
+				BigDecimal stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100),
+						0, RoundingMode.HALF_DOWN);
 
-				stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
+				stepEMI = CalculationUtil.roundAmount(stepEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 				// stepEMI = round(stepEMI);
-				repayInstructions.get(k + j).setRepayAmount(stepEMI);
+				instructions.get(k + j).setRepayAmount(stepEMI);
 			}
 
-			finScheduleData = getRpyInstructDetails(finScheduleData);
-			finScheduleData = graceSchdCal(finScheduleData);
-			finScheduleData = repaySchdCal(finScheduleData, false);
+			schdData = getRpyInstructDetails(schdData);
+			schdData = graceSchdCal(schdData);
+			schdData = repaySchdCal(schdData, false);
 
 			// Find COMPARISION AND COMPARIONTO amounts
-			comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
+			BigDecimal comparisionAmount = instructions.get(iRpyInst).getRepayAmount();
+			BigDecimal comparisionToAmount = curSchd.getPrincipalSchd();
+
+			iCompareEMI = schedules.get(sdSize - 1).getPrincipalSchd();
 
 			// SET COMPARISION TO
 			if (isComapareWithEMI) {
-				comparisionToAmount = finSchdDetails.get(iCompare).getRepayAmount();
-				iCompareEMI = finSchdDetails.get(sdSize - 1).getRepayAmount();
-			} else {
-				comparisionToAmount = finSchdDetails.get(iCompare).getPrincipalSchd();
-				iCompareEMI = finSchdDetails.get(sdSize - 1).getPrincipalSchd();
+				comparisionToAmount = curSchd.getRepayAmount();
+				iCompareEMI = schedules.get(sdSize - 1).getRepayAmount();
 			}
 
 			if (comparisionToAmount.compareTo(comparisionAmount) == 0) {
-				logger.debug("Leaving");
-				return finScheduleData;
+				logger.debug(Literal.LEAVING);
+				return schdData;
 			}
 
-			diff_Low_High = (comparisionToAmount.subtract(comparisionAmount)).abs();
-			if (diff_Low_High.compareTo(BigDecimal.valueOf(finMain.getRoundingTarget())) <= 0) {
-				logger.debug("Leaving");
-				return finScheduleData;
+			diffLowHigh = (comparisionToAmount.subtract(comparisionAmount)).abs();
+			if (diffLowHigh.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
+				logger.debug(Literal.LEAVING);
+				return schdData;
 			}
 
-			stepDetail = stepPolicyDetails.get(stepPolicyDetails.size() - 1);
+			stepDetail = fspd.get(fspd.size() - 1);
 			if (stepDetail.getEmiSplitPerc().compareTo(BigDecimal.ZERO) > 0) {
 				iCompareEMI = iCompareEMI.multiply(bd100).divide(stepDetail.getEmiSplitPerc(), 0,
 						RoundingMode.HALF_DOWN);
@@ -7358,7 +7513,7 @@ public class ScheduleCalculator {
 				iCompareEMI = stepDetail.getSteppedEMI();
 			}
 
-			if (iCompareEMI.compareTo(approxEMI) == 1) {
+			if (iCompareEMI.compareTo(approxEMI) > 0) {
 				repayAmountLow = approxEMI;
 			} else {
 				repayAmountHigh = approxEMI;
@@ -7371,13 +7526,12 @@ public class ScheduleCalculator {
 		BigDecimal maxRepayDifference = BigDecimal.ZERO;
 
 		// Find COMPARISION AND COMPARIONTO amounts
-		comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
+		BigDecimal comparisionAmount = instructions.get(iRpyInst).getRepayAmount();
+		BigDecimal comparisionToAmount = curSchd.getPrincipalSchd();
 
 		// SET COMPARISION TO
 		if (isComapareWithEMI) {
-			comparisionToAmount = finSchdDetails.get(iCompare).getRepayAmount();
-		} else {
-			comparisionToAmount = finSchdDetails.get(iCompare).getPrincipalSchd();
+			comparisionToAmount = curSchd.getRepayAmount();
 		}
 
 		if (repayAmountLow.compareTo(repayAmountHigh) != 0) {
@@ -7389,39 +7543,37 @@ public class ScheduleCalculator {
 				approxEMI = repayAmountLow;
 			}
 
-			approxEMI = CalculationUtil.roundAmount(approxEMI, finMain.getCalRoundingMode(),
-					finMain.getRoundingTarget());
+			approxEMI = CalculationUtil.roundAmount(approxEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 			lastTriedEMI = approxEMI;
 			// Step case for Grace Allowed
 			int k = 0;
-			if (DateUtility.compare(finMain.getFinStartDate(), finMain.getGrcPeriodEndDate()) != 0) {
+			if (DateUtil.compare(fm.getFinStartDate(), fm.getGrcPeriodEndDate()) != 0) {
 				k = 1;
 			}
 
 			for (int j = 0; j < stepSize; j++) {
-				stepDetail = stepPolicyDetails.get(j);
-				stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
-						RoundingMode.HALF_DOWN);
-				stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(),
-						finMain.getRoundingTarget());
+				stepDetail = fspd.get(j);
+				BigDecimal stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100),
+						0, RoundingMode.HALF_DOWN);
+				stepEMI = CalculationUtil.roundAmount(stepEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 				// stepEMI = round(stepEMI);
-				repayInstructions.get(k + j).setRepayAmount(stepEMI);
+				instructions.get(k + j).setRepayAmount(stepEMI);
 			}
 
-			finScheduleData = getRpyInstructDetails(finScheduleData);
-			finScheduleData = graceSchdCal(finScheduleData);
-			finScheduleData = repaySchdCal(finScheduleData, false);
+			schdData = getRpyInstructDetails(schdData);
+			schdData = graceSchdCal(schdData);
+			schdData = repaySchdCal(schdData, false);
 
 			// Find COMPARISION AND COMPARIONTO amounts
-			comparisionAmount = repayInstructions.get(iRpyInst).getRepayAmount();
+			comparisionAmount = instructions.get(iRpyInst).getRepayAmount();
 
 			// SET COMPARISION TO
 			if (isComapareWithEMI) {
-				comparisionToAmount = finSchdDetails.get(iCompare).getRepayAmount();
+				comparisionToAmount = curSchd.getRepayAmount();
 			} else {
-				comparisionToAmount = finSchdDetails.get(iCompare).getPrincipalSchd();
+				comparisionToAmount = curSchd.getPrincipalSchd();
 			}
 
 			if (lastTriedEMI.compareTo(repayAmountLow) == 0) {
@@ -7441,27 +7593,27 @@ public class ScheduleCalculator {
 
 		// Step case for Grace Allowed
 		int k = 0;
-		if (DateUtility.compare(finMain.getFinStartDate(), finMain.getGrcPeriodEndDate()) != 0) {
+		if (DateUtil.compare(fm.getFinStartDate(), fm.getGrcPeriodEndDate()) != 0) {
 			k = 1;
 		}
 
 		for (int j = 0; j < stepSize; j++) {
-			stepDetail = stepPolicyDetails.get(j);
-			stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
+			stepDetail = fspd.get(j);
+			BigDecimal stepEMI = approxEMI.multiply(stepDetail.getEmiSplitPerc()).divide(BigDecimal.valueOf(int100), 0,
 					RoundingMode.HALF_DOWN);
 
-			stepEMI = CalculationUtil.roundAmount(stepEMI, finMain.getCalRoundingMode(), finMain.getRoundingTarget());
+			stepEMI = CalculationUtil.roundAmount(stepEMI, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 			// stepEMI = round(stepEMI);
-			repayInstructions.get(k + j).setRepayAmount(stepEMI);
+			instructions.get(k + j).setRepayAmount(stepEMI);
 		}
 
-		finScheduleData = getRpyInstructDetails(finScheduleData);
-		finScheduleData = graceSchdCal(finScheduleData);
-		finScheduleData = repaySchdCal(finScheduleData, false);
+		schdData = getRpyInstructDetails(schdData);
+		schdData = graceSchdCal(schdData);
+		schdData = repaySchdCal(schdData, false);
 
-		logger.debug("Leaving");
-		return finScheduleData;
+		logger.debug(Literal.LEAVING);
+		return schdData;
 	}
 
 	/**
@@ -7714,42 +7866,13 @@ public class ScheduleCalculator {
 			return finScheduleData;
 		}
 
-		List<FinanceScheduleDetail> finSchdDetails = finScheduleData.getFinanceScheduleDetails();
 		Date recalFromDate = finMain.getRecalFromDate();
 		Date recalToDate = finMain.getRecalToDate();
 		String schdMethod = finMain.getScheduleMethod();
-		int sdSize = finSchdDetails.size();
-
 		finMain.setEqualRepay(false);
-		int calTerms = 0;
-		BigDecimal startBalance = null;
-		BigDecimal endBalance = null;
-		BigDecimal rate = null;
-
-		for (int j = 0; j < sdSize; j++) {
-			FinanceScheduleDetail curSchd = finSchdDetails.get(j);
-
-			if (DateUtility.compare(curSchd.getSchDate(), recalFromDate) < 0) {
-				startBalance = curSchd.getClosingBalance();
-				continue;
-			}
-			if (DateUtility.compare(curSchd.getSchDate(), recalToDate) > 0) {
-				break;
-			}
-			if (!curSchd.isRepayOnSchDate()) {
-				continue;
-			}
-			if (DateUtility.compare(curSchd.getSchDate(), recalFromDate) == 0) {
-				rate = curSchd.getCalculatedRate();
-			}
-			endBalance = curSchd.getClosingBalance();
-			calTerms = calTerms + 1;
-		}
 
 		if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_EQUAL)) {
-			if (rate != null) {
-				rpyAmt = approxPMT(finMain, rate, calTerms, startBalance, endBalance, 0);
-			}
+			rpyAmt = getApproxPMT(finScheduleData);
 		}
 
 		finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, rpyAmt, schdMethod);
@@ -7759,6 +7882,52 @@ public class ScheduleCalculator {
 
 		logger.debug("Leaving");
 		return finScheduleData;
+	}
+
+	private BigDecimal getApproxPMT(FinScheduleData schdData) {
+		BigDecimal pmtAmount = BigDecimal.ZERO;
+		FinanceMain fm = schdData.getFinanceMain();
+		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
+		Date recalFromDate = fm.getRecalFromDate();
+		Date recalToDate = fm.getRecalToDate();
+
+		int calTerms = 0;
+		BigDecimal startBalance = BigDecimal.ZERO;
+		BigDecimal endBalance = BigDecimal.ZERO;
+		BigDecimal rate = BigDecimal.ZERO;
+
+		for (int iFsd = 0; iFsd < schedules.size(); iFsd++) {
+			FinanceScheduleDetail curSchd = schedules.get(iFsd);
+
+			Date schDate = curSchd.getSchDate();
+			if (DateUtil.compare(schDate, recalFromDate) < 0) {
+				startBalance = curSchd.getClosingBalance();
+				continue;
+			}
+
+			if (DateUtil.compare(schDate, recalToDate) > 0) {
+				break;
+			}
+
+			if (!curSchd.isRepayOnSchDate()) {
+				continue;
+			}
+
+			if (DateUtil.compare(schDate, recalFromDate) == 0) {
+				if (iFsd == 0) {
+					rate = curSchd.getCalculatedRate();
+				} else {
+					rate = schedules.get(iFsd - 1).getCalculatedRate();
+				}
+
+			}
+			endBalance = curSchd.getClosingBalance();
+			calTerms = calTerms + 1;
+		}
+
+		pmtAmount = approxPMT(fm, rate, calTerms, startBalance, endBalance, 0);
+
+		return pmtAmount;
 	}
 
 	private FinScheduleData setRepayForSanctionBasedDisbADJMDT(FinScheduleData finScheduleData,
@@ -8077,8 +8246,7 @@ public class ScheduleCalculator {
 	private FinScheduleData buildOverdraftSchd(FinScheduleData orgFinScheduleData) {
 		logger.debug("Entering");
 
-		Cloner cloner = new Cloner();
-		FinScheduleData finScheduleData = cloner.deepClone(orgFinScheduleData);
+		FinScheduleData finScheduleData = orgFinScheduleData.copyEntity();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
 
 		// Overdraft Maintenance Changes for calculation
@@ -9384,56 +9552,48 @@ public class ScheduleCalculator {
 	}
 
 	/**
-	 * Method to get the EMI amount on total loan amount used only in aggreements/email templates
+	 * Method to get the EMI amount on total loan amount used only in agreements/email templates
 	 * 
 	 */
-	public static BigDecimal getEMIOnFinAssetValue(FinanceDetail financeDetail) {
+	public static BigDecimal getEMIOnFinAssetValue(FinScheduleData fsData) {
 		logger.debug(Literal.ENTERING);
 		BigDecimal emi = BigDecimal.ZERO;
 		try {
 			// Prepare Finance Schedule Generator Details List
-			FinanceDetail detail = new FinanceDetail();
-			Cloner cloner = new Cloner();
-			detail = cloner.deepClone(financeDetail);
+			FinScheduleData fsDataCopy = fsData.copyEntity();
+			FinanceMain fmCopy = fsDataCopy.getFinanceMain();
 
-			FinScheduleData data = new FinScheduleData();
-			data = cloner.deepClone(detail.getFinScheduleData());
-
-			FinanceMain main = new FinanceMain();
-			main = cloner.deepClone(data.getFinanceMain());
-
-			data.setRepayInstructions(new ArrayList<RepayInstruction>());
-			data.setFinanceScheduleDetails(new ArrayList<FinanceScheduleDetail>());
-			data.setDisbursementDetails(new ArrayList<FinanceDisbursement>());
+			fsDataCopy.setRepayInstructions(new ArrayList<RepayInstruction>());
+			fsDataCopy.setFinanceScheduleDetails(new ArrayList<FinanceScheduleDetail>());
+			fsDataCopy.setDisbursementDetails(new ArrayList<FinanceDisbursement>());
 
 			// Set Disbursement Details with total loan amount
-			FinanceDisbursement disbursementDetails = new FinanceDisbursement();
-			disbursementDetails.setDisbDate(main.getFinStartDate());
-			disbursementDetails.setDisbSeq(1);
-			disbursementDetails.setDisbAmount(main.getFinAssetValue());
-			disbursementDetails.setDisbReqDate(disbursementDetails.getDisbDate());
-			disbursementDetails.setFeeChargeAmt(main.getFeeChargeAmt());
-			disbursementDetails.setQuickDisb(main.isQuickDisb());
-			data.getDisbursementDetails().add(disbursementDetails);
+			FinanceDisbursement fddCopy = new FinanceDisbursement();
+			fddCopy.setDisbDate(fmCopy.getFinStartDate());
+			fddCopy.setDisbSeq(1);
+			fddCopy.setDisbAmount(fmCopy.getFinAssetValue());
+			fddCopy.setDisbReqDate(fddCopy.getDisbDate());
+			fddCopy.setFeeChargeAmt(fmCopy.getFeeChargeAmt());
+			fddCopy.setQuickDisb(fmCopy.isQuickDisb());
+			fsDataCopy.getDisbursementDetails().add(fddCopy);
 
-			detail.setFinScheduleData(ScheduleGenerator.getNewSchd(data));
-			data = getCalSchd(data, null);
+			fsDataCopy = ScheduleGenerator.getNewSchd(fsDataCopy);
+			fsDataCopy = getCalSchd(fsDataCopy, null);
 
-			if (CollectionUtils.isNotEmpty(detail.getFinScheduleData().getPlanEMIHmonths())) {
-				data.setPlanEMIHmonths(detail.getFinScheduleData().getPlanEMIHmonths());
-				data = ScheduleCalculator.getFrqEMIHoliday(data);
+			if (CollectionUtils.isNotEmpty(fsDataCopy.getPlanEMIHmonths())) {
+				fsDataCopy.setPlanEMIHmonths(fsDataCopy.getPlanEMIHmonths());
+				fsDataCopy = ScheduleCalculator.getFrqEMIHoliday(fsDataCopy);
 			}
 
-			if (null != data) {
-				List<FinanceScheduleDetail> details = data.getFinanceScheduleDetails();
-				if (CollectionUtils.isNotEmpty(details)) {
-					for (FinanceScheduleDetail financeScheduleDetail : details) {
-						if (financeScheduleDetail.isRepayOnSchDate()
-								&& financeScheduleDetail.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
-							if (emi.compareTo(financeScheduleDetail.getRepayAmount()) == 0) {
+			if (null != fsDataCopy) {
+				List<FinanceScheduleDetail> fsdListCopy = fsDataCopy.getFinanceScheduleDetails();
+				if (CollectionUtils.isNotEmpty(fsdListCopy)) {
+					for (FinanceScheduleDetail fsdCopy : fsdListCopy) {
+						if (fsdCopy.isRepayOnSchDate() && fsdCopy.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+							if (emi.compareTo(fsdCopy.getRepayAmount()) == 0) {
 								break;
 							}
-							emi = financeScheduleDetail.getRepayAmount();
+							emi = fsdCopy.getRepayAmount();
 						}
 					}
 				}

@@ -757,7 +757,7 @@ public class CDScheduleCalculator {
 		}
 
 		fm.setTotalGrossPft(fm.getTotalProfit());
-		IRRCalculator.calculateXIRRAndIRR(fsData, false);
+		IRRCalculator.calculateXIRRAndIRR(fsData, null, false);
 
 		logger.debug("Leaving");
 		return fsData;

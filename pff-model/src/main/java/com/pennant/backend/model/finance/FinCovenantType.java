@@ -90,6 +90,43 @@ public class FinCovenantType extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public FinCovenantType copyEntity() {
+		FinCovenantType entity = new FinCovenantType();
+		entity.setFinReference(this.finReference);
+		entity.setCovenantType(this.covenantType);
+		entity.setCovenantTypeDesc(this.covenantTypeDesc);
+		entity.setMandRole(this.mandRole);
+		entity.setMandRoleDesc(this.mandRoleDesc);
+		entity.setDescription(this.description);
+		entity.setAlwWaiver(this.alwWaiver);
+		entity.setAlwPostpone(this.alwPostpone);
+		entity.setAlwOtc(this.alwOtc);
+		entity.setInternalUse(this.internalUse);
+		entity.setPostponeDays(this.postponeDays);
+		entity.setModule(this.module);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setReceivableDate(this.receivableDate);
+		entity.setDocReceivedDate(this.docReceivedDate);
+		entity.setCategoryCode(this.categoryCode);
+		entity.setPddFlag(this.pddFlag);
+		entity.setOtcFlag(this.otcFlag);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("covenantTypeDesc");

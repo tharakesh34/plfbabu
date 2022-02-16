@@ -48,6 +48,31 @@ public class FinIRRDetails extends AbstractWorkflowEntity {
 	private IRRCode befImage;
 	private LoggedInUser userDetails;
 
+	public FinIRRDetails copyEntity() {
+		FinIRRDetails entity = new FinIRRDetails();
+		entity.setiRRID(this.iRRID);
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setiRRCode(this.iRRCode);
+		entity.setIRR(this.iRR);
+		entity.setIrrCodeDesc(this.irrCodeDesc);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public String getiRRCode() {
 		return iRRCode;
 	}
@@ -75,7 +100,7 @@ public class FinIRRDetails extends AbstractWorkflowEntity {
 	public void setFinID(long finID) {
 		this.finID = finID;
 	}
-	
+
 	public String getFinReference() {
 		return finReference;
 	}
