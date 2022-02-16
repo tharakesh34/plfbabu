@@ -24433,7 +24433,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'customersdedup_view');
@@ -24441,7 +24441,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1" author="Gopal.p">
+	<changeSet id="PSD#172188.2" author="Gopal.p">
 		<createView viewName="CUSTOMERSDEDUP_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.CUSTID,
@@ -24572,7 +24572,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1_post" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.2_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'customersdedup_view');
