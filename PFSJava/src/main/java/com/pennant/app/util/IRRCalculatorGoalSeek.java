@@ -348,7 +348,7 @@ public class IRRCalculatorGoalSeek {
 		final double absoluteAccuracy = 1E-7;
 
 		double x0 = 0;
-		double x1;
+		double x1 = 0;
 
 		int i = 0;
 		while (i < maxIterationCount) {
@@ -363,10 +363,9 @@ public class IRRCalculatorGoalSeek {
 				fValue += value / denominator;
 				denominator *= factor;
 				fDerivative -= k * value / denominator;
+				// the essense of the Newton-Raphson Method
+				x1 = x0 - fValue / fDerivative;
 			}
-
-			// the essense of the Newton-Raphson Method
-			x1 = x0 - fValue / fDerivative;
 
 			if (Math.abs(x1 - x0) <= absoluteAccuracy) {
 				return BigDecimal.valueOf(x1);
@@ -638,9 +637,7 @@ public class IRRCalculatorGoalSeek {
 		List<FinFeeDetail> ffdList = fsData.getFinFeeDetailList();
 		List<IRRFeeType> irrFeeList = null;
 
-		if (irrFT != null) {
-			irrFeeList = iRRFeeTypeDAO.getIRRFeeTypeList(irrFT.getIRRID(), "");
-		}
+		irrFeeList = iRRFeeTypeDAO.getIRRFeeTypeList(irrFT.getIRRID(), "");
 
 		if (ffdList.isEmpty()) {
 			return irrFeeCFList;
@@ -809,7 +806,7 @@ public class IRRCalculatorGoalSeek {
 
 				// Net Of Values
 				try {
-					divisor = BigDecimal.valueOf(Math.pow((irr.divide(big100).doubleValue() + 1.0), iCf + 1));
+					divisor = BigDecimal.valueOf(Math.pow((irr.divide(big100).doubleValue() + 1.0), (iCf + 1)));
 				} catch (NumberFormatException e) {
 					break;
 				}
