@@ -28,7 +28,7 @@ public class LoadConfigTest {
 
 	@BeforeSuite
 	public void setUp() throws BiffException, IOException {
-		System.out.println("Initializing application context...");
+		System.out.println(" Initializing application context....");
 
 		System.out.println(System.getenv("PFF_HOME"));
 
