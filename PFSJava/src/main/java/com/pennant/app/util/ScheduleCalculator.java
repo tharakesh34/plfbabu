@@ -7272,6 +7272,49 @@ public class ScheduleCalculator {
 				newEmiGuess = curEmiGuess.add(curEmiDiff);
 				continue;
 			} else {
+
+				if ((curEmiDiff.subtract(prvEmiDiff)).compareTo(BigDecimal.ZERO) == 0) {
+					BigDecimal recalFromDateEMI = BigDecimal.ZERO;
+					BigDecimal recalToDateEMI = BigDecimal.ZERO;
+					int iTerms = 0;
+					for (int iFsd = 0; iFsd < schdData.getFinanceScheduleDetails().size(); iFsd++) {
+						FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(iFsd);
+
+						if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalFromDate()) < 0) {
+							continue;
+						}
+						if (!curSchd.isRepayOnSchDate()) {
+							continue;
+						}
+						iTerms = iTerms + 1;
+						if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalFromDate()) == 0) {
+							if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+								recalFromDateEMI = curSchd.getRepayAmount();
+							} else if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+									|| StringUtils.equals(fm.getScheduleMethod(),
+											CalculationConstants.SCHMTHD_PRI_PFT)) {
+								recalFromDateEMI = curSchd.getPrincipalSchd();
+							}
+						}
+						if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalToDate()) == 0) {
+							if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+								recalToDateEMI = curSchd.getRepayAmount();
+							} else if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+									|| StringUtils.equals(fm.getScheduleMethod(),
+											CalculationConstants.SCHMTHD_PRI_PFT)) {
+								recalToDateEMI = curSchd.getPrincipalSchd();
+							}
+							break;
+						}
+					}
+
+					BigDecimal diffEMI = recalFromDateEMI.subtract(recalToDateEMI).abs();
+					diffEMI = diffEMI.divide(BigDecimal.valueOf(iTerms), 0, RoundingMode.HALF_DOWN);
+					if (diffEMI.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
+						break;
+					}
+				}
+
 				newEmiGuess = prvEmiDiff.negate().multiply((curEmiGuess.subtract(prvEmiGuess)));
 				newEmiGuess = newEmiGuess.divide((curEmiDiff.subtract(prvEmiDiff)), 0, RoundingMode.HALF_DOWN);
 				newEmiGuess = newEmiGuess.add(prvEmiGuess);
@@ -7376,7 +7419,7 @@ public class ScheduleCalculator {
 		}
 
 		if (calTerms > 0) {
-			equalPri = closingBal.divide(BigDecimal.valueOf(calTerms));
+			equalPri = closingBal.divide(BigDecimal.valueOf(calTerms), 9, RoundingMode.HALF_DOWN);
 			equalPri = CalculationUtil.roundAmount(equalPri, fm.getCalRoundingMode(), fm.getRoundingTarget());
 		}
 
