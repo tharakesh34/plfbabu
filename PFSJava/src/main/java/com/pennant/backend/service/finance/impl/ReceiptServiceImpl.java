@@ -109,7 +109,6 @@ import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.applicationmaster.Assignment;
 import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.applicationmaster.BankDetail;
-import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.applicationmaster.InstrumentwiseLimit;
 import com.pennant.backend.model.applicationmaster.ReasonCode;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -378,12 +377,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		receiptData.setFinID(finID);
 		receiptData.setFinReference(finReference);
 
-		Entity entity = entityDAO.getEntity(fm.getLovDescEntityCode(), "");
-		if (entity != null) {
-			fm.setEntityDesc(entity.getEntityDesc());
-		}
-
 		FinanceType financeType = financeTypeDAO.getOrgFinanceTypeByID(finType, "_ORGView");
+
+		fm.setEntityDesc(financeType.getLovDescEntityDesc());
 
 		if (StringUtils.isNotBlank(promotionCode) && (fm.getPromotionSeqId() != null && fm.getPromotionSeqId() == 0)) {
 			Promotion promotion = this.promotionDAO.getPromotionByCode(promotionCode, "_AView");
