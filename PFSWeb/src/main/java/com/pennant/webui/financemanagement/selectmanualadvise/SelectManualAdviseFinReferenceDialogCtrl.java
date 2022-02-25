@@ -220,7 +220,7 @@ public class SelectManualAdviseFinReferenceDialogCtrl extends GFCBaseCtrl<Financ
 		long finID = ComponentUtil.getFinID(this.finReference);
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMntnSts)
 				&& (!FinServiceEvent.MANUALADVISE.equals(rcdMntnSts) || !FinServiceEvent.HOLDDISB.equals(rcdMntnSts))) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));

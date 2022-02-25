@@ -3503,32 +3503,23 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 	}
 
 	@Override
-	public String getFinanceMainByRcdMaintenance(long finID, String type) {
-		StringBuilder sql = new StringBuilder("Select RcdMaintainSts From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinID = ?");
+	public String getFinanceMainByRcdMaintenance(long finID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("Select RcdMaintainSts From (");
+		sql.append(" Select RcdMaintainSts From FinanceMain_Temp Where FinID = ?");
+		sql.append(" Union All");
+		sql.append(" Select RcdMaintainSts From FinanceMain Where FinID = ?");
+		sql.append(" and not exists (Select 1 From FinanceMain_Temp Where FinID = FinanceMain.FinID)");
+		sql.append(" ) fm");
 
-		logger.debug(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql);
+
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID);
+			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finID, finID);
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
-		return null;
-	}
 
-	@Override
-	public String getFinanceMainByRcdMaintenance(String finReference, String type) {
-		StringBuilder sql = new StringBuilder("Select RcdMaintainSts From FinanceMain");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where FinReference = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
-		} catch (EmptyResultDataAccessException e) {
-			//
-		}
 		return null;
 	}
 

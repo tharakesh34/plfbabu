@@ -197,7 +197,7 @@ public class ChequeHeaderListCtrl extends GFCBaseListCtrl<ChequeHeader> {
 		}
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(chequeheader.getFinID(), "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(chequeheader.getFinID());
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.CHEQUEDETAILS.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;

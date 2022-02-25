@@ -445,7 +445,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -805,7 +805,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			fsi.setFinID(finID);
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
@@ -1047,7 +1047,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -1174,7 +1174,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -2164,7 +2164,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// Validate Loan is INPROGRESS in any Other Servicing Event or NOT ?
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -3282,7 +3282,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("60203", valueParm);
 		}
 		// validating with the rcdmaintainsts
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(fm.getFinID(), "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(fm.getFinID());
 
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEWAIVERS.equals(rcdMntnSts)) {
 			String valueParm[] = new String[4];

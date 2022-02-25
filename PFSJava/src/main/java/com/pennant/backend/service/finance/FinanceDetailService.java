@@ -264,7 +264,7 @@ public interface FinanceDetailService {
 
 	FinanceMain getFinanceMainForRateReport(long finID, String type);
 
-	String getFinanceMainByRcdMaintenance(long finID, String type);
+	String getFinanceMainByRcdMaintenance(long finID);
 
 	FinanceMain getRcdMaintenanceByRef(long finID, String type);
 

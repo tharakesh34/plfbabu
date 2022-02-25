@@ -565,7 +565,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 				valueDate.getValue());
 
 		// Validate Loan is INPROGRESS in WRITEOFF or NOT ?
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (FinServiceEvent.WRITEOFF.equals(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;

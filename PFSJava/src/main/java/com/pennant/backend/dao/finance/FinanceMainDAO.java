@@ -225,9 +225,7 @@ public interface FinanceMainDAO {
 
 	boolean isFinActive(long finID);
 
-	String getFinanceMainByRcdMaintenance(String finReference, String type);
-
-	String getFinanceMainByRcdMaintenance(long finID, String type);
+	String getFinanceMainByRcdMaintenance(long finID);
 
 	FinanceMain getRcdMaintenanceByRef(long finID, String type);
 
