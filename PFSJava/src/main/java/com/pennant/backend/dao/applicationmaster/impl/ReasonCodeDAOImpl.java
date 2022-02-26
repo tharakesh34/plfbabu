@@ -13,33 +13,16 @@
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ReasonCodeDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  19-12-2017    														*
- *                                                                  						*
- * Modified Date    :  19-12-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ReasonCodeDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 19-12-2017 * * Modified
+ * Date : 19-12-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-12-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-12-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.backend.dao.applicationmaster.impl;
 
 import java.util.List;
@@ -338,5 +321,59 @@ public class ReasonCodeDAOImpl extends SequenceDao<ReasonCode> implements Reason
 
 		logger.debug(Literal.LEAVING);
 		return reasonCode;
+	}
+
+	@Override
+	public ReasonCode getReasonCode(long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" r.Id, r.ReasonTypeID, r.ReasonCategoryID, r.Code, r.Description");
+		sql.append(", rc.Code ReasonCategoryCode, rc.Description ReasonCategoryDesc");
+		sql.append(", rt.Code ReasonTypeCode, rt.Description ReasonTypeDesc");
+		sql.append(" From Reasons r");
+		sql.append(" Inner Join ReasonCategory rc On rc.id = r.ReasonCategoryId");
+		sql.append(" Inner Join ReasonTypes rt On rt.id = r.ReasonTypeId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				ReasonCode rc = new ReasonCode();
+				rc.setId(rs.getLong("Id"));
+				rc.setReasonTypeID(rs.getLong("ReasonTypeID"));
+				rc.setReasonCategoryID(rs.getLong("ReasonCategoryID"));
+				rc.setCode(rs.getString("Code"));
+				rc.setDescription(rs.getString("Description"));
+				rc.setReasonCategoryCode(rs.getString("ReasonCategoryCode"));
+				rc.setReasonCategoryDesc(rs.getString("ReasonCategoryDesc"));
+				rc.setReasonTypeCode(rs.getString("ReasonTypeCode"));
+				rc.setReasonTypeDesc(rs.getString("ReasonTypeDesc"));
+
+				return rc;
+			}, id);
+
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
+	public String getReasonTypeCode(long id) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" rt.Code ReasonTypeCode");
+		sql.append(" From Reasons r");
+		sql.append(" Inner Join ReasonCategory rc On rc.id = r.ReasonCategoryId");
+		sql.append(" Inner Join ReasonTypes rt On rt.id = r.ReasonTypeId");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), String.class, id);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
 	}
 }
