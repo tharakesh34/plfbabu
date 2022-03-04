@@ -62,7 +62,6 @@ import com.pennant.backend.model.finance.FinFeeConfig;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
-import com.pennant.backend.model.finance.FinReceiptDetail;
 import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
@@ -113,13 +112,21 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetais(String finReference, long custId) {
+	public List<FinReceiptHeader> getUpfrontReceipts(long finID, String reference) {
 		logger.debug(Literal.ENTERING);
 
-		List<FinReceiptDetail> list = finReceiptDetailDAO.getFinReceiptDetailByRef(finReference, custId);
+		List<FinReceiptHeader> headers = new ArrayList<>();
+
+		List<FinReceiptHeader> list = finReceiptDetailDAO.getUpfrontFeeReceipts(finID, reference);
+
+		list.forEach(rch -> {
+			if ("FeePayment".equals(rch.getReceiptPurpose()) && !"C".equals(rch.getReceiptModeStatus())) {
+				headers.add(rch);
+			}
+		});
 
 		logger.debug(Literal.LEAVING);
-		return list;
+		return headers;
 	}
 
 	@Override
@@ -535,15 +542,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	@Override
 	public BigDecimal getExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
-		List<FinReceiptHeader> headers = new ArrayList<>();
-
-		List<FinReceiptHeader> list = finReceiptDetailDAO.getUpfrontFeeReceipts(finID, custId);
-
-		list.forEach(rch -> {
-			if ("FeePayment".equals(rch.getReceiptPurpose()) && !"C".equals(rch.getReceiptModeStatus())) {
-				headers.add(rch);
-			}
-		});
+		List<FinReceiptHeader> headers = getUpfrontReceipts(finID, String.valueOf(custId));
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
 		for (FinReceiptHeader rch : headers) {

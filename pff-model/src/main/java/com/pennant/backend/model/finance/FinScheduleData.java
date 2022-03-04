@@ -154,7 +154,7 @@ public class FinScheduleData implements Serializable {
 
 	private boolean quickDisb;
 
-	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<>();
+	private List<FinReceiptHeader> imdReceipts = new ArrayList<>();
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<>();
 	private List<FinIRRDetails> iRRDetails = new ArrayList<>();
 
@@ -252,8 +252,7 @@ public class FinScheduleData implements Serializable {
 		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
 		entity.setPromotion(this.promotion == null ? null : this.promotion.copyEntity());
 		entity.setQuickDisb(this.quickDisb);
-		this.finReceiptDetails.stream()
-				.forEach(e -> entity.getFinReceiptDetails().add(e == null ? null : e.copyEntity()));
+		this.imdReceipts.stream().forEach(e -> entity.getImdReceipts().add(e == null ? null : e.copyEntity()));
 		this.finFeeReceipts.stream().forEach(e -> entity.getFinFeeReceipts().add(e == null ? null : e.copyEntity()));
 		this.iRRDetails.stream().forEach(e -> entity.getiRRDetails().add(e == null ? null : e.copyEntity()));
 		this.exposureLinkings.stream()
@@ -671,12 +670,12 @@ public class FinScheduleData implements Serializable {
 		this.outstandingPri = outstandingPri;
 	}
 
-	public List<FinReceiptDetail> getFinReceiptDetails() {
-		return finReceiptDetails;
+	public List<FinReceiptHeader> getImdReceipts() {
+		return imdReceipts;
 	}
 
-	public void setFinReceiptDetails(List<FinReceiptDetail> finReceiptDetails) {
-		this.finReceiptDetails = finReceiptDetails;
+	public void setImdReceipts(List<FinReceiptHeader> imdReceipts) {
+		this.imdReceipts = imdReceipts;
 	}
 
 	public List<FinFeeReceipt> getFinFeeReceipts() {

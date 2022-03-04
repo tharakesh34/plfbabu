@@ -36,7 +36,7 @@ import com.pennant.backend.model.expenses.UploadTaxPercent;
 import com.pennant.backend.model.finance.FinFeeConfig;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
-import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
@@ -58,7 +58,7 @@ public interface FinFeeDetailService {
 	List<AuditDetail> validate(List<FinFeeDetail> feeList, long workflowId, String method, String auditTranType,
 			String usrLanguage, boolean isWIF);
 
-	List<FinReceiptDetail> getFinReceiptDetais(String reference, long custId);
+	List<FinReceiptHeader> getUpfrontReceipts(long finID, String reference);
 
 	List<FinFeeReceipt> getFinFeeReceiptsById(List<Long> feeIds, String type);
 

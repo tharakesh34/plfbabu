@@ -104,10 +104,9 @@ public class SOAReportGenerationDAOImpl extends BasicDao<StatementOfAccount> imp
 		FinanceMain finMain = new FinanceMain();
 		finMain.setFinReference(finReference);
 
-		StringBuilder sql = new StringBuilder();
-		sql.append("select ClosingStatus, FinStartDate, FeeChargeAmt, FinCurrAssetValue, FInApprovedDate");
-		sql.append(
-				", FinType, FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, ClosingStatus, FinStartDate, FeeChargeAmt, FinCurrAssetValue, FInApprovedDate, FinType");
+		sql.append(", FinCategory, FixedRateTenor, FixedTenorRate, NumberOfTerms, RepayProfitRate, RepayBaseRate");
 		sql.append(", FinCcy, RepaySpecialRate, RepayMargin, advemiterms, advanceemi, MaturityDate, CustId, CalTerms");
 		sql.append(", AdvType, GrcAdvType, DownPayment, Promotioncode, PromotionSeqId");
 		sql.append(", FinAssetValue, RepayRateBasis, GraceTerms, ClosedDate, FinIsActive");

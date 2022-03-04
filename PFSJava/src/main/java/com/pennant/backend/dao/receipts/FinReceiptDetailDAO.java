@@ -36,8 +36,6 @@ public interface FinReceiptDetailDAO {
 
 	BigDecimal getReceiptAmountPerDay(Date appDate, String paymentType, long custID);
 
-	List<FinReceiptDetail> getFinReceiptDetailByRef(String reference, long custId);
-
 	void cancelReceiptDetails(List<Long> receiptID);
 
 	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
@@ -65,5 +63,6 @@ public interface FinReceiptDetailDAO {
 
 	String getReceiptSourceAccType(String receiptSource);
 
-	List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, long custId);
+	List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, String reference);
+
 }

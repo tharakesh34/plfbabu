@@ -215,46 +215,6 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	}
 
 	@Override
-	public List<FinReceiptDetail> getFinReceiptDetailByRef(String reference, long custId) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" rch.ReceiptID, rch.Reference, rch.TransactionRef, rcd.FavourNumber");
-		sql.append(", rch.ReceiptMode, rch.ReceiptAmount");
-		sql.append(" From FinReceiptHeader rch");
-		sql.append(" Inner Join FinreceiptDetail rcd on rcd.ReceiptID = rch.ReceiptID");
-		sql.append(" where ReceiptPurpose = ? and rcd.Status <> ?");
-		sql.append(" and ((RecAgainst = ? and rch.Reference = ?) or (RecAgainst = ? and rch.Reference = ?");
-		sql.append(" and rch.ReceiptID not in");
-		sql.append(" (Select distinct ReceiptId from FinFeeReceipts_View where FinReference <> ?)))");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		return this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-
-			ps.setString(index++, "FeePayment");
-			ps.setString(index++, "C");
-			ps.setString(index++, RepayConstants.RECEIPTTO_FINANCE);
-			ps.setString(index++, reference);
-			ps.setString(index++, RepayConstants.RECEIPTTO_CUSTOMER);
-			ps.setString(index++, String.valueOf(custId));
-			ps.setString(index++, reference);
-
-		}, (rs, rowNum) -> {
-			FinReceiptDetail rcd = new FinReceiptDetail();
-
-			// rcd.setFinID(rs.getLong("FinID"));
-			rcd.setReceiptID(rs.getLong("ReceiptID"));
-			rcd.setReference(rs.getString("Reference"));
-			rcd.setTransactionRef(rs.getString("TransactionRef"));
-			rcd.setFavourNumber(rs.getString("FavourNumber"));
-			rcd.setPaymentType(rs.getString("ReceiptMode"));
-			// rcd.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-
-			return rcd;
-		});
-	}
-
-	@Override
 	public Date getMaxReceivedDateByReference(String finReference) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" max(rch.ValueDate)");
@@ -768,32 +728,24 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 
 	@Override
 	public String getReceiptSourceAccType(String receiptSource) {
-		logger.info(Literal.ENTERING);
+		String sql = "Select Account_Type From Receipt_Source_Account_Types Where Receipt_Source = ?";
 
-		StringBuilder sql = new StringBuilder("Select Account_Type From Receipt_Source_Account_Types ");
-		sql.append(" Where Receipt_Source = ? ");
+		logger.debug(Literal.SQL + sql);
 
-		logger.trace(Literal.SQL + sql.toString());
-		String accType = null;
 		try {
-			accType = this.jdbcOperations.queryForObject(sql.toString(), new Object[] { receiptSource },
-					new RowMapper<String>() {
-						@Override
-						public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-							return rs.getString("Account_Type");
-						}
-					});
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				return rs.getString("Account_Type");
+			}, receiptSource);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
+			//
 		}
 
-		logger.info(Literal.LEAVING);
-		return accType;
+		return null;
 	}
 
 	@Override
-	public List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, long custId) {
-		String sql = "Select ReceiptID, ReceiptAmount, ReceiptPurpose, ReceiptModeStatus, RecAgainst From FinReceiptHeader Where FinID = ? or Reference = ?";
+	public List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, String reference) {
+		String sql = "Select ReceiptID, ReceiptAmount, ReceiptPurpose, ReceiptModeStatus, RecAgainst, TransactionRef, ReceiptMode From FinReceiptHeader Where FinID = ? or Reference = ?";
 
 		logger.debug(Literal.SQL + sql);
 
@@ -801,7 +753,7 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			int index = 1;
 
 			ps.setLong(index++, finID);
-			ps.setString(index++, String.valueOf(custId));
+			ps.setString(index++, reference);
 		}, (rs, rowNum) -> {
 			FinReceiptHeader rch = new FinReceiptHeader();
 
@@ -810,6 +762,8 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			rch.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rch.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
 			rch.setRecAgainst(rs.getString("RecAgainst"));
+			rch.setTransactionRef(rs.getString("TransactionRef"));
+			rch.setReceiptMode(rs.getString("ReceiptMode"));
 
 			return rch;
 		});

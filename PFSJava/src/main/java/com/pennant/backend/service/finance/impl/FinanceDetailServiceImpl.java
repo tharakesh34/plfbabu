@@ -561,12 +561,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
 
 		/* Finance Receipt Details */
-		schdData.setFinReceiptDetails(finFeeDetailService.getFinReceiptDetais(finReference, custID));
+		schdData.setImdReceipts(finFeeDetailService.getUpfrontReceipts(finID, String.valueOf(custID)));
 
 		/* Loading Up-front Fee Details by LeadId */
 		if (StringUtils.isNotEmpty(offerId)) {
 			/* Finance Fee Details */
-			schdData.getFinReceiptDetails().addAll(finFeeDetailService.getFinReceiptDetais(offerId, custID));
+			schdData.getImdReceipts().addAll(finFeeDetailService.getUpfrontReceipts(finID, offerId));
 
 			/* Finance Fee Details by leadID */
 			List<FinFeeDetail> feeDetails = finFeeDetailService.getFinFeeDetailById(offerId, false, "_View");

@@ -90,4 +90,11 @@
 		</createIndex>
 	</changeSet>
 	
+	<changeSet id="7.0" author="murthy.y">
+		<createIndex tableName="finreceiptheader" indexName="idx_frh_finid_reference">
+			<column name="FinID" type="bigint"/>
+			<column name="Reference" type="Varchar(20)"/>
+		</createIndex>
+	</changeSet>
+	
 </databaseChangeLog>
