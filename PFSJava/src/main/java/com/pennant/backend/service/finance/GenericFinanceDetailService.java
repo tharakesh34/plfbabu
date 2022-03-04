@@ -1299,7 +1299,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		List<FinFeeDetail> finFeeDetailList = schdData.getFinFeeDetailList();
 

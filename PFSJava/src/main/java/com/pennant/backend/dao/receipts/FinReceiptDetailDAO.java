@@ -38,8 +38,6 @@ public interface FinReceiptDetailDAO {
 
 	List<FinReceiptDetail> getFinReceiptDetailByRef(String reference, long custId);
 
-	List<FinReceiptDetail> getFinReceiptDetailByFinID(long finID, long custId);
-
 	void cancelReceiptDetails(List<Long> receiptID);
 
 	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
@@ -66,4 +64,6 @@ public interface FinReceiptDetailDAO {
 	List<FinReceiptDetail> getNonLanReceiptHeader(long receiptID, String type);
 
 	String getReceiptSourceAccType(String receiptSource);
+
+	List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, long custId);
 }

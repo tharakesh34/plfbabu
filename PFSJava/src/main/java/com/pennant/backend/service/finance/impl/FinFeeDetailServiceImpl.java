@@ -39,13 +39,11 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.RuleExecutionUtil;
-import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.applicationmaster.BranchDAO;
 import com.pennant.backend.dao.audit.AuditHeaderDAO;
 import com.pennant.backend.dao.finance.FinFeeDetailDAO;
@@ -60,30 +58,26 @@ import com.pennant.backend.dao.systemmasters.ProvinceDAO;
 import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.expenses.UploadTaxPercent;
-import com.pennant.backend.model.finance.FinExcessAmount;
-import com.pennant.backend.model.finance.FinExcessMovement;
 import com.pennant.backend.model.finance.FinFeeConfig;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
 import com.pennant.backend.model.finance.FinFeeScheduleDetail;
 import com.pennant.backend.model.finance.FinReceiptDetail;
+import com.pennant.backend.model.finance.FinReceiptHeader;
 import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.FinanceScheduleDetail;
-import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.TaxAmountSplit;
 import com.pennant.backend.model.finance.TaxHeader;
 import com.pennant.backend.model.finance.Taxes;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
-import com.pennant.backend.model.smtmasters.PFSParameter;
 import com.pennant.backend.service.GenericService;
 import com.pennant.backend.service.finance.FinFeeDetailService;
 import com.pennant.backend.service.finance.TaxHeaderDetailsService;
 import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
-import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.RuleReturnType;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -541,168 +535,32 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 	@Override
 	public BigDecimal getExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
+		List<FinReceiptHeader> headers = new ArrayList<>();
+
+		List<FinReceiptHeader> list = finReceiptDetailDAO.getUpfrontFeeReceipts(finID, custId);
+
+		list.forEach(rch -> {
+			if ("FeePayment".equals(rch.getReceiptPurpose()) && !"C".equals(rch.getReceiptModeStatus())) {
+				headers.add(rch);
+			}
+		});
 
 		BigDecimal excessAmount = BigDecimal.ZERO;
-		for (FinReceiptDetail rcd : rcdList) {
-			if (map != null && map.containsKey(rcd.getReceiptID())) {
-				List<FinFeeReceipt> finFeeReceiptList = map.get(rcd.getReceiptID());
+		for (FinReceiptHeader rch : headers) {
+			long receiptID = rch.getReceiptID();
+			if (map.containsKey(receiptID)) {
+				List<FinFeeReceipt> finFeeReceiptList = map.get(receiptID);
 				BigDecimal feePaidAmount = BigDecimal.ZERO;
 				for (FinFeeReceipt feeReceipt : finFeeReceiptList) {
-					feePaidAmount = feePaidAmount.add(feeReceipt.getPaidAmount());
+					BigDecimal paidAmount = feeReceipt.getPaidAmount();
+					feePaidAmount = feePaidAmount.add(paidAmount);
 				}
-				excessAmount = excessAmount.add(rcd.getAmount().subtract(feePaidAmount));
+				excessAmount = excessAmount.add(rch.getReceiptAmount().subtract(feePaidAmount));
 			} else {
-				excessAmount = excessAmount.add(rcd.getAmount());
+				excessAmount = excessAmount.add(rch.getReceiptAmount());
 			}
 		}
 		return excessAmount;
-	}
-
-	private void updateUpfrontExcessAmount(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
-
-		FinExcessAmount excessAmount = null;
-		for (FinReceiptDetail rcd : rcdList) {
-			long receiptID = rcd.getReceiptID();
-
-			if (map == null || !map.containsKey(receiptID)) {
-				continue;
-			}
-
-			List<FinFeeReceipt> finFeeReceiptList = map.get(receiptID);
-
-			BigDecimal feePaidAmount = BigDecimal.ZERO;
-			for (FinFeeReceipt feeReceipt : finFeeReceiptList) {
-				feePaidAmount = feePaidAmount.add(feeReceipt.getPaidAmount());
-			}
-
-			if (feePaidAmount.compareTo(BigDecimal.ZERO) > 0) {
-				excessAmount = finExcessAmountDAO.getFinExcessAmount(finID, receiptID);
-
-				long excessID = excessAmount.getExcessID();
-				finExcessAmountDAO.updateUtiliseOnly(excessID, feePaidAmount);
-
-				// Excess Movement Creation
-				FinExcessMovement movement = new FinExcessMovement();
-				movement.setExcessID(excessID);
-				movement.setReceiptID(receiptID);
-				movement.setMovementType(RepayConstants.RECEIPTTYPE_RECIPT);
-				movement.setTranType(AccountConstants.TRANTYPE_DEBIT);
-				movement.setMovementFrom("UPFRONT");
-				movement.setAmount(feePaidAmount);
-				finExcessAmountDAO.saveExcessMovement(movement);
-			}
-
-		}
-	}
-
-	private void createPayableAdvises(long finID, Map<Long, List<FinFeeReceipt>> map, long custId) {
-		logger.debug(Literal.ENTERING);
-
-		PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("MANUALADVISE_FEETYPEID");
-		long feeTypeId = Long.parseLong(pfsParameter.getSysParmValue());
-		ManualAdvise manualAdvise = null;
-
-		List<FinReceiptDetail> rcdList = finReceiptDetailDAO.getFinReceiptDetailByFinID(finID, custId);
-
-		Date appDate = SysParamUtil.getAppDate();
-
-		for (FinReceiptDetail rcd : rcdList) {
-			List<FinFeeReceipt> finFeeRecList = map.get(rcd.getReceiptID());
-			BigDecimal feePaid = BigDecimal.ZERO;
-			BigDecimal available;
-			long getLastMntBy = Long.MIN_VALUE;
-			for (FinFeeReceipt feeReceipt : finFeeRecList) {
-				feePaid = feePaid.add(feeReceipt.getPaidAmount());
-				getLastMntBy = feeReceipt.getLastMntBy();
-			}
-			available = rcd.getAmount().subtract(feePaid);
-
-			if (available.compareTo(BigDecimal.ZERO) > 0) {
-				manualAdvise = new ManualAdvise();
-				manualAdvise.setAdviseType(2);
-				manualAdvise.setFinID(rcd.getFinID());
-				manualAdvise.setFinReference(rcd.getReference());
-				manualAdvise.setFeeTypeID(feeTypeId);
-				manualAdvise.setSequence(0);
-				manualAdvise.setAdviseAmount(available);
-				manualAdvise.setPaidAmount(BigDecimal.ZERO);
-				manualAdvise.setWaivedAmount(BigDecimal.ZERO);
-				manualAdvise.setRemarks("FeeReceipt Remaining Amount");
-				manualAdvise.setBounceID(0);
-				manualAdvise.setReceiptID(rcd.getReceiptID());
-				manualAdvise.setValueDate(appDate);
-				manualAdvise.setPostDate(appDate);
-				manualAdvise.setReservedAmt(BigDecimal.ZERO);
-				manualAdvise.setBalanceAmt(BigDecimal.ZERO);
-
-				manualAdvise.setVersion(0);
-				manualAdvise.setLastMntBy(getLastMntBy);
-				manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				manualAdvise.setRoleCode("");
-				manualAdvise.setNextRoleCode("");
-				manualAdvise.setTaskId("");
-				manualAdvise.setNextTaskId("");
-				manualAdvise.setRecordType("");
-				manualAdvise.setWorkflowId(0);
-			}
-
-			manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
-		}
-		// FIXME CH Get the latest Receipt details and update the payable.
-
-		logger.debug(Literal.LEAVING);
-	}
-
-	private void createPayableAdvise(String finReference, Map<Long, FinFeeReceipt> map) {
-		logger.debug(Literal.ENTERING);
-
-		FinFeeReceipt feeReceipt;
-		PFSParameter pfsParameter = SysParamUtil.getSystemParameterObject("MANUALADVISE_FEETYPEID");
-		long feeTypeId = Long.valueOf(pfsParameter.getSysParmValue());
-		ManualAdvise manualAdvise;
-
-		Date appDate = SysParamUtil.getAppDate();
-
-		// FIXME CH Get the latest Receipt details and update the payable.
-		for (Long key : map.keySet()) {
-			feeReceipt = map.get(key);
-
-			if (feeReceipt.getAvailableAmount().compareTo(BigDecimal.ZERO) != 0) {
-				manualAdvise = new ManualAdvise();
-				manualAdvise.setAdviseType(2);
-				manualAdvise.setFinReference(finReference);
-				manualAdvise.setFeeTypeID(feeTypeId);
-				manualAdvise.setSequence(0);
-				manualAdvise.setAdviseAmount(feeReceipt.getAvailableAmount());
-				manualAdvise.setPaidAmount(BigDecimal.ZERO);
-				manualAdvise.setWaivedAmount(BigDecimal.ZERO);
-				manualAdvise.setRemarks("FeeReceipt Remaining Amount");
-				manualAdvise.setBounceID(0);
-				manualAdvise.setReceiptID(feeReceipt.getReceiptID());
-				manualAdvise.setValueDate(appDate);
-				manualAdvise.setPostDate(appDate);
-				manualAdvise.setReservedAmt(BigDecimal.ZERO);
-				manualAdvise.setBalanceAmt(BigDecimal.ZERO);
-
-				manualAdvise.setVersion(0);
-				manualAdvise.setLastMntBy(feeReceipt.getLastMntBy());
-				manualAdvise.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-				manualAdvise.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-				manualAdvise.setRoleCode("");
-				manualAdvise.setNextRoleCode("");
-				manualAdvise.setTaskId("");
-				manualAdvise.setNextTaskId("");
-				manualAdvise.setRecordType("");
-				manualAdvise.setWorkflowId(0);
-
-				manualAdviseDAO.save(manualAdvise, TableType.MAIN_TAB);
-			}
-		}
-
-		logger.debug(Literal.LEAVING);
 	}
 
 	@Override
