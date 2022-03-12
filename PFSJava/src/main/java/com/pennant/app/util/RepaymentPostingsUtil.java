@@ -786,7 +786,7 @@ public class RepaymentPostingsUtil {
 		pftDetail.setClosingStatus(fm.getClosingStatus());
 
 		// Reset Back Repayments Details
-		List<FinanceRepayments> repayList = financeRepaymentsDAO.getFinRepayListByFinRef(fm.getFinID(), true, "");
+		List<FinanceRepayments> repayList = financeRepaymentsDAO.getFinRepayListByLinkedTranID(fm.getFinID());
 
 		if (CollectionUtils.isNotEmpty(repayList)) {
 			BigDecimal totPri = BigDecimal.ZERO;
@@ -817,8 +817,11 @@ public class RepaymentPostingsUtil {
 		CustEODEvent custEODEvent = new CustEODEvent();
 		custEODEvent.setEodDate(dateValueDate);
 		custEODEvent.setEodValueDate(dateValueDate);
-		Customer customer = customerDAO.getCustomerStatus(fm.getCustID());
+
+		Customer customer = new Customer();
+		customer.setCustSts(customerDAO.getCustomerStatus(fm.getCustID()));
 		custEODEvent.setCustomer(customer);
+
 		latePayMarkingService.processCustomerStatus(custEODEvent);
 
 		logger.debug(Literal.LEAVING);

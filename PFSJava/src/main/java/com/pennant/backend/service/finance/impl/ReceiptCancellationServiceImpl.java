@@ -1637,8 +1637,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
 				List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
-				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(fm.getFinID(), false,
-						"");
+				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(fm.getFinID());
 				schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
 				// Check whether Accrual Reversal required for LPP or not

@@ -12,7 +12,7 @@ import com.pennanttech.pennapps.core.AppException;
 
 public interface ManualPaymentService {
 
-	List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type);
+	List<FinanceRepayments> getFinRepayList(long finID);
 
 	FinanceProfitDetail getFinProfitDetailsById(long finID);
 

@@ -154,7 +154,7 @@ public class FinanceWriteoffServiceImpl extends GenericFinanceDetailService impl
 					FinanceConstants.MODULEID_FINTYPE));
 		}
 
-		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, ""));
+		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayList(finID));
 		schdData.setPenaltyDetails(recoveryDAO.getFinancePenaltysByFinRef(finID, ""));
 		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(finType, "_AView"));
 

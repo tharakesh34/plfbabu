@@ -2180,7 +2180,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Check Repayments on Finance when it is not in Maintenance
 		if (StringUtils.isEmpty(maintainSts)) {
 			List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
-			listFinanceRepayments = financeDetailService.getFinanceRepaymentsByFinRef(finID, false);
+			listFinanceRepayments = financeDetailService.getFinRepayList(finID);
 			if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
 				boolean onlyBPIPayment = true;
 				for (FinanceRepayments financeRepayments : listFinanceRepayments) {

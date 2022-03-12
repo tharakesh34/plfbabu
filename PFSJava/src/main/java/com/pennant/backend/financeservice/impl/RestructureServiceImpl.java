@@ -551,7 +551,7 @@ public class RestructureServiceImpl extends GenericService<FinServiceInstruction
 		// Recalculation of OD Details based on user selected Restructure Date
 		Date appDate = SysParamUtil.getAppDate();
 		if (DateUtil.compare(restructureDate, appDate) != 0) {
-			List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, "");
+			List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(finID);
 			latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, restructureDate,
 					schdData.getFinanceScheduleDetails(), repayments, true, true);
 		}

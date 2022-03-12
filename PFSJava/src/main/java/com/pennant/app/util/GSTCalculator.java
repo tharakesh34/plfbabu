@@ -470,6 +470,25 @@ public class GSTCalculator {
 		return taxPercMap;
 	}
 
+	public static Map<String, Object> getGSTDataMap(long finID, FinanceTaxDetail taxDetail) {
+		if (taxDetail == null) {
+			taxDetail = financeTaxDetailDAO.getFinanceTaxDetailForLMSEvent(finID);
+		}
+
+		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finID, TableType.MAIN_TAB);
+
+		String finBranch = (String) dataMap.computeIfAbsent("FinBranch", ft -> "");
+		String custBranch = (String) dataMap.computeIfAbsent("CustBranch", ft -> "");
+		String custProvince = (String) dataMap.computeIfAbsent("CustProvince", ft -> "");
+		String custCountry = (String) dataMap.computeIfAbsent("CustCountry", ft -> "");
+		String custResdSts = (Object) dataMap.get("ResidentialStatus") == null ? ""
+				: String.valueOf((Object) dataMap.get("ResidentialStatus"));
+
+		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, taxDetail);
+		dataMap.put("custResidentialSts", custResdSts);
+		return dataMap;
+	}
+
 	public static Map<String, Object> getGSTDataMap(long finID) {
 		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finID, TableType.MAIN_TAB);
 

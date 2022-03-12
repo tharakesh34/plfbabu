@@ -59,16 +59,7 @@ public interface ReceiptService {
 	// ### Ticket id:124998
 	FinanceMain getClosingStatus(long finID, TableType tempTab, boolean wif);
 
-	// ### 29-10-2018, Ticket id:124998
-	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);
-
-	// ### 29-10-2018, Ticket id:124998
-	long checkDedupSP(FinReceiptHeader receiptHeader, String purpose);
-
-	BigDecimal getClosingBalance(long finID, Date valueDate);// ## PSD
-																// Ticket
-																// id:124998,Receipt
-																// Upload
+	BigDecimal getClosingBalance(long finID, Date valueDate);
 
 	boolean isReceiptsPending(long finID, long receiptId);
 
@@ -95,8 +86,6 @@ public interface ReceiptService {
 	FinReceiptData calcuateDues(FinReceiptData receiptData);
 
 	boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations, FinReceiptData receiptData);
-
-	FinReceiptData adjustToExcess(FinReceiptData receiptData);
 
 	FinTaxReceivable getTaxReceivable(long finID, String taxFor);
 

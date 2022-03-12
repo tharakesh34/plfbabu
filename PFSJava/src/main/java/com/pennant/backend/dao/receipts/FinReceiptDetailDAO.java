@@ -42,15 +42,6 @@ public interface FinReceiptDetailDAO {
 
 	BigDecimal getFinReceiptDetailsByFinRef(String finReference);
 
-	// ### 29-10-2018, Ticket id:124998
-	boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose);
-
-	// ### 29-10-2018, Ticket id:124998
-	boolean isFinReceiptDetailExitsByTransactionRef(FinReceiptHeader receiptHeader, String purpose);
-
-	// ### 29-10-2018, Ticket id:124998
-	long getReceiptIdByReceiptDetails(FinReceiptHeader receiptHeader, String purpose);
-
 	// ### 30-10-2018, Ticket id:124998
 	void updateReceiptStatusByReceiptId(long receiptId, String status);
 
@@ -64,6 +55,10 @@ public interface FinReceiptDetailDAO {
 	String getReceiptSourceAccType(String receiptSource);
 
 	Date getMaxValueDate(long finID, String receiptPurpose);
-	
-	List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, String reference);
+
+	List<FinReceiptHeader> getReceiptsForDuplicateCheck(long finID, String reference);
+
+	List<FinReceiptHeader> getReceiptsForDuplicateCheck(long finID);
+
+	long getReceiptIDForSP(FinReceiptHeader rh);
 }

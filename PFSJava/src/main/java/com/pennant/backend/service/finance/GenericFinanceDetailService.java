@@ -2466,7 +2466,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			// Finance Fee Details
 			finSchData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, ""));
 
-			finSchData.setRepayDetails(getFinanceRepaymentsByFinRef(finID, false));
+			finSchData.setRepayDetails(getFinRepayList(finID));
 			finSchData.setPenaltyDetails(getFinancePenaltysByFinRef(finID));
 			finSchData.setAccrueValue(profitDetailsDAO.getAccrueAmount(finID));
 		}
@@ -2481,8 +2481,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param type
 	 * @return
 	 */
-	public List<FinanceRepayments> getFinanceRepaymentsByFinRef(long finID, boolean isRpyCancelProc) {
-		return financeRepaymentsDAO.getFinRepayListByFinRef(finID, isRpyCancelProc, "");
+	public List<FinanceRepayments> getFinRepayList(long finID) {
+		return financeRepaymentsDAO.getFinRepayList(finID);
 	}
 
 	/**

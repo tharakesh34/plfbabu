@@ -4565,7 +4565,7 @@ public class ReceiptCalculator {
 		if (CollectionUtils.isNotEmpty(finRepayments)) {
 			repayments = finRepayments;
 		} else {
-			repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, "");
+			repayments = financeRepaymentsDAO.getFinRepayList(finID);
 		}
 
 		latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schedules, repayments, resetReq, true);
@@ -4729,7 +4729,7 @@ public class ReceiptCalculator {
 
 		List<FinanceScheduleDetail> schedules = schdData.getFinanceScheduleDetails();
 		long finID = fm.getFinID();
-		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, "");
+		List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(finID);
 		latePayMarkingService.calPDOnBackDatePayment(fm, overdueList, valueDate, schedules, repayments, true, true);
 
 		return overdueList;

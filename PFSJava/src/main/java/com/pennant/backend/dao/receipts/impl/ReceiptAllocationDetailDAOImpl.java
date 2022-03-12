@@ -214,14 +214,14 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 	}
 
 	@Override
-	public List<ReceiptAllocationDetail> getManualAllocationsByRef(String finReference, long curReceiptID) {
+	public List<ReceiptAllocationDetail> getManualAllocationsByRef(long finID, long curReceiptID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" rad.AllocationType AllocationType, rad.AllocationTo AllocationTo");
 		sql.append(", SUM(rad.PaidAmount) PaidAmount, SUM(rad.WaivedAmount) WaivedAmount");
 		sql.append(", SUM(rad.PaidGST) PaidGST, SUM(rad.WaivedGST) WaivedGST");
 		sql.append(" FROM RECEIPTALLOCATIONDETAIL_TEMP rad");
 		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP rch ON rad.RECEIPTID = rch.RECEIPTID ");
-		sql.append(" Where rch.Reference = ? and rch.ReceiptID <> ?");
+		sql.append(" Where rch.FinID = ? and rch.ReceiptID <> ?");
 		sql.append(" and rch.ALLOCATIONTYPE = ? and rch.CANCELREASON IS NULL ");
 		sql.append(" GROUP BY rad.AllocationType, rad.AllocationTo ");
 
@@ -229,7 +229,7 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 
 		return this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;
-			ps.setString(index++, finReference);
+			ps.setLong(index++, finID);
 			ps.setLong(index++, curReceiptID);
 			ps.setString(index, "M");
 		}, (rs, rowNum) -> {

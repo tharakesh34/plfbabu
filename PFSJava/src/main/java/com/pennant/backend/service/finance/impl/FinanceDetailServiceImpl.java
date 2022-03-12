@@ -7969,7 +7969,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.ENTERING);
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		schdData.setRepayDetails(getFinanceRepaymentsByFinRef(finID, false));
+		schdData.setRepayDetails(getFinRepayList(finID));
 		schdData.setPenaltyDetails(getFinancePenaltysByFinRef(finID));
 		logger.debug(Literal.LEAVING);
 		return schdData;

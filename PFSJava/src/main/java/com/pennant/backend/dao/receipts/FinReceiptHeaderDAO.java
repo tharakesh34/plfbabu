@@ -38,9 +38,7 @@ public interface FinReceiptHeaderDAO {
 
 	BigDecimal getTotalCashReceiptAmount(String depositBranch, String type); // Cash Management Change
 
-	boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type, long receiptId); // Cash
-																													// Management
-																													// Change
+	boolean isReceiptCancelProcess(String depositBranch, List<String> paymentTypes, String type, long receiptId);
 
 	List<FinReceiptHeader> getUpFrontReceiptHeaderByID(List<Long> receipts, String type);
 
@@ -65,8 +63,6 @@ public interface FinReceiptHeaderDAO {
 
 	// ### 29-10-2018, Ticket id:124998
 	void updateReceiptStatusAndRealizationDate(long receiptID, String status, Date realizationDate);
-
-	List<FinReceiptHeader> getInProcessReceipts(String Reference);
 
 	List<Long> getInProcessReceiptId(String reference);
 
@@ -119,4 +115,6 @@ public interface FinReceiptHeaderDAO {
 	boolean checkPresentmentsInQueue(long finID);
 
 	List<FinReceiptHeader> getInprocessReceipts(long finID);
+
+	List<FinReceiptHeader> getLastMntOn(long receiptID);
 }

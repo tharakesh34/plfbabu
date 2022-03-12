@@ -117,7 +117,7 @@ public class FinFeeDetailServiceImpl extends GenericService<FinFeeDetail> implem
 
 		List<FinReceiptHeader> headers = new ArrayList<>();
 
-		List<FinReceiptHeader> list = finReceiptDetailDAO.getUpfrontFeeReceipts(finID, reference);
+		List<FinReceiptHeader> list = finReceiptDetailDAO.getReceiptsForDuplicateCheck(finID, reference);
 
 		list.forEach(rch -> {
 			if ("FeePayment".equals(rch.getReceiptPurpose()) && !"C".equals(rch.getReceiptModeStatus())) {

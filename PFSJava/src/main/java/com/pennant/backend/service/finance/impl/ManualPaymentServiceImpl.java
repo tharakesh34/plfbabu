@@ -888,8 +888,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type) {
-		return financeRepaymentsDAO.getFinRepayListByFinRef(finID, isRpyCancelProc, type);
+	public List<FinanceRepayments> getFinRepayList(long finID) {
+		return financeRepaymentsDAO.getFinRepayList(finID);
 	}
 
 	@Override

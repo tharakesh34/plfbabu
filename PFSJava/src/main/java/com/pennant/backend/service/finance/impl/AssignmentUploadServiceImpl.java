@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -684,7 +685,12 @@ public class AssignmentUploadServiceImpl extends GenericService<AssignmentUpload
 				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
 			}
 			dataMap = amountCodes.getDeclaredFieldValues(dataMap);
-			Map<String, Object> map = financeMainDAO.getGLSubHeadCodes(finID);
+			Map<String, Object> map = financeMain.getGlSubHeadCodes();
+
+			if (MapUtils.isEmpty(map)) {
+				map.putAll(financeMainDAO.getGLSubHeadCodes(finID));
+			}
+
 			dataMap.put("emptype", map.get("EMPTYPE"));
 			dataMap.put("branchcity", map.get("BRANCHCITY"));
 			dataMap.put("fincollateralreq", map.get("FINCOLLATERALREQ"));

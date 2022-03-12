@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -2978,32 +2979,51 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 	}
 
-	@Override
-	public Map<String, Object> getGLSubHeadCodes(long finID) {
-		final Map<String, Object> map = new HashMap<>();
-
+	private Map<String, Object> getGLSubHeadCodes(long finID, TableType tableType) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FinrefeRence, EntityCode, AlwFlexi, FinBranch, BTLoan, BusinessVertical");
-		sql.append(", EmpType, BranchCity, FinCollateralReq, FinDivision");
-		sql.append(" From GL_SubHeadCodes_View Where FinID = ?");
+		sql.append(" fm.FinReference, fm.FinBranch, bv.Code, dd.EntityCode");
+		sql.append(", c.SubCategory, pc.PCCityName, ft.FinCollateralReq, ft.FinDivision");
+		sql.append(" From FinanceMain");
+		sql.append(tableType.getSuffix());
+		sql.append(" fm");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Inner Join Customers c on c.CustID = fm.CustID");
+		sql.append(" Inner Join RMTBranches br on br.BranchCode = fm.FinBranch");
+		sql.append(" Inner Join RMTProvincevsCity pc on pc.PcCity = br.BranchCity");
+		sql.append(" Left Join Business_Vertical bv on bv.ID = fm.BusinessVertical");
+		sql.append(" Inner Join SMTDivisionDetail dd on dd.DivisionCode = ft.FinDivision");
+		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
+
+		final Map<String, Object> map = new HashMap<>();
 
 		return this.jdbcOperations.query(sql.toString(), (ResultSet rs) -> {
 			while (rs.next()) {
-				map.put("FINREFERENCE", rs.getString("FinrefeRence"));
-				map.put("ENTITYCODE", rs.getString("EntityCode"));
-				map.put("ALWFLEXI", rs.getBoolean("AlwFlexi"));
+				map.put("FINREFERENCE", rs.getString("FinReference"));
 				map.put("FINBRANCH", rs.getString("FinBranch"));
-				map.put("BTLOAN", rs.getString("BTLoan"));
-				map.put("BUSINESSVERTICAL", rs.getString("BusinessVertical"));
-				map.put("EMPTYPE", rs.getString("EmpType"));
-				map.put("BRANCHCITY", rs.getString("BranchCity"));
+				map.put("ENTITYCODE", rs.getString("EntityCode"));
+				map.put("BUSINESSVERTICAL", rs.getString("Code"));
+				map.put("EMPTYPE", rs.getString("SubCategory"));
+				map.put("BRANCHCITY", rs.getString("PCCityName"));
 				map.put("FINCOLLATERALREQ", rs.getBoolean("FinCollateralReq"));
 				map.put("FINDIVISION", rs.getString("FinDivision"));
+				map.put("ALWFLEXI", false);
+				map.put("BTLOAN", null);
 			}
 			return map;
 		}, finID);
+	}
+
+	@Override
+	public Map<String, Object> getGLSubHeadCodes(long finID) {
+		Map<String, Object> glSubHeadCodes = getGLSubHeadCodes(finID, TableType.MAIN_TAB);
+
+		if (MapUtils.isEmpty(glSubHeadCodes)) {
+			glSubHeadCodes = getGLSubHeadCodes(finID, TableType.TEMP_TAB);
+		}
+
+		return glSubHeadCodes;
 	}
 
 	@Override
@@ -3082,6 +3102,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		}
 
 		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
 
 		int recordCount = jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;

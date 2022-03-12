@@ -694,24 +694,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public List<FinReceiptHeader> getInProcessReceipts(String reference) {
-		String sql = "Select ReceiptID, AllocationType, ReceiptAmount From FinReceiptHeader_Temp Where Reference = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		return this.jdbcOperations.query(sql, (rs, rowNum) -> {
-			FinReceiptHeader rch = new FinReceiptHeader();
-
-			rch.setReceiptID(rs.getLong("ReceiptID"));
-			rch.setAllocationType(rs.getString("AllocationType"));
-			rch.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-
-			return rch;
-
-		}, reference);
-	}
-
-	@Override
 	public String getReceiptModeStatus(long receiptID) {
 		String sql = "Select ReceiptModeStatus From FinReceiptHeader Where ReceiptID = ?";
 
@@ -1429,7 +1411,7 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	@Override
 	public List<FinReceiptHeader> getInprocessReceipts(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" ReceiptID, ValueDate, ReceiptPurpose, ReceiptModeStatus");
+		sql.append(" ReceiptID, ValueDate, ReceiptPurpose, ReceiptModeStatus, AllocationType, ReceiptAmount");
 		sql.append(" From FinReceiptHeader_Temp");
 		sql.append(" Where FinID = ?");
 
@@ -1442,6 +1424,29 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 			rh.setValueDate(rs.getDate("ValueDate"));
 			rh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
 			rh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+			rh.setAllocationType(rs.getString("AllocationType"));
+			rh.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+
+			return rh;
+		});
+	}
+
+	@Override
+	public List<FinReceiptHeader> getLastMntOn(long receiptID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  LastMntOn, 1 WorkflowId From FinReceiptHeader_Temp Where ReceiptID = ?");
+		sql.append(" Union all");
+		sql.append(" Select LastMntOn, 0 WorkflowId From FinReceiptHeader Where ReceiptID = ?");
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, receiptID);
+			ps.setLong(2, receiptID);
+		}, (rs, rowNum) -> {
+			FinReceiptHeader rh = new FinReceiptHeader();
+
+			rh.setReceiptID(rs.getLong("ReceiptID"));
+			rh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			rh.setWorkflowId(rs.getLong("WorkflowId"));
 
 			return rh;
 		});

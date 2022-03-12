@@ -2052,28 +2052,12 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public Customer getCustomerStatus(long custId) {
+	public String getCustomerStatus(long custId) {
+		String sql = "Select CustSts From Customers where CustID = ?";
 
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setId(custId);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder("SELECT  CustSts");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(" Where CustID =:CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-
-		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			customer = null;
-		}
-		logger.debug("Leaving");
-		return customer;
-
+		return jdbcOperations.queryForObject(sql, String.class, custId);
 	}
 
 	public Customer getCustomerEOD(final long id) {

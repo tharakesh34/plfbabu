@@ -144,7 +144,7 @@ public interface CustomerDAO {
 
 	void updateCustStatus(String custStatus, Date statusChgdate, long custId);
 
-	Customer getCustomerStatus(long custId);
+	String getCustomerStatus(long custId);
 
 	Customer getCustomerEOD(long id);
 

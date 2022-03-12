@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -395,10 +396,14 @@ public class RepaymentProcessUtil {
 		FinReceiptDetail rcd = rcdList.get(rcdList.size() - 1);
 		FinRepayHeader rph = rcd.getRepayHeader();
 
-		fm.setGlSubHeadCodes(financeMainDAO.getGLSubHeadCodes(finID));
+		Map<String, Object> map = fm.getGlSubHeadCodes();
 
-		// GST Mapping details
-		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finID);
+		if (MapUtils.isEmpty(map)) {
+			map.putAll(financeMainDAO.getGLSubHeadCodes(finID));
+		}
+
+		Map<String, Object> gstExecutionMap = GSTCalculator.getGSTDataMap(finID, financeDetail.getFinanceTaxDetail());
+		fm.setGstExecutionMap(gstExecutionMap);
 
 		/**
 		 * Defaulting with ZERO
