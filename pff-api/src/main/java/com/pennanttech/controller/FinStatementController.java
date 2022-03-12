@@ -570,7 +570,7 @@ public class FinStatementController extends SummaryDetailService {
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		TaxAmountSplit taxSplit = null;
 		BigDecimal bounceGst = BigDecimal.ZERO;
 		BigDecimal receivableGst = BigDecimal.ZERO;

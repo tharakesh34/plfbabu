@@ -2077,7 +2077,6 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	public Customer getCustomerEOD(final long id) {
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, CustPOB");
 		sql.append(", CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector");
@@ -2087,10 +2086,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" From Customers");
 		sql.append(" Where CustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Customer c = new Customer();
 
 				c.setCustID(rs.getLong("CustID"));
@@ -2126,9 +2125,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setCustShrtName(rs.getString("CustShrtName"));
 
 				return c;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records not exists in Customers table for the specified CustID >> {}", id);
+			//
 		}
 
 		return null;

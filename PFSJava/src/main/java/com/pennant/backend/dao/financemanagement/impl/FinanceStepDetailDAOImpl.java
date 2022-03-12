@@ -165,4 +165,32 @@ public class FinanceStepDetailDAOImpl extends BasicDao<StepPolicyDetail> impleme
 			ps.setLong(index++, finID);
 		});
 	}
+
+	@Override
+	public List<FinanceStepPolicyDetail> getStepDetailsForLMSEvent(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, StepNo, TenorSplitPerc, Installments, RateMargin, EmiSplitPerc");
+		sql.append(", SteppedEMI, StepSpecifier, StepStart, StepEnd, AutoCal");
+		sql.append(" From FinStepPolicyDetail");
+		sql.append(" Where FinID = ?");
+
+		return jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			FinanceStepPolicyDetail spd = new FinanceStepPolicyDetail();
+
+			spd.setFinID(rs.getLong("FinID"));
+			spd.setFinReference(rs.getString("FinReference"));
+			spd.setStepNo(rs.getInt("StepNo"));
+			spd.setTenorSplitPerc(rs.getBigDecimal("TenorSplitPerc"));
+			spd.setInstallments(rs.getInt("Installments"));
+			spd.setRateMargin(rs.getBigDecimal("RateMargin"));
+			spd.setEmiSplitPerc(rs.getBigDecimal("EmiSplitPerc"));
+			spd.setSteppedEMI(rs.getBigDecimal("SteppedEMI"));
+			spd.setStepSpecifier(rs.getString("StepSpecifier"));
+			spd.setStepStart(rs.getDate("StepStart"));
+			spd.setStepEnd(rs.getDate("StepEnd"));
+			spd.setAutoCal(rs.getBoolean("AutoCal"));
+
+			return spd;
+		});
+	}
 }

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  ErrorUtil.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : ErrorUtil.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.util;
@@ -50,6 +41,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.service.errordetail.ErrorDetailService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
@@ -102,7 +94,7 @@ public class ErrorUtil implements Serializable {
 		Map<String, ErrorDetail> hashMap = new HashMap<String, ErrorDetail>();
 
 		for (ErrorDetail errorDetail : errorDetails) {
-			//errorDetail = getError(errorDetail.getErrorCode());
+			// errorDetail = getError(errorDetail.getErrorCode());
 			ErrorDetail errDetail = getErrorDetail(errorDetail.getCode());
 			hashMap.put(StringUtils.trimToEmpty(errorDetail.getCode()), errDetail);
 		}
@@ -124,8 +116,30 @@ public class ErrorUtil implements Serializable {
 		return oldDetail;
 	}
 
-	public void setErrorDetailService(ErrorDetailService errorDetailService) {
+	public static void setErrorDetailService(ErrorDetailService errorDetailService) {
 		ErrorUtil.errorDetailService = errorDetailService;
+	}
+
+	public static void setError(FinScheduleData schdData, String errorCode, String... parms) {
+		String[] valueParm = new String[parms.length];
+
+		int index = 0;
+		for (String parm : parms) {
+			valueParm[index++] = parm;
+		}
+
+		schdData.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm)));
+	}
+
+	public static ErrorDetail getError(String errorCode, String... parms) {
+		String[] valueParm = new String[parms.length];
+
+		int index = 0;
+		for (String parm : parms) {
+			valueParm[index++] = parm;
+		}
+
+		return ErrorUtil.getErrorDetail(new ErrorDetail(errorCode, "", valueParm));
 	}
 
 }

@@ -1,7 +1,6 @@
 package com.pennanttech.controller;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,13 +24,10 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.zkoss.util.resource.Labels;
 
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.HolidayHandlerTypes;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.APIHeader;
-import com.pennant.app.util.CalculationUtil;
-import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeScheduleCalculator;
@@ -44,7 +40,6 @@ import com.pennant.app.util.ScheduleCalculator;
 import com.pennant.app.util.ScheduleGenerator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
-import com.pennant.app.util.TDSCalculator;
 import com.pennant.backend.dao.applicationmaster.BankDetailDAO;
 import com.pennant.backend.dao.documentdetails.DocumentDetailsDAO;
 import com.pennant.backend.dao.finance.FinAdvancePaymentsDAO;
@@ -76,7 +71,6 @@ import com.pennant.backend.financeservice.RecalculateService;
 import com.pennant.backend.financeservice.RemoveTermsService;
 import com.pennant.backend.financeservice.RestructureService;
 import com.pennant.backend.model.WSReturnStatus;
-import com.pennant.backend.model.WorkFlowDetails;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.LoanPendingData;
 import com.pennant.backend.model.audit.AuditDetail;
@@ -95,7 +89,6 @@ import com.pennant.backend.model.finance.FinAssetTypes;
 import com.pennant.backend.model.finance.FinCollaterals;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinFeeReceipt;
-import com.pennant.backend.model.finance.FinODDetails;
 import com.pennant.backend.model.finance.FinODPenaltyRate;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -113,8 +106,6 @@ import com.pennant.backend.model.finance.FinanceStepPolicyDetail;
 import com.pennant.backend.model.finance.FinanceSummary;
 import com.pennant.backend.model.finance.GuarantorDetail;
 import com.pennant.backend.model.finance.JointAccountDetail;
-import com.pennant.backend.model.finance.ManualAdvise;
-import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.finance.RepayInstruction;
 import com.pennant.backend.model.finance.RestructureCharge;
 import com.pennant.backend.model.finance.RestructureDetail;
@@ -125,7 +116,6 @@ import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.lmtmasters.FinanceCheckListReference;
 import com.pennant.backend.model.lmtmasters.FinanceReferenceDetail;
-import com.pennant.backend.model.lmtmasters.FinanceWorkFlow;
 import com.pennant.backend.model.partnerbank.PartnerBank;
 import com.pennant.backend.model.payorderissue.PayOrderIssueHeader;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
@@ -151,13 +141,11 @@ import com.pennant.backend.service.pdc.ChequeHeaderService;
 import com.pennant.backend.service.rmtmasters.FinTypePartnerBankService;
 import com.pennant.backend.util.DisbursementConstants;
 import com.pennant.backend.util.FinanceConstants;
-import com.pennant.backend.util.PennantApplicationUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.RuleConstants;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.pff.core.engine.accounting.AccountingEngine;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.DocType;
@@ -170,10 +158,10 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.util.APIConstants;
 import com.pennanttech.ws.model.finance.DisbRequest;
 import com.pennanttech.ws.service.APIErrorHandlerService;
-import com.rits.cloning.Cloner;
 
 public class FinServiceInstController extends SummaryDetailService {
 	private static final Logger logger = LogManager.getLogger(FinServiceInstController.class);
@@ -1279,870 +1267,6 @@ public class FinServiceInstController extends SummaryDetailService {
 		return fd;
 	}
 
-	public FinanceDetail doReceiptTransaction(FinReceiptData receiptData, String eventCode) {
-		logger.debug(Literal.ENTERING);
-
-		BigDecimal bounce = BigDecimal.ZERO;
-		FinanceDetail fd = receiptData.getFinanceDetail();
-		FinScheduleData schdData = fd.getFinScheduleData();
-		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
-			logger.debug("Leaving - doReceiptTransaction");
-			return fd;
-		}
-		FinServiceInstruction finServiceInstruction = schdData.getFinServiceInstruction();
-		if (StringUtils.equals(schdData.getFinServiceInstruction().getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
-			receiptData.getReceiptHeader().setReasonCode(finServiceInstruction.getEarlySettlementReason());
-		}
-		if (StringUtils.equals(finServiceInstruction.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			if (finServiceInstruction.getToDate() == null) {
-				finServiceInstruction.setToDate(schdData.getFinanceMain().getMaturityDate());
-			}
-
-		}
-
-		String receiptPurpose = schdData.getFinServiceInstruction().getModuleDefiner();
-
-		if (!RepayConstants.ALLOCATIONTYPE_MANUAL.equals(finServiceInstruction.getAllocationType())) {
-			fd = validateFees(fd, receiptData);
-		}
-
-		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
-			logger.debug(Literal.LEAVING);
-			return fd;
-		}
-
-		try {
-			fd = doProcessReceipt(receiptData, receiptPurpose);
-
-			if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
-				if (schdData.getErrorDetails() == null || !schdData.getErrorDetails().isEmpty()) {
-					FinanceSummary summary = schdData.getFinanceSummary();
-					// summary.setFinStatus("M");
-				}
-			}
-
-			if (APIConstants.REQTYPE_INQUIRY.equals(finServiceInstruction.getReqType())) {
-				List<ReceiptAllocationDetail> receiptAllocationDetails = schdData.getReceiptAllocationList();
-				List<ReceiptAllocationDetail> newreceiptAllocationDetails = new ArrayList<ReceiptAllocationDetail>();
-				ReceiptAllocationDetail bounceAllocation = new ReceiptAllocationDetail();
-				for (ReceiptAllocationDetail receiptallocation : receiptAllocationDetails) {
-					if (RepayConstants.ALLOCATION_BOUNCE.equals(receiptallocation.getAllocationType())) {
-						bounce = bounce.add(receiptallocation.getTotalDue());
-					} else {
-						newreceiptAllocationDetails.add(receiptallocation);
-					}
-				}
-				if (bounce != BigDecimal.ZERO) {
-					bounceAllocation.setAllocationType(RepayConstants.ALLOCATION_BOUNCE);
-					bounceAllocation.setDueAmount(bounce);
-					newreceiptAllocationDetails.add(bounceAllocation);
-				}
-				schdData.setReceiptAllocationList(newreceiptAllocationDetails);
-
-				List<FinReceiptHeader> receiptAmt = new ArrayList<>();
-				BigDecimal receiptProcessedAmt = BigDecimal.ZERO;
-				receiptAmt = finReceiptHeaderDAO.getInProcessReceipts(fd.getFinReference());
-				if (CollectionUtils.isNotEmpty(receiptAmt)) {
-					for (FinReceiptHeader finReceiptHeader : receiptAmt) {
-						receiptProcessedAmt = receiptProcessedAmt.add(finReceiptHeader.getReceiptAmount());
-					}
-					fd.setReceiptProcessingAmt(receiptProcessedAmt);
-				}
-
-			}
-		} catch (InterfaceException ex) {
-			logger.error("InterfaceException", ex);
-			schdData = receiptService.setErrorToFSD(schdData, "9998", ex.getMessage());
-			return fd;
-		} catch (AppException appEx) {
-			logger.error("AppException", appEx);
-			schdData = receiptService.setErrorToFSD(schdData, "9999", appEx.getMessage());
-			return fd;
-		} catch (Exception e) {
-			logger.error("Exception", e);
-			WSReturnStatus returnStatus = APIErrorHandlerService.getFailedStatus();
-			schdData = receiptService.setErrorToFSD(schdData, returnStatus.getReturnCode(),
-					returnStatus.getReturnText());
-			return fd;
-		}
-
-		logger.debug(Literal.LEAVING);
-		return fd;
-	}
-
-	public FinanceDetail validateFees(FinanceDetail fd, FinReceiptData receiptData) {
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
-		FinanceMain fm = schdData.getFinanceMain();
-		String roundingMode = schdData.getFinanceMain().getCalRoundingMode();
-		int roundingTarget = schdData.getFinanceMain().getRoundingTarget();
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		List<ReceiptAllocationDetail> allocationList = rch.getAllocations();
-
-		// FIXME: PV AS OF NOW, PNLY ONE FEE IS HANDLED. AFTER FIRST RELEASE
-		// MULTI FEES TO BE DEVELOPED.
-		// GST to be tested
-		boolean isAPIFeeRequested = false;
-		boolean isEventFeeRequired = false;
-		boolean isFee = false;
-		String apiFeeCode = null;
-		BigDecimal apiActualFee = BigDecimal.ZERO;
-		BigDecimal apiPaidFee = BigDecimal.ZERO;
-		BigDecimal apiWaived = BigDecimal.ZERO;
-		String eventFeeCode = null;
-		BigDecimal eventActualFee = BigDecimal.ZERO;
-		BigDecimal maxWaiver = BigDecimal.ZERO;
-		BigDecimal maxWaiverAllowed = BigDecimal.ZERO;
-
-		// Validate Fees
-		if (schdData.getFinFeeDetailList() != null && !schdData.getFinFeeDetailList().isEmpty()) {
-			isEventFeeRequired = true;
-			eventFeeCode = schdData.getFinFeeDetailList().get(0).getFeeTypeCode();
-			eventActualFee = schdData.getFinFeeDetailList().get(0).getActualAmount();
-			maxWaiver = schdData.getFinFeeDetailList().get(0).getMaxWaiverPerc();
-
-			if (maxWaiver.compareTo(BigDecimal.valueOf(100)) == 0) {
-				maxWaiverAllowed = eventActualFee;
-			} else if (maxWaiver.compareTo(BigDecimal.ZERO) > 0) {
-				maxWaiverAllowed = eventActualFee.multiply(maxWaiver).divide(BigDecimal.valueOf(100), 0,
-						RoundingMode.HALF_DOWN);
-				maxWaiverAllowed = CalculationUtil.roundAmount(maxWaiverAllowed, roundingMode, roundingTarget);
-			}
-		}
-
-		if (StringUtils.equals(fsi.getReqType(), APIConstants.REQTYPE_INQUIRY)) {
-			return fd;
-		}
-
-		if (fsi.getFinFeeDetails() != null && !fsi.getFinFeeDetails().isEmpty()) {
-			isAPIFeeRequested = true;
-			apiFeeCode = fsi.getFinFeeDetails().get(0).getFeeTypeCode().toUpperCase();
-			apiActualFee = fsi.getFinFeeDetails().get(0).getActualAmount();
-			apiPaidFee = fsi.getFinFeeDetails().get(0).getPaidAmount();
-			apiWaived = fsi.getFinFeeDetails().get(0).getWaivedAmount();
-		}
-
-		// Event fees not applicable and API not requested.
-		if (!isAPIFeeRequested && !isEventFeeRequired) {
-			return fd;
-		}
-
-		// Fee is Mandatory but API does not requested
-		if (!isAPIFeeRequested && isEventFeeRequired) {
-			schdData = receiptService.setErrorToFSD(schdData, "65019", eventFeeCode);
-			return fd;
-		}
-
-		// Mismatch in the Fees requirement.
-		if (isAPIFeeRequested && !isEventFeeRequired) {
-			schdData = receiptService.setErrorToFSD(schdData, "90245", null);
-			return fd;
-		}
-
-		// Mismatch in the Fees requirement.
-		if (!StringUtils.equalsIgnoreCase(apiFeeCode, eventFeeCode)) {
-			schdData = receiptService.setErrorToFSD(schdData, "90247", null);
-			return fd;
-		}
-
-		// Negative Amounts
-		if (apiActualFee.compareTo(BigDecimal.ZERO) < 0 || apiPaidFee.compareTo(BigDecimal.ZERO) < 0
-				|| apiWaived.compareTo(BigDecimal.ZERO) < 0) {
-			schdData = receiptService.setErrorToFSD(schdData, "90259", apiFeeCode);
-			return fd;
-		}
-
-		String parm0 = null;
-		String parm1 = null;
-		int formatter = CurrencyUtil.getFormat(schdData.getFinanceMain().getFinCcy());
-
-		// Waiver Exceeds the limit
-		if (apiWaived.compareTo(maxWaiverAllowed) > 0) {
-			parm0 = "Fee Waiver";
-			parm1 = PennantApplicationUtil.amountFormate(maxWaiverAllowed, formatter);
-			schdData = receiptService.setErrorToFSD(schdData, "90257", parm0, parm1, apiFeeCode);
-			return fd;
-		}
-
-		FinODPenaltyRate finODPenaltyRate = schdData.getFinODPenaltyRate();
-		if (finODPenaltyRate == null) {
-			finODPenaltyRate = finODPenaltyRateDAO.getFinODPenaltyRateByRef(fm.getFinID(), "_AView");
-		}
-
-		if (CollectionUtils.isNotEmpty(allocationList)) {
-
-			for (ReceiptAllocationDetail allocate : allocationList) {
-				if (allocate.getAllocationType() == RepayConstants.ALLOCATION_ODC) {
-					if (fm.istDSApplicable() && finODPenaltyRate.isoDTDSReq()
-							&& schdData.getFinFeeDetailList().get(0).getFeeTypeCode() == allocate.getFeeTypeCode()) {
-						eventActualFee = allocate.getPaidAmount();
-						isFee = true;
-						break;
-					}
-				}
-
-				if (allocate.getAllocationType() == RepayConstants.ALLOCATION_FEE) {
-					if (fm.istDSApplicable()
-							&& schdData.getFinFeeDetailList().get(0).getFeeTypeCode() == allocate.getFeeTypeCode()) {
-						eventActualFee = allocate.getPaidAmount();
-						isFee = true;
-						break;
-					}
-
-				}
-			}
-		}
-
-		apiActualFee = fsi.getFinFeeDetails().get(0).getActualAmount();
-		if (isFee) {
-			if ((apiActualFee.compareTo(eventActualFee) != 0)) {
-				parm0 = "Fee Amount";
-				parm1 = PennantApplicationUtil.amountFormate(eventActualFee, formatter);
-				schdData = receiptService.setErrorToFSD(schdData, "90258", parm0, parm1, apiFeeCode);
-				return fd;
-			}
-			if ((apiActualFee.subtract(apiPaidFee).subtract(apiWaived)).compareTo(BigDecimal.ZERO) != 0) {
-				parm0 = "Fee Amount - Fee Waived";
-				parm1 = "Fee Paid";
-				schdData = receiptService.setErrorToFSD(schdData, "90258", parm0, parm1, apiFeeCode);
-				return fd;
-			}
-		} else {
-			// API Actual Amount <> EVENT Actual Amount
-			if ((apiActualFee.compareTo(eventActualFee) != 0)) {
-				parm0 = "Fee Amount";
-				parm1 = PennantApplicationUtil.amountFormate(eventActualFee, formatter);
-				schdData = receiptService.setErrorToFSD(schdData, "90258", parm0, parm1, apiFeeCode);
-				return fd;
-			}
-
-			// Actual Amount - Paid - Waived <> 0
-			if ((apiActualFee.subtract(apiPaidFee).subtract(apiWaived)).compareTo(BigDecimal.ZERO) != 0) {
-				parm0 = "Fee Amount - Fee Waived";
-				parm1 = "Fee Paid";
-				schdData = receiptService.setErrorToFSD(schdData, "90258", parm0, parm1, apiFeeCode);
-				return fd;
-			}
-		}
-
-		return fd;
-	}
-
-	private FinanceDetail doProcessReceipt(FinReceiptData receiptData, String receiptPurpose) throws Exception {
-		logger.debug(Literal.ENTERING);
-		try {
-
-			FinanceDetail fd = receiptData.getFinanceDetail();
-			FinReceiptHeader rch = receiptData.getReceiptHeader();
-			FinReceiptDetail rcd = rch.getReceiptDetails().get(0);
-			FinScheduleData schdData = fd.getFinScheduleData();
-			FinServiceInstruction fsi = schdData.getFinServiceInstruction();
-			FinanceMain fm = schdData.getFinanceMain();
-
-			Date appDate = SysParamUtil.getAppDate();
-			Date sysDate = DateUtility.getSysDate();
-
-			int receiptPurposeCtg = receiptCalculator.setReceiptCategory(receiptPurpose);
-			receiptData.setTotalPastDues(receiptCalculator.getTotalNetPastDue(receiptData));
-
-			if (receiptPurposeCtg == 2) {
-				rch.getReceiptDetails().clear();
-				receiptService.createXcessRCD(receiptData);
-			}
-
-			BigDecimal amount = rch.getReceiptAmount().subtract(receiptData.getExcessAvailable());
-
-			if (receiptData.getTotalPastDues().compareTo(amount) >= 0) {
-				rcd.setDueAmount(amount);
-				receiptData.setTotalPastDues(receiptData.getTotalPastDues().subtract(amount));
-			} else {
-				rcd.setDueAmount(receiptData.getTotalPastDues());
-				receiptData.setTotalPastDues(BigDecimal.ZERO);
-			}
-
-			if (receiptPurposeCtg == 2) {
-				rch.getReceiptDetails().add(rcd);
-			}
-
-			if (fsi.isReceiptUpload() && APIConstants.REQTYPE_POST.equals(fsi.getReqType())
-					&& receiptService.dedupCheckRequest(rch, receiptPurpose)) {
-				long rchID = receiptService.CheckDedupSP(rch, receiptPurpose);
-
-				if (rchID != 0) {
-					finReceiptHeaderDAO.updateReceiptStatusAndRealizationDate(rchID, RepayConstants.PAYSTATUS_REALIZED,
-							rch.getRealizationDate());
-					finReceiptDetailDAO.updateReceiptStatusByReceiptId(rchID, RepayConstants.PAYSTATUS_REALIZED);
-					WSReturnStatus returnStatus = APIErrorHandlerService.getSuccessStatus();
-					receiptService.setErrorToFSD(schdData, returnStatus.getReturnCode(), returnStatus.getReturnText());
-					return fd;
-				}
-			}
-
-			if (APIConstants.FINSOURCE_ID_API.equalsIgnoreCase(receiptData.getSourceId())) {
-				if (CollectionUtils.isNotEmpty(rch.getAllocations())) {
-					fd.getFinScheduleData().setReceiptAllocationList(rch.getAllocations());
-				}
-			}
-
-			if (APIConstants.REQTYPE_POST.equals(fsi.getReqType())) {
-				// FIXME: PV. IS IT REQUIRED HERE? VALIDATION AL;READY DONE IN
-				// RECEIPT SERVICE.
-				String receiptMode = fsi.getPaymentMode();
-
-				if (RepayConstants.RECEIPTMODE_ONLINE.equals(receiptMode)) {
-					receiptMode = fsi.getSubReceiptMode();
-				}
-
-				if (!RepayConstants.RECEIPTMODE_CASH.equals(receiptMode)
-						&& !RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)) {
-					long fundingAccount = fsi.getReceiptDetail().getFundingAc();
-					fsi.setFundingAc(fundingAccount);
-					int count = finTypePartnerBankService.getPartnerBankCount(fm.getFinType(), receiptMode,
-							AccountConstants.PARTNERSBANK_RECEIPTS, fundingAccount);
-					if (count <= 0) {
-						schdData = receiptService.setErrorToFSD(schdData, "90263", null);
-						return fd;
-					}
-
-					// fetch partner bank details
-					PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc(), "");
-					if (partnerBank != null) {
-						rcd.setPartnerBankAc(partnerBank.getAccountNo());
-						rcd.setPartnerBankAcType(partnerBank.getAcType());
-					}
-				}
-
-				int version = 0;
-				// Receipt upload process
-				if (fsi.isReceiptdetailExits()) {
-					FinReceiptData oldReceiptData = this.receiptService.getFinReceiptDataById(fsi.getFinReference(),
-							AccountingEvent.REPAY, FinServiceEvent.RECEIPT, FinanceConstants.REALIZATION_MAKER);
-					receiptData = oldReceiptData;
-
-					version = fd.getFinScheduleData().getFinanceMain().getVersion();
-					fm.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
-					fm.setRecordType("");
-					schdData.setSchduleGenerated(true);
-					receiptData.getReceiptHeader().setRealizationDate(fsi.getRealizationDate());
-				} else {
-					// Set Version value
-					version = fm.getVersion();
-					fm.setVersion(version + 1);
-					fm.setRecordType("");
-					schdData.setSchduleGenerated(true);
-				}
-
-				// Save the Schedule details
-				AuditHeader auditHeader = getAuditHeader(receiptData, PennantConstants.TRAN_WF);
-
-				// ### ticket id:124998,
-				// setting to temp table
-				if (fsi.isReceiptUpload() && receiptPurposeCtg != 0 && StringUtils.equals(fsi.getStatus(), "A")
-						&& (StringUtils.equals(fsi.getPaymentMode(), "CHEQUE")
-								|| StringUtils.equals(fsi.getPaymentMode(), "DD"))) {
-
-					WorkFlowDetails workFlowDetails = null;
-					String roleCode = FinanceConstants.DEPOSIT_APPROVER;
-					String nextRolecode = FinanceConstants.REALIZATION_MAKER;
-					String taskid = null;
-					String nextTaskId = null;
-					long workFlowId = 0;
-
-					String finEvent = FinServiceEvent.RECEIPT;
-					FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
-							fm.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
-
-					if (financeWorkFlow != null) {
-						workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
-						if (workFlowDetails != null) {
-							workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-							taskid = workFlow.getUserTaskId(roleCode);
-							workFlowId = workFlowDetails.getWorkFlowId();
-							nextTaskId = workFlow.getUserTaskId(nextRolecode);
-						}
-
-						fm.setWorkflowId(workFlowId);
-						fm.setTaskId(taskid);
-						fm.setRoleCode(roleCode);
-						fm.setNextRoleCode(nextRolecode);
-						fm.setRecordType(PennantConstants.RECORD_TYPE_UPD);
-						fm.setNextTaskId(nextTaskId + ";");
-						fm.setNewRecord(true);
-						fm.setVersion(version + 1);
-						fm.setRcdMaintainSts(FinServiceEvent.RECEIPT);
-						fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						fm.setRecordStatus(PennantConstants.RCD_STATUS_SUBMITTED);
-
-						String eventCode = null;
-						if (receiptPurposeCtg == 2) {
-							eventCode = AccountingEvent.EARLYSTL;
-						} else {
-							eventCode = AccountingEvent.EARLYPAY;
-						}
-					}
-
-					fd.getFinScheduleData().setFinanceMain(fm);
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-							.get(APIHeader.API_HEADER_KEY);
-					auditHeader.setApiHeader(reqHeaderDetails);
-
-					auditHeader = receiptService.saveOrUpdate(auditHeader);
-
-				} else {
-
-					APIHeader reqHeaderDetails = (APIHeader) PhaseInterceptorChain.getCurrentMessage().getExchange()
-							.get(APIHeader.API_HEADER_KEY);
-					auditHeader.setApiHeader(reqHeaderDetails);
-					BigDecimal earlyPayAmount = receiptData.getRemBal();
-					String recalType = rch.getEffectSchdMethod();
-					fm.setReceiptPurpose(receiptPurpose);
-					if (receiptPurposeCtg == 1) {
-						schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, rch.getValueDate(), null,
-								earlyPayAmount, recalType);
-						receiptData = receiptCalculator.addPartPaymentAlloc(receiptData);
-					}
-
-					Cloner cloner = new Cloner();
-					FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
-					fd.setFinScheduleData(schdData);
-					receiptData.getReceiptHeader().setValueDate(rch.getValueDate());
-
-					receiptData.setDueAdjusted(true);
-					if (receiptPurposeCtg == 2) {
-						boolean duesAdjusted = receiptService
-								.checkDueAdjusted(receiptData.getReceiptHeader().getAllocations(), receiptData);
-						if (!duesAdjusted) {
-							receiptData = receiptService.adjustToExcess(receiptData);
-							receiptData.setDueAdjusted(false);
-						}
-					}
-					if (receiptData.isDueAdjusted()) {
-						for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
-							allocate.setPaidAvailable(allocate.getPaidAmount());
-							allocate.setWaivedAvailable(allocate.getWaivedAmount());
-							allocate.setPaidAmount(BigDecimal.ZERO);
-							allocate.setPaidGST(BigDecimal.ZERO);
-							allocate.setTotalPaid(BigDecimal.ZERO);
-							allocate.setBalance(allocate.getTotalDue());
-							allocate.setWaivedAmount(BigDecimal.ZERO);
-							allocate.setWaivedGST(BigDecimal.ZERO);
-							allocate.setTdsPaid(BigDecimal.ZERO);
-							allocate.setTdsWaived(BigDecimal.ZERO);
-						}
-
-						receiptData.setBuildProcess("R");
-						receiptData = receiptCalculator.initiateReceipt(receiptData, false);
-
-					}
-					receiptData.getFinanceDetail().getFinScheduleData().setFinanceScheduleDetails(
-							tempReceiptData.getFinanceDetail().getFinScheduleData().getFinanceScheduleDetails());
-
-					if (fsi.isNonStp()) {
-						auditHeader = receiptService.doApprove(auditHeader);
-					} else {
-
-						WorkFlowDetails workFlowDetails = null;
-						String roleCode = fsi.getProcessStage();
-						String nextRolecode = fsi.getProcessStage();
-
-						String taskid = null;
-						String nextTaskId = null;
-						long workFlowId = 0;
-						String finEvent = FinServiceEvent.RECEIPT;
-
-						FinanceWorkFlow financeWorkFlow = financeWorkFlowService.getApprovedFinanceWorkFlowById(
-								fm.getFinType(), finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
-
-						if (financeWorkFlow == null) {
-							FinanceDetail response = new FinanceDetail();
-							doEmptyResponseObject(response);
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("90339"));
-							return response;
-						}
-
-						workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
-						String[] workFlowRoles = workFlowDetails.getWorkFlowRoles().split(";");
-
-						if (StringUtils.isBlank(fsi.getProcessStage())) {
-							roleCode = workFlowDetails.getFirstTaskOwner();
-							nextRolecode = roleCode;
-						}
-						boolean roleNotFound = false;
-						for (String workFlowRole : workFlowRoles) {
-							if (StringUtils.equals(workFlowRole, roleCode)) {
-								roleNotFound = true;
-								break;
-							}
-						}
-
-						if (!roleNotFound) {
-							FinanceDetail response = new FinanceDetail();
-							doEmptyResponseObject(response);
-							String[] valueParm = new String[1];
-							valueParm[0] = roleCode;
-							response.setReturnStatus(APIErrorHandlerService.getFailedStatus("API004", valueParm));
-							return response;
-						}
-
-						if (fsi.getPaymentMode().equals("CASH")) {
-							if (!roleCode.equals("RECEIPT_MAKER") && !roleCode.equals("REALIZATION_APPROVER")) {
-								FinanceDetail response = new FinanceDetail();
-								doEmptyResponseObject(response);
-								String[] valueParm = new String[1];
-								valueParm[0] = "CASH PAYMENT MODE";
-								response.setReturnStatus(APIErrorHandlerService.getFailedStatus("30556", valueParm));
-								return response;
-							}
-						}
-
-						if (workFlowDetails != null) {
-							workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
-							taskid = workFlow.getUserTaskId(roleCode);
-							workFlowId = workFlowDetails.getWorkFlowId();
-							nextTaskId = workFlow.getUserTaskId(nextRolecode);
-						}
-
-						fm.setWorkflowId(workFlowId);
-						fm.setTaskId(taskid);
-						fm.setRoleCode(roleCode);
-						fm.setNextRoleCode(nextRolecode);
-						fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
-						fm.setNextTaskId(nextTaskId + ";");
-						fm.setNewRecord(true);
-						fm.setVersion(1);
-						fm.setRcdMaintainSts(FinServiceEvent.RECEIPT);
-						fm.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-						fm.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-
-						receiptData.getReceiptHeader();
-						receiptData.getReceiptHeader().setTaskId(taskid);
-						receiptData.getReceiptHeader().setNextTaskId(nextTaskId + ";");
-						receiptData.getReceiptHeader().setRoleCode(roleCode);
-						receiptData.getReceiptHeader().setNextRoleCode(nextRolecode);
-						receiptData.getReceiptHeader().setWorkflowId(workFlowId);
-						receiptData.getReceiptHeader().setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
-						receiptData.getReceiptHeader().setFinType(fm.getFinType());
-
-						auditHeader = receiptService.saveOrUpdate(auditHeader);
-					}
-				}
-
-				if (auditHeader.getErrorMessage() != null) {
-					for (ErrorDetail auditErrorDetail : auditHeader.getErrorMessage()) {
-						receiptService.setErrorToFSD(schdData, auditErrorDetail.getCode(), auditErrorDetail.getError());
-						return fd;
-					}
-				}
-
-				receiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
-				// FIXME: PV re-look at it
-				fd = getServiceInstResponse(receiptData.getFinanceDetail().getFinScheduleData());
-				rch = receiptData.getReceiptHeader();
-				fd.getFinScheduleData().getFinServiceInstruction().setReceiptId(rch.getReceiptID());
-
-				List<FinServiceInstruction> finServInstList = new ArrayList<>();
-				for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
-					for (FinRepayHeader rpyHeader : recDtl.getRepayHeaders()) {
-						FinServiceInstruction finServInst = new FinServiceInstruction();
-						finServInst.setFinID(fm.getFinID());
-						finServInst.setFinReference(fm.getFinReference());
-						finServInst.setFinEvent(rpyHeader.getFinEvent());
-						finServInst.setAmount(rpyHeader.getRepayAmount());
-						finServInst.setAppDate(appDate);
-						finServInst.setSystemDate(sysDate);
-						finServInst.setMaker(auditHeader.getAuditUsrId());
-						finServInst.setMakerAppDate(appDate);
-						finServInst.setMakerSysDate(sysDate);
-						finServInst.setChecker(auditHeader.getAuditUsrId());
-						finServInst.setCheckerAppDate(appDate);
-						finServInst.setCheckerSysDate(sysDate);
-						finServInst.setReference(String.valueOf(rch.getReceiptID()));
-						finServInstList.add(finServInst);
-					}
-				}
-
-				// set receipt id in data
-				if (fsi.isReceiptUpload() && !fsi.isReceiptResponse()) {
-					this.receiptUploadDetailDAO.updateReceiptId(fsi.getUploadDetailId(), rcd.getReceiptID());
-				}
-
-				// set receipt id response job
-				if (fsi.isReceiptUpload() && fsi.isReceiptResponse()) {
-					this.receiptResponseDetailDAO.updateReceiptResponseId(fsi.getRootId(), rcd.getReceiptID());
-				}
-
-			} else {
-
-				BigDecimal earlyPayAmount = receiptData.getRemBal();
-				String recalType = rch.getEffectSchdMethod();
-				schdData.getFinanceMain().setReceiptPurpose(receiptPurpose);
-				if (receiptPurposeCtg == 1) {
-					schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, rch.getValueDate(), null,
-							earlyPayAmount, recalType);
-					receiptData = receiptCalculator.addPartPaymentAlloc(receiptData);
-				}
-				receiptData.getFinanceDetail().setFinScheduleData(schdData);
-
-				for (ReceiptAllocationDetail allocate : receiptData.getReceiptHeader().getAllocations()) {
-					allocate.setPaidAvailable(allocate.getPaidAmount());
-					allocate.setFeeTypeCode(allocate.getFeeTypeCode());
-					allocate.setWaivedAvailable(allocate.getWaivedAmount());
-					allocate.setPaidAmount(BigDecimal.ZERO);
-					allocate.setPaidGST(BigDecimal.ZERO);
-					allocate.setTotalPaid(BigDecimal.ZERO);
-					allocate.setBalance(allocate.getTotalDue());
-					allocate.setWaivedAmount(BigDecimal.ZERO);
-					allocate.setWaivedGST(BigDecimal.ZERO);
-				}
-				receiptData.setBuildProcess("R");
-				receiptData = receiptCalculator.initiateReceipt(receiptData, false);
-				fd = getServiceInstResponse(receiptData.getFinanceDetail().getFinScheduleData());
-				FinanceSummary summary = fd.getFinScheduleData().getFinanceSummary();
-				summary.setFinODDetail(rch.getFinODDetails());
-				fd.getFinScheduleData().setFinODDetails(rch.getFinODDetails());
-			}
-
-			logger.debug(Literal.LEAVING);
-			return fd;
-		} catch (AppException ex) {
-			logger.error("AppException", ex);
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
-			return response;
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			APIErrorHandlerService.logUnhandledException(e);
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(APIErrorHandlerService.getFailedStatus());
-			return response;
-		}
-	}
-
-	private Map<String, String> validateRepayAmount(FinScheduleData schdData, FinServiceInstruction fsi,
-			BigDecimal totReceiptAmt) {
-
-		Map<String, String> returnMap = new HashMap<String, String>();
-		returnMap.put("ReturnCode", "");
-		returnMap.put("ReturnText", "");
-		returnMap.put("partPaidAmt", "0");
-
-		// validate repayment amount
-		BigDecimal pftBalance = BigDecimal.ZERO;
-		BigDecimal priBalance = BigDecimal.ZERO;
-		BigDecimal schFeeBal = BigDecimal.ZERO;
-		BigDecimal tdsReturns = BigDecimal.ZERO;
-
-		Date curBussniessDate = fsi.getReceiptDetail().getReceivedDate();
-		boolean partAccrualReq = true;
-		FinanceScheduleDetail curSchd = null;
-		FinanceScheduleDetail prvSchd = null;
-
-		FinanceMain fm = schdData.getFinanceMain();
-
-		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
-
-		if (totReceiptAmt.compareTo(BigDecimal.ZERO) <= 0) {
-			if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
-					|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
-				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
-				returnMap.put("ReturnCode", status.getReturnCode());
-				returnMap.put("ReturnText", status.getReturnText());
-			} else if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYRPY)
-					|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
-				WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90331");
-				returnMap.put("ReturnCode", status.getReturnCode());
-				returnMap.put("ReturnText", status.getReturnText());
-			}
-			if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYRPY)) {
-				boolean isInSubvention = receiptService.isInSubVention(fm, curBussniessDate);
-				if (isInSubvention) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "Not allowed to do Partial Settlement in Subvention Period.";
-					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("30550", valueParm);
-					returnMap.put("ReturnCode", status.getReturnCode());
-					returnMap.put("ReturnText", status.getReturnText());
-				}
-			}
-		}
-
-		if (!StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.SCHDRPY)) {
-			FinanceMain financeMain = fm;
-			BigDecimal tdsMultiplier = BigDecimal.ONE;
-			if (TDSCalculator.isTDSApplicable(financeMain)) {
-				BigDecimal tdsPerc = new BigDecimal(
-						SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-				if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-					tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
-							RoundingMode.HALF_DOWN);
-				}
-			}
-
-			List<FinanceScheduleDetail> tempScheduleDetails = schdData.getFinanceScheduleDetails();
-			for (int i = 0; i < tempScheduleDetails.size(); i++) {
-				curSchd = tempScheduleDetails.get(i);
-				if (i != 0) {
-					prvSchd = tempScheduleDetails.get(i - 1);
-				}
-				Date schdDate = curSchd.getSchDate();
-
-				if (curSchd.isTDSApplicable()) {
-					BigDecimal tdsPerc = new BigDecimal(
-							SysParamUtil.getValue(CalculationConstants.TDS_PERCENTAGE).toString());
-					if (tdsPerc.compareTo(BigDecimal.ZERO) > 0) {
-						tdsMultiplier = (new BigDecimal(100)).divide(new BigDecimal(100).subtract(tdsPerc), 20,
-								RoundingMode.HALF_DOWN);
-					}
-				}
-
-				schFeeBal = schFeeBal.add(curSchd.getFeeSchd().subtract(curSchd.getSchdFeePaid()));
-
-				if (DateUtility.compare(schdDate, curBussniessDate) < 0) {
-					pftBalance = pftBalance.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
-					priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-					if (curSchd.isTDSApplicable()) {
-						BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-						BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-						tdsReturns = tdsReturns.add(pft.subtract(actualPft));
-						tdsReturns = CalculationUtil.roundAmount(tdsReturns, financeMain.getCalRoundingMode(),
-								financeMain.getRoundingTarget());
-					}
-				} else if (DateUtility.compare(curBussniessDate, schdDate) == 0) {
-
-					if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
-							|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)) {
-
-						BigDecimal remPft = curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid());
-						pftBalance = pftBalance.add(curSchd.getProfitCalc().subtract(curSchd.getSchdPftPaid()));
-						if (prvSchd != null) {
-							remPft = remPft.add(prvSchd.getProfitBalance());
-							pftBalance = pftBalance.add(prvSchd.getProfitBalance());
-						}
-
-						priBalance = priBalance.add(curSchd.getPrincipalSchd().add(curSchd.getClosingBalance()))
-								.subtract(curSchd.getCpzAmount()).subtract(curSchd.getSchdPriPaid());
-
-						if (curSchd.isTDSApplicable()) {
-							BigDecimal actualPft = remPft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-							tdsReturns = tdsReturns.add(remPft.subtract(actualPft));
-							tdsReturns = CalculationUtil.roundAmount(tdsReturns, financeMain.getCalRoundingMode(),
-									financeMain.getRoundingTarget());
-						}
-						partAccrualReq = false;
-					} else {
-						pftBalance = pftBalance.add(curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid()));
-						priBalance = priBalance.add(curSchd.getPrincipalSchd().subtract(curSchd.getSchdPriPaid()));
-						if (curSchd.isTDSApplicable()) {
-							BigDecimal pft = curSchd.getProfitSchd().subtract(curSchd.getSchdPftPaid());
-							BigDecimal actualPft = pft.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-							tdsReturns = tdsReturns.add(pft.subtract(actualPft));
-							tdsReturns = CalculationUtil.roundAmount(tdsReturns, financeMain.getCalRoundingMode(),
-									financeMain.getRoundingTarget());
-						}
-					}
-				} else {
-					if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)
-							|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)) {
-						if (partAccrualReq && prvSchd != null) {
-							partAccrualReq = false;
-							BigDecimal accruedPft = CalculationUtil.calInterest(prvSchd.getSchDate(), curBussniessDate,
-									curSchd.getBalanceForPftCal(), prvSchd.getPftDaysBasis(),
-									prvSchd.getCalculatedRate());
-							accruedPft = accruedPft.add(prvSchd.getProfitFraction());
-							accruedPft = CalculationUtil.roundAmount(accruedPft, financeMain.getCalRoundingMode(),
-									financeMain.getRoundingTarget());
-							pftBalance = pftBalance.add(accruedPft).add(prvSchd.getProfitBalance());
-
-							priBalance = priBalance.add(prvSchd.getClosingBalance());
-
-							if (curSchd.isTDSApplicable()) {
-								BigDecimal actualPft = (accruedPft.add(prvSchd.getProfitBalance()))
-										.divide(tdsMultiplier, 0, RoundingMode.HALF_DOWN);
-								tdsReturns = tdsReturns
-										.add(accruedPft.add(prvSchd.getProfitBalance()).subtract(actualPft));
-								tdsReturns = CalculationUtil.roundAmount(tdsReturns, financeMain.getCalRoundingMode(),
-										financeMain.getRoundingTarget());
-							}
-						} else {
-							priBalance = priBalance.add(curSchd.getDisbAmount());
-						}
-					} else {
-						break;
-					}
-				}
-			}
-
-			// Fetching Actual Late Payments based on Value date passing
-			BigDecimal latePayPftBal = BigDecimal.ZERO;
-			BigDecimal penaltyBal = BigDecimal.ZERO;
-			List<FinODDetails> overdueList = null;
-			if (DateUtility.compare(curBussniessDate, SysParamUtil.getAppDate()) == 0) {
-				overdueList = finODDetailsDAO.getFinODDByFinRef(finID, null);
-			} else {
-				// Calculate overdue Penalties
-				overdueList = receiptService.getValueDatePenalties(schdData, totReceiptAmt, curBussniessDate, null,
-						true);
-			}
-
-			// Calculating Actual Sum of Penalty Amount & Late Pay Interest
-			if (overdueList != null && !overdueList.isEmpty()) {
-				for (int i = 0; i < overdueList.size(); i++) {
-					FinODDetails finODDetail = overdueList.get(i);
-					if (finODDetail.getFinODSchdDate().compareTo(curBussniessDate) > 0) {
-						continue;
-					}
-					latePayPftBal = latePayPftBal.add(finODDetail.getLPIBal());
-					penaltyBal = penaltyBal.add(finODDetail.getTotPenaltyBal());
-				}
-			}
-
-			List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
-					FinanceConstants.MANUAL_ADVISE_RECEIVABLE, " ");
-			BigDecimal bounceCharge = BigDecimal.ZERO;
-			if (manualAdviseFees != null && !manualAdviseFees.isEmpty()) {
-				for (ManualAdvise advisedFees : manualAdviseFees) {
-					bounceCharge = bounceCharge
-							.add(advisedFees.getAdviseAmount().subtract(advisedFees.getPaidAmount()));
-				}
-			}
-			BigDecimal remBal = priBalance.add(pftBalance).add(schFeeBal).add(latePayPftBal).add(penaltyBal)
-					.add(bounceCharge).subtract(tdsReturns);
-			BigDecimal partialPaidAmt = totReceiptAmt.subtract(
-					priBalance.add(pftBalance).add(schFeeBal).add(latePayPftBal).add(penaltyBal).subtract(tdsReturns));
-			returnMap.put("partPaidAmt", String.valueOf(partialPaidAmt));
-
-			// calculate Remaining balance after
-			if (StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSTLENQ)
-					|| StringUtils.equals(fsi.getModuleDefiner(), FinServiceEvent.EARLYSETTLE)) {
-				if (totReceiptAmt.compareTo(remBal) < 0) {
-					WSReturnStatus status = APIErrorHandlerService.getFailedStatus("90330");
-					returnMap.put("ReturnCode", status.getReturnCode());
-					returnMap.put("ReturnText", status.getReturnText());
-				}
-			} /*
-				 * else if (StringUtils.equals(finServiceInst.getModuleDefiner(),
-				 * FinanceConstants.FINSER_EVENT_EARLYRPY)) { if (totReceiptAmt.compareTo(remBal) <= 0) { WSReturnStatus
-				 * status = APIErrorHandlerService.getFailedStatus("90332"); returnMap.put("ReturnCode",
-				 * status.getReturnCode()); returnMap.put("ReturnText", status.getReturnText()); } }
-				 */
-		}
-		return returnMap;
-	}
-
-	private BigDecimal getTotalFeePaid(List<FinFeeDetail> finFeeDetailList) {
-		BigDecimal totFeeAmount = BigDecimal.ZERO;
-		if (finFeeDetailList != null) {
-			for (FinFeeDetail feeDetail : finFeeDetailList) {
-				if (!feeDetail.isOriginationFee()) {
-					totFeeAmount = totFeeAmount.add(feeDetail.getPaidAmount());
-				}
-			}
-		}
-		return totFeeAmount;
-	}
-
 	/**
 	 * Method for updateLoanBasicDetails
 	 * 
@@ -3005,23 +2129,20 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		// Valid Receipt Mode
 		String receiptMode = fsi.getPaymentMode();
-		if (!StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CASH)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_CHEQUE)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DD)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ONLINE)
-				&& !StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
+		if (!StringUtils.equals(receiptMode, ReceiptMode.CASH) && !StringUtils.equals(receiptMode, ReceiptMode.CHEQUE)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.DD)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.NEFT)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.RTGS)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.IMPS)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.ESCROW)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.ONLINE)
+				&& !StringUtils.equals(receiptMode, ReceiptMode.DIGITAL)) {
 
 			valueParm = new String[2];
 			valueParm[0] = "Receipt mode";
-			valueParm[1] = RepayConstants.RECEIPTMODE_CASH + "," + RepayConstants.RECEIPTMODE_CHEQUE + ","
-					+ RepayConstants.RECEIPTMODE_DD + "," + RepayConstants.RECEIPTMODE_NEFT + ","
-					+ RepayConstants.RECEIPTMODE_RTGS + "," + RepayConstants.RECEIPTMODE_IMPS + ","
-					+ RepayConstants.RECEIPTMODE_ESCROW + RepayConstants.RECEIPTMODE_ONLINE + ","
-					+ RepayConstants.RECEIPTMODE_DIGITAL;
+			valueParm[1] = ReceiptMode.CASH + "," + ReceiptMode.CHEQUE + "," + ReceiptMode.DD + "," + ReceiptMode.NEFT
+					+ "," + ReceiptMode.RTGS + "," + ReceiptMode.IMPS + "," + ReceiptMode.ESCROW + ReceiptMode.ONLINE
+					+ "," + ReceiptMode.DIGITAL;
 			return APIErrorHandlerService.getFailedStatus("90281", valueParm);
 		}
 		FinReceiptDetail finReceiptDetail = fsi.getReceiptDetail();
@@ -3066,8 +2187,7 @@ public class FinServiceInstController extends SummaryDetailService {
 			}
 		}
 
-		if (RepayConstants.RECEIPTMODE_CHEQUE.equals(receiptMode)
-				|| RepayConstants.RECEIPTMODE_DD.equals(receiptMode)) {
+		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 
 			if (StringUtils.isBlank(finReceiptDetail.getFavourName())) {
 				valueParm = new String[1];
@@ -3171,11 +2291,10 @@ public class FinServiceInstController extends SummaryDetailService {
 			finReceiptDetail.setChequeAcNo("");
 		}
 		// In Case of online mode transactionRef is mandatory
-		if (StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_NEFT)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_RTGS)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_IMPS)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_ESCROW)
-				|| StringUtils.equals(receiptMode, RepayConstants.RECEIPTMODE_DIGITAL)) {
+		if (StringUtils.equals(receiptMode, ReceiptMode.NEFT) || StringUtils.equals(receiptMode, ReceiptMode.RTGS)
+				|| StringUtils.equals(receiptMode, ReceiptMode.IMPS)
+				|| StringUtils.equals(receiptMode, ReceiptMode.ESCROW)
+				|| StringUtils.equals(receiptMode, ReceiptMode.DIGITAL)) {
 			if (StringUtils.isBlank(finReceiptDetail.getTransactionRef())) {
 				valueParm = new String[1];
 				valueParm[0] = "transactionRef";
@@ -3439,7 +2558,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		String paymentMode = finServiceInst.getPaymentMode();
 		String receiptMode = paymentMode;
 
-		if (RepayConstants.RECEIPTMODE_ONLINE.equals(receiptMode)) {
+		if (ReceiptMode.ONLINE.equals(receiptMode)) {
 			receiptMode = finServiceInst.getSubReceiptMode();
 		}
 
@@ -3473,7 +2592,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		if (auditHeader.getErrorMessage() != null) {
 			for (ErrorDetail auditErrorDetail : auditHeader.getErrorMessage()) {
-				receiptService.setErrorToFSD(finScheduleData, auditErrorDetail.getCode(), auditErrorDetail.getError());
+				ErrorUtil.setError(finScheduleData, auditErrorDetail.getCode(), auditErrorDetail.getError());
 				return financeDetail;
 			}
 		}
@@ -3484,7 +2603,7 @@ public class FinServiceInstController extends SummaryDetailService {
 
 		List<FinServiceInstruction> finServInstList = new ArrayList<>();
 		Date appDate = SysParamUtil.getAppDate();
-		Date sysDate = DateUtility.getSysDate();
+		Date sysDate = DateUtil.getSysDate();
 
 		for (FinReceiptDetail recDtl : rch.getReceiptDetails()) {
 			for (FinRepayHeader rpyHeader : recDtl.getRepayHeaders()) {
@@ -3725,7 +2844,10 @@ public class FinServiceInstController extends SummaryDetailService {
 	}
 
 	private void prepareGST(FeeWaiverDetail actualWaiverDetail, BigDecimal waiverAmount) {
-		Map<String, BigDecimal> gstPercentages = getTaxPercentages(actualWaiverDetail.getFinID());
+		FinanceMain fm = new FinanceMain();
+		fm.setFinID(actualWaiverDetail.getFinID());
+
+		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		actualWaiverDetail.setWaivedAmount(waiverAmount);
 		actualWaiverDetail.setCurrWaiverAmount(waiverAmount);
@@ -3775,15 +2897,6 @@ public class FinServiceInstController extends SummaryDetailService {
 			tax.setNetTax(tax.getActualTax().subtract(tax.getWaivedTax()));
 			tax.setRemFeeTax(tax.getNetTax().subtract(tax.getPaidTax()));
 		}
-	}
-
-	private Map<String, BigDecimal> getTaxPercentages(long finID) {
-		Map<String, BigDecimal> taxPercentages = null;
-		if (taxPercentages == null) {
-			taxPercentages = GSTCalculator.getTaxPercentages(finID);
-		}
-
-		return taxPercentages;
 	}
 
 	protected AuditHeader getAuditHeader(FeeWaiverHeader feeWaiver, String tranType) {

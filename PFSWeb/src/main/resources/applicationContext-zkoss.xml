@@ -4762,11 +4762,6 @@
 		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
 	</bean>
 
-	<bean id="selectReceiptDialogCtrl" class="com.pennant.webui.financemanagement.receipts.SelectReceiptDialogCtrl"
-		parent="basisCtrl" scope="prototype">
-		<property name="financeWorkFlowService" ref="financeWorkFlowService" />
-	</bean>
-
 	<bean id="receiptsEnquiryDialogCtrl" class="com.pennant.webui.financemanagement.receipts.ReceiptsEnquiryDialogCtrl"
 		parent="basisCtrl" scope="prototype">
 		<property name="ruleService" ref="ruleService" />

@@ -14,6 +14,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.eventproperties.EventProperties;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -22,7 +23,7 @@ import com.pennanttech.pennapps.core.resource.Literal;
 public class GenerateCopyEntity {
 	private static final Logger logger = LogManager.getLogger(GenerateCopyEntity.class);
 
-	private static Object object = null;
+	private static Object object = new AuditDetail();
 
 	public static void main(String[] args) throws NoSuchFieldException, SecurityException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, NoSuchMethodException {

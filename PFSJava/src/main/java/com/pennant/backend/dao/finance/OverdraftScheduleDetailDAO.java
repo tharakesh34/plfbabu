@@ -15,4 +15,6 @@ public interface OverdraftScheduleDetailDAO {
 
 	List<OverdraftScheduleDetail> getOverdraftScheduleDetails(long finID, String type, boolean isWIF);
 
+	List<OverdraftScheduleDetail> getOverdraftScheduleForLMSEvent(long finID);
+
 }

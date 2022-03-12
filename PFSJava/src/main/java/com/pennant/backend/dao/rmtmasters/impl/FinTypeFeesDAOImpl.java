@@ -45,6 +45,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import com.pennant.backend.dao.rmtmasters.FinTypeFeesDAO;
 import com.pennant.backend.model.rmtmasters.FinTypeFees;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -737,5 +738,68 @@ public class FinTypeFeesDAOImpl extends SequenceDao<FinTypeFees> implements FinT
 		RowMapper<FinTypeFees> typeRowMapper = BeanPropertyRowMapper.newInstance(FinTypeFees.class);
 		logger.debug("Leaving");
 		return this.jdbcTemplate.query(selectSql.toString(), mapSqlParameterSource, typeRowMapper);
+	}
+
+	@Override
+	public List<FinTypeFees> getFinTypeFeesForLMSEvent(String finType, String finEvent) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ft.FinType, ft.OriginationFee, ft.FinEvent, ft.FeeTypeID, ft.FeeOrder, ft.ReferenceId");
+		sql.append(", ft.FeeScheduleMethod, ft.CalculationType, ft.RuleCode, ft.Amount, ft.Percentage");
+		sql.append(", ft.CalculateOn, ft.AlwDeviation, ft.MaxWaiverPerc, ft.AlwModifyFee, ft.AlwModifyFeeSchdMthd");
+		sql.append(", ft.Active, ft.AlwPreIncomization, ft.ModuleId, ft.FinTypeFeeId, ft.PercType");
+		sql.append(", ft.PercRule, ft.InclForAssignment, r.RuleCodeDesc");
+		sql.append(", f.FeeTypeCode, f.FeeTypeDesc, f.TaxApplicable, f.TaxComponent, f.TdsReq");
+		sql.append(" From FinTypeFees ft");
+		sql.append(" Inner Join FeeTypes f on f.FeeTypeID = ft.FeeTypeID");
+		sql.append(" Left Join Rules r on r.rulecode = ft.rulecode and");
+		sql.append(" r.rulemodule = ? and r.ruleevent = ft.finevent");
+		sql.append(" Where ft.FinType = ? and ft.FinEvent = ? and ft.Active = ?");
+		sql.append(" and ft.OriginationFee = ? and ft.ModuleId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, "fees");
+			ps.setString(index++, finType);
+			ps.setString(index++, finEvent);
+			ps.setInt(index++, 1);
+			ps.setBoolean(index++, false);
+			ps.setInt(index++, FinanceConstants.MODULEID_FINTYPE);
+		}, (rs, rowNum) -> {
+			FinTypeFees fsd = new FinTypeFees();
+
+			fsd.setFinType(rs.getString("FinType"));
+			fsd.setOriginationFee(rs.getBoolean("OriginationFee"));
+			fsd.setFinEvent(rs.getString("FinEvent"));
+			fsd.setFeeTypeID(JdbcUtil.getLong(rs.getObject("FeeTypeID")));
+			fsd.setFeeOrder(rs.getInt("FeeOrder"));
+			fsd.setReferenceId(rs.getLong("ReferenceId"));
+			fsd.setFeeScheduleMethod(rs.getString("FeeScheduleMethod"));
+			fsd.setCalculationType(rs.getString("CalculationType"));
+			fsd.setRuleCode(rs.getString("RuleCode"));
+			fsd.setAmount(rs.getBigDecimal("Amount"));
+			fsd.setPercentage(rs.getBigDecimal("Percentage"));
+			fsd.setCalculateOn(rs.getString("CalculateOn"));
+			fsd.setAlwDeviation(rs.getBoolean("AlwDeviation"));
+			fsd.setMaxWaiverPerc(rs.getBigDecimal("MaxWaiverPerc"));
+			fsd.setAlwModifyFee(rs.getBoolean("AlwModifyFee"));
+			fsd.setAlwModifyFeeSchdMthd(rs.getBoolean("AlwModifyFeeSchdMthd"));
+			fsd.setActive(rs.getBoolean("Active"));
+			fsd.setAlwPreIncomization(rs.getBoolean("AlwPreIncomization"));
+			fsd.setRuleDesc(rs.getString("RuleCodeDesc"));
+			fsd.setModuleId(rs.getInt("ModuleId"));
+			fsd.setFinTypeFeeId(rs.getLong("FinTypeFeeId"));
+			fsd.setPercType(rs.getString("PercType"));
+			fsd.setPercRule(rs.getString("PercRule"));
+			fsd.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			fsd.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			fsd.setTaxApplicable(rs.getBoolean("TaxApplicable"));
+			fsd.setTaxComponent(rs.getString("TaxComponent"));
+			fsd.setTdsReq(rs.getBoolean("TdsReq"));
+
+			return fsd;
+		});
 	}
 }

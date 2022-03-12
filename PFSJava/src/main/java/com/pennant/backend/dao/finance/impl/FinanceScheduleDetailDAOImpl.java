@@ -1302,4 +1302,9 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 		return list.stream().sorted((l1, l2) -> l1.compareTo(l2)).collect(Collectors.toList());
 	}
+
+	@Override
+	public List<FinanceScheduleDetail> getSchedulesForLMSEvent(long finID) {
+		return getFinScheduleDetails(finID, "", false);
+	}
 }

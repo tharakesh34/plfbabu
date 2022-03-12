@@ -524,9 +524,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 				return dd;
 			}, referenceId, category, module);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(
-					"Record is not found in DocumentDetails{} for the specified ReferenceId >> ? and DocCategory >> ? and DocModule >> ?",
-					type, referenceId, category, module);
+			//
 		}
 
 		return null;
@@ -580,8 +578,7 @@ public class DocumentDetailsDAOImpl extends SequenceDao<DocumentDetails> impleme
 
 		logger.debug(Literal.LEAVING);
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { finReference, docCategory },
-					Long.class);
+			return this.jdbcOperations.queryForObject(sql.toString(), Long.class, finReference, docCategory);
 		} catch (Exception e) {
 			logger.warn(Literal.EXCEPTION, e);
 			return 0;

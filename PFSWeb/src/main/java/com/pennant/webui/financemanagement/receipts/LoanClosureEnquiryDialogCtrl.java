@@ -14,11 +14,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -65,7 +63,6 @@ import org.zkoss.zul.Window;
 import com.aspose.words.SaveFormat;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -88,8 +85,6 @@ import com.pennant.backend.dao.collateral.ExtendedFieldRenderDAO;
 import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.model.applicationmaster.Assignment;
-import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.collateral.CollateralAssignment;
 import com.pennant.backend.model.commitment.Commitment;
 import com.pennant.backend.model.customermasters.Customer;
@@ -172,6 +167,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceStage;
 import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.rits.cloning.Cloner;
 
 public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
@@ -622,8 +618,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 		List<ReceiptAllocationDetail> allocationListData = receiptData.getReceiptHeader().getAllocationsSummary();
 
-		receiptPurposeCtg = getReceiptCalculator()
-				.setReceiptCategory(receiptData.getReceiptHeader().getReceiptPurpose());
+		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
 		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
@@ -2023,28 +2018,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
-				// Assignment Percentage
-				Set<String> excludeFees = null;
-				if (finMain.getAssignmentId() > 0) {
-					Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-					if (assignment != null) {
-						amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-						List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-								.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-						if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-							excludeFees = new HashSet<String>();
-							for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-								excludeFees.add(excludeFee.getFeeTypeCode());
-							}
-						}
-					}
-				}
-
 				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-				if (excludeFees != null) {
-					dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-				}
 
 				if (!feesExecuted && StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 						FinServiceEvent.SCHDRPY)) {
@@ -2420,28 +2394,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 			aeEvent.setAccountingEvent(eventCode);
 
-			// Assignment Percentage
-			Set<String> excludeFees = null;
-			if (finMain.getAssignmentId() > 0) {
-				Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-				if (assignment != null) {
-					amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-					List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-							.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-					if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-						excludeFees = new HashSet<String>();
-						for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-							excludeFees.add(excludeFee.getFeeTypeCode());
-						}
-					}
-				}
-			}
-
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-			if (excludeFees != null) {
-				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-			}
 
 			// Receipt Detail external usage Fields Insertion into DataMap
 			dataMap.putAll(extDataMap);
@@ -2658,28 +2611,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 				addZeroifNotContains(movementMap, "bounceCharge_UGST_P");
 				addZeroifNotContains(movementMap, "bounceCharge_CESS_P");
 
-				// Assignment Percentage
-				excludeFees = null;
-				if (finMain.getAssignmentId() > 0) {
-					Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-					if (assignment != null) {
-						amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-						List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-								.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-						if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-							excludeFees = new HashSet<String>();
-							for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-								excludeFees.add(excludeFee.getFeeTypeCode());
-							}
-						}
-					}
-				}
-
 				dataMap = amountCodes.getDeclaredFieldValues();
-
-				if (excludeFees != null) {
-					dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-				}
 
 				dataMap.putAll(movementMap);
 
@@ -2713,28 +2645,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 					amountCodes.setRpPri(
 							CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(), totRpyPri));
 
-					// Assignment Percentage
-					Set<String> excludeFees = null;
-					if (finMain.getAssignmentId() > 0) {
-						Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-						if (assignment != null) {
-							amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-							List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-									.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-							if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-								excludeFees = new HashSet<String>();
-								for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-									excludeFees.add(excludeFee.getFeeTypeCode());
-								}
-							}
-						}
-					}
-
 					Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-					if (excludeFees != null) {
-						dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-					}
 
 					aeEvent.setDataMap(dataMap);
 					engineExecution.getAccEngineExecResults(aeEvent);

@@ -132,4 +132,6 @@ public interface ManualAdviseDAO extends BasicCrudDao<ManualAdvise> {
 	BigDecimal getReceivableAmt(long finID, boolean isBounce);
 
 	Date getMaxValueDateOfRcv(long finID);
+
+	List<ManualAdvise> getManualAdviseForLMSEvent(long finID);
 }

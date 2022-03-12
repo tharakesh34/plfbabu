@@ -190,7 +190,9 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 			 */
 
 			// For GST Calculations
-			Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(finID);
+			FinanceMain fm = new FinanceMain();
+			fm.setFinID(finID);
+			Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
 			// Manual Advise and Bounce Waivers
 			List<ManualAdvise> adviseList = manualAdviseDAO.getManualAdvise(finID);
@@ -1209,8 +1211,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		boolean gstInvOnDue = SysParamUtil.isAllowed(SMTParameterConstants.GST_INV_ON_DUE);
 		List<FinanceRepayments> rpyList = new ArrayList<>();
 
-		// For GST Calculations
-		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fwh.getFinID());
+		FinanceMain fm = new FinanceMain();
+		fm.setFinID(fwh.getFinID());
+
+		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		for (FeeWaiverDetail fwd : fwh.getFeeWaiverDetails()) {
 			if (fwd.getCurrWaiverAmount().compareTo(BigDecimal.ZERO) == 0) {
@@ -1881,7 +1885,10 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		BigDecimal curwaivedAmt = waiverdetail.getCurrWaiverAmount();
 		BigDecimal curActualwaivedAmt = waiverdetail.getCurrActualWaiver();
 		BigDecimal amountWaived = BigDecimal.ZERO;
-		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(waiverdetail.getFinID());
+
+		FinanceMain fm = new FinanceMain();
+		fm.setFinID(waiverdetail.getFinID());
+		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		TaxAmountSplit taxSplit = null;
 		TaxHeader taxHeader = null;

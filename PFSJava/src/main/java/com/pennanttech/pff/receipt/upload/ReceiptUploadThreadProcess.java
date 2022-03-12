@@ -143,7 +143,7 @@ public class ReceiptUploadThreadProcess implements Runnable {
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
 		fsi.setLoggedInUser(rud.getLoggedInUser());
-		FinanceDetail financeDetail = receiptService.receiptTransaction(fsi, fsi.getReceiptPurpose());
+		FinanceDetail financeDetail = receiptService.receiptTransaction(fsi);
 
 		WSReturnStatus returnStatus = financeDetail.getReturnStatus();
 		if (returnStatus != null) {

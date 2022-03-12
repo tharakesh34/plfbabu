@@ -1670,7 +1670,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						taxHeader.setTaxDetails(new ArrayList<>());
 					}
 
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 					Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST));
 					Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST));

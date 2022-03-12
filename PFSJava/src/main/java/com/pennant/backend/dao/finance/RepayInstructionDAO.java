@@ -53,4 +53,6 @@ public interface RepayInstructionDAO {
 	int deleteInEOD(long finID);
 
 	int saveListInEOD(List<RepayInstruction> repayInstruction);
+
+	List<RepayInstruction> getRepayInstructionsForLMSEvent(long finID);
 }

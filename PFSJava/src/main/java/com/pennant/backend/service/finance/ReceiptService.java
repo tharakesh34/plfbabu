@@ -4,12 +4,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
-import com.pennant.backend.model.applicationmaster.Assignment;
-import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.audit.AuditHeader;
 import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinODDetails;
@@ -21,13 +18,13 @@ import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinTaxReceivable;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.FinanceMain;
-import com.pennant.backend.model.finance.FinanceScheduleDetail;
 import com.pennant.backend.model.finance.ReceiptAllocationDetail;
 import com.pennant.backend.model.receiptupload.ReceiptUploadDetail;
 import com.pennant.backend.model.rmtmasters.FinanceType;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 
 public interface ReceiptService {
 
@@ -55,23 +52,9 @@ public interface ReceiptService {
 	List<FinODDetails> getValueDatePenalties(FinScheduleData finScheduleData, BigDecimal totReceiptAmount,
 			Date valueDate, List<FinanceRepayments> repayments, boolean resetReq);
 
-	Date getMaxReceiptDate(String finReference);
-
-	FinReceiptData doReceiptValidations(FinanceDetail financeDetail, String method);
-
-	FinReceiptData doBasicValidations(FinReceiptData receiptData, int methodCtg);
-
-	FinReceiptData doDataValidations(FinReceiptData receiptData, int methodCtg);
-
-	FinReceiptData doFunctionalValidations(FinReceiptData receiptData, int methodCtg);
-
 	FinReceiptData doBusinessValidations(FinReceiptData receiptData, int methodCtg);
 
-	FinReceiptData validateDual(FinReceiptData receiptData, int methodCtg);
-
-	FinReceiptData getServicingFinance(String id, String nextRoleCode, String screenEvent, String role);
-
-	Map<Long, String> getOrnamentDescriptions(List<Long> idList);
+	void validateDual(FinReceiptData receiptData);
 
 	// ### Ticket id:124998
 	FinanceMain getClosingStatus(long finID, TableType tempTab, boolean wif);
@@ -80,7 +63,7 @@ public interface ReceiptService {
 	boolean dedupCheckRequest(FinReceiptHeader receiptHeader, String purpose);
 
 	// ### 29-10-2018, Ticket id:124998
-	long CheckDedupSP(FinReceiptHeader receiptHeader, String purpose);
+	long checkDedupSP(FinReceiptHeader receiptHeader, String purpose);
 
 	BigDecimal getClosingBalance(long finID, Date valueDate);// ## PSD
 																// Ticket
@@ -91,28 +74,9 @@ public interface ReceiptService {
 
 	boolean canProcessReceipt(long receiptId);
 
-	Assignment getAssignment(long id, String type);
-
-	List<AssignmentDealExcludedFee> getApprovedAssignmentDealExcludedFeeList(long id);
-
 	boolean isInSubVention(FinanceMain financeMain, Date receivedDate);
 
-	Date getFirstInstDate(List<FinanceScheduleDetail> financeScheduleDetails);
-
 	Date getManualAdviseMaxDate(long finID, Date valueDate);
-
-	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0);
-
-	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0, String parm1);
-
-	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0, String parm1, String parm2);
-
-	FinScheduleData setErrorToFSD(FinScheduleData schdData, String errorCode, String parm0, String parm1, String parm2,
-			String parm3);
-
-	FinReceiptData setReceiptData(FinReceiptData receiptData);
-
-	FinReceiptData setReceiptDetail(FinReceiptData receiptData);
 
 	FinanceType getFinanceType(String finType);
 
@@ -120,9 +84,9 @@ public interface ReceiptService {
 
 	FinReceiptData recalEarlyPaySchedule(FinReceiptData receiptData);
 
-	ErrorDetail doInstrumentValidation(FinReceiptData receiptData);
+	void doInstrumentValidation(FinReceiptData receiptData);
 
-	FinanceDetail receiptTransaction(FinServiceInstruction finServiceInstruction, String moduleDefiner);
+	FinanceDetail receiptTransaction(FinServiceInstruction fsi);
 
 	FinServiceInstruction buildFinServiceInstruction(ReceiptUploadDetail rud, String entity);
 
@@ -151,10 +115,6 @@ public interface ReceiptService {
 
 	FinReceiptData createXcessRCD(FinReceiptData receiptData);
 
-	boolean isEarlySettlementInitiated(String finreference);
-
-	boolean isPartialSettlementInitiated(String finreference);
-
 	String getLoanReferenc(String finreference, String fileName);
 
 	List<FinExcessAmount> xcessList(long finID);
@@ -174,4 +134,8 @@ public interface ReceiptService {
 	boolean checkPresentmentsInQueue(long finID);
 
 	Date getFinSchdDate(FinReceiptHeader rh);
+
+	ErrorDetail checkInprocessReceipts(long finID, ReceiptPurpose receiptPurpose);
+
+	void setFinanceData(FinReceiptData rd);
 }

@@ -61,4 +61,6 @@ public interface FinanceDisbursementDAO {
 
 	int getFinDsbursmntInstrctnIds(long instractionUid);
 
+	List<FinanceDisbursement> getFinanceDisbursementForLMSEvent(long finID);
+
 }

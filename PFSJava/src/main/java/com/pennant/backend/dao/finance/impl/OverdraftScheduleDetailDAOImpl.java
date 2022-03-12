@@ -179,4 +179,9 @@ public class OverdraftScheduleDetailDAOImpl extends BasicDao<OverdraftScheduleDe
 		}
 		return 1;
 	}
+
+	@Override
+	public List<OverdraftScheduleDetail> getOverdraftScheduleForLMSEvent(long finID) {
+		return getOverdraftScheduleDetails(finID, "", false);
+	}
 }

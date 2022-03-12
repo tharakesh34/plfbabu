@@ -77,6 +77,23 @@ public class AuditDetail implements java.io.Serializable {
 		super();
 	}
 
+	public AuditDetail copyEntity() {
+		AuditDetail entity = new AuditDetail();
+		entity.setAuditId(this.auditId);
+		entity.setAuditDate(this.auditDate);
+		entity.setAuditTranType(this.auditTranType);
+		entity.setAuditSeq(this.auditSeq);
+		entity.setAuditField(this.auditField);
+		entity.setAuditValue(this.auditValue);
+		entity.setExtended(this.extended);
+		entity.setLovDescRcdInTime(this.lovDescRcdInTime);
+		entity.setLovDescRcdOutTime(this.lovDescRcdOutTime);
+		entity.setLovDescRecordStatus(this.lovDescRecordStatus);
+		entity.setLovDescRoleCode(this.lovDescRoleCode);
+		entity.setLovDescNextRoleCode(this.lovDescNextRoleCode);
+		return entity;
+	}
+
 	@SuppressWarnings("unchecked")
 	public AuditDetail(String auditTranType, int auditSeq, Object befImage, Object modelData) {
 		super();

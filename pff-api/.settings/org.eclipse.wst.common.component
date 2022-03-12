@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
-                                            
+                                                
+    
     
     
     
@@ -10,7 +11,8 @@
     
     
     <wb-module deploy-name="pff-api">
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -21,7 +23,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -32,7 +35,8 @@
         
         
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -43,7 +47,8 @@
         
         
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -75,7 +80,8 @@
         <dependent-module archiveName="pff-extension-core-6.0.0_R3.1.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/pff-extension-core/pff-extension-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -86,7 +92,8 @@
         
         
         <property name="context-root" value="pff-api"/>
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -97,7 +104,8 @@
         
         
         <property name="java-output-path" value="/pff-api/target/classes"/>
-                                                                                        
+                                                                                                
+        
         
         
         
@@ -108,7 +116,8 @@
         
         
         <property name="component.exclusion.patterns" value="WEB-INF/lib/stax-api-1.0.1.jar"/>
-                                                                                    
+                                                                                            
+    
     
     
     
@@ -119,7 +128,8 @@
     
     
     </wb-module>
-                                        
+                                            
+
 
 
 

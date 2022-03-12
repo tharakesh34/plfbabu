@@ -44,4 +44,6 @@ public interface FinanceTaxDetailDAO extends BasicCrudDao<FinanceTaxDetail> {
 
 	List<FinanceTaxDetail> getGSTNumberAndCustCIF(long taxCustId, String taxNumber, String type);
 
+	FinanceTaxDetail getFinanceTaxDetailForLMSEvent(long finID);
+
 }

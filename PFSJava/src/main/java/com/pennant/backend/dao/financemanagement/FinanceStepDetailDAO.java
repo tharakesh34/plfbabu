@@ -15,4 +15,7 @@ public interface FinanceStepDetailDAO {
 	void saveList(List<FinanceStepPolicyDetail> stepPolicyDetails, boolean isWIF, String tableType);
 
 	void deleteList(long finID, boolean isWIF, String tableType);
+
+	List<FinanceStepPolicyDetail> getStepDetailsForLMSEvent(long finID);
+
 }

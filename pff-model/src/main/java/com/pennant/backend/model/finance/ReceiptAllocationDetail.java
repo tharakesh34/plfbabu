@@ -48,7 +48,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal paidNow = BigDecimal.ZERO;
 	private BigDecimal waivedNow = BigDecimal.ZERO;
 
-	//Waiver GST fields
+	// Waiver GST fields
 	private BigDecimal waivedCGST = BigDecimal.ZERO;
 	private BigDecimal waivedSGST = BigDecimal.ZERO;
 	private BigDecimal waivedIGST = BigDecimal.ZERO;
@@ -56,14 +56,14 @@ public class ReceiptAllocationDetail implements Serializable {
 	private BigDecimal waivedCESS = BigDecimal.ZERO;
 	private BigDecimal waivedGST = BigDecimal.ZERO;
 
-	//Waiver GST fields
+	// Waiver GST fields
 	private BigDecimal dueCGST = BigDecimal.ZERO;
 	private BigDecimal dueSGST = BigDecimal.ZERO;
 	private BigDecimal dueIGST = BigDecimal.ZERO;
 	private BigDecimal dueUGST = BigDecimal.ZERO;
 	private BigDecimal dueCESS = BigDecimal.ZERO;
 
-	//In Process Allocation along with GST and TDS
+	// In Process Allocation along with GST and TDS
 	private BigDecimal inProcess = BigDecimal.ZERO;
 
 	private String taxType = "";
@@ -73,7 +73,7 @@ public class ReceiptAllocationDetail implements Serializable {
 	private Long taxHeaderId;
 	private TaxHeader taxHeader;
 
-	//Applicable only for allocation summary in receipt header
+	// Applicable only for allocation summary in receipt header
 	private boolean isSubListAvailable = false;
 	private boolean isEditable = false;
 

@@ -77,6 +77,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.external.SubReceiptPaymentModes;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pff.web.util.ComponentUtil;
 
 public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
@@ -484,7 +485,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		doWriteComponentsToBean();
 
 		ErrorDetail errorDetail = null;
-		String receiptPurpose = "";
+		ReceiptPurpose receiptPurpose = null;
 		BigDecimal receiptAmount = this.receiptAmount.getActualValue();
 		receiptAmount = PennantApplicationUtil.unFormateAmount(receiptAmount, formatter);
 
@@ -519,46 +520,16 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			}
 		}
 		if (isForeClosure) {
-			receiptPurpose = FinServiceEvent.EARLYSETTLE;
+			receiptPurpose = ReceiptPurpose.EARLYSETTLE;
+
 		} else {
-			receiptPurpose = this.receiptPurpose.getSelectedItem().getValue();
+			receiptPurpose = ReceiptPurpose.purpose(this.receiptPurpose.getSelectedItem().getValue());
 		}
 
-		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY) || receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
+		if (receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
 			Date startDate = ((FinanceMain) this.finReference.getObject()).getFinStartDate();
 			errorDetail = financeMainService.rescheduleValidation(this.receiptDate.getValue(), finID, startDate);
-		}
-
-		/*
-		 * if (isKnockOff) { BigDecimal receiptDues = this.receiptDues.getActualValue(); BigDecimal knockOffAmount =
-		 * this.receiptAmount.getActualValue(); receiptPurpose = this.receiptPurpose.getSelectedItem().getValue(); if
-		 * (FinanceConstants.FINSER_EVENT_SCHDRPY.equals(receiptPurpose) && knockOffAmount.compareTo(receiptDues) > 0) {
-		 * MessageUtil.showError(Labels.getLabel("label_Allocation_More_Due_KnockedOff")); return; } }
-		 */
-
-		// PSD:138262
-		if (receiptPurpose.equals(FinServiceEvent.EARLYSETTLE) || receiptPurpose.equals(FinServiceEvent.EARLYRPY)) {
-			boolean initiated = receiptService
-					.isEarlySettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
-			if (initiated) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Receipt For Early Settlement already Initiated and is in process";
-
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90498", valueParm));
-			}
-
-		}
-		// PSD:138262
-		if (receiptPurpose.equals(FinServiceEvent.EARLYRPY) || receiptPurpose.equals(FinServiceEvent.EARLYSETTLE)) {
-			boolean initiated = receiptService
-					.isPartialSettlementInitiated(StringUtils.trimToEmpty(this.finReference.getValue()));
-			if (initiated) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "Receipt For Partial Settlement already Initiated and is in process";
-
-				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90499", valueParm));
-			}
-
+			errorDetail = receiptService.checkInprocessReceipts(finID, receiptPurpose);
 		}
 
 		errorDetail = receiptService.getWaiverValidation(finID, this.receiptPurpose.getSelectedItem().getValue(),
@@ -791,47 +762,54 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		String tranBranch = null;
 		loanReference = this.finReference.getValue().toString();
 		tranBranch = this.tranBranch.getValue().toString();
-		String method = "";
 		String eventCode = null;
 
 		String recPurpose = getComboboxValue(this.receiptPurpose);
 		if (isForeClosure) {
 			recPurpose = FinServiceEvent.EARLYSETTLE;
-			method = FinServiceEvent.EARLYSETTLE;
 		}
 
-		switch (recPurpose) {
-		case FinServiceEvent.SCHDRPY:
-			method = FinServiceEvent.SCHDRPY;
+		ReceiptPurpose rptPurpose = ReceiptPurpose.purpose(recPurpose);
+
+		switch (rptPurpose) {
+		case SCHDRPY:
 			eventCode = AccountingEvent.REPAY;
 			break;
-		case FinServiceEvent.EARLYRPY:
-			method = FinServiceEvent.EARLYRPY;
+		case EARLYRPY:
 			eventCode = AccountingEvent.EARLYPAY;
 			break;
-		case FinServiceEvent.EARLYSETTLE:
-			method = FinServiceEvent.EARLYSETTLE;
+		case EARLYSETTLE:
 			eventCode = AccountingEvent.EARLYSTL;
 			break;
 		default:
 			break;
 		}
-		/*
-		 * Based on this flag limit is calculated so making this flag true while clicking on validate and proceed
-		 * buttons.
-		 */
-		boolean isEnquiry = receiptData.isEnquiry();
-		receiptData = receiptService.getFinReceiptDataById(loanReference, eventCode, FinServiceEvent.RECEIPT, "");
-		receiptData.setEnquiry(isEnquiry);
-		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		FinanceDetail fd = receiptData.getFinanceDetail();
+
+		long finID = ComponentUtil.getFinID(this.finReference);
+		FinanceDetail fd = new FinanceDetail();
+		receiptData.setFinanceDetail(fd);
+
+		FinReceiptHeader rch = new FinReceiptHeader();
+		receiptData.setReceiptHeader(rch);
+
 		FinScheduleData schdData = fd.getFinScheduleData();
-		FinanceMain fm = schdData.getFinanceMain();
+
+		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(finID);
+		fm.setAppDate(appDate);
+
+		schdData.setFinanceMain(fm);
+		schdData.setFeeEvent(eventCode);
+
+		boolean isEnquiry = receiptData.isEnquiry();
+
+		receiptService.setFinanceData(receiptData);
+		receiptData.setEnquiry(isEnquiry);
 		schdData.setFinServiceInstruction(new FinServiceInstruction());
 		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 		if (!fm.isFinIsActive()) {
 			fsi.setExcessAdjustTo(RepayConstants.EXAMOUNTTYPE_EXCESS);
 		}
+
 		fsi.setReceiptDetail(new FinReceiptDetail());
 		FinReceiptDetail rcd = fsi.getReceiptDetail();
 
@@ -844,7 +822,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		rch.setFinType(schdData.getFinanceMain().getFinType());
 		rch.setReceiptAmount(PennantApplicationUtil.unFormateAmount(this.receiptAmount.getActualValue(), formatter));
-		rch.setReceiptPurpose(method);
+		rch.setReceiptPurpose(rptPurpose.code());
 
 		if (isKnockOff) {
 			rch.setReceiptMode(this.knockOffFrom.getSelectedItem().getValue().toString());
@@ -869,8 +847,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			rch.setTdsAmount(PennantApplicationUtil.unFormateAmount(this.tDSAmount.getActualValue(), formatter));
 		}
 
-		int methodCtg = receiptCalculator.setReceiptCategory(method);
-		schdData.setErrorDetails(new ArrayList<ErrorDetail>(1));
+		schdData.setErrorDetails(new ArrayList<>(1));
 
 		fsi.setReceivedDate(receiptDate.getValue());
 		if (this.row_valueDate.isVisible()) {
@@ -879,25 +856,25 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 			fsi.setValueDate(receiptDate.getValue());
 		}
 
-		fsi.setReceiptPurpose(method);
+		fsi.setReceiptPurpose(rptPurpose.code());
 		fsi.setFromDate(fsi.getValueDate());
 
 		rch.setReceiptAmount(rch.getReceiptAmount().add(rch.getTdsAmount()));
-		rch.setReceiptDate(SysParamUtil.getAppDate());
+		rch.setReceiptDate(appDate);
 		rch.setValueDate(fsi.getValueDate());
 		rch.setReceivedDate(fsi.getReceivedDate());
 		rcd.setValueDate(fsi.getValueDate());
 		rcd.setReceivedDate(fsi.getReceivedDate());
 		rch.setSourceofFund(getComboboxValue(this.sourceofFund));
 
-		receiptData = receiptService.validateDual(receiptData, methodCtg);
+		receiptService.validateDual(receiptData);
 	}
 
 	private void doShowDialog() {
 		logger.debug("Entering ");
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
-		final Map<String, Object> map = new HashMap<String, Object>();
+		final Map<String, Object> map = new HashMap<>();
 
 		boolean isPartPayment = false;
 		if (FinServiceEvent.EARLYRPY.equalsIgnoreCase(rch.getReceiptPurpose())) {

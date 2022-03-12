@@ -338,4 +338,61 @@ public class FinanceTaxDetailDAOImpl extends BasicDao<FinanceTaxDetail> implemen
 		return 0;
 	}
 
+	@Override
+	public FinanceTaxDetail getFinanceTaxDetailForLMSEvent(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FinID, FinReference, CustCIF, CustShrtName, ApplicableFor, TaxCustId, td.TaxExempted, TaxNumber");
+		sql.append(", AddrLine1, AddrLine2 , AddrLine3, AddrLine4, Country, Province, td.City");
+		sql.append(", td.PinCode, td.PinCodeId, AreaName");
+		sql.append(", SezCertificateNo, SezValueDate, AddressDetail");
+		sql.append(", CountryDesc, CPProvinceName, PCCityName");
+		sql.append(" From FinTaxDetail td");
+		sql.append(" Inner Join Customers c On c.CustID = td.TaxCustID");
+		sql.append(" Inner Join PinCodes pcode On pcode.PinCodeID = td.PinCodeID and pcode.City = td.City");
+		sql.append(" Inner Join BMTCountries country On country.CountryCode = td.Country");
+		sql.append(" Inner Join RMTCountryVsProvince cp On cp.CPProvince = td.Province and cp.CPCountry = td.Country");
+		sql.append(" Inner Join RMTProvinceVsCity pc on pc.PCCity = td.City");
+		sql.append(" and pc.PCProvince = td.Province and pc.PCCountry = td.Country");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				FinanceTaxDetail td = new FinanceTaxDetail();
+
+				td.setFinID(rs.getLong("FinID"));
+				td.setFinReference(rs.getString("FinReference"));
+				td.setCustCIF(rs.getString("CustCIF"));
+				td.setCustShrtName(rs.getString("CustShrtName"));
+				td.setApplicableFor(rs.getString("ApplicableFor"));
+				td.setTaxCustId(rs.getLong("TaxCustId"));
+				td.setTaxExempted(rs.getBoolean("TaxExempted"));
+				td.setTaxNumber(rs.getString("TaxNumber"));
+				td.setAddrLine1(rs.getString("AddrLine1"));
+				td.setAddrLine2(rs.getString("AddrLine2"));
+				td.setAddrLine3(rs.getString("AddrLine3"));
+				td.setAddrLine4(rs.getString("AddrLine4"));
+				td.setCountry(rs.getString("Country"));
+				td.setProvince(rs.getString("Province"));
+				td.setCity(rs.getString("City"));
+				td.setPinCode(rs.getString("PinCode"));
+				td.setPinCodeId(JdbcUtil.getLong(rs.getObject("PinCodeId")));
+				td.setPinCodeName(rs.getString("AreaName"));
+				td.setSezCertificateNo(rs.getString("SezCertificateNo"));
+				td.setSezValueDate(rs.getTimestamp("SezValueDate"));
+				td.setAddressDetail(rs.getString("AddressDetail"));
+				td.setCountryName(rs.getString("CountryDesc"));
+				td.setProvinceName(rs.getString("CPProvinceName"));
+				td.setCityName(rs.getString("PCCityName"));
+
+				return td;
+			}, finID);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
 }

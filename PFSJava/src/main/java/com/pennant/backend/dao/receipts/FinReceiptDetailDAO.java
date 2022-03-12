@@ -21,7 +21,7 @@ public interface FinReceiptDetailDAO {
 
 	int getReceiptHeaderByBank(String bankCode, String type);
 
-	Date getMaxReceivedDateByReference(String finReference);
+	Date getMaxReceivedDate(long finID);
 
 	List<RepayScheduleDetail> fetchRepaySchduleList(long receiptSeqId);
 
@@ -63,6 +63,7 @@ public interface FinReceiptDetailDAO {
 
 	String getReceiptSourceAccType(String receiptSource);
 
+	Date getMaxValueDate(long finID, String receiptPurpose);
+	
 	List<FinReceiptHeader> getUpfrontFeeReceipts(long finID, String reference);
-
 }

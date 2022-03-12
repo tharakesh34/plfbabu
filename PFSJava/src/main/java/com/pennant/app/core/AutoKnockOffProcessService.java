@@ -241,6 +241,8 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 			allocate.setBalance(allocate.getTotalDue());
 			allocate.setWaivedAmount(BigDecimal.ZERO);
 			allocate.setWaivedGST(BigDecimal.ZERO);
+			allocate.setTdsPaid(BigDecimal.ZERO);
+			allocate.setTdsWaived(BigDecimal.ZERO);
 		}
 
 		receiptCalculator.initiateReceipt(receiptData, false);

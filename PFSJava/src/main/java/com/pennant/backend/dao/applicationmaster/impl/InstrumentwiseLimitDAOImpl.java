@@ -225,6 +225,7 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 		return exists;
 	}
 
+	@Override
 	public InstrumentwiseLimit getInstrumentWiseModeLimit(String instrumentMode, String type) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" Id, InstrumentMode, PaymentMinAmtperTrans, PaymentMaxAmtperTran, PaymentMaxAmtperDay");
@@ -269,4 +270,28 @@ public class InstrumentwiseLimitDAOImpl extends SequenceDao<InstrumentwiseLimit>
 
 		return null;
 	}
+
+	@Override
+	public InstrumentwiseLimit getInstrumentForLMSEvent(String instrumentMode) {
+		String sql = "Select ReceiptMinAmtperTran, ReceiptMaxAmtperTran, ReceiptMaxAmtperDay From InstrumentwiseLimit Where InstrumentMode = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return this.jdbcOperations.queryForObject(sql, (rs, rowNum) -> {
+				InstrumentwiseLimit iwl = new InstrumentwiseLimit();
+
+				iwl.setReceiptMinAmtperTran(rs.getBigDecimal("ReceiptMinAmtperTran"));
+				iwl.setReceiptMaxAmtperTran(rs.getBigDecimal("ReceiptMaxAmtperTran"));
+				iwl.setReceiptMaxAmtperDay(rs.getBigDecimal("ReceiptMaxAmtperDay"));
+
+				return iwl;
+			}, instrumentMode);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
 }

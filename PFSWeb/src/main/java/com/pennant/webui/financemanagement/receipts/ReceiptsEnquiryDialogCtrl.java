@@ -159,6 +159,7 @@ import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.rits.cloning.Cloner;
 
 /**
@@ -467,7 +468,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			doLoadWorkFlow(finReceiptHeader.isWorkflow(), finReceiptHeader.getWorkflowId(),
 					finReceiptHeader.getNextTaskId());
-			receiptPurposeCtg = getReceiptCalculator().setReceiptCategory(finReceiptHeader.getReceiptPurpose());
+			receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(finReceiptHeader.getReceiptPurpose());
 
 			if (enqiryModule) {
 				setWorkFlowEnabled(false);
@@ -528,9 +529,9 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		// Preparation of Finance Enquiry Data
 		FinReceiptHeader frh = receiptData.getReceiptHeader();
 		FinanceMain fm = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-		
+
 		FinanceEnquiry finEnq = new FinanceEnquiry();
-		
+
 		finEnq.setFinID(frh.getFinID());
 		finEnq.setFinReference(frh.getReference());
 		finEnq.setFinType(frh.getFinType());

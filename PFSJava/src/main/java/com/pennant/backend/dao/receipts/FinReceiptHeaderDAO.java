@@ -84,10 +84,6 @@ public interface FinReceiptHeaderDAO {
 
 	List<Long> getInProcessMultiReceiptRecord();
 
-	boolean checkEarlySettlementInitiation(String reference);
-
-	boolean checkPartialSettlementInitiation(String reference);
-
 	boolean isChequeExists(String reference, String paytypeCheque, String chequeNo, String favourNumber, String type);
 
 	boolean isOnlineExists(String reference, String subReceiptMode, String tranRef, String type);
@@ -121,4 +117,6 @@ public interface FinReceiptHeaderDAO {
 			String type);
 
 	boolean checkPresentmentsInQueue(long finID);
+
+	List<FinReceiptHeader> getInprocessReceipts(long finID);
 }

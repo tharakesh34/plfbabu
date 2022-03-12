@@ -41,10 +41,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -98,7 +96,6 @@ import com.pennant.AccountSelectionBox;
 import com.pennant.ChartType;
 import com.pennant.CurrencyBox;
 import com.pennant.ExtendedCombobox;
-import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.CalculationConstants;
 import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.core.AccrualService;
@@ -125,8 +122,6 @@ import com.pennant.backend.model.Notes;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.Repayments.FinanceRepayments;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.model.applicationmaster.Assignment;
-import com.pennant.backend.model.applicationmaster.AssignmentDealExcludedFee;
 import com.pennant.backend.model.applicationmaster.BankDetail;
 import com.pennant.backend.model.applicationmaster.BounceReason;
 import com.pennant.backend.model.applicationmaster.ClosureType;
@@ -144,7 +139,6 @@ import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.extendedfield.ExtendedFieldHeader;
 import com.pennant.backend.model.extendedfield.ExtendedFieldRender;
 import com.pennant.backend.model.finance.FeeType;
-import com.pennant.backend.model.finance.FinExcessAmount;
 import com.pennant.backend.model.finance.FinFeeDetail;
 import com.pennant.backend.model.finance.FinReceiptData;
 import com.pennant.backend.model.finance.FinReceiptDetail;
@@ -243,6 +237,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.rits.cloning.Cloner;
 
 /**
@@ -1253,25 +1248,35 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
+	private FinReceiptData copy(FinReceiptData rd) {
+		FinReceiptData recData = rd.copyEntity();
+		FinanceDetail fd = new FinanceDetail();
+
+		FinScheduleData schD = rd.getFinanceDetail().getFinScheduleData();
+		fd.setFinScheduleData(schD.copyEntity());
+		fd.getFinScheduleData().setFinPftDeatil(schD.getFinPftDeatil().copyEntity());
+		fd.getFinScheduleData().setFinanceMain(schD.getFinanceMain().copyEntity());
+		recData.setFinanceDetail(fd);
+
+		return recData;
+	}
+
 	public void executeAccounting() throws Exception {
-		Cloner cloner = new Cloner();
-		FinReceiptData tempReceiptData = cloner.deepClone(receiptData);
+		FinReceiptData tempReceiptData = receiptData.copyEntity();
+
+		receiptCalculator.getXcessList(tempReceiptData);
+		receiptService.calcuateDues(tempReceiptData);
+		tempReceiptData = receiptService.recalculateReceipt(tempReceiptData);
 
 		FinanceDetail fd = tempReceiptData.getFinanceDetail();
 		FinScheduleData scheduleData = fd.getFinScheduleData();
 		FinanceMain fm = scheduleData.getFinanceMain();
 		List<FinanceScheduleDetail> schdList = scheduleData.getFinanceScheduleDetails();
 		FinanceProfitDetail profitDetail = fd.getFinScheduleData().getFinPftDeatil();
+		String roleCode = tempReceiptData.getReceiptHeader().getRoleCode();
 
 		fm.setSimulateAccounting(true);
 		fd.getFinScheduleData().getFinanceMain().setSimulateAccounting(true);
-
-		String roleCode = tempReceiptData.getReceiptHeader().getRoleCode();
-		List<FinExcessAmount> xcess = receiptService.xcessList(fm.getFinID());
-
-		tempReceiptData.getReceiptHeader().setExcessAmounts(xcess);
-		receiptCalculator.getXcessList(tempReceiptData);
-		tempReceiptData = receiptService.recalculateReceipt(tempReceiptData);
 
 		FinReceiptHeader rch = tempReceiptData.getReceiptHeader();
 		rch.setRoleCode(roleCode);
@@ -1469,8 +1474,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	private boolean setSummaryData(boolean isChgReceipt)
 			throws InterruptedException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
-		receiptPurposeCtg = getReceiptCalculator()
-				.setReceiptCategory(receiptData.getReceiptHeader().getReceiptPurpose());
+		receiptPurposeCtg = ReceiptUtil.getReceiptPurpose(receiptData.getReceiptHeader().getReceiptPurpose());
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 		this.finReference.setValue(rch.getReference());
 
@@ -2469,6 +2473,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		List<FinReceiptDetail> rcdList = rch.getReceiptDetails();
 		receiptData.getReceiptHeader().setReceiptDetails(rcdList);
 
+		FinScheduleData schdData = receiptData.getFinanceDetail().getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
 		Map<String, BigDecimal> taxPercMap = null;
 
 		// Create a new Receipt Detail for every type of excess/payable
@@ -2532,7 +2538,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				if (StringUtils.isNotBlank(payable.getTaxType())) {
 
 					if (taxPercMap == null) {
-						taxPercMap = GSTCalculator.getTaxPercentages(rch.getFinID());
+						taxPercMap = GSTCalculator.getTaxPercentages(fm);
 					}
 
 					TaxHeader taxHeader = new TaxHeader();
@@ -5202,28 +5208,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 							AccountingEvent.REPAY, FinanceConstants.MODULEID_FINTYPE));
 				}
 
-				// Assignment Percentage
-				Set<String> excludeFees = null;
-				if (finMain.getAssignmentId() > 0) {
-					Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-					if (assignment != null) {
-						amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-						List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-								.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-						if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-							excludeFees = new HashSet<>();
-							for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-								excludeFees.add(excludeFee.getFeeTypeCode());
-							}
-						}
-					}
-				}
-
 				Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-				if (excludeFees != null) {
-					dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-				}
 
 				if (!feesExecuted && StringUtils.equals(receiptData.getReceiptHeader().getReceiptPurpose(),
 						FinServiceEvent.SCHDRPY)) {
@@ -5540,28 +5525,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 			aeEvent.setAccountingEvent(eventCode);
 
-			// Assignment Percentage
-			Set<String> excludeFees = null;
-			if (finMain.getAssignmentId() > 0) {
-				Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-				if (assignment != null) {
-					amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-					List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-							.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-					if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-						excludeFees = new HashSet<String>();
-						for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-							excludeFees.add(excludeFee.getFeeTypeCode());
-						}
-					}
-				}
-			}
-
 			Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-			if (excludeFees != null) {
-				dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-			}
 
 			// Receipt Detail external usage Fields Insertion into DataMap
 			dataMap.putAll(extDataMap);
@@ -5851,28 +5815,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				addZeroifNotContains(movementMap, "bounceCharge_UGST_W");
 				addZeroifNotContains(movementMap, "bounceCharge_CESS_W");
 
-				// Assignment Percentage
-				excludeFees = null;
-				if (finMain.getAssignmentId() > 0) {
-					Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-					if (assignment != null) {
-						amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-						List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-								.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-						if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-							excludeFees = new HashSet<String>();
-							for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-								excludeFees.add(excludeFee.getFeeTypeCode());
-							}
-						}
-					}
-				}
-
 				dataMap = amountCodes.getDeclaredFieldValues();
-
-				if (excludeFees != null) {
-					dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-				}
 
 				dataMap.putAll(movementMap);
 
@@ -5909,28 +5852,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					amountCodes.setRpPri(
 							CalculationUtil.getConvertedAmount(finMain.getFinCcy(), commitment.getCmtCcy(), totRpyPri));
 
-					// Assignment Percentage
-					Set<String> excludeFees = null;
-					if (finMain.getAssignmentId() > 0) {
-						Assignment assignment = getReceiptService().getAssignment(finMain.getAssignmentId(), "");
-						if (assignment != null) {
-							amountCodes.setAssignmentPerc(assignment.getSharingPercentage());
-							List<AssignmentDealExcludedFee> excludeFeesList = getReceiptService()
-									.getApprovedAssignmentDealExcludedFeeList(assignment.getDealId());
-							if (CollectionUtils.isNotEmpty(excludeFeesList)) {
-								excludeFees = new HashSet<String>();
-								for (AssignmentDealExcludedFee excludeFee : excludeFeesList) {
-									excludeFees.add(excludeFee.getFeeTypeCode());
-								}
-							}
-						}
-					}
-
 					Map<String, Object> dataMap = amountCodes.getDeclaredFieldValues();
-
-					if (excludeFees != null) {
-						dataMap.put(AccountConstants.POSTINGS_EXCLUDE_FEES, excludeFees);
-					}
 
 					aeEvent.setDataMap(dataMap);
 					engineExecution.getAccEngineExecResults(aeEvent);

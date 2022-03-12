@@ -213,7 +213,7 @@ public class EventFeeDetailsDialogCtrl extends GFCBaseCtrl<ReceiptAllocationDeta
 						RoundingMode.HALF_DOWN);
 
 				if (StringUtils.equals(feeDetail.getTaxComponent(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(financeMain);
 					BigDecimal gstPercentage = taxPercentages.get(RuleConstants.CODE_TOTAL_GST);
 					BigDecimal gstCalPercentage = gstPercentage.divide(BigDecimal.valueOf(100), 4,
 							RoundingMode.HALF_DOWN);

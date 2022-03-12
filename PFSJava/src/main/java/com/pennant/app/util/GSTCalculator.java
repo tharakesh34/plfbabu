@@ -355,13 +355,26 @@ public class GSTCalculator {
 		return CALCULATE_GST_ON_GSTRATE_MASTER;
 	}
 
+	public static Map<String, BigDecimal> getTaxPercentages(FinanceMain fm) {
+		Map<String, BigDecimal> taxPercentages = fm.getTaxPercentages();
+
+		if (MapUtils.isNotEmpty(taxPercentages)) {
+			return taxPercentages;
+		}
+
+		taxPercentages = getTaxPercentages(fm.getFinID());
+		fm.getTaxPercentages().putAll(taxPercentages);
+
+		return taxPercentages;
+	}
+
 	/**
 	 * This method will return the GST percentages by executing the GST rules configured.
 	 * 
 	 * @param finID
 	 * @return The GST percentages MAP
 	 */
-	public static Map<String, BigDecimal> getTaxPercentages(long finID) {
+	private static Map<String, BigDecimal> getTaxPercentages(long finID) {
 		Map<String, BigDecimal> gstPercentages = new HashMap<>();
 
 		gstPercentages.put(RuleConstants.CODE_CGST, BigDecimal.ZERO);
@@ -460,8 +473,13 @@ public class GSTCalculator {
 	public static Map<String, Object> getGSTDataMap(long finID) {
 		Map<String, Object> dataMap = financeMainDAO.getGSTDataMap(finID, TableType.MAIN_TAB);
 
+		FinanceTaxDetail financeTaxDetail = null;
 		if (MapUtils.isEmpty(dataMap)) {
 			dataMap = financeMainDAO.getGSTDataMap(finID, TableType.TEMP_TAB);
+
+			financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_View");
+		} else {
+			financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetailForLMSEvent(finID);
 		}
 
 		String finBranch = (String) dataMap.computeIfAbsent("FinBranch", ft -> "");
@@ -470,8 +488,6 @@ public class GSTCalculator {
 		String custCountry = (String) dataMap.computeIfAbsent("CustCountry", ft -> "");
 		String custResdSts = (Object) dataMap.get("ResidentialStatus") == null ? ""
 				: String.valueOf((Object) dataMap.get("ResidentialStatus"));
-
-		FinanceTaxDetail financeTaxDetail = financeTaxDetailDAO.getFinanceTaxDetail(finID, "_View");
 
 		dataMap = getGSTDataMap(finBranch, custBranch, custProvince, custResdSts, custCountry, financeTaxDetail);
 		// setting the customer residential status

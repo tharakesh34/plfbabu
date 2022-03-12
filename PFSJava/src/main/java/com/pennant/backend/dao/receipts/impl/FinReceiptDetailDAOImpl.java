@@ -215,17 +215,17 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	}
 
 	@Override
-	public Date getMaxReceivedDateByReference(String finReference) {
+	public Date getMaxReceivedDate(long finID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" max(rch.ValueDate)");
 		sql.append(" From FinReceiptHeader rch");
 		sql.append(" Inner Join FinReceiptDetail rcd on rcd.ReceiptId = rch.ReceiptId");
-		sql.append(" Where rch.Reference = ? AND rcd.Status not in (?, ?) ");
+		sql.append(" Where rch.FinID = ? AND rcd.Status not in (?, ?) ");
 
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finReference, "B", "C");
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, "B", "C");
 		} catch (EmptyResultDataAccessException e) {
 			//
 		}
@@ -429,16 +429,14 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	 */
 	@Override
 	public boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose) {
-		logger.debug("Entering");
-
-		StringBuilder selectSql = new StringBuilder();
-		selectSql.append(" Select count(*) ");
-		selectSql.append(" From FinReceiptHeader T1");
-		selectSql.append(" Inner Join FinReceiptDetail T2 on T1.ReceiptID = T2.RECEIPTID");
-		selectSql.append(
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select count(*) ");
+		sql.append(" From FinReceiptHeader T1");
+		sql.append(" Inner Join FinReceiptDetail T2 on T1.ReceiptID = T2.RECEIPTID");
+		sql.append(
 				" where Reference = :Finreference and T1.ReceiptPurpose = :ReceiptPurpose and T1.RECEIPTMODE = :RECEIPTMODE ");
-		selectSql.append(" and  T2.BANKCODE = :BANKCODE and T2.FAVOURNUMBER = :FAVOURNUMBER ");
-		selectSql.append(" and  T1.receiptmodeStatus not in ('C')");
+		sql.append(" and  T2.BANKCODE = :BANKCODE and T2.FAVOURNUMBER = :FAVOURNUMBER ");
+		sql.append(" and  T1.receiptmodeStatus not in ('C')");
 
 		MapSqlParameterSource source = new MapSqlParameterSource();
 		source.addValue("Finreference", receiptHeader.getReference());
@@ -447,12 +445,12 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 		source.addValue("BANKCODE", receiptHeader.getReceiptDetails().get(0).getBankCode());
 		source.addValue("FAVOURNUMBER", receiptHeader.getReceiptDetails().get(0).getFavourNumber());
 
-		logger.debug("selectSql: " + selectSql.toString());
+		logger.debug("selectSql: " + sql.toString());
 		logger.debug("Leaving");
 
 		int count = 0;
 		try {
-			count = this.jdbcTemplate.queryForObject(selectSql.toString(), source, Integer.class);
+			count = this.jdbcTemplate.queryForObject(sql.toString(), source, Integer.class);
 		} catch (DataAccessException e) {
 			logger.debug(e);
 			count = 0;
@@ -662,6 +660,26 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 	}
 
 	@Override
+	public Date getMaxValueDate(long finID, String receiptPurpose) {
+		StringBuilder sql = new StringBuilder("Select max(ValueDate) From (");
+		sql.append(" Select ValueDate From FinReceiptHeader Where FinID = ? and ReceiptPurpose = ?");
+		sql.append(" Union All");
+		sql.append(" Select ValueDate From FinReceiptHeader_Temp Where FinID = ? and ReceiptPurpose = ?");
+		sql.append(" ) T");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return this.jdbcOperations.queryForObject(sql.toString(), Date.class, finID, receiptPurpose, finID,
+					receiptPurpose);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
+		return null;
+	}
+
+	@Override
 	public List<FinReceiptDetail> getNonLanReceiptHeader(long receiptID, String type) {
 
 		StringBuilder sql = new StringBuilder(
@@ -768,5 +786,5 @@ public class FinReceiptDetailDAOImpl extends SequenceDao<FinReceiptDetail> imple
 			return rch;
 		});
 	}
-
+	
 }

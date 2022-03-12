@@ -405,7 +405,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 
 		FinanceMain fm = getFinanceDetail().getFinScheduleData().getFinanceMain();
 
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		List<FinFeeDetail> templist = pricingDetail.getActualFinFeeDetails();
 		for (FinFeeDetail finFeeDetail : aFinanceDetail.getFinScheduleData().getFinFeeDetailList()) {

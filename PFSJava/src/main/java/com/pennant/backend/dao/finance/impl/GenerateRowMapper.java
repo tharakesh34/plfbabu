@@ -4,22 +4,31 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import com.pennant.backend.model.applicationmaster.CheckListDetail;
+import com.pennant.backend.model.finance.FinanceMain;
 
 public class GenerateRowMapper {
 
 	private static Set<String> fields = new LinkedHashSet<>();
-	private static Object object = new CheckListDetail();
-	private static String tableName = "LiabilityRequest";
+	private static Object object = new FinanceMain();
+	private static String tableName = "FinanceMain";
 	private static String whereClause = "";
-	private static String varibaleName = "cld";
+	private static String varibaleName = "fm";
 	private static boolean list = false;
 
 	private static String getSelectQuery() {
-		StringBuilder sql = new StringBuilder();
-		sql.append(" CheckListId, AnsSeqNo, AnsDesc, AnsCond, RemarksAllow, DocRequired, DocType, RemarksMand");
-		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, TaskId, NextTaskId");
-		sql.append(", RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder("");
+		sql.append(
+				" DmaCode, MigratedFinance, MaxReAgeHolidays, LinkedFinRef, WifReference, UnPlanEMIHLockPeriod, NextRepayCpzDate");
+		sql.append(
+				", Priority, PlanDeferCount, Connector, AllowedDefFrqChange, RecordStatus, RpyMaxRate, AllowedDefRpyChange, FinLimitRef, SamplingRequired");
+		sql.append(
+				", TdsType, FinSourceID, RcdMaintainSts, MaxUnplannedEmi, AvailedUnPlanEmi, TaskId, FinRemarks, AnualizedPercRate, OverrideLimit, DsaCode");
+		sql.append(
+				", NextRepayRvwDate, SchCalOnRvw, Defferments, StepPolicy, WorkflowId,  AccountsOfficer, MinDownPayPerc, GrcMaxRate, WriteoffLoan");
+		sql.append(
+				", InvestmentRef, FinPreApprovedRef, LastRepay, EmployeeName, EffectiveRateOfReturn, RoleCode, DownPaySupl, RateChgAnyDay, AvailedReAgeH");
+		sql.append(
+				", NextRoleCode, LimitValid, AvailedDefRpyChange, DroppingMethod, PftServicingODLimit, ReAgeBucket, AvailedDefFrqChange, LegalRequired");
 
 		return sql.toString();
 	}
