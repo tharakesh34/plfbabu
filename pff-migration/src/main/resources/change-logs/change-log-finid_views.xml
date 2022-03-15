@@ -19325,4 +19325,213 @@
 		</sql>
 	</changeSet>
 	
+		
+	<changeSet id="8_pre" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="8" author="gopal.p">
+		<createView viewName="RMTPROVINCEVSCITY_VIEW"  replaceIfExists="true" >
+			<![CDATA[
+				SELECT T1.PCCOUNTRY,
+					T1.PCPROVINCE,
+					T1.PCCITY,
+					T1.PCCITYNAME,
+					T1.PCCITYCLASSIFICATION,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKREFNO,
+					T1.CITYISACTIVE,
+					T2.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T3.TAXSTATECODE,
+					T1.DISTRICTID,
+					T4.CODE DISTRICTCODE,
+					T4.NAME DISTRICTNAME
+				FROM RMTPROVINCEVSCITY_TEMP  T1
+				INNER JOIN BMTCOUNTRIES T2 ON T1.PCCOUNTRY = T2.COUNTRYCODE
+				INNER JOIN RMTCOUNTRYVSPROVINCE  T3 ON T1.PCCOUNTRY = T3.CPCOUNTRY AND T1.PCPROVINCE = T3.CPPROVINCE
+				LEFT JOIN RMTDISTRICTS T4 ON T1.DISTRICTID = T4.ID 
+				UNION ALL
+				SELECT T1.PCCOUNTRY,
+					T1.PCPROVINCE,
+					T1.PCCITY,
+					T1.PCCITYNAME,
+					T1.PCCITYCLASSIFICATION,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKREFNO,
+					T1.CITYISACTIVE,
+					T2.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T3.TAXSTATECODE,
+					T1.DISTRICTID,
+					T4.CODE DISTRICTCODE,
+					T4.NAME DISTRICTNAME
+				FROM RMTPROVINCEVSCITY T1
+				INNER JOIN BMTCOUNTRIES T2 ON T1.PCCOUNTRY = T2.COUNTRYCODE
+				INNER JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PCCOUNTRY = T3.CPCOUNTRY AND T1.PCPROVINCE = T3.CPPROVINCE
+				LEFT JOIN RMTDISTRICTS T4 ON T1.DISTRICTID = T4.ID 	
+				WHERE  NOT EXISTS(SELECT 1 FROM RMTPROVINCEVSCITY_TEMP WHERE PCCOUNTRY = T1.PCCOUNTRY 
+					AND PCPROVINCE = T1.PCPROVINCE AND PCCITY = T1.PCCITY)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="8_post" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="9_pre" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="9" author="gopal.p">
+		<createView viewName="RMTPROVINCEVSCITY_AVIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.PCCOUNTRY,
+					T1.PCPROVINCE,
+					T1.PCCITY,
+					T1.PCCITYNAME,
+					T1.PCCITYCLASSIFICATION,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T1.BANKREFNO,
+					T1.CITYISACTIVE,
+					T2.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T3.TAXSTATECODE,
+					T1.DISTRICTID,
+					T4.CODE DISTRICTCODE,
+					T4.NAME DISTRICTNAME
+				FROM RMTPROVINCEVSCITY T1
+				INNER JOIN BMTCOUNTRIES T2 ON T1.PCCOUNTRY = T2.COUNTRYCODE
+				INNER JOIN RMTCOUNTRYVSPROVINCE T3 ON T1.PCCOUNTRY = T3.CPCOUNTRY AND T1.PCPROVINCE = T3.CPPROVINCE
+				LEFT JOIN RMTDISTRICTS T4 ON T1.DISTRICTID = T4.ID 	
+			 ]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="9_post" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity_aview');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10_pre" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'pincodes_view');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="10" author="gopal.p">
+		<createView viewName="PINCODES_VIEW" replaceIfExists="true">
+			<![CDATA[
+				SELECT T1.PINCODEID,
+					T1.PINCODE,
+					T1.GROUPID,
+					T1.CITY,
+					T2.PCCITYNAME,
+					T2.PCCOUNTRY,
+					T4.COUNTRYDESC LOVDESCPCCOUNTRYNAME,
+					T2.PCPROVINCE,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T1.AREANAME,
+					T1.ACTIVE,
+					T1.SERVICEABLE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.TAXSTATECODE GSTIN
+				FROM PINCODES_TEMP T1
+				JOIN RMTPROVINCEVSCITY T2 ON T1.CITY = T2.PCCITY
+				JOIN RMTCOUNTRYVSPROVINCE T3 ON T2.PCPROVINCE = T3.CPPROVINCE  AND T3.CPCOUNTRY = T2.PCCOUNTRY
+				JOIN BMTCOUNTRIES T4 ON T2.PCCOUNTRY = T4.COUNTRYCODE
+				UNION ALL
+				SELECT T1.PINCODEID,
+					T1.PINCODE,
+					T1.GROUPID,
+					T1.CITY,
+					T2.PCCITYNAME,
+					T2.PCCOUNTRY,
+					T4.COUNTRYDESC LOVDESCPCCOUNTRYNAMEE,
+					T2.PCPROVINCE,
+					T3.CPPROVINCENAME LOVDESCPCPROVINCENAME,
+					T1.AREANAME,
+					T1.ACTIVE,
+					T1.SERVICEABLE,
+					T1.VERSION,
+					T1.LASTMNTBY,
+					T1.LASTMNTON,
+					T1.RECORDSTATUS,
+					T1.ROLECODE,
+					T1.NEXTROLECODE,
+					T1.TASKID,
+					T1.NEXTTASKID,
+					T1.RECORDTYPE,
+					T1.WORKFLOWID,
+					T3.TAXSTATECODE GSTIN
+				FROM PINCODES T1
+				JOIN RMTPROVINCEVSCITY T2 ON T1.CITY = T2.PCCITY 
+				JOIN RMTCOUNTRYVSPROVINCE T3 ON T2.PCPROVINCE = T3.CPPROVINCE  AND T3.CPCOUNTRY = T2.PCCOUNTRY
+				JOIN BMTCOUNTRIES T4 ON T2.PCCOUNTRY = T4.COUNTRYCODE WHERE T1.PINCODEID NOT IN (SELECT PINCODEID FROM PINCODES_TEMP)
+			]]>
+		</createView>
+	</changeSet>
+	
+	<changeSet id="10_post" author="gopal.p" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'pincodes_view');
+			]]>
+		</sql>
+	</changeSet> 
+	
 </databaseChangeLog>
