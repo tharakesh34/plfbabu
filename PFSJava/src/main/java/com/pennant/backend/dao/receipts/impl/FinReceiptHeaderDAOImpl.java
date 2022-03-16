@@ -1444,7 +1444,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		}, (rs, rowNum) -> {
 			FinReceiptHeader rh = new FinReceiptHeader();
 
-			rh.setReceiptID(rs.getLong("ReceiptID"));
 			rh.setLastMntOn(rs.getTimestamp("LastMntOn"));
 			rh.setWorkflowId(rs.getLong("WorkflowId"));
 

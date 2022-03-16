@@ -1029,6 +1029,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		List<Long> tarnIds = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			return rs.getLong(1);
 		});
+		if (tarnIds.isEmpty()) {
+			return 0;
+		}
 
 		return tarnIds.stream().mapToLong(Long::longValue).max().orElse(0);
 	}
@@ -1041,6 +1044,9 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		List<Date> list = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
 			return rs.getDate(1);
 		});
+		if (list.isEmpty()) {
+			return null;
+		}
 
 		return list.stream().map(l1 -> l1).max(Date::compareTo).get();
 	}
