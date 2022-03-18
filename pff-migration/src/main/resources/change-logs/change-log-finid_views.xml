@@ -15665,17 +15665,18 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.43_pre" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.43.1_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'extended_field_mnt_view'); 
 			]]>
 		</sql>
 	</changeSet>
-	<changeSet id="ST#556.43" author="Mounika.M">
+	<changeSet id="ST#556.43.1" author="Mounika.M">
 		<createView viewName="EXTENDED_FIELD_MNT_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.ID,
+					T2.FINID,
 				    T2.FINREFERENCE,
 				    T1.REFERENCE,
 				    T2.FINTYPE,
@@ -15720,6 +15721,7 @@
 			    JOIN RMTFINANCETYPES T6 ON T6.FINTYPE = T2.FINTYPE
 				UNION ALL
 			 	SELECT T1.ID,
+			 		T2.FINID,
 			    	T2.FINREFERENCE,
 				    T1.REFERENCE,
 				    T2.FINTYPE,
@@ -15766,7 +15768,7 @@
 			]]>
 		</createView>
 	</changeSet>
-	<changeSet id="ST#556.43_post" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.43.1_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'extended_field_mnt_view');	
