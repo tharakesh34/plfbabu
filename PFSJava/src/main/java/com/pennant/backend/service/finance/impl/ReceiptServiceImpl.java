@@ -5103,65 +5103,62 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			break;
 		}
 
-		FinReceiptData recData = rd.copyEntity();
-
-		FinanceDetail fd = recData.getFinanceDetail();
+		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
+
+		List<FinanceScheduleDetail> finSchdDtls = copy(schdData.getFinanceScheduleDetails());
 		FinanceMain fm = schdData.getFinanceMain();
 
 		if (FinanceConstants.CLOSE_STATUS_WRITEOFF.equals(fm.getClosingStatus())) {
 			eventCode = AccountingEvent.WRITEBK;
 		}
 
-		rch = recData.getReceiptHeader();
-		recData.setValueDate(rch.getValueDate());
+		rd.setValueDate(rch.getValueDate());
 		rch.setReceiptDate(fm.getAppDate());
-		recData.setAllocList(rch.getAllocations());
-		recData.setForeClosure(rd.isForeClosure());
+		rd.setAllocList(rch.getAllocations());
+		rd.setForeClosure(rd.isForeClosure());
 
-		if (!AllocationType.MANUAL.equals(recData.getReceiptHeader().getAllocationType())) {
-			recData = receiptCalculator.recalAutoAllocation(recData, false);
+		if (!AllocationType.MANUAL.equals(rch.getAllocationType())) {
+			rd = receiptCalculator.recalAutoAllocation(rd, false);
 		}
 
 		if (peceiptPurpose == ReceiptPurpose.EARLYSETTLE) {
-			boolean duesAdjusted = checkDueAdjusted(recData.getReceiptHeader().getAllocations(), rd);
+			boolean duesAdjusted = checkDueAdjusted(rch.getAllocations(), rd);
 			if (!duesAdjusted) {
 				if (rd.isForeClosure()) {
-					recData.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail("FC0000")));
-					return recData;
+					rd.getErrorDetails().add(ErrorUtil.getErrorDetail(new ErrorDetail("FC0000")));
+					return rd;
 				} else {
-					adjustToExcess(recData);
-					recData.setDueAdjusted(false);
-					return recData;
+					adjustToExcess(rd);
+					rd.setDueAdjusted(false);
+					return rd;
 				}
 			}
 		}
 
 		if (peceiptPurpose == ReceiptPurpose.EARLYRPY && !fm.isSimulateAccounting()) {
-			recalEarlyPay(recData);
+			recalEarlyPay(rd);
 		}
 
-		BigDecimal pastDues = receiptCalculator.getTotalNetPastDue(recData);
-		recData.setTotalPastDues(pastDues);
-		for (FinReceiptDetail rcd : recData.getReceiptHeader().getReceiptDetails()) {
-			recData = updateExcessPay(recData, payType(rcd.getPaymentType()), rcd.getPayAgainstID(), rcd.getAmount());
-			if (recData.getTotalPastDues().compareTo(rcd.getAmount()) >= 0) {
+		BigDecimal pastDues = receiptCalculator.getTotalNetPastDue(rd);
+		rd.setTotalPastDues(pastDues);
+		for (FinReceiptDetail rcd : rd.getReceiptHeader().getReceiptDetails()) {
+			rd = updateExcessPay(rd, payType(rcd.getPaymentType()), rcd.getPayAgainstID(), rcd.getAmount());
+			if (rd.getTotalPastDues().compareTo(rcd.getAmount()) >= 0) {
 				rcd.setDueAmount(rcd.getAmount());
-				recData.setTotalPastDues(recData.getTotalPastDues().subtract(rcd.getAmount()));
+				rd.setTotalPastDues(rd.getTotalPastDues().subtract(rcd.getAmount()));
 			} else {
-				rcd.setDueAmount(recData.getTotalPastDues());
-				recData.setTotalPastDues(BigDecimal.ZERO);
+				rcd.setDueAmount(rd.getTotalPastDues());
+				rd.setTotalPastDues(BigDecimal.ZERO);
 			}
 		}
 
-		List<FinanceScheduleDetail> finSchdDtls = copy(schdData.getFinanceScheduleDetails());
-
 		if (peceiptPurpose == ReceiptPurpose.EARLYRPY) {
-			receiptCalculator.addPartPaymentAlloc(recData);
+			receiptCalculator.addPartPaymentAlloc(rd);
 		}
 
-		recData.setBuildProcess("R");
-		for (ReceiptAllocationDetail allocate : recData.getReceiptHeader().getAllocations()) {
+		rd.setBuildProcess("R");
+		for (ReceiptAllocationDetail allocate : rd.getReceiptHeader().getAllocations()) {
 			allocate.setPaidAvailable(allocate.getPaidAmount());
 			allocate.setWaivedAvailable(allocate.getWaivedAmount());
 			allocate.setPaidAmount(BigDecimal.ZERO);
@@ -5174,12 +5171,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			allocate.setTdsWaived(BigDecimal.ZERO);
 		}
 
-		receiptCalculator.initiateReceipt(recData, false);
+		receiptCalculator.initiateReceipt(rd, false);
 
 		schdData.setFinanceScheduleDetails(finSchdDtls);
 		schdData.setFeeEvent(eventCode);
 
-		return recData;
+		return rd;
 	}
 
 	public boolean checkDueAdjusted(List<ReceiptAllocationDetail> allocations, FinReceiptData rd) {
@@ -5991,7 +5988,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd.setTotalPastDues(BigDecimal.ZERO);
 		}
 
-		if (requestSource == RequestSource.UI) {
+		if (requestSource != RequestSource.UPLOAD && !"Post".equals(fsi.getReqType())) {
 			BigDecimal earlyPayAmount = rd.getRemBal();
 			String recalType = rch.getEffectSchdMethod();
 			fm.setReceiptPurpose(receiptPurpose.code());
