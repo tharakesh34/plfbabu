@@ -27,7 +27,8 @@ public class Services {
 		IMenuExtension menuExtension;
 		String exception = "The IExtensionServices implimentation should be available in the client exetension layer to override the API services list.";
 		try {
-			Object object = Class.forName("com.pennanttech.extension.web.menu.MenuExtension").newInstance();
+			Object object = Class.forName("com.pennanttech.extension.web.menu.MenuExtension").getDeclaredConstructor()
+					.newInstance();
 			if (object != null) {
 				menuExtension = (IMenuExtension) object;
 				return menuExtension;

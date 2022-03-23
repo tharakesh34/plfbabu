@@ -15,11 +15,12 @@ public class MenuExtension implements IMenuExtension {
 		Set<String> set = new HashSet<>();
 
 		set.add("menu_Item_FinanceReferenceDetail");
+		set.add("menu_Item_FieldInvestigation");
+		set.add("menu_Item_FieldInvestigation_Enquiry");
 		set.add("menu_Item_FieldInvestigation_Initiation");
 		set.add("menu_Item_TechnicalVerification_Initiation");
 		set.add("menu_Item_LegalVerification_Initiation");
 		set.add("menu_Item_RCUInitiation");
-		set.add("menu_Item_Field_Investigation");
 		set.add("menu_Item_TechnicalVerification");
 		set.add("menu_Item_TechnicalVerification_External");
 		set.add("menu_Item_TechnicalVerification_Internal");
@@ -75,6 +76,16 @@ public class MenuExtension implements IMenuExtension {
 		set.add("menu_Item_Dealer");
 		set.add("menu_Item_Manufacturer");
 		set.add("menu_Item_QueryCategory");
+
+		set.add("menu_Item_Field_Investigation");
+		set.add("menu_Item_Legal_Verification");
+		set.add("menu_Item_RCU_Verification");
+		set.add("menu_Item_Technical_Verification");
+		set.add("menu_Item_Pesonal_Discussion");
+		set.add("menu_Item_DirectSellingAgent");
+		set.add("menu_Item_DirectMarketAgent");
+		set.add("menu_Item_Connector");
+		set.add("menu_Item_VehicleDealer");
 
 		return set;
 	}
