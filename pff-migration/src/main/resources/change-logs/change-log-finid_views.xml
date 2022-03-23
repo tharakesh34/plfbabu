@@ -4648,7 +4648,7 @@
 
 	<!-- (FTDV) :: Fin Tax detail Views handle in single place start -->
 
-	<changeSet id="FTDV_1.2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_1.3_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_aview');
@@ -4656,7 +4656,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_1.2" author="Gopal.p">
+	<changeSet id="FTDV_1.3" author="Gopal.p">
 		<createView viewName="FINTAXDETAIL_AVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -4703,7 +4703,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_1.2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_1.3_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_aview');	
@@ -4711,7 +4711,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_2.2_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_2.3_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_tview');
@@ -4719,7 +4719,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_2.2" author="Gopal.p">
+	<changeSet id="FTDV_2.3" author="Gopal.p">
 		<createView viewName="FINTAXDETAIL_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -4766,7 +4766,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_2.2_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_2.3_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_tview');	
@@ -4774,7 +4774,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_3.4_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_3.5_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_view');
@@ -4782,7 +4782,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FTDV_3.4" author="Gopal.p">
+	<changeSet id="FTDV_3.5" author="Gopal.p">
 		<createView viewName="FINTAXDETAIL_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -4872,7 +4872,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FTDV_3.4_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FTDV_3.5_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'fintaxdetail_view');	

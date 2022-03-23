@@ -692,10 +692,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) {
+	public AuditHeader saveOrUpdate(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptData rcData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+		FinReceiptData rcData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 		long serviceUID = Long.MIN_VALUE;
 		if (rcData.getFinanceDetail().getExtendedFieldRender() != null) {
@@ -704,17 +704,17 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					rcData.getFinanceDetail().getExtendedFieldExtension());
 		}
 
-		aAuditHeader = businessValidation(aAuditHeader, "saveOrUpdate");
+		auditHeader = businessValidation(auditHeader, "saveOrUpdate");
 
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		if (!aAuditHeader.isNextProcess()) {
+		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
-			return aAuditHeader;
+			return auditHeader;
 		}
 
 		boolean changeStatus = false;
 
-		AuditHeader auditHeader = copy(aAuditHeader);
+		// AuditHeader auditHeader = copy(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 		FinReceiptHeader rch = rceiptData.getReceiptHeader();
@@ -1523,13 +1523,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
 		logger.debug(Literal.ENTERING);
 
-		FinReceiptData ard = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+		FinReceiptData ard = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		AuditHeader auditHeader = copy(aAuditHeader);
+		// AuditHeader auditHeader = copy(aAuditHeader);
 
 		FinReceiptData rd = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
@@ -1563,7 +1563,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			befFinReceiptDetail = befRch.getReceiptDetails();
 		}
 
-		aAuditHeader.getAuditDetail().setBefImage(befRch);
+		auditHeader.getAuditDetail().setBefImage(befRch);
 
 		String rmStatus = rch.getReceiptModeStatus();
 		if (RepayConstants.PAYSTATUS_BOUNCE.equals(rmStatus) || RepayConstants.PAYSTATUS_CANCEL.equals(rmStatus)) {
@@ -1576,9 +1576,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 					rph.setRepayScheduleDetails(rpySchdList);
 				}
 			}
-			receiptCancellationService.doApprove(aAuditHeader);
-			aAuditHeader.getAuditDetail().setModelData(rd);
-			return aAuditHeader;
+			receiptCancellationService.doApprove(auditHeader);
+			auditHeader.getAuditDetail().setModelData(rd);
+			return auditHeader;
 		}
 
 		String roleCode = rd.getReceiptHeader().getRoleCode();
@@ -1589,9 +1589,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (FinanceConstants.REALIZATION_APPROVER.equals(roleCode)) {
 			if (receiptPurpose == ReceiptPurpose.SCHDRPY && prvReceiptPurpose == null
 					&& (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode))) {
-				receiptRealizationService.doApprove(aAuditHeader);
-				aAuditHeader.getAuditDetail().setModelData(rd);
-				return aAuditHeader;
+				receiptRealizationService.doApprove(auditHeader);
+				auditHeader.getAuditDetail().setModelData(rd);
+				return auditHeader;
 			}
 		}
 		// schedule pay effect on cheque/dd realization(if N schedule will effect while approve/if Y schedule will
@@ -1601,9 +1601,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, roleCode)) {
 				if (receiptPurpose == ReceiptPurpose.SCHDRPY && prvReceiptPurpose == null
 						&& (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode))) {
-					receiptRealizationService.doApprove(aAuditHeader);
-					aAuditHeader.getAuditDetail().setModelData(rd);
-					return aAuditHeader;
+					receiptRealizationService.doApprove(auditHeader);
+					auditHeader.getAuditDetail().setModelData(rd);
+					return auditHeader;
 				}
 			}
 		}
@@ -1621,13 +1621,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (!StringUtils.equalsIgnoreCase(PennantConstants.FINSOURCE_ID_API, rd.getSourceId())
 				&& !schdData.getFinServiceInstruction().isReceiptUpload()) {
 			if (receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
-				aAuditHeader = approveValidation(aAuditHeader, "doApprove");
+				auditHeader = approveValidation(auditHeader, "doApprove");
 			}
 		}
 
-		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
-		if (!aAuditHeader.isNextProcess()) {
-			return aAuditHeader;
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
+			return auditHeader;
 		}
 
 		long serviceUID = Long.MIN_VALUE;
@@ -1663,7 +1663,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		// Execute Accounting Details Process
 		// =======================================
-		FinReceiptData rcdata = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+		FinReceiptData rcdata = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinanceDetail financeDetail = rcdata.getFinanceDetail();
 		if (rd.getReceiptHeader().getReceiptID() > 0
 				&& StringUtils.isEmpty(rd.getReceiptHeader().getPrvReceiptPurpose())) {
@@ -1970,20 +1970,20 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String[] rFields = PennantJavaUtil.getFieldDetails(new FinReceiptDetail(),
 				rd.getReceiptHeader().getReceiptDetails().get(0).getExcludeFields());
 		for (int i = 0; i < rd.getReceiptHeader().getReceiptDetails().size(); i++) {
-			tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rFields[0], rFields[1], null,
+			tempAuditDetailList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, rFields[0], rFields[1], null,
 					ard.getReceiptHeader().getReceiptDetails().get(i)));
 		}
 
 		String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(),
 				rd.getReceiptHeader().getExcludeFields());
-		aAuditHeader.setAuditDetail(
-				new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], null, rch));
+		auditHeader.setAuditDetail(
+				new AuditDetail(auditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1], null, rch));
 
-		aAuditHeader.setAuditTranType(PennantConstants.TRAN_WF);
-		aAuditHeader.setAuditDetails(tempAuditDetailList);
-		aAuditHeader.setAuditModule("Receipt");
-		auditHeaderDAO.addAudit(aAuditHeader);
-		aAuditHeader.getAuditDetail().setModelData(rd);
+		auditHeader.setAuditTranType(PennantConstants.TRAN_WF);
+		auditHeader.setAuditDetails(tempAuditDetailList);
+		auditHeader.setAuditModule("Receipt");
+		auditHeaderDAO.addAudit(auditHeader);
+		auditHeader.getAuditDetail().setModelData(rd);
 
 		if (ard.getReceiptHeader().getRecordType().equals(PennantConstants.RECORD_TYPE_NEW)) {
 			tranType = PennantConstants.TRAN_ADD;
@@ -2193,19 +2193,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	 * @throws IllegalAccessException
 	 */
 	@Override
-	public AuditHeader doReversal(AuditHeader aAuditHeader)
+	public AuditHeader doReversal(AuditHeader auditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
 		List<AuditDetail> auditDetails = new ArrayList<AuditDetail>();
-		aAuditHeader = businessValidation(aAuditHeader, "doApprove");
-		if (!aAuditHeader.isNextProcess()) {
+		auditHeader = businessValidation(auditHeader, "doApprove");
+		if (!auditHeader.isNextProcess()) {
 			logger.debug(Literal.LEAVING);
-			return aAuditHeader;
+			return auditHeader;
 		}
 
-		AuditHeader auditHeader = copy(aAuditHeader);
+		// AuditHeader auditHeader = copy(aAuditHeader);
 		FinReceiptData rceiptData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 		FinReceiptHeader receiptHeader = rceiptData.getReceiptHeader();
 		receiptHeader.setPostBranch(auditHeader.getAuditBranchCode());
@@ -2358,7 +2358,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			financeMainDAO.delete(fm, TableType.TEMP_TAB, false, true);
 
 			// Extended field Render Details Delete from temp.
-			FinReceiptData recData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+			FinReceiptData recData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			List<AuditDetail> extendedDetails = recData.getFinanceDetail().getAuditDetailMap()
 					.get("ExtendedFieldDetails");
 			if (CollectionUtils.isNotEmpty(extendedDetails)) {
@@ -2375,15 +2375,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				auditDetails.addAll(details);
 			}
 
-			FinReceiptData tempRepayData = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
+			FinReceiptData tempRepayData = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 			FinanceMain tempfinanceMain = tempRepayData.getFinanceDetail().getFinScheduleData().getFinanceMain();
-			auditHeader.setAuditDetail(new AuditDetail(aAuditHeader.getAuditTranType(), 1, fields[0], fields[1],
+			auditHeader.setAuditDetail(new AuditDetail(auditHeader.getAuditTranType(), 1, fields[0], fields[1],
 					tempfinanceMain.getBefImage(), tempfinanceMain));
 
 			// Receipt Header Audit Details Preparation
 			String[] rhFields = PennantJavaUtil.getFieldDetails(new FinReceiptHeader(),
 					rceiptData.getReceiptHeader().getExcludeFields());
-			tempAuditDetailList.add(new AuditDetail(aAuditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1],
+			tempAuditDetailList.add(new AuditDetail(auditHeader.getAuditTranType(), 1, rhFields[0], rhFields[1],
 					rceiptData.getReceiptHeader().getBefImage(), rceiptData.getReceiptHeader()));
 
 			// Adding audit as deleted from TEMP table
@@ -7085,19 +7085,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logger.error(Literal.EXCEPTION, logMsg);
 
 		schdData.setErrorDetail(error);
-	}
-
-	private AuditHeader copy(AuditHeader aAuditHeader) {
-		AuditHeader auditHeader = aAuditHeader.copyEntity();
-
-		FinReceiptData ard = (FinReceiptData) aAuditHeader.getAuditDetail().getModelData();
-		FinReceiptData rd = ard.copyEntity();
-		auditHeader.setModelData(rd);
-		auditHeader.getAuditDetail().setModelData(rd);
-
-		rd.getFinanceDetail().setCustomerDetails(ard.getFinanceDetail().getCustomerDetails());
-
-		return auditHeader;
 	}
 
 	private List<FinanceScheduleDetail> copy(List<FinanceScheduleDetail> schedules) {

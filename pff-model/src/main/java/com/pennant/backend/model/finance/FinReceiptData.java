@@ -192,10 +192,13 @@ public class FinReceiptData implements Serializable {
 
 		FinScheduleData schD = this.getFinanceDetail().getFinScheduleData();
 		fd.setFinScheduleData(schD.copyEntity());
+
 		fd.getFinScheduleData().setFinPftDeatil(schD.getFinPftDeatil().copyEntity());
 		fd.getFinScheduleData().setFinanceMain(schD.getFinanceMain().copyEntity());
 		this.financeDetail.getFinTypeFeesList().stream()
 				.forEach(e -> fd.getFinTypeFeesList().add(e == null ? null : e.copyEntity()));
+		fd.setExtendedFieldExtension(this.getFinanceDetail().getExtendedFieldExtension().copyEntity());
+
 		entity.setFinanceDetail(fd);
 
 		return entity;
