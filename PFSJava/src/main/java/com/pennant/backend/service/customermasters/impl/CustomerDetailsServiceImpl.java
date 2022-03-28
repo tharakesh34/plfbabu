@@ -3158,6 +3158,13 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				return auditDetail;
 			}
 
+			if (StringUtils.isBlank(customer.getCustCRCPR())) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "panNumber";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+				return auditDetail;
+			}
+
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
 				if (!StringUtils.isBlank(customer.getCustResidentialSts())) {
 					boolean isResExists = false;
