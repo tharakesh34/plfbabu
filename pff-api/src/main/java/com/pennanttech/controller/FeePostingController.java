@@ -17,6 +17,7 @@ import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.SessionUserDetails;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.feetype.FeeTypeDAO;
+import com.pennant.backend.dao.finance.FinanceMainDAO;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -62,6 +63,7 @@ public class FeePostingController extends ExtendedTestClass {
 	private FinanceTaxDetailService financeTaxDetailService;
 	private FinFeeDetailService finFeeDetailService;
 	private ManualAdviseService manualAdviseService;
+	private FinanceMainDAO financeMainDAO;
 
 	/**
 	 * Method for create FeePostings in PLF system.
@@ -405,6 +407,11 @@ public class FeePostingController extends ExtendedTestClass {
 		feePostings.setLastMntBy(userDetails.getUserId());
 		feePostings.setLastMntOn(new Timestamp(System.currentTimeMillis()));
 		feePostings.setSourceId(APIConstants.FINSOURCE_ID_API);
+
+		if (FinanceConstants.POSTING_AGAINST_LOAN.equals(feePostings.getPostAgainst())) {
+			String finDivision = financeMainDAO.getLovDescFinDivisionByReference(feePostings.getReference());
+			feePostings.setPostingDivision(finDivision);
+		}
 	}
 
 	public void setFeePostingService(FeePostingService feePostingService) {
@@ -429,6 +436,10 @@ public class FeePostingController extends ExtendedTestClass {
 
 	public void setFinFeeDetailService(FinFeeDetailService finFeeDetailService) {
 		this.finFeeDetailService = finFeeDetailService;
+	}
+
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
 	}
 
 }
