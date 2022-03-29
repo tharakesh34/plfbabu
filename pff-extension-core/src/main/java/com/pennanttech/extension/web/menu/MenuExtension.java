@@ -20,6 +20,7 @@ public class MenuExtension implements IMenuExtension {
 		set.add("menu_Item_FieldInvestigation_Initiation");
 		set.add("menu_Item_TechnicalVerification_Initiation");
 		set.add("menu_Item_LegalVerification_Initiation");
+		set.add("menu_Item_TechnicalVerification_Enquiry");
 		set.add("menu_Item_RCUInitiation");
 		set.add("menu_Item_TechnicalVerification");
 		set.add("menu_Item_TechnicalVerification_External");
@@ -41,26 +42,23 @@ public class MenuExtension implements IMenuExtension {
 		set.add("menu_Item_PromotionReferenceDetail");
 		set.add("menu_Item_PromotionServiceWorkFlow");
 		set.add("menu_Item_PromotionReferenceService");
-		set.add("menu_Item_CollateralStructure");
-		set.add("menu_Item_CollateralWorkFlow");
-		set.add("menu_Item_CollateralReferenceDetail");
 		set.add("menu_Item_AssetType");
 		set.add("menu_Item_VASProductCategory");
 		set.add("menu_Item_VASProductType");
 		set.add("menu_Item_VASConfiguration");
 		set.add("menu_Item_VASWorkFlow");
 		set.add("menu_Item_VASReferenceDetail");
-		set.add("menu_Item_CollateralSetup");
 		set.add("menu_Item_VASRecording");
 		set.add("menu_Item_VASCancel");
 		set.add("menu_Item_CorpCreditAppReview");
 		set.add("menu_Item_CreditApplicationReviewMaintinence");
-		set.add("menu_Item_CollateralDelink");
 		set.add("menu_Item_LimitRebuild");
 		set.add("menu_Item_InstitutionLimitRebuild");
 		set.add("menu_Item_LegalVetting_Initiation");
 		set.add("menu_Item_LegalVettingVerification");
 		set.add("menu_Item_PMAY");
+		set.add("menu_Item_PmayEnquiry");
+		set.add("menu_Item_PMAYDetails");
 		set.add("menu_Item_LinkingDelinking");
 		set.add("menu_Item_NewFinanceMain");
 		set.add("menu_Item_FinanceDeviations");
@@ -71,12 +69,13 @@ public class MenuExtension implements IMenuExtension {
 		set.add("menu_Item_FinChangeCustomer");
 		set.add("menu_Item_BuilderGroup");
 		set.add("menu_Item_BuilderCompany");
+		set.add("menu_Item_BuilderCompanyEnquiry");
 		set.add("menu_Item_BuilderProjcet");
+		set.add("menu_Item_BuilderProjcetEnquiry");
 		set.add("menu_Item_VASProviderAccDetail");
 		set.add("menu_Item_Dealer");
 		set.add("menu_Item_Manufacturer");
 		set.add("menu_Item_QueryCategory");
-
 		set.add("menu_Item_Field_Investigation");
 		set.add("menu_Item_Legal_Verification");
 		set.add("menu_Item_RCU_Verification");
@@ -86,6 +85,10 @@ public class MenuExtension implements IMenuExtension {
 		set.add("menu_Item_DirectMarketAgent");
 		set.add("menu_Item_Connector");
 		set.add("menu_Item_VehicleDealer");
+		set.add("menu_Item_Sampling");
+		set.add("menu_Item_Sampling_Enquiry");
+		set.add("menu_Item_InterfaceConfiguration");
+		set.add("menu_Item_InterfaceConfigurationEnquiry");
 
 		return set;
 	}
