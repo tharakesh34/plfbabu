@@ -50,7 +50,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("DISB_PAID_CANCELLATION_ALLOW", true);
 
-		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", true);
+		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", false);
 
 		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", true);
 

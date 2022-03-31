@@ -16,7 +16,7 @@
 	<include file="change-logs/change-log-5.9.0.xml" />
 	<include file="change-logs/change-log-5.10.0.xml" />
 	<include file="change-logs/change-log-5.11.0.xml" />
-	<include file="change-logs/change-log-security-seq-reseed.xml" />
+	<include file="change-logs/change-log-security-seq-reseed_pre.xml" />
 	<include file="change-logs/change-log-5.12.0.xml" />
 	<include file="change-logs/change-log-5.13.0.xml" />
 	<include file="change-logs/change-log-5.14.0.xml" />
@@ -30,11 +30,12 @@
 	<include file="change-logs/change-log-finid.xml" />
 	<include file="change-logs/change-log-6.0.0-pt.xml" />
 	<include file="change-logs/change-log-finid_views.xml" />
-	<include file="change-logs/change-log-db-cleanup.xml" /> 
-	<include file="change-logs/change-log-security-seq-reseed.xml" />
+	<include file="change-logs/change-log-security-seq-reseed_post.xml" />
 	<include file="change-logs/change-log-indexes.xml" />
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
+	<include file="change-logs/change-log-db-cleanup.xml" /> 
 	<include file="change-logs/change-log-otp.xml" />
+	<include file="change-logs/change-log-kinara.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
 	
 	

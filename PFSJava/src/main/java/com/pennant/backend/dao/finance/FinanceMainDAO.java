@@ -383,4 +383,6 @@ public interface FinanceMainDAO {
 	FinanceMain getRejectFinanceMainByRef(String finReference);
 
 	FinanceMain getFinanceMainForAdviseUpload(String finReference);
+
+	String getLovDescFinDivisionByReference(String finReference);
 }

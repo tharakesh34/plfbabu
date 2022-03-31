@@ -90,4 +90,52 @@
 		</createIndex>
 	</changeSet>
 	
+	<changeSet id="16_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity_temp');
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity');
+			]]>
+		</sql>
+	</changeSet>
+	<changeSet id="16.0" author="murthy.y">
+		<modifyDataType tableName="rmtprovincevscity_temp" columnName="pccity" newDataType="varchar(8)" />
+	</changeSet>
+	<changeSet id="16.1" author="murthy.y">
+		<modifyDataType tableName="rmtprovincevscity" columnName="pccity" newDataType="varchar(8)" />
+	</changeSet>
+	<changeSet id="16_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity_temp');
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="11" author="gopal.p">
+		<createIndex tableName="rmtprovincevscity" indexName="idx_rmtprovincevscity_pp_pc">
+			<column name="pcprovince" type="varchar(8)" />
+			<column name="pccountry" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="12" author="gopal.p">
+		<createIndex tableName="rmtprovincevscity" indexName="idx_rmtprovincevscity_pc">
+			<column name="pccountry" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="13" author="gopal.p">
+		<createIndex tableName="pincodes" indexName="idx_pincodes_c">
+			<column name="city" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+	
+	<changeSet id="14" author="gopal.p">
+		<createIndex tableName="pincodes_temp" indexName="idx_pincodes_t_c">
+			<column name="city" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+	
 </databaseChangeLog>

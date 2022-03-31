@@ -1,43 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  MainMenuCtrl.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  04-08-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : MainMenuCtrl.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 04-08-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-08-2011       Pennant	                 0.1                                            * 
- * 03-05-2018		Sai Krishna				 0.2		  While opening a menu group, close * 
- *                                                        the siblings. Also fixed the      * 
- *                                                        position of search menu in ZUL    * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-08-2011 Pennant 0.1 * 03-05-2018 Sai Krishna 0.2 While opening a menu group, close * the siblings. Also fixed the
+ * * position of search menu in ZUL * * * * * *
  ********************************************************************************************
  */
 package com.pennant.common.menu;
@@ -70,6 +62,7 @@ import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.webui.util.WindowBaseCtrl;
+import com.pennanttech.extension.Services;
 import com.pennanttech.pennapps.core.App.AuthenticationType;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -214,6 +207,10 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 
 	private boolean isAllowedMenu(MenuItem menuItem) {
 		String menuId = menuItem.getId();
+
+		if (Services.isExclude(menuId)) {
+			return false;
+		}
 
 		switch (menuId) {
 		case "menu_Item_LoanTypeKnockOff":
