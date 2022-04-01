@@ -122,7 +122,7 @@ public class CollateralController extends ExtendedTestClass {
 
 			// call collateral create method
 			auditHeader = collateralSetupService.doApprove(auditHeader);
-			if (CollectionUtils.isEmpty(auditHeader.getErrorMessage())) {
+			if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CollateralSetup();
 					response.setReturnStatus(
