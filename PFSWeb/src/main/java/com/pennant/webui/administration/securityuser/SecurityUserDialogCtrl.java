@@ -640,7 +640,6 @@ public class SecurityUserDialogCtrl extends GFCBaseCtrl<SecurityUser> implements
 		this.txtbox_confirm_Password.setValue("");
 		showLDAPDomainName();
 		setUserDetails();
-
 	}
 
 	/**
