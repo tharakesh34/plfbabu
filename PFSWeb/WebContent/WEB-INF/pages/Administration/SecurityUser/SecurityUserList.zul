@@ -113,7 +113,6 @@
 								<listheader id="listheader_UsrLName" label="${c:l('listheader_UsrLName.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_UsrCanOverrideLimits" label="${c:l('listheader_UsrCanOverrideLimits.label')}"
 									sort="auto" visible="false" hflex="min" />
-								<listheader id="listheader_UsrAcExp" label="${c:l('listheader_UsrAcExp.label')}" sort="auto" hflex="min" />
 								<listheader id="listheader_UsrAcLocked" label="${c:l('listheader_UsrAcLocked.label')}" sort="auto"
 									hflex="min" />
 								<listheader id="listheader_UsrDftAppCode" label="${c:l('listheader_UsrDftAppCode.label')}" sort="auto"

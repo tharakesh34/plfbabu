@@ -390,8 +390,8 @@ public class UserDAOImpl extends BasicDao<SecurityUser> implements UserDAO {
 			securityUser.setUsrMobile(rs.getString("USRMOBILE"));
 			securityUser.setUsrEmail(rs.getString("USREMAIL"));
 			securityUser.setUsrEnabled(rs.getBoolean("USRENABLED"));
-			securityUser.setUsrCanSignonFrom(rs.getDate("USRCANSIGNONFROM"));
-			securityUser.setUsrCanSignonTo(rs.getDate("USRCANSIGNONTO"));
+			securityUser.setUsrCanSignonFrom(rs.getTime("USRCANSIGNONFROM"));
+			securityUser.setUsrCanSignonTo(rs.getTime("USRCANSIGNONTO"));
 			securityUser.setUsrCanOverrideLimits(rs.getBoolean("USRCANOVERRIDELIMITS"));
 			securityUser.setUsrAcExp(rs.getBoolean("USRACEXP"));
 			securityUser.setUserStaffID(rs.getString("USERSTAFFID"));

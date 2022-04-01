@@ -197,7 +197,7 @@
 													</hbox>
 												</row>
 
-												<row visible="true">
+												<row visible="false">
 													<label id="label_SecurityUserDialog_UsrAcExp" value="${c:l('label_SecurityUserDialog_UsrAcExp.value')}" />
 													<hbox>
 														<space spacing="2px" />
