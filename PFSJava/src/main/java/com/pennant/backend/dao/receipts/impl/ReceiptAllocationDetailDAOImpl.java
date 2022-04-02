@@ -25,18 +25,14 @@
 package com.pennant.backend.dao.receipts.impl;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -218,50 +214,35 @@ public class ReceiptAllocationDetailDAOImpl extends SequenceDao<ReceiptAllocatio
 	}
 
 	@Override
-	public List<ReceiptAllocationDetail> getManualAllocationsByRef(String finReference, long curReceiptID) {
-		logger.debug(Literal.ENTERING);
-
+	public List<ReceiptAllocationDetail> getManualAllocationsByRef(long finID, long curReceiptID) {
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" rad.AllocationType AllocationType, rad.AllocationTo AllocationTo");
 		sql.append(", SUM(rad.PaidAmount) PaidAmount, SUM(rad.WaivedAmount) WaivedAmount");
 		sql.append(", SUM(rad.PaidGST) PaidGST, SUM(rad.WaivedGST) WaivedGST");
 		sql.append(" FROM RECEIPTALLOCATIONDETAIL_TEMP rad");
 		sql.append(" INNER JOIN FINRECEIPTHEADER_TEMP rch ON rad.RECEIPTID = rch.RECEIPTID ");
-		sql.append(" Where rch.Reference = ? and rch.ReceiptID <> ?");
+		sql.append(" Where rch.FinID = ? and rch.ReceiptID <> ?");
 		sql.append(" and rch.ALLOCATIONTYPE = ? and rch.CANCELREASON IS NULL ");
 		sql.append(" GROUP BY rad.AllocationType, rad.AllocationTo ");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
-		try {
-			return this.jdbcOperations.query(sql.toString(), new PreparedStatementSetter() {
-				@Override
-				public void setValues(PreparedStatement ps) throws SQLException {
-					int index = 1;
-					ps.setString(index++, finReference);
-					ps.setLong(index++, curReceiptID);
-					ps.setString(index++, "M");
-				}
-			}, new RowMapper<ReceiptAllocationDetail>() {
-				@Override
-				public ReceiptAllocationDetail mapRow(ResultSet rs, int rowNum) throws SQLException {
-					ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+			ps.setLong(index++, curReceiptID);
+			ps.setString(index, "M");
+		}, (rs, rowNum) -> {
+			ReceiptAllocationDetail rad = new ReceiptAllocationDetail();
 
-					rad.setAllocationType(rs.getString("AllocationType"));
-					rad.setAllocationTo(rs.getLong("AllocationTo"));
-					rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
-					rad.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
-					rad.setPaidGST(rs.getBigDecimal("PaidGST"));
-					rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
+			rad.setAllocationType(rs.getString("AllocationType"));
+			rad.setAllocationTo(rs.getLong("AllocationTo"));
+			rad.setPaidAmount(rs.getBigDecimal("PaidAmount"));
+			rad.setWaivedAmount(rs.getBigDecimal("WaivedAmount"));
+			rad.setPaidGST(rs.getBigDecimal("PaidGST"));
+			rad.setWaivedGST(rs.getBigDecimal("WaivedGST"));
 
-					return rad;
-				}
-			});
-		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
-		}
-
-		logger.debug(Literal.LEAVING);
-		return new ArrayList<>();
+			return rad;
+		});
 	}
 }

@@ -22,6 +22,15 @@ public class FinPlanEmiHoliday {
 		super();
 	}
 
+	public FinPlanEmiHoliday copyEntity() {
+		FinPlanEmiHoliday entity = new FinPlanEmiHoliday();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setPlanEMIHMonth(this.planEMIHMonth);
+		entity.setPlanEMIHDate(this.planEMIHDate);
+		return entity;
+	}
+
 	public long getFinID() {
 		return finID;
 	}

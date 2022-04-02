@@ -693,7 +693,7 @@ public class FinODDetailsDAOImpl extends BasicDao<FinODDetails> implements FinOD
 		sql.append(" From FinODDetails");
 		sql.append(" Where FinID = ?");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		List<FinODDetails> odList = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;

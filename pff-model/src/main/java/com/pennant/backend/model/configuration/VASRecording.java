@@ -182,6 +182,113 @@ public class VASRecording extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public VASRecording copyEntity() {
+		VASRecording entity = new VASRecording();
+		entity.setProductCode(this.productCode);
+		entity.setProductDesc(this.productDesc);
+		entity.setPostingAgainst(this.postingAgainst);
+		entity.setPrimaryLinkRef(this.primaryLinkRef);
+		entity.setVasReference(this.vasReference);
+		entity.setFee(this.fee);
+		entity.setRenewalFee(this.renewalFee);
+		entity.setFeePaymentMode(this.feePaymentMode);
+		entity.setValueDate(this.valueDate);
+		entity.setAccrualTillDate(this.accrualTillDate);
+		entity.setRecurringDate(this.recurringDate);
+		entity.setDsaId(this.dsaId);
+		entity.setDsaIdDesc(this.dsaIdDesc);
+		entity.setDmaId(this.dmaId);
+		entity.setDmaIdDesc(this.dmaIdDesc);
+		entity.setFulfilOfficerId(this.fulfilOfficerId);
+		entity.setFulfilOfficerIdDesc(this.fulfilOfficerIdDesc);
+		entity.setReferralId(this.referralId);
+		entity.setReferralIdDesc(this.referralIdDesc);
+		entity.setSourceId(this.sourceId);
+		entity.setProductType(this.productType);
+		entity.setProductTypeDesc(this.productTypeDesc);
+		entity.setProductCtg(this.productCtg);
+		entity.setProductCtgDesc(this.productCtgDesc);
+		entity.setManufacturerDesc(this.manufacturerDesc);
+		entity.setVasStatus(this.vasStatus);
+		entity.setFinanceProcess(this.financeProcess);
+		entity.setFeeAccounting(this.feeAccounting);
+		entity.setStatus(this.status);
+		entity.setEntityCode(this.entityCode);
+		entity.setEntityDesc(this.entityDesc);
+		entity.setOldVasReference(this.oldVasReference);
+		entity.setRemarks(this.remarks);
+		entity.setReason(this.reason);
+		entity.setCancelAmt(this.cancelAmt);
+		entity.setCancelAfterFLP(this.cancelAfterFLP);
+		entity.setFinType(this.finType);
+		entity.setFlpDays(this.flpDays);
+		entity.setServiceReqNumber(this.serviceReqNumber);
+		entity.setInsuranceCancel(this.insuranceCancel);
+		entity.setTermInsuranceLien(this.termInsuranceLien);
+		entity.setProviderName(this.providerName);
+		entity.setPolicyNumber(this.policyNumber);
+		entity.setMedicalApplicable(this.medicalApplicable);
+		entity.setMedicalStatus(this.medicalStatus);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setInsStatus(this.insStatus);
+		// FIXME
+		// entity.setExtendedFieldRender(this.extendedFieldRender == null ? null :
+		// this.extendedFieldRender.copyEntity());
+		entity.setVasConfiguration(this.vasConfiguration == null ? null : this.vasConfiguration.copyEntity());
+		if (aggrements != null) {
+			entity.setAggrements(new ArrayList<FinanceReferenceDetail>());
+			this.aggrements.stream().forEach(e -> entity.getAggrements().add(e == null ? null : e.copyEntity()));
+		}
+		if (vasCheckLists != null) {
+			entity.setVasCheckLists(new ArrayList<FinanceCheckListReference>());
+			this.vasCheckLists.stream().forEach(e -> entity.getVasCheckLists().add(e == null ? null : e.copyEntity()));
+		}
+		this.selAnsCountMap.entrySet().stream().forEach(e -> entity.getSelAnsCountMap().put(e.getKey(), e.getValue()));
+		if (documents != null) {
+			entity.setDocuments(new ArrayList<DocumentDetails>());
+			this.documents.stream().forEach(e -> entity.getDocuments().add(e == null ? null : e.copyEntity()));
+		}
+
+		if (checkLists != null) {
+			entity.setCheckLists(new ArrayList<FinanceReferenceDetail>());
+			this.checkLists.stream().forEach(e -> entity.getCheckLists().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setVasCustomer(this.vasCustomer == null ? null : this.vasCustomer.copyEntity());
+		this.returnDataSetList.stream()
+				.forEach(e -> entity.getReturnDataSetList().add(e == null ? null : e.copyEntity()));
+		this.finFeeDetailsList.stream()
+				.forEach(e -> entity.getFinFeeDetailsList().add(e == null ? null : e.copyEntity()));
+		if (extendedDetails != null) {
+			entity.setExtendedDetails(new ArrayList<ExtendedField>());
+			this.extendedDetails.stream()
+					.forEach(e -> entity.getExtendedDetails().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setCif(this.cif);
+		entity.setFinReference(this.finReference);
+		entity.setCollateralRef(this.collateralRef);
+		entity.setReturnStatus(this.returnStatus == null ? null : this.returnStatus.copyEntity());
+		entity.setPaidAmt(this.paidAmt);
+		entity.setWaivedAmt(this.waivedAmt);
+		entity.setPartnerPremiumAmt(this.partnerPremiumAmt);
+		entity.setManualAdviseId(this.manualAdviseId);
+		entity.setPaymentInsId(this.paymentInsId);
+		entity.setReceivableAdviseId(this.receivableAdviseId);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("productDesc");

@@ -26,6 +26,7 @@
 package com.pennant.backend.model.lmtmasters;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -99,6 +100,72 @@ public class FinanceReferenceDetail extends AbstractWorkflowEntity {
 	public FinanceReferenceDetail(long id) {
 		super();
 		this.setId(id);
+	}
+
+	public FinanceReferenceDetail copyEntity() {
+		FinanceReferenceDetail entity = new FinanceReferenceDetail();
+		entity.setFinRefDetailId(this.finRefDetailId);
+		entity.setFinType(this.finType);
+		entity.setFinEvent(this.finEvent);
+		entity.setFinRefType(this.finRefType);
+		entity.setFinRefId(this.finRefId);
+		entity.setLovDescRefDesc(this.lovDescRefDesc);
+		entity.setIsActive(this.isActive);
+		entity.setShowInStage(this.showInStage);
+		entity.setMandInputInStage(this.mandInputInStage);
+		entity.setAllowInputInStage(this.allowInputInStage);
+		entity.setLovDescRegenerate(this.lovDescRegenerate);
+		entity.setOverRide(this.overRide);
+		entity.setOverRideValue(this.overRideValue);
+		entity.setLovDescCodelov(this.lovDescCodelov);
+		entity.setLovDescNamelov(this.lovDescNamelov);
+		entity.setLovDescAggImage(this.lovDescAggImage);
+		entity.setLovDescIsRemarksAllowed(this.lovDescIsRemarksAllowed);
+		entity.setLovDescCheckMinCount(this.lovDescCheckMinCount);
+		entity.setLovDescCheckMaxCount(this.lovDescCheckMaxCount);
+		entity.setLovDescStgRuleValue(this.lovDescStgRuleValue);
+		entity.setLovDescElgRuleValue(this.lovDescElgRuleValue);
+		entity.setLovDescAggReportName(this.lovDescAggReportName);
+		entity.setLovDescAggReportPath(this.lovDescAggReportPath);
+		entity.setLovDescAggRuleName(this.lovDescAggRuleName);
+		entity.setAggType(this.aggType);
+		entity.setLovDescminScore(this.lovDescminScore);
+		entity.setLovDescisoverride(this.lovDescisoverride);
+		entity.setLovDescoverrideScore(this.lovDescoverrideScore);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		if (lovDesccheckListDetail != null) {
+			entity.setLovDesccheckListDetail(new ArrayList<>());
+			this.lovDesccheckListDetail.stream()
+					.forEach(e -> entity.getLovDesccheckListDetail().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setLovDescElgCalVal(this.lovDescElgCalVal);
+		entity.setLovDescRuleResult(this.lovDescRuleResult);
+		entity.setLovDescFinCcyCode(this.lovDescFinCcyCode);
+		entity.setLovDescProductCodeName(this.lovDescProductCodeName);
+		entity.setLovDescRuleReturnType(this.lovDescRuleReturnType);
+		entity.setLovDescFinTypeDescName(this.lovDescFinTypeDescName);
+		entity.setAllowDeviation(this.allowDeviation);
+		entity.setAllowWaiver(this.allowWaiver);
+		entity.setAllowPostpone(this.allowPostpone);
+		entity.setAllowExpire(this.allowExpire);
+		entity.setAlertType(this.alertType);
+		entity.setAllowMultiple(this.allowMultiple);
+		entity.setModuleType(this.moduleType);
+		entity.setResendReq(this.resendReq);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
 	}
 
 	public Set<String> getExcludeFields() {

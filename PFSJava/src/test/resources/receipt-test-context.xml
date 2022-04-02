@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+		http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+		
+	<context:component-scan base-package="com.pennant.backend.dao" />
+	
+	<bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="org.postgresql.Driver" />
+		<property name="url" value="jdbc:postgresql://192.168.120.44:5432/plf_core_qc3?currentSchema=plf,public,plfaudit,pg_catalog" />
+		<property name="username" value="plf_core_qc3_admin" />
+		<property name="password" value="core_123" />
+		<property name="maxTotal" value="100" />
+	</bean>
+	
+	 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+ 
+   <tx:annotation-driven />
+	
+	<bean id="basicDao" class="com.pennanttech.pennapps.core.jdbc.BasicDao" abstract="true">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<bean name="genericFinanceDetailService" class="com.pennant.backend.service.finance.GenericFinanceDetailService"
+		abstract="true">
+		<property name="financeDisbursementDAO" ref="financeDisbursementDAO" />
+		<property name="repayInstructionDAO" ref="repayInstructionDAO" />
+		<property name="finODPenaltyRateDAO" ref="finODPenaltyRateDAO" />
+		<property name="financeTypeDAO" ref="financeTypeDAO" />
+		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
+		<property name="commitmentDAO" ref="commitmentDAO" />
+		<property name="postingsDAO" ref="postingsDAO" />
+		<property name="profitDetailsDAO" ref="profitDetailsDAO" />
+		<property name="commitmentMovementDAO" ref="commitmentMovementDAO" />
+		<property name="finLogEntryDetailDAO" ref="finLogEntryDetailDAO" />
+		<property name="finODDetailsDAO" ref="finODDetailsDAO" />
+		<property name="financeMainDAO" ref="financeMainDAO" />
+		<property name="financeRepaymentsDAO" ref="financeRepaymentsDAO" />
+		<property name="recoveryDAO" ref="overdueChargeRecoveryDAO" />
+		<property name="financeSuspHeadDAO" ref="financeSuspHeadDAO" />
+		<property name="transactionEntryDAO" ref="transactionEntryDAO" />
+		<property name="finFeeChargesDAO" ref="finFeeChargesDAO" />
+		<property name="finFeeScheduleDetailDAO" ref="finFeeScheduleDetailDAO" />
+		<property name="financeStepDetailDAO" ref="financeStepDetailDAO" />
+		<property name="blacklistCustomerDAO" ref="blacklistCustomerDAO" />
+		<property name="financeDedupeDAO" ref="financeDedupeDAO" />
+		<property name="customerDedupDAO" ref="customerDedupDAO" />
+		<property name="finStageAccountingLogDAO" ref="finStageAccountingLogDAO" />
+		<property name="finCollateralsDAO" ref="finCollateralsDAO" />
+		<property name="finTypeAccountingDAO" ref="finTypeAccountingDAO" />
+		<property name="finPlanEmiHolidayDAO" ref="finPlanEmiHolidayDAO" />
+		<property name="finFeeDetailDAO" ref="finFeeDetailDAO" />
+		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
+		<property name="financeTaxDetailDAO" ref="financeTaxDetailDAO" />
+		<property name="dMSService" ref="dMSService" />
+		<property name="extTablesDAO" ref="extTablesDAO" />
+		<property name="engineExecution" ref="engineExecution" />
+		<property name="customerDAO" ref="customerDAO" />
+		<property name="accountProcessUtil" ref="accountProcessUtil" />
+		<property name="postingsPreparationUtil" ref="postingsPreparationUtil" />
+		<property name="finStatusDetailDAO" ref="finStatusDetailDAO" />
+		<property name="suspensePostingUtil" ref="suspensePostingUtil" />
+		<property name="recoveryPostingsUtil" ref="recoveryPostingsUtil" />
+		<property name="deviationDetailsService" ref="deviationDetailsService" />
+		<property name="finMandateService" ref="finMandateService" />
+		<property name="accrualService" ref="accrualService" />
+		<property name="eligibilityDetailService" ref="finEligibilityDetailService" />
+		<property name="guarantorDetailService" ref="guarantorDetailService" />
+		<property name="jointAccountDetailService" ref="jointAccountDetailService" />
+		<property name="scoringDetailService" ref="finScoringDetailService" />
+		<property name="checkListDetailService" ref="finCheckListDetailService" />
+		<property name="customerDetailsService" ref="customerDetailsService" />
+		<property name="finCollateralService" ref="finCollateralService" />
+		<property name="finAdvancePaymentsService" ref="finAdvancePaymentsService" />
+		<property name="finFeeDetailService" ref="finFeeDetailService" />
+		<property name="finCovenantTypeService" ref="finCovenantTypeService" />
+		<property name="repayPostingUtil" ref="repayPostingUtil" />
+		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
+		<property name="finServiceInstructionDAO" ref="finServiceInstructionDAO" />
+		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
+		<property name="finAssetTypeDAO" ref="finAssetTypeDAO" />
+		<property name="installmentDueService" ref="installmentDueService" />
+		<property name="advancePaymentService" ref="advancePaymentService" />
+		<property name="finIRRDetailsDAO" ref="finIRRDetailsDAO" />
+		<property name="vehicleDealerService" ref="vehicleDealerService" />
+		<property name="customerQueuingDAO" ref="customerQueuingDAO" />
+		<property name="gstInvoiceTxnService" ref="gstInvoiceTxnService" />
+		<property name="queryDetailService" ref="queryDetailService" />
+		<property name="feeTypeDAO" ref="feeTypeDAO" />
+		<property name="receiptCalculator" ref="receiptCalculator" />
+		<property name="ruleDAO" ref="ruleDAO" />
+		<property name="covenantsService" ref="covenantsService" />
+		<property name="finOptionService" ref="finOptionService" />
+		<property name="financeScheduleDetailDAO" ref="financeScheduleDetailDAO" />
+		<property name="covenantsDAO" ref="covenantsDAO" />
+		<property name="manualAdviseDAO" ref="manualAdviseDAO" />
+		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
+		<property name="accountingSetDAO" ref="accountingSetDAO" />
+		<property name="subventionService" ref="subventionService" />
+		<property name="restructureService" ref="restructureService" />
+		<property name="feeTypeService" ref="feeTypeService" />
+	</bean>
+	
+	<bean name="receiptService" class="com.pennant.backend.service.finance.impl.ReceiptServiceImpl" parent="genericFinanceDetailService" />	
+</beans>

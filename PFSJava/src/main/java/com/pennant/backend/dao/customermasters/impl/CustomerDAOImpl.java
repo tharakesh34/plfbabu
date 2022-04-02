@@ -2052,32 +2052,15 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 	}
 
 	@Override
-	public Customer getCustomerStatus(long custId) {
+	public String getCustomerStatus(long custId) {
+		String sql = "Select CustSts From Customers where CustID = ?";
 
-		logger.debug("Entering");
-		Customer customer = new Customer();
-		customer.setId(custId);
+		logger.debug(Literal.SQL + sql);
 
-		StringBuilder selectSql = new StringBuilder("SELECT  CustSts");
-		selectSql.append(" FROM  Customers");
-		selectSql.append(" Where CustID =:CustID");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(customer);
-		RowMapper<Customer> typeRowMapper = BeanPropertyRowMapper.newInstance(Customer.class);
-
-		try {
-			customer = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, typeRowMapper);
-		} catch (EmptyResultDataAccessException e) {
-			customer = null;
-		}
-		logger.debug("Leaving");
-		return customer;
-
+		return jdbcOperations.queryForObject(sql, String.class, custId);
 	}
 
 	public Customer getCustomerEOD(final long id) {
-
 		StringBuilder sql = new StringBuilder("Select");
 		sql.append(" CustID, CustCIF, CustCoreBank, CustCtgCode, CustTypeCode, CustDftBranch, CustPOB");
 		sql.append(", CustCOB, CustGroupID, CustSts, CustStsChgDate, CustIsStaff, CustIndustry, CustSector");
@@ -2087,10 +2070,10 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 		sql.append(" From Customers");
 		sql.append(" Where CustID = ?");
 
-		logger.trace(Literal.SQL + sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				Customer c = new Customer();
 
 				c.setCustID(rs.getLong("CustID"));
@@ -2126,9 +2109,9 @@ public class CustomerDAOImpl extends SequenceDao<Customer> implements CustomerDA
 				c.setCustShrtName(rs.getString("CustShrtName"));
 
 				return c;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records not exists in Customers table for the specified CustID >> {}", id);
+			//
 		}
 
 		return null;

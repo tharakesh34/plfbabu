@@ -457,8 +457,7 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 
 			this.label_window_FinEnqHeaderDialog.setValue(Labels.getLabel("label_RepaymentEnuiry.value"));
 			this.btnPrint.setVisible(false);
-			List<FinanceRepayments> financeRepayments = getManualPaymentService().getFinRepayListByFinRef(this.finID,
-					false, "");
+			List<FinanceRepayments> financeRepayments = manualPaymentService.getFinRepayList(this.finID);
 			map.put("financeRepayments", financeRepayments);
 			map.put("finAmountformatter", CurrencyUtil.getFormat(enquiry.getFinCcy()));
 			path = "/WEB-INF/pages/Enquiry/RepayInquiry/RepayEnquiryDialog.zul";

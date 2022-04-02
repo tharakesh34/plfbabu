@@ -98,7 +98,7 @@ public class CheckListDetailServiceImpl implements CheckListDetailService {
 
 		String showCheckListIds = "";
 		StringBuilder showCheckListIdSb = new StringBuilder();
-		Set<Long> checkListIdSet = new HashSet<Long>();
+		Set<Long> checkListIdSet = new HashSet<>();
 
 		if (referenceList == null) {
 			referenceList = new ArrayList<>();

@@ -1536,8 +1536,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT
 			// ?
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinID(),
-					"_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(aFinanceMain.getFinID());
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -1667,7 +1666,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		long finID = aFm.getFinID();
 		String finRef = aFm.getFinReference();
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		String whereCond1 = " Where FinReference = ?";
 
 		if (!doCheckAuthority(aFm, whereCond1, new Object[] { finRef })) {
@@ -1763,7 +1762,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		String finRef = aFm.getFinReference();
 		long finID = aFm.getFinID();
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where FinReference=?";
@@ -1862,7 +1861,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		long finID = aFinanceMain.getFinID();
 		String finRef = aFinanceMain.getFinReference();
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where FinReference=?";
@@ -1969,7 +1968,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -2099,7 +2098,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 		long finID = fm.getFinID();
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where FinID = ?";
@@ -2181,7 +2180,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 		// Check Repayments on Finance when it is not in Maintenance
 		if (StringUtils.isEmpty(maintainSts)) {
 			List<FinanceRepayments> listFinanceRepayments = new ArrayList<FinanceRepayments>();
-			listFinanceRepayments = financeDetailService.getFinanceRepaymentsByFinRef(finID, false);
+			listFinanceRepayments = financeDetailService.getFinRepayList(finID);
 			if (listFinanceRepayments != null && listFinanceRepayments.size() > 0) {
 				boolean onlyBPIPayment = true;
 				for (FinanceRepayments financeRepayments : listFinanceRepayments) {
@@ -2266,7 +2265,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -2686,7 +2685,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference=?";
@@ -2813,7 +2812,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -2908,7 +2907,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -3021,7 +3020,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			return;
 		}
 
-		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 		if (StringUtils.isNotEmpty(rcdMaintainSts) && !moduleDefiner.equals(rcdMaintainSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));
@@ -3806,7 +3805,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			// Check whether the user has authority to change/view the record.
 			String whereCond1 = " where FinReference = ?";
@@ -3984,7 +3983,7 @@ public class FinanceSelectCtrl extends GFCBaseListCtrl<FinanceMain> {
 			// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
 			long finID = aFinanceMain.getFinID();
 			String finRef = aFinanceMain.getFinReference();
-			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+			String rcdMaintainSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 
 			if (StringUtils.isNotEmpty(rcdMaintainSts) && !StringUtils.equals(rcdMaintainSts, moduleDefiner)) {
 				MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMaintainSts));

@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -159,57 +158,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		save(list, type);
 
 		return fr.getId();
-	}
-
-	@Override
-	public List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type) {
-		StringBuilder sql = getRepayListQuery(isRpyCancelProc, type);
-		sql.append(" Where FinID = ?");
-		if (isRpyCancelProc) {
-			sql.append(" and LinkedTranId = (Select max(LinkedTranId) From FinRepayDetails Where FinID = ?)");
-			sql.append(" and LinkedTranId != ?");
-		}
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		FinRepayListRowMapper rowMapper = new FinRepayListRowMapper(isRpyCancelProc);
-
-		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
-			int index = 1;
-			ps.setLong(index++, finID);
-
-			if (isRpyCancelProc) {
-				ps.setLong(index++, finID);
-				ps.setInt(index++, 0);
-			}
-
-		}, rowMapper);
-
-		if (CollectionUtils.isEmpty(repaymentList)) {
-			sql = new StringBuilder();
-			sql = getRepayListQuery(isRpyCancelProc, type);
-			sql.append(" Where FinID = ?");
-			if (isRpyCancelProc) {
-				sql.append(" and FinPostDate = (Select max(FinPostDate) From FinRepayDetails Where FinID = ?)");
-				sql.append(" and LinkedTranId = ?");
-			}
-
-			logger.debug(Literal.SQL + sql.toString());
-
-			repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
-				int index = 1;
-				ps.setLong(index++, finID);
-				if (isRpyCancelProc) {
-					ps.setLong(index++, finID);
-					ps.setInt(index++, 0);
-				}
-
-			}, rowMapper);
-
-		}
-
-		return repaymentList.stream().sorted((rp1, rp2) -> DateUtil.compare(rp2.getFinSchdDate(), rp1.getFinSchdDate()))
-				.collect(Collectors.toList());
 	}
 
 	@Override
@@ -335,7 +283,7 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		sql.append("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?");
 		sql.append(")");
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		jdbcOperations.update(sql.toString(), ps -> {
 			int index = 1;
@@ -856,23 +804,6 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		return null;
 	}
 
-	private StringBuilder getRepayListQuery(boolean isRpyCancelProc, String type) {
-		StringBuilder sql = new StringBuilder("Select");
-		sql.append(" FInID, FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount");
-		sql.append(", FinSchdDate, FinValueDate, FinBranch, FinType, FinCustID");
-		sql.append(", FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid, FinTotSchdPaid");
-		sql.append(", FinFee, FinWaiver, FinRefund, SchdFeePaid, PenaltyPaid");
-		sql.append(", PenaltyWaived");
-
-		if (isRpyCancelProc) {
-			sql.append(", LinkedTranId");
-		}
-
-		sql.append(" From FinRepayDetails");
-		sql.append(StringUtils.trimToEmpty(type));
-		return sql;
-	}
-
 	private String getInsertQuery(String type) {
 		StringBuilder sql = new StringBuilder("insert into");
 		sql.append(" FinRepayDetails");
@@ -993,12 +924,70 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 		}
 	}
 
-	private class FinRepayListRowMapper implements RowMapper<FinanceRepayments> {
-		private boolean isRpyCancelProc;
+	@Override
+	public List<FinanceRepayments> getFinRepayList(long finID) {
+		StringBuilder sql = getRepayListQuery();
+		sql.append(" Where FinID = ?");
 
-		private FinRepayListRowMapper(boolean isRpyCancelProc) {
-			this.isRpyCancelProc = isRpyCancelProc;
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+
+		}, new RepayListRM());
+
+		return repaymentList.stream().sorted((rp1, rp2) -> DateUtil.compare(rp2.getFinSchdDate(), rp1.getFinSchdDate()))
+				.collect(Collectors.toList());
+	}
+
+	@Override
+	public List<FinanceRepayments> getFinRepayListByLinkedTranID(long finID) {
+		long linkedTranID = getMaxLinkedTranID(finID);
+		Date postDate = getMaxPostDate(finID);
+
+		StringBuilder sql = getRepayListQuery();
+		sql.append(" Where FinID = ?");
+
+		if (linkedTranID > 0) {
+			sql.append(" and LinkedTranId = ?");
+		} else if (postDate != null) {
+			sql.append(" and FinPostDate = ?");
+		} else {
+			return new ArrayList<>();
 		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<FinanceRepayments> repaymentList = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+			ps.setLong(index++, finID);
+
+			if (linkedTranID > 0) {
+				ps.setLong(index++, linkedTranID);
+			} else if (postDate != null) {
+				ps.setDate(index++, JdbcUtil.getDate(postDate));
+			}
+
+		}, new RepayListRM());
+
+		return repaymentList.stream().sorted((rp1, rp2) -> DateUtil.compare(rp2.getFinSchdDate(), rp1.getFinSchdDate()))
+				.collect(Collectors.toList());
+	}
+
+	private StringBuilder getRepayListQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" FInID, FinReference, FinPostDate, FinRpyFor, FinPaySeq, FinRpyAmount");
+		sql.append(", FinSchdDate, FinValueDate, FinBranch, FinType, FinCustID");
+		sql.append(", FinSchdPriPaid, FinSchdPftPaid, FinSchdTdsPaid, FinTotSchdPaid");
+		sql.append(", FinFee, FinWaiver, FinRefund, SchdFeePaid, PenaltyPaid, PenaltyWaived");
+		sql.append(", LinkedTranId");
+		sql.append(" From FinRepayDetails");
+
+		return sql;
+	}
+
+	private class RepayListRM implements RowMapper<FinanceRepayments> {
 
 		@Override
 		public FinanceRepayments mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1025,12 +1014,40 @@ public class FinanceRepaymentsDAOImpl extends SequenceDao<FinanceRepayments> imp
 			rd.setSchdFeePaid(rs.getBigDecimal("SchdFeePaid"));
 			rd.setPenaltyPaid(rs.getBigDecimal("PenaltyPaid"));
 			rd.setPenaltyWaived(rs.getBigDecimal("PenaltyWaived"));
-
-			if (isRpyCancelProc) {
-				rd.setLinkedTranId(rs.getLong("LinkedTranId"));
-			}
+			rd.setLinkedTranId(rs.getLong("LinkedTranId"));
 
 			return rd;
 		}
+
+	}
+
+	private long getMaxLinkedTranID(long finID) {
+		String sql = "Select LinkedTranId From FinRepayDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<Long> tarnIds = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			return rs.getLong(1);
+		});
+		if (tarnIds.isEmpty()) {
+			return 0;
+		}
+
+		return tarnIds.stream().mapToLong(Long::longValue).max().orElse(0);
+	}
+
+	private Date getMaxPostDate(long finID) {
+		String sql = "Select FinPostDate From FinRepayDetails Where FinID = ?";
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<Date> list = this.jdbcOperations.query(sql, ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			return rs.getDate(1);
+		});
+		if (list.isEmpty()) {
+			return null;
+		}
+
+		return list.stream().map(l1 -> l1).max(Date::compareTo).get();
 	}
 }

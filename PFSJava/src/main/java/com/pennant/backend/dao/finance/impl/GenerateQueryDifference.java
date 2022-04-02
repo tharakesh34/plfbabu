@@ -29,7 +29,7 @@ public class GenerateQueryDifference {
 			}
 		}
 		System.out.println("Query 2 Exceed Columns : " + QueryDiffTwo);
-		//	System.out.println("Qeury Size : "+sqlQueryOne.length);
+		// System.out.println("Qeury Size : "+sqlQueryOne.length);
 	}
 
 	private static Map<String, Integer> getQueryNotMatches(String[] sqlQueryOne, String[] sqlQueryTwo) {
@@ -52,10 +52,109 @@ public class GenerateQueryDifference {
 	}
 
 	private static String getSelectFirstQuery() {
-		return null;
+		StringBuilder sql = new StringBuilder();
+		sql.append(" StepFinance,  AccountsOfficer, PlanEMIHMax");
+		sql.append(", RepayCpzFrq, WorkflowId, UnPlanEMIHLockPeriod");
+		sql.append(", NextRoleCode, GrcPftRate, AllowGrcRepay, GrcCpzFrq");
+		sql.append(", LastRepayPftDate, NextGrcPftDate, RecalType, AllowedDefRpyChange");
+		sql.append(", MinDownPayPerc, CustDSR, RvwRateApplFor, RateChgAnyDay");
+		sql.append(", RcdMaintainSts, MaxReAgeHolidays");
+		sql.append(", CustID, CalTerms, FinAmount, UnPlanEMICpz");
+		sql.append(", PlanDeferCount, PlanEMIHAlw, PlanEMIHAlwInGrace, CalMaturity");
+		sql.append(", DsaCode, Defferments, BpiAmount, ApplicationNo, LegalRequired");
+		sql.append(", RoleCode, FinPurpose, FinCurrAssetValue, FinStsReason, NextTaskId");
+		sql.append(", GrcRateBasis, LastRepayRvwDate, RecordStatus, TotalGraceCpz");
+		sql.append(", RpyMaxRate, RpyMinRate, AlwMultiDisb, NextRepayCpzDate, FinRepaymentAmount");
+		sql.append(", DmaCode, ReqRepayAmount, MaxUnplannedEmi");
+		sql.append(", ScheduleRegenerated, FixedRateTenor, GrcProfitDaysBasis");
+		sql.append(", DownPayBank, DroplineFrq, FinStatus, NumberOfTerms");
+		sql.append(", OverrideLimit, Version, ScheduleMethod, FirstRepay");
+		sql.append(", RepayProfitRate, FinIsActive, GrcPeriodEndDate");
+		sql.append(", RepayRvwFrq, FinLimitRef, ProductCategory");
+		sql.append(", FinRepayPftOnFrq, EmployeeName, TDSApplicable");
+		sql.append(", Connector, AvailedDefRpyChange, ScheduleMaintained, LastRepayDate");
+		sql.append(", LastRepay, ReqMaturity, PastduePftMargin, RepayFrq, TotalCpz");
+		sql.append(", TotalGrossPft, FinRepayMethod, AllowRepayRvw");
+		sql.append(", TotalProfit, AvailedUnPlanEmi, FinCategory, GrcPftRvwFrq, FinCommitmentRef");
+		sql.append(", TotalGrossGrcPft, DownPaySupl, AllowGrcPeriod, SalesDepartment");
+		sql.append(", PlanEMICpz, GrcMaxRate, FirstDroplineDate, MandateID");
+		sql.append(", AvailedDefFrqChange, CpzAtGraceEnd, StepPolicy, AllowGrcCpz");
+		sql.append(", NextRepayPftDate, AllowGrcPftRvw, NextGrcPftRvwDate, FinContractDate");
+		sql.append(", InvestmentRef, PromotionCode, FinPreApprovedRef, LimitValid");
+		sql.append(", NoOfSteps, RoundingTarget");
+		sql.append(", LastRepayCpzDate, NextGrcCpzDate, PlanEMIHMethod, AdvanceEMI");
+		sql.append(", AnualizedPercRate, FinCcy, TaskId, BpiPftDaysBasis, StepType");
+		sql.append(", WifReference, InitiateDate, FinApprovedDate");
+		sql.append(", BpiTreatment, NextRepayDate, DroppingMethod, RepayBaseRate");
+		sql.append(", SchCalOnRvw, AvailedReAgeH, FeeChargeAmt, MigratedFinance");
+		sql.append(", FixedTenorRate, LastMntOn, GrcMaxAmount, PlanEMIHLockPeriod");
+		sql.append(", InitiateUser, RepayPftFrq, ProfitDaysBasis, JointAccount, FinBranch");
+		sql.append(", GrcPftFrq, FinSourceID, EligibilityMethod, CalRoundingMode");
+		sql.append(", DeductFeeDisb, FinType, EffectiveRateOfReturn, GraceTerms");
+		sql.append(", DownPayment, FinAssetValue, FinRemarks");
+		sql.append(", Priority, AllowedDefFrqChange, DeviationApproval, ManualSchedule");
+		sql.append(", GraceBaseRate, ReferralId, SamplingRequired, AlwBPI, AlwManualSteps");
+		sql.append(", GrcMargin, RepayMargin, RepayRateBasis, LinkedFinRef, TotalRepayAmt");
+		sql.append(", JointCustId, TotalGracePft, RepaySpecialRate");
+		sql.append(", RecordType, ReAgeCpz, GraceSpecialRate, AllowRepayCpz");
+		sql.append(", NextRepayRvwDate, PlanEMIHMaxPerYear, GrcSchdMthd, LastMntBy");
+		sql.append(", NextUserId, FinStartDate, MaturityDate, ClosingStatus");
+		sql.append(", PftServicingODLimit, QuickDisb, GrcMinRate, PastduePftCalMthd");
+		sql.append(", ReAgeBucket, TdsType, WriteoffLoan, ASCD");
+		return sql.toString();
 	}
 
 	private static String getSelectSecondQuery() {
-		return null;
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" StepFinance,  AccountsOfficer, PlanEMIHMax");
+		sql.append(", RepayCpzFrq, WorkflowId, UnPlanEMIHLockPeriod");
+		sql.append(", NextRoleCode, GrcPftRate, AllowGrcRepay, GrcCpzFrq");
+		sql.append(", LastRepayPftDate, NextGrcPftDate, RecalType, AllowedDefRpyChange");
+		sql.append(", MinDownPayPerc, CustDSR, RvwRateApplFor, RateChgAnyDay");
+		sql.append(", RcdMaintainSts, MaxReAgeHolidays");
+		sql.append(", CustID, CalTerms, FinAmount, UnPlanEMICpz");
+		sql.append(", PlanDeferCount, PlanEMIHAlw, PlanEMIHAlwInGrace, CalMaturity");
+		sql.append(", DsaCode, Defferments, BpiAmount, ApplicationNo, LegalRequired");
+		sql.append(", RoleCode, FinPurpose, FinCurrAssetValue, FinStsReason, NextTaskId");
+		sql.append(", GrcRateBasis, LastRepayRvwDate, RecordStatus, TotalGraceCpz");
+		sql.append(", RpyMaxRate, RpyMinRate, AlwMultiDisb, NextRepayCpzDate, FinRepaymentAmount");
+		sql.append(", DmaCode, ReqRepayAmount, MaxUnplannedEmi");
+		sql.append(", ScheduleRegenerated, FixedRateTenor, GrcProfitDaysBasis");
+		sql.append(", DownPayBank, DroplineFrq, FinStatus, NumberOfTerms");
+		sql.append(", OverrideLimit, Version, ScheduleMethod, FirstRepay");
+		sql.append(", RepayProfitRate, FinIsActive, GrcPeriodEndDate");
+		sql.append(", RepayRvwFrq, FinLimitRef, ProductCategory");
+		sql.append(", FinRepayPftOnFrq, EmployeeName, TDSApplicable");
+		sql.append(", Connector, AvailedDefRpyChange, ScheduleMaintained, LastRepayDate");
+		sql.append(", LastRepay, ReqMaturity, PastduePftMargin, RepayFrq, TotalCpz");
+		sql.append(", TotalGrossPft, FinRepayMethod, AllowRepayRvw");
+		sql.append(", TotalProfit, AvailedUnPlanEmi, FinCategory, GrcPftRvwFrq, FinCommitmentRef");
+		sql.append(", TotalGrossGrcPft, DownPaySupl, AllowGrcPeriod, SalesDepartment");
+		sql.append(", PlanEMICpz, GrcMaxRate, FirstDroplineDate, MandateID");
+		sql.append(", AvailedDefFrqChange, CpzAtGraceEnd, StepPolicy, AllowGrcCpz");
+		sql.append(", NextRepayPftDate, AllowGrcPftRvw, NextGrcPftRvwDate, FinContractDate");
+		sql.append(", InvestmentRef, PromotionCode, FinPreApprovedRef, LimitValid");
+		sql.append(", NoOfSteps, RoundingTarget");
+		sql.append(", LastRepayCpzDate, NextGrcCpzDate, PlanEMIHMethod, AdvanceEMI");
+		sql.append(", AnualizedPercRate, FinCcy, TaskId, BpiPftDaysBasis, StepType");
+		sql.append(", WifReference, InitiateDate, FinApprovedDate");
+		sql.append(", BpiTreatment, NextRepayDate, DroppingMethod, RepayBaseRate");
+		sql.append(", SchCalOnRvw, AvailedReAgeH, FeeChargeAmt, MigratedFinance");
+		sql.append(", FixedTenorRate, LastMntOn, GrcMaxAmount, PlanEMIHLockPeriod");
+		sql.append(", InitiateUser, RepayPftFrq, ProfitDaysBasis, JointAccount, FinBranch");
+		sql.append(", GrcPftFrq, FinSourceID, EligibilityMethod, CalRoundingMode");
+		sql.append(", DeductFeeDisb, FinType, EffectiveRateOfReturn, GraceTerms");
+		sql.append(", DownPayment, FinAssetValue, FinRemarks");
+		sql.append(", Priority, AllowedDefFrqChange, DeviationApproval, ManualSchedule");
+		sql.append(", GraceBaseRate, ReferralId, SamplingRequired, AlwBPI, AlwManualSteps");
+		sql.append(", GrcMargin, RepayMargin, RepayRateBasis, LinkedFinRef, TotalRepayAmt");
+		sql.append(", JointCustId, TotalGracePft, RepaySpecialRate");
+		sql.append(", RecordType, ReAgeCpz, GraceSpecialRate, AllowRepayCpz");
+		sql.append(", NextRepayRvwDate, PlanEMIHMaxPerYear, GrcSchdMthd, LastMntBy");
+		sql.append(", NextUserId, FinStartDate, MaturityDate, ClosingStatus");
+		sql.append(", PftServicingODLimit, QuickDisb, GrcMinRate, PastduePftCalMthd");
+		sql.append(", ReAgeBucket, TdsType, WriteoffLoan, ASC");
+		return sql.toString();
 	}
 }

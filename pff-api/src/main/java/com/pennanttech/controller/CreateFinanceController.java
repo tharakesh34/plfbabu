@@ -3116,7 +3116,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		// Bounce and manual advice fees if applicable
 		List<ManualAdvise> manualAdviseFees = manualAdviseDAO.getManualAdviseByRef(finID,
 				FinanceConstants.MANUAL_ADVISE_RECEIVABLE, "_View");
-		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(finID);
+		Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 		FeeType feeType = feeTypeDAO.getApprovedFeeTypeByFeeCode("BOUNCE");
 		TaxAmountSplit taxSplit;
 		TaxAmountSplit taxSplit2;

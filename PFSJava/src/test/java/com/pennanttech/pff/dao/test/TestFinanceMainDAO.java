@@ -236,11 +236,8 @@ public class TestFinanceMainDAO {
 
 		financeMainDAO.isFinActive(5354);
 
-		financeMainDAO.getFinanceMainByRcdMaintenance(5354, "");
-		financeMainDAO.getFinanceMainByRcdMaintenance(500, "");
-
-		financeMainDAO.getFinanceMainByRcdMaintenance("1500BUS0003280", "");
-		financeMainDAO.getFinanceMainByRcdMaintenance("1500BUS0003", "");
+		financeMainDAO.getFinanceMainByRcdMaintenance(5354);
+		financeMainDAO.getFinanceMainByRcdMaintenance(500);
 
 		financeMainDAO.getRcdMaintenanceByRef(5354, "");
 		financeMainDAO.getRcdMaintenanceByRef(500, "");

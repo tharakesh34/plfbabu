@@ -36,4 +36,6 @@ public interface InstrumentwiseLimitDAO extends BasicCrudDao<InstrumentwiseLimit
 
 	InstrumentwiseLimit getInstrumentWiseModeLimit(String paymentMode, String type);
 
+	InstrumentwiseLimit getInstrumentForLMSEvent(String instrumentMode);
+
 }

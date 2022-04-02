@@ -100,6 +100,54 @@ public class CovenantType extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public CovenantType copyEntity() {
+		CovenantType entity = new CovenantType();
+		entity.setId(this.id);
+		entity.setCode(this.code);
+		entity.setDescription(this.description);
+		entity.setCategory(this.category);
+		entity.setCategoryName(this.categoryName);
+		entity.setDocType(this.docType);
+		entity.setDocTypeName(this.docTypeName);
+		entity.setAllowPostPonement(this.allowPostPonement);
+		entity.setMaxAllowedDays(this.maxAllowedDays);
+		entity.setAllowedPaymentModes(this.allowedPaymentModes);
+		entity.setAlertsRequired(this.alertsRequired);
+		entity.setFrequency(this.frequency);
+		entity.setGraceDays(this.graceDays);
+		entity.setAlertDays(this.alertDays);
+		entity.setAlertType(this.alertType);
+		entity.setAlertTypeName(this.alertTypeName);
+		entity.setAlertToRoles(this.alertToRoles);
+		entity.setAlertToRolesName(this.alertToRolesName);
+		entity.setUserTemplate(this.userTemplate);
+		entity.setUserTemplateCode(this.userTemplateCode);
+		entity.setUserTemplateName(this.userTemplateName);
+		entity.setCustomerTemplate(this.customerTemplate);
+		entity.setCustomerTemplateCode(this.customerTemplateCode);
+		entity.setCustomerTemplateName(this.customerTemplateName);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setCovenantType(this.covenantType);
+		entity.setStrAlertsRequired(this.strAlertsRequired);
+		entity.setlGraceDays(this.lGraceDays);
+		entity.setlAlertDays(this.lAlertDays);
+		entity.setStrAllowPostPonement(this.strAllowPostPonement);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("categoryName");

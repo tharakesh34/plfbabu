@@ -68,12 +68,12 @@ public class AuditHeader implements java.io.Serializable {
 	private boolean auditPrinted = false;
 	private boolean auditRecovered = false;
 	private String auditErrorForRecocvery;
-	private List<ErrorDetail> infoMessage;
-	private List<ErrorDetail> overideMessage;
-	private List<ErrorDetail> errorMessage;
+	private List<ErrorDetail> infoMessage = new ArrayList<>();
+	private List<ErrorDetail> overideMessage = new ArrayList<>();
+	private List<ErrorDetail> errorMessage = new ArrayList<>();
 	private Object modelData;
 	private AuditDetail auditDetail;
-	private List<AuditDetail> auditDetails;
+	private List<AuditDetail> auditDetails = new ArrayList<>();
 	private int overideCount = 0;
 	private String usrLanguage;
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
@@ -85,6 +85,89 @@ public class AuditHeader implements java.io.Serializable {
 
 	public AuditHeader() {
 		super();
+	}
+
+	public ErrorDetail getCopy(ErrorDetail error) {
+		ErrorDetail err = new ErrorDetail();
+		err.setCode(error.getCode());
+		err.setLanguage(error.getLanguage());
+		err.setSeverity(error.getSeverity());
+		err.setMessage(error.getMessage());
+		err.setExtendedMessage(error.getExtendedMessage());
+		err.setNewRecord(error.isNewRecord());
+		err.setBefImage(error.getBefImage() == null ? null : getCopy(error));
+		err.setUserDetails(error.getUserDetails());
+		err.setField(error.getField());
+		err.setParameters(error.getParameters());
+		err.setFieldValues(error.getFieldValues());
+		err.setOveride(error.isOveride());
+		err.setFieldName(error.getFieldName());
+		err.setComponentName(error.getComponentName());
+
+		return err;
+	}
+
+	public List<ErrorDetail> getCopy(List<ErrorDetail> list) {
+		List<ErrorDetail> errors = new ArrayList<>();
+
+		if (list == null) {
+			return errors;
+		}
+
+		list.forEach(error -> errors.add(getCopy(error)));
+
+		return errors;
+	}
+
+	public AuditHeader copyEntity() {
+		AuditHeader entity = new AuditHeader();
+		entity.setAuditId(this.auditId);
+		entity.setAuditDate(this.auditDate);
+		entity.setAuditUsrId(this.auditUsrId);
+		entity.setAuditModule(this.auditModule);
+		entity.setAuditBranchCode(this.auditBranchCode);
+		entity.setAuditDeptCode(this.auditDeptCode);
+		entity.setAuditTranType(this.auditTranType);
+		entity.setAuditCustNo(this.auditCustNo);
+		entity.setAuditAccNo(this.auditAccNo);
+		entity.setAuditLoanNo(this.auditLoanNo);
+		entity.setAuditReference(this.auditReference);
+		entity.setAuditSystemIP(this.auditSystemIP);
+		entity.setAuditSessionID(this.auditSessionID);
+		entity.setOveride(this.overide);
+		entity.setAuditInfo(this.auditInfo);
+		entity.setAuditOveride(this.auditOveride);
+		entity.setAuditError(this.auditError);
+		entity.setAuditPrinted(this.auditPrinted);
+		entity.setAuditRecovered(this.auditRecovered);
+		entity.setAuditErrorForRecocvery(this.auditErrorForRecocvery);
+
+		if (infoMessage != null) {
+			this.infoMessage.stream().forEach(e -> entity.getInfoMessage().add(e == null ? null : getCopy(e)));
+		}
+
+		if (overideMessage != null) {
+			this.overideMessage.stream().forEach(e -> entity.getOverideMessage().add(e == null ? null : getCopy(e)));
+		}
+
+		if (errorMessage != null) {
+			this.errorMessage.stream().forEach(e -> entity.getErrorMessage().add(e == null ? null : getCopy(e)));
+		}
+
+		entity.setAuditDetail(this.auditDetail == null ? null : this.auditDetail.copyEntity());
+
+		if (auditDetails != null) {
+			this.auditDetails.stream().forEach(e -> entity.getAuditDetails().add(e == null ? null : e.copyEntity()));
+		}
+
+		entity.setOverideCount(this.overideCount);
+		entity.setUsrLanguage(this.usrLanguage);
+
+		entity.setProcessStatus(this.processStatus);
+		entity.setNextProcess(this.nextProcess);
+		entity.setDeleteNotes(this.deleteNotes);
+		entity.setProcessCompleted(this.processCompleted);
+		return entity;
 	}
 
 	// New methods for copying the properties of AuditHeader

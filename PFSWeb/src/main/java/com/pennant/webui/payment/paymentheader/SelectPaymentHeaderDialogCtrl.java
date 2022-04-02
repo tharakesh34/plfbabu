@@ -153,7 +153,7 @@ public class SelectPaymentHeaderDialogCtrl extends GFCBaseCtrl<CollateralSetup> 
 		}
 
 		// Validate Loan is INPROGRESS in any Other Servicing option or NOT ?
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.PAYMENTINST.equals(rcdMntnSts)) {
 			MessageUtil.showError(Labels.getLabel("Finance_Inprogresss_" + rcdMntnSts));
 			return;

@@ -561,12 +561,12 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		schdData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, "_TView"));
 
 		/* Finance Receipt Details */
-		schdData.setFinReceiptDetails(finFeeDetailService.getFinReceiptDetais(finReference, custID));
+		schdData.setImdReceipts(finFeeDetailService.getUpfrontReceipts(finID, String.valueOf(custID)));
 
 		/* Loading Up-front Fee Details by LeadId */
 		if (StringUtils.isNotEmpty(offerId)) {
 			/* Finance Fee Details */
-			schdData.getFinReceiptDetails().addAll(finFeeDetailService.getFinReceiptDetais(offerId, custID));
+			schdData.getImdReceipts().addAll(finFeeDetailService.getUpfrontReceipts(finID, offerId));
 
 			/* Finance Fee Details by leadID */
 			List<FinFeeDetail> feeDetails = finFeeDetailService.getFinFeeDetailById(offerId, false, "_View");
@@ -4442,8 +4442,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
-			if ((FinServiceEvent.PLANNEDEMI.equals(moduleDefiner)
-					|| (FinServiceEvent.CHGFRQ.equals(moduleDefiner))) && fm.isPlanEMIHAlw()) {
+			if ((FinServiceEvent.PLANNEDEMI.equals(moduleDefiner) || (FinServiceEvent.CHGFRQ.equals(moduleDefiner)))
+					&& fm.isPlanEMIHAlw()) {
 				if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, "");
 				} else if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_ADHOC)) {
@@ -7969,7 +7969,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		logger.debug(Literal.ENTERING);
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		schdData.setRepayDetails(getFinanceRepaymentsByFinRef(finID, false));
+		schdData.setRepayDetails(getFinRepayList(finID));
 		schdData.setPenaltyDetails(getFinancePenaltysByFinRef(finID));
 		logger.debug(Literal.LEAVING);
 		return schdData;
@@ -9049,8 +9049,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public String getFinanceMainByRcdMaintenance(long finID, String type) {
-		return financeMainDAO.getFinanceMainByRcdMaintenance(finID, type);
+	public String getFinanceMainByRcdMaintenance(long finID) {
+		return financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 	}
 
 	@Override

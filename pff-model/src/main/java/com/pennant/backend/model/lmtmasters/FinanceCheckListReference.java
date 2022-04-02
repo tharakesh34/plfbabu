@@ -68,6 +68,37 @@ public class FinanceCheckListReference extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public FinanceCheckListReference copyEntity() {
+		FinanceCheckListReference entity = new FinanceCheckListReference();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setQuestionId(this.questionId);
+		entity.setAnswer(this.answer);
+		entity.setRemarks(this.remarks);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		this.lovDescSelAnsCountMap.entrySet().stream()
+				.forEach(e -> entity.getLovDescSelAnsCountMap().put(e.getKey(), e.getValue()));
+		entity.setLovDescQuesDesc(this.lovDescQuesDesc);
+		entity.setLovDescAnswerDesc(this.lovDescAnswerDesc);
+		entity.setLovDescMaxAnsCount(this.lovDescMaxAnsCount);
+		entity.setLovDescMinAnsCount(this.lovDescMinAnsCount);
+		entity.setInstructionUID(this.instructionUID);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 

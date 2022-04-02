@@ -19,6 +19,22 @@ public class ExtendedFieldExtension extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public ExtendedFieldExtension copyEntity() {
+		ExtendedFieldExtension entity = new ExtendedFieldExtension();
+
+		entity.setId(this.id);
+		entity.setExtenrnalRef(this.extenrnalRef);
+		entity.setPurpose(this.purpose);
+		entity.setModeStatus(this.modeStatus);
+		entity.setInstructionUID(this.instructionUID);
+		entity.setSequence(this.sequence);
+		entity.setEvent(this.event);
+		entity.setNewRecord(this.newRecord);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+
+		return entity;
+	}
+
 	public long getId() {
 		return id;
 	}

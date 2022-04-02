@@ -1449,7 +1449,9 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	private void prepareGST(FeeWaiverDetail wd, BigDecimal waiverAmount) {
 		logger.debug(Literal.ENTERING);
 
-		Map<String, BigDecimal> gstPercentages = getTaxPercentages(wd.getFinID());
+		FinanceMain fm = new FinanceMain();
+		fm.setFinID(wd.getFinID());
+		Map<String, BigDecimal> gstPercentages = GSTCalculator.getTaxPercentages(fm);
 
 		if (wd.isTaxApplicable()) {
 			/* Always taking as Inclusive case here */
@@ -1552,14 +1554,6 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	@Override
 	protected String getReference() {
 		return String.valueOf(this.feeWaiverHeader.getWaiverId());
-	}
-
-	private Map<String, BigDecimal> getTaxPercentages(long finID) {
-		if (taxPercentages == null) {
-			taxPercentages = GSTCalculator.getTaxPercentages(finID);
-		}
-
-		return taxPercentages;
 	}
 
 	public FinanceSelectCtrl getFinanceSelectCtrl() {

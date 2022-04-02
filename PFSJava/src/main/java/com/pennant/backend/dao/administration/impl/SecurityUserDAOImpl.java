@@ -74,13 +74,6 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		super();
 	}
 
-	/**
-	 * Fetch the Record Security Users details by key field
-	 * 
-	 * @param id   (int)
-	 * @param type (String) ""/_Temp/_View
-	 * @return SecurityUsers
-	 */
 	@Override
 	public SecurityUser getSecurityUserById(final long usrid, String type) {
 		StringBuilder sql = getSecurityUserQuery(type);
@@ -89,11 +82,11 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrid }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				return getTypeRowMapper(rs, type);
-			});
+			}, usrid);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in secusers{} for the user Id >> {} ", type, usrid);
+			//
 		}
 		return null;
 	}
@@ -121,13 +114,6 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		return sql;
 	}
 
-	/**
-	 * Fetch the Record Security Users details by key field
-	 * 
-	 * @param usrLogin (String)
-	 * @param type     (String) ""/_Temp/_View
-	 * @return SecurityUsers
-	 */
 	@Override
 	public SecurityUser getSecurityUserByLogin(final String usrLogin, String type) {
 		StringBuilder sql = getSecurityUserQuery(type);
@@ -136,11 +122,11 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 		logger.trace(Literal.SQL + sql);
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { usrLogin }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				return getTypeRowMapper(rs, type);
-			});
+			}, usrLogin);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Records are not found in secusers{} for the user Login >> {} ", type, usrLogin);
+			//
 		}
 
 		return null;
@@ -330,30 +316,26 @@ public class SecurityUserDAOImpl extends SequenceDao<SecurityUser> implements Se
 	 */
 	@Override
 	public SecurityUserDivBranch getSecUserDivBrDetailsById(SecurityUserDivBranch securityUserDivBranch, String type) {
-		logger.debug(Literal.ENTERING);
-
-		StringBuilder sql = new StringBuilder(" Select UsrID, UserDivision, UserBranch, ");
-		sql.append(" Version , LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode, ");
-		sql.append(" TaskId, NextTaskId, RecordType, WorkflowId");
+		StringBuilder sql = new StringBuilder(" Select UsrID, UserDivision, UserBranch");
+		sql.append(", Version, LastMntBy, LastMntOn, RecordStatus, RoleCode, NextRoleCode");
+		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
-			sql.append(",UserBranchDesc ");
+			sql.append(", UserBranchDesc ");
 		}
 		sql.append(" From SecurityUserDivBranch");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where UsrID = :UsrID And UserDivision = :UserDivision And UserBranch =:UserBranch");
 
-		logger.debug("selectSql:" + sql);
+		logger.debug(Literal.SQL + sql.toString());
 		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(securityUserDivBranch);
 		RowMapper<SecurityUserDivBranch> typeRowMapper = BeanPropertyRowMapper.newInstance(SecurityUserDivBranch.class);
 
 		try {
-			securityUserDivBranch = this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
+			return this.jdbcTemplate.queryForObject(sql.toString(), beanParameters, typeRowMapper);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn(Literal.EXCEPTION, e);
-			securityUserDivBranch = null;
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return securityUserDivBranch;
+		return null;
 	}
 
 	/**

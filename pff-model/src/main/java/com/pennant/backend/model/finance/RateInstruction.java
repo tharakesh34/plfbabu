@@ -13,12 +13,7 @@ import com.pennanttech.pennapps.core.model.AbstractWorkflowEntity;
 @XmlType(propOrder = { "schDate", "pftRate", "baseRate", "splRate", "margin" })
 @XmlAccessorType(XmlAccessType.NONE)
 public class RateInstruction extends AbstractWorkflowEntity {
-
 	private static final long serialVersionUID = 8001757194454901203L;
-
-	public RateInstruction() {
-		super();
-	}
 
 	@XmlElement
 	private Date schDate;
@@ -30,6 +25,31 @@ public class RateInstruction extends AbstractWorkflowEntity {
 	private String splRate;
 	@XmlElement
 	private BigDecimal margin = BigDecimal.ZERO;
+
+	public RateInstruction() {
+		super();
+	}
+
+	public RateInstruction copyEntity() {
+		RateInstruction entity = new RateInstruction();
+		entity.setSchDate(this.schDate);
+		entity.setPftRate(this.pftRate);
+		entity.setBaseRate(this.baseRate);
+		entity.setSplRate(this.splRate);
+		entity.setMargin(this.margin);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
 
 	public Date getSchDate() {
 		return schDate;

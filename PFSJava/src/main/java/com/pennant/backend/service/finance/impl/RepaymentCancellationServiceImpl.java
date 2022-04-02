@@ -104,7 +104,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 
 		schdData.setFinanceMain(fm);
 
-		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByFinRef(finID, true, ""));
+		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByLinkedTranID(finID));
 
 		logger.debug(Literal.LEAVING);
 
@@ -377,7 +377,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		Date appData = SysParamUtil.getAppDate();
 
 		// Fetch Repayments Details List based on Finance Reference
-		List<FinanceRepayments> rpdList = financeRepaymentsDAO.getFinRepayListByFinRef(finID, true, "");
+		List<FinanceRepayments> rpdList = financeRepaymentsDAO.getFinRepayListByLinkedTranID(finID);
 
 		FinanceRepayments repayment = rpdList.get(0);
 		Date rpyValueDate = repayment.getFinValueDate();
@@ -547,7 +547,7 @@ public class RepaymentCancellationServiceImpl extends GenericService<FinanceMain
 		profitDetail.setFinWorstStatus(worstSts);
 
 		// Reset Back Repayments Details
-		rpdList = financeRepaymentsDAO.getFinRepayListByFinRef(finID, true, "");
+		rpdList = financeRepaymentsDAO.getFinRepayListByLinkedTranID(finID);
 		if (!rpdList.isEmpty()) {
 			BigDecimal totPri = BigDecimal.ZERO;
 			BigDecimal totPft = BigDecimal.ZERO;

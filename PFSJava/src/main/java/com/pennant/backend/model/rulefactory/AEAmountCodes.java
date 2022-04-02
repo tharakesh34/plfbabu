@@ -240,9 +240,12 @@ public class AEAmountCodes implements Serializable {
 	private boolean isWriteOff = false;
 	private BigDecimal prvMntAmz = BigDecimal.ZERO;
 
-	//Od Details 
+	// Od Details
 	private BigDecimal odPri = BigDecimal.ZERO;
 	private BigDecimal odPft = BigDecimal.ZERO;
+
+	// Missing Codes
+	private BigDecimal lppPaid = BigDecimal.ZERO;
 
 	public AEAmountCodes() {
 		super();
@@ -438,6 +441,7 @@ public class AEAmountCodes implements Serializable {
 		map.put("ae_prvMntAmz", this.prvMntAmz);
 		map.put("ae_odPri", this.odPri);
 		map.put("ae_odPft", this.odPft);
+		map.put("ae_lppPaid", this.lppPaid);
 
 		return map;
 	}
@@ -1913,4 +1917,13 @@ public class AEAmountCodes implements Serializable {
 	public void setReceiptChannel(String receiptChannel) {
 		this.receiptChannel = receiptChannel;
 	}
+
+	public BigDecimal getLppPaid() {
+		return lppPaid;
+	}
+
+	public void setLppPaid(BigDecimal lppPaid) {
+		this.lppPaid = lppPaid;
+	}
+
 }

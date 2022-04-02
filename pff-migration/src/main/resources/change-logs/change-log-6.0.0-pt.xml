@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
 	<property name="add.schema" value="dbo." dbms="mssql" />
@@ -29,20 +29,20 @@
 
 	<changeSet id="1.0" author="murthy.y">
 		<createIndex tableName="collateralassignment_temp" indexName="idx_collateral_asmnt_t_cr">
-			<column name="CollateralRef" type="varchar(20)"/>
+			<column name="CollateralRef" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
 	<changeSet id="1.1" author="murthy.y">
 		<createIndex tableName="collateralassignment_temp" indexName="idx_collateral_asmnt_t_fr">
-			<column name="Reference" type="varchar(20)"/>
+			<column name="Reference" type="varchar(20)" />
 		</createIndex>
 	</changeSet>
 	<changeSet id="2.0" author="murthy.y">
 		<createIndex tableName="collateralsetup_temp" indexName="idx_collateral_setup_t_did">
-			<column name="DepositorId" type="bigint"/>
+			<column name="DepositorId" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="5.0_pre" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -52,11 +52,12 @@
 		</sql>
 	</changeSet>
 	<changeSet id="5.0" author="murthy.y">
-		<modifyDataType tableName="fintaxdetail_temp" columnName="taxcustid" newDataType="bigint"/>
+		<modifyDataType tableName="fintaxdetail_temp" columnName="taxcustid" newDataType="bigint" />
 	</changeSet>
 	<changeSet id="5.1" author="murthy.y">
-		<modifyDataType tableName="fintaxdetail" columnName="taxcustid" newDataType="bigint"/>
+		<modifyDataType tableName="fintaxdetail" columnName="taxcustid" newDataType="bigint" />
 	</changeSet>
+	
 	<changeSet id="5.0_post" author="murthy.y" dbms="postgresql">
 		<sql>
 			<![CDATA[
@@ -65,29 +66,186 @@
 			]]>
 		</sql>
 	</changeSet>
-
+	
+	<changeSet id="15.0_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail');
+				select deps_save_and_drop_dependencies ('plf', 'fintaxdetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="15.0" author="murthy.y">
+		<modifyDataType tableName="fintaxdetail_temp" columnName="country" newDataType="char(2)" />
+	</changeSet>
+	<changeSet id="15.1" author="murthy.y">
+		<modifyDataType tableName="fintaxdetail" columnName="country" newDataType="char(2)" />
+	</changeSet>
+	<changeSet id="15.2" author="murthy.y">
+		<modifyDataType tableName="fintaxdetail_temp" columnName="city" newDataType="varchar(8)" />
+	</changeSet>
+	<changeSet id="15.3" author="murthy.y">
+		<modifyDataType tableName="fintaxdetail" columnName="city" newDataType="varchar(8)" />
+	</changeSet>
+	<changeSet id="15_post_1" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'fintaxdetail');
+				select deps_restore_dependencies ('plf', 'fintaxdetail_temp');
+			]]>
+		</sql>
+	</changeSet>
+	
 	<changeSet id="3.0" author="murthy.y">
 		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_temp_custid">
-			<column name="taxcustid" type="bigint"/>
+			<column name="taxcustid" type="bigint" />
 		</createIndex>
 	</changeSet>
 	<changeSet id="3.1" author="murthy.y">
 		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_custid">
-			<column name="taxcustid" type="bigint"/>
+			<column name="taxcustid" type="bigint" />
 		</createIndex>
 	</changeSet>
-	
+
 	<changeSet id="6.0" author="murthy.y">
 		<createIndex tableName="customerAddresses" indexName="idx_ca_custid_addr_priority">
-			<column name="custid" type="bigint"/>
-			<column name="custaddrpriority" type="int"/>
+			<column name="custid" type="bigint" />
+			<column name="custaddrpriority" type="int" />
 		</createIndex>
 	</changeSet>
 	<changeSet id="6.1" author="murthy.y">
 		<createIndex tableName="customerAddresses_temp" indexName="idx_ca_t_custid_addr_priority">
-			<column name="custid" type="bigint"/>
-			<column name="custaddrpriority" type="int"/>
+			<column name="custid" type="bigint" />
+			<column name="custaddrpriority" type="int" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="7.0" author="murthy.y">
+		<createIndex tableName="finreceiptheader" indexName="idx_frh_finid_reference">
+			<column name="FinID" type="bigint" />
+			<column name="Reference" type="Varchar(20)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="8.0" author="murthy.y">
+		<createIndex tableName="bmtbankdetail" indexName="idx_bmtbankdetail_bc_a">
+			<column name="BankCode" type="varchar(8)" />
+			<column name="Active" type="smallint" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="9.0" author="murthy.y">
+		<createIndex tableName="rmtprovincevscity" indexName="idx_rmtprovincevscity_pc_pp_pc">
+			<column name="pccity" type="varchar(50)" />
+			<column name="pcprovince" type="varchar(8)" />
+			<column name="pccountry" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="10.0" author="murthy.y">
+		<createIndex tableName="pincodes" indexName="idx_pincodes_pid_city">
+			<column name="pincodeid" type="bigint" />
+			<column name="city" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="11.0" author="murthy.y">
+		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_country">
+			<column name="Country" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="11.1" author="murthy.y">
+		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_t_country">
+			<column name="Country" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="12" author="murthy.y">
+		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_cp">
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="12.1" author="murthy.y">
+		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_t_cp">
+			<column name="Country" type="varchar(2)" />
+			<column name="Province" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="13" author="murthy.y">
+		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_c_p_c">
+			<column name="city" type="varchar(50)" />
+			<column name="province" type="varchar(8)" />
+			<column name="country" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="13.1" author="murthy.y">
+		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_t_c_p_c">
+			<column name="city" type="varchar(50)" />
+			<column name="province" type="varchar(8)" />
+			<column name="country" type="varchar(2)" />
+		</createIndex>
+	</changeSet>
+
+	<changeSet id="14.0" author="murthy.y">
+		<createIndex tableName="fintaxdetail" indexName="idx_fintaxdetail_pid_city">
+			<column name="pincodeid" type="bigint" />
+			<column name="city" type="varchar(8)" />
+		</createIndex>
+	</changeSet>
+	<changeSet id="14.1" author="murthy.y">
+		<createIndex tableName="fintaxdetail_temp" indexName="idx_fintaxdetail_t_pid_city">
+			<column name="pincodeid" type="bigint" />
+			<column name="city" type="varchar(8)" />
 		</createIndex>
 	</changeSet>
 	
+	<changeSet id="16_pre" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity_temp');
+				select deps_save_and_drop_dependencies ('plf', 'rmtprovincevscity');
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="16.1_pre" author="murthy.y"  dbms="oracle">
+    	<dropIndex indexName="IX_RMTPRVCITY_PCCITY" tableName="RMTPROVINCEVSCITY"/>
+	</changeSet>
+	
+	<changeSet id="16.2_pre" author="murthy.y"  dbms="oracle">
+    	<dropIndex indexName="IX_RMTPC_PCCPC" tableName="RMTPROVINCEVSCITY"/>
+	</changeSet>
+	
+	<changeSet id="16.0" author="murthy.y"  dbms="postgresql,oracle">
+		<modifyDataType tableName="rmtprovincevscity_temp" columnName="pccity" newDataType="varchar(8)" /> 
+	</changeSet>
+	
+	<changeSet id="16.1" author="murthy.y" dbms="postgresql,oracle">
+		<modifyDataType tableName="rmtprovincevscity" columnName="pccity" newDataType="varchar(8)" />
+	</changeSet>
+	
+	<changeSet id="16.1.0_post" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_RMTPRVCITY_PCCITY ON RMTPROVINCEVSCITY (NLSSORT(PCCITY,'nls_sort=''BINARY_CI''')); 
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="16.1.1_post" author="murthy.y" dbms="oracle">
+		<sql>
+			<![CDATA[
+				CREATE INDEX IX_RMTPC_PCCPC ON RMTPROVINCEVSCITY (NLSSORT(PCCOUNTRY,'nls_sort=''BINARY_CI'''), NLSSORT(PCPROVINCE,'nls_sort=''BINARY_CI'''), NLSSORT(PCCITY,'nls_sort=''BINARY_CI''')) ;
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="16_post" author="murthy.y" dbms="postgresql">
+		<sql>
+			<![CDATA[
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity_temp');
+				select deps_restore_dependencies ('plf', 'rmtprovincevscity');
+			]]>
+		</sql>
+	</changeSet>
+
 </databaseChangeLog>

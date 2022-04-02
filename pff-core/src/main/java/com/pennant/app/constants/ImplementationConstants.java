@@ -279,6 +279,7 @@ public class ImplementationConstants {
 		COVENANT_ADTNL_REMARKS = getValueAsBoolean(extensions, "COVENANT_ADTNL_REMARKS", false);
 		HOLD_DISB_INST_POST = getValueAsBoolean(extensions, "HOLD_DISB_INST_POST", false);
 		VAS_INST_ON_DISB = getValueAsBoolean(extensions, "VAS_INST_ON_DISB", false);
+		FUR_DISBINST_ACC_REQ = getValueAsBoolean(extensions, "FUR_DISBINST_ACC_REQ", false);
 
 	}
 
@@ -457,6 +458,7 @@ public class ImplementationConstants {
 	public static boolean ALW_DOWNPAY_IN_LOANENQ_AND_SOA;
 	/* Documents tab is automatically open in FinAdvancePayments Screen when value is "true" */
 	public static boolean FA_CANCEL_CHEQUE_AUTO_OPEN;
+	public static boolean FUR_DISBINST_ACC_REQ;
 
 	public static String REPAY_HIERARCHY_METHOD;
 	public static String REPAY_INTEREST_HIERARCHY;

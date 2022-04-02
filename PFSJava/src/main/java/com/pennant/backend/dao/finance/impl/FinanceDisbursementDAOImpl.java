@@ -640,4 +640,10 @@ public class FinanceDisbursementDAOImpl extends BasicDao<FinanceDisbursement> im
 
 		return this.jdbcOperations.queryForObject(sql, Integer.class, instructionUid);
 	}
+
+	@Override
+	public List<FinanceDisbursement> getFinanceDisbursementForLMSEvent(long finID) {
+		return getFinanceDisbursementDetails(finID, "", false);
+	}
+
 }

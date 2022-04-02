@@ -465,7 +465,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);

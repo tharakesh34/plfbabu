@@ -753,8 +753,7 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 				priAmt = priAmt.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
 			}
 
-			limitManagement.processLoanRepay(fm, finDetails.getCustomerDetails().getCustomer(), priAmt,
-					StringUtils.trimToEmpty(finDetails.getFinScheduleData().getFinanceType().getProductCategory()));
+			limitManagement.processLoanRepay(fm, finDetails.getCustomerDetails().getCustomer(), priAmt);
 		} else {
 			limitCheckDetails.doProcessLimits(fm, FinanceConstants.AMENDEMENT);
 		}
@@ -889,8 +888,8 @@ public class ManualPaymentServiceImpl extends GenericFinanceDetailService implem
 	}
 
 	@Override
-	public List<FinanceRepayments> getFinRepayListByFinRef(long finID, boolean isRpyCancelProc, String type) {
-		return financeRepaymentsDAO.getFinRepayListByFinRef(finID, isRpyCancelProc, type);
+	public List<FinanceRepayments> getFinRepayList(long finID) {
+		return financeRepaymentsDAO.getFinRepayList(finID);
 	}
 
 	@Override

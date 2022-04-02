@@ -810,6 +810,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private String custAcctHolderName;
 
 	private boolean cpzPosIntact = false;
+	private Map<String, BigDecimal> taxPercentages = new HashMap<>();
+	private Map<String, Object> gstExecutionMap = new HashMap<>();
 
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
@@ -1034,11 +1036,10 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("instructionUID");
 		excludeFields.add("custAcctNumber");
 		excludeFields.add("custAcctHolderName");
+		excludeFields.add("taxPercentages");
+		excludeFields.add("gstExecutionMap");
 		return excludeFields;
 	}
-	// ******************************************************//
-	// ****************** getter / setter *******************//
-	// ******************************************************//
 
 	public FinanceMain copyEntity() {
 		FinanceMain entity = new FinanceMain();
@@ -1510,6 +1511,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setCustBankId(this.custBankId);
 		entity.setCustAcctNumber(this.custAcctNumber);
 		entity.setCustAcctHolderName(this.custAcctHolderName);
+		entity.setTaxPercentages(this.taxPercentages);
+		entity.setGstExecutionMap(this.gstExecutionMap);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5287,6 +5290,22 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setCustAcctHolderName(String custAcctHolderName) {
 		this.custAcctHolderName = custAcctHolderName;
+	}
+
+	public Map<String, BigDecimal> getTaxPercentages() {
+		return taxPercentages;
+	}
+
+	public void setTaxPercentages(Map<String, BigDecimal> taxPercentages) {
+		this.taxPercentages = taxPercentages;
+	}
+
+	public Map<String, Object> getGstExecutionMap() {
+		return gstExecutionMap;
+	}
+
+	public void setGstExecutionMap(Map<String, Object> gstExecutionMap) {
+		this.gstExecutionMap = gstExecutionMap;
 	}
 
 }

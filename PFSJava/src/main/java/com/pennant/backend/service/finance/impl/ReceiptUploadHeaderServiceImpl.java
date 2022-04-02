@@ -101,6 +101,7 @@ import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.upload.ReceiptUploadThreadProcess;
 
@@ -652,7 +653,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			FinServiceInstruction fsi = receiptService.buildFinServiceInstruction(rud, ruh.getEntityCode());
 			fsi.setReqType("Inquiry");
 			fsi.setReceiptUpload(true);
-			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi, fsi.getReceiptPurpose());
+			fsi.setRequestSource(RequestSource.UPLOAD);
+			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi);
 
 			WSReturnStatus returnStatus = financeDetail.getReturnStatus();
 			if (returnStatus != null) {

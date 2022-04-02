@@ -359,7 +359,7 @@ public class AccrualService extends ServiceHelper {
 			// -------------------------------------------------------------------------------------
 			// Cumulative Totals
 			// -------------------------------------------------------------------------------------
-			calCumulativeTotals(pfd, curSchd, fm);
+			calCumulativeTotals(pfd, curSchd);
 
 			// -------------------------------------------------------------------------------------
 			// Till Date and Future Date Totals
@@ -369,7 +369,7 @@ public class AccrualService extends ServiceHelper {
 			if (DateUtil.compare(curSchdDate, valueDate) <= 0) {
 				calTillDateTotals(pfd, curSchd);
 			} else {
-				calNextDateTotals(pfd, curSchd, fm);
+				calNextDateTotals(pfd, curSchd);
 
 				if (TDS_SCHD_INDEX < -1) {
 					if (curSchd.isTDSApplicable()) {
@@ -470,7 +470,7 @@ public class AccrualService extends ServiceHelper {
 		}
 	}
 
-	private static void calCumulativeTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd, FinanceMain fm) {
+	private static void calCumulativeTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd) {
 		// profit
 		pfd.setTotalPftSchd(pfd.getTotalPftSchd().add(schd.getProfitSchd()));
 		pfd.setTotalPftCpz(pfd.getTotalPftCpz().add(schd.getCpzAmount()));
@@ -592,7 +592,7 @@ public class AccrualService extends ServiceHelper {
 
 	}
 
-	private static void calNextDateTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd, FinanceMain fm) {
+	private static void calNextDateTotals(FinanceProfitDetail pfd, FinanceScheduleDetail schd) {
 
 		// advance Profit and Principal
 		pfd.setTotalPftPaidInAdv(pfd.getTotalPftPaidInAdv().add(schd.getSchdPftPaid()));
@@ -609,11 +609,6 @@ public class AccrualService extends ServiceHelper {
 					pfd.setNSchdPriDue(schd.getPrincipalSchd().subtract(schd.getSchdPriPaid()));
 					pfd.setNSchdPftDue(schd.getProfitSchd().subtract(schd.getSchdPftPaid()));
 				}
-
-				/*
-				 * if (!(fm.isAlwGrcAdj() && DateUtil.compare(curSchd.getSchDate(), fm.getGrcPeriodEndDate()) <= 0)) {
-				 * pftDetail.setFutureInst(pftDetail.getFutureInst() + 1); }
-				 */
 
 				if (!StringUtils.equals(schd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
 					pfd.setFutureInst(pfd.getFutureInst() + 1);

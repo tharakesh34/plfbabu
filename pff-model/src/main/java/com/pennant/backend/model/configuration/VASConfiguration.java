@@ -130,6 +130,70 @@ public class VASConfiguration extends AbstractWorkflowEntity {
 		this.setId(id);
 	}
 
+	public VASConfiguration copyEntity() {
+		VASConfiguration entity = new VASConfiguration();
+		entity.setProductCode(this.productCode);
+		entity.setProductDesc(this.productDesc);
+		entity.setProductType(this.productType);
+		entity.setProductTypeDesc(this.productTypeDesc);
+		entity.setProductCategory(this.productCategory);
+		entity.setProductCategoryDesc(this.productCategoryDesc);
+		entity.setVasFee(this.vasFee);
+		entity.setAllowFeeToModify(this.allowFeeToModify);
+		entity.setManufacturerId(this.manufacturerId);
+		entity.setManufacturerName(this.manufacturerName);
+		entity.setRecAgainst(this.recAgainst);
+		entity.setFeeAccrued(this.feeAccrued);
+		entity.setFeeAccounting(this.feeAccounting);
+		entity.setFeeAccountingName(this.feeAccountingName);
+		entity.setFeeAccountingDesc(this.feeAccountingDesc);
+		entity.setAccrualAccounting(this.accrualAccounting);
+		entity.setAccrualAccountingName(this.accrualAccountingName);
+		entity.setAccrualAccountingDesc(this.accrualAccountingDesc);
+		entity.setRecurringType(this.recurringType);
+		entity.setFreeLockPeriod(this.freeLockPeriod);
+		entity.setPreValidationReq(this.preValidationReq);
+		entity.setPostValidationReq(this.postValidationReq);
+		entity.setPreValidation(this.preValidation);
+		entity.setPostValidation(this.postValidation);
+		entity.setFeeType(this.feeType);
+		entity.setFeeTypeCode(this.feeTypeCode);
+		entity.setFeeTypeDesc(this.feeTypeDesc);
+		entity.setFlpCalculatedOn(this.flpCalculatedOn);
+		entity.setShortCode(this.shortCode);
+		entity.setActive(this.active);
+		entity.setRemarks(this.remarks);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setExtendedFieldHeader(this.extendedFieldHeader == null ? null : this.extendedFieldHeader.copyEntity());
+		entity.setReturnStatus(this.returnStatus == null ? null : this.returnStatus.copyEntity());
+		if (extendedFieldDetailList != null) {
+			entity.setExtendedFieldDetailList(new ArrayList<ExtendedFieldDetail>());
+			this.extendedFieldDetailList.stream()
+					.forEach(e -> entity.getExtendedFieldDetailList().add(e == null ? null : e.copyEntity()));
+		}
+		entity.setModeOfPayment(this.modeOfPayment);
+		entity.setAllowFeeType(this.allowFeeType);
+		entity.setMedicalApplicable(this.medicalApplicable);
+		entity.setBatchId(this.batchId);
+		entity.setFileName(this.fileName);
+		this.premiumCalcDetList.stream()
+				.forEach(e -> entity.getPremiumCalcDetList().add(e == null ? null : e.copyEntity()));
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<String>();
 		excludeFields.add("feeAccountingName");

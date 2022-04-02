@@ -48,6 +48,37 @@ public class FinanceStepPolicyDetail extends AbstractWorkflowEntity {
 		super();
 	}
 
+	public FinanceStepPolicyDetail copyEntity() {
+		FinanceStepPolicyDetail entity = new FinanceStepPolicyDetail();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setStepNo(this.stepNo);
+		entity.setTenorSplitPerc(this.tenorSplitPerc);
+		entity.setInstallments(this.installments);
+		entity.setRateMargin(this.rateMargin);
+		entity.setEmiSplitPerc(this.emiSplitPerc);
+		entity.setSteppedEMI(this.steppedEMI);
+		entity.setLovValue(this.lovValue);
+		entity.setBefImage(this.befImage == null ? null : this.befImage.copyEntity());
+		entity.setUserDetails(this.userDetails);
+		entity.setStepSpecifier(this.stepSpecifier);
+		entity.setStepStart(this.stepStart);
+		entity.setStepEnd(this.stepEnd);
+		entity.setAutoCal(this.autoCal);
+		entity.setRecordStatus(super.getRecordStatus());
+		entity.setRoleCode(super.getRoleCode());
+		entity.setNextRoleCode(super.getNextRoleCode());
+		entity.setTaskId(super.getTaskId());
+		entity.setNextTaskId(super.getNextTaskId());
+		entity.setRecordType(super.getRecordType());
+		entity.setWorkflowId(super.getWorkflowId());
+		entity.setUserAction(super.getUserAction());
+		entity.setVersion(super.getVersion());
+		entity.setLastMntBy(super.getLastMntBy());
+		entity.setLastMntOn(super.getLastMntOn());
+		return entity;
+	}
+
 	public FinanceStepPolicyDetail(String id) {
 		super();
 		this.setId(id);

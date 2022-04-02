@@ -1245,7 +1245,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 				if (taxPercMap == null) {
 					FinanceDetail financeDetail = new FinanceDetail();
 					financeDetail.getFinScheduleData().setFinanceMain(financeMain);
-					taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+					taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
 				}
 
 				// GST Calculations
@@ -1671,7 +1671,7 @@ public class PaymentHeaderDialogCtrl extends GFCBaseCtrl<PaymentHeader> {
 		if (detail.isTaxApplicable() && taxHeader != null) {
 
 			if (taxPercMap == null) {
-				taxPercMap = GSTCalculator.getTaxPercentages(financeMain.getFinID());
+				taxPercMap = GSTCalculator.getTaxPercentages(financeMain);
 			}
 
 			// GST Calculations

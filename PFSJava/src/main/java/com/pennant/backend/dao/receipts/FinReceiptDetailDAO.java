@@ -21,7 +21,7 @@ public interface FinReceiptDetailDAO {
 
 	int getReceiptHeaderByBank(String bankCode, String type);
 
-	Date getMaxReceivedDateByReference(String finReference);
+	Date getMaxReceivedDate(long finID);
 
 	List<RepayScheduleDetail> fetchRepaySchduleList(long receiptSeqId);
 
@@ -36,24 +36,11 @@ public interface FinReceiptDetailDAO {
 
 	BigDecimal getReceiptAmountPerDay(Date appDate, String paymentType, long custID);
 
-	List<FinReceiptDetail> getFinReceiptDetailByRef(String reference, long custId);
-
-	List<FinReceiptDetail> getFinReceiptDetailByFinID(long finID, long custId);
-
 	void cancelReceiptDetails(List<Long> receiptID);
 
 	List<FinReceiptDetail> getDMFinReceiptDetailByFinRef(String finReference, String type);
 
 	BigDecimal getFinReceiptDetailsByFinRef(String finReference);
-
-	// ### 29-10-2018, Ticket id:124998
-	boolean isFinReceiptDetailExitsByFavourNo(FinReceiptHeader receiptHeader, String purpose);
-
-	// ### 29-10-2018, Ticket id:124998
-	boolean isFinReceiptDetailExitsByTransactionRef(FinReceiptHeader receiptHeader, String purpose);
-
-	// ### 29-10-2018, Ticket id:124998
-	long getReceiptIdByReceiptDetails(FinReceiptHeader receiptHeader, String purpose);
 
 	// ### 30-10-2018, Ticket id:124998
 	void updateReceiptStatusByReceiptId(long receiptId, String status);
@@ -66,4 +53,12 @@ public interface FinReceiptDetailDAO {
 	List<FinReceiptDetail> getNonLanReceiptHeader(long receiptID, String type);
 
 	String getReceiptSourceAccType(String receiptSource);
+
+	Date getMaxValueDate(long finID, String receiptPurpose);
+
+	List<FinReceiptHeader> getReceiptsForDuplicateCheck(long finID, String reference);
+
+	List<FinReceiptHeader> getReceiptsForDuplicateCheck(long finID);
+
+	long getReceiptIDForSP(FinReceiptHeader rh);
 }

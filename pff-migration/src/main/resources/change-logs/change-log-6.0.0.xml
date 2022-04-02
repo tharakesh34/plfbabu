@@ -24433,7 +24433,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.2_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'customersdedup_view');
@@ -24441,7 +24441,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1" author="Gopal.p">
+	<changeSet id="PSD#172188.2" author="Gopal.p">
 		<createView viewName="CUSTOMERSDEDUP_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.CUSTID,
@@ -24572,7 +24572,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1_post" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.2_post" author="gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'customersdedup_view');
@@ -26930,12 +26930,20 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</createView>
 	</changeSet>
 	
-	
 	<changeSet id="PSD#187420" author="Gireesh.G">
 		<sql>
 			<![CDATA[
 				DELETE from ErrorDetails WHERE code='90599';
 				INSERT INTO ERRORDETAILS (CODE, LANGUAGE, SEVERITY, MESSAGE, EXTENDEDMESSAGE, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID, LASTMNTON, LASTMNTBY, VERSION) VALUES ('90599', 'EN', 'E', '{0} is not valid for Customer: {1}', null, 'Approved', null, null, null, null, null, 0, null, 1000, 0);
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="187420" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				DELETE FROM SMTPARAMETERS WHERE SYSPARMCODE = 'BPI_IMPACT_ON_IRR';
+				INSERT INTO SMTPARAMETERS (SYSPARMCODE, SYSPARMDESC, SYSPARMTYPE, SYSPARMMAINT, SYSPARMVALUE, SYSPARMLENGTH, SYSPARMDEC, SYSPARMLIST, SYSPARMVALDMOD, SYSPARMDESCRIPTION, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('BPI_IMPACT_ON_IRR', 'Effective Rate Calculation on (XIRR/IRR)', 'String', 1, 'Y', 1, 0, null, null, '', 1, 1000, current_timestamp, 'Approved', null, null, null, null, null, 0);
 			]]>
 		</sql>
 	</changeSet>

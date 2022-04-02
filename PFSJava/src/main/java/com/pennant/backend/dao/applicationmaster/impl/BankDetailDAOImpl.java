@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  BankDetailDAOImpl.java                                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-05-2011    														*
- *                                                                  						*
- * Modified Date    :  05-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : BankDetailDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-05-2011 * * Modified
+ * Date : 05-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.dao.applicationmaster.impl;
@@ -99,15 +81,6 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		return bankDetail;
 	}
 
-	/**
-	 * Fetch the Record Bank Details by key field
-	 * 
-	 * @param id
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
-	 * @return BankDetail
-	 */
 	@Override
 	public BankDetail getBankDetailById(final String id, String type) {
 		StringBuilder sql = new StringBuilder("Select");
@@ -118,10 +91,10 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankCode = ?");
 
-		logger.trace(Literal.SQL + sql);
+		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { id }, (rs, rowNum) -> {
+			return this.jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
 				BankDetail bd = new BankDetail();
 
 				bd.setBankCode(rs.getString("BankCode"));
@@ -142,9 +115,9 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 				bd.setWorkflowId(rs.getLong("WorkflowId"));
 
 				return bd;
-			});
+			}, id);
 		} catch (EmptyResultDataAccessException e) {
-			logger.warn("Record not found in BMTBankDetail{} with BankCode>>{}", type, id);
+			//
 		}
 
 		return null;
@@ -356,6 +329,21 @@ public class BankDetailDAOImpl extends BasicDao<BankDetail> implements BankDetai
 
 		if (bankCount > 0) {
 			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isBankCodeExits(String bankCode) {
+		String sql = "Select BankCode From BMTBankDetail Where BankCode = ? and Active = ?";
+
+		logger.debug(Literal.SQL + sql);
+
+		try {
+			return jdbcOperations.queryForObject(sql, String.class, bankCode, 1) != null;
+		} catch (EmptyResultDataAccessException e) {
+			//
 		}
 
 		return false;

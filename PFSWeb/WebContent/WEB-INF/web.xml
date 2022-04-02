@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	id="WebApp_ID" version="3.0">
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID"
+	version="3.0">
 
 	<display-name>pennApps Lending Factory</display-name>
 
@@ -35,7 +36,7 @@
 		<param-name>isLog4jAutoInitializationDisabled</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	
+
 	<!-- Listener to get application session details -->
 	<listener>
 		<listener-class>com.pennapps.web.observability.listener.MetricesListener</listener-class>
@@ -46,6 +47,10 @@
 	<listener>
 		<display-name>Application startup</display-name>
 		<listener-class>com.pennanttech.pennapps.web.ApplicationStartup</listener-class>
+	</listener>
+	<listener>
+		<display-name>Session Listener</display-name>
+		<listener-class>com.pennanttech.pennapps.web.security.listener.SessionListener</listener-class>
 	</listener>
 	<listener>
 		<display-name>Spring Request Context Listener</display-name>
@@ -87,6 +92,40 @@
 		<filter-name>XSSFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+
+	<filter>
+		<filter-name>HSTSFilter</filter-name>
+		<filter-class>com.pennanttech.pennapps.web.security.filter.HSTSFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>HSTSFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>CSPFilter</filter-name>
+		<filter-class>com.pennanttech.pennapps.web.security.filter.CSPFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>CSPFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>HostHeaderFilter</filter-name>
+		<filter-class>com.pennanttech.pennapps.web.security.filter.HostHeaderFilter</filter-class>
+		<async-supported>true</async-supported>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>HostHeaderFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 
 	<filter-mapping>
 		<filter-name>cache</filter-name>
@@ -149,16 +188,6 @@
 		<url-pattern>/zkau/*</url-pattern>
 	</servlet-mapping>
 	<distributable />
-
-	<session-config>
-		<session-timeout>30</session-timeout>
-		<cookie-config>
-			<name>NSA-JSESSIONID</name>
-			<http-only>true</http-only>
-		</cookie-config>
-		<tracking-mode>COOKIE</tracking-mode>
-		<tracking-mode>URL</tracking-mode>
-	</session-config>
 
 	<error-page>
 		<error-code>404</error-code>

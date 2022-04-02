@@ -418,4 +418,9 @@ public class RepayInstructionDAOImpl extends BasicDao<RepayInstruction> implemen
 			return ri;
 		}
 	}
+
+	@Override
+	public List<RepayInstruction> getRepayInstructionsForLMSEvent(long finID) {
+		return getRepayInstructions(finID, "", false);
+	}
 }

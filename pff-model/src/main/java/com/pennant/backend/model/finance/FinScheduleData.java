@@ -154,7 +154,7 @@ public class FinScheduleData implements Serializable {
 
 	private boolean quickDisb;
 
-	private List<FinReceiptDetail> finReceiptDetails = new ArrayList<>();
+	private List<FinReceiptHeader> imdReceipts = new ArrayList<>();
 	private List<FinFeeReceipt> finFeeReceipts = new ArrayList<>();
 	private List<FinIRRDetails> iRRDetails = new ArrayList<>();
 
@@ -189,6 +189,98 @@ public class FinScheduleData implements Serializable {
 
 	public FinScheduleData() {
 		super();
+	}
+
+	public FinScheduleData copyEntity() {
+		FinScheduleData entity = new FinScheduleData();
+		entity.setFinID(this.finID);
+		entity.setFinReference(this.finReference);
+		entity.setSchduleGenerated(this.schduleGenerated);
+		entity.setFinanceType(this.financeType == null ? null : this.financeType.copyEntity());
+		entity.setFinanceMain(this.financeMain == null ? null : this.financeMain.copyEntity());
+		if (scheduleMap != null) {
+			entity.setScheduleMap(new HashMap<Date, FinanceScheduleDetail>());
+			this.scheduleMap.entrySet().stream().forEach(e -> entity.getScheduleMap().put(e.getKey(),
+					e.getValue() == null ? null : e.getValue().copyEntity()));
+		}
+		this.stepPolicyDetails.stream()
+				.forEach(e -> entity.getStepPolicyDetails().add(e == null ? null : e.copyEntity()));
+		this.financeScheduleDetails.stream()
+				.forEach(e -> entity.getFinanceScheduleDetails().add(e == null ? null : e.copyEntity()));
+		this.overdraftScheduleDetails.stream()
+				.forEach(e -> entity.getOverdraftScheduleDetails().add(e == null ? null : e.copyEntity()));
+		this.disbursementDetails.stream()
+				.forEach(e -> entity.getDisbursementDetails().add(e == null ? null : e.copyEntity()));
+		this.repayInstructions.stream()
+				.forEach(e -> entity.getRepayInstructions().add(e == null ? null : e.copyEntity()));
+		this.errorDetails.stream().forEach(e -> entity.getErrorDetails().add(e));
+		entity.setFinanceSummary(this.financeSummary == null ? null : this.financeSummary.copyEntity());
+		this.feeRules.stream().forEach(e -> entity.getFeeRules().add(e == null ? null : e.copyEntity()));
+		this.finFeeDetailList.stream()
+				.forEach(e -> entity.getFinFeeDetailList().add(e == null ? null : e.copyEntity()));
+		this.repayDetails.stream().forEach(e -> entity.getRepayDetails().add(e == null ? null : e.copyEntity()));
+		this.penaltyDetails.stream().forEach(e -> entity.getPenaltyDetails().add(e == null ? null : e.copyEntity()));
+		entity.setAccrueValue(this.accrueValue);
+		entity.setFinODPenaltyRate(this.finODPenaltyRate == null ? null : this.finODPenaltyRate.copyEntity());
+		entity.setFinPftSuspended(this.finPftSuspended);
+		entity.setFinSuspDate(this.finSuspDate);
+		entity.setFeeEvent(this.feeEvent);
+		this.rateInstruction.stream().forEach(e -> entity.getRateInstruction().add(e == null ? null : e.copyEntity()));
+		this.finServiceInstructions.stream()
+				.forEach(e -> entity.getFinServiceInstructions().add(e == null ? null : e.copyEntity()));
+		entity.setOdLimitReset(this.odLimitReset);
+		this.planEMIHmonths.stream().forEach(e -> entity.getPlanEMIHmonths().add(e));
+		this.planEMIHDates.stream().forEach(e -> entity.getPlanEMIHDates().add(e));
+		this.baseRates.stream().forEach(e -> entity.getBaseRates().add(e == null ? null : e.copyEntity()));
+		this.splRates.stream().forEach(e -> entity.getSplRates().add(e == null ? null : e.copyEntity()));
+		this.apiPlanEMIHDates.stream()
+				.forEach(e -> entity.getApiPlanEMIHDates().add(e == null ? null : e.copyEntity()));
+		this.apiPlanEMIHmonths.stream()
+				.forEach(e -> entity.getApiPlanEMIHmonths().add(e == null ? null : e.copyEntity()));
+		this.vasRecordingList.stream()
+				.forEach(e -> entity.getVasRecordingList().add(e == null ? null : e.copyEntity()));
+		this.finODDetails.stream().forEach(e -> entity.getFinODDetails().add(e == null ? null : e.copyEntity()));
+		if (foreClosureFees != null) {
+			entity.setForeClosureFees(new ArrayList<FinFeeDetail>());
+			this.foreClosureFees.stream()
+					.forEach(e -> entity.getForeClosureFees().add(e == null ? null : e.copyEntity()));
+		}
+		this.feeDues.stream().forEach(e -> entity.getFeeDues().add(e == null ? null : e.copyEntity()));
+		entity.setOutstandingPri(this.outstandingPri);
+		entity.setPftChg(this.pftChg);
+		entity.setReturnStatus(this.returnStatus == null ? null : this.returnStatus.copyEntity());
+		entity.setSubventionDetail(this.subventionDetail == null ? null : this.subventionDetail.copyEntity());
+		entity.setPromotion(this.promotion == null ? null : this.promotion.copyEntity());
+		entity.setQuickDisb(this.quickDisb);
+		this.imdReceipts.stream().forEach(e -> entity.getImdReceipts().add(e == null ? null : e.copyEntity()));
+		this.finFeeReceipts.stream().forEach(e -> entity.getFinFeeReceipts().add(e == null ? null : e.copyEntity()));
+		this.iRRDetails.stream().forEach(e -> entity.getiRRDetails().add(e == null ? null : e.copyEntity()));
+		this.exposureLinkings.stream()
+				.forEach(e -> entity.getExposureLinkings().add(e == null ? null : e.copyEntity()));
+		this.sanctionConditions.stream()
+				.forEach(e -> entity.getSanctionConditions().add(e == null ? null : e.copyEntity()));
+		entity.setExternalReference(this.externalReference);
+		entity.setUpfrontAuto(this.isUpfrontAuto);
+		entity.setFlexiDisb(this.isFlexiDisb);
+		entity.setFinPftDeatil(this.finPftDeatil == null ? null : this.finPftDeatil.copyEntity());
+		if (receiptAllocationList != null) {
+			entity.setReceiptAllocationList(new ArrayList<ReceiptAllocationDetail>());
+			this.receiptAllocationList.stream()
+					.forEach(e -> entity.getReceiptAllocationList().add(e == null ? null : e.copyEntity()));
+		}
+		// FIXME
+		/*
+		 * this.gstExecutionMap.entrySet().stream().forEach(e -> entity.getGstExecutionMap().put(e.getKey(),
+		 * e.getValue() == null ? null : e.getValue().copyEntity()));
+		 */
+		this.lowerTaxDeductionDetails.stream()
+				.forEach(e -> entity.getLowerTaxDeductionDetails().add(e == null ? null : e.copyEntity()));
+		this.irrSDList.stream().forEach(e -> entity.getIrrSDList().add(e == null ? null : e.copyEntity()));
+		entity.setFinMaintainInstruction(
+				this.finMaintainInstruction == null ? null : this.finMaintainInstruction.copyEntity());
+		entity.setOldFinReference(this.oldFinReference);
+		entity.setRestructureDetail(this.restructureDetail == null ? null : this.restructureDetail.copyEntity());
+		return entity;
 	}
 
 	public long getFinID() {
@@ -578,12 +670,12 @@ public class FinScheduleData implements Serializable {
 		this.outstandingPri = outstandingPri;
 	}
 
-	public List<FinReceiptDetail> getFinReceiptDetails() {
-		return finReceiptDetails;
+	public List<FinReceiptHeader> getImdReceipts() {
+		return imdReceipts;
 	}
 
-	public void setFinReceiptDetails(List<FinReceiptDetail> finReceiptDetails) {
-		this.finReceiptDetails = finReceiptDetails;
+	public void setImdReceipts(List<FinReceiptHeader> imdReceipts) {
+		this.imdReceipts = imdReceipts;
 	}
 
 	public List<FinFeeReceipt> getFinFeeReceipts() {

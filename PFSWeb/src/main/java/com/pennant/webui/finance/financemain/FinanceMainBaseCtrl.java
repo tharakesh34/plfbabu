@@ -155,6 +155,7 @@ import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.FeeCalculator;
 import com.pennant.app.util.FrequencyUtil;
 import com.pennant.app.util.GSTCalculator;
+import com.pennant.app.util.IRRCalculator;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.RateUtil;
 import com.pennant.app.util.ReferenceGenerator;
@@ -19157,6 +19158,11 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 					} else {
 						appendScheduleDetailTab(false, false);
 					}
+
+					// Calculation of IRR based on Future dated Disbursement Instructions
+					if (ImplementationConstants.FUR_DISBINST_ACC_REQ) {
+						calculateIRR();
+					}
 				}
 				// Calculating the Net FinanceAmount After Schedule is Built
 				setNetFinanceAmount(false);
@@ -22425,6 +22431,20 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 			}
 		}
 		logger.debug(Literal.LEAVING);
+	}
+
+	/**
+	 * Method for Recalculating IRR based on Disbursement Transaction dates.
+	 */
+	public void calculateIRR() {
+		List<FinAdvancePayments> advPayList = finAdvancePaymentsListCtrl.getFinAdvancePaymentsList();
+		if (CollectionUtils.isNotEmpty(advPayList)) {
+			boolean isXIRRCalc = SysParamUtil.isAllowed("CALC_EFFRATE_ON_XIRR");
+			IRRCalculator.calculateXIRRAndIRR(getFinanceDetail().getFinScheduleData(), advPayList, isXIRRCalc);
+			if (scheduleDetailDialogCtrl != null) {
+				scheduleDetailDialogCtrl.doFillIrrDetails(getFinanceDetail().getFinScheduleData().getiRRDetails());
+			}
+		}
 	}
 
 	public List<String> getAssignCollateralRef() {

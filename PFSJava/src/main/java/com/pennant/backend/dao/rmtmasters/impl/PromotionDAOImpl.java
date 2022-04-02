@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PromotionDAOImpl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-03-2017    														*
- *                                                                  						*
- * Modified Date    :  21-03-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PromotionDAOImpl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-03-2017 * * Modified
+ * Date : 21-03-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-03-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-03-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -83,10 +65,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -114,10 +94,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	 * This method Deletes the Record from the Promotions or Promotions_Temp. if Record not deleted then throws
 	 * DataAccessException with error 41003. delete Promotion by key PromotionCode
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -154,10 +132,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	 * 
 	 * save Promotion
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -210,10 +186,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	 * This method updates the Record Promotions or Promotions_Temp. if Record not updated then throws
 	 * DataAccessException with error 41004. update Promotion by key PromotionCode and Version
 	 * 
-	 * @param Promotion
-	 *            (promotion)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param Promotion (promotion)
+	 * @param type      (String) ""/_Temp/_View
 	 * @return void
 	 * @throws DataAccessException
 	 * 
@@ -451,10 +425,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param promotionId
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionId (long)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -481,10 +453,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param referenceId
-	 *            (long)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param referenceId (long)
+	 * @param type        (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -655,10 +625,8 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 	/**
 	 * Fetch the Record Promotion details by key field
 	 * 
-	 * @param promotionCode
-	 *            (String)
-	 * @param type
-	 *            (String) ""/_Temp/_View
+	 * @param promotionCode (String)
+	 * @param type          (String) ""/_Temp/_View
 	 * @return Promotion
 	 */
 	@Override
@@ -680,6 +648,47 @@ public class PromotionDAOImpl extends SequenceDao<Promotion> implements Promotio
 		}
 
 		logger.debug(Literal.LEAVING);
+		return null;
+	}
+
+	@Override
+	public Promotion getPromotionForLMSEvent(String code) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" PromotionCode, PromotionDesc, FinIsDwPayRequired, DownPayRule, ActualInterestRate, FinBaseRate");
+		sql.append(", FinSplRate, FinMargin, ApplyRpyPricing, RpyPricingMethod, FinMinTerm, FinMaxTerm");
+		sql.append(", FinMinAmount, FinMaxAmount, FinMinRate, FinMaxRate");
+		sql.append(" From Promotions");
+		sql.append(" Where PromotionCode = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			return jdbcOperations.queryForObject(sql.toString(), (rs, rowNum) -> {
+				Promotion p = new Promotion();
+
+				p.setPromotionCode(rs.getString("PromotionCode"));
+				p.setPromotionDesc(rs.getString("PromotionDesc"));
+				p.setFinIsDwPayRequired(rs.getBoolean("FinIsDwPayRequired"));
+				p.setDownPayRule(rs.getLong("DownPayRule"));
+				p.setActualInterestRate(rs.getBigDecimal("ActualInterestRate"));
+				p.setFinBaseRate(rs.getString("FinBaseRate"));
+				p.setFinSplRate(rs.getString("FinSplRate"));
+				p.setFinMargin(rs.getBigDecimal("FinMargin"));
+				p.setApplyRpyPricing(rs.getBoolean("ApplyRpyPricing"));
+				p.setRpyPricingMethod(rs.getLong("RpyPricingMethod"));
+				p.setFinMinTerm(rs.getInt("FinMinTerm"));
+				p.setFinMaxTerm(rs.getInt("FinMaxTerm"));
+				p.setFinMinAmount(rs.getBigDecimal("FinMinAmount"));
+				p.setFinMaxAmount(rs.getBigDecimal("FinMaxAmount"));
+				p.setFinMinRate(rs.getBigDecimal("FinMinRate"));
+				p.setFinMaxRate(rs.getBigDecimal("FinMaxRate"));
+
+				return p;
+			}, code);
+		} catch (EmptyResultDataAccessException e) {
+			//
+		}
+
 		return null;
 	}
 }

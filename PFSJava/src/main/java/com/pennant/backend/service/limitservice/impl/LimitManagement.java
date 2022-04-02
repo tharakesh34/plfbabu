@@ -274,12 +274,12 @@ public class LimitManagement {
 		return errors;
 	}
 
-	public void processLoanRepay(FinanceMain finMain, Customer customer, BigDecimal transAmount, String prodCategory) {
+	public void processLoanRepay(FinanceMain fm, Customer customer, BigDecimal transAmount) {
 		logger.debug(Literal.ENTERING);
 
-		Date maturityDate = finMain.getMaturityDate();
+		Date maturityDate = fm.getMaturityDate();
 
-		EventProperties eventProperties = finMain.getEventProperties();
+		EventProperties eventProperties = fm.getEventProperties();
 
 		Date valueDate = null;
 		if (eventProperties.isParameterLoaded()) {
@@ -289,7 +289,7 @@ public class LimitManagement {
 		}
 
 		String tansType = LimitConstants.PRINPAY;
-		if (prodCategory.equals(FinanceConstants.PRODUCT_ODFACILITY)) {
+		if (FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())) {
 			tansType = LimitConstants.REPAY;
 		}
 
@@ -304,7 +304,7 @@ public class LimitManagement {
 		limitHeader.setOverride(false);
 		limitHeader.setValidateOnly(false);
 
-		processLimits(limitHeader, customer, finMain, null, LOAN_REPAY);
+		processLimits(limitHeader, customer, fm, null, LOAN_REPAY);
 		logger.debug(Literal.LEAVING);
 	}
 

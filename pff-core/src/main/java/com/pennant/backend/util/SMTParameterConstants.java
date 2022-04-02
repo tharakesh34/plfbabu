@@ -123,6 +123,7 @@ public class SMTParameterConstants {
 	// Installment Due date
 	public static final String BPI_PAID_ON_INSTDATE = "BPI_PAID_ON_INSTDATE";
 	public static final String BPI_TDS_DEDUCT_ON_ORG = "BPI_TDS_DEDUCT_ON_ORG";
+	public static final String BPI_IMPACT_ON_IRR = "BPI_IMPACT_ON_IRR";
 
 	// On Advance Interest TDS Incomize Required Upfront
 	public static final String ADVANCE_TDS_INCZ_UPF = "ADVINT_TDS_INCZ_UPF";
@@ -384,4 +385,10 @@ public class SMTParameterConstants {
 	public static final String PRESENTMENT_RESP_PROCESS_THREAD_COUNT = "PRESENTMENT_RESP_PROCESS_THREAD_COUNT";
 	public static final String PRESENTMENT_EXTRACTION_TYPE = "PRESENTMENT_EXTRACTION_TYPE";
 	public static final String CUSTOMER_CORP_FINANCE_TAB_REQ = "CUSTOMER_CORP_FINANCE_TAB_REQ";
+	public static final String CALC_EFFRATE_ON_XIRR = "CALC_EFFRATE_ON_XIRR";
+	public static final String EARLYSETTLE_CHQ_DFT_DAYS = "EARLYSETTLE_CHQ_DFT_DAYS";
+	public static final String RECEIPT_CASH_PAN_LIMIT = "RECEIPT_CASH_PAN_LIMIT";
+	public static final String EARLYSETTLE_CHQ_CLR_DAYS = "EARLYSETTLE_CHQ_CLR_DAYS";
+	public static final String ALW_SP_BACK_DAYS = "ALW_SP_BACK_DAYS";
+	public static final String STEP_LOAN_SERVICING_REQ = "STEP_LOAN_SERVICING_REQ";
 }

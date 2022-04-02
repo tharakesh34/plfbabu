@@ -138,5 +138,8 @@
 		</createTable>
 	</changeSet>
 
-
+	<changeSet id="ST#180.2.1" author="GopalaSwamy.M">
+		<renameColumn tableName="ADTJOB_DETAILS" oldColumnName="Mode" newColumnName="JobMode"/>
+	</changeSet>
+	
 </databaseChangeLog>

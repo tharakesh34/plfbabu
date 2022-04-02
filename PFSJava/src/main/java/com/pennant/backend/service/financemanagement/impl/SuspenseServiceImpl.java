@@ -132,7 +132,7 @@ public class SuspenseServiceImpl extends GenericFinanceDetailService implements 
 		schdData.setFinanceScheduleDetails(financeScheduleDetailDAO.getFinScheduleDetails(finID, "", false));
 		schdData.setDisbursementDetails(financeDisbursementDAO.getFinanceDisbursementDetails(finID, "", false));
 		schdData.setFeeRules(finFeeChargesDAO.getFeeChargesByFinRef(finID, procEdtEvent, false, ""));
-		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayListByFinRef(finID, false, ""));
+		schdData.setRepayDetails(financeRepaymentsDAO.getFinRepayList(finID));
 		schdData.setPenaltyDetails(recoveryDAO.getFinancePenaltysByFinRef(finID, ""));
 		schdData.setFinanceType(financeTypeDAO.getFinanceTypeByID(fm.getFinType(), "_AView"));
 

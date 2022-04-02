@@ -1299,7 +1299,6 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		FinScheduleData schdData = financeDetail.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
 		long finID = fm.getFinID();
-		String finReference = fm.getFinReference();
 
 		List<FinFeeDetail> finFeeDetailList = schdData.getFinFeeDetailList();
 
@@ -2467,7 +2466,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 			// Finance Fee Details
 			finSchData.setFinFeeDetailList(finFeeDetailService.getFinFeeDetailById(finID, false, ""));
 
-			finSchData.setRepayDetails(getFinanceRepaymentsByFinRef(finID, false));
+			finSchData.setRepayDetails(getFinRepayList(finID));
 			finSchData.setPenaltyDetails(getFinancePenaltysByFinRef(finID));
 			finSchData.setAccrueValue(profitDetailsDAO.getAccrueAmount(finID));
 		}
@@ -2482,8 +2481,8 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 	 * @param type
 	 * @return
 	 */
-	public List<FinanceRepayments> getFinanceRepaymentsByFinRef(long finID, boolean isRpyCancelProc) {
-		return financeRepaymentsDAO.getFinRepayListByFinRef(finID, isRpyCancelProc, "");
+	public List<FinanceRepayments> getFinRepayList(long finID) {
+		return financeRepaymentsDAO.getFinRepayList(finID);
 	}
 
 	/**
@@ -2592,7 +2591,7 @@ public abstract class GenericFinanceDetailService extends GenericService<Finance
 		TaxHeader taxHeader = null;
 		if (taxApplicable) {
 
-			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+			Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 			taxHeader = new TaxHeader();
 			taxHeader.setNewRecord(true);

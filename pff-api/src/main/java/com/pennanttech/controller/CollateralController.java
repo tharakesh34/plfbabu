@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.logging.log4j.LogManager;
@@ -121,7 +122,7 @@ public class CollateralController extends ExtendedTestClass {
 
 			// call collateral create method
 			auditHeader = collateralSetupService.doApprove(auditHeader);
-			if (auditHeader.getErrorMessage() != null) {
+			if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
 				for (ErrorDetail errorDetail : auditHeader.getErrorMessage()) {
 					response = new CollateralSetup();
 					response.setReturnStatus(

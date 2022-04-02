@@ -1637,8 +1637,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 					valueDate = DateUtility.addDays(valueDate, -1);
 				}
 				List<FinODDetails> overdueList = finODDetailsDAO.getFinODBalByFinRef(fm.getFinID());
-				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayListByFinRef(fm.getFinID(), false,
-						"");
+				List<FinanceRepayments> repayments = financeRepaymentsDAO.getFinRepayList(fm.getFinID());
 				schdData.setFinanceScheduleDetails(sortSchdDetails(schdData.getFinanceScheduleDetails()));
 
 				// Check whether Accrual Reversal required for LPP or not
@@ -1670,7 +1669,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						taxHeader.setTaxDetails(new ArrayList<>());
 					}
 
-					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm.getFinID());
+					Map<String, BigDecimal> taxPercentages = GSTCalculator.getTaxPercentages(fm);
 
 					Taxes cgstTax = getTaxDetail(RuleConstants.CODE_CGST, taxPercentages.get(RuleConstants.CODE_CGST));
 					Taxes sgstTax = getTaxDetail(RuleConstants.CODE_SGST, taxPercentages.get(RuleConstants.CODE_SGST));

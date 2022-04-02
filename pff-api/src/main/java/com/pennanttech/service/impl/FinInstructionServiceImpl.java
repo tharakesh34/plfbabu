@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pennant.app.constants.CalculationConstants;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.PathUtil;
 import com.pennant.app.util.ReceiptCalculator;
@@ -39,7 +38,6 @@ import com.pennant.backend.dao.systemmasters.VASProviderAccDetailDAO;
 import com.pennant.backend.financeservice.AddDisbursementService;
 import com.pennant.backend.financeservice.AddRepaymentService;
 import com.pennant.backend.financeservice.AddTermsService;
-import com.pennant.backend.financeservice.CancelDisbursementService;
 import com.pennant.backend.financeservice.ChangeFrequencyService;
 import com.pennant.backend.financeservice.ChangeProfitService;
 import com.pennant.backend.financeservice.ChangeScheduleMethodService;
@@ -80,7 +78,6 @@ import com.pennant.backend.model.finance.covenant.CovenantDocument;
 import com.pennant.backend.model.finance.financetaxdetail.FinanceTaxDetail;
 import com.pennant.backend.model.systemmasters.VASProviderAccDetail;
 import com.pennant.backend.service.customermasters.CustomerDetailsService;
-import com.pennant.backend.service.fees.FeeDetailService;
 import com.pennant.backend.service.finance.FeeWaiverHeaderService;
 import com.pennant.backend.service.finance.FinAdvancePaymentsService;
 import com.pennant.backend.service.finance.FinanceDetailService;
@@ -126,7 +123,6 @@ import com.pennant.validation.UpdateLoanPenaltyDetailGroup;
 import com.pennant.validation.UpfrontFeesGroup;
 import com.pennant.validation.ValidationUtility;
 import com.pennant.ws.exception.ServiceException;
-import com.pennanttech.controller.CreateFinanceController;
 import com.pennanttech.controller.ExtendedTestClass;
 import com.pennanttech.controller.FinServiceInstController;
 import com.pennanttech.pennapps.core.AppException;
@@ -137,7 +133,9 @@ import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
+import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.ReceiptPurpose;
 import com.pennanttech.pffws.FinServiceInstRESTService;
 import com.pennanttech.pffws.FinServiceInstSOAPService;
 import com.pennanttech.util.APIConstants;
@@ -156,12 +154,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private static final Logger logger = LogManager.getLogger(FinInstructionServiceImpl.class);
 
 	private FinServiceInstController finServiceInstController;
-	private CreateFinanceController createFinanceController;
 	private AddRepaymentService addRepaymentService;
 	private RateChangeService rateChangeService;
 	private ChangeProfitService changeProfitService;
 	private AddDisbursementService addDisbursementService;
-	private CancelDisbursementService cancelDisbursementService;
 	private ChangeFrequencyService changeFrequencyService;
 	private ReceiptService receiptService;
 	private ReScheduleService reScheduleService;
@@ -170,7 +166,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	private PostponementService postponementService;
 	private AddTermsService addTermsService;
 	private ChangeScheduleMethodService changeScheduleMethodService;
-	private FeeDetailService feeDetailService;
 	private ReceiptCalculator receiptCalculator;
 	private FinanceMainDAO financeMainDAO;
 	private ValidationUtility validationUtility;
@@ -445,7 +440,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return fd;
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -805,7 +800,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			fsi.setFinID(finID);
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			fd = new FinanceDetail();
 			doEmptyResponseObject(fd);
@@ -1047,7 +1042,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -1174,7 +1169,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return returnStatus;
 		}
 
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -1230,11 +1225,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail earlySettlement(FinServiceInstruction fsi) {
 		try {
-			String moduleDefiner = FinServiceEvent.EARLYSETTLE;
-			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
-			return fd;
+			return receiptTransaction(fsi, ReceiptPurpose.EARLYSETTLE);
 		} catch (AppException ex) {
-			logger.error("AppException", ex);
+			logger.error(Literal.EXCEPTION, ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
@@ -1256,12 +1249,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail partialSettlement(FinServiceInstruction fsi) {
 		try {
-			String moduleDefiner = FinServiceEvent.EARLYRPY;
 			fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
-			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
-			return fd;
+			return receiptTransaction(fsi, ReceiptPurpose.EARLYRPY);
 		} catch (AppException ex) {
-			logger.error("AppException", ex);
+			logger.error(Literal.EXCEPTION, ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
@@ -1282,11 +1273,9 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	@Override
 	public FinanceDetail manualPayment(FinServiceInstruction fsi) throws ServiceException {
 		try {
-			String moduleDefiner = FinServiceEvent.SCHDRPY;
-			FinanceDetail fd = receiptTransaction(fsi, moduleDefiner);
-			return fd;
+			return receiptTransaction(fsi, ReceiptPurpose.SCHDRPY);
 		} catch (AppException ex) {
-			logger.error("AppException", ex);
+			logger.error(Literal.EXCEPTION, ex);
 			FinanceDetail response = new FinanceDetail();
 			doEmptyResponseObject(response);
 			response.setReturnStatus(APIErrorHandlerService.getFailedStatus("9999", ex.getMessage()));
@@ -1304,98 +1293,65 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 	}
 
-	public FinanceDetail receiptTransaction(FinServiceInstruction fsi, String moduleDefiner) throws ServiceException {
-		logger.debug(Literal.ENTERING);
-
-		String eventCode = null;
-		if (StringUtils.equals(moduleDefiner, FinServiceEvent.SCHDRPY)) {
-			eventCode = AccountingEvent.REPAY;
-			fsi.setModuleDefiner(FinServiceEvent.SCHDRPY);
-			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-			if (!fsi.isReceiptUpload()) {
-				validationUtility.validate(fsi, SchedulePaymentGroup.class);
-			}
-		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYRPY)) {
-			eventCode = AccountingEvent.EARLYPAY;
-			fsi.setModuleDefiner(FinServiceEvent.EARLYRPY);
-			fsi.setReceiptPurpose(FinServiceEvent.EARLYRPY);
-			if (!fsi.isReceiptUpload()) {
-				validationUtility.validate(fsi, PartialSettlementGroup.class);
-			}
-		} else if (StringUtils.equals(moduleDefiner, FinServiceEvent.EARLYSETTLE)) {
-			eventCode = AccountingEvent.EARLYSTL;
-			fsi.setModuleDefiner(FinServiceEvent.EARLYSETTLE);
-			fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-			if (!fsi.isReceiptUpload()) {
-				validationUtility.validate(fsi, EarlySettlementGroup.class);
-			}
+	private FinanceDetail receiptTransaction(FinServiceInstruction fsi, ReceiptPurpose receiptPurpose) {
+		switch (receiptPurpose) {
+		case SCHDRPY:
+			validationUtility.validate(fsi, SchedulePaymentGroup.class);
+			break;
+		case EARLYRPY:
+			validationUtility.validate(fsi, PartialSettlementGroup.class);
+			break;
+		case EARLYSETTLE:
+			validationUtility.validate(fsi, EarlySettlementGroup.class);
+			break;
+		default:
+			break;
 		}
 
-		// Method for validate instruction details
 		FinanceDetail fd = new FinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 
-		if (fsi.getValueDate() == null) {
-			fsi.setValueDate(fsi.getReceiptDetail().getReceivedDate());
-			fsi.getReceiptDetail().setValueDate(fsi.getReceiptDetail().getReceivedDate());
-		}
-
-		fsi.setReceivedDate(fsi.getReceiptDetail().getReceivedDate());
-		schdData.setFinServiceInstruction(fsi);
-		fd = validateInstructions(fd, moduleDefiner, eventCode);
-		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
-
 		String finReference = fsi.getFinReference();
-		Long finID = financeMainDAO.getFinID(finReference);
-
-		WSReturnStatus returnStatus = new WSReturnStatus();
+		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
 
 		if (finID == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			returnStatus = APIErrorHandlerService.getFailedStatus("90201", valueParm);
-		}
-
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			doEmptyResponseObject(fd);
-			fd.setReturnStatus(returnStatus);
+			ErrorUtil.setError(schdData, "90201", finReference);
+			setReturnStatus(fd);
 			return fd;
 		}
 
-		FinanceMain fm = financeMainDAO.getEntityNEntityDesc(finID, "", false);
-		fm.setFinID(finID);
-		fm.setFinReference(finReference);
-		fd.getFinScheduleData().setFinanceMain(fm);
+		FinReceiptDetail rd = fsi.getReceiptDetail();
 
-		FinReceiptData receiptData = receiptService.doReceiptValidations(fd, moduleDefiner);
-		fd = receiptData.getFinanceDetail();
-		schdData = fd.getFinScheduleData();
-
-		if (schdData.getErrorDetails() != null && !schdData.getErrorDetails().isEmpty()) {
-			logger.debug("Leaving - doReceiptValidations Error");
-			return setReturnStatus(fd);
+		if (fsi.getValueDate() == null) {
+			fsi.setValueDate(rd.getReceivedDate());
+			rd.setValueDate(rd.getReceivedDate());
 		}
 
-		receiptService.setReceiptData(receiptData);
-		fd = finServiceInstController.doReceiptTransaction(receiptData, eventCode);
+		fsi.setFinID(finID);
+		fsi.setReceivedDate(rd.getReceivedDate());
+		schdData.setFinServiceInstruction(fsi);
 
-		if (fd.getFinScheduleData() != null && fd.getFinScheduleData().getErrorDetails() != null
-				&& !fd.getFinScheduleData().getErrorDetails().isEmpty()) {
-			fd = setReturnStatus(fd);
+		fsi.setAmount(fsi.getAmount().add(fsi.getTdsAmount()));
+		fsi.setRequestSource(RequestSource.API);
+		fsi.setReceiptPurpose(receiptPurpose.code());
+
+		fd = receiptService.receiptTransaction(fsi);
+
+		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+			setReturnStatus(fd);
 		}
 
-		logger.debug(Literal.LEAVING);
 		return fd;
 	}
 
-	public FinanceDetail setReturnStatus(FinanceDetail fd) {
+	private void setReturnStatus(FinanceDetail fd) {
 		WSReturnStatus returnStatus = new WSReturnStatus();
 
 		FinScheduleData schdData = fd.getFinScheduleData();
-		ErrorDetail errorDetail = schdData.getErrorDetails().get(0);
+		ErrorDetail error = schdData.getErrorDetails().get(0);
 
-		returnStatus.setReturnCode(errorDetail.getCode());
-		returnStatus.setReturnText(errorDetail.getError());
+		returnStatus.setReturnCode(error.getCode());
+		returnStatus.setReturnText(error.getError());
 
 		fd.setFinScheduleData(null);
 		fd.setDocumentDetailsList(null);
@@ -1408,7 +1364,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		fd.setCustomerDetails(null);
 		fd.setReturnStatus(returnStatus);
 
-		return fd;
 	}
 
 	/**
@@ -1505,28 +1460,6 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		fd = finServiceInstController.doChangeGestationPeriod(fsi, eventCode);
-
-		logger.debug(Literal.LEAVING);
-		return fd;
-	}
-
-	private FinanceDetail validateInstructions(FinanceDetail fd, String moduleDefiner, String eventCode) {
-		logger.debug(Literal.ENTERING);
-
-		FinScheduleData schdData = fd.getFinScheduleData();
-		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
-		String finReference = fsi.getFinReference();
-		fd.setFinReference(finReference);
-		ErrorDetail errorDetail = new ErrorDetail();
-
-		WSReturnStatus returnStatus = validateReqType(fsi.getReqType());
-		if (StringUtils.isNotBlank(returnStatus.getReturnCode())) {
-			errorDetail.setCode(returnStatus.getReturnCode());
-			errorDetail.setMessage(returnStatus.getReturnText());
-			errorDetail.setExtendedMessage(returnStatus.getReturnText());
-			schdData.setErrorDetail(errorDetail);
-			return fd;
-		}
 
 		logger.debug(Literal.LEAVING);
 		return fd;
@@ -1636,22 +1569,8 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return response;
 	}
 
-	/**
-	 * validate request type received from API.
-	 * 
-	 * @param reqType
-	 * @return WSReturnStatus
-	 */
 	private WSReturnStatus validateReqType(String reqType) {
-		logger.debug(Literal.ENTERING);
 
-		if (!APIConstants.REQTYPE_INQUIRY.equals(reqType) && !APIConstants.REQTYPE_POST.equals(reqType)) {
-			String valueParm[] = new String[1];
-			valueParm[0] = reqType;
-			return APIErrorHandlerService.getFailedStatus("91113", valueParm);
-		}
-
-		logger.debug(Literal.LEAVING);
 		return new WSReturnStatus();
 	}
 
@@ -2164,7 +2083,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 
 		// Validate Loan is INPROGRESS in any Other Servicing Event or NOT ?
-		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finReference, "_View");
+		String rcdMaintainSts = financeMainDAO.getFinanceMainByRcdMaintenance(finID);
 		if (StringUtils.isNotEmpty(rcdMaintainSts)) {
 			String[] valueParm = new String[1];
 			valueParm[0] = rcdMaintainSts;
@@ -2597,40 +2516,14 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		detail.setReturnDataSetList(null);
 	}
 
-	/**
-	 * Set Default date formats for calculation purpose.
-	 * 
-	 * @param fsi
-	 */
 	private void setDefaultDateFormats(FinServiceInstruction fsi) {
-		if (fsi.getFromDate() != null) {
-			fsi.setFromDate(
-					DateUtility.getDBDate(DateUtility.format(fsi.getFromDate(), PennantConstants.DBDateFormat)));
-		}
-
-		if (fsi.getToDate() != null) {
-			fsi.setToDate(DateUtility.getDBDate(DateUtility.format(fsi.getToDate(), PennantConstants.DBDateFormat)));
-		}
-		if (fsi.getRecalFromDate() != null) {
-			fsi.setRecalFromDate(
-					DateUtility.getDBDate(DateUtility.format(fsi.getRecalFromDate(), PennantConstants.DBDateFormat)));
-		}
-		if (fsi.getRecalToDate() != null) {
-			fsi.setRecalToDate(
-					DateUtility.getDBDate(DateUtility.format(fsi.getRecalToDate(), PennantConstants.DBDateFormat)));
-		}
-		if (fsi.getGrcPeriodEndDate() != null) {
-			fsi.setGrcPeriodEndDate(DateUtility
-					.getDBDate(DateUtility.format(fsi.getGrcPeriodEndDate(), PennantConstants.DBDateFormat)));
-		}
-		if (fsi.getNextGrcRepayDate() != null) {
-			fsi.setNextGrcRepayDate(DateUtility
-					.getDBDate(DateUtility.format(fsi.getNextGrcRepayDate(), PennantConstants.DBDateFormat)));
-		}
-		if (fsi.getNextRepayDate() != null) {
-			fsi.setNextRepayDate(
-					DateUtility.getDBDate(DateUtility.format(fsi.getNextRepayDate(), PennantConstants.DBDateFormat)));
-		}
+		fsi.setFromDate(DateUtil.getDatePart(fsi.getFromDate()));
+		fsi.setToDate(DateUtil.getDatePart(fsi.getToDate()));
+		fsi.setRecalFromDate(DateUtil.getDatePart(fsi.getRecalFromDate()));
+		fsi.setRecalToDate(DateUtil.getDatePart(fsi.getRecalToDate()));
+		fsi.setGrcPeriodEndDate(DateUtil.getDatePart(fsi.getGrcPeriodEndDate()));
+		fsi.setNextGrcRepayDate(DateUtil.getDatePart(fsi.getNextGrcRepayDate()));
+		fsi.setNextRepayDate(DateUtil.getDatePart(fsi.getNextRepayDate()));
 	}
 
 	private void setDefaultForReferenceFields(FinServiceInstruction fsi) {
@@ -2639,125 +2532,12 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		}
 	}
 
-	@Autowired
-	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
-		this.finServiceInstController = finServiceInstController;
-	}
-
-	@Autowired
-	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
-		this.financeMainDAO = financeMainDAO;
-	}
-
-	@Autowired
-	public void setRateChangeService(RateChangeService rateChangeService) {
-		this.rateChangeService = rateChangeService;
-	}
-
-	@Autowired
-	public void setAddRepaymentService(AddRepaymentService addRepaymentService) {
-		this.addRepaymentService = addRepaymentService;
-	}
-
-	@Autowired
-	public void setValidationUtility(ValidationUtility validationUtility) {
-		this.validationUtility = validationUtility;
-	}
-
-	@Autowired
-	public void setRecalService(RecalculateService recalService) {
-		this.recalService = recalService;
-	}
-
-	@Autowired
-	public void setChangeProfitService(ChangeProfitService changeProfitService) {
-		this.changeProfitService = changeProfitService;
-	}
-
-	@Autowired
-	public void setAddDisbursementService(AddDisbursementService addDisbursementService) {
-		this.addDisbursementService = addDisbursementService;
-	}
-
-	@Autowired
-	public void setChangeFrequencyService(ChangeFrequencyService changeFrequencyService) {
-		this.changeFrequencyService = changeFrequencyService;
-	}
-
-	@Autowired
-	public void setReScheduleService(ReScheduleService reScheduleService) {
-		this.reScheduleService = reScheduleService;
-	}
-
-	@Autowired
-	public void setFinanceValidationService(FinanceValidationService financeValidationService) {
-		this.financeValidationService = financeValidationService;
-	}
-
-	@Autowired
-	public void setReceiptService(ReceiptService receiptService) {
-		this.receiptService = receiptService;
-	}
-
-	@Autowired
-	public void setRmvTermsService(RemoveTermsService rmvTermsService) {
-		this.rmvTermsService = rmvTermsService;
-	}
-
-	@Autowired
-	public void setPostponementService(PostponementService postponementService) {
-		this.postponementService = postponementService;
-	}
-
-	@Autowired
-	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
-		this.financeDataValidation = financeDataValidation;
-	}
-
-	@Autowired
-	public void setAddTermsService(AddTermsService addTermsService) {
-		this.addTermsService = addTermsService;
-	}
-
-	@Autowired
-	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
-		this.changeScheduleMethodService = changeScheduleMethodService;
-	}
-
-	@Autowired
-	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
-		this.finReceiptDetailDAO = finReceiptDetailDAO;
-	}
-
-	@Autowired
-	public void setCancelDisbursementService(CancelDisbursementService cancelDisbursementService) {
-		this.cancelDisbursementService = cancelDisbursementService;
-	}
-
-	public CreateFinanceController getCreateFinanceController() {
-		return createFinanceController;
-	}
-
-	@Autowired
-	public void setCreateFinanceController(CreateFinanceController createFinanceController) {
-		this.createFinanceController = createFinanceController;
-	}
-
-	public SecurityUserDAO getSecurityUserDAO() {
-		return securityUserDAO;
-	}
-
-	@Autowired
-	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
-		this.securityUserDAO = securityUserDAO;
-	}
-
 	public BigDecimal getDueAmount(FinServiceInstruction finSerInst, FinanceDetail financeDetail, String eventCode) {
 		BigDecimal dueAmount = BigDecimal.ZERO;
 		FinReceiptData receiptData = new FinReceiptData();
 		receiptData.setTotReceiptAmount(finSerInst.getAmount());
 		receiptData.getReceiptHeader().setValueDate(finSerInst.getValueDate());
-		receiptData.getReceiptHeader().setReceiptPurpose(finSerInst.getReceiptPurpose());
+		receiptData.getReceiptHeader().setReceiptPurpose(finSerInst.getReceiptPurpose().code());
 
 		receiptData = receiptCalculator.recalAutoAllocation(receiptData, false);
 		List<ReceiptAllocationDetail> allocationList = receiptData.getReceiptHeader().getAllocations();
@@ -2845,7 +2625,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		int count = validateBlockedFinances(finID);
 		if (count > 0) {
-			String valueParm[] = new String[2];
+			String[] valueParm = new String[2];
 			valueParm[0] = "Disbursement";
 			valueParm[1] = "FinReference: " + finReference;
 			return APIErrorHandlerService.getFailedStatus("90204", valueParm);
@@ -2853,7 +2633,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		long paymentId = fsi.getPaymentId();
 		if (paymentId == Long.MIN_VALUE && paymentId <= 0) {
-			String valueParm[] = new String[1];
+			String[] valueParm = new String[1];
 			valueParm[0] = "PaymentId";
 			return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 		}
@@ -2872,7 +2652,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		if (DisbursementConstants.STATUS_PAID.equals(finAdv.getStatus())) {
 			List<FinAdvancePayments> disbursementDetailsList = fsi.getDisbursementDetails();
 			if (CollectionUtils.isEmpty(disbursementDetailsList)) {
-				String valueParm[] = new String[1];
+				String[] valueParm = new String[1];
 				valueParm[0] = "DisbursementDetails";
 				return APIErrorHandlerService.getFailedStatus("90502", valueParm);
 			}
@@ -3120,7 +2900,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 			List<Covenant> covenants = covenantsDAO.getCovenants(finReference, "LOAN", TableType.VIEW);
 			if (CollectionUtils.isEmpty(covenants)) {
-				String valueParm[] = new String[4];
+				String[] valueParm = new String[4];
 				valueParm[0] = "Covenants Are Not";
 				valueParm[1] = "Avaialable with the Finreference: " + finReference;
 				valueParm[2] = "";
@@ -3194,7 +2974,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		List<CovenantAggrement> cvntAggrement = interestCertificateService.getCovenantReportStatus(finReference);
 		if (CollectionUtils.isEmpty(cvntAggrement)) {
-			String valueParm[] = new String[4];
+			String[] valueParm = new String[4];
 			valueParm[0] = "Covenants Are Not";
 			valueParm[1] = "Avaialable with the Finreference: " + finReference;
 			valueParm[2] = "";
@@ -3282,10 +3062,10 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			return APIErrorHandlerService.getFailedStatus("60203", valueParm);
 		}
 		// validating with the rcdmaintainsts
-		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(fm.getFinID(), "_View");
+		String rcdMntnSts = financeDetailService.getFinanceMainByRcdMaintenance(fm.getFinID());
 
 		if (StringUtils.isNotEmpty(rcdMntnSts) && !FinServiceEvent.FEEWAIVERS.equals(rcdMntnSts)) {
-			String valueParm[] = new String[4];
+			String[] valueParm = new String[4];
 			valueParm[0] = "Finance is";
 			valueParm[1] = "Progress";
 			valueParm[2] = "" + rcdMntnSts;
@@ -3296,7 +3076,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		// Validating the records in temp table if Exists showing the Validation
 		FeeWaiverHeader fwh = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiverHeader);
 		if (fwh != null) {
-			String valueParm[] = new String[4];
+			String[] valueParm = new String[4];
 			valueParm[0] = "Fee Waiver";
 			valueParm[1] = "in";
 			valueParm[2] = "Processing";
@@ -3311,7 +3091,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		feeWaiver = feeWaiverHeaderService.getFeeWaiverByFinRef(feeWaiver);
 
 		if (!feeWaiver.isAlwtoProceed()) {
-			String valueParm[] = new String[4];
+			String[] valueParm = new String[4];
 			valueParm[0] = "Receipt is";
 			valueParm[1] = "in";
 			valueParm[2] = "Maintainance: ";
@@ -3341,7 +3121,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		int actualFeeTypeCode = feeWaiver.getFeeWaiverDetails().size();
 		int feeTypeCode = feeWaiverHeader.getFeeWaiverDetails().size();
 		if (actualFeeTypeCode != feeTypeCode) {
-			String valueParm[] = new String[4];
+			String[] valueParm = new String[4];
 			valueParm[0] = "FeeType Codes";
 			valueParm[1] = "Should";
 			valueParm[2] = "be Matched With Existing: ";
@@ -3359,7 +3139,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 				if (StringUtils.equals(fwd.getFeeTypeCode(), compareWithBalance.getFeeTypeCode())) {
 					BigDecimal balanceAmount = compareWithBalance.getReceivableAmount();
 					if (balanceAmount.compareTo(fwd.getCurrWaiverAmount()) == -1) {
-						String valueParm[] = new String[4];
+						String[] valueParm = new String[4];
 						valueParm[0] = "CurrentWaived Amount";
 						valueParm[1] = "Should be";
 						valueParm[2] = "less than";
@@ -3397,7 +3177,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 			}
 		}
 		if (!feeCode) {
-			String valueParm[] = new String[4];
+			String[] valueParm = new String[4];
 			valueParm[0] = "FeeTypeCode";
 			valueParm[1] = "Should be";
 			valueParm[2] = "Valid";
@@ -3408,9 +3188,132 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		return finServiceInstController.processFeeWaivers(feeWaiverHeader, feeWaiver);
 	}
 
+	@Override
+	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstruction) throws ServiceException {
+		String moduleDefiner = FinServiceEvent.SCHDRPY;
+		return nonLanReceiptTransaction(finServiceInstruction, moduleDefiner);
+	}
+
+	private FinanceDetail nonLanReceiptTransaction(FinServiceInstruction fsi, String moduleDefiner) {
+		logger.info(Literal.ENTERING);
+
+		String eventCode = null;
+		if (!fsi.isReceiptUpload()) {
+			validationUtility.validate(fsi, NonLanReceiptGroup.class);
+		}
+
+		// Method for validate instruction details
+		FinanceDetail financeDetail = new FinanceDetail();
+		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
+		finScheduleData.setFinServiceInstruction(fsi);
+
+		if (!StringUtils.equals(fsi.getReqType(), "Inquiry") && !StringUtils.equals(fsi.getReqType(), "Post")) {
+			ErrorUtil.setError(finScheduleData, "91113", fsi.getReqType());
+		}
+
+		if (fsi.getValueDate() == null) {
+			fsi.setValueDate(fsi.getReceivedDate());
+		}
+
+		FinReceiptData receiptData = nonLanReceiptService.doReceiptValidations(financeDetail, moduleDefiner);
+		financeDetail = receiptData.getFinanceDetail();
+		finScheduleData = financeDetail.getFinScheduleData();
+
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			logger.debug("Leaving - doReceiptValidations Error");
+			setReturnStatus(financeDetail);
+			return financeDetail;
+		}
+
+		receiptData = nonLanReceiptService.setReceiptData(receiptData);
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			setReturnStatus(financeDetail);
+			return financeDetail;
+		}
+
+		try {
+			financeDetail = finServiceInstController.doProcessNonLanReceipt(receiptData, eventCode);
+		} catch (Exception e) {
+			logger.error(Literal.EXCEPTION, e);
+			finScheduleData = nonLanReceiptService.setErrorToFSD(finScheduleData, "90502", e.getMessage());
+		}
+		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
+			setReturnStatus(financeDetail);
+			return financeDetail;
+		}
+		if (financeDetail.getFinScheduleData().getErrorDetails() != null
+				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
+			setReturnStatus(financeDetail);
+			return financeDetail;
+		}
+
+		logger.info(Literal.LEAVING);
+		return financeDetail;
+	}
+
 	@Autowired
-	public void setFeeDetailService(FeeDetailService feeDetailService) {
-		this.feeDetailService = feeDetailService;
+	public void setFinServiceInstController(FinServiceInstController finServiceInstController) {
+		this.finServiceInstController = finServiceInstController;
+	}
+
+	@Autowired
+	public void setAddRepaymentService(AddRepaymentService addRepaymentService) {
+		this.addRepaymentService = addRepaymentService;
+	}
+
+	@Autowired
+	public void setRateChangeService(RateChangeService rateChangeService) {
+		this.rateChangeService = rateChangeService;
+	}
+
+	@Autowired
+	public void setChangeProfitService(ChangeProfitService changeProfitService) {
+		this.changeProfitService = changeProfitService;
+	}
+
+	@Autowired
+	public void setAddDisbursementService(AddDisbursementService addDisbursementService) {
+		this.addDisbursementService = addDisbursementService;
+	}
+
+	@Autowired
+	public void setChangeFrequencyService(ChangeFrequencyService changeFrequencyService) {
+		this.changeFrequencyService = changeFrequencyService;
+	}
+
+	@Autowired
+	public void setReceiptService(ReceiptService receiptService) {
+		this.receiptService = receiptService;
+	}
+
+	@Autowired
+	public void setReScheduleService(ReScheduleService reScheduleService) {
+		this.reScheduleService = reScheduleService;
+	}
+
+	@Autowired
+	public void setRecalService(RecalculateService recalService) {
+		this.recalService = recalService;
+	}
+
+	@Autowired
+	public void setRmvTermsService(RemoveTermsService rmvTermsService) {
+		this.rmvTermsService = rmvTermsService;
+	}
+
+	@Autowired
+	public void setPostponementService(PostponementService postponementService) {
+		this.postponementService = postponementService;
+	}
+
+	@Autowired
+	public void setAddTermsService(AddTermsService addTermsService) {
+		this.addTermsService = addTermsService;
+	}
+
+	@Autowired
+	public void setChangeScheduleMethodService(ChangeScheduleMethodService changeScheduleMethodService) {
+		this.changeScheduleMethodService = changeScheduleMethodService;
 	}
 
 	@Autowired
@@ -3419,7 +3322,37 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Autowired
-	public void setFinanceTaxDetailsService(FinanceTaxDetailService financeTaxDetailService) {
+	public void setFinanceMainDAO(FinanceMainDAO financeMainDAO) {
+		this.financeMainDAO = financeMainDAO;
+	}
+
+	@Autowired
+	public void setValidationUtility(ValidationUtility validationUtility) {
+		this.validationUtility = validationUtility;
+	}
+
+	@Autowired
+	public void setFinanceValidationService(FinanceValidationService financeValidationService) {
+		this.financeValidationService = financeValidationService;
+	}
+
+	@Autowired
+	public void setFinanceDataValidation(FinanceDataValidation financeDataValidation) {
+		this.financeDataValidation = financeDataValidation;
+	}
+
+	@Autowired
+	public void setFinReceiptDetailDAO(FinReceiptDetailDAO finReceiptDetailDAO) {
+		this.finReceiptDetailDAO = finReceiptDetailDAO;
+	}
+
+	@Autowired
+	public void setSecurityUserDAO(SecurityUserDAO securityUserDAO) {
+		this.securityUserDAO = securityUserDAO;
+	}
+
+	@Autowired
+	public void setFinanceTaxDetailService(FinanceTaxDetailService financeTaxDetailService) {
 		this.financeTaxDetailService = financeTaxDetailService;
 	}
 
@@ -3479,74 +3412,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Autowired
-	public void setPartCancellationService(PartCancellationService partCancellationService) {
-		this.partCancellationService = partCancellationService;
-	}
-
-	@Override
-	public FinanceDetail nonLanReceipt(FinServiceInstruction finServiceInstruction) throws ServiceException {
-		String moduleDefiner = FinServiceEvent.SCHDRPY;
-		FinanceDetail financeDetail = nonLanReceiptTransaction(finServiceInstruction, moduleDefiner);
-		return financeDetail;
-	}
-
-	private FinanceDetail nonLanReceiptTransaction(FinServiceInstruction fsi, String moduleDefiner) {
-		logger.info(Literal.ENTERING);
-
-		String eventCode = null;
-		if (!fsi.isReceiptUpload()) {
-			validationUtility.validate(fsi, NonLanReceiptGroup.class);
-		}
-
-		// Method for validate instruction details
-		FinanceDetail financeDetail = new FinanceDetail();
-		FinScheduleData finScheduleData = financeDetail.getFinScheduleData();
-		finScheduleData.setFinServiceInstruction(fsi);
-		financeDetail = validateInstructions(financeDetail, moduleDefiner, eventCode);
-
-		if (fsi.getValueDate() == null) {
-			fsi.setValueDate(fsi.getReceivedDate());
-		}
-
-		FinReceiptData receiptData = nonLanReceiptService.doReceiptValidations(financeDetail, moduleDefiner);
-		financeDetail = receiptData.getFinanceDetail();
-		finScheduleData = financeDetail.getFinScheduleData();
-
-		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
-			logger.debug("Leaving - doReceiptValidations Error");
-			return setReturnStatus(financeDetail);
-		}
-
-		receiptData = nonLanReceiptService.setReceiptData(receiptData);
-		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
-			return setReturnStatus(financeDetail);
-		}
-
-		try {
-			financeDetail = finServiceInstController.doProcessNonLanReceipt(receiptData, eventCode);
-		} catch (Exception e) {
-			logger.error(Literal.EXCEPTION, e);
-			finScheduleData = nonLanReceiptService.setErrorToFSD(finScheduleData, "90502", e.getMessage());
-		}
-		if (finScheduleData.getErrorDetails() != null && !finScheduleData.getErrorDetails().isEmpty()) {
-			return setReturnStatus(financeDetail);
-		}
-		if (financeDetail.getFinScheduleData().getErrorDetails() != null
-				&& !financeDetail.getFinScheduleData().getErrorDetails().isEmpty()) {
-			financeDetail = setReturnStatus(financeDetail);
-		}
-
-		logger.info(Literal.LEAVING);
-		return financeDetail;
-	}
-
-	public NonLanReceiptService getNonLanReceiptService() {
-		return nonLanReceiptService;
+	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
+		this.nonLanReceiptService = nonLanReceiptService;
 	}
 
 	@Autowired
-	public void setNonLanReceiptService(NonLanReceiptService nonLanReceiptService) {
-		this.nonLanReceiptService = nonLanReceiptService;
+	public void setPartCancellationService(PartCancellationService partCancellationService) {
+		this.partCancellationService = partCancellationService;
 	}
 
 	@Autowired
@@ -3555,13 +3427,13 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 	}
 
 	@Autowired
-	public void setSubventionUploadDAO(SubventionUploadDAO subventionUploadDAO) {
-		this.subventionUploadDAO = subventionUploadDAO;
+	public void setSubventionKnockOffService(SubventionKnockOffService subventionKnockOffService) {
+		this.subventionKnockOffService = subventionKnockOffService;
 	}
 
 	@Autowired
-	public void setSubventionKnockOffService(SubventionKnockOffService subventionKnockOffService) {
-		this.subventionKnockOffService = subventionKnockOffService;
+	public void setSubventionUploadDAO(SubventionUploadDAO subventionUploadDAO) {
+		this.subventionUploadDAO = subventionUploadDAO;
 	}
 
 	@Autowired

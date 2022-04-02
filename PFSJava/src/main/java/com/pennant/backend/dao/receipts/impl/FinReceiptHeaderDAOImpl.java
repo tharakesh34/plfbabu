@@ -694,24 +694,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 	}
 
 	@Override
-	public List<FinReceiptHeader> getInProcessReceipts(String reference) {
-		String sql = "Select ReceiptID, AllocationType, ReceiptAmount From FinReceiptHeader_Temp Where Reference = ?";
-
-		logger.debug(Literal.SQL + sql);
-
-		return this.jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
-			FinReceiptHeader rch = new FinReceiptHeader();
-
-			rch.setReceiptID(rs.getLong("ReceiptID"));
-			rch.setAllocationType(rs.getString("AllocationType"));
-			rch.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
-
-			return rch;
-
-		}, reference);
-	}
-
-	@Override
 	public String getReceiptModeStatus(long receiptID) {
 		String sql = "Select ReceiptModeStatus From FinReceiptHeader Where ReceiptID = ?";
 
@@ -873,26 +855,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		return this.jdbcOperations.query(sql, ps -> ps.setInt(1, 0), (rs, rowNum) -> {
 			return JdbcUtil.getLong(rs.getObject(1));
 		});
-	}
-
-	@Override
-	public boolean checkEarlySettlementInitiation(String reference) {
-		return checkReceiptInitiation(reference, "_view", FinServiceEvent.EARLYSETTLE);
-	}
-
-	@Override
-	public boolean checkPartialSettlementInitiation(String reference) {
-		return checkReceiptInitiation(reference, "_Temp", FinServiceEvent.EARLYRPY);
-	}
-
-	private boolean checkReceiptInitiation(String reference, String type, String purpose) {
-		StringBuilder sql = new StringBuilder("Select count(ReceiptId)  From FinReceiptHeader");
-		sql.append(type);
-		sql.append(" Where Reference = ? and Receiptpurpose = ? and ReceiptModeStatus not in (?, ?)");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		return this.jdbcOperations.queryForObject(sql.toString(), Integer.class, reference, purpose, "B", "C") > 0;
 	}
 
 	@Override
@@ -1298,7 +1260,6 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 		sql.append(", KnockOffType, PrvReceiptPurpose, ReceiptSource");
 		sql.append(", RecAppDate, ReceivedDate, ClosureTypeId, SourceofFund, TdsAmount");
 		sql.append(", Version, LastMntOn, LastMntBy, RecordStatus, RoleCode, NextRoleCode");
-
 		sql.append(", TaskId, NextTaskId, RecordType, WorkflowId");
 		if (StringUtils.trimToEmpty(type).contains("View")) {
 			sql.append(", FinType, FinCcy, FinBranch, CustCIF, CustShrtName, FinTypeDesc");
@@ -1445,6 +1406,48 @@ public class FinReceiptHeaderDAOImpl extends SequenceDao<FinReceiptHeader> imple
 
 			return rh;
 		}
+	}
 
+	@Override
+	public List<FinReceiptHeader> getInprocessReceipts(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ReceiptID, ValueDate, ReceiptPurpose, ReceiptModeStatus, AllocationType, ReceiptAmount");
+		sql.append(" From FinReceiptHeader_Temp");
+		sql.append(" Where FinID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.query(sql.toString(), ps -> ps.setLong(1, finID), (rs, rowNum) -> {
+			FinReceiptHeader rh = new FinReceiptHeader();
+
+			rh.setReceiptID(rs.getLong("ReceiptID"));
+			rh.setValueDate(rs.getDate("ValueDate"));
+			rh.setReceiptPurpose(rs.getString("ReceiptPurpose"));
+			rh.setReceiptModeStatus(rs.getString("ReceiptModeStatus"));
+			rh.setAllocationType(rs.getString("AllocationType"));
+			rh.setReceiptAmount(rs.getBigDecimal("ReceiptAmount"));
+
+			return rh;
+		});
+	}
+
+	@Override
+	public List<FinReceiptHeader> getLastMntOn(long receiptID) {
+		StringBuilder sql = new StringBuilder();
+		sql.append(" Select  LastMntOn, 1 WorkflowId From FinReceiptHeader_Temp Where ReceiptID = ?");
+		sql.append(" Union all");
+		sql.append(" Select LastMntOn, 0 WorkflowId From FinReceiptHeader Where ReceiptID = ?");
+
+		return this.jdbcOperations.query(sql.toString(), ps -> {
+			ps.setLong(1, receiptID);
+			ps.setLong(2, receiptID);
+		}, (rs, rowNum) -> {
+			FinReceiptHeader rh = new FinReceiptHeader();
+
+			rh.setLastMntOn(rs.getTimestamp("LastMntOn"));
+			rh.setWorkflowId(rs.getLong("WorkflowId"));
+
+			return rh;
+		});
 	}
 }

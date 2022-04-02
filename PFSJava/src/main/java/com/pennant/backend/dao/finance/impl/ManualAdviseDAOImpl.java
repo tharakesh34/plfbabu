@@ -45,6 +45,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 import com.pennant.backend.model.finance.ManualAdvise;
 import com.pennant.backend.model.finance.ManualAdviseMovements;
 import com.pennant.backend.model.finance.ManualAdviseReserve;
+import com.pennant.backend.util.FinanceConstants;
 import com.pennanttech.pennapps.core.ConcurrencyException;
 import com.pennanttech.pennapps.core.DependencyFoundException;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
@@ -1688,6 +1689,77 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		}
 
 		return null;
+	}
+
+	@Override
+	public List<ManualAdvise> getManualAdviseForLMSEvent(long finID) {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" ma.AdviseID, ma.AdviseType, ma.FinID, ma.FinReference, ma.FeeTypeID");
+		sql.append(", ma.Sequence, ma.AdviseAmount, ma.BounceID, ma.LinkedTranId, ma.ReceiptID");
+		sql.append(", ma.PaidAmount, ma.WaivedAmount, ma.Remarks, ma.ValueDate, ma.PostDate, ma.ReservedAmt");
+		sql.append(", ma.BalanceAmt, ma.PaidCGST, ma.PaidSGST, ma.PaidUGST, ma.PaidIGST, ma.PaidCESS");
+		sql.append(", ma.WaivedCGST, ma.WaivedSGST, ma.WaivedUGST, ma.WaivedIGST");
+		sql.append(", ma.WaivedCESS, ma.FinSource, ma.DueCreation");
+		sql.append(", ft.FeeTypeCode, ft.FeeTypeDesc, ft.TaxApplicable, ft.TaxComponent, ft.TDSReq, br.BounceCode");
+		sql.append(" From ManualAdvise ma");
+		sql.append(" Left Join FeeTypes ft on ft.FeeTypeID = ma.FeeTypeID");
+		sql.append(" Left Join BounceReasons br on br.BounceID = ma.BounceID");
+		sql.append(" Where ma.FinID = ? and ma.AdviseType = ?");
+		sql.append(" and (ma.AdviseAmount - ma.PaidAmount - ma.WaivedAmount) > 0");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<ManualAdvise> list = this.jdbcOperations.query(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setLong(index++, finID);
+			ps.setInt(index++, FinanceConstants.MANUAL_ADVISE_PAYABLE);
+		}, (rs, rowNum) -> {
+
+			ManualAdvise ma = new ManualAdvise();
+
+			ma.setAdviseID(rs.getLong("AdviseID"));
+			ma.setAdviseType(rs.getInt("AdviseType"));
+			ma.setFinID(rs.getLong("FinID"));
+			ma.setFinReference(rs.getString("FinReference"));
+			ma.setFeeTypeID(rs.getLong("FeeTypeID"));
+			ma.setSequence(rs.getInt("sequence"));
+			ma.setAdviseAmount(rs.getBigDecimal("adviseAmount"));
+			ma.setBounceID(rs.getLong("BounceID"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setLinkedTranId(rs.getLong("LinkedTranId"));
+			ma.setReceiptID(rs.getLong("ReceiptID"));
+			ma.setPaidAmount(rs.getBigDecimal("paidAmount"));
+			ma.setWaivedAmount(rs.getBigDecimal("waivedAmount"));
+			ma.setRemarks(rs.getString("remarks"));
+			ma.setValueDate(rs.getTimestamp("ValueDate"));
+			ma.setPostDate(rs.getTimestamp("PostDate"));
+			ma.setReservedAmt(rs.getBigDecimal("ReservedAmt"));
+			ma.setBalanceAmt(rs.getBigDecimal("BalanceAmt"));
+			ma.setPaidCGST(rs.getBigDecimal("PaidCGST"));
+			ma.setPaidSGST(rs.getBigDecimal("PaidSGST"));
+			ma.setPaidUGST(rs.getBigDecimal("PaidUGST"));
+			ma.setPaidIGST(rs.getBigDecimal("PaidIGST"));
+			ma.setPaidCESS(rs.getBigDecimal("PaidCESS"));
+			ma.setWaivedCGST(rs.getBigDecimal("WaivedCGST"));
+			ma.setWaivedSGST(rs.getBigDecimal("WaivedSGST"));
+			ma.setWaivedUGST(rs.getBigDecimal("WaivedUGST"));
+			ma.setWaivedIGST(rs.getBigDecimal("WaivedIGST"));
+			ma.setWaivedCESS(rs.getBigDecimal("WaivedCESS"));
+			ma.setFinSource(rs.getString("FinSource"));
+			ma.setDueCreation(rs.getBoolean("DueCreation"));
+			ma.setFeeTypeCode(rs.getString("FeeTypeCode"));
+			ma.setFeeTypeDesc(rs.getString("FeeTypeDesc"));
+			ma.setTaxApplicable(rs.getBoolean("taxApplicable"));
+			ma.setTaxComponent(rs.getString("taxComponent"));
+			ma.setTdsReq(rs.getBoolean("TDSReq"));
+			ma.setBounceCode(rs.getString("BounceCode"));
+
+			return ma;
+		});
+
+		return list.stream().sorted((l1, l2) -> Long.compare(l2.getFeeTypeID(), l1.getFeeTypeID()))
+				.collect(Collectors.toList());
 	}
 
 }

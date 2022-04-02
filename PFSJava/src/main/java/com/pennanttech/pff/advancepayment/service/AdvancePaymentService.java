@@ -768,7 +768,7 @@ public class AdvancePaymentService extends ServiceHelper {
 		logger.debug(Literal.ENTERING);
 
 		// Fetch Fee Type ID
-		long feeTypeID = feeTypeDAO.getFeeTypeId(amountType);
+		Long feeTypeID = feeTypeDAO.getFeeTypeId(amountType);
 
 		ManualAdvise manualAdvise = new ManualAdvise();
 		manualAdvise.setAdviseID(Long.MIN_VALUE);
@@ -778,7 +778,7 @@ public class AdvancePaymentService extends ServiceHelper {
 			manualAdvise.setAdviseType(FinanceConstants.MANUAL_ADVISE_PAYABLE);
 		}
 		manualAdvise.setFinReference(finReference);
-		manualAdvise.setFeeTypeID(feeTypeID);
+		manualAdvise.setFeeTypeID(feeTypeID == null ? 0 : feeTypeID);
 		manualAdvise.setAdviseAmount(adviseAmount.abs());
 		manualAdvise.setRemarks("Advise for Advance Interest/EMI");
 		manualAdvise.setValueDate(valueDate);

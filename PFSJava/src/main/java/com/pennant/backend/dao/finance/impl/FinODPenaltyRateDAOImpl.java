@@ -187,4 +187,9 @@ public class FinODPenaltyRateDAOImpl extends SequenceDao<FinODPenaltyRate> imple
 	public FinODPenaltyRate getDMFinODPenaltyRateByRef(final long finID, String type) {
 		return getFinODPenaltyRateByRef(finID, type);
 	}
+
+	@Override
+	public FinODPenaltyRate getFinODPenaltyRateForLMSEvent(long finID) {
+		return getFinODPenaltyRateByRef(finID, "");
+	}
 }
