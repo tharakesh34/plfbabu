@@ -1264,6 +1264,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	public void executeAccounting() throws Exception {
 		FinReceiptData tempReceiptData = receiptData.copyEntity();
 
+		tempReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setSimulateAccounting(true);
+
 		receiptCalculator.getXcessList(tempReceiptData);
 		receiptService.calcuateDues(tempReceiptData);
 		tempReceiptData = receiptService.recalculateReceipt(tempReceiptData);
@@ -1276,7 +1278,6 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		String roleCode = tempReceiptData.getReceiptHeader().getRoleCode();
 
 		fm.setSimulateAccounting(true);
-		fd.getFinScheduleData().getFinanceMain().setSimulateAccounting(true);
 
 		FinReceiptHeader rch = tempReceiptData.getReceiptHeader();
 		rch.setRoleCode(roleCode);
