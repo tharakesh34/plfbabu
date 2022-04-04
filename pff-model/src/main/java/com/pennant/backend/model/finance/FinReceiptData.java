@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.pennant.backend.model.Repayments.FinanceRepayments;
+import com.pennant.backend.model.extendedfield.ExtendedFieldExtension;
 import com.pennant.backend.model.rmtmasters.Promotion;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
@@ -197,7 +198,11 @@ public class FinReceiptData implements Serializable {
 		fd.getFinScheduleData().setFinanceMain(schD.getFinanceMain().copyEntity());
 		this.financeDetail.getFinTypeFeesList().stream()
 				.forEach(e -> fd.getFinTypeFeesList().add(e == null ? null : e.copyEntity()));
-		fd.setExtendedFieldExtension(this.getFinanceDetail().getExtendedFieldExtension().copyEntity());
+
+		ExtendedFieldExtension extendedFieldExtension = this.getFinanceDetail().getExtendedFieldExtension();
+		if (extendedFieldExtension != null) {
+			fd.setExtendedFieldExtension(extendedFieldExtension.copyEntity());
+		}
 
 		entity.setFinanceDetail(fd);
 
