@@ -32,7 +32,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_TDS_ON_FEE", true);
 
-		customConstants.put("ALLOW_OD_LOANS", true);
+		customConstants.put("ALLOW_OD_LOANS", false);
 
 		customConstants.put("ALLOW_CD_LOANS", true);
 

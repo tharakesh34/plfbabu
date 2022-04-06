@@ -233,6 +233,7 @@ public class MainMenuCtrl extends WindowBaseCtrl {
 			return ImplementationConstants.ALLOW_OD_LOANS;
 		case "menu_Item_CDFinanceType":
 		case "menu_Item_CDSchemes":
+		case "menu_Item_NewCDFinanceMain":
 			return ImplementationConstants.ALLOW_CD_LOANS;
 		case "menu_Item_Sampling":
 			return ImplementationConstants.ALLOW_SAMPLING;

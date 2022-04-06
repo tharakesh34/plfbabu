@@ -133,6 +133,11 @@ public class ImplementationConstants {
 		ALLOW_ADV_INT = getValueAsBoolean(extensions, "ALLOW_ADV_INT", false);
 		ALLOW_ADV_EMI = getValueAsBoolean(extensions, "ALLOW_ADV_EMI", false);
 		ALLOW_TDS_ON_FEE = getValueAsBoolean(extensions, "ALLOW_TDS_ON_FEE", false);
+		ALLOW_CD_LOANS = getValueAsBoolean(extensions, "ALLOW_CD_LOANS", false);
+		ALLOW_OD_LOANS = getValueAsBoolean(extensions, "ALLOW_OD_LOANS", false);
+		ALLOW_SAMPLING = getValueAsBoolean(extensions, "ALLOW_SAMPLING", false);
+		ALLOW_SCHOOL_ORG = getValueAsBoolean(extensions, "ALLOW_SCHOOL_ORG", false);
+		ALLOW_FDD_ON_RVW_DATE = getValueAsBoolean(extensions, "ALLOW_FDD_ON_RVW_DATE", false);
 		ALLOW_NPA_PROVISION = getValueAsBoolean(extensions, "ALLOW_NPA_PROVISION", false);
 		ALLOW_UNACCURED_PENALITY_SOA = getValueAsBoolean(extensions, "ALLOW_UNACCURED_PENALITY_SOA", true);
 		ALLOW_AUTO_GRACE_EXT = getValueAsBoolean(extensions, "ALLOW_AUTO_GRACE_EXT", false);
