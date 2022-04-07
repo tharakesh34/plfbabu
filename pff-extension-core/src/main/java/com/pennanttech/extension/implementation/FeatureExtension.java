@@ -66,12 +66,6 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_RESTRUCTURING", true);
 
-		customConstants.put("ALLOW_LOAN_SPLIT", true);
-
-		customConstants.put("SCHD_INST_CAL_ON_DISB_RELIZATION", true);
-
-		customConstants.put("ALLOW_SUBVENTION", true);
-
 		customConstants.put("PRESENT_RECEIPTS_ON_RESP", false);
 
 		customConstants.put("PRESENT_RESP_BOUNCE_REMARKS_MAN", true);
@@ -101,7 +95,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
 
-		customConstants.put("ALLOW_ESCROW_MODE", true);
+		customConstants.put("ALLOW_ESCROW_MODE", false);
 
 	}
 
