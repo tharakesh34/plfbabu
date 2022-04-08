@@ -23,7 +23,7 @@ public class ImplementationConstants {
 		// The below are the steps that are required to extend the constants.
 		// 1. Interface, IFeatureExtension, will be available in pff-core.
 		// 2. The implementation class, FeatureExtension, for the above interface will be available in both
-		// - pff-extension-core (dummy implementation and can be used for testing the constants as well)
+		// - pff-extension-core (dummy implementation and can be u sed for testing the constants as well)
 		// - pff-extension-client
 
 		Map<String, Object> extensions = getFeatureExtensions();
