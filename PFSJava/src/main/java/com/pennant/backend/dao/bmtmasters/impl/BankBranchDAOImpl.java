@@ -329,7 +329,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { ifsc },
+			return this.jdbcOperations.queryForObject(sql.toString(),
 					new RowMapper<BankBranch>() {
 						@Override
 						public BankBranch mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -360,9 +360,9 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 							return bb;
 						}
-					});
+					}, ifsc);
 		} catch (EmptyResultDataAccessException e) {
-			logger.error(Literal.EXCEPTION, e);
+			//
 		}
 
 		return null;
@@ -385,7 +385,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.trace(Literal.SQL + sql.toString());
 
 		try {
-			return this.jdbcOperations.queryForObject(sql.toString(), new Object[] { bankCode, branchCode },
+			return this.jdbcOperations.queryForObject(sql.toString(),
 					new RowMapper<BankBranch>() {
 						@Override
 						public BankBranch mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -417,7 +417,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 
 							return bb;
 						}
-					});
+					}, bankCode, branchCode);
 		} catch (EmptyResultDataAccessException e) {
 			logger.warn(
 					"Record not found in BankBranches {} table/view for the specified BankCode >> {} and BranchCode >> {} ",
