@@ -70,7 +70,7 @@ public class AuditHeader implements java.io.Serializable {
 	private String auditErrorForRecocvery;
 	private List<ErrorDetail> infoMessage = new ArrayList<>();
 	private List<ErrorDetail> overideMessage = new ArrayList<>();
-	private List<ErrorDetail> errorMessage = new ArrayList<>();
+	private List<ErrorDetail> errorMessage;
 	private Object modelData;
 	private AuditDetail auditDetail;
 	private List<AuditDetail> auditDetails = new ArrayList<>();
