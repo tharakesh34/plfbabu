@@ -68,12 +68,12 @@ public class AuditHeader implements java.io.Serializable {
 	private boolean auditPrinted = false;
 	private boolean auditRecovered = false;
 	private String auditErrorForRecocvery;
-	private List<ErrorDetail> infoMessage = new ArrayList<>();
-	private List<ErrorDetail> overideMessage = new ArrayList<>();
+	private List<ErrorDetail> infoMessage;
+	private List<ErrorDetail> overideMessage;
 	private List<ErrorDetail> errorMessage;
 	private Object modelData;
 	private AuditDetail auditDetail;
-	private List<AuditDetail> auditDetails = new ArrayList<>();
+	private List<AuditDetail> auditDetails;
 	private int overideCount = 0;
 	private String usrLanguage;
 	private Map<String, List<ErrorDetail>> overideMap = new HashMap<String, List<ErrorDetail>>();
