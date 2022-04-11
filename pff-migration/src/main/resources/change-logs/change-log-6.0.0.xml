@@ -24580,7 +24580,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.3" author="gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE DEDUPFIELDS SET FIELDNAME = 'aadharNumber' WHERE FIELDDESC = 'Aadhar Number' AND QUERYMODULE = 'RETAILCustomer';
