@@ -3360,7 +3360,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (ReceiptMode.CHEQUE.equals(fsi.getPaymentMode())) {
-			validateCheque(schdData, fsi.getFavourNumber());
+			validateCheque(schdData, fsi.getReceiptDetail().getFavourNumber());
 		}
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
