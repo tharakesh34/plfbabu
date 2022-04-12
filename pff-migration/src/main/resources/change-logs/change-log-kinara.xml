@@ -305,7 +305,7 @@
 	<changeSet id="14" author="Gireesh.G">
 		<sql>
 			<![CDATA[
-				 UPDATE RULES SET ACTUALBLOCK = '(|if|FIELDLIST|fm_productCategory| |==|STATICTEXT|CONV| |1|0|1|1|0|S| |~)|~(|else if|FIELDLIST|fm_productCategory| |==|STATICTEXT|OD| |1|0|1|1|0|P| |~)|~(|else|0|0|0|1|0|I| |~)|, FIELDS = 'fm_productCategory'  WHERE RULEMODULE = 'AMZMTH';
+				 UPDATE RULES SET ACTUALBLOCK = '(|if|FIELDLIST|fm_productCategory| |==|STATICTEXT|CONV| |1|0|1|1|0|S| |~)|~(|else if|FIELDLIST|fm_productCategory| |==|STATICTEXT|OD| |1|0|1|1|0|P| |~)|~(|else|0|0|0|1|0|I| |~)|', FIELDS = 'fm_productCategory'  WHERE RULEMODULE = 'AMZMTH';
 				 UPDATE RULES SET ACTUALBLOCK = '(|if|FIELDLIST|fin_curODAmt| |==|CALCVALUE|1000000| |1|0|1|1|1|1000| |~)|~(|else if|FIELDLIST|fin_curODAmt| |==|CALCVALUE|2500000| |1|0|1|1|1|1500| |~)|~(|else if|FIELDLIST|fin_curODAmt| |==|CALCVALUE|5000000| |1|0|1|1|1|2000| |~)|~(|else|0|0|0|1|1|2500| |~)|', FIELDS = 'fin_curODAmt'  WHERE RULEMODULE = 'LPPRULE';
 			]]>
 		</sql>
