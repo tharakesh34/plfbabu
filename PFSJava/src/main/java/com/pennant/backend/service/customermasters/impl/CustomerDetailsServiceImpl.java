@@ -3255,6 +3255,21 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm)));
 			}
+
+			// cust PAN
+
+			if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
+				String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
+				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regExp));
+				Matcher matcher = pattern.matcher(customer.getCustCRCPR());
+
+				if (!matcher.matches()) {
+					String[] valueParm = new String[1];
+					valueParm[0] = "panNumber";
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN"));
+				}
+			}
+
 			/*
 			 * if (StringUtils.isNotBlank(customer.getCustNationality())) { String[] valueParm = new String[2];
 			 * valueParm[0] = "nationality"; valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
