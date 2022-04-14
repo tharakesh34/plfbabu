@@ -52,6 +52,7 @@ import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.zkoss.util.resource.Labels;
 
 import com.pennant.Interface.service.CustomerLimitIntefaceService;
@@ -10743,7 +10744,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 		this.drawingPowerService = drawingPowerService;
 	}
 
-	public void setCashBackProcessService(CashBackProcessService cashBackProcessService) {
+	@Autowired
+	public void setCashBackProcessService(@Lazy CashBackProcessService cashBackProcessService) {
 		this.cashBackProcessService = cashBackProcessService;
 	}
 
