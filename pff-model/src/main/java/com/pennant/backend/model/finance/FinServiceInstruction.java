@@ -345,7 +345,10 @@ public class FinServiceInstruction extends AbstractWorkflowEntity {
 					.forEach(e -> fsi.getUploadAllocationDetails().add(e == null ? null : e.copyEntity()));
 		}
 
-		fsi.setReceiptPurpose(this.receiptPurpose.code());
+		if (this.receiptPurpose != null) {
+			fsi.setReceiptPurpose(this.receiptPurpose.code());
+		}
+
 		this.dueMap.entrySet().stream().forEach(e -> fsi.getDueMap().put(e.getKey(), e.getValue()));
 		fsi.setPftIntact(this.pftIntact);
 		fsi.setTerms(this.terms);
