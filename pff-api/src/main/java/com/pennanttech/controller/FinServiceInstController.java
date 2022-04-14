@@ -3090,6 +3090,7 @@ public class FinServiceInstController extends SummaryDetailService {
 					chequeDetail.setAccountNo(chequeHeader.getAccountNo());
 
 					// setting the reference
+					chequeHeader.setFinID(financeMain.getFinID());
 					chequeHeader.setFinReference(financeMain.getFinReference());
 					chequeHeader.setTotalAmount(chequeDetail.getAmount().add(chequeHeader.getTotalAmount()));
 					// setting the default values
