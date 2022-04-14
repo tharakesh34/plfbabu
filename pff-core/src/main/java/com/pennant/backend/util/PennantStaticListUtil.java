@@ -2296,6 +2296,8 @@ public class PennantStaticListUtil {
 					Labels.getLabel("label_FinSerEvent_Upfront_Fee"), "UFMK"));
 			events.add(new FinServicingEvent(FinServiceEvent.UPFRONT_FEE_CAN,
 					Labels.getLabel("label_FinSerEvent_Upfront_Fee_Cancel"), "UFCM"));
+			events.add(new FinServicingEvent(FinServiceEvent.COLLATERAL,
+					Labels.getLabel("label_FinSerEvent_Collateral"), "COLL"));
 		}
 		return events;
 	}
