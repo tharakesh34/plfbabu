@@ -5846,25 +5846,13 @@ public class ScheduleCalculator {
 		}
 
 		// Set Profit On date based on frequency
-		if (FrequencyUtil.isFrqDate(fm.getRepayPftFrq(), curSchdDate)) {
-			curSchd.setPftOnSchDate(true);
-		} else {
-			curSchd.setPftOnSchDate(false);
-		}
+		curSchd.setPftOnSchDate(FrequencyUtil.isFrqDate(fm.getRepayPftFrq(), curSchdDate));
 
 		// Set Profit Review On date based on frequency
-		if (FrequencyUtil.isFrqDate(fm.getRepayRvwFrq(), curSchdDate)) {
-			curSchd.setRvwOnSchDate(true);
-		} else {
-			curSchd.setRvwOnSchDate(false);
-		}
+		curSchd.setRvwOnSchDate(FrequencyUtil.isFrqDate(fm.getRepayRvwFrq(), curSchdDate));
 
 		// Set Capitalize On date based on frequency
-		if (FrequencyUtil.isFrqDate(fm.getRepayCpzFrq(), curSchdDate)) {
-			curSchd.setCpzOnSchDate(true);
-		} else {
-			curSchd.setCpzOnSchDate(false);
-		}
+		curSchd.setCpzOnSchDate(FrequencyUtil.isFrqDate(fm.getRepayCpzFrq(), curSchdDate));
 
 		// Reset New Schedule Record if record not found
 		finScheduleData = resetNewSchdDetail(finScheduleData, newSchdDate, CalculationConstants.SCHDFLAG_RPY);
