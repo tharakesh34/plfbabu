@@ -611,9 +611,18 @@ public class IRRCalculator {
 				df = BigDecimal.valueOf(days).divide(big360, 13, RoundingMode.HALF_DOWN);
 			}
 
+			// TODO Review Required by PV
 			pv = irr.add(BigDecimal.ONE);
-			pv = BigDecimal.valueOf(Math.pow(pv.doubleValue(), df.doubleValue()));
-			pv = cf.getCfAmount().divide(pv, 13, RoundingMode.HALF_DOWN);
+			double pow = Math.pow(pv.doubleValue(), df.doubleValue());
+
+			if (Double.isNaN(pow)) {
+				pow = 0;
+			}
+
+			pv = BigDecimal.valueOf(pow);
+			if (pv.compareTo(BigDecimal.ZERO) > 0) {
+				pv = cf.getCfAmount().divide(pv, 13, RoundingMode.HALF_DOWN);
+			}
 			pv = CalculationUtil.roundAmount(pv, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 			npv = npv.add(pv);
