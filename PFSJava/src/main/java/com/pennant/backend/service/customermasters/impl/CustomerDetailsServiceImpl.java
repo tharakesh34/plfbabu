@@ -3110,6 +3110,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 	private AuditDetail validatePersonalInfo(AuditDetail auditDetail, Customer customer) {
 		logger.debug(Literal.ENTERING);
 
+		if (StringUtils.isBlank(customer.getCustCRCPR())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "panNumber";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+		}
+
+		if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
+			String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regExp));
+			Matcher matcher = pattern.matcher(customer.getCustCRCPR());
+
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "panNumber";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN"));
+			}
+		}
+
 		// validate conditional mandatory fields
 		String custCtgCode = customer.getCustCtgCode();
 		if (StringUtils.equals(custCtgCode, PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -3156,25 +3174,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[0] = "maritalStatus";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
 				return auditDetail;
-			}
-
-			if (StringUtils.isBlank(customer.getCustCRCPR())) {
-				String[] valueParm = new String[1];
-				valueParm[0] = "panNumber";
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
-				return auditDetail;
-			}
-
-			if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
-				String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
-				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regExp));
-				Matcher matcher = pattern.matcher(customer.getCustCRCPR());
-
-				if (!matcher.matches()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "panNumber";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN"));
-				}
 			}
 
 			if (StringUtils.equals(customer.getCustCtgCode(), PennantConstants.PFF_CUSTCTG_INDIV)) {
@@ -3254,20 +3253,6 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 				valueParm[0] = "motherName";
 				valueParm[1] = PennantConstants.PFF_CUSTCTG_INDIV;
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90124", "", valueParm)));
-			}
-
-			// cust PAN
-
-			if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
-				String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
-				Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regExp));
-				Matcher matcher = pattern.matcher(customer.getCustCRCPR());
-
-				if (!matcher.matches()) {
-					String[] valueParm = new String[1];
-					valueParm[0] = "panNumber";
-					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN"));
-				}
 			}
 
 			/*
