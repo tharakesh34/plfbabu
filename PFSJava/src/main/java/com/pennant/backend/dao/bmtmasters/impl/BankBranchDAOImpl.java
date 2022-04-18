@@ -92,87 +92,6 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	}
 
 	@Override
-	public void delete(BankBranch bankBranch, String type) {
-		StringBuilder sql = new StringBuilder("Delete From BankBranches");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Where BankBranchID = ?");
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-
-				ps.setLong(1, bankBranch.getBankBranchID());
-			});
-			if (recordCount <= 0) {
-				throw new ConcurrencyException();
-			}
-		} catch (DataAccessException e) {
-			throw new DependencyFoundException(e);
-		}
-	}
-
-	@Override
-	public void update(BankBranch bankBranch, String type) {
-		StringBuilder sql = new StringBuilder("Update BankBranches");
-		sql.append(StringUtils.trimToEmpty(type));
-		sql.append(" Set BankCode = ?, BranchCode = ?, BranchDesc = ?, City = ?, MICR = ?, IFSC = ?");
-		sql.append(", AddOfBranch = ?, Nach = ?, Dd = ?, Dda = ?, Ecs = ?, Cheque = ?, Active = ?");
-		sql.append(", ParentBranch = ?, ParentBranchDesc = ?, Emandate = ?, AllowedSources = ?");
-		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
-		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
-		sql.append(" Where BankBranchID = ?");
-
-		if (!type.endsWith("_Temp")) {
-			sql.append("  and Version = ?");
-		}
-
-		logger.debug(Literal.SQL + sql.toString());
-
-		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-			int index = 1;
-
-			ps.setString(index++, bankBranch.getBankCode());
-			ps.setString(index++, bankBranch.getBranchCode());
-			ps.setString(index++, bankBranch.getBranchDesc());
-			ps.setString(index++, bankBranch.getCity());
-			ps.setString(index++, bankBranch.getMICR());
-			ps.setString(index++, bankBranch.getIFSC());
-			ps.setString(index++, bankBranch.getAddOfBranch());
-			ps.setBoolean(index++, bankBranch.isNach());
-			ps.setBoolean(index++, bankBranch.isDd());
-			ps.setBoolean(index++, bankBranch.isDda());
-			ps.setBoolean(index++, bankBranch.isEcs());
-			ps.setBoolean(index++, bankBranch.isCheque());
-			ps.setBoolean(index++, bankBranch.isActive());
-			ps.setString(index++, bankBranch.getParentBranch());
-			ps.setString(index++, bankBranch.getParentBranchDesc());
-			ps.setBoolean(index++, bankBranch.isEmandate());
-			ps.setString(index++, bankBranch.getAllowedSources());
-			ps.setInt(index++, bankBranch.getVersion());
-			ps.setLong(index++, bankBranch.getLastMntBy());
-			ps.setTimestamp(index++, bankBranch.getLastMntOn());
-			ps.setString(index++, bankBranch.getRecordStatus());
-			ps.setString(index++, bankBranch.getRoleCode());
-			ps.setString(index++, bankBranch.getNextRoleCode());
-			ps.setString(index++, bankBranch.getTaskId());
-			ps.setString(index++, bankBranch.getNextTaskId());
-			ps.setString(index++, bankBranch.getRecordType());
-			ps.setLong(index++, bankBranch.getWorkflowId());
-
-			ps.setLong(index++, bankBranch.getBankBranchID());
-
-			if (!type.endsWith("_Temp")) {
-				ps.setInt(index++, bankBranch.getVersion() - 1);
-			}
-		});
-
-		if (recordCount <= 0) {
-			throw new ConcurrencyException();
-		}
-	}
-
-	@Override
 	public int getBankBranchByIFSC(final String iFSC, long id, String type) {
 		StringBuilder sql = new StringBuilder("Select Count(BankBranchID) From BankBranches");
 		sql.append(StringUtils.trimToEmpty(type));
@@ -260,6 +179,87 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		});
 
 		return bankBranch.getId();
+	}
+
+	@Override
+	public void update(BankBranch bankBranch, String type) {
+		StringBuilder sql = new StringBuilder("Update BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Set BankCode = ?, BranchCode = ?, BranchDesc = ?, City = ?, MICR = ?, IFSC = ?");
+		sql.append(", AddOfBranch = ?, Nach = ?, Dd = ?, Dda = ?, Ecs = ?, Cheque = ?, Active = ?");
+		sql.append(", ParentBranch = ?, ParentBranchDesc = ?, Emandate = ?, AllowedSources = ?");
+		sql.append(", Version = ?, LastMntBy = ?, LastMntOn = ?, RecordStatus = ?, RoleCode = ?, NextRoleCode = ?");
+		sql.append(", TaskId = ?, NextTaskId = ?, RecordType = ?, WorkflowId = ?");
+		sql.append(" Where BankBranchID = ?");
+
+		if (!type.endsWith("_Temp")) {
+			sql.append("  and Version = ?");
+		}
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+			int index = 1;
+
+			ps.setString(index++, bankBranch.getBankCode());
+			ps.setString(index++, bankBranch.getBranchCode());
+			ps.setString(index++, bankBranch.getBranchDesc());
+			ps.setString(index++, bankBranch.getCity());
+			ps.setString(index++, bankBranch.getMICR());
+			ps.setString(index++, bankBranch.getIFSC());
+			ps.setString(index++, bankBranch.getAddOfBranch());
+			ps.setBoolean(index++, bankBranch.isNach());
+			ps.setBoolean(index++, bankBranch.isDd());
+			ps.setBoolean(index++, bankBranch.isDda());
+			ps.setBoolean(index++, bankBranch.isEcs());
+			ps.setBoolean(index++, bankBranch.isCheque());
+			ps.setBoolean(index++, bankBranch.isActive());
+			ps.setString(index++, bankBranch.getParentBranch());
+			ps.setString(index++, bankBranch.getParentBranchDesc());
+			ps.setBoolean(index++, bankBranch.isEmandate());
+			ps.setString(index++, bankBranch.getAllowedSources());
+			ps.setInt(index++, bankBranch.getVersion());
+			ps.setLong(index++, bankBranch.getLastMntBy());
+			ps.setTimestamp(index++, bankBranch.getLastMntOn());
+			ps.setString(index++, bankBranch.getRecordStatus());
+			ps.setString(index++, bankBranch.getRoleCode());
+			ps.setString(index++, bankBranch.getNextRoleCode());
+			ps.setString(index++, bankBranch.getTaskId());
+			ps.setString(index++, bankBranch.getNextTaskId());
+			ps.setString(index++, bankBranch.getRecordType());
+			ps.setLong(index++, bankBranch.getWorkflowId());
+
+			ps.setLong(index++, bankBranch.getBankBranchID());
+
+			if (!type.endsWith("_Temp")) {
+				ps.setInt(index++, bankBranch.getVersion() - 1);
+			}
+		});
+
+		if (recordCount <= 0) {
+			throw new ConcurrencyException();
+		}
+	}
+
+	@Override
+	public void delete(BankBranch bankBranch, String type) {
+		StringBuilder sql = new StringBuilder("Delete From BankBranches");
+		sql.append(StringUtils.trimToEmpty(type));
+		sql.append(" Where BankBranchID = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		try {
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
+
+				ps.setLong(1, bankBranch.getBankBranchID());
+			});
+			if (recordCount <= 0) {
+				throw new ConcurrencyException();
+			}
+		} catch (DataAccessException e) {
+			throw new DependencyFoundException(e);
+		}
 	}
 
 	@Override
