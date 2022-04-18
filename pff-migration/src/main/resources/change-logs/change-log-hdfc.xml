@@ -29,10 +29,10 @@
 		</sql>
 	</changeSet>
 	
-	<changeSet id="1" author="vijaya.a">
+	<changeSet id="1.1" author="vijaya.a">
 		<sql>
 			<![CDATA[
-				update plf.RBFieldDetails set modulecode = 'CustomerCategory', rbflddesc = 'Customer Category' where rbflddesc = 'Customer Catery' And rbfldname  = 'ct_custCtgCode' And rbmodule = 'LTVRULE'
+				UPDATE RBFIELDDETAILS SET MODULECODE = 'CustomerCategory', RBFLDDESC = 'Customer Category' WHERE RBFLDDESC = 'Customer Catery' AND RBFLDNAME  = 'ct_custCtgCode' AND RBMODULE = 'LTVRULE';
 			]]>
 		</sql>
 	</changeSet>
