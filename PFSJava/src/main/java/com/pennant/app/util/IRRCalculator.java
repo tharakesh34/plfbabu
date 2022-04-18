@@ -611,7 +611,7 @@ public class IRRCalculator {
 				df = BigDecimal.valueOf(days).divide(big360, 13, RoundingMode.HALF_DOWN);
 			}
 
-			// FIXME:: Review Required by PV
+			// TODO Review Required by PV
 			pv = irr.add(BigDecimal.ONE);
 			double pow = Math.pow(pv.doubleValue(), df.doubleValue());
 
