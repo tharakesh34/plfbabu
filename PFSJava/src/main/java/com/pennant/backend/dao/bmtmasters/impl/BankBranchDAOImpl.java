@@ -242,7 +242,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 	}
 
 	@Override
-	public void delete(BankBranch bankBranch, String type) {
+	public void delete(BankBranch bb, String type) {
 		StringBuilder sql = new StringBuilder("Delete From BankBranches");
 		sql.append(StringUtils.trimToEmpty(type));
 		sql.append(" Where BankBranchID = ?");
@@ -250,10 +250,7 @@ public class BankBranchDAOImpl extends SequenceDao<BankBranch> implements BankBr
 		logger.debug(Literal.SQL + sql.toString());
 
 		try {
-			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> {
-
-				ps.setLong(1, bankBranch.getBankBranchID());
-			});
+			int recordCount = this.jdbcOperations.update(sql.toString(), ps -> ps.setLong(1, bb.getBankBranchID()));
 			if (recordCount <= 0) {
 				throw new ConcurrencyException();
 			}

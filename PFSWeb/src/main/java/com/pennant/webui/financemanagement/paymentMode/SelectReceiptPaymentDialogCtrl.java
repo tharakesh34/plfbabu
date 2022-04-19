@@ -796,6 +796,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 		FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(finID);
 		fm.setAppDate(appDate);
+		fm.setReceiptPurpose(rptPurpose.code());
 
 		schdData.setFinanceMain(fm);
 		schdData.setFeeEvent(eventCode);

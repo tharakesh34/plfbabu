@@ -277,7 +277,6 @@ public class ReceiptCalculator {
 		FinanceProfitDetail pfd = schdData.getFinPftDeatil();
 		processCIP(rd);
 		if (receiptPurposeCtg == 2 && rd.getOrgFinPftDtls() == null) {
-			FinanceProfitDetail orgFinPftDtls = pfd.copyEntity();
 			FinanceScheduleDetail prvSchd = financeScheduleDetailDAO.getPrvSchd(fm.getFinID(), valueDate);
 			Date prvSchdDate = valueDate;
 
@@ -285,17 +284,16 @@ public class ReceiptCalculator {
 				prvSchdDate = prvSchd.getSchDate();
 			}
 
-			orgFinPftDtls = accrualService.calProfitDetails(fm, schdDetails, orgFinPftDtls, prvSchdDate);
-			rd.setOrgFinPftDtls(orgFinPftDtls.copyEntity());
+			rd.setOrgFinPftDtls(accrualService.calProfitDetails(fm, schdDetails, pfd.copyEntity(), prvSchdDate));
 		}
 
 		if (rch.getValueDate() == null || rch.getReceiptDate().compareTo(rch.getValueDate()) != 0) {
-			pfd = accrualService.calProfitDetails(fm, schdData.getFinanceScheduleDetails(), pfd, valueDate);
+			accrualService.calProfitDetails(fm, schdData.getFinanceScheduleDetails(), pfd, valueDate);
 			rch.setValueDate(valueDate);
 		}
+
 		if (CollectionUtils.isNotEmpty(rd.getAllocList())) {
 			isAllocated = true;
-
 		}
 
 		List<Date> presentmentDates = getPresentmentDates(rd, valueDate);

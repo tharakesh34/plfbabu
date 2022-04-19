@@ -6382,7 +6382,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				&& fm.isFinIsActive()) {
 			rch.setValueDate(null);
 
-			rd.setOrgFinPftDtls(schdData.getFinPftDeatil());
+			if (!fm.isSimulateAccounting()) {
+				rd.setOrgFinPftDtls(schdData.getFinPftDeatil().copyEntity());
+			}
+
 			rd.getRepayMain().setEarlyPayOnSchDate(valueDate);
 
 			recalEarlyPay(rd);
@@ -6398,7 +6401,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				rch.setReceiptAmount(rd.getExcessAvailable());
 			} else {
 				if (rch.getReceiptDetails().size() > 1) {
-					rch.setReceiptAmount(rd.getActualReceiptAmount());
+					rch.setReceiptAmount(rd.getActualReceiptAmount().add(rd.getExcessAvailable()));
 				}
 			}
 		}

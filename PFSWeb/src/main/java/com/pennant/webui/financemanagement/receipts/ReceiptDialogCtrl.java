@@ -237,6 +237,7 @@ import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.notifications.service.NotificationService;
+import com.pennanttech.pff.receipt.constants.ReceiptMode;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 import com.rits.cloning.Cloner;
 
@@ -1289,7 +1290,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			rch.setReceiptModeStatus(RepayConstants.PAYSTATUS_DEPOSITED);
 		}
 
-		if (!StringUtils.equals(RepayConstants.RECEIPTMODE_CHEQUE, rch.getReceiptMode())) {
+		if (!ReceiptMode.CHEQUE.equals(rch.getReceiptMode())) {
 			rch.setRealizationDate(rch.getValueDate());
 		}
 
