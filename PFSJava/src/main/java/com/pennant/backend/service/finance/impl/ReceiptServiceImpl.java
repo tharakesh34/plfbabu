@@ -276,44 +276,42 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		rch.setReceiptDetails(rcdList);
-		if (!isFeePayment) {
-			List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(receiptID, type);
 
-			if (CollectionUtils.isNotEmpty(allocations)) {
-				for (ReceiptAllocationDetail allocation : allocations) {
-					allocation.setTotalPaid(allocation.getPaidAmount().add(allocation.getTdsPaid()));
-					Long headerId = allocation.getTaxHeaderId();
-					if (headerId != null && headerId > 0) {
-						List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
-						TaxHeader taxHeader = new TaxHeader(headerId);
-						taxHeader.setTaxDetails(taxDetails);
-						allocation.setTaxHeader(taxHeader);
-					}
-				}
+		List<ReceiptAllocationDetail> allocations = allocationDetailDAO.getAllocationsByReceiptID(receiptID, type);
+
+		for (ReceiptAllocationDetail allocation : allocations) {
+			allocation.setTotalPaid(allocation.getPaidAmount().add(allocation.getTdsPaid()));
+			Long headerId = allocation.getTaxHeaderId();
+
+			if (headerId != null && headerId > 0) {
+				List<Taxes> taxDetails = taxHeaderDetailsDAO.getTaxDetailById(headerId, type);
+				TaxHeader taxHeader = new TaxHeader(headerId);
+				taxHeader.setTaxDetails(taxDetails);
+				allocation.setTaxHeader(taxHeader);
 			}
+		}
 
-			rch.setAllocations(allocations);
+		rch.setAllocations(allocations);
+
+		for (FinReceiptDetail rcd : rcdList) {
+			rcd.setRepayHeader(financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), ""));
+		}
+
+		if (ReceiptMode.CHEQUE.equalsIgnoreCase(rch.getReceiptMode())) {
+			rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
+		}
+
+		if (StringUtils.isBlank(rch.getExtReference())) {
+			rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getReference(), receiptID, "_View"));
 		} else {
-			// Fetch Repay Headers List
-			for (FinReceiptDetail rcd : rcdList) {
-				rcd.setRepayHeader(financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), ""));
-			}
-			// Bounce reason Code
-			if (ReceiptMode.CHEQUE.equalsIgnoreCase(rch.getReceiptMode())) {
-				rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
-			}
-			if (StringUtils.isBlank(rch.getExtReference())) {
-				rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getReference(), receiptID, "_View"));
-			} else {
-				rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getExtReference(), receiptID, "_View"));
-				FinReceiptHeader frh = finReceiptHeaderDAO.getFinTypeByReceiptID(rch.getReceiptID());
-				if (frh != null) {
-					rch.setFinType(frh.getFinType());
-					rch.setFinTypeDesc(frh.getFinTypeDesc());
-					rch.setFinCcy(frh.getFinCcy());
-					rch.setFinCcyDesc(frh.getFinCcyDesc());
-				}
+			rch.setPaidFeeList(feeReceiptService.getPaidFinFeeDetails(rch.getExtReference(), receiptID, "_View"));
+			FinReceiptHeader frh = finReceiptHeaderDAO.getFinTypeByReceiptID(rch.getReceiptID());
 
+			if (frh != null) {
+				rch.setFinType(frh.getFinType());
+				rch.setFinTypeDesc(frh.getFinTypeDesc());
+				rch.setFinCcy(frh.getFinCcy());
+				rch.setFinCcyDesc(frh.getFinCcyDesc());
 			}
 		}
 
