@@ -91,7 +91,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("RESTRUCTURE_ALW_CHARGES", true);
 
-		customConstants.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", true);
+		customConstants.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", false);
 
 		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
 
