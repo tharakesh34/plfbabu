@@ -159,14 +159,17 @@ public class ReceiptCalculator {
 
 	/** To Calculate the Amounts for given schedule */
 	private FinReceiptData procInitiateReceipt(FinReceiptData rd, boolean isPresentment) {
-		// Initialize Repay
+		String buildProcess = rd.getBuildProcess();
+		logger.info("Calculate the Amounts for given schedule started with build process {}", buildProcess);
+
 		rd.setPresentment(isPresentment);
-		if ("I".equals(rd.getBuildProcess())) {
+		if ("I".equals(buildProcess)) {
 			rd = initializeReceipt(rd);
-		} else if ("R".equals(rd.getBuildProcess())) {
+		} else if ("R".equals(buildProcess)) {
 			rd = recalReceipt(rd, isPresentment);
 		}
 
+		logger.info("Calculate the Amounts for given schedule completed with build process {}", buildProcess);
 		rd = setTotals(rd, 0);
 
 		return rd;

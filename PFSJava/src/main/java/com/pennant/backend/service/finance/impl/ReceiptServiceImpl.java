@@ -1527,7 +1527,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptData ard = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
-		// AuditHeader auditHeader = copy(aAuditHeader);
 
 		FinReceiptData rd = (FinReceiptData) auditHeader.getAuditDetail().getModelData();
 
@@ -3958,10 +3957,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 
 			List<FinanceDisbursement> disbursementDetails = schdData.getDisbursementDetails();
-			Date disbDate = disbursementDetails.get(0).getDisbDate();
-			if (DateUtil.compare(rcd.getReceivedDate(), disbDate) < 0) {
-				setError(schdData, "RU0050", DateUtil.formatToLongDate(disbDate));
-				return;
+			if (!disbursementDetails.isEmpty()) {
+				Date disbDate = disbursementDetails.get(0).getDisbDate();
+				if (DateUtil.compare(rcd.getReceivedDate(), disbDate) < 0) {
+					setError(schdData, "RU0050", DateUtil.formatToLongDate(disbDate));
+					return;
+				}
 			}
 		}
 
@@ -4501,15 +4502,18 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public FinServiceInstruction buildFinServiceInstruction(ReceiptUploadDetail rud, String entity) {
 		FinServiceInstruction fsi = new FinServiceInstruction();
-		Long finID = financeMainDAO.getFinIDByFinReference(rud.getReference(), "", false);
+		String reference = rud.getReference();
+		String chequeNo = rud.getChequeNo();
+
+		Long finID = financeMainDAO.getFinIDByFinReference(reference, "", false);
 
 		if (finID == null) {
-			setErrorToRUD(rud, "RU0004", rud.getReference());
+			setErrorToRUD(rud, "RU0004", reference);
 		} else {
 			rud.setFinID(finID);
 		}
 		fsi.setFinID(rud.getFinID());
-		fsi.setFinReference(rud.getReference());
+		fsi.setFinReference(reference);
 		fsi.setExternalReference(rud.getExtReference());
 		fsi.setModule("Receipts");
 		fsi.setValueDate(rud.getValueDate());
@@ -4521,12 +4525,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		fsi.setPaymentRef(rud.getPaymentRef());
-		fsi.setFavourNumber(rud.getFavourNumber());
+		String favourNumber = rud.getFavourNumber();
+		fsi.setFavourNumber(favourNumber);
 		fsi.setRecalType(rud.getEffectSchdMethod());
-
-		fsi.setFavourNumber(rud.getFavourNumber());
+		fsi.setFavourNumber(favourNumber);
 		fsi.setBankCode(rud.getBankCode());
-		fsi.setChequeNo(rud.getChequeNo());
+		fsi.setChequeNo(chequeNo);
 		fsi.setTransactionRef(rud.getTransactionRef());
 		fsi.setStatus(rud.getStatus());
 		fsi.setDepositDate(rud.getDepositDate());
@@ -4536,7 +4540,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fsi.setRemarks(rud.getRemarks());
 		fsi.setPaymentMode(rud.getReceiptMode());
 		fsi.setExcessAdjustTo(rud.getExcessAdjustTo());
-
 		fsi.setUploadAllocationDetails(rud.getListAllocationDetails());
 		fsi.setEntity(entity);
 		fsi.setSubReceiptMode(rud.getSubReceiptMode());
@@ -4546,30 +4549,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fsi.setPanNumber(rud.getPanNumber());
 		fsi.setUploadDetailId(rud.getUploadDetailId());
 		fsi.setTdsAmount(rud.getTdsAmount());
+		fsi.setLoggedInUser(rud.getLoggedInUser());
 
-		if (StringUtils.equals(rud.getStatus(), "A")) {
+		if ("A".equals(rud.getStatus())) {
 			fsi.setReceiptdetailExits(false);
 		} else {
+			String mode = rud.getReceiptMode();
+			if ((ReceiptMode.CHEQUE.equalsIgnoreCase(mode) || ReceiptMode.DD.equalsIgnoreCase(mode))
+					&& RepayConstants.PAYSTATUS_REALIZED.equalsIgnoreCase(rud.getStatus())) {
 
-			if ((StringUtils.equalsIgnoreCase(rud.getReceiptMode(), ReceiptMode.CHEQUE)
-					|| StringUtils.equalsIgnoreCase(rud.getReceiptMode(), ReceiptMode.DD))
-					&& StringUtils.equalsIgnoreCase(rud.getStatus(), RepayConstants.PAYSTATUS_REALIZED)) {
-				String mode = rud.getReceiptMode();
-				boolean isreceiptdataExits = false;
-
-				if (StringUtils.equalsIgnoreCase(rud.getReceiptPurpose(), "SP")) {
-					isreceiptdataExits = finReceiptHeaderDAO.isReceiptDetailsExits(rud.getReference(), mode,
-							rud.getChequeNo(), rud.getFavourNumber(), "");
-				} else {
-					isreceiptdataExits = finReceiptHeaderDAO.isReceiptDetailsExits(rud.getReference(), mode,
-							rud.getChequeNo(), rud.getFavourNumber(), "_Temp");
+				String type = "";
+				if (!"SP".equalsIgnoreCase(rud.getReceiptPurpose())) {
+					type = "_Temp";
 				}
 
-				if (isreceiptdataExits) {
+				if (finReceiptHeaderDAO.isReceiptDetailsExits(reference, mode, chequeNo, favourNumber, type)) {
 					fsi.setReceiptdetailExits(true);
 				}
 			}
-
 		}
 
 		FinReceiptDetail rcd = new FinReceiptDetail();
@@ -4583,7 +4580,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rcd.setTransactionRef(rud.getTransactionRef());
 		rcd.setFavourNumber(fsi.getFavourNumber());
 
-		rcd.setChequeAcNo(rud.getChequeNo());
+		rcd.setChequeAcNo(chequeNo);
 
 		if (StringUtils.isNotEmpty(rud.getFundingAc())) {
 			rcd.setFundingAc(Long.parseLong(rud.getFundingAc()));
@@ -4591,19 +4588,27 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rcd.setReceivedDate(rud.getReceivedDate());
 		rcd.setStatus(fsi.getStatus());
 		rcd.setRemarks(rud.getRemarks());
-		rcd.setReference(rud.getReference());
+		rcd.setReference(reference);
 
-		if (StringUtils.equals(rud.getReceiptPurpose(), "SP")) {
-			fsi.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-			rcd.setReceiptPurpose(FinServiceEvent.SCHDRPY);
-		} else if (StringUtils.equals(rud.getReceiptPurpose(), "EP")) {
-			fsi.setReceiptPurpose(FinServiceEvent.EARLYRPY);
-			rcd.setReceiptPurpose(FinServiceEvent.EARLYRPY);
-		} else if (StringUtils.equals(rud.getReceiptPurpose(), "ES")) {
-			fsi.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
-			rcd.setReceiptPurpose(FinServiceEvent.EARLYSETTLE);
+		String receiptPurpose = null;
+		switch (rud.getReceiptPurpose()) {
+		case "SP":
+			receiptPurpose = FinServiceEvent.SCHDRPY;
+			break;
+		case "EP":
+			receiptPurpose = FinServiceEvent.EARLYRPY;
+			break;
+		case "ES":
+			receiptPurpose = FinServiceEvent.EARLYSETTLE;
+			break;
+		default:
+			break;
 		}
+
+		fsi.setReceiptPurpose(receiptPurpose);
+		rcd.setReceiptPurpose(receiptPurpose);
 		fsi.setReceiptDetail(rcd);
+
 		if (fsi.getFinID() <= 0) {
 			fsi.setFinID(rud.getFinID() == null ? 0 : rud.getFinID());
 		}
@@ -5311,8 +5316,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		rch.getReceiptDetails().add(rcd);
-
-		rcd.setValueDate(rch.getValueDate());
+		rcd.setValueDate(rd.getValueDate());
 		rcd.setReceiptType(RepayConstants.RECEIPTTYPE_RECIPT);
 		rcd.setPaymentTo(RepayConstants.RECEIPTTO_FINANCE);
 
@@ -5323,7 +5327,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		rcd.setAmount(fsi.getAmount());
-
 		rch.setRemarks(rcd.getRemarks());
 		rch.setSource(PennantConstants.FINSOURCE_ID_API);
 
@@ -5350,7 +5353,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rcd.setValueDate(rch.getValueDate());
 		}
 
-		rch.setValueDate(fsi.getValueDate());
 		rd.setSourceId(PennantConstants.FINSOURCE_ID_API);
 
 		rch.setDepositDate(rcd.getDepositDate());
@@ -5361,7 +5363,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rch.setTransactionRef(rcd.getTransactionRef());
 		}
 
-		rch.setValueDate(rcd.getValueDate());
 		rch.setPartnerBankId(rcd.getFundingAc());
 		if (rcd.getFundingAc() > 0) {
 			PartnerBank partnerBank = partnerBankDAO.getPartnerBankById(rcd.getFundingAc());
@@ -5483,20 +5484,22 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		String paymentMode = fsi.getPaymentMode();
 
 		String receiptMode = ReceiptMode.getReceiptMode(paymentMode);
-		String subReceiptMode = ReceiptMode.getSubReceiptMode(paymentMode);
+		String subReceiptMode = fsi.getSubReceiptMode();
 		String receiptChannel = fsi.getReceiptChannel();
 
-		fsi.setPaymentMode(ReceiptMode.getReceiptMode(paymentMode));
-		fsi.setSubReceiptMode(subReceiptMode);
-		fsi.setReceiptChannel(receiptChannel != null ? receiptChannel : ReceiptMode.getReceiptChannel(paymentMode));
-
-		receiptChannel = fsi.getReceiptChannel();
+		fsi.setPaymentMode(receiptMode);
+		fsi.setSubReceiptMode(subReceiptMode == null ? ReceiptMode.getSubReceiptMode(paymentMode) : subReceiptMode);
+		fsi.setReceiptChannel(receiptChannel == null ? ReceiptMode.getReceiptChannel(paymentMode) : receiptChannel);
 
 		LoggedInUser userDetails = fsi.getLoggedInUser();
 		Long userId = null;
 		String userName = "";
 		if (userDetails == null) {
-			userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
+			User logiedInUser = SessionUserDetails.getLogiedInUser();
+
+			if (logiedInUser != null) {
+				userDetails = SessionUserDetails.getUserDetails(logiedInUser);
+			}
 
 			if (userDetails != null) {
 				userId = userDetails.getUserId();
@@ -5508,7 +5511,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		StringBuilder logMsg = new StringBuilder();
 		logMsg.append("\n");
-		logMsg.append("=======================================================\n");
+		logMsg.append(" ========================================================\n");
 		logMsg.append("User-ID: ").append(userId).append("\n");
 		logMsg.append("User-Name: ").append(userName).append("\n");
 		logMsg.append("Fin-Reference: ").append(finReference).append("\n");
@@ -5516,10 +5519,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		logMsg.append("Receipt-Purpose: ").append(receiptPurpose.code()).append("\n");
 		logMsg.append("Request-Source: ").append(requestSource.name()).append("\n");
 		logMsg.append("Request-Type: ").append(reqType).append("\n");
-		logMsg.append("Payment-Mode: ").append(paymentMode).append("\n");
+		logMsg.append("Payment-Mode: ").append(fsi.getPaymentMode()).append("\n");
 		logMsg.append("Receipt-Mode: ").append(receiptMode).append("\n");
-		logMsg.append("Sub-Receipt-Mode: ").append(receiptMode).append("\n");
-		logMsg.append("Receipt-Channel: ").append(receiptChannel).append("\n");
+		logMsg.append("Sub-Receipt-Mode: ").append(fsi.getSubReceiptMode()).append("\n");
+		logMsg.append("Receipt-Channel: ").append(fsi.getReceiptChannel()).append("\n");
 		logMsg.append("Allocation-Type: ").append(fsi.getAllocationType()).append("\n");
 		logMsg.append("Excess-Adjust-To: ").append(fsi.getExcessAdjustTo()).append("\n");
 
@@ -5602,6 +5605,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (requestSource != RequestSource.UPLOAD) {
 			setFinanceData(rd);
+		} else {
+			rd.getFinanceDetail().getFinScheduleData().setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
 		}
 
 		doReceiptValidations(rd);

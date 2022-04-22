@@ -260,6 +260,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		fm.setFinType(finType);
 		fm.setEntityCode(entityCode);
 		fm.setLovDescEntityCode(entityCode);
+		fm.setDefferments(financeType.getFinMaxDifferment());
 
 		try {
 

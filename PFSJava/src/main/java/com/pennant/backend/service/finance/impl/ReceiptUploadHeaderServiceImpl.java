@@ -679,6 +679,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 		String fileName = ruh.getFileName();
 		long headerId = ruh.getId();
+		LoggedInUser userDetails = ruh.getUserDetails();
 
 		final Set<String> setTxnKeys = new HashSet<String>();
 		final Set<String> setTxnKeysCheque = new HashSet<String>();
@@ -802,6 +803,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				rud.getErrorDetails().add(ErrorUtil.getErrorDetail(errorDetail));
 			}
 
+			rud.setLoggedInUser(userDetails);
 			rudList.add(rud);
 
 			rut.incrementProgress();

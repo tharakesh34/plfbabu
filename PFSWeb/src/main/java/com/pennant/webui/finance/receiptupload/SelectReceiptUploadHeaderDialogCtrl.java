@@ -56,6 +56,7 @@ import com.pennant.util.Constraint.PTStringValidator;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
+import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.MediaUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -379,7 +380,9 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		ruh.setVersion(0);
 		ruh.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 		ruh.setLastMntOn(new Timestamp(System.currentTimeMillis()));
-		ruh.setLastMntBy(getUserWorkspace().getLoggedInUser().getUserId());
+		LoggedInUser loggedInUser = getUserWorkspace().getLoggedInUser();
+		ruh.setUserDetails(loggedInUser);
+		ruh.setLastMntBy(loggedInUser.getUserId());
 		receiptUploadHeaderDAO.save(ruh, TableType.TEMP_TAB);
 	}
 
