@@ -1163,29 +1163,22 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		return auditHeader;
 	}
 
-	// Getting the approved collateral setup values from search object and adding the newly created collateral setup
-	// list
 	private void setCollateralTypeList(List<CollateralSetup> collateralSetupList) {
+		List<CollateralSetup> csList = collateralSetupService.getCollateralSetupByCustomer(customerId, finType);
 
-		StringBuilder whereClause = getWhereClause();
-
-		Search search = new Search(CollateralSetup.class);
-		search.addTabelName("CollateralSetup_AView");
-		search.addWhereClause(whereClause.toString());
-		List<CollateralSetup> collateralSetupSearchList = searchProcessor.getResults(search);
-
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = new ArrayList<CollateralSetup>();
+		if (CollectionUtils.isEmpty(csList)) {
+			csList = new ArrayList<>();
 		}
 
 		if (CollectionUtils.isNotEmpty(collateralSetupList)) {
-			collateralSetupSearchList.addAll(collateralSetupList);
+			csList.addAll(collateralSetupList);
 		}
-		// Setting null if collateralSetupSearchList is empty to throw the validation for collateralRef
-		if (CollectionUtils.isEmpty(collateralSetupSearchList)) {
-			collateralSetupSearchList = null;
+
+		if (CollectionUtils.isEmpty(csList)) {
+			csList = null;
 		}
-		this.collateralRef.setList(collateralSetupSearchList);
+
+		this.collateralRef.setList(csList);
 	}
 
 	private StringBuilder getWhereClause() {

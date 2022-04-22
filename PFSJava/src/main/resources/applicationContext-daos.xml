@@ -6915,42 +6915,8 @@
 		</property>
 	</bean>
 
-	<bean name="collateralSetupServiceTarget"
-		class="com.pennant.backend.service.collateral.impl.CollateralSetupServiceImpl">
-		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
-		<property name="collateralSetupDAO" ref="collateralSetupDAO" />
-		<property name="financeReferenceDetailDAO" ref="financeReferenceDetailDAO" />
-		<property name="collateralThirdPartyDAO" ref="collateralThirdPartyDAO" />
-		<property name="coOwnerDetailDAO" ref="coOwnerDetailDAO" />
-		<property name="documentDetailsDAO" ref="documentDetailsDAO" />
+	<bean name="collateralSetupServiceTarget" class="com.pennant.backend.service.collateral.impl.CollateralSetupServiceImpl">
 		<property name="dMSService" ref="dMSService" />
-		<property name="customerDocumentDAO" ref="customerDocumentDAO" />
-		<property name="financeCheckListReferenceDAO" ref="financeCheckListReferenceDAO" />
-		<property name="cityDAO" ref="cityDAO" />
-		<property name="extendedFieldRenderDAO" ref="extendedFieldRenderDAO" />
-		<property name="customerDAO" ref="customerDAO" />
-		<property name="primaryAccountDAO" ref="primaryAccountDAO" />
-		<property name="customerEmploymentDetailDAO" ref="customerEmploymentDetailDAO" />
-		<property name="custEmployeeDetailDAO" ref="custEmployeeDetailDAO" />
-		<property name="incomeDetailDAO" ref="incomeDetailDAO" />
-		<property name="directorDetailDAO" ref="directorDetailDAO" />
-		<property name="customerRatingDAO" ref="customerRatingDAO" />
-		<property name="customerPhoneNumberDAO" ref="customerPhoneNumberDAO" />
-		<property name="customerEMailDAO" ref="customerEMailDAO" />
-		<property name="customerBankInfoDAO" ref="customerBankInfoDAO" />
-		<property name="customerGstDetailDAO" ref="customerGstDetailDAO" />
-		<property name="customerChequeInfoDAO" ref="customerChequeInfoDAO" />
-		<property name="externalLiabilityDAO" ref="externalLiabilityDAO" />
-		<property name="customerCardSalesInfoDAO" ref="customerCardSalesInfoDAO" />
-		<property name="customerExtLiabilityDAO" ref="customerExtLiabilityDAO" />
-		<property name="customerAddresDAO" ref="customerAddresDAO" />
-		<property name="checkListDetailService" ref="finCheckListDetailService" />
-		<property name="collateralStructureService" ref="collateralStructureService" />
-		<property name="currencyDAO" ref="currencyDAO" />
-		<property name="finFlagDetailsDAO" ref="finFlagDetailsDAO" />
-		<property name="documentTypeService" ref="documentTypeService" />
-		<property name="collateralAssignmentDAO" ref="collateralAssignmentDAO" />
-		<property name="extendedFieldDetailsService" ref="extendedFieldDetailsService" />
 	</bean>
 
 	<bean name="collateralSetupFetchingService"

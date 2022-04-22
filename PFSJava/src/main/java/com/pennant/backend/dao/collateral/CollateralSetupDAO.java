@@ -61,4 +61,9 @@ public interface CollateralSetupDAO {
 
 	Long getCustomerIdByCollateral(String finReference);
 
+	List<CollateralSetup> getCollateralSetupByCustomer(long custID);
+
+	List<CollateralSetup> getCollateralSetupByReference(long custID);
+
+	boolean isNotAssigned(String collateralRef);
 }

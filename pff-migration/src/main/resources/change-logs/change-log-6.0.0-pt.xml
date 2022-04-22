@@ -247,5 +247,11 @@
 			]]>
 		</sql>
 	</changeSet>
+	
+	<changeSet id="17" author="murthy.y">
+		<createIndex tableName="CollateralThirdParty" indexName="idx_ctp_customerid">
+			<column name="CustomerId" type="bigint"/>
+		</createIndex>
+	</changeSet>
 
 </databaseChangeLog>

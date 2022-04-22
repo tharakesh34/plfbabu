@@ -443,4 +443,71 @@ public class CollateralSetupDAOImpl extends BasicDao<CollateralSetup> implements
 			return cs;
 		}
 	}
+
+	@Override
+	public List<CollateralSetup> getCollateralSetupByCustomer(long custID) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where DepositorId = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+	}
+
+	@Override
+	public List<CollateralSetup> getCollateralSetupByReference(long custID) {
+		StringBuilder sql = getSqlQuery();
+		sql.append(" Where CollateralRef in (Select CollateralRef From CollateralThirdParty Where CustomerId = ?)");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return jdbcOperations.query(sql.toString(), new CollateralSetupRM(), custID);
+	}
+
+	@Override
+	public boolean isNotAssigned(String collateralRef) {
+		StringBuilder sql = new StringBuilder("");
+		sql.append("Select CollateralRef From CollateralAssignment Where CollateralRef = ?");
+		sql.append(" Union All");
+		sql.append(" Select CollateralRef From CollateralAssignment_Temp Where CollateralRef = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		List<String> references = jdbcOperations.query(sql.toString(), (rs, rowNum) -> {
+			return rs.getString(1);
+		}, collateralRef, collateralRef);
+
+		if (references.isEmpty()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	private StringBuilder getSqlQuery() {
+		StringBuilder sql = new StringBuilder("Select");
+		sql.append(" CollateralRef, CollateralType, CollateralCcy, CollateralValue");
+		sql.append(", BankValuation, MultiLoanAssignment, ExpiryDate");
+		sql.append(" From CollateralSetup");
+		
+		return sql;
+	}
+
+	private class CollateralSetupRM implements RowMapper<CollateralSetup> {
+		
+		@Override
+		public CollateralSetup mapRow(ResultSet rs, int rowNum) throws SQLException {
+			CollateralSetup cs = new CollateralSetup();
+
+			cs.setCollateralRef(rs.getString("CollateralRef"));
+			cs.setCollateralType(rs.getString("CollateralType"));
+			cs.setCollateralCcy(rs.getString("CollateralCcy"));
+			cs.setCollateralValue(rs.getBigDecimal("CollateralValue"));
+			cs.setBankValuation(rs.getBigDecimal("BankValuation"));
+			cs.setMultiLoanAssignment(rs.getBoolean("MultiLoanAssignment"));
+			cs.setExpiryDate(JdbcUtil.getDate(rs.getDate("ExpiryDate")));
+
+			return cs;
+		}
+	}
 }

@@ -1041,32 +1041,19 @@ public class FinanceTypeDAOImpl extends BasicDao<FinanceType> implements Finance
 		return productCount;
 	}
 
-	/**
-	 * Method for Fetching Collateral Types based on Finance Type
-	 */
 	@Override
 	public String getAllowedCollateralTypes(String finType) {
-		logger.debug(Literal.ENTERING);
+		String sql = "Select CollateralType From RMTFinanceTypes Where FinType = ?";
 
-		String collateralTypes = "";
-		FinanceType financeType = new FinanceType();
-		financeType.setFinType(finType);
-
-		StringBuilder selectSql = new StringBuilder("SELECT CollateralType ");
-		selectSql.append(" From RMTFinanceTypes ");
-		selectSql.append(" Where FinType =:FinType");
-
-		logger.debug("selectSql: " + selectSql.toString());
-		SqlParameterSource beanParameters = new BeanPropertySqlParameterSource(financeType);
+		logger.debug(Literal.SQL + sql);
 
 		try {
-			collateralTypes = this.jdbcTemplate.queryForObject(selectSql.toString(), beanParameters, String.class);
+			return this.jdbcOperations.queryForObject(sql, String.class, finType);
 		} catch (EmptyResultDataAccessException dae) {
-			logger.debug(dae);
-			collateralTypes = "";
+			//
 		}
-		logger.debug(Literal.LEAVING);
-		return collateralTypes;
+		
+		return null;
 	}
 
 	/**
