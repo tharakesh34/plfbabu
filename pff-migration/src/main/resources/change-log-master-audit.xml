@@ -24,5 +24,4 @@
 	<include file="change-logs/change-log-finid-audit.xml" />
 	<include file="change-logs/change-log-db-cleanup-audit.xml" /> 
 	<include file="change-logs/change-log-6.0.0-pt-audit.xml" />
-	<include file="change-logs/change-log-kinara-audit.xml" />
 </databaseChangeLog>

@@ -35,7 +35,7 @@
 	<include file="change-logs/change-log-hl-missing-indexes.xml" />
 	<include file="change-logs/change-log-db-cleanup.xml" /> 
 	<include file="change-logs/change-log-otp.xml" />
-	<include file="change-logs/change-log-kinara.xml" />
+	<include file="change-logs/change-log-hdfc.xml" />
 	<include file="change-logs/change-log-meta-data.xml" />
 	
 	

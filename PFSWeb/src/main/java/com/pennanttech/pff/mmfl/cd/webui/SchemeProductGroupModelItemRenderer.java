@@ -25,7 +25,7 @@ public class SchemeProductGroupModelItemRenderer implements ListitemRenderer<Sch
 		lc.setParent(item);
 		lc = new Listcell(String.valueOf(schemeDealerGroup.getProductGroupCode()));
 		lc.setParent(item);
-		lc = new Listcell(String.valueOf(schemeDealerGroup.getPOSVendor()));
+		lc = new Listcell(schemeDealerGroup.isPOSVendor() ? "1" : "0");
 		lc.setParent(item);
 		if (schemeDealerGroup.isActive()) {
 			lc = new Listcell("1");
