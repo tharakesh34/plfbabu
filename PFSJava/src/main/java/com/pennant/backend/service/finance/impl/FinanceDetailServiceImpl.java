@@ -3907,6 +3907,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (fm.getOldFinReference() != null && auditHeader.getApiHeader() != null
 						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 					FinanceMainExtension finExtension = new FinanceMainExtension();
+					finExtension.setFinId(finID);
 					finExtension.setFinreference(finReference);
 					finExtension.setHostreference(fm.getOldFinReference());
 					finExtension.setOldhostreference(fm.getExtReference());
@@ -4442,8 +4443,8 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 
 			// Plan EMI Holiday Details Deletion, if exists on Old image
 			// =======================================
-			if ((FinServiceEvent.PLANNEDEMI.equals(moduleDefiner)
-					|| (FinServiceEvent.CHGFRQ.equals(moduleDefiner))) && fm.isPlanEMIHAlw()) {
+			if ((FinServiceEvent.PLANNEDEMI.equals(moduleDefiner) || (FinServiceEvent.CHGFRQ.equals(moduleDefiner)))
+					&& fm.isPlanEMIHAlw()) {
 				if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_FRQ)) {
 					finPlanEmiHolidayDAO.deletePlanEMIHMonths(finID, "");
 				} else if (StringUtils.equals(planEMIHMethod, FinanceConstants.PLANEMIHMETHOD_ADHOC)) {

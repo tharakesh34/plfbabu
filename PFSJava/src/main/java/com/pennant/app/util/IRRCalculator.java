@@ -417,6 +417,7 @@ public class IRRCalculator {
 		for (int iCf = 0; iCf < irrFeeCFList.size(); iCf++) {
 			IRRCashFlow irrCF = irrFeeCFList.get(iCf);
 			IRRScheduleDetail irrSD = new IRRScheduleDetail();
+			irrSD.setFinID(fsData.getFinanceMain().getFinID());
 			irrSD.setFinReference(fsData.getFinanceMain().getFinReference());
 			irrSD.setSchDate(irrCF.getCfDate());
 			if (iCf == 0) {
