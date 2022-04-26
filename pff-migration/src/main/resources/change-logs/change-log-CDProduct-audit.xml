@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
+        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+	<property name="add.schema" value="dbo." dbms="mssql" />
+	<property name="add.schema" value=" " dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="mssql" />
+	<property name="call.substr" value="substr" dbms="oracle" />
+	<property name="call.substr" value="substring" dbms="postgresql" />
+	<property name="call.auditdb" value="PLFAVANSEQC.." dbms="mssql" />
+	<property name="call.auditdb" value=" " dbms="oracle" />
+	<property name="call.auditdb" value=" " dbms="postgresql" />
+	<property name="call.refdb" value="PLFAVANSEDev.." dbms="mssql" />
+	<property name="call.refdb" value=" " dbms="oracle" />
+	<property name="call.refdb" value=" " dbms="postgresql" />
+	<property name="call.concatenate" value="+" dbms="mssql" />
+	<property name="call.concatenate" value="||" dbms="oracle" />
+	<property name="call.concatenate" value="||" dbms="postgresql" />
+	<property name="call.collength" value="LEN" dbms="mssql" />
+	<property name="call.collength" value="LENGTH" dbms="oracle" />
+	<property name="call.collength" value="LENGTH" dbms="postgresql" />
+	<property name="call.date" value="getdate()" dbms="mssql" />
+	<property name="call.date" value="sysdate" dbms="oracle" />
+	<property name="call.date" value="now()" dbms="postgresql" />
+	<property name="call.adtdate" value="CONVERT(varchar(20), TH.AuditDate, 106)" dbms="mssql" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="oracle" />
+	<property name="call.adtdate" value="to_char(TH.AuditDate, 'DD-MON-YYYY')" dbms="postgresql" />
+	<property name="call.adttime" value="CONVERT(varchar(35), TH.AuditDate, 108)" dbms="mssql" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="oracle" />
+	<property name="call.adttime" value="to_char( TH.AuditDate, 'HH24:MI:SS')" dbms="postgresql" />
+	<property name="call.replaceView" value="ALTER" dbms="mssql" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="oracle" />
+	<property name="call.replaceView" value="CREATE OR REPLACE" dbms="postgresql" />
+
+	<changeSet id="pre_run_for_pgp1" author="Adarsh" runAlways="true" dbms="postgresql">
+		<sql>
+			Set search_path = plfaudit,plf,public,pg_catalog;
+		</sql>
+	</changeSet>
+
+	<changeSet id="EP#3496.1" author="Gopal.p">
+		<createTable tableName="ADTCD_Manufacturers">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ManufacturerId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="Name" type="varchar(100)" />
+			<column name="Description" type="varchar(100)" />
+			<column name="Channel" type="varchar(20)" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.2" author="Gopal.p">
+		<addPrimaryKey tableName="AdtCD_Manufacturers" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ACD_MANUFACTURER" />
+	</changeSet>
+
+	<changeSet id="EP#3496.3" author="Gopal.p">
+		<createTable tableName="ADTCD_Products">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProductId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ModelId" type="varchar(8)" />
+			<column name="ModelDescription" type="varchar(20)" />
+			<column name="ManufacturerId" type="varchar(50)" />
+			<column name="AssetDescription" type="Varchar(20)" />
+			<column name="MinAmount" type="decimal(18,0)" />
+			<column name="MaxAmount" type="decimal(18,0)" />
+			<column name="ModelStatus" type="Varchar(20)" />
+			<column name="Channel" type="Varchar(20)" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.4" author="Gopal.p">
+		<addPrimaryKey tableName="ADTCD_Products" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ACD_PRODUCT" />
+	</changeSet>
+
+	<changeSet id="EP#3496.5" author="Gopal.p">
+		<createTable tableName="AdtCD_Merchants">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="MerchantId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="MerchantName" type="varchar(50)" />
+			<column name="StoreId" type="number(20)" />
+			<column name="StoreName" type="varchar(50)" />
+			<column name="StoreAddressLine1" type="varchar(200)" />
+			<column name="StoreAddressLine2" type="varchar(100)" />
+			<column name="StoreAddressLine3" type="varchar(100)" />
+			<column name="StoreCity" type="varchar(50)" />
+			<column name="StoreState" type="varchar(8)" />
+			<column name="StoreCountry" type="varchar(50)" />
+			<column name="CountryName" type="varchar(50)" />
+			<column name="StateName" type="varchar(50)" />
+			<column name="cityName" type="varchar(50)" />
+			<column name="POSID" type="int" />
+			<column name="AvgTranPerMnth" type="decimal(18,0)" />
+			<column name="AvgTranAmtPerMnth" type="decimal(18,0)" />
+			<column name="TranAmtPerTran" type="decimal(18,0)" />
+			<column name="TranAmtPerDay" type="decimal(18,0)" />
+			<column name="AllowRefund" type="boolean" />
+			<column name="PeakTransPerDay" type="decimal(18,0)" />
+			<column name="Channel" type="varchar(20)" />
+			<column name="Active" type="smallint" />
+			<column name="Pincode" type="varchar(8)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.6" author="Gopal.p">
+		<addPrimaryKey tableName="ADTCD_Merchants" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ACD_MERCHANTS" />
+	</changeSet>
+
+	<changeSet id="EP#3496.7" author="Gopal.p">
+		<createTable tableName="ADTCD_DealerMapping">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerMapId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="MerchantId" type="int" />
+			<column name="StoreId" type="number(20)" />
+			<column name="DealerCode" type="int" />
+			<column name="POSID" type="bigint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="Active" type="boolean" />
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.8" author="Gopal.p">
+		<addPrimaryKey tableName="ADTCD_DealerMapping" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ACD_DEALERMAP" />
+	</changeSet>
+
+	<changeSet id="EP#3496.9" author="Gopal.p">
+		<sql>
+			<![CDATA[
+				UPDATE ADTCD_DEALERMAPPING SET POSID = 0  WHERE POSID IS NULL;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="EP#3496.10" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[	
+				ALTER TABLE ADTCD_DEALERMAPPING ADD CONSTRAINT DF_ADEALERMAPPING_POSID DEFAULT 0 FOR POSID;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="EP#3496.10" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="POSID" tableName="ADTCD_DEALERMAPPING" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="EP#3496.11" author="Gopal.p">
+		<createTable tableName="AdtCD_DealerGroup">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerGroupId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerCode" type="varchar(8)" />
+			<column name="DealerCategoryId" type="int" />
+			<column name="Channel" type="varchar(20)" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.12" author="Gopal.p">
+		<addPrimaryKey tableName="AdtCD_DealerGroup" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_AdtCD_DealerGroup" />
+	</changeSet>
+
+	<changeSet id="EP#3496.13" author="Gopal.p">
+		<createTable tableName="AdtProductGroup">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="ProductGroupId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="ModelId" type="varchar(8)" />
+			<column name="ProductCategoryId" type="int" />
+			<column name="Channel" type="varchar(20)" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.14" author="Gopal.p">
+		<addPrimaryKey tableName="AdtProductGroup" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_AdtProductGroup" />
+	</changeSet>
+
+	<changeSet id="EP#3496.15" author="Gopal.p">
+		<createTable tableName="AdtCD_Scheme_DealerGroup">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchemeDealerGroupId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PromotionId" type="varchar(20)" />
+			<column name="DealerGroupCode" type="int" />
+			<column name="Active" type="smallint" />
+			<column name="ACTION" type="NUMBER(1,0)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.16" author="Gopal.p">
+		<addPrimaryKey tableName="AdtCD_Scheme_DealerGroup" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_ACD_SchemeDealerGroupId" />
+	</changeSet>
+
+	<changeSet id="EP#3496.17" author="Gopal.p" dbms="postgresql, oracle">
+		<addDefaultValue columnName="ACTION" tableName="AdtCD_Scheme_DealerGroup" defaultValue="0" />
+	</changeSet>
+
+	<changeSet id="EP#3496.17" author="Gopal.p" dbms="mssql">
+		<sql>
+			<![CDATA[
+				ALTER TABLE ADTCD_SCHEME_DEALERGROUP ADD CONSTRAINT DF_SDG_ACTION DEFAULT 0 FOR ACTION;
+			]]>
+		</sql>
+	</changeSet>
+
+	<changeSet id="EP#3496.18" author="Gopal.p">
+		<createTable tableName="AdtCD_Scheme_ProductGroup">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="SchemeProductGroupId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="PromotionId" type="varchar(20)" />
+			<column name="ProductGroupCode" type="int" />
+			<column name="POSVendor" type="smallint" />
+			<column name="Active" type="smallint" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.18.1" author="Gopal.p">
+		<addPrimaryKey tableName="AdtCD_Scheme_ProductGroup"
+			columnNames="AuditId, AuditDate,AuditSeq,AuditImage" constraintName="PK_ACD_SCHM_PRODUCTGROUPID" />
+	</changeSet>
+
+	<changeSet id="EP#3496.19" author="Gopal.p">
+		<createTable tableName="AdtTransactionMapping">
+			<column name="AuditId" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditDate" type="datetime">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditSeq" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="AuditImage" type="varchar(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="Id" type="bigint">
+				<constraints nullable="false" />
+			</column>
+			<column name="POSId" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerCode" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="DealerName" type="varchar2(100)" />
+			<column name="MID" type="number(20)">
+				<constraints nullable="false" />
+			</column>
+			<column name="TID" type="number(6)" />
+			<column name="Active" type="smallint" />
+			<column name="MobileNumber1" type="varchar(20)" />
+			<column name="MobileNumber2" type="varchar(20)" />
+			<column name="MobileNumber3" type="varchar(20)" />
+			<column name="Version" type="int">
+				<constraints nullable="false" />
+			</column>
+			<column name="LastMntBy" type="bigint" />
+			<column name="LastMntOn" type="datetime" />
+			<column name="RecordStatus" type="varchar(50)" />
+			<column name="RoleCode" type="varchar(100)" />
+			<column name="NextRoleCode" type="varchar(200)" />
+			<column name="TaskId" type="varchar(50)" />
+			<column name="NextTaskId" type="varchar(200)" />
+			<column name="RecordType" type="varchar(50)" />
+			<column name="WorkflowId" type="bigint" />
+		</createTable>
+	</changeSet>
+
+	<changeSet id="EP#3496.20" author="Gopal.p">
+		<addPrimaryKey tableName="AdtTransactionMapping" columnNames="AuditId, AuditDate,AuditSeq,AuditImage"
+			constraintName="PK_TransactionMapping" />
+	</changeSet>
+
+</databaseChangeLog>
