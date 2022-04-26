@@ -23,6 +23,7 @@
 	<include file="change-logs/change-log-5.15.0.xml" />
 	<include file="change-logs/change-log-5.16.0.xml" />
 	<include file="change-logs/change-log-6.0.0.xml" />
+	<include file="change-logs/change-log-CDProduct.xml" />
 	<include file="change-logs/change-log-account-updater.xml"/>
 	<include file="change-logs/change-log-islamic_code_removal.xml" />
 	<include file="change-logs/change-log-db-based-scheduler.xml" />
