@@ -5091,6 +5091,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		String eventCode = "";
 
+		if (!PennantConstants.RECORD_TYPE_NEW.equals(rch.getRecordType())) {
+			rd.setCalReq(false);
+		}
+
 		ReceiptPurpose peceiptPurpose = ReceiptPurpose.purpose(rch.getReceiptPurpose());
 		switch (peceiptPurpose) {
 		case SCHDRPY:

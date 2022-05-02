@@ -744,26 +744,25 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		FinReceiptHeader finReceiptHeader = receiptService.getFinReceiptHeaderById(finRcptHeader.getReceiptID(), false,
-				"_View");
+		FinReceiptHeader rch = receiptService.getFinReceiptHeaderById(finRcptHeader.getReceiptID(), false, "_View");
 
 		// Check whether the user has authority to change/view the record.
 		String whereCond1 = " where receiptID=?";
 
-		if (!doCheckAuthority(finReceiptHeader, whereCond1, new Object[] { finReceiptHeader.getReceiptID() })) {
+		if (!doCheckAuthority(rch, whereCond1, new Object[] { rch.getReceiptID() })) {
 			MessageUtil.showMessage(Labels.getLabel("info.not_authorized"));
 			return;
 		}
 
 		// Role Code State Checking
-		String userRole = finReceiptHeader.getNextRoleCode();
+		String userRole = rch.getNextRoleCode();
 
 		if (StringUtils.isEmpty(userRole)) {
 			userRole = workFlowDetails.getFirstTaskOwner();
 		}
 
-		String nextroleCode = finReceiptHeader.getNextRoleCode();
-		String reference = finReceiptHeader.getReference();
+		String nextroleCode = rch.getNextRoleCode();
+		String reference = rch.getReference();
 		if (StringUtils.isNotBlank(nextroleCode) && !StringUtils.equals(userRole, nextroleCode)) {
 			String[] errParm = new String[1];
 			String[] valueParm = new String[1];
@@ -781,7 +780,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			return;
 		}
 
-		boolean canProcessReceipt = receiptService.canProcessReceipt(finReceiptHeader.getReceiptID());
+		boolean canProcessReceipt = receiptService.canProcessReceipt(rch.getReceiptID());
 
 		if (!canProcessReceipt && !enqiryModule) {
 			String[] valueParm = new String[1];
@@ -798,8 +797,7 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 
 		if (FinanceConstants.KNOCKOFFCAN_MAKER.equals(module) || FinanceConstants.KNOCKOFFCAN_APPROVER.equals(module)) {
 			if (RepayConstants.KNOCKOFF_TYPE_AUTO.equals(finRcptHeader.getKnockOffType())) {
-				ErrorDetail ed = receiptService.receiptCancelValidation(finReceiptHeader.getFinID(),
-						finReceiptHeader.getReceiptDate());
+				ErrorDetail ed = receiptService.receiptCancelValidation(rch.getFinID(), rch.getReceiptDate());
 				if (ed != null) {
 					MessageUtil.showError(ed.getError());
 
@@ -817,15 +815,19 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			FinanceDetail fd = new FinanceDetail();
 			finReceiptData.setFinanceDetail(fd);
 
-			finReceiptData.setReceiptHeader(finReceiptHeader);
+			finReceiptData.setReceiptHeader(rch);
 
 			FinScheduleData schdData = fd.getFinScheduleData();
 
-			FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(finReceiptHeader.getFinID());
+			if (!PennantConstants.RECORD_TYPE_NEW.equals(rch.getRecordType())) {
+				finReceiptData.setCalReq(false);
+			}
+
+			FinanceMain fm = financeMainDAO.getFinanceMainForLMSEvent(rch.getFinID());
 			fm.setAppDate(SysParamUtil.getAppDate());
 
 			schdData.setFinanceMain(fm);
-			ReceiptPurpose receiptPurpose = ReceiptPurpose.purpose(finReceiptHeader.getReceiptPurpose());
+			ReceiptPurpose receiptPurpose = ReceiptPurpose.purpose(rch.getReceiptPurpose());
 
 			switch (receiptPurpose) {
 			case SCHDRPY:
@@ -844,8 +846,8 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			receiptService.setFinanceData(finReceiptData);
 
 			if (isKnockOff) {
-				finReceiptHeader = finReceiptData.getReceiptHeader();
-				finReceiptHeader.setKnockOffRefId(finReceiptHeader.getReceiptDetails().get(0).getPayAgainstID());
+				rch = finReceiptData.getReceiptHeader();
+				rch.setKnockOffRefId(rch.getReceiptDetails().get(0).getPayAgainstID());
 			}
 			if (!enqiryModule && finReceiptData.isCalReq()) {
 				receiptService.doInstrumentValidation(finReceiptData);
@@ -869,16 +871,16 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 				userRole = workFlowDetails.getFirstTaskOwner();
 			}
 
-			if (doCheckAuthority(finReceiptHeader, whereCond)
-					|| StringUtils.equals(finReceiptHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
-				doShowReceiptView(finReceiptHeader, finReceiptData);
+			if (doCheckAuthority(rch, whereCond)
+					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 			}
 		} else {
-			if (doCheckAuthority(finReceiptHeader, whereCond)
-					|| StringUtils.equals(finReceiptHeader.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
-				doShowReceiptView(finReceiptHeader, finReceiptData);
+			if (doCheckAuthority(rch, whereCond)
+					|| StringUtils.equals(rch.getRecordStatus(), PennantConstants.RCD_STATUS_SAVED)) {
+				doShowReceiptView(rch, finReceiptData);
 			} else {
 				MessageUtil.showError(Labels.getLabel("info.not_authorized"));
 			}
