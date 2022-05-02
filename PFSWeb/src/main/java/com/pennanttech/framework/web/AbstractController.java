@@ -1116,7 +1116,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		} else {
 			divisionField = "lovDescFinDivision";
 		}
-		wherQuery.append(" FinBranch In( Select UserBranch from SecurityUserDivBranch where userDivision =");
+		wherQuery.append(" FinBranch In( Select distinct UserBranch from SecurityUserDivBranch where userDivision =");
 		wherQuery.append(divisionField);
 		wherQuery.append(" and usrid =");
 		wherQuery.append(getUserWorkspace().getLoggedInUser().getUserId());

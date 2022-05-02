@@ -519,7 +519,6 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 
 		doSearch();
 		this.pagingEnquiryList.setDetailed(true);
-		getPagedListWrapper().init(this.searchObj, this.listBoxEnquiryResult, this.pagingEnquiryList);
 		this.listBoxEnquiryResult.setItemRenderer(new FinanceEnquiryListModelItemRenderer());
 
 		logger.debug(Literal.LEAVING);
