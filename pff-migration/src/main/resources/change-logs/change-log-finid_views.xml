@@ -2276,7 +2276,7 @@
 
 	<!-- (FEV) :: Finance Enquiry views handle in single place start -->
 
-	<changeSet id="FEV_1.1_pre" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_1.1.0_pre" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_save_and_drop_dependencies ('plf', 'financeenquiry_tview');
@@ -2284,7 +2284,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="FEV_1.1" author="Gopal.p">
+	<changeSet id="FEV_1.1.0" author="Gopal.p">
 		<createView viewName="FINANCEENQUIRY_TVIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -2345,7 +2345,8 @@
 					T1.ESCROW,
 					T1.CUSTBANKID,
 					CB.ACCOUNTNUMBER CUSTACCTNUMBER,
-					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME
+					CB.ACCOUNTHOLDERNAME CUSTACCTHOLDERNAME,
+					T1.SVAMOUNT
 				FROM FINANCEMAIN_TEMP T1
 				JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
 				JOIN CUSTOMERS T3 ON T1.CUSTID = T3.CUSTID
@@ -2358,7 +2359,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="FEV_1.1_post" author="Gopal.p" dbms="postgresql">
+	<changeSet id="FEV_1.1.0_post" author="Gopal.p" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_tview');
