@@ -530,7 +530,7 @@ public class LegalVettingServiceImpl extends GenericService<LegalVetting> implem
 				if (StringUtils.isEmpty(documentDetails.getReferenceId())) {
 					documentDetails.setReferenceId(String.valueOf(lv.getVerificationId()));
 				}
-				if (documentDetails.getDocRefId() <= 0 && documentDetails.getDocImage() != null) {
+				if (documentDetails.getDocRefId() == null && documentDetails.getDocImage() != null) {
 					DocumentManager documentManager = new DocumentManager();
 					documentManager.setDocImage(documentDetails.getDocImage());
 					documentDetails.setDocRefId(documentManagerDAO.save(documentManager));

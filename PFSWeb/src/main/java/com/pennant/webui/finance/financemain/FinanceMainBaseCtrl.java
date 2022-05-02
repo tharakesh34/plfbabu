@@ -20858,7 +20858,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 					// since it is an existing document record has to be store
 					// in document manager
-					exstDetails.setDocRefId(Long.MIN_VALUE);
+					exstDetails.setDocRefId(null);
 					return exstDetails;
 				}
 

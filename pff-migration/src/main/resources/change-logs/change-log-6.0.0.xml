@@ -26948,4 +26948,15 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="187420.1" author="saratkumar.p">
+		<sql>
+			<![CDATA[
+				UPDATE CUSTOMERDOCUMENTS SET DOCREFID = NULL WHERE DOCREFID <= 0;
+				UPDATE DOCUMENTDETAILS SET DOCREFID = NULL WHERE DOCREFID <= 0;
+				UPDATE CUSTOMERDOCUMENTS_TEMP SET DOCREFID = NULL WHERE DOCREFID <= 0;
+				UPDATE DOCUMENTDETAILS_TEMP SET DOCREFID = NULL WHERE DOCREFID <= 0;
+			]]>
+		</sql>
+	</changeSet>
+	
 </databaseChangeLog>

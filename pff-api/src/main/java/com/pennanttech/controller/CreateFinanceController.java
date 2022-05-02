@@ -847,7 +847,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 					// since it is an existing document record has to be store
 					// in document manager
-					exstDetails.setDocRefId(Long.MIN_VALUE);
+					exstDetails.setDocRefId(null);
 					return exstDetails;
 				}
 
@@ -1381,9 +1381,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			document.setNextRoleCode(fm.getNextRoleCode());
 			document.setTaskId(fm.getTaskId());
 			document.setNextTaskId(fm.getNextTaskId());
-			if (document.getDocRefId() == null) {
-				document.setDocRefId(Long.MIN_VALUE);
-			}
+		
 		}
 
 		// setting required values which are not received from API
@@ -2873,7 +2871,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			document.setRecordType(PennantConstants.RECORD_TYPE_NEW);
 			document.setVersion(1);
 			document.setReferenceId(fm.getFinReference());
-			document.setDocRefId(Long.MIN_VALUE);
+			document.setDocRefId(null);
 			// set update properties if exists
 			String docCategory = document.getDocCategory();
 			String module = FinanceConstants.MODULE_NAME;

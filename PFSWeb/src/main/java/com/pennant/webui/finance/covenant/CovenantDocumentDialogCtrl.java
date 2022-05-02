@@ -694,7 +694,7 @@ public class CovenantDocumentDialogCtrl extends GFCBaseCtrl<CovenantDocument> {
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
 				documentDetails.setLovDescNewImage(true);
-				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocRefId(null);
 				documentDetails.setDocUri(null);
 				textbox.setAttribute("data", documentDetails);
 				covenantDocument.setDoctype(docType);

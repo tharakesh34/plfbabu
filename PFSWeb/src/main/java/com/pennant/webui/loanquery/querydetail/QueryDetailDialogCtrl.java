@@ -533,8 +533,7 @@ public class QueryDetailDialogCtrl extends GFCBaseCtrl<QueryDetail> {
 		DocumentDetails documentDetails = (DocumentDetails) event.getData();
 
 		// Set Image data to bean
-		if (documentDetails != null && documentDetails.getDocImage() == null
-				&& documentDetails.getDocRefId() != Long.MIN_VALUE) {
+		if (documentDetails != null && documentDetails.getDocImage() == null && documentDetails.getDocRefId() != null) {
 			byte[] docManager = queryDetailService.getdocImage(documentDetails.getDocRefId());
 			if (docManager != null) {
 				documentDetails.setDocImage(docManager);

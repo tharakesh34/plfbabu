@@ -2901,7 +2901,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 						documentDetails.setReferenceId(String.valueOf(receiptHeader.getId()));
 					}
 					documentDetails.setFinEvent(FinServiceEvent.RECEIPT);
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						saveDocument(DMSModule.FINANCE, DMSModule.RECEIPT, documentDetails);
 						documentDetailsDAO.save(documentDetails, type);
 					}
@@ -2913,7 +2913,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 				if (updateRecord) {
 					// When a document is updated, insert another file into the DocumentManager table's.
 					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						saveDocument(DMSModule.FINANCE, DMSModule.RECEIPT, documentDetails);
 						documentDetailsDAO.update(documentDetails, type);
 					}

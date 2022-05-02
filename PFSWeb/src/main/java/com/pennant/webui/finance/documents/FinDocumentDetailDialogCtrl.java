@@ -602,7 +602,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else {
 				aDocumentDetails.setDocImage(null);
 				aDocumentDetails.setDoctype(null);
-				aDocumentDetails.setDocRefId(Long.MIN_VALUE);
+				aDocumentDetails.setDocRefId(null);
 			}
 
 		} catch (WrongValueException we) {
@@ -1407,7 +1407,7 @@ public class FinDocumentDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 				DocumentDetails documentDetails = (DocumentDetails) textbox.getAttribute("data");
 				documentDetails.setDoctype(docType);
 				documentDetails.setDocImage(ddaImageData);
-				documentDetails.setDocRefId(Long.MIN_VALUE);
+				documentDetails.setDocRefId(null);
 				documentDetails.setDocUri(null);
 				documentDetails.setLovDescNewImage(true);
 				textbox.setAttribute("data", documentDetails);

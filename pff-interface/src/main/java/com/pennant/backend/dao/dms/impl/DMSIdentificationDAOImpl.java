@@ -27,6 +27,7 @@ import com.pennant.backend.dao.dms.DMSIdentificationDAO;
 import com.pennant.backend.model.documentdetails.DocumentDetails;
 import com.pennant.backend.model.documentdetails.DocumentManager;
 import com.pennant.backend.util.DmsDocumentConstants;
+import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.jdbc.SequenceDao;
 import com.pennanttech.pennapps.core.resource.Literal;
 
@@ -46,21 +47,8 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 	private DefaultTransactionDefinition transDef;
 
 	private enum Field {
-		Id(1),
-		FinReference(2),
-		DocModule(3),
-		DocRefId(4),
-		State(5),
-		Status(6),
-		ReferenceId(7),
-		RetryCount(8),
-		CustomerCif(9),
-		DocId(10),
-		DocCategory(11),
-		DocDesc(12),
-		DocExt(13),
-		LastMntOn(14),
-		CreatedOn(15),
+		Id(1), FinReference(2), DocModule(3), DocRefId(4), State(5), Status(6), ReferenceId(7), RetryCount(8),
+		CustomerCif(9), DocId(10), DocCategory(11), DocDesc(12), DocExt(13), LastMntOn(14), CreatedOn(15),
 		ErrorDesc(16);
 
 		private int index;
@@ -261,7 +249,7 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 					documentDetail.setId(rs.getLong(Field.Id.index));
 					documentDetail.setFinReference(rs.getString(Field.FinReference.index));
 					documentDetail.setDocModule(rs.getString(Field.DocModule.index));
-					documentDetail.setDocRefId(rs.getLong(Field.DocRefId.index));
+					documentDetail.setDocRefId(JdbcUtil.getLong(rs.getObject(Field.DocRefId.index)));
 					documentDetail.setState(rs.getString(Field.State.index));
 					documentDetail.setStatus(rs.getString(Field.Status.index));
 					//	documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));
@@ -364,7 +352,8 @@ public class DMSIdentificationDAOImpl extends SequenceDao<DocumentDetails> imple
 							documentDetail.setId(rs.getLong(Field.Id.index));
 							documentDetail.setFinReference(rs.getString(Field.FinReference.index));
 							documentDetail.setDocModule(rs.getString(Field.DocModule.index));
-							documentDetail.setDocRefId(rs.getLong(rs.getString(Field.DocRefId.index)));
+							documentDetail
+									.setDocRefId(JdbcUtil.getLong(rs.getObject(rs.getString(Field.DocRefId.index))));
 							documentDetail.setState(rs.getString(Field.State.index));
 							documentDetail.setStatus(rs.getString(Field.Status.index));
 							//documentDetail.setLastMntOn(rs.getTimestamp(Field.LastMntOn.index));

@@ -730,7 +730,7 @@ public class BuilderProjcetServiceImpl extends GenericService<BuilderProjcet> im
 						documentDetails.setReferenceId(String.valueOf(builderProject.getId()));
 					}
 					documentDetails.setFinEvent(FinServiceEvent.ORG);
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(documentManagerDAO.save(documentManager));

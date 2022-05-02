@@ -77,7 +77,7 @@ public class VASController extends ExtendedTestClass {
 					detail.setRecordStatus(PennantConstants.RCD_STATUS_APPROVED);
 					detail.setDocModule(VASConsatnts.MODULE_NAME);
 					detail.setNewRecord(true);
-					detail.setDocRefId(Long.MIN_VALUE);
+					detail.setDocRefId(null);
 				}
 			}
 			// process Extended field details
@@ -276,7 +276,7 @@ public class VASController extends ExtendedTestClass {
 					detail.setDocModule(VASConsatnts.MODULE_NAME);
 					detail.setNewRecord(true);
 					detail.setWorkflowId(vasRecording.getWorkflowId());
-					detail.setDocRefId(Long.MIN_VALUE);
+					detail.setDocRefId(null);
 
 				}
 			}

@@ -746,7 +746,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 						documentDetails.setReferenceId(String.valueOf(manualAdvise.getId()));
 					}
 					documentDetails.setFinEvent(FinServiceEvent.RECEIPT);
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(documentManagerDAO.save(documentManager));
@@ -760,7 +760,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 				if (updateRecord) {
 					// When a document is updated, insert another file into the DocumentManager table's.
 					// Get the new DocumentManager.id & set to documentDetails.getDocRefId()
-					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() <= 0) {
+					if (documentDetails.getDocImage() != null && documentDetails.getDocRefId() == null) {
 						DocumentManager documentManager = new DocumentManager();
 						documentManager.setDocImage(documentDetails.getDocImage());
 						documentDetails.setDocRefId(documentManagerDAO.save(documentManager));

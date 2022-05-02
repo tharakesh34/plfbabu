@@ -74,8 +74,8 @@ public class DocumentDetailValidation {
 		}
 		DocumentDetails tempDocument = null;
 		if (documentDetails.isWorkflow()) {
-			tempDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "_Temp",
-					documentDetails.getDocRefId() == null || documentDetails.getDocRefId() <= 0 ? false : true);
+			tempDocument = documentDetailsDAO.getDocumentDetailsById(documentDetails.getDocId(), "_Temp",
+					documentDetails.getDocRefId() == null ? false : true);
 		}
 
 		DocumentDetails befDocument = getDocumentDetailsDAO().getDocumentDetailsById(documentDetails.getDocId(), "",
@@ -100,8 +100,8 @@ public class DocumentDetailValidation {
 
 		if (documentDetails.isNewRecord()) { // for New record or new record into work flow
 
-			if (!documentDetails.isWorkflow()) {// With out Work flow only new records  
-				if (befDocument != null) { // Record Already Exists in the table then error  
+			if (!documentDetails.isWorkflow()) {// With out Work flow only new records
+				if (befDocument != null) { // Record Already Exists in the table then error
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41001", errParm, null));
 				}
 			} else { // with work flow
@@ -137,7 +137,7 @@ public class DocumentDetailValidation {
 				}
 			} else {
 
-				if (tempDocument == null) { // if records not exists in the Work flow table 
+				if (tempDocument == null) { // if records not exists in the Work flow table
 					auditDetail.setErrorDetail(new ErrorDetail(PennantConstants.KEY_FIELD, "41005", errParm, null));
 				}
 
