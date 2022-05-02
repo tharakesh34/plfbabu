@@ -633,4 +633,9 @@
 		<property name="auditHeaderDAO" ref="auditHeaderDAO" />
 	</bean>
 
+	<bean id="cityDAO" class="com.pennant.backend.dao.systemmasters.impl.CityDAOImpl" parent="basicDao" />
+	
+	<bean name="documentTypeService" class="com.pennant.backend.service.systemmasters.impl.DocumentTypeServiceImpl"/>
+	
+
 </beans>
