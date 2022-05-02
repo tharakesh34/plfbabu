@@ -300,8 +300,8 @@ public class LatepayProfitRecoveryListCtrl extends GFCBaseListCtrl<OverdueCharge
 			List<FinODDetails> list = finODDetailsDAO.getFinODBalByFinRef(finID);
 			List<FinanceScheduleDetail> schlist = financeScheduleDetailDAO.getFinSchdDetailsForBatch(finID);
 			for (FinODDetails fod : list) {
-				List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod,
-						DateUtility.addDays(SysParamUtil.getAppDate(), -1), finMian, schlist, null);
+				List<OverdueChargeRecovery> lpiList = latePayInterestService.computeLPI(fod, SysParamUtil.getAppDate(),
+						finMian, schlist, null);
 				lpiListTodisplay.addAll(lpiList);
 			}
 		}

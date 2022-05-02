@@ -503,7 +503,7 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 		sql.append(" from FinScheduleDetails");
 		sql.append(" Where FinID = ?");
 
-		return jdbcOperations.query(sql.toString(), ps -> {
+		List<FinanceScheduleDetail>  finSchdDetails = jdbcOperations.query(sql.toString(), ps -> {
 			ps.setLong(1, finID);
 		}, (rs, rowNum) -> {
 			FinanceScheduleDetail schd = new FinanceScheduleDetail();
@@ -535,6 +535,8 @@ public class FinanceScheduleDetailDAOImpl extends BasicDao<FinanceScheduleDetail
 
 			return schd;
 		});
+		
+		return ScheduleCalculator.sortSchdDetails(finSchdDetails);
 	}
 
 	@Override
