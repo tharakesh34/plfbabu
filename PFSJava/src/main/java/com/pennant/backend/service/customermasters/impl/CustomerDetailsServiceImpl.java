@@ -3093,11 +3093,11 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 		ErrorDetail errorDetail = new ErrorDetail();
 		if (date != null) {
 			Date defaultAppDate = SysParamUtil.getValueAsDate("APP_DFT_START_DATE");
-			if (date.compareTo(DateUtility.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
+			if (date.compareTo(SysParamUtil.getAppDate()) != -1 || defaultAppDate.compareTo(date) >= 0) {
 				String[] valueParm = new String[3];
 				valueParm[0] = label;
 				valueParm[1] = DateUtility.format(defaultAppDate, PennantConstants.XMLDateFormat);
-				valueParm[2] = DateUtility.format(DateUtility.getAppDate(), PennantConstants.XMLDateFormat);
+				valueParm[2] = DateUtility.format(SysParamUtil.getAppDate(), PennantConstants.XMLDateFormat);
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90318", "", valueParm));
 			}
 		}
@@ -3106,6 +3106,24 @@ public class CustomerDetailsServiceImpl extends GenericService<Customer> impleme
 
 	private AuditDetail validatePersonalInfo(AuditDetail auditDetail, Customer customer) {
 		logger.debug(Literal.ENTERING);
+
+		if (StringUtils.isBlank(customer.getCustCRCPR())) {
+			String[] valueParm = new String[1];
+			valueParm[0] = "panNumber";
+			auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90502", "", valueParm)));
+		}
+
+		if (StringUtils.isNotBlank(customer.getCustCRCPR())) {
+			String regExp = PennantRegularExpressions.REGEX_PANNUMBER;
+			Pattern pattern = Pattern.compile(PennantRegularExpressions.getRegexMapper(regExp));
+			Matcher matcher = pattern.matcher(customer.getCustCRCPR());
+
+			if (!matcher.matches()) {
+				String[] valueParm = new String[1];
+				valueParm[0] = "panNumber";
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90251", "", valueParm), "EN"));
+			}
+		}
 
 		// validate conditional mandatory fields
 		String custCtgCode = customer.getCustCtgCode();

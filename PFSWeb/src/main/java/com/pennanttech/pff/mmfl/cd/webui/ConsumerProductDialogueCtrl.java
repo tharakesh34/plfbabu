@@ -134,7 +134,7 @@ public class ConsumerProductDialogueCtrl extends GFCBaseCtrl<ConsumerProduct> {
 		setStatusDetails();
 
 		this.txtchannel.setMaxlength(20);
-		this.modelId.setMaxlength(20);
+		this.modelId.setMaxlength(8);
 
 		int formatter = CurrencyUtil.getFormat(SysParamUtil.getAppCurrency());
 		this.minAmount.setProperties(true, formatter);

@@ -362,7 +362,19 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 			return stmtResp;
 		}
 
-		FinanceMain fm = financeMainDAO.getFinanceMain(finReference, TableType.MAIN_TAB);
+		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
+
+		if (finID == null) {
+			String[] valueParm = new String[1];
+			valueParm[0] = finReference;
+			stmtResp = new FinStatementResponse();
+			stmtResp.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
+			return stmtResp;
+		}
+
+		stmtReq.setFinID(finID);
+
+		FinanceMain fm = financeMainDAO.getFinanceMain(finID, TableType.MAIN_TAB);
 
 		if (fm == null) {
 			stmtResp = new FinStatementResponse();
@@ -483,18 +495,6 @@ public class FinStatementWebServiceImpl extends ExtendedTestClass
 		if (StringUtils.isBlank(stmtReq.getTemplate())) {
 			stmtReq.setTemplate(APIConstants.REPORT_TEMPLATE_API);
 		}
-
-		Long finID = financeMainDAO.getFinID(finReference, TableType.MAIN_TAB);
-
-		if (finID == null) {
-			String[] valueParm = new String[1];
-			valueParm[0] = finReference;
-			stmtResp = new FinStatementResponse();
-			stmtResp.setReturnStatus(APIErrorHandlerService.getFailedStatus("90260", valueParm));
-			return stmtResp;
-		}
-
-		stmtReq.setFinID(finID);
 
 		if (APIConstants.REPORT_TEMPLATE_API.equals(stmtReq.getTemplate())) {
 			if (StringUtils.equals(requestType, APIConstants.REPORT_SOA)

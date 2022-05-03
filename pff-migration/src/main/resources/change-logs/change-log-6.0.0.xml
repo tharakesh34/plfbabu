@@ -24580,7 +24580,7 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 
-	<changeSet id="PSD#172188.1" author="gopal.p" dbms="postgresql">
+	<changeSet id="PSD#172188.3" author="gopal.p">
 		<sql>
 			<![CDATA[
 				UPDATE DEDUPFIELDS SET FIELDNAME = 'aadharNumber' WHERE FIELDDESC = 'Aadhar Number' AND QUERYMODULE = 'RETAILCustomer';
@@ -26959,4 +26959,26 @@ to DDE" state="Resubmitted to DDE" representsUserAction="true" mandateNotes="tru
 		</sql>
 	</changeSet>
 	
+	<changeSet id="K#10" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTCONFIGURATION SET WHERECONDITION = 0 WHERE MENUITEMCODE = 'menu_Item_NPAReport';
+				UPDATE REPORTCONFIGURATION SET DATASOURCENAME = 'reportsDataSource'  WHERE MENUITEMCODE = 'menu_Item_MiscellaneouspostUploadStsrpt';
+			]]>
+		</sql>
+	</changeSet>
+	
+	<changeSet id="K#10.1" author="Gireesh.G">
+		<sql>
+			<![CDATA[
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'c.KeyReference' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_CovenantDetailsReport') AND FIELDID = 1;
+				
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'prh.Id' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 1;
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'fm.FINREFERENCE' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 2;
+				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'pd.STATUS' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_PresentmentFileImport_Report') AND FIELDID = 3;
+				
+				UPDATE REPORTFILTERFIELDS SET  FIELDDBNAME = 't1.entitycode'  WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_MiscellaneouspostUploadStsrpt') AND FIELDID = 1;
+			]]>
+		</sql>
+	</changeSet>
 </databaseChangeLog>

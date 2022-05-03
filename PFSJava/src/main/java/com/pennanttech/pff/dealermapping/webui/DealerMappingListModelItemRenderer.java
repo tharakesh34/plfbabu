@@ -35,7 +35,7 @@ public class DealerMappingListModelItemRenderer implements ListitemRenderer<Deal
 		lc = new Listcell(String.valueOf(dealerMapping.getStoreCity()));
 		lc.setParent(item);
 
-		lc = new Listcell(dealerMapping.getStoreId());
+		lc = new Listcell(String.valueOf(dealerMapping.getStoreId()));
 		lc.setParent(item);
 
 		lc = new Listcell(String.valueOf(dealerMapping.getDealerCode()));

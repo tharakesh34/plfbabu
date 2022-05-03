@@ -6277,4 +6277,16 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 
 		return null;
 	}
+
+	@Override
+	public String getLovDescFinDivisionByReference(String finReference) {
+		StringBuilder sql = new StringBuilder("Select ft.FinDivision");
+		sql.append(" From FinanceMain fm");
+		sql.append(" Inner Join RMTFinanceTypes ft on ft.FinType = fm.FinType");
+		sql.append(" Where fm.FinReference = ?");
+
+		logger.debug(Literal.SQL + sql.toString());
+
+		return this.jdbcOperations.queryForObject(sql.toString(), String.class, finReference);
+	}
 }

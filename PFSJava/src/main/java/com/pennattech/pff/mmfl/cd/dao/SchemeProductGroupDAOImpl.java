@@ -89,8 +89,8 @@ public class SchemeProductGroupDAOImpl extends SequenceDao<SchemeProductGroup> i
 
 		StringBuilder sql = new StringBuilder("Update CD_SCHEME_PRODUCTGROUP");
 		sql.append(tableType.getSuffix());
-		sql.append(" set   PromotionId = :promotionId , ProductGroupCode = :productGroupCode,Active = :active");
-		sql.append(", LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
+		sql.append(" set   PromotionId = :promotionId , ProductGroupCode = :productGroupCode, POSVendor = :POSVendor");
+		sql.append(", Active = :active, LastMntOn = :LastMntOn, RecordStatus = :RecordStatus, RoleCode = :RoleCode");
 		sql.append(", NextRoleCode = :NextRoleCode, TaskId = :TaskId, NextTaskId = :NextTaskId");
 		sql.append(", RecordType = :RecordType, WorkflowId = :WorkflowId");
 		sql.append(" where SchemeProductGroupId = :schemeProductGroupId ");
