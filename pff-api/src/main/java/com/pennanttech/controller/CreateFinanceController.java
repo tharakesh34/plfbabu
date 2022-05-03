@@ -382,7 +382,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			// Disbursement Instruction is calculation fails if alwBpiTreatment
 			// is true so calling this after schedule calculation.
 			if (!fm.isAlwBPI()) {
-				if (stp) {
+				if (stp && !loanWithWIF) {
 					schdData.getDisbursementDetails().clear();
 				}
 				setDisbursements(fd, loanWithWIF, false, false);
@@ -468,7 +468,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			}
 
 			if (fm.isAlwBPI()) {
-				if (stp) {
+				if (stp && !loanWithWIF) {
 					schdData.getDisbursementDetails().clear();
 				}
 				setDisbursements(fd, loanWithWIF, false, false);
@@ -1381,7 +1381,7 @@ public class CreateFinanceController extends SummaryDetailService {
 			document.setNextRoleCode(fm.getNextRoleCode());
 			document.setTaskId(fm.getTaskId());
 			document.setNextTaskId(fm.getNextTaskId());
-		
+
 		}
 
 		// setting required values which are not received from API

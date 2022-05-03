@@ -254,7 +254,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 
 		this.schemeId.setText(schemeProductGroup.getPromotionId());
 		this.productGroupCode.setValue(schemeProductGroup.getProductGroupCode());
-		this.posVendor.setValue(schemeProductGroup.getPOSVendor());
+		this.posVendor.setValue(schemeProductGroup.isPOSVendor() ? "1" : "0");
 		this.active.setChecked(schemeProductGroup.isActive());
 		if (schemeProductGroup.isNewRecord()
 				|| (schemeProductGroup.getRecordType() != null ? schemeProductGroup.getRecordType() : "")
@@ -290,7 +290,7 @@ public class SchemeProductGroupDialogueCtrl extends GFCBaseCtrl<SchemeProductGro
 		}
 
 		try {
-			schemeProductGroup.setPOSVendor(this.posVendor.getValue());
+			schemeProductGroup.setPOSVendor(this.posVendor.getValue().equals("1"));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

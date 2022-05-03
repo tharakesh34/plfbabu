@@ -192,6 +192,7 @@ public class CashBackProcessServiceImpl implements CashBackProcessService {
 		logger.debug(Literal.ENTERING);
 
 		CashBackDetail cbDetail = new CashBackDetail();
+		cbDetail.setFinID(finMain.getFinID());
 		cbDetail.setFinReference(finMain.getFinReference());
 		cbDetail.setType(type);
 		cbDetail.setAdviseId(manualAdvise.getAdviseID());

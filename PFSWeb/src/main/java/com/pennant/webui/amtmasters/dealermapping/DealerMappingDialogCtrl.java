@@ -128,7 +128,6 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.merchantName.setModuleName("MerchantDetails");
 		this.merchantName.setValueColumn("MerchantId");
 		this.merchantName.setDescColumn("MerchantName");
-		this.merchantName.setValidateColumns(new String[] { "MerchantId" });
 
 		this.storeName.setMandatoryStyle(true);
 
@@ -293,10 +292,10 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		this.storeName.setModuleName("Stores");
 		this.storeName.setValueColumn("StoreName");
 		this.storeName.setDescColumn("StoreId");
-		this.storeName.setValidateColumns(new String[] { "StoreName" });
 
 		Filter[] filters = new Filter[1];
-		filters[0] = Filter.in("MerchantId", this.merchantName.getTextbox().getValue());
+		String merchantId = this.merchantName.getTextbox().getValue();
+		filters[0] = Filter.in("MerchantId", Long.valueOf(merchantId.equals("") ? "0" : merchantId));
 		this.storeName.setFilters(filters);
 	}
 
@@ -342,7 +341,11 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		}
 		onfulfillMerchantName();
 		this.storeName.setValue(dealerMapping.getStoreName());
-		this.storeName.setDescription(dealerMapping.getStoreId());
+		if (dealerMapping.getStoreId() > 0) {
+			this.storeName.setDescription(String.valueOf(dealerMapping.getStoreId()));
+		} else {
+			this.storeName.setDescription("");
+		}
 		this.storeCity.setText(dealerMapping.getStoreCity());
 		this.storeAddress.setText(dealerMapping.getStoreAddress());
 
@@ -351,7 +354,7 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		} else {
 			this.dealerCode.setText(String.valueOf(dealerMapping.getDealerCode()));
 		}
-		this.storeId.setText(dealerMapping.getStoreId());
+		this.storeId.setText(String.valueOf(dealerMapping.getStoreId()));
 		this.posId.setText(String.valueOf(dealerMapping.getPosId()));
 		this.active.setChecked(dealerMapping.isActive());
 
@@ -376,20 +379,13 @@ public class DealerMappingDialogCtrl extends GFCBaseCtrl<DealerMapping> {
 		List<WrongValueException> wve = new ArrayList<>();
 
 		try {
-			this.merchantName.getValidatedValue();
 			aDealerMapping.setMerchantId(Long.valueOf(this.merchantName.getTextbox().getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
 
 		try {
-			this.storeName.getValidatedValue();
-		} catch (WrongValueException we) {
-			wve.add(we);
-		}
-
-		try {
-			aDealerMapping.setStoreId(this.storeId.getText());
+			aDealerMapping.setStoreId(Long.valueOf(this.storeId.getValue()));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}

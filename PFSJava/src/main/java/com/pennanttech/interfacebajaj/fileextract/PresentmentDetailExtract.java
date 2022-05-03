@@ -382,8 +382,6 @@ public class PresentmentDetailExtract extends FileImport implements Runnable {
 					successCount++;
 				} else if (RepayConstants.PEXC_FAILURE.equals(sts)) {
 					failedCount++;
-				} else {
-					failedCount++;
 				}
 			}
 

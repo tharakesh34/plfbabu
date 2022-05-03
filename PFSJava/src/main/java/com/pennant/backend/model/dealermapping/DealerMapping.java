@@ -15,7 +15,7 @@ public class DealerMapping extends AbstractWorkflowEntity {
 	private String storeName;
 	private String storeAddress;
 	private String storeCity;
-	private String storeId;
+	private long storeId;
 	private long dealerCode;
 	private long posId;
 	private String lovValue;
@@ -100,11 +100,11 @@ public class DealerMapping extends AbstractWorkflowEntity {
 		this.storeCity = storeCity;
 	}
 
-	public String getStoreId() {
+	public long getStoreId() {
 		return storeId;
 	}
 
-	public void setStoreId(String storeId) {
+	public void setStoreId(long storeId) {
 		this.storeId = storeId;
 	}
 

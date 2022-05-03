@@ -519,27 +519,29 @@ public class FeePostingServiceImpl extends GenericService<FeePostings> implement
 			}
 			break;
 		case FinanceConstants.POSTING_AGAINST_LOAN:
-			FinanceMain fm = financeMainDAO.getFinanceMainByRef(feePostings.getFinReference(), "", false);
-			if (fm != null) {
-				feePostings.setReference(feePostings.getFinReference());
-				// validate currency
-				if (StringUtils.isNotBlank(feePostings.getCurrency())) {
-					if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), fm.getFinCcy())) {
-						String[] valueParm = new String[2];
-						valueParm[0] = feePostings.getCurrency();
-						valueParm[1] = "Loan: " + fm.getFinCcy();
-						auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
-						return auditDetail;
-					} else {
-						feePostings.setCurrency(fm.getFinCcy());
-					}
-				}
-			} else {
+			Long finID = financeMainDAO.getFinID(feePostings.getFinReference());
+
+			if (finID == null) {
 				String[] valueParm = new String[1];
 				valueParm[0] = feePostings.getFinReference();
 				errorDetail = ErrorUtil.getErrorDetail(new ErrorDetail("90201", "", valueParm));
 				auditDetail.setErrorDetail(errorDetail);
 				return auditDetail;
+			}
+
+			FinanceMain fm = financeMainDAO.getFinanceMainById(finID, "", false);
+			feePostings.setReference(feePostings.getFinReference());
+
+			if (StringUtils.isNotBlank(feePostings.getCurrency())) {
+				if (!StringUtils.equalsIgnoreCase(feePostings.getCurrency(), fm.getFinCcy())) {
+					String[] valueParm = new String[2];
+					valueParm[0] = feePostings.getCurrency();
+					valueParm[1] = "Loan: " + fm.getFinCcy();
+					auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(new ErrorDetail("90294", "", valueParm)));
+					return auditDetail;
+				} else {
+					feePostings.setCurrency(fm.getFinCcy());
+				}
 			}
 			break;
 		case FinanceConstants.POSTING_AGAINST_LIMIT:

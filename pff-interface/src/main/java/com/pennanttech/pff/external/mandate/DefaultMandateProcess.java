@@ -174,8 +174,13 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 			String configName = null;
 
 			if (ImplementationConstants.MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK) {
+				Long partnerBankId = (Long) filterMap.get("PARTNERBANKID");
+				if (partnerBankId == null) {
+					partnerBankId = 0L;
+				}
+
 				configName = getConfigName(filterMap.get("MANDATETYPE").toString(),
-						Long.valueOf(filterMap.get("PARTNERBANKID").toString()));
+						Long.valueOf(partnerBankId.toString()));
 			}
 			if (configName == null) {
 				configName = "MANDATES_EXPORT";

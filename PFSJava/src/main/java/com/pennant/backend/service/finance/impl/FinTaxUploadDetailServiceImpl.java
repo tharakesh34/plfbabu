@@ -330,6 +330,20 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 			String aggrementNo = taxuploadDetail.getAggrementNo();
 			errParm[0] = String.valueOf(aggrementNo);
 
+			Long finID = null;
+			if (StringUtils.isNotBlank(aggrementNo)) {
+				finID = financeMainDAO.getFinID(aggrementNo);
+			}
+
+			if (finID == null) {
+				String[] errParams = new String[2];
+
+				errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
+				errParams[1] = aggrementNo;
+				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
+						new ErrorDetail(PennantConstants.KEY_FIELD, "99008", errParams, valueParm), usrLanguage));
+				return auditDetail;
+			}
 			// --------Length validations-----------------------------------
 
 			if (StringUtils.isEmpty(aggrementNo)) {
@@ -413,20 +427,6 @@ public class FinTaxUploadDetailServiceImpl extends GenericService<FinTaxUploadHe
 				errParm[2] = 10 + "";
 				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
 						new ErrorDetail(PennantConstants.KEY_FIELD, "99006", errParm, valueParm), usrLanguage));
-			}
-
-			Long finID = null;
-			if (StringUtils.isNotBlank(aggrementNo)) {
-				finID = financeMainDAO.getFinID(aggrementNo);
-			}
-
-			if (finID == null) {
-				String[] errParams = new String[2];
-
-				errParams[0] = PennantJavaUtil.getLabel("listheader_AggrementNo.label");
-				errParams[1] = aggrementNo;
-				auditDetail.setErrorDetail(ErrorUtil.getErrorDetail(
-						new ErrorDetail(PennantConstants.KEY_FIELD, "99008", errParams, valueParm), usrLanguage));
 			}
 
 			// Validate the GST number

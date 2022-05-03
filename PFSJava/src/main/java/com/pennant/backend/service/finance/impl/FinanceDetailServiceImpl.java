@@ -3908,6 +3908,7 @@ public class FinanceDetailServiceImpl extends GenericFinanceDetailService implem
 				if (fm.getOldFinReference() != null && auditHeader.getApiHeader() != null
 						&& StringUtils.equals(moduleDefiner, FinServiceEvent.ORG)) {
 					FinanceMainExtension finExtension = new FinanceMainExtension();
+					finExtension.setFinId(finID);
 					finExtension.setFinreference(finReference);
 					finExtension.setHostreference(fm.getOldFinReference());
 					finExtension.setOldhostreference(fm.getExtReference());

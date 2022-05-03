@@ -32,7 +32,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_TDS_ON_FEE", true);
 
-		customConstants.put("ALLOW_OD_LOANS", true);
+		customConstants.put("ALLOW_OD_LOANS", false);
 
 		customConstants.put("ALLOW_CD_LOANS", true);
 
@@ -50,7 +50,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("DISB_PAID_CANCELLATION_ALLOW", true);
 
-		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", true);
+		customConstants.put("MANDATE_PTNRBNK_IN_DWNLD", false);
 
 		customConstants.put("LOANTYPE_REQ_FOR_PRESENTMENT_PROCESS", true);
 
@@ -97,7 +97,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("RESTRUCTURE_ALW_CHARGES", true);
 
-		customConstants.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", true);
+		customConstants.put("MANDATE_REQ_RES_FILE_GEN_PARTNERBNAK", false);
 
 		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
 
