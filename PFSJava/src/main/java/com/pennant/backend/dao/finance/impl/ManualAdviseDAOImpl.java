@@ -960,7 +960,7 @@ public class ManualAdviseDAOImpl extends SequenceDao<ManualAdvise> implements Ma
 		sql.append(", ma.RoleCode, ma.NextRoleCode, ma.TaskId, ma.NextTaskId, ma.RecordType, ma.WorkflowId");
 		sql.append(" From ManualAdvise_Aview ma");
 		sql.append(" Left Join FeeTypes ft on ma.FeeTypeId = ft.FeeTypeId");
-		sql.append(" Where FinID = ?");
+		sql.append(" Where FinID = ?  and ma.AdviseType = 1");
 
 		logger.debug(Literal.SQL + sql.toString());
 
