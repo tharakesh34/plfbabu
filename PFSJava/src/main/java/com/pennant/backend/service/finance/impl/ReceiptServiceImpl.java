@@ -297,7 +297,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rcd.setRepayHeader(financeRepaymentsDAO.getFinRepayHeadersByReceipt(rcd.getReceiptSeqID(), ""));
 		}
 
-		if (ReceiptMode.CHEQUE.equalsIgnoreCase(rch.getReceiptMode())) {
+		if (ReceiptMode.CHEQUE.equalsIgnoreCase(rch.getReceiptMode())
+				|| RepayConstants.PAYSTATUS_BOUNCE.equals(rch.getReceiptModeStatus())) {
 			rch.setManualAdvise(manualAdviseDAO.getManualAdviseByReceiptId(receiptID, "_View"));
 		}
 

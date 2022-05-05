@@ -233,7 +233,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.valueDate.setValue(this.receiptDate.getValue());
 
 		String recPurpose = this.receiptPurpose.getSelectedItem().getValue().toString();
-		if (!StringUtils.equals(recPurpose, FinServiceEvent.EARLYSETTLE)) {
+		if (!FinServiceEvent.EARLYSETTLE.equals(recPurpose)) {
 			return;
 		}
 
