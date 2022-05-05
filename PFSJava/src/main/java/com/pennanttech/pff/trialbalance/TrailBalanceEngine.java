@@ -157,7 +157,7 @@ public class TrailBalanceEngine extends DataEngineExport {
 
 		if (dimension == Dimension.STATE) {
 			parameterMap.put("REPORT_NAME", "State Wise Trial Balance - Ledger A/C wise");
-			parameterMap.put("ENTITY_CODE", entityCode + "_TRAIL_BALANCE_");
+			parameterMap.put("ENTITY_CODE", entityCode + "_TRIAL_BALANCE_");
 
 		} else {
 			parameterMap.put("REPORT_NAME", "Consolidated Trial Balance - Ledger A/C wise");

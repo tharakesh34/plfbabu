@@ -670,7 +670,8 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 		}
 
 		try {
-			aTransactionEntry.setPostToSys(AccountConstants.POSTTOSYS_GLNPL);
+			aTransactionEntry.setPostToSys(this.postToCore.isChecked() ? AccountConstants.POSTTOSYS_CORE
+					: (this.postToERP.isChecked() ? AccountConstants.POSTTOSYS_GLNPL : ""));
 		} catch (WrongValueException we) {
 			wve.add(we);
 		}
