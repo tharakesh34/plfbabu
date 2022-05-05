@@ -97,6 +97,7 @@ public class FeatureExtension implements IFeatureExtension {
 
 		customConstants.put("ALLOW_ESCROW_MODE", false);
 
+		customConstants.put("HOLD_DISB_INST_POST", true);
 	}
 
 	@Override
