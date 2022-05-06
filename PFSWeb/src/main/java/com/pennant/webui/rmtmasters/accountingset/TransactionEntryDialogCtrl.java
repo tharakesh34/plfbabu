@@ -24,18 +24,16 @@
  */
 package com.pennant.webui.rmtmasters.accountingset;
 
-import java.awt.Button;
-import java.awt.Checkbox;
-import java.awt.Window;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.LogManager;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.zkoss.codemirror.Codemirror;
@@ -45,8 +43,11 @@ import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
+import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zul.Button;
+import org.zkoss.zul.Checkbox;
 import org.zkoss.zul.Column;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Comboitem;
@@ -54,6 +55,7 @@ import org.zkoss.zul.Grid;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Hbox;
 import org.zkoss.zul.Intbox;
+import org.zkoss.zul.Label;
 import org.zkoss.zul.Listbox;
 import org.zkoss.zul.Listcell;
 import org.zkoss.zul.Listgroup;
@@ -65,6 +67,7 @@ import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
 import org.zkoss.zul.Tab;
 import org.zkoss.zul.Textbox;
+import org.zkoss.zul.Window;
 
 import com.pennant.app.constants.AccountConstants;
 import com.pennant.app.constants.ImplementationConstants;
@@ -99,6 +102,7 @@ import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -110,7 +114,7 @@ public class TransactionEntryDialogCtrl extends GFCBaseCtrl<TransactionEntry> {
 	private static final Logger logger = LogManager.getLogger(TransactionEntryDialogCtrl.class);
 
 	/*
-	 * All the comEonents that are defined here and have a corresponding component with the same 'id' in the ZUL-file
+	 * All the components that are defined here and have a corresponding component with the same 'id' in the ZUL-file
 	 * are getting autowired by our 'extends GFCBaseCtrl' GenericForwardComposer.
 	 */
 	protected Window window_TransactionEntryDialog;

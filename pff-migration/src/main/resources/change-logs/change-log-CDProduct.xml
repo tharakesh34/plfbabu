@@ -464,7 +464,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="MerchantName" type="varchar(50)" />
-			<column name="StoreId" type="decimal(20)" />
+			<column name="StoreId" type="bigint" />
 			<column name="StoreName" type="varchar(50)" />
 			<column name="StoreAddressLine1" type="varchar(200)" />
 			<column name="StoreAddressLine2" type="varchar(100)" />
@@ -510,7 +510,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="MerchantName" type="varchar(50)" />
-			<column name="StoreId" type="decimal(20)" />
+			<column name="StoreId" type="bigint" />
 			<column name="StoreName" type="varchar(50)" />
 			<column name="StoreAddressLine1" type="varchar(200)" />
 			<column name="StoreAddressLine2" type="varchar(100)" />
@@ -1000,7 +1000,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="MerchantId" type="int" />
-			<column name="StoreId" type="decimal(20)" />
+			<column name="StoreId" type="bigint" />
 			<column name="DealerCode" type="int" />
 			<column name="POSID" type="bigint" />
 			<column name="Version" type="int">
@@ -1030,7 +1030,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="MerchantId" type="int" />
-			<column name="StoreId" type="decimal(20)" />
+			<column name="StoreId" type="bigint" />
 			<column name="DealerCode" type="int" />
 			<column name="POSID" type="bigint" />
 			<column name="Version" type="int">
@@ -2360,7 +2360,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="DealerName" type="varchar(100)" />
-			<column name="MID" type="number(20)">
+			<column name="MID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="TID" type="smallint" />
@@ -2399,7 +2399,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="DealerName" type="varchar(100)" />
-			<column name="MID" type="decimal(20)">
+			<column name="MID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="TID" type="decimal(6)" />
@@ -3533,16 +3533,6 @@
 		<sql>
 			<![CDATA[
 				UPDATE REPORTFILTERFIELDS SET FIELDDBNAME = 'cs.Custcif' WHERE REPORTID IN (SELECT REPORTID FROM REPORTCONFIGURATION WHERE MENUITEMCODE = 'menu_Item_SubventionPendingKnockoff') AND FIELDID = 1;
-			]]>
-		</sql>
-	</changeSet>
-	
-	<changeSet id="EP#3496.127" author="Gopal.p">
-		<sql>
-			<![CDATA[
-				DELETE FROM BMTLOVFIELDCODE WHERE FIELDCODE = 'CHANNEL';
-				
-				INSERT INTO BMTLOVFIELDCODE (FIELDCODE, FIELDCODEDESC, FIELDCODETYPE, FIELDEDIT, ISACTIVE, VERSION, LASTMNTBY, LASTMNTON, RECORDSTATUS, ROLECODE, NEXTROLECODE, TASKID, NEXTTASKID, RECORDTYPE, WORKFLOWID) VALUES ('CHANNEL', 'Fin Labs', 'String', 1, 1, 1, 1000, current_timestamp, 'Approved', NULL, NULL, NULL, NULL, NULL, 0);
 			]]>
 		</sql>
 	</changeSet>

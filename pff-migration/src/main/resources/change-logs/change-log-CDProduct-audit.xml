@@ -144,7 +144,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="MerchantName" type="varchar(50)" />
-			<column name="StoreId" type="decimal(20)" />
+			<column name="StoreId" type="bigint" />
 			<column name="StoreName" type="varchar(50)" />
 			<column name="StoreAddressLine1" type="varchar(200)" />
 			<column name="StoreAddressLine2" type="varchar(100)" />
@@ -203,7 +203,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="MerchantId" type="int" />
-			<column name="StoreId" type="decimal(20)" />
+			<column name="StoreId" type="bigint" />
 			<column name="DealerCode" type="int" />
 			<column name="POSID" type="bigint" />
 			<column name="Version" type="int">
@@ -447,7 +447,7 @@
 				<constraints nullable="false" />
 			</column>
 			<column name="DealerName" type="varchar(100)" />
-			<column name="MID" type="decimal(20)">
+			<column name="MID" type="bigint">
 				<constraints nullable="false" />
 			</column>
 			<column name="TID" type="decimal(6)" />
