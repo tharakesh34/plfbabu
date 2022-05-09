@@ -419,9 +419,9 @@
 											vflex="1">
 											<columns>
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 											</columns>
 											<rows>
 												<row>
@@ -789,9 +789,9 @@
 										<grid sclass="GridLayoutNoBorder" fixedLayout="true" style="border:0px">
 											<columns>
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 											</columns>
 											<rows>
 												<row>
@@ -964,9 +964,9 @@
 											vflex="1">
 											<columns>
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 											</columns>
 											<rows>
 												<row id="noOfTermsRow">
@@ -1366,9 +1366,9 @@
 											vflex="1">
 											<columns>
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 											</columns>
 											<rows>
 												<row>
@@ -1461,9 +1461,9 @@
 											vflex="1">
 											<columns>
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 												<column width="220px" />
-												<column width="360px" />
+												<column />
 											</columns>
 											<rows>
 												<row>
