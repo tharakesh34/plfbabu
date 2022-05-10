@@ -1841,7 +1841,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		boolean isPresentProc = false;
 		if (rch.getReceiptDetails() != null && !rch.getReceiptDetails().isEmpty()) {
 			for (FinReceiptDetail rcd : rch.getReceiptDetails()) {
-				if (StringUtils.equals(rcd.getPaymentType(), RepayConstants.PAYTYPE_PRESENTMENT)) {
+				if (RepayConstants.PAYTYPE_PRESENTMENT.equals(rcd.getPaymentType())) {
 					isPresentProc = true;
 				}
 			}
@@ -5612,6 +5612,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			setFinanceData(rd);
 		} else {
 			rd.getFinanceDetail().getFinScheduleData().setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
+
+			CustomerDetails customerDetails = new CustomerDetails();
+			customerDetails.setCustomer(customerDAO.getCustomerByID(fm.getCustID()));
+			customerDetails.setCustID(fm.getCustID());
+			fd.setCustomerDetails(customerDetails);
 		}
 
 		doReceiptValidations(rd);

@@ -29,6 +29,7 @@ import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
+import com.pennanttech.pff.core.RequestSource;
 
 public class ReceiptUploadThreadProcess implements Runnable {
 	private static Logger logger = LogManager.getLogger(ReceiptUploadThreadProcess.class);
@@ -143,6 +144,7 @@ public class ReceiptUploadThreadProcess implements Runnable {
 		fsi.setReqType("Post");
 		fsi.setReceiptUpload(true);
 		fsi.setLoggedInUser(rud.getLoggedInUser());
+		fsi.setRequestSource(RequestSource.UPLOAD);
 		FinanceDetail financeDetail = receiptService.receiptTransaction(fsi);
 
 		WSReturnStatus returnStatus = financeDetail.getReturnStatus();

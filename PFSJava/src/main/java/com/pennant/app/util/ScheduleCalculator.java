@@ -6220,22 +6220,22 @@ public class ScheduleCalculator {
 			}
 		}
 
-		if (calFrq.equals(FrequencyCodeTypes.FRQ_MONTHLY)) {
+		if (FrequencyCodeTypes.FRQ_MONTHLY.equals(calFrq)) {
 			periods = new BigDecimal(12);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_QUARTERLY)) {
+		} else if (FrequencyCodeTypes.FRQ_QUARTERLY.equals(calFrq)) {
 			periods = new BigDecimal(4);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_HALF_YEARLY)) {
+		} else if (FrequencyCodeTypes.FRQ_HALF_YEARLY.equals(calFrq)) {
 			periods = new BigDecimal(2);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_YEARLY)) {
+		} else if (FrequencyCodeTypes.FRQ_YEARLY.equals(calFrq)) {
 			periods = new BigDecimal(1);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_BIWEEKLY)
-				|| calFrq.equals(FrequencyCodeTypes.FRQ_FORTNIGHTLY)) {
+		} else if (FrequencyCodeTypes.FRQ_BIWEEKLY.equals(calFrq)
+				|| FrequencyCodeTypes.FRQ_FORTNIGHTLY.equals(calFrq)) {
 			periods = new BigDecimal(26);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_15DAYS)) {
+		} else if (FrequencyCodeTypes.FRQ_15DAYS.equals(calFrq)) {
 			periods = new BigDecimal(24);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_BIMONTHLY)) {
+		} else if (FrequencyCodeTypes.FRQ_BIMONTHLY.equals(calFrq)) {
 			periods = new BigDecimal(6);
-		} else if (calFrq.equals(FrequencyCodeTypes.FRQ_WEEKLY)) {
+		} else if (FrequencyCodeTypes.FRQ_WEEKLY.equals(calFrq)) {
 			periods = new BigDecimal(52);
 		} else {
 			periods = new BigDecimal(365);
@@ -6244,9 +6244,9 @@ public class ScheduleCalculator {
 		// Interest Rate Per Period
 		// PMT calculation Changes 19-06-2019
 		if (fm.isEqualRepay()
-				&& (idb.equals(CalculationConstants.IDB_ACT_ISDA) || idb.equals(CalculationConstants.IDB_ACT_365FIXED)
-						|| idb.equals(CalculationConstants.IDB_ACT_365LEAPS)
-						|| idb.equals(CalculationConstants.IDB_ACT_365LEAP))) {
+				&& (CalculationConstants.IDB_ACT_ISDA.equals(idb) || CalculationConstants.IDB_ACT_365FIXED.equals(idb)
+						|| CalculationConstants.IDB_ACT_365LEAPS.equals(idb)
+						|| CalculationConstants.IDB_ACT_365LEAP.equals(idb))) {
 			intRate = intRate.multiply(days365.divide(periods, 13, RoundingMode.HALF_DOWN));
 		} else {
 			intRate = intRate.multiply(days360.divide(periods, 13, RoundingMode.HALF_DOWN));
