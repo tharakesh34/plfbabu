@@ -187,8 +187,6 @@
 		<property name="changeGraceEndService" ref="changeGraceEndService" />
 	</bean>
 
-	<bean id="archivalService" class="com.pennant.eod.ArchivalService" parent="serviceHelper" />
-
 	<bean id="changeGraceEndService" class="com.pennant.app.core.ChangeGraceEndService" parent="serviceHelper">
 		<property name="accrualService" ref="accrualService" />
 	</bean>
