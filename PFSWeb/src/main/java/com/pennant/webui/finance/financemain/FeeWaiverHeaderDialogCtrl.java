@@ -1416,7 +1416,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 			if (feeWaiverDetail.getAdviseId() == detail.getAdviseId()) {
 				// PSD#:145831
-				BigDecimal balanceAmount = detail.getBalanceAmount();
+				BigDecimal balanceAmount = detail.getReceivableAmount().subtract(detail.getReceivedAmount());
 				if (balanceAmount.compareTo(amount) == -1) {
 
 					throw new WrongValueException(currWaivedAmt,
