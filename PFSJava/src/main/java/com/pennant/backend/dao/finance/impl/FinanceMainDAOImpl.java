@@ -6052,13 +6052,13 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 		sql.append(", fm.InvestmentRef, fm.FinPreApprovedRef, fm.LastRepay, fm.EmployeeName, fm.EffectiveRateOfReturn");
 		sql.append(", fm.RoleCode, fm.DownPaySupl, fm.RateChgAnyDay, fm.AvailedReAgeH, fm.NextRoleCode, fm.LimitValid");
 		sql.append(", fm.AvailedDefRpyChange, fm.DroppingMethod, fm.PftServicingODLimit");
-		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired");
-		sql.append(" From FinanceMain");
-		sql.append(" fm");
+		sql.append(", fm.ReAgeBucket, fm.AvailedDefFrqChange, fm.LegalRequired, ft.FinTypeDesc, b.BranchDesc");
+		sql.append(" From FinanceMain fm");
 		sql.append(" Inner Join RMTFinanceTypes ft On fm.FinType = ft.FinType");
 		sql.append(" Inner Join Customers c On fm.CustID = c.CustID");
 		sql.append(" Inner Join SmtDivisionDetail d On d.DivisionCode = ft.FinDivision");
 		sql.append(" Inner Join Entity e on e.EntityCode = d.EntityCode");
+		sql.append(" Inner Join RMTBranches b on b.BranchCode = fm.FinBranch");
 		sql.append(" Where FinID = ?");
 
 		logger.debug(Literal.SQL + sql.toString());
@@ -6268,6 +6268,8 @@ public class FinanceMainDAOImpl extends BasicDao<FinanceMain> implements Finance
 				fm.setReAgeBucket(rs.getInt("ReAgeBucket"));
 				fm.setAvailedDefFrqChange(rs.getInt("AvailedDefFrqChange"));
 				fm.setLegalRequired(rs.getBoolean("LegalRequired"));
+				fm.setLovDescFinTypeName(rs.getString("FinTypeDesc"));
+				fm.setLovDescFinBranchName(rs.getString("BranchDesc"));
 
 				return fm;
 			}, finID);
