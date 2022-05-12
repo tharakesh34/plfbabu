@@ -813,6 +813,8 @@ public class FinanceMain extends AbstractWorkflowEntity {
 	private Map<String, BigDecimal> taxPercentages = new HashMap<>();
 	private Map<String, Object> gstExecutionMap = new HashMap<>();
 
+	private BigDecimal expectedEndBal = BigDecimal.ZERO;
+
 	public Set<String> getExcludeFields() {
 		Set<String> excludeFields = new HashSet<>();
 		excludeFields.add("calculateRepay");
@@ -1038,6 +1040,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		excludeFields.add("custAcctHolderName");
 		excludeFields.add("taxPercentages");
 		excludeFields.add("gstExecutionMap");
+		excludeFields.add("expectedEndBal");
 		return excludeFields;
 	}
 
@@ -1513,6 +1516,7 @@ public class FinanceMain extends AbstractWorkflowEntity {
 		entity.setCustAcctHolderName(this.custAcctHolderName);
 		entity.setTaxPercentages(this.taxPercentages);
 		entity.setGstExecutionMap(this.gstExecutionMap);
+		entity.setExpectedEndBal(this.expectedEndBal);
 		entity.setRecordStatus(super.getRecordStatus());
 		entity.setRoleCode(super.getRoleCode());
 		entity.setNextRoleCode(super.getNextRoleCode());
@@ -5306,6 +5310,14 @@ public class FinanceMain extends AbstractWorkflowEntity {
 
 	public void setGstExecutionMap(Map<String, Object> gstExecutionMap) {
 		this.gstExecutionMap = gstExecutionMap;
+	}
+
+	public BigDecimal getExpectedEndBal() {
+		return expectedEndBal;
+	}
+
+	public void setExpectedEndBal(BigDecimal expectedEndBal) {
+		this.expectedEndBal = expectedEndBal;
 	}
 
 }

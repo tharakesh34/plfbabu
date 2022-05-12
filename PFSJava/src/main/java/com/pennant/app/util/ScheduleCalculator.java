@@ -459,41 +459,48 @@ public class ScheduleCalculator {
 		return dpScheduleData;
 	}
 
-	private ScheduleCalculator(String method, FinScheduleData finScheduleData, String baseRate, String splRate,
+	private ScheduleCalculator(String method, FinScheduleData schdData, String baseRate, String splRate,
 			BigDecimal mrgRate, BigDecimal calculatedRate, boolean isCalSchedule) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
 
-		finScheduleData.getFinanceMain().setRecalIdx(-1);
-		finScheduleData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
+		if (PROC_CHANGERATE.equals(method)
+				&& CalculationConstants.RPYCHG_CURPRD.equals(schdData.getFinanceMain().getRecalType())) {
+			getCurPerodDates(schdData);
+		}
+
+		setExpectedEndBal(schdData);
+
+		schdData.getFinanceMain().setRecalIdx(-1);
+		schdData.getFinanceMain().setAppDate(SysParamUtil.getAppDate());
 
 		if (StringUtils.equals(method, PROC_CHANGERATE)) {
-			finScheduleData.getFinanceMain().setRateChange(true);
+			schdData.getFinanceMain().setRateChange(true);
 
-			FinanceMain fm = finScheduleData.getFinanceMain();
+			FinanceMain fm = schdData.getFinanceMain();
 
 			// re generate original schedule from Flexi Schedule
 			if (fm.isAlwFlexi() && fm.isChgDropLineSchd()) {
-
-				rebuildOrgSchdFromFlexiSchd(finScheduleData);
+				rebuildOrgSchdFromFlexiSchd(schdData);
 			}
 
-			finScheduleData = procChangeRate(finScheduleData, baseRate, splRate, mrgRate, calculatedRate, isCalSchedule,
-					false);
+			schdData = procChangeRate(schdData, baseRate, splRate, mrgRate, calculatedRate, isCalSchedule, false);
 
-			finScheduleData.getFinanceMain().setRateChange(false);
+			schdData.getFinanceMain().setRateChange(false);
 			if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_STEPPOS)) {
-				finScheduleData = maintainPOSStep(finScheduleData);
+				schdData = maintainPOSStep(schdData);
 			}
 
 			fm.setScheduleMaintained(true);
-			setFinScheduleData(finScheduleData);
+			setFinScheduleData(schdData);
 
 		}
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal amount, String schdMethod) {
-		logger.debug("Entering");
+		logger.debug(Literal.ENTERING);
+
+		setExpectedEndBal(finScheduleData);
 
 		FinanceMain fm = finScheduleData.getFinanceMain();
 		fm.setRecalIdx(-1);
@@ -521,7 +528,7 @@ public class ScheduleCalculator {
 			setFinScheduleData(procRebuildSchd(finScheduleData, schdMethod));
 		}
 
-		logger.debug("Leaving");
+		logger.debug(Literal.LEAVING);
 	}
 
 	private ScheduleCalculator(String method, FinScheduleData finScheduleData, BigDecimal amount,
@@ -2418,6 +2425,7 @@ public class ScheduleCalculator {
 			}
 		}
 
+		setExpectedEndBal(finScheduleData);
 		finScheduleData = calSchdProcess(finScheduleData, false, false);
 		fm = finScheduleData.getFinanceMain();
 		fm.setScheduleMaintained(true);
@@ -7239,55 +7247,60 @@ public class ScheduleCalculator {
 			if (iLoop == 0) {
 				newEmiGuess = curEmiGuess.add(curEmiDiff);
 				continue;
-			} else {
+			}
 
-				if ((curEmiDiff.subtract(prvEmiDiff)).compareTo(BigDecimal.ZERO) == 0) {
-					BigDecimal recalFromDateEMI = BigDecimal.ZERO;
-					BigDecimal recalToDateEMI = BigDecimal.ZERO;
-					int iTerms = 0;
-					for (int iFsd = 0; iFsd < schdData.getFinanceScheduleDetails().size(); iFsd++) {
-						FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(iFsd);
+			if ((curEmiDiff.subtract(prvEmiDiff)).compareTo(BigDecimal.ZERO) == 0) {
+				BigDecimal recalFromDateEMI = BigDecimal.ZERO;
+				BigDecimal recalToDateEMI = BigDecimal.ZERO;
+				int iTerms = 0;
+				for (int iFsd = 0; iFsd < schdData.getFinanceScheduleDetails().size(); iFsd++) {
+					FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(iFsd);
 
-						if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalFromDate()) < 0) {
-							continue;
-						}
-						if (!curSchd.isRepayOnSchDate()) {
-							continue;
-						}
-						iTerms = iTerms + 1;
-						if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalFromDate()) == 0) {
-							if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
-								recalFromDateEMI = curSchd.getRepayAmount();
-							} else if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
-									|| StringUtils.equals(fm.getScheduleMethod(),
-											CalculationConstants.SCHMTHD_PRI_PFT)) {
-								recalFromDateEMI = curSchd.getPrincipalSchd();
-							}
-						}
-						if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalToDate()) == 0) {
-							if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
-								recalToDateEMI = curSchd.getRepayAmount();
-							} else if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
-									|| StringUtils.equals(fm.getScheduleMethod(),
-											CalculationConstants.SCHMTHD_PRI_PFT)) {
-								recalToDateEMI = curSchd.getPrincipalSchd();
-							}
-							break;
+					if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalFromDate()) < 0) {
+						continue;
+					}
+					if (!curSchd.isRepayOnSchDate()) {
+						continue;
+					}
+					iTerms = iTerms + 1;
+					if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalFromDate()) == 0) {
+						if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+							recalFromDateEMI = curSchd.getRepayAmount();
+						} else if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+								|| StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
+							recalFromDateEMI = curSchd.getPrincipalSchd();
 						}
 					}
-
-					BigDecimal diffEMI = recalFromDateEMI.subtract(recalToDateEMI).abs();
-					diffEMI = diffEMI.divide(BigDecimal.valueOf(iTerms), 0, RoundingMode.HALF_DOWN);
-					if (diffEMI.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
+					if (DateUtil.compare(curSchd.getSchDate(), fm.getRecalToDate()) == 0) {
+						if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+							recalToDateEMI = curSchd.getRepayAmount();
+						} else if (StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI)
+								|| StringUtils.equals(fm.getScheduleMethod(), CalculationConstants.SCHMTHD_PRI_PFT)) {
+							recalToDateEMI = curSchd.getPrincipalSchd();
+						}
 						break;
 					}
 				}
 
-				newEmiGuess = prvEmiDiff.negate().multiply((curEmiGuess.subtract(prvEmiGuess)));
-				newEmiGuess = newEmiGuess.divide((curEmiDiff.subtract(prvEmiDiff)), 0, RoundingMode.HALF_DOWN);
-				newEmiGuess = newEmiGuess.add(prvEmiGuess);
-				newEmiGuess = CalculationUtil.roundAmount(newEmiGuess, fm.getCalRoundingMode(), fm.getRoundingTarget());
+				BigDecimal diffEMI = recalFromDateEMI.subtract(recalToDateEMI).abs();
+				diffEMI = diffEMI.divide(BigDecimal.valueOf(iTerms), 0, RoundingMode.HALF_DOWN);
+				if (diffEMI.compareTo(BigDecimal.valueOf(fm.getRoundingTarget())) <= 0) {
+					break;
+				}
 			}
+
+			if (curEmiDiff.compareTo(prvEmiDiff) == 0) {
+				logger.info(
+						"Current EMI Difference {} & Previous EMI difference {}, both are same, System is terminating the calculations.",
+						curEmiDiff, prvEmiDiff);
+
+				break;
+			}
+
+			newEmiGuess = prvEmiDiff.negate().multiply((curEmiGuess.subtract(prvEmiGuess)));
+			newEmiGuess = newEmiGuess.divide((curEmiDiff.subtract(prvEmiDiff)), 0, RoundingMode.HALF_DOWN);
+			newEmiGuess = newEmiGuess.add(prvEmiGuess);
+			newEmiGuess = CalculationUtil.roundAmount(newEmiGuess, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
 			// STEP6: Check if new EMI is Final guess
 			if (curEmiDiff.compareTo(BigDecimal.ZERO) == 0 || newEmiGuess.compareTo(curEmiGuess) == 0
@@ -7311,7 +7324,7 @@ public class ScheduleCalculator {
 		Date recalToDate = fm.getRecalToDate();
 		int calTerms = 0;
 		int sdSize = schedules.size();
-
+		BigDecimal newEndinBalance = BigDecimal.ZERO;
 		if (AdvanceType.hasAdvEMI(fm.getAdvType()) && AdvanceStage.hasFrontEnd(fm.getAdvStage())) {
 			sdSize = sdSize - fm.getAdvTerms();
 		}
@@ -7322,6 +7335,11 @@ public class ScheduleCalculator {
 			if (DateUtil.compare(curSchd.getSchDate(), recalFromDate) < 0) {
 				continue;
 			}
+
+			if (DateUtil.compare(curSchd.getSchDate(), recalToDate) == 0) {
+				newEndinBalance = curSchd.getClosingBalance();
+			}
+
 			if (DateUtil.compare(curSchd.getSchDate(), recalToDate) > 0) {
 				break;
 			}
@@ -7338,10 +7356,13 @@ public class ScheduleCalculator {
 		}
 
 		BigDecimal bgCalTerms = BigDecimal.valueOf(calTerms);
-
 		BigDecimal totEmiGuess = instructions.get(idxRI).getRepayAmount();
 		totEmiGuess = totEmiGuess.multiply(bgCalTerms);
-		BigDecimal avgEMIDiff = totEmiGuess.subtract(emiSum);
+
+		emiSum = emiSum.add(newEndinBalance).subtract(fm.getExpectedEndBal());
+
+		BigDecimal avgEMIDiff = totEmiGuess.subtract(emiSum).abs();
+
 		avgEMIDiff = avgEMIDiff.divide(bgCalTerms, 0, RoundingMode.HALF_DOWN);
 		avgEMIDiff = CalculationUtil.roundAmount(avgEMIDiff, fm.getCalRoundingMode(), fm.getRoundingTarget());
 
@@ -7904,7 +7925,7 @@ public class ScheduleCalculator {
 
 		int calTerms = 0;
 		BigDecimal startBalance = BigDecimal.ZERO;
-		BigDecimal endBalance = BigDecimal.ZERO;
+		BigDecimal endBalance = fm.getExpectedEndBal();
 		BigDecimal rate = BigDecimal.ZERO;
 
 		for (int iFsd = 0; iFsd < schedules.size(); iFsd++) {
@@ -7932,7 +7953,7 @@ public class ScheduleCalculator {
 				}
 
 			}
-			endBalance = curSchd.getClosingBalance();
+			// endBalance = curSchd.getClosingBalance();
 			calTerms = calTerms + 1;
 		}
 
@@ -10139,6 +10160,40 @@ public class ScheduleCalculator {
 		}
 
 		return null;
+	}
+
+	private void setExpectedEndBal(FinScheduleData fsData) {
+		fsData.getFinanceMain().setExpectedEndBal(BigDecimal.ZERO);
+
+		String recalType = fsData.getFinanceMain().getRecalType();
+		if (StringUtils.isBlank(recalType)) {
+			return;
+		}
+
+		if (!CalculationConstants.RPYCHG_CURPRD.equals(recalType)
+				&& !CalculationConstants.RPYCHG_TILLDATE.equals(recalType)) {
+			return;
+		}
+
+		Date recalToDate = fsData.getFinanceMain().getRecalToDate();
+
+		List<FinanceScheduleDetail> fsdList = fsData.getFinanceScheduleDetails();
+		for (int iFsd = 0; iFsd < fsdList.size(); iFsd++) {
+			FinanceScheduleDetail fsd = fsdList.get(iFsd);
+			if (DateUtil.compare(fsd.getSchDate(), recalToDate) < 0) {
+				continue;
+			}
+
+			if (DateUtil.compare(fsd.getSchDate(), recalToDate) == 0) {
+				fsData.getFinanceMain().setExpectedEndBal(fsd.getClosingBalance());
+			} else {
+				FinanceScheduleDetail prvSchd = fsdList.get(iFsd - 1);
+				fsData.getFinanceMain().setExpectedEndBal(prvSchd.getClosingBalance());
+			}
+
+			break;
+		}
+
 	}
 
 	// ******************************************************//
