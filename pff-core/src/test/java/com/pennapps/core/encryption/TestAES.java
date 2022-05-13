@@ -1,14 +1,17 @@
 package com.pennapps.core.encryption;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import com.pennanttech.pennapps.core.util.AES;
 
 public class TestAES {
-	public static void main(String[] args) {
-		byte[] plainText = "V V S N MURTHY".getBytes();
-		
-		byte[] encryptedText = AES.encrypt(plainText);
-		System.out.println(new String(encryptedText));
-		
-		System.out.println(AES.decrypt(encryptedText));
+	@Test
+	public void compare() {
+		String input = "V V S N MURTHY";
+		byte[] plainText = input.getBytes();
+		byte[] encrypted = AES.encrypt(plainText);
+
+		Assert.assertEquals(AES.decrypt(encrypted), input, "COMP");
 	}
 }
