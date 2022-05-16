@@ -479,11 +479,13 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 
 	public void onFulfill$custEmpName(Event event) {
 		long employerId = 0;
+		String empName = null;
 
 		Object dataObject = custEmpName.getObject();
 		if (dataObject instanceof EmployerDetail) {
 			EmployerDetail details = (EmployerDetail) dataObject;
 			employerId = details.getEmployerId();
+			empName = details.getEmpName();
 			this.custEmpName.setAttribute("EmpId", details.getId());
 		} else if (dataObject instanceof String || dataObject == null) {
 			this.custEmpName.setValue("");
@@ -500,6 +502,10 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 		} else {
 			this.companyName.setValue("");
 			this.companyName.setReadonly(true);
+		}
+
+		if ("other".equals(empName)) {
+			this.companyName.setReadonly(false);
 		}
 	}
 
