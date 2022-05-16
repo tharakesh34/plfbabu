@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.security.auth.login.AccountNotFoundException;
 
@@ -5583,7 +5584,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		fm.setUserDetails(userDetails);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
 			return fd;
 		}
@@ -5593,7 +5593,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		doBasicValidations(schdData);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
 			return fd;
 		}
@@ -5603,7 +5602,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		validateReceiptData(rd);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
 			return fd;
 		}
@@ -5611,7 +5609,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		validateAllocations(rd);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
 			return fd;
 		}
 
@@ -5633,7 +5630,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		doReceiptValidations(rd);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
 			return fd;
 		}
@@ -5643,7 +5639,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
 			validateEarlySettle(rd);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				setReturnStatus(fd);
 				logger.info(Literal.LEAVING);
 				return fd;
 			}
@@ -5680,7 +5675,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
 			return fd;
 		}
@@ -5690,11 +5684,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return fd;
 		}
 
-		fd = doReceiptTransaction(rd, eventCode);
-
-		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			setReturnStatus(fd);
-		}
+		doReceiptTransaction(rd, eventCode);
 
 		logger.info(Literal.LEAVING);
 		return fd;
@@ -5764,18 +5754,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		schdData.setFinanceMain(fm);
 	}
 
-	public void setReturnStatus(FinanceDetail fd) {
-		WSReturnStatus returnStatus = new WSReturnStatus();
-		ErrorDetail error = fd.getFinScheduleData().getErrorDetails().get(0);
-		returnStatus.setReturnCode(error.getCode());
-		returnStatus.setReturnText(error.getError());
-
-		doEmptyResponseObject(fd);
-
-		fd.setReturnStatus(returnStatus);
-	}
-
-	private FinanceDetail doReceiptTransaction(FinReceiptData rd, String eventCode) {
+	private void doReceiptTransaction(FinReceiptData rd, String eventCode) {
 		logger.info(Literal.ENTERING);
 		FinanceDetail fd = rd.getFinanceDetail();
 
@@ -5787,7 +5766,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (CollectionUtils.isNotEmpty(errors)) {
 			logger.info(Literal.LEAVING);
-			return fd;
+			return;
 		}
 
 		if ("Inquiry".equals(fsi.getReqType()) && fsi.getToDate() == null) {
@@ -5817,27 +5796,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (CollectionUtils.isNotEmpty(errors)) {
 			logger.info(Literal.LEAVING);
-			return fd;
+			return;
 		}
 
 		try {
-			fd = doProcessReceipt(rd, receiptPurpose);
+			doProcessReceipt(rd, receiptPurpose);
 		} catch (AppException e) {
 			logger.error(Literal.EXCEPTION, e);
 			setError(schdData, "9998", e.getMessage());
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
-			return fd;
+			return;
 		} catch (Exception e) {
 			logger.error(Literal.EXCEPTION, e);
 			setError(schdData, "9999", "Unable to process request.");
-			setReturnStatus(fd);
 			logger.info(Literal.LEAVING);
-			return fd;
+			return;
 		}
 
 		logger.info(Literal.LEAVING);
-		return fd;
 	}
 
 	public void setReceiptModeStatus(FinReceiptHeader rch) {
@@ -5978,7 +5954,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 	}
 
-	private FinanceDetail doProcessReceipt(FinReceiptData rd, ReceiptPurpose receiptPurpose) throws Exception {
+	private void doProcessReceipt(FinReceiptData rd, ReceiptPurpose receiptPurpose) throws Exception {
 		logger.info(Literal.ENTERING);
 
 		FinanceDetail fd = rd.getFinanceDetail();
@@ -6038,14 +6014,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd.setBuildProcess("R");
 
 			receiptCalculator.initiateReceipt(rd, false);
-
+			prepareFinanceSummary(fd);
 			FinanceSummary summary = fd.getFinScheduleData().getFinanceSummary();
 			summary.setFinODDetail(rch.getFinODDetails());
 			fd.getFinScheduleData().setFinODDetails(rch.getFinODDetails());
 
 			logger.info(Literal.LEAVING);
-
-			return fd;
+			return;
 		}
 
 		if ((requestSource == RequestSource.UPLOAD || requestSource == RequestSource.API) && dedupCheckRequest(rch)) {
@@ -6058,7 +6033,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				setError(schdData, "0000", "Success");
 
 				logger.info(Literal.LEAVING);
-				return fd;
+				return;
 			}
 		}
 
@@ -6096,16 +6071,16 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		initiateReceipt(rd, receiptPurpose);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-			return fd;
+			return;
 		}
 
 		if (fsi.isNonStp()) {
 			auditHeader = doApprove(auditHeader);
 		} else {
-			FinanceDetail fdTemp = setWorkflowDetails(rd);
-			if (fdTemp.getReturnStatus().getReturnCode() != null) {
+			setWorkflowDetails(rd);
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				logger.info(Literal.LEAVING);
-				return fdTemp;
+				return;
 			}
 
 			auditHeader = saveOrUpdate(auditHeader);
@@ -6114,7 +6089,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		if (CollectionUtils.isNotEmpty(auditHeader.getErrorMessage())) {
 			ErrorDetail error = auditHeader.getErrorMessage().get(0);
 			setError(schdData, error.getCode(), error.getError());
-			return fd;
+			return;
 		}
 
 		List<FinServiceInstruction> finServInstList = new ArrayList<>();
@@ -6153,10 +6128,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		logger.info(Literal.LEAVING);
-		return fd;
 	}
 
-	private FinanceDetail setWorkflowDetails(FinReceiptData rd) {
+	private void setWorkflowDetails(FinReceiptData rd) {
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinReceiptHeader rch = rd.getReceiptHeader();
 
@@ -6177,10 +6151,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				finEvent, PennantConstants.WORFLOW_MODULE_FINANCE);
 
 		if (financeWorkFlow == null) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(getWSReturnStatus("90339", ""));
-			return response;
+			setError(schdData, "90339", "");
+			return;
 		}
 
 		workFlowDetails = WorkFlowUtil.getDetailsByType(financeWorkFlow.getWorkFlowType());
@@ -6199,19 +6171,15 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		}
 
 		if (!roleNotFound) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(getWSReturnStatus("API004", roleCode));
-			return response;
+			setError(schdData, "API004", roleCode);
+			return;
 		}
 
 		String paymentMode = fsi.getPaymentMode();
 		if ("CASH".equals(paymentMode) && !"RECEIPT_MAKER".equals(roleCode)
 				&& !"REALIZATION_APPROVER".equals(roleCode)) {
-			FinanceDetail response = new FinanceDetail();
-			doEmptyResponseObject(response);
-			response.setReturnStatus(getWSReturnStatus("30556", "CASH PAYMENT MODE"));
-			return response;
+			setError(schdData, "30556", "CASH PAYMENT MODE");
+			return;
 		}
 
 		WorkflowEngine workFlow = new WorkflowEngine(workFlowDetails.getWorkFlowXml());
@@ -6238,8 +6206,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setWorkflowId(workFlowId);
 		rch.setRecordStatus(PennantConstants.RCD_STATUS_SAVED);
 		rch.setFinType(fm.getFinType());
-
-		return fd;
 	}
 
 	private void doEmptyResponseObject(FinanceDetail fd) {
@@ -7085,6 +7051,193 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	@Override
 	public Date getLastWaiverDate(long finID, Date appDate, Date receiptDate) {
 		return feeWaiverHeaderDAO.getLastWaiverDate(finID, appDate, receiptDate);
+	}
+	
+	private void prepareFinanceSummary(FinanceDetail fd) {
+		logger.debug(Literal.ENTERING);
+
+		FinanceSummary summary = new FinanceSummary();
+
+		FinScheduleData schdData = fd.getFinScheduleData();
+		FinanceMain fm = schdData.getFinanceMain();
+
+		summary.setEffectiveRateOfReturn(fm.getEffectiveRateOfReturn());
+		summary.setTotalGracePft(fm.getTotalGracePft());
+		summary.setTotalGraceCpz(fm.getTotalGraceCpz());
+		summary.setTotalGrossGrcPft(fm.getTotalGrossGrcPft());
+		summary.setLoanTenor(DateUtil.getMonthsBetween(fm.getFinStartDate(), fm.getMaturityDate()));
+
+		if (FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())) {
+			summary.setSanctionAmt(fm.getFinAssetValue());
+		}
+
+		if (StringUtils.isBlank(fm.getClosingStatus())) {
+			summary.setFinStatus("A");
+		} else {
+			summary.setFinStatus(fm.getClosingStatus());
+		}
+
+		summary.setAdvPaymentAmount(BigDecimal.ZERO);
+		summary.setFeeChargeAmt(getTotalFeeAmount(fd));
+		fm.setRecordType(PennantConstants.RECORD_TYPE_NEW);
+
+		resetScheduleDetail(schdData);
+
+		prepareProfitDetailSummary(summary, schdData);
+		prepareDisbursementSummary(summary, schdData);
+		prepareODSummary(fd, summary);
+
+		schdData.setFinanceSummary(summary);
+
+		logger.debug(Literal.LEAVING);
+	}
+
+	private BigDecimal getTotalFeeAmount(FinanceDetail fd) {
+		List<FinFeeDetail> fees = fd.getFinScheduleData().getFinFeeDetailList();
+
+		BigDecimal totFeeAmount = BigDecimal.ZERO;
+		for (FinFeeDetail fee : fees) {
+			String schdMthd = fee.getFeeScheduleMethod();
+			if (CalculationConstants.REMFEE_PART_OF_DISBURSE.equals(schdMthd)
+					|| CalculationConstants.REMFEE_PART_OF_SALE_PRICE.equals(schdMthd)) {
+				totFeeAmount = totFeeAmount.add(fee.getActualAmount().subtract(fee.getWaivedAmount()));
+			} else {
+				totFeeAmount = totFeeAmount.add(fee.getPaidAmount());
+			}
+		}
+
+		return totFeeAmount;
+	}
+
+	public void resetScheduleDetail(FinScheduleData schdData) {
+		if (schdData == null || schdData.getFinanceScheduleDetails() == null) {
+			return;
+		}
+
+		int size = schdData.getFinanceScheduleDetails().size();
+
+		FinanceMain fm = schdData.getFinanceMain();
+		if (!FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())) {
+			for (int i = size - 1; i >= 0; i--) {
+				FinanceScheduleDetail curSchd = schdData.getFinanceScheduleDetails().get(i);
+				boolean closingBalance = curSchd.getClosingBalance().compareTo(BigDecimal.ZERO) == 0;
+
+				if (closingBalance && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) > 0) {
+					fm.setMaturityDate(curSchd.getSchDate());
+					break;
+				} else if (closingBalance && curSchd.getRepayAmount().compareTo(BigDecimal.ZERO) == 0) {
+					schdData.getFinanceScheduleDetails().remove(i);
+				}
+			}
+		}
+	}
+
+	private void prepareProfitDetailSummary(FinanceSummary summary, FinScheduleData schdData) {
+		FinanceMain fm = schdData.getFinanceMain();
+
+		FinanceProfitDetail fpd = new FinanceProfitDetail();
+
+		fpd = accrualService.calProfitDetails(fm, schdData.getFinanceScheduleDetails(), fpd, fm.getAppDate());
+		fm.setRepayProfitRate(fpd.getCurReducingRate());
+
+		summary.setTotalCpz(fpd.getTotalPftCpz());
+		summary.setTotalProfit(fpd.getTotalPftSchd());
+		summary.setTotalRepayAmt(fpd.getTotalpriSchd().add(fpd.getTotalPftSchd()));
+		summary.setNumberOfTerms(fpd.getNOInst());
+		summary.setMaturityDate(fpd.getMaturityDate());
+		summary.setFirstEmiAmount(fpd.getFirstRepayAmt());
+		summary.setNextSchDate(fpd.getNSchdDate());
+		summary.setNextRepayAmount(fpd.getNSchdPri().add(fpd.getNSchdPft()));
+		summary.setFutureInst(fpd.getFutureInst());
+		summary.setFutureTenor(DateUtil.getMonthsBetween(fpd.getNSchdDate(), fpd.getMaturityDate()));
+		summary.setFirstInstDate(fpd.getFirstRepayDate());
+		summary.setSchdPriPaid(fpd.getTotalPriPaid());
+		summary.setSchdPftPaid(fpd.getTotalPftPaid());
+		summary.setPaidTotal(fpd.getTotalPriPaid().add(fpd.getTotalPftPaid()));
+		summary.setFinLastRepayDate(fpd.getPrvRpySchDate());
+		summary.setOutStandPrincipal(fpd.getTotalPriBal());
+		summary.setOutStandProfit(fpd.getTotalPftBal());
+		summary.setTotalOutStanding(fpd.getTotalPriBal().add(fpd.getTotalPftBal()));
+		summary.setPrincipal(fpd.getTdSchdPriBal());
+		summary.setFuturePrincipal(fpd.getTotalPriBal().subtract(fpd.getTdSchdPriBal()));
+		summary.setInterest(fpd.getTdSchdPftBal());
+
+		if (FinanceConstants.PRODUCT_ODFACILITY.equals(fm.getProductCategory())) {
+			summary.setUtilizedAmt(fpd.getTotalPriBal());
+			summary.setAvailableAmt(summary.getSanctionAmt().subtract(summary.getUtilizedAmt()));
+		}
+	}
+
+	private void prepareDisbursementSummary(FinanceSummary summary, FinScheduleData schdData) {
+		FinanceMain fm = schdData.getFinanceMain();
+
+		List<FinanceDisbursement> disbList = schdData.getDisbursementDetails();
+
+		if (CollectionUtils.isEmpty(disbList)) {
+			return;
+		}
+
+		Date disbDate = disbList.get(0).getDisbDate();
+		if (disbList.size() == 1) {
+			summary.setFirstDisbDate(disbDate);
+			summary.setLastDisbDate(disbDate);
+		} else {
+			disbList = disbList.stream().sorted((b1, b2) -> Integer.compare(b1.getDisbSeq(), b2.getDisbSeq()))
+					.collect(Collectors.toList());
+
+			summary.setFirstDisbDate(disbDate);
+			summary.setLastDisbDate(disbList.get(disbList.size() - 1).getDisbDate());
+		}
+
+		BigDecimal totDisbAmt = BigDecimal.ZERO;
+		for (FinanceDisbursement finDisb : disbList) {
+			totDisbAmt = totDisbAmt.add(finDisb.getDisbAmount());
+		}
+
+		BigDecimal assetValue = fm.getFinAssetValue() == null ? BigDecimal.ZERO : fm.getFinAssetValue();
+		if (assetValue.compareTo(BigDecimal.ZERO) == 0 || assetValue.compareTo(totDisbAmt) == 0) {
+			summary.setFullyDisb(true);
+		}
+	}
+
+	private void prepareODSummary(FinanceDetail fd, FinanceSummary summary) {
+		FinScheduleData schdData = fd.getFinScheduleData();
+
+		List<FinODDetails> odDetails = schdData.getFinODDetails();
+
+		if (odDetails == null) {
+			return;
+		}
+
+		BigDecimal overDuePrincipal = BigDecimal.ZERO;
+		BigDecimal overDueProfit = BigDecimal.ZERO;
+		BigDecimal overDueCharges = BigDecimal.ZERO;
+		BigDecimal latePayPftBal = BigDecimal.ZERO;
+		BigDecimal totPenaltyBal = BigDecimal.ZERO;
+		int odInst = 0;
+
+		for (FinODDetails odDetail : odDetails) {
+			overDuePrincipal = overDuePrincipal.add(odDetail.getFinCurODPri());
+			overDueProfit = overDueProfit.add(odDetail.getFinCurODPft());
+			overDueCharges = overDueCharges.add(odDetail.getTotPenaltyAmt());
+			totPenaltyBal = totPenaltyBal.add(odDetail.getTotPenaltyBal());
+			latePayPftBal = latePayPftBal.add(odDetail.getLPIBal());
+			if (odDetail.getFinCurODAmt().compareTo(BigDecimal.ZERO) > 0) {
+				odInst++;
+			}
+		}
+
+		summary.setOverDuePrincipal(overDuePrincipal);
+		summary.setOverDueProfit(overDueProfit);
+		summary.setOverDueCharges(overDueCharges);
+		summary.setTotalOverDue(overDuePrincipal.add(overDueProfit));
+		summary.setDueCharges(totPenaltyBal.add(latePayPftBal));
+		summary.setTotalOverDueIncCharges(summary.getTotalOverDue().add(summary.getDueCharges()));
+		summary.setFinODDetail(odDetails);
+		summary.setOverDueInstlments(odInst);
+		summary.setOverDueAmount(summary.getTotalOverDueIncCharges());
+
+		schdData.setFinODDetails(odDetails);
 	}
 
 	private void doPostHookValidation(AuditHeader auditHeader) {
