@@ -58,7 +58,7 @@
 		<description>Append CSRF token for each page</description>
 		<listener-class>com.pennanttech.pennapps.web.security.CsrfTokenAppender</listener-class>
 	</listener>
-		
+
 	<!-- Listener to get zk statsitc data -->
 	<!-- ====================================================== -->
 	<listener>
@@ -75,7 +75,9 @@
 		<listener-class>com.pennapps.web.observability.listener.EventListener
 		</listener-class>
 	</listener>
-	
+	<listener>
+		<listener-class>org.zkoss.support.patch.AuUploadWebAppInit</listener-class>
+	</listener>
 
 	<!-- ====================================================== -->
 	<!-- Besides that, you have to specify what -->
@@ -275,4 +277,8 @@
 	</device-config>
 	<!-- <system-config> <id-generator-class>com.pennant.util.ComponentIdGenerator </id-generator-class> </system-config> <library-property> 
 		<name>org.zkoss.zk.ui.uuidRecycle.disabled </name> <value>true</value> </library-property> -->
+
+	<system-config>
+		<file-item-factory-class>org.zkoss.support.patch.UploadFixItemFactory</file-item-factory-class>
+	</system-config>
 </zk>
