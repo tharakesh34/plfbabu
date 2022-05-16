@@ -647,7 +647,6 @@ public class ReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 			lc = new Listcell(finReceiptHeader.getReference());
 			lc.setParent(item);
 
-			// TODO CH -Should show Excess/Payable FeeType/BOUNCE
 			lc = new Listcell(finReceiptHeader.getPaymentType());
 			lc.setParent(item);
 

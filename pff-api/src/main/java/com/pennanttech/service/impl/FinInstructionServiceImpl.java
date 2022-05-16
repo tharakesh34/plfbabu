@@ -1336,6 +1336,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		fsi.setReceiptPurpose(receiptPurpose.code());
 
 		fd = receiptService.receiptTransaction(fsi);
+		schdData = fd.getFinScheduleData();
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 			setReturnStatus(fd);

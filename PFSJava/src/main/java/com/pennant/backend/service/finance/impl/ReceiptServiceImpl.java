@@ -3252,6 +3252,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	private void checkInprocessReceipts(FinScheduleData schdData, ReceiptPurpose receiptPurpose) {
+		if (!(receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE)) {
+			return;
+		}
+
 		ErrorDetail error = checkInprocessReceipts(schdData.getFinID(), receiptPurpose);
 
 		if (error != null) {
@@ -3305,6 +3309,11 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		RequestSource requestSource = fsi.getRequestSource();
 		String instructstatus = fsi.getStatus();
 
+		if (String.valueOf(fsi.getAmount()).length() > 18) {
+			setError(schdData, "92021", "Amount exceeded the maximum range.");
+			return;
+		}
+
 		ReceiptPurpose receiptPurpose = fsi.getReceiptPurpose();
 
 		String receiptMode = fsi.getPaymentMode();
@@ -3357,7 +3366,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return;
 		}
 
-		if (ReceiptMode.CHEQUE.equals(fsi.getPaymentMode())) {
+		if (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode)) {
 			validateCheque(schdData, fsi.getReceiptDetail().getFavourNumber());
 		}
 
@@ -4409,6 +4418,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptDetail rd = fsi.getReceiptDetail();
 		if (rd != null) {
 			rd.setReceivedDate(DateUtil.getDatePart(rd.getReceivedDate()));
+			fsi.setBankCode(rd.getBankCode());
 		}
 
 		ReceiptPurpose receiptPurpose = fsi.getReceiptPurpose();
@@ -5297,6 +5307,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setExcldTdsCal(fsi.isExcldTdsCal());
 		rch.setReceivedFrom(fsi.getReceivedFrom());
 		rch.setPanNumber(fsi.getPanNumber());
+		rch.setBankCode(fsi.getBankCode());
 
 		rd.setBuildProcess("I");
 		rd.setReceiptHeader(rch);
@@ -5363,7 +5374,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rch.setDepositDate(rcd.getDepositDate());
 
 		if (ReceiptMode.CHEQUE.equals(paymentType) || ReceiptMode.DD.equals(paymentType)) {
-			rch.setTransactionRef(rcd.getChequeAcNo());
+			rch.setTransactionRef(rcd.getFavourNumber());
 		} else {
 			rch.setTransactionRef(rcd.getTransactionRef());
 		}

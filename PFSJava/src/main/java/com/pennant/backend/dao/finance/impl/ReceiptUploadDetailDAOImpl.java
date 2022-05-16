@@ -73,7 +73,7 @@ public class ReceiptUploadDetailDAOImpl extends SequenceDao<ReceiptUploadDetail>
 			sql.append(" and ProcessingStatus = ?");
 		}
 
-		logger.debug(Literal.SQL, sql.toString());
+		logger.debug(Literal.SQL + sql.toString());
 
 		List<ReceiptUploadDetail> uploads = this.jdbcOperations.query(sql.toString(), ps -> {
 			int index = 1;

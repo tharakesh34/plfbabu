@@ -62,7 +62,7 @@ public class ReceiptMode {
 	}
 
 	public static String getSubReceiptMode(String receiptMode) {
-		return ONLINE.equals(getReceiptMode(receiptMode)) ? "" : receiptMode;
+		return ONLINE.equals(getReceiptMode(receiptMode)) ? receiptMode : "";
 	}
 
 	public static String getReceiptChannel(String receiptMode) {

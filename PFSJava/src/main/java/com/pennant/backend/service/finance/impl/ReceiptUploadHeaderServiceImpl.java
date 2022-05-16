@@ -96,11 +96,11 @@ import com.pennant.backend.util.ReceiptUploadConstants.ReceiptDetailStatus;
 import com.pennant.backend.util.RepayConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennanttech.interfacebajaj.fileextract.service.ExcelFileImport;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
-import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.core.RequestSource;
 import com.pennanttech.pff.core.TableType;
 import com.pennanttech.pff.receipt.upload.ReceiptUploadThreadProcess;
@@ -701,17 +701,18 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 
 			ReceiptUploadDetail rud = prepareReceiptUploadDetail(rchRow, headerId, appDate);
 
-			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
-				errorMsg = "Favour Number more than 6 digits";
-				setErrorToRUD(rud, "90405", errorMsg);
-			}
-
 			Long finID = getFinID(rud.getReference(), ruh.getEntityCode(), TableType.MAIN_TAB);
 
 			if (finID == null) {
 				setErrorToRUD(rud, "RU0004", rud.getReference());
+				continue;
 			} else {
 				rud.setFinID(finID);
+			}
+
+			if (rud.getFavourNumber() != null && rud.getFavourNumber().length() > 6) {
+				errorMsg = "Favour Number more than 6 digits";
+				setErrorToRUD(rud, "90405", errorMsg);
 			}
 
 			if (dedupCheck) {
@@ -810,8 +811,7 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 		}
 
 		if (rudList == null || rudList.isEmpty()) {
-			MessageUtil.showError(Labels.getLabel("label_ReceiptUpload_File_NoData"));
-			return true;
+			throw new AppException(Labels.getLabel("label_ReceiptUpload_File_NoData"));
 		}
 
 		logger.info("File Data Validation and ReceiptUploadDetails Preparation was completed...");
