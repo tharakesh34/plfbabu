@@ -21,6 +21,8 @@ import org.zkoss.zk.ui.WebApps;
 import org.zkoss.zk.ui.util.CharsetFinder;
 import org.zkoss.zk.ui.util.Configuration;
 
+import com.pennanttech.pennapps.core.resource.Literal;
+
 /**
  * The file item factory that monitors the progress of uploading.
  */
@@ -72,7 +74,7 @@ public class UploadFixItemFactory implements org.zkoss.zk.ui.sys.DiskFileItemFac
 							charset = chfd.getCharset(ctype,
 									fi.isInMemory() ? new ByteArrayInputStream(fi.get()) : fi.getInputStream());
 						} catch (IOException e) {
-							e.printStackTrace();
+							log.error(Literal.EXCEPTION, e);
 						}
 					if (charset == null)
 						charset = conf.getUploadCharset();
@@ -81,7 +83,7 @@ public class UploadFixItemFactory implements org.zkoss.zk.ui.sys.DiskFileItemFac
 					return fi.isInMemory() ? new AMedia(name, null, ctype, fi.getString(charset))
 							: new ReaderMedia(name, null, ctype, fi, charset);
 				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
+					log.error(Literal.EXCEPTION, e);
 				}
 			}
 		}
