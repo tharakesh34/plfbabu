@@ -834,6 +834,7 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 			} else if ("REJFIN".equals(value)) {
 				rejectedList = true;
 				this.row_RadioGroup.setVisible(false);
+				this.searchObj.clearFilters();
 				this.searchObj.addTabelName("RejectFinanceMain_View");
 			}
 		}

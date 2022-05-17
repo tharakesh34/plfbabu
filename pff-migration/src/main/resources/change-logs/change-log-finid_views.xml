@@ -17435,7 +17435,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.56_pre" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.56.1_pre" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_view');
@@ -17443,7 +17443,7 @@
 		</sql>
 	</changeSet>
 
-	<changeSet id="ST#556.56" author="Mounika.M">
+	<changeSet id="ST#556.56.1" author="Mounika.M">
 		<createView viewName="FINANCEENQUIRY_HIERARCHY_VIEW" replaceIfExists="true">
 			<![CDATA[
 				SELECT T1.FINID,
@@ -17490,7 +17490,8 @@
 				    T4.BRANCHDESC LOVDESCFINBRANCHNAME,
 				    T5.CUSTTYPECTG,
 				    COALESCE(T9.NOINST, 0) NOINST,
-				    H.REPORTING_TO
+				    H.REPORTING_TO,
+				    T1.RECORDSTATUS
 				FROM FINANCEMAIN T1
      			JOIN USER_HIERARCHY H ON T1.BUSINESSVERTICAL = COALESCE(H.BUSINESS_VERTICAL, T1.BUSINESSVERTICAL) AND T1.FINCATEGORY = COALESCE(H.PRODUCT, T1.FINCATEGORY) AND T1.FINTYPE = COALESCE(H.FIN_TYPE, T1.FINTYPE) AND T1.FINBRANCH = COALESCE(H.BRANCH, T1.FINBRANCH)
      			JOIN RMTFINANCETYPES T2 ON T1.FINTYPE = T2.FINTYPE
@@ -17502,7 +17503,7 @@
 		</createView>
 	</changeSet>
 
-	<changeSet id="ST#556.56_post" author="Mounika.M" dbms="postgresql">
+	<changeSet id="ST#556.56.1_post" author="Mounika.M" dbms="postgresql">
 		<sql>
 			<![CDATA[
 				select deps_restore_dependencies ('plf', 'financeenquiry_hierarchy_view');
