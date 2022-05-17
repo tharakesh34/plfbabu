@@ -55,7 +55,6 @@ public class EodJobListener implements JobExecutionListener {
 
 	private EODConfigDAO eODConfigDAO;
 	private BatchProcessStatusDAO bpsDAO;
-	private EODConfig eodConfig;
 	private EventPropertiesService eventPropertiesService;
 
 	public EodJobListener() {
@@ -87,7 +86,7 @@ public class EodJobListener implements JobExecutionListener {
 			return;
 		}
 
-		eodConfig = eodList.get(0);
+		EODConfig eodConfig = eodList.get(0);
 		updateExecutionStatus(jobExecution, eodDate);
 
 		if (!eodConfig.isSendEmailRequired()) {
