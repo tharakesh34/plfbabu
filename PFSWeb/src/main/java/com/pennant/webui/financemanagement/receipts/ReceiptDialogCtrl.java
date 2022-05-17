@@ -3696,7 +3696,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			allocationWaived.setReadonly(!getUserWorkspace().isAllowed("ReceiptDialog_WaivedAmount"));
 		}
 
-		if (StringUtils.equals(allocate.getTaxType(), FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE)) {
+		if (FinanceConstants.FEE_TAXCOMPONENT_EXCLUSIVE.equals(allocate.getTaxType())) {
 			String[] arg = new String[1];
 			arg[0] = PennantApplicationUtil.amountFormate(allocate.getDueAmount(), formatter);
 			allocationWaived.setTooltiptext(Labels.getLabel("label_WaivedAllocation_More_than_receipt", arg));

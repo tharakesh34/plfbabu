@@ -1340,6 +1340,11 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 			setReturnStatus(fd);
+		} else {
+			WSReturnStatus returnStatus = new WSReturnStatus();
+			returnStatus.setReturnCode(APIConstants.RES_SUCCESS_CODE);
+			returnStatus.setReturnText(APIConstants.RES_SUCCESS_DESC);
+			fd.setReturnStatus(returnStatus);
 		}
 
 		return fd;

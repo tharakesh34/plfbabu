@@ -1073,7 +1073,7 @@ public class ReceiptCalculator {
 
 				TaxAmountSplit taxSplit = calculateGST(rd.getFinanceDetail(), taxType, taxableAmount);
 
-				if (StringUtils.equals(taxType, FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE)) {
+				if (FinanceConstants.FEE_TAXCOMPONENT_INCLUSIVE.equals(taxType)) {
 					taxableAmount = taxableAmount.subtract(taxSplit.gettGST());
 				}
 
