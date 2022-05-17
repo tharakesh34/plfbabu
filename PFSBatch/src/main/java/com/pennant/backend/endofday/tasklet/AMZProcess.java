@@ -106,7 +106,7 @@ public class AMZProcess implements Tasklet {
 		List<ProjectedAmortization> incomeAMZList = null;
 
 		List<Exception> exceptions = new ArrayList<Exception>(1);
-		AmortizationQueuing amortizationQueuing = new AmortizationQueuing();
+		AmortizationQueuing amortizationQueuing;
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		JdbcCursorItemReader<AmortizationQueuing> cursorItemReader = new JdbcCursorItemReader<AmortizationQueuing>();
 
@@ -188,9 +188,6 @@ public class AMZProcess implements Tasklet {
 				exceptions.add(e);
 				updateFailed(finID);
 			}
-
-			// clear data after the process
-			amortizationQueuing = null;
 		}
 		cursorItemReader.close();
 
@@ -198,7 +195,6 @@ public class AMZProcess implements Tasklet {
 			logger.warn(exceptions.get(0).getMessage());
 			Exception exception = exceptions.get(0);
 			exceptions.clear();
-			exceptions = null;
 			throw exception;
 		}
 

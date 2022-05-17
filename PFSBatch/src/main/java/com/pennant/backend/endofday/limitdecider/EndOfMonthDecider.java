@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  EndOfMonthDecider.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : EndOfMonthDecider.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.endofday.limitdecider;
@@ -87,7 +78,6 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 	public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
 		logger.debug(Literal.ENTERING);
 		Object object = jobExecution.getExecutionContext().get(EODUtil.EVENT_PROPERTIES);
-		EventProperties eventProperties = new EventProperties();
 
 		Date valueDate = null;
 		int amzPostingEvent = 0;
@@ -98,7 +88,7 @@ public class EndOfMonthDecider implements JobExecutionDecider {
 			amzPostingEvent = SysParamUtil.getValueAsInt(AccountConstants.AMZ_POSTING_EVENT);
 			eomOnEOD = SysParamUtil.isAllowed(SMTParameterConstants.EOM_ON_EOD);
 		} else {
-			eventProperties = (EventProperties) object;
+			EventProperties eventProperties = (EventProperties) object;
 			valueDate = eventProperties.getAppValueDate();
 			amzPostingEvent = eventProperties.getAmzPostingEvent();
 			eomOnEOD = eventProperties.isEomOnEOD();

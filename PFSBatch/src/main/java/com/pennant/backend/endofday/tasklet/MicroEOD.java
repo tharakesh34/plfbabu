@@ -1,44 +1,35 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  MicroEOD.java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : MicroEOD.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- * 04-05-2018		Vinay					 0.2         As discuss with Satya Naga Prasad  *
- * 														 Micro EOD code changed             *  
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * 04-05-2018 Vinay 0.2 As discuss with Satya Naga Prasad * Micro EOD code changed * * * * *
+ * * *
  ********************************************************************************************
  */
 package com.pennant.backend.endofday.tasklet;
@@ -139,7 +130,7 @@ public class MicroEOD implements Tasklet {
 			ps.setInt(2, EodConstants.PROGRESS_WAIT);
 		});
 
-		// Get the Rules 
+		// Get the Rules
 		String provisionRule = null;
 		String amzMethodRule = null;
 
@@ -181,12 +172,12 @@ public class MicroEOD implements Tasklet {
 			logger.info("Customer Provision {}", customerProvision);
 		}
 
-		//to hold the exception till the process completed for all the customers
+		// to hold the exception till the process completed for all the customers
 		List<Exception> exceptions = new ArrayList<Exception>(1);
 
 		cursorItemReader.open(context.getStepContext().getStepExecution().getExecutionContext());
 
-		CustomerQueuing customerQueuing = new CustomerQueuing();
+		CustomerQueuing customerQueuing;
 		while ((customerQueuing = cursorItemReader.read()) != null) {
 			status.setProcessedRecords(processedCount++);
 			BatchUtil.setExecutionStatus(context, status);
@@ -234,7 +225,6 @@ public class MicroEOD implements Tasklet {
 				logger.info("Micro EOD completed on {} for the customer ID {}", sysDate, custId);
 
 				custEODEvent.getFinEODEvents().clear();
-				custEODEvent = null;
 
 			} catch (Exception e) {
 				status.setFailedRecords(failedCount++);
@@ -245,8 +235,6 @@ public class MicroEOD implements Tasklet {
 				logger.info("Micro EOD failed on {} for the customer ID {}", sysDate, custId);
 				updateFailed(custId);
 			}
-
-			customerQueuing = null;
 		}
 
 		cursorItemReader.close();
@@ -254,7 +242,6 @@ public class MicroEOD implements Tasklet {
 		if (!exceptions.isEmpty()) {
 			Exception exception = new Exception(exceptions.get(0));
 			exceptions.clear();
-			exceptions = null;
 			sysDate = DateUtil.getSysDate(DateFormat.FULL_DATE_TIME);
 			logger.info("Micro EOD failed on {}\n, Application Date {}\n Thread ID {}", sysDate, strAppDate, threadId);
 			throw exception;
@@ -281,9 +268,9 @@ public class MicroEOD implements Tasklet {
 		CustomerQueuing customerQueuing = new CustomerQueuing();
 		customerQueuing.setCustID(custId);
 		customerQueuing.setEndTime(DateUtility.getSysDate());
-		//reset thread for reallocation
+		// reset thread for reallocation
 		customerQueuing.setThreadId(0);
-		//reset to "wait", to re run only failed cases.
+		// reset to "wait", to re run only failed cases.
 		customerQueuing.setProgress(EodConstants.PROGRESS_WAIT);
 		customerQueuingDAO.updateFailed(customerQueuing);
 	}
