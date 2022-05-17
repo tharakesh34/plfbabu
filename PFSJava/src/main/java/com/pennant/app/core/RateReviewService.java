@@ -227,8 +227,7 @@ public class RateReviewService extends ServiceHelper {
 		// Rate Changes applied for Finance Schedule Data
 		schdData = ScheduleCalculator.refreshRates(schdData);
 
-		FinanceProfitDetail newProfitDetail = new FinanceProfitDetail();
-		newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
+		FinanceProfitDetail newProfitDetail = accrualService.calProfitDetails(fm, schedules, profitDetail, valueDate);
 		// Amount Codes Details Preparation
 		AEEvent aeEvent = AEAmounts.procCalAEAmounts(fm, profitDetail, schedules, AccountingEvent.RATCHG, valueDate,
 				valueDate);
@@ -312,7 +311,7 @@ public class RateReviewService extends ServiceHelper {
 	private Date findRecalFromDate(FinEODEvent finEODEvent, int iEvtFrom) {
 
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
-		FinanceScheduleDetail schd = new FinanceScheduleDetail();
+		FinanceScheduleDetail schd;
 
 		int sdSize = schedules.size();
 		Date recalFromDate = null;

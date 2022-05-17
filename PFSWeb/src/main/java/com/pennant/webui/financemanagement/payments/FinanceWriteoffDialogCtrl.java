@@ -240,13 +240,12 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 			if (arguments.containsKey("financeWriteoffHeader")) {
 				setFinanceWriteoffHeader((FinanceWriteoffHeader) arguments.get("financeWriteoffHeader"));
-				FinanceMain befImage = new FinanceMain();
 				setFinanceDetail(getFinanceWriteoffHeader().getFinanceDetail());
 				financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
 				financeWriteoff = getFinanceWriteoffHeader().getFinanceWriteoff();
 
 				Cloner cloner = new Cloner();
-				befImage = cloner.deepClone(financeMain);
+				FinanceMain befImage = cloner.deepClone(financeMain);
 				getFinanceWriteoffHeader().getFinanceDetail().getFinScheduleData().getFinanceMain()
 						.setBefImage(befImage);
 
@@ -1013,9 +1012,8 @@ public class FinanceWriteoffDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 			return;
 		}
 
-		FinanceWriteoffHeader aFinanceWriteoffHeader = new FinanceWriteoffHeader();
 		Cloner cloner = new Cloner();
-		aFinanceWriteoffHeader = cloner.deepClone(getFinanceWriteoffHeader());
+		FinanceWriteoffHeader aFinanceWriteoffHeader = cloner.deepClone(getFinanceWriteoffHeader());
 		FinanceDetail aFinanceDetail = aFinanceWriteoffHeader.getFinanceDetail();
 
 		aFinanceDetail.getFinScheduleData().setFinanceScheduleDetails(
