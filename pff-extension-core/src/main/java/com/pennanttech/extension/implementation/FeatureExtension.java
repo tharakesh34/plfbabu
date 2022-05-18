@@ -96,8 +96,6 @@ public class FeatureExtension implements IFeatureExtension {
 		customConstants.put("DISB_REQ_RES_FILE_GEN_MODE", true);
 
 		customConstants.put("ALLOW_ESCROW_MODE", false);
-
-		customConstants.put("HOLD_DISB_INST_POST", true);
 	}
 
 	@Override
