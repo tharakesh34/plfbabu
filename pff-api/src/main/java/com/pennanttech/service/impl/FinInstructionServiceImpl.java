@@ -3019,7 +3019,7 @@ public class FinInstructionServiceImpl extends ExtendedTestClass
 		covenantAgreement.setCovenantAggrementList(cvntAggrement);
 
 		String agreement = "LOD.docx";
-		String path = PathUtil.getPath(PathUtil.CovenantStatusReport);
+		String path = PathUtil.getPath(PathUtil.COVENANT_STATUS_REPORT);
 
 		byte[] doc = agreementGeneration.getCovenantAgreementGeneration(covenantAgreement, path, agreement);
 

@@ -600,7 +600,7 @@ public class InterestCertificateGenerationDialogCtrl extends GFCBaseCtrl<Interes
 					}
 				}
 
-				String templatePath = PathUtil.getPath(PathUtil.CovenantStatusReport);
+				String templatePath = PathUtil.getPath(PathUtil.COVENANT_STATUS_REPORT);
 				TemplateEngine engine = null;
 				try {
 					engine = new TemplateEngine(templatePath, templatePath);

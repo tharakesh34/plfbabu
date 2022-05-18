@@ -85,7 +85,7 @@ public class AMZProcess implements Tasklet {
 	private ProjectedAmortizationDAO projectedAmortizationDAO;
 	private ProjectedAmortizationService projectedAmortizationService;
 
-	private static final String financeSQL = "Select FinID, CustID from AmortizationQueuing  Where ThreadID = ? and Progress = ?";
+	private static final String FINANCE_SQL = "Select FinID, CustID from AmortizationQueuing  Where ThreadID = ? and Progress = ?";
 
 	@Override
 	public RepeatStatus execute(StepContribution arg0, ChunkContext context) throws Exception {
@@ -110,7 +110,7 @@ public class AMZProcess implements Tasklet {
 		DefaultTransactionDefinition txDef = new DefaultTransactionDefinition();
 		JdbcCursorItemReader<AmortizationQueuing> cursorItemReader = new JdbcCursorItemReader<AmortizationQueuing>();
 
-		cursorItemReader.setSql(financeSQL);
+		cursorItemReader.setSql(FINANCE_SQL);
 		cursorItemReader.setDataSource(dataSource);
 		cursorItemReader.setRowMapper(new RowMapper<AmortizationQueuing>() {
 

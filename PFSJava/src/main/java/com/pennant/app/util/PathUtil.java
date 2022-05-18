@@ -65,7 +65,7 @@ public class PathUtil {
 	public static final String FINANCE_AGREEMENTS = "Agreements";
 	public static final String FINANCE_INTERESTCERTIFICATE = "Agreements/InterestCertificate";
 	public static final String FINANCE_LOANCLOSURE = "Agreements/LoanClosureLetter";
-	public static final String CovenantStatusReport = "Agreements/LOD";
+	public static final String COVENANT_STATUS_REPORT = "Agreements/LOD";
 
 	// Report Detail paths
 	public static final String REPORTS_CHECKS = "Reports/Checks";
@@ -94,7 +94,7 @@ public class PathUtil {
 	public static final String CUSTOMER_FAQ = "/Customer360/FAQ.pdf";
 	public static final String CUSTOMER_BALIC_CLAIM_FORM_FOR_CRITICAL_ILLNESS = "/Customer360/BAGIC Claim for Critical Illness.pdf";
 	public static final String CUSTOMER_DEALTH_CLAIM_FORM = "/Customer360/Death Claim Form.pdf";
-	public static final String CUSTOMER_FGI_CI_Claim_Form = "/Customer360/FGL Death Cliam Form.pdf";
+	public static final String CUSTOMER_FGI_CI_CLAIM_FORM = "/Customer360/FGL Death Cliam Form.pdf";
 	public static final String CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM = "/Customer360/FGL Claim form.pdf";
 	public static final String CUSTOMER_HDFC_CLAIM_FORM = "/Customer360/HDFC Claim form.pdf";
 	public static final String CUSTOMER_CHECKLIST_FOR_DEALTHCRITICAL_FORM = "/Customer360/Checklist for Death - Critical Illness.xls";
@@ -102,8 +102,8 @@ public class PathUtil {
 	public static final String FILE_UPLOADS_PATH = "FileUploads";
 
 	public static final String REPORTS_FINANCIALS_SPREADSHEETS = "Financials/SpreadSheets"; // For Credit Review Details
-	public static final String ExtLiability = "ExtLiability";
-	public static final String LoanReport = "LoanReport";
+	public static final String EXT_LIABILITY = "ExtLiability";
+	public static final String LOAN_REPORT = "LoanReport";
 
 	/**
 	 * Method for Set Environment Variable to Root Path Location

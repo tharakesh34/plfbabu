@@ -984,7 +984,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		FileInputStream file = null;
 		Workbook workbook = null;
 		Sheet sheet = null;
-		String path = PathUtil.getPath(PathUtil.ExtLiability) + "/ExternalLiabilities.xlsx";
+		String path = PathUtil.getPath(PathUtil.EXT_LIABILITY) + "/ExternalLiabilities.xlsx";
 		try {
 			// Reading the template
 			file = new FileInputStream(new File(path));

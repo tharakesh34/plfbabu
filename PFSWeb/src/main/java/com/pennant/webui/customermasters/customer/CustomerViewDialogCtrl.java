@@ -3067,7 +3067,7 @@ public class CustomerViewDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			path = PathUtil.getPath(PathUtil.CUSTOMER_DEALTH_CLAIM_FORM);
 			break;
 		case "FGICF":
-			path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_Claim_Form);
+			path = PathUtil.getPath(PathUtil.CUSTOMER_FGI_CI_CLAIM_FORM);
 			break;
 		case "FGNCF":
 			path = PathUtil.getPath(PathUtil.CUSTOMER_FUTURE_GENERAL_NEW_CLAIM_FORM);
