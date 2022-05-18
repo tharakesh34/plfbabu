@@ -51,6 +51,8 @@ public class ReceiptMode {
 		case PAYU:
 		case PAYTM:
 		case PORTAL:
+		case ESCROW:
+		case DIGITAL:
 			return ONLINE;
 		case RESTRUCT:
 			return RESTRUCT;
@@ -163,6 +165,7 @@ public class ReceiptMode {
 			subReceiptModes.add(PAYU);
 			subReceiptModes.add(PAYTM);
 			subReceiptModes.add(PORTAL);
+			subReceiptModes.add(DIGITAL);
 		}
 
 		return subReceiptModes;
