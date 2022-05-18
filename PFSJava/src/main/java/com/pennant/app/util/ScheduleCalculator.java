@@ -7361,7 +7361,7 @@ public class ScheduleCalculator {
 
 		emiSum = emiSum.add(newEndinBalance).subtract(fm.getExpectedEndBal());
 
-		BigDecimal avgEMIDiff = totEmiGuess.subtract(emiSum).abs();
+		BigDecimal avgEMIDiff = totEmiGuess.subtract(emiSum);
 
 		avgEMIDiff = avgEMIDiff.divide(bgCalTerms, 0, RoundingMode.HALF_DOWN);
 		avgEMIDiff = CalculationUtil.roundAmount(avgEMIDiff, fm.getCalRoundingMode(), fm.getRoundingTarget());

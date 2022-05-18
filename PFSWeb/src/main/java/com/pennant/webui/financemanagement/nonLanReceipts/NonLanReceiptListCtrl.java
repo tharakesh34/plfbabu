@@ -1,6 +1,7 @@
 package com.pennant.webui.financemanagement.nonLanReceipts;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
 import com.pennant.ExtendedCombobox;
+import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.WorkFlowDetails;
@@ -234,6 +236,11 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
+
+				if (filter.getProperty().equals("receiptAmount")) {
+					filter.setValue(CurrencyUtil.unFormat((BigDecimal) filter.getValue(), 2));
+				}
+
 				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
 						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
 					Filter[] filters = new Filter[2];
