@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: DialyDownLoadsReportCtrl.java                               * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-11-2012   														*
- *                                                                  						*
- * Modified Date    :  16-11-2012   															*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DialyDownLoadsReportCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-11-2012 * *
+ * Modified Date : 16-11-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *  16-11-2012      Pennant	                 0.1                                        * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.reports;
@@ -110,7 +92,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 	protected Panelchildren pc_StatusList;
 	protected Vbox vbox_statusList;
 
-	//Unused Fields
+	// Unused Fields
 	protected Datebox fromDate;
 	protected Datebox toDate;
 
@@ -317,7 +299,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 			file = new File(reportSrc);
 			if (file.exists()) {
 
-				//use swap virtualizer by default
+				// use swap virtualizer by default
 				int maxSize = 250;
 				JRSwapFile swapFile = new JRSwapFile(System.getProperty("java.io.tmpdir"), 250, 250);
 				JRAbstractLRUVirtualizer virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile, true);
@@ -327,9 +309,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 					if (bulkReportProc) {
 						JasperPrint jasperPrint = JasperFillManager.fillReport(reportSrc, reportArgumentsMap, con);
 
-						String outputFileName = zipFolderPath + "\\" + reportName + ".pdf";
+						String outputFileName = zipFolderPath + File.separator + reportName + ".pdf";
 						File outputFile = new File(outputFileName);
-						//If File Already exist in Folder Delete it for Regeneration with New Data
+						// If File Already exist in Folder Delete it for Regeneration with New Data
 						if (outputFile.exists()) {
 							outputFile.delete();
 						}
@@ -347,10 +329,11 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 
 					ByteArrayOutputStream outputStream = null;
 
-					//String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
+					// String printfileName = JasperFillManager.fillReportToFile(reportSrc, reportArgumentsMap, con);
 					JasperPrint jasperPrint = JasperFillManager.fillReport(reportSrc, reportArgumentsMap, con);
 
-					//set virtualizer read only to optimize performance. must be set after print object has been generated
+					// set virtualizer read only to optimize performance. must be set after print object has been
+					// generated
 					if (virtualizer != null) {
 						virtualizer.setReadOnly(true);
 					}
@@ -358,7 +341,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 					JRXlsExporter excelExporter = new JRXlsExporter();
 					excelExporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
 
-					//excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName); 
+					// excelExporter.setParameter(JRExporterParameter.INPUT_FILE_NAME,printfileName);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
 					excelExporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.TRUE);
@@ -369,9 +352,9 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 
 					if (bulkReportProc) {
 
-						String outputFileName = zipFolderPath + "\\" + reportName + ".xls";
+						String outputFileName = zipFolderPath + File.separator + reportName + ".xls";
 						File outputFile = new File(outputFileName);
-						//If File Already exist in Folder Delete it for Regeneration with New Data
+						// If File Already exist in Folder Delete it for Regeneration with New Data
 						if (outputFile.exists()) {
 							outputFile.delete();
 						}
@@ -383,7 +366,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 					}
 					excelExporter.exportReport();
 
-					//Excel Download to local System Directly
+					// Excel Download to local System Directly
 					if (!bulkReportProc) {
 						Filedownload.save(
 								new AMedia(reportName, "xls", "application/vnd.ms-excel", outputStream.toByteArray()));
@@ -475,7 +458,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 			appendChild("Download fail ", reportName, false);
 			logger.error("Exception: ", e);
 		} finally {
-			//Delete File after Creating ZIP
+			// Delete File after Creating ZIP
 			deleteFile(new File(fileLocation));
 			directory = null;
 			folder = null;
@@ -559,7 +542,7 @@ public class DailyDownloadReportCtrl extends GFCBaseListCtrl<ReportsMonthEndConf
 						deleteFile(file);
 					}
 				} else {
-					//if file, then delete it
+					// if file, then delete it
 					file.delete();
 				}
 			}
