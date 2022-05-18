@@ -554,7 +554,7 @@ public class ExtendedFieldRenderDialogCtrl extends GFCBaseCtrl<ExtendedFieldHead
 								decimal = new BigDecimal(String.valueOf(fieldValue));
 							}
 
-							cellValue = PennantApplicationUtil.amountFormate(decimal, fieldDetail.getFieldPrec());
+							cellValue = String.valueOf(decimal);
 
 							lc.setStyle("text-align:right");
 							break;
