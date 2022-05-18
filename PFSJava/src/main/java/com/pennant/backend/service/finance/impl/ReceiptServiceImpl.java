@@ -5616,16 +5616,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			setReceiptDataForEarlySettlement(rd);
 		}
 
-		if (requestSource != RequestSource.UPLOAD) {
-			setFinanceData(rd);
-		} else {
-			rd.getFinanceDetail().getFinScheduleData().setFinPftDeatil(profitDetailsDAO.getFinProfitDetailsById(finID));
-
-			CustomerDetails customerDetails = new CustomerDetails();
-			customerDetails.setCustomer(customerDAO.getCustomerByID(fm.getCustID()));
-			customerDetails.setCustID(fm.getCustID());
-			fd.setCustomerDetails(customerDetails);
-		}
+		setFinanceData(rd);
 
 		doReceiptValidations(rd);
 
@@ -6251,7 +6242,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		rd.setDueAdjusted(true);
 		List<ReceiptAllocationDetail> allocations = rch.getAllocations();
 
-		if (receiptPurpose == ReceiptPurpose.EARLYSETTLE && !checkDueAdjusted(allocations, rd)) {
+		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && !checkDueAdjusted(allocations, rd)) {
 			adjustToExcess(rd);
 			rd.setDueAdjusted(false);
 		}
