@@ -321,4 +321,13 @@
 		</sql>
 	</changeSet>
 	
+	<changeSet id="TK#11864" author="vijaya.a">
+        <sql>
+           <![CDATA[
+                ALTER TABLE PROMOTIONS DROP CONSTRAINT uk_promotions;
+                ALTER TABLE PROMOTIONS_TEMP DROP CONSTRAINT uk_promotions_temp;
+            ]]>
+        </sql>
+    </changeSet>
+	
 </databaseChangeLog>
