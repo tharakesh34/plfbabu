@@ -368,7 +368,8 @@ public class RateChangeUploadProcess extends BasicDao<RateChangeUpload> {
 		error = "Entity Code is Invalid.";
 		for (RateChangeUpload rcu : header.getRateChangeUpload()) {
 			StringBuilder remarks = new StringBuilder(StringUtils.trimToEmpty(rcu.getUploadStatusRemarks()));
-			if (!StringUtils.equals(rcu.getFinanceMain().getEntityCode(), header.getEntityCode())) {
+			if (rcu.getFinanceMain() != null
+					&& !StringUtils.equals(rcu.getFinanceMain().getEntityCode(), header.getEntityCode())) {
 				if (remarks.length() > 0) {
 					remarks.append(",");
 				}

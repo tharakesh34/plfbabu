@@ -608,12 +608,12 @@ public class ScheduleCalculator {
 		// BPI change
 		// finScheduleData.getFinanceMain().setBpiResetReq(true);
 
-		if (StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, method)) {
+		if (CalculationConstants.EARLYPAY_ADJMUR.equals(method)) {
 			method = CalculationConstants.RPYCHG_ADJMDT;
 		}
 
 		// Developer Finance, Original Ending Balance Not Changed from Receipts
-		if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
+		if (CalculationConstants.EARLYPAY_PRIHLD.equals(method)) {
 			fm.setResetOrgBal(false);
 		}
 
@@ -628,7 +628,7 @@ public class ScheduleCalculator {
 			FinanceScheduleDetail curSchd = finScheduleData.getFinanceScheduleDetails()
 					.get(finScheduleData.getFinanceMain().getIndexMisc());
 
-			if (StringUtils.equals(curSchd.getSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)) {
+			if (CalculationConstants.SCHMTHD_EQUAL.equals(curSchd.getSchdMethod())) {
 				earlyPayAmt = earlyPayAmt.add(curSchd.getPrincipalSchd()).add(curSchd.getProfitSchd());
 			} else {
 				earlyPayAmt = earlyPayAmt.add(curSchd.getPrincipalSchd());
@@ -636,10 +636,10 @@ public class ScheduleCalculator {
 
 		}
 
-		if (fm.isSanBsdSchdle() && StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
+		if (fm.isSanBsdSchdle() && CalculationConstants.EARLYPAY_PRIHLD.equals(method)) {
 			setRepayForSanctionBasedPriHld(finScheduleData, earlyPayAmt);
-		} else if (StringUtils.equals(CalculationConstants.RPYCHG_ADJMDT, method)
-				|| StringUtils.equals(CalculationConstants.EARLYPAY_ADMPFI, method)) {
+		} else if (CalculationConstants.RPYCHG_ADJMDT.equals(method)
+				|| CalculationConstants.EARLYPAY_ADMPFI.equals(method)) {
 
 			fm.setRecalToDate(fm.getMaturityDate());
 			final BigDecimal totalDesiredProfit = fm.getTotalGrossPft();
@@ -665,7 +665,7 @@ public class ScheduleCalculator {
 				fm.setMaturityDate(eventToDate);
 			}
 
-			if (StringUtils.equals(CalculationConstants.EARLYPAY_ADMPFI, method)) {
+			if (CalculationConstants.EARLYPAY_ADMPFI.equals(method)) {
 
 				fm.setEventToDate(eventToDate);
 				// Apply Effective Rate for ReSchedule to get Desired Profit
@@ -674,8 +674,8 @@ public class ScheduleCalculator {
 				finScheduleData.setFinanceScheduleDetails(sortSchdDetails(finScheduleData.getFinanceScheduleDetails()));
 			}
 
-		} else if (StringUtils.equals(CalculationConstants.EARLYPAY_RECRPY, method)
-				|| (!fm.isAlwFlexi() && StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method))) {
+		} else if (CalculationConstants.EARLYPAY_RECRPY.equals(method)
+				|| (!fm.isAlwFlexi() && CalculationConstants.EARLYPAY_PRIHLD.equals(method))) {
 
 			fm.setRecalToDate(fm.getMaturityDate());
 
@@ -694,7 +694,7 @@ public class ScheduleCalculator {
 
 			// finScheduleData.getFinanceScheduleDetails().addAll(tempSchdlDetailList);
 
-		} else if (StringUtils.equals(CalculationConstants.EARLYPAY_RECPFI, method)) {
+		} else if (CalculationConstants.EARLYPAY_RECPFI.equals(method)) {
 
 			final BigDecimal totalDesiredProfit = fm.getTotalGrossPft();
 
@@ -704,7 +704,7 @@ public class ScheduleCalculator {
 			finScheduleData = calEffectiveRate(finScheduleData, CalculationConstants.SCH_SPECIFIER_TOTAL,
 					totalDesiredProfit, null, fm.getMaturityDate(), false);
 
-		} else if (StringUtils.equals(CalculationConstants.RPYCHG_STEPPOS, method)) {
+		} else if (CalculationConstants.RPYCHG_STEPPOS.equals(method)) {
 
 			fm.setRecalToDate(fm.getMaturityDate());
 
@@ -722,7 +722,7 @@ public class ScheduleCalculator {
 
 			// PV : Principal Holiday, Removed here and Included in
 			// EARLYPAY_RECRPY
-		} else if (StringUtils.equals(CalculationConstants.EARLYPAY_PRIHLD, method)) {
+		} else if (CalculationConstants.EARLYPAY_PRIHLD.equals(method)) {
 
 			/*
 			 * if (!finMain.isAlwFlexi()) { finScheduleData = principalHoliday(finScheduleData, earlyPayAmt); }
@@ -734,7 +734,7 @@ public class ScheduleCalculator {
 		finScheduleData.getFinanceMain().setBpiResetReq(false);
 		setFinanceTotals(finScheduleData);
 
-		if (StringUtils.equals(CalculationConstants.EARLYPAY_ADJMUR, receivedRecalMethod)) {
+		if (CalculationConstants.EARLYPAY_ADJMUR.equals(receivedRecalMethod)) {
 			method = receivedRecalMethod;
 		}
 
@@ -1731,7 +1731,7 @@ public class ScheduleCalculator {
 		sd.setActRate(prvSchd.getActRate());
 		sd.setCalculatedRate(prvSchd.getCalculatedRate());
 		sd.setSchdMethod(prvSchd.getSchdMethod());
-		if (StringUtils.equals(prvSchd.getBpiOrHoliday(), FinanceConstants.FLAG_BPI)) {
+		if (FinanceConstants.FLAG_BPI.equals(prvSchd.getBpiOrHoliday())) {
 			if (DateUtility.compare(newSchdDate, fm.getGrcPeriodEndDate()) <= 0) {
 				sd.setPftDaysBasis(fm.getGrcProfitDaysBasis());
 			} else {
@@ -1790,9 +1790,9 @@ public class ScheduleCalculator {
 		Date recalFromDate = fm.getRecalFromDate();
 
 		// Repay Change with in Grace Period
-		if (StringUtils.equals(reqSchdMethod, CalculationConstants.SCHMTHD_PFTCAP)) {
+		if (CalculationConstants.SCHMTHD_PFTCAP.equals(reqSchdMethod)) {
 
-			if (StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_ADJMDT)) {
+			if (CalculationConstants.RPYCHG_ADJMDT.equals(fm.getRecalType())) {
 				schdMethod = repayInstructions.get(risize - 1).getRepaySchdMethod();
 			} else {
 				for (int i = 0; i < risize; i++) {
@@ -5682,13 +5682,13 @@ public class ScheduleCalculator {
 		BigDecimal closingBal = prvSchd.getClosingBalance().add(curSchd.getDisbAmount()).add(curSchd.getFeeChargeAmt())
 				.subtract(curSchd.getDownPaymentAmount());
 
-		if (repayRateBasis.equals(CalculationConstants.RATE_BASIS_D)) {
+		if (CalculationConstants.RATE_BASIS_D.equals(repayRateBasis)) {
 			closingBal = closingBal.subtract(curSchd.getRepayAmount());
 		} else {
 			closingBal = closingBal.subtract(curSchd.getPrincipalSchd());
 		}
 
-		if (!cpzPOSIntact || StringUtils.equals(curSchd.getBpiOrHoliday(), FinanceConstants.FLAG_MORTEMIHOLIDAY)) {
+		if (!cpzPOSIntact || FinanceConstants.FLAG_MORTEMIHOLIDAY.equals(curSchd.getBpiOrHoliday())) {
 			closingBal = closingBal.add(curSchd.getCpzAmount());
 		}
 		return closingBal;
@@ -7679,12 +7679,12 @@ public class ScheduleCalculator {
 
 				if (curSchd.isRepayOnSchDate()) {
 					recalSchdMethod = curSchd.getSchdMethod();
-					if (StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PFT)
-							|| StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PFTCPZ)) {
+					if (CalculationConstants.SCHMTHD_PFT.equals(recalSchdMethod)
+							|| CalculationConstants.SCHMTHD_PFTCPZ.equals(recalSchdMethod)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
-					if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
-						if (StringUtils.equals(recalSchdMethod, CalculationConstants.SCHMTHD_PRI)) {
+					if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
+						if (CalculationConstants.SCHMTHD_PRI.equals(recalSchdMethod)) {
 							recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 						}
 					}
@@ -7692,7 +7692,7 @@ public class ScheduleCalculator {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 				} else {
 					recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
-					if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
+					if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 						recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 					}
 				}
@@ -7731,9 +7731,9 @@ public class ScheduleCalculator {
 			finScheduleData = addSchdRcd(finScheduleData, eventFromDate, prvIndex, true);
 			openSchd = schedules.get(prvIndex + 1);
 
-			if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYRPY)) {
+			if (FinServiceEvent.EARLYRPY.equals(receiptPurpose)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI;
-			} else if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
+			} else if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 				recalSchdMethod = CalculationConstants.SCHMTHD_PRI_PFT;
 			}
 
@@ -7744,7 +7744,7 @@ public class ScheduleCalculator {
 			}
 		}
 
-		if (StringUtils.equals(receiptPurpose, FinServiceEvent.EARLYSETTLE)) {
+		if (FinServiceEvent.EARLYSETTLE.equals(receiptPurpose)) {
 			openSchd.setPftOnSchDate(true);
 		} else {
 			openSchd.setPartialPaidAmt(openSchd.getPartialPaidAmt().add(amount));
@@ -7783,8 +7783,8 @@ public class ScheduleCalculator {
 			finScheduleData = getSchdMethod(finScheduleData);
 		}
 		if (finScheduleData.getFinanceType() != null && finScheduleData.getFinanceType().isSchdOnPMTCal()
-				&& StringUtils.equals(fm.getRecalSchdMethod(), CalculationConstants.SCHMTHD_EQUAL)
-				&& StringUtils.equals(fm.getRecalType(), CalculationConstants.RPYCHG_TILLMDT)) {
+				&& CalculationConstants.SCHMTHD_EQUAL.equals(fm.getRecalSchdMethod())
+				&& CalculationConstants.RPYCHG_TILLMDT.equals(fm.getRecalType())) {
 			fm.setEqualRepay(false);
 		} else {
 			fm.setEqualRepay(true);
@@ -7799,15 +7799,15 @@ public class ScheduleCalculator {
 
 		// Force set recaltype to TILLMDT. TILLDATE comparision will happen with
 		// closing balance, which gives wrong results for last record.
-		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLDATE)) {
+		if (CalculationConstants.RPYCHG_TILLDATE.equals(recaltype)) {
 			if (fm.getRecalToDate().equals(finSchdDetails.get(sdSize - 1).getSchDate())) {
 				recaltype = CalculationConstants.RPYCHG_TILLMDT;
 				fm.setRecalType(recaltype);
 			}
 		}
 
-		if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADDTERM)
-				|| StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADDRECAL)) {
+		if (CalculationConstants.RPYCHG_ADDTERM.equals(recaltype)
+				|| CalculationConstants.RPYCHG_ADDRECAL.equals(recaltype)) {
 
 			finScheduleData = procAddTerm(finScheduleData, adjTerms, false);
 
@@ -7821,30 +7821,30 @@ public class ScheduleCalculator {
 			sdSize = finSchdDetails.size();
 
 			// Set Recalculation Start and End Dates
-			if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADDRECAL)) {
+			if (CalculationConstants.RPYCHG_ADDRECAL.equals(recaltype)) {
 				fm.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
 			} else {
 
 				fm.setRecalFromDate(finSchdDetails.get(iOldMDT + 1).getSchDate());
 				fm.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
-				if (StringUtils.equals(recalPurpose, PROC_UNPLANEMIH)) {
+				if (PROC_UNPLANEMIH.equals(recalPurpose)) {
 					resetRpyInstruction = false;
 				}
 			}
 
-		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT)) {
+		} else if (CalculationConstants.RPYCHG_ADJMDT.equals(recaltype)) {
 			fm.setCalculateRepay(false);
 			fm.setEqualRepay(false);
 
 			fm.setRecalFromDate(fm.getMaturityDate());
 			fm.setRecalToDate(fm.getMaturityDate());
 
-		} else if (StringUtils.equals(recaltype, CalculationConstants.RPYCHG_TILLMDT)) {
+		} else if (CalculationConstants.RPYCHG_TILLMDT.equals(recaltype)) {
 			fm.setRecalToDate(finSchdDetails.get(sdSize - 1).getSchDate());
 		}
 
 		// Set maturity Date schedule amount
-		if (StringUtils.equals(CalculationConstants.SCHMTHD_EQUAL, finSchdDetails.get(sdSize - 1).getSchdMethod())) {
+		if (CalculationConstants.SCHMTHD_EQUAL.equals(finSchdDetails.get(sdSize - 1).getSchdMethod())) {
 			fm.setCompareExpectedResult(finSchdDetails.get(sdSize - 1).getRepayAmount());
 		} else {
 			fm.setCompareExpectedResult(finSchdDetails.get(sdSize - 1).getPrincipalSchd());
@@ -7858,14 +7858,14 @@ public class ScheduleCalculator {
 		finScheduleData = getSchdMethod(finScheduleData);
 		schdMethod = fm.getRecalSchdMethod();
 
-		if (StringUtils.equals(schdMethod, CalculationConstants.SCHMTHD_PFT)) {
+		if (CalculationConstants.SCHMTHD_PFT.equals(schdMethod)) {
 			resetRpyInstruction = false;
 		}
 
 		// Set Repayment Instructions as 1 for recalFromDate to recalToDate.
 		// Reason for not setting zero is to avoid deleting future zero
 		// instructions
-		if (!StringUtils.equals(recaltype, CalculationConstants.RPYCHG_ADJMDT) && resetRpyInstruction) {
+		if (!CalculationConstants.RPYCHG_ADJMDT.equals(recaltype) && resetRpyInstruction) {
 			finScheduleData = setRpyInstructDetails(finScheduleData, recalFromDate, recalToDate, BigDecimal.ONE,
 					schdMethod);
 		} else if (!resetRpyInstruction) {

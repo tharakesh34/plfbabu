@@ -787,8 +787,8 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 				logger.info("There is No Duplicate Receipt found in ReceiptUploadDetails_Temp table..");
 			}
 
-			if (StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.EARLYSETTLEMENT)
-					|| StringUtils.equals(rud.getReceiptPurpose(), FinanceConstants.PARTIALSETTLEMENT)) {
+			if (FinanceConstants.EARLYSETTLEMENT.equals(rud.getReceiptPurpose())
+					|| FinanceConstants.PARTIALSETTLEMENT.equals(rud.getReceiptPurpose())) {
 				if (StringUtils.isNotBlank(fileName)) {
 					String finReferenceValue = getLoanReferenc(rud.getReference(), fileName);
 					if (StringUtils.isNotBlank(finReferenceValue)) {
