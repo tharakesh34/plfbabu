@@ -10861,19 +10861,21 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.finGrcMinRate, this.finGrcMaxRate);
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
-			if (this.graceRate.getMarginValue() != null) {
-				RateDetail rateDetail = RateUtil.rates(this.graceRate.getBaseValue(), this.finCcy.getValue(),
-						this.graceRate.getSpecialValue(),
-						this.graceRate.getMarginValue() == null ? BigDecimal.ZERO : this.graceRate.getMarginValue(),
-						this.finGrcMinRate.getValue() != null
-								&& this.finGrcMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
-										: this.finGrcMinRate.getValue(),
-						this.finGrcMaxRate.getValue() != null
-								&& this.finGrcMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
-										: this.finGrcMaxRate.getValue());
-				this.graceRate.setEffRateText(
-						PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+			if (this.graceRate.getMarginValue() == null) {
+				this.graceRate.setMarginValue(BigDecimal.ZERO);
 			}
+
+			RateDetail rateDetail = RateUtil.rates(this.graceRate.getBaseValue(), this.finCcy.getValue(),
+					this.graceRate.getSpecialValue(),
+					this.graceRate.getMarginValue() == null ? BigDecimal.ZERO : this.graceRate.getMarginValue(),
+					this.finGrcMinRate.getValue() != null
+							&& this.finGrcMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
+									: this.finGrcMinRate.getValue(),
+					this.finGrcMaxRate.getValue() != null
+							&& this.finGrcMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0 ? BigDecimal.ZERO
+									: this.finGrcMaxRate.getValue());
+			this.graceRate
+					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 		}
 		logger.debug(Literal.LEAVING + event.toString());
 	}
@@ -11264,19 +11266,22 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 						this.finMinRate, this.finMaxRate);
 			}
 		} else if (StringUtils.equals(rateType, PennantConstants.RATE_MARGIN)) {
-			if (this.repayRate.getMarginValue() != null) {
-				RateDetail rateDetail = RateUtil.rates(this.repayRate.getBaseValue(), this.finCcy.getValue(),
-						this.repayRate.getSpecialValue(),
-						this.repayRate.getMarginValue() == null ? BigDecimal.ZERO : this.repayRate.getMarginValue(),
-						this.finMinRate.getValue() != null && this.finMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0
-								? BigDecimal.ZERO
-								: this.finMinRate.getValue(),
-						this.finMaxRate.getValue() != null && this.finMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0
-								? BigDecimal.ZERO
-								: this.finMaxRate.getValue());
-				this.repayRate.setEffRateText(
-						PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
+
+			if (this.repayRate.getMarginValue() == null) {
+				this.repayRate.setMarginValue(BigDecimal.ZERO);
 			}
+
+			RateDetail rateDetail = RateUtil.rates(this.repayRate.getBaseValue(), this.finCcy.getValue(),
+					this.repayRate.getSpecialValue(),
+					this.repayRate.getMarginValue() == null ? BigDecimal.ZERO : this.repayRate.getMarginValue(),
+					this.finMinRate.getValue() != null && this.finMinRate.getValue().compareTo(BigDecimal.ZERO) <= 0
+							? BigDecimal.ZERO
+							: this.finMinRate.getValue(),
+					this.finMaxRate.getValue() != null && this.finMaxRate.getValue().compareTo(BigDecimal.ZERO) <= 0
+							? BigDecimal.ZERO
+							: this.finMaxRate.getValue());
+			this.repayRate
+					.setEffRateText(PennantApplicationUtil.formatRate(rateDetail.getNetRefRateLoan().doubleValue(), 2));
 
 		}
 		logger.debug(Literal.LEAVING + event.toString());
