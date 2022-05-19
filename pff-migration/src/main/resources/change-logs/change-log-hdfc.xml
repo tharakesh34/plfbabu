@@ -329,5 +329,14 @@
             ]]>
         </sql>
     </changeSet>
+    
+    <changeSet id="TK#11895" author="vijaya.a">
+        <sql>
+           <![CDATA[
+                Delete from RBFIELDDETAILS where RBMODULE = 'FEES' and RBEVENT = 'ADDDBSP' and RBFLDNAME = 'fm_finBranchProvinceCode';
+				Insert into RBFIELDDETAILS (RBMODULE,RBEVENT,RBFLDNAME,RBFLDDESC,RBFLDTYPE,RBFLDLEN,RBFORCALFLDS,RBFORBLDFLDS,RBFLDTABLENAME,RBSTFLDS,MODULECODE) values ('FEES', 'ADDDBSP', 'fm_finBranchProvinceCode', 'Branch Province Code', 'nvarchar', 8, '0', '1', 'RMTCountryVsProvince', 'dbvalue', 'Province');
+            ]]>
+        </sql>
+    </changeSet>
 	
 </databaseChangeLog>
