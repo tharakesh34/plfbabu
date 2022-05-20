@@ -194,14 +194,14 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 		}
 
 		i = 0;
-		String key = "";
+		String name = "";
 		for (List<CustomerIncome> customerIncomes : incomeMap.values()) {
 			if (CollectionUtils.isEmpty(customerIncomes)) {
 				continue;
 			}
 
 			if (i != 0) {
-				key = "CoApp".concat(String.valueOf(i));
+				name = "CoApp".concat(String.valueOf(i));
 			}
 
 			int format = PennantConstants.defaultCCYDecPos;
@@ -211,34 +211,34 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				if (PennantConstants.INC_CATEGORY_SALARY.equals(customerIncome.getCategory())) {
 					switch (customerIncome.getIncomeType()) {
 					case "BS":
-						dataMap.put(key.concat("Basic"), formatedIncome);
+						dataMap.put(name.concat("Basic"), formatedIncome);
 						break;
 					case "GP":
-						dataMap.put(key.concat("GP"), formatedIncome);
+						dataMap.put(name.concat("GP"), formatedIncome);
 						break;
 					case "DA":
-						dataMap.put(key.concat("DA"), formatedIncome);
+						dataMap.put(name.concat("DA"), formatedIncome);
 						break;
 					case "HOU21":
-						dataMap.put(key.concat("HRA"), formatedIncome);
+						dataMap.put(name.concat("HRA"), formatedIncome);
 						break;
 					case "CLA":
-						dataMap.put(key.concat("CLA"), formatedIncome);
+						dataMap.put(name.concat("CLA"), formatedIncome);
 						break;
 					case "MED44":
-						dataMap.put(key.concat("MEDA"), formatedIncome);
+						dataMap.put(name.concat("MEDA"), formatedIncome);
 						break;
 					case "SA":
-						dataMap.put(key.concat("SA"), formatedIncome);
+						dataMap.put(name.concat("SA"), formatedIncome);
 						break;
 					case "OA":
-						dataMap.put(key.concat("OA"), formatedIncome);
+						dataMap.put(name.concat("OA"), formatedIncome);
 						break;
 					case "CV":
-						dataMap.put(key.concat("CV"), formatedIncome);
+						dataMap.put(name.concat("CV"), formatedIncome);
 						break;
 					case "VP":
-						dataMap.put(key.concat("VP"), formatedIncome);
+						dataMap.put(name.concat("VP"), formatedIncome);
 						break;
 
 					default:
@@ -247,12 +247,12 @@ public class SpreadSheetServiceImpl implements SpreadSheetService {
 				} else if (StringUtils.equals(customerIncome.getCategory(), PennantConstants.INC_CATEGORY_OTHER)) {
 					switch (customerIncome.getIncomeType()) {
 					case "RENINC":
-						dataMap.put(key.concat("RENINC"), formatedIncome);
-						dataMap.put(key.concat("Net_RENINC"), formatedIncome);
+						dataMap.put(name.concat("RENINC"), formatedIncome);
+						dataMap.put(name.concat("Net_RENINC"), formatedIncome);
 						break;
 					case "INTINC":
-						dataMap.put(key.concat("INTINC"), formatedIncome);
-						dataMap.put(key.concat("Net_INTINC"), formatedIncome);
+						dataMap.put(name.concat("INTINC"), formatedIncome);
+						dataMap.put(name.concat("Net_INTINC"), formatedIncome);
 						break;
 
 					default:

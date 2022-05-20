@@ -5051,16 +5051,16 @@ public class PennantStaticListUtil {
 		}
 
 		ldapDomains = new ArrayList<>();
-		String key = "ldap.domain.name";
-		String domainName = App.getProperty(key);
-		ldapDomains.add(new ValueLabel(key, domainName));
+		String name = "ldap.domain.name";
+		String domainName = App.getProperty(name);
+		ldapDomains.add(new ValueLabel(name, domainName));
 
 		for (int i = 1; i <= 10; i++) {
-			key = "ldap" + i + ".domain.name";
-			domainName = App.getProperty(key);
+			name = "ldap" + i + ".domain.name";
+			domainName = App.getProperty(name);
 
 			if (domainName != null) {
-				ldapDomains.add(new ValueLabel(key, domainName));
+				ldapDomains.add(new ValueLabel(name, domainName));
 			}
 		}
 

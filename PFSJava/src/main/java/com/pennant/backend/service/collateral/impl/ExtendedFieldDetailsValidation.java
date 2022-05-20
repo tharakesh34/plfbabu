@@ -398,13 +398,13 @@ public class ExtendedFieldDetailsValidation {
 			break;
 		case ExtendedFieldConstants.FIELDTYPE_EXTENDEDCOMBO:
 		case ExtendedFieldConstants.FIELDTYPE_BASERATE:
-			String key = exdConfigDetail.getFieldList();
+			String name = exdConfigDetail.getFieldList();
 			if (StringUtils.equals(ExtendedFieldConstants.FIELDTYPE_BASERATE, exdConfigDetail.getFieldType())) {
-				key = "BaseRate";
+				name = "BaseRate";
 			}
-			if (key != null && key.contains(PennantConstants.DELIMITER_COMMA)) {
-				String[] values = key.split(PennantConstants.DELIMITER_COMMA);
-				key = values[0];
+			if (name != null && name.contains(PennantConstants.DELIMITER_COMMA)) {
+				String[] values = name.split(PennantConstants.DELIMITER_COMMA);
+				name = values[0];
 			}
 			if (fieldValue.length() > exdConfigDetail.getFieldLength()) {
 				String[] valueParm = new String[2];
@@ -412,7 +412,7 @@ public class ExtendedFieldDetailsValidation {
 				valueParm[1] = String.valueOf(exdConfigDetail.getFieldLength());
 				errors.add(ErrorUtil.getErrorDetail(new ErrorDetail("90300", "", valueParm)));
 			}
-			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(key);
+			ModuleMapping moduleMapping = PennantJavaUtil.getModuleMap(name);
 			if (moduleMapping != null) {
 				String[] lovFields = moduleMapping.getLovFields();
 				Object[][] filters = moduleMapping.getLovFilters();
