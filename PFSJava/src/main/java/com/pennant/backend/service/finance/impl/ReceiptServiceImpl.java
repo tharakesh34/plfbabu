@@ -1597,8 +1597,8 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		// effect while realization)
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.CHEQUE_MODE_SCHDPAY_EFFT_ON_REALIZATION)
 				&& SysParamUtil.isAllowed(SMTParameterConstants.CHQ_RECEIPTS_PAID_AT_DEPOSIT_APPROVER)) {
-			if (StringUtils.equals(FinanceConstants.REALIZATION_APPROVER, roleCode)) {
-				if (receiptPurpose == ReceiptPurpose.SCHDRPY && prvReceiptPurpose == null
+			if (FinanceConstants.REALIZATION_APPROVER.equals(roleCode)) {
+				if (ReceiptPurpose.SCHDRPY == receiptPurpose && prvReceiptPurpose == null
 						&& (ReceiptMode.CHEQUE.equals(receiptMode) || ReceiptMode.DD.equals(receiptMode))) {
 					receiptRealizationService.doApprove(auditHeader);
 					auditHeader.getAuditDetail().setModelData(rd);
@@ -1617,9 +1617,9 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			schdData.setFinServiceInstruction(finServInst);
 		}
 
-		if (!StringUtils.equalsIgnoreCase(PennantConstants.FINSOURCE_ID_API, rd.getSourceId())
+		if (!PennantConstants.FINSOURCE_ID_API.equalsIgnoreCase(rd.getSourceId())
 				&& !schdData.getFinServiceInstruction().isReceiptUpload()) {
-			if (receiptPurpose == ReceiptPurpose.EARLYRPY || receiptPurpose == ReceiptPurpose.EARLYSETTLE) {
+			if (ReceiptPurpose.EARLYRPY == receiptPurpose || ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
 				auditHeader = approveValidation(auditHeader, "doApprove");
 			}
 		}
@@ -5612,7 +5612,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			return fd;
 		}
 
-		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && fsi.isReceiptUpload()) {
+		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose && fsi.isReceiptUpload() && !"Post".equals(fsi.getReqType())) {
 			setReceiptDataForEarlySettlement(rd);
 		}
 
@@ -6225,12 +6225,13 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
 
 		BigDecimal earlyPayAmount = rd.getRemBal();
 		String recalType = rch.getEffectSchdMethod();
 		fm.setReceiptPurpose(receiptPurpose.code());
 
-		if (receiptPurpose == ReceiptPurpose.EARLYRPY) {
+		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
 			schdData = ScheduleCalculator.recalEarlyPaySchedule(schdData, rch.getValueDate(), null, earlyPayAmount,
 					recalType);
 			receiptCalculator.addPartPaymentAlloc(rd);
@@ -6247,22 +6248,24 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			rd.setDueAdjusted(false);
 		}
 
-		if (rd.isDueAdjusted()) {
-			for (ReceiptAllocationDetail allocate : allocations) {
-				allocate.setPaidAvailable(allocate.getPaidAmount());
-				allocate.setWaivedAvailable(allocate.getWaivedAmount());
-				allocate.setPaidAmount(BigDecimal.ZERO);
-				allocate.setPaidGST(BigDecimal.ZERO);
-				allocate.setTotalPaid(BigDecimal.ZERO);
-				allocate.setBalance(allocate.getTotalDue());
-				allocate.setWaivedAmount(BigDecimal.ZERO);
-				allocate.setWaivedGST(BigDecimal.ZERO);
-				allocate.setTdsPaid(BigDecimal.ZERO);
-				allocate.setTdsWaived(BigDecimal.ZERO);
+		if (RequestSource.UPLOAD == fsi.getRequestSource()) {
+			if (rd.isDueAdjusted()) {
+				for (ReceiptAllocationDetail allocate : allocations) {
+					allocate.setPaidAvailable(allocate.getPaidAmount());
+					allocate.setWaivedAvailable(allocate.getWaivedAmount());
+					allocate.setPaidAmount(BigDecimal.ZERO);
+					allocate.setPaidGST(BigDecimal.ZERO);
+					allocate.setTotalPaid(BigDecimal.ZERO);
+					allocate.setBalance(allocate.getTotalDue());
+					allocate.setWaivedAmount(BigDecimal.ZERO);
+					allocate.setWaivedGST(BigDecimal.ZERO);
+					allocate.setTdsPaid(BigDecimal.ZERO);
+					allocate.setTdsWaived(BigDecimal.ZERO);
+				}
+			} else {
+				setError(schdData, "90330", receiptPurpose.code(), "");
+				return;
 			}
-		} else {
-			setError(schdData, "90330", receiptPurpose.code(), "");
-			return;
 		}
 
 		rd.setBuildProcess("R");
