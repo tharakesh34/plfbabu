@@ -71,9 +71,9 @@ import com.pennant.backend.dao.finance.ReceiptUploadDetailDAO;
 import com.pennant.backend.dao.finance.ReceiptUploadHeaderDAO;
 import com.pennant.backend.dao.finance.UploadAllocationDetailDAO;
 import com.pennant.backend.dao.receipts.FinReceiptHeaderDAO;
-import com.pennant.backend.model.WSReturnStatus;
 import com.pennant.backend.model.audit.AuditDetail;
 import com.pennant.backend.model.audit.AuditHeader;
+import com.pennant.backend.model.finance.FinScheduleData;
 import com.pennant.backend.model.finance.FinServiceInstruction;
 import com.pennant.backend.model.finance.FinanceDetail;
 import com.pennant.backend.model.finance.ManualAdvise;
@@ -656,12 +656,13 @@ public class ReceiptUploadHeaderServiceImpl extends GenericService<ReceiptUpload
 			fsi.setRequestSource(RequestSource.UPLOAD);
 			FinanceDetail financeDetail = receiptService.receiptTransaction(fsi);
 
-			WSReturnStatus returnStatus = financeDetail.getReturnStatus();
-			if (returnStatus != null) {
+			FinScheduleData schd = financeDetail.getFinScheduleData();
+			if (!schd.getErrorDetails().isEmpty()) {
+				ErrorDetail error = schd.getErrorDetails().get(0);
 				rud.setProcessingStatus(ReceiptDetailStatus.FAILED.getValue());
 
-				String code = StringUtils.trimToEmpty(returnStatus.getReturnCode());
-				String description = StringUtils.trimToEmpty(returnStatus.getReturnText());
+				String code = StringUtils.trimToEmpty(error.getCode());
+				String description = StringUtils.trimToEmpty(error.getError());
 
 				rud.setReason(String.format("%s %s %s", code, "-", description));
 			} else {
