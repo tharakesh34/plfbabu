@@ -2333,7 +2333,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 					primaryApplicant.put("ExtWrittenOffNonCredit", extWrittenOffNonCredit);
 					primaryApplicant.put("ExtWrittenOffCredit", extWrittenOffCredit);
 					primaryApplicant.put("ExtDerog", extDerog);
-					System.out.println("response :::" + primaryApplicant);
+
 					noOfAccountsIn30dpdL12M = 0;
 					noOfAccountsIn1dpdL6M = 0;
 				}
@@ -3870,7 +3870,7 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 		String formattedTime = time.substring(0, 2) + ":" + time.substring(2, 4) + ":" + time.substring(4, 6);
 		cibilHeader.put("TimeProcessed", formattedTime);
 		jsonObject.put("cibilHeader", cibilHeader);
-		System.out.println(jsonObject.toString());
+
 		logger.debug("Parsed header respone :" + cibilHeader.toString());
 		logger.debug(Literal.LEAVING);
 

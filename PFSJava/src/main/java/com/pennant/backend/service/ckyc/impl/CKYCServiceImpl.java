@@ -1,4 +1,3 @@
-
 package com.pennant.backend.service.ckyc.impl;
 
 import java.io.BufferedWriter;
@@ -225,7 +224,6 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			if (!mainfolder.exists()) {
 				boolean folderData = false;
 				if (mainfolder.mkdir()) {
-					System.out.println("Directory is created!");
 					File file = new File(mainfolder.getPath() + "/" + fname + ".txt");
 					FileOutputStream fos = null;
 					try {
@@ -504,9 +502,9 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 														+ ckycdtl20.getCustCif() + "_" + rowNo);
 												if (!folder.exists()) {
 													if (folder.mkdir()) {
-														System.out.println("Directory is created!");
+														//
 													} else {
-														System.out.println("Failed to create directory!");
+														//
 													}
 												}
 
@@ -526,12 +524,9 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 										File directoryToZip = new File(insideFileFolder.getPath());
 										try {
 											List<File> fileList = new ArrayList<File>();
-											System.out.println("---Getting references to all files in: "
-													+ directoryToZip.getCanonicalPath());
+
 											getAllFiles(directoryToZip, fileList);
-											System.out.println("---Creating zip file");
 											writeZipFile(directoryToZip, fileList);
-											System.out.println("---Done");
 										} catch (Exception e) {
 											logger.warn(Literal.EXCEPTION + e);
 										}
@@ -563,10 +558,9 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 						File directoryToZip = new File(fileFolder.getPath());
 						try {
 							List<File> fileList = new ArrayList<File>();
-							System.out.println(
-									"---Getting references to all files in: " + directoryToZip.getCanonicalPath());
+
 							getAllFiles(directoryToZip, fileList);
-							System.out.println("---Creating zip file");
+
 							List<File> mainList = new ArrayList<File>();
 							for (File files : fileList) {
 								String fileName = files.toString();
@@ -577,7 +571,6 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 							writeZipFile(fileFolder, mainList);
 							boolean sucess = deleteDirectory(fileFolder);
 							flag = sucess;
-							System.out.println("---Done");
 						} catch (Exception e) {
 							logger.warn(Literal.EXCEPTION + e);
 						}
@@ -1469,19 +1462,14 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 	}
 
 	public void getAllFiles(File dir, List<File> fileList) {
-		try {
-			File[] files = dir.listFiles();
-			for (File file : files) {
-				fileList.add(file);
-				if (file.isDirectory()) {
-					System.out.println("directory:" + file.getCanonicalPath());
-					getAllFiles(file, fileList);
-				} else {
-					System.out.println("     file:" + file.getCanonicalPath());
-				}
+		File[] files = dir.listFiles();
+		for (File file : files) {
+			fileList.add(file);
+			if (file.isDirectory()) {
+				getAllFiles(file, fileList);
+			} else {
+				//
 			}
-		} catch (IOException e) {
-			logger.error(Literal.EXCEPTION, e);
 		}
 	}
 
@@ -1515,7 +1503,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 		// to the directory being zipped, so chop off the rest of the path
 		String zipFilePath = file.getCanonicalPath().substring(directoryToZip.getCanonicalPath().length() + 1,
 				file.getCanonicalPath().length());
-		System.out.println("Writing '" + zipFilePath + "' to zip file");
+
 		ZipEntry zipEntry = new ZipEntry(zipFilePath);
 		zos.putNextEntry(zipEntry);
 
