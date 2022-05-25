@@ -270,7 +270,7 @@ public class NotificationProcessImpl extends BasicDao<SystemNotifications> imple
 				builder.setOMElement(builder, data.getKey(), value);
 			}
 
-			System.out.println((builder.getEnvelope().toString()));
+			logger.trace(builder.getEnvelope().toString());
 			logExecutionDetails(builder.getEnvelope().toString().getBytes("UTF-8"), id, email, mobileNum,
 					(int) systemNotifications.getId(), attributes);
 			successCount++;

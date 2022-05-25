@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ProcessViewCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-11-2017    														*
- *                                                                  						*
- * Modified Date    :  05-11-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ProcessViewCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-11-2017 * * Modified Date
+ * : 05-11-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-11-2017       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-11-2017 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.util;
@@ -101,7 +83,7 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 
 		if (workFlowId != 0L) {
 			workflow = WorkFlowUtil.getWorkflow(workFlowId);
-			//doWriteBeanToComponents();
+			// doWriteBeanToComponents();
 			if (fromAuditId != 0L && toAuditId != 0L) {
 				loadWorkflow(workFlowId, moduleCode, keyValue, fromAuditId, toAuditId);
 			}
@@ -125,16 +107,11 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 	/**
 	 * To load Process View as per respective below data.
 	 * 
-	 * @param workflowId
-	 *            (long)
-	 * @param moduleCode
-	 *            (String)
-	 * @param keyValue
-	 *            (Object)
-	 * @param fromAuditId
-	 *            (long)
-	 * @param toAuditId
-	 *            (long)
+	 * @param workflowId  (long)
+	 * @param moduleCode  (String)
+	 * @param keyValue    (Object)
+	 * @param fromAuditId (long)
+	 * @param toAuditId   (long)
 	 */
 	private void loadWorkflow(long workflowId, String moduleCode, Object keyValue, long fromAuditId, long toAuditId) {
 		logger.debug(Literal.ENTERING);
@@ -143,7 +120,7 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 		try {
 			workflowContentIframe.setSrc(designerUrl + "editor/#/process/" + workflowId + "/" + args);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			logger.error(Literal.EXCEPTION);
 		}
 
 		logger.debug(Literal.LEAVING);
@@ -152,8 +129,7 @@ public class ProcessViewCtrl extends GFCBaseCtrl<WorkFlowDetails> implements Ser
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
