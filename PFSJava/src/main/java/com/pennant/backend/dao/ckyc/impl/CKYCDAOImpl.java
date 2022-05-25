@@ -327,8 +327,7 @@ public class CKYCDAOImpl extends SequenceDao<CKYCHeader> implements CKYCDAO {
 			jdbcTemplate.update(sqlCkycDtl70.toString(), new HashMap<String, Object>());
 
 		} catch (Exception e) {
-			System.out.println("Exception e" + e);
-			logger.debug("Leaving");
+			logger.error(Literal.EXCEPTION, e);
 			return false;
 		}
 		logger.debug("Leaving");

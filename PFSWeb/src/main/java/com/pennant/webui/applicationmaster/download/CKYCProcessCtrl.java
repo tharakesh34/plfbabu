@@ -124,7 +124,6 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 			}
 		}
 		if (batchNo != null) {
-			System.out.println(batchNo);
 			while ((line = br.readLine()) != null) {
 				// Do your thing with line
 				String[] words = line.split("\\|");
