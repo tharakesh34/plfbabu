@@ -306,7 +306,6 @@ public class EODServiceImpl implements EODService {
 			helper.setText("", result);
 			mailSender.send(message);
 		} catch (Exception e) {
-			System.out.println("");
 			logger.warn(Literal.EXCEPTION, e);
 		}
 

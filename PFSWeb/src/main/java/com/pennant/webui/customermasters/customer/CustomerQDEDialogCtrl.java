@@ -540,7 +540,6 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 					aCustomerDetails.setCustomer(aCustomer);
 					auditHeader = getAuditHeader(aCustomerDetails, PennantConstants.TRAN_WF);
 					processCompleted = doSaveProcess(auditHeader, method);
-					System.out.println("Testing");
 				}
 
 				if (!processCompleted) {

@@ -297,7 +297,6 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		int pDCPeriod = Integer.parseInt(this.cbPDCPeriod.getSelectedItem().getValue().toString());
 		for (int j = startIndex; j <= endIndex; j++) {
 			if (pDCPeriod == 0 || j % pDCPeriod == 0) {
-				System.out.println(j);
 				chequeDetails = prepareReportObject(getFinScheduleData());
 				chequeDetails.setAppDate(DateUtility.formatToLongDate(DateUtility
 						.parse(this.startDate.getItemAtIndex(j).getValue().toString(), PennantConstants.DBDateFormat)));
@@ -318,7 +317,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 				chequeDetailsList.add(chequeDetails);
 			}
 		}
-		//}
+		// }
 		return chequeDetailsList;
 	}
 
@@ -347,7 +346,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 */
 	private ChequeDetails prepareReportObject(FinScheduleData finScheduleData) {
 		ChequeDetails chequeDetails = new ChequeDetails();
-		chequeDetails.setFinBranchName(Labels.getLabel("label_ClientName"));//finScheduleData.getFinanceMain().getLovDescFinBranchName()
+		chequeDetails.setFinBranchName(Labels.getLabel("label_ClientName"));// finScheduleData.getFinanceMain().getLovDescFinBranchName()
 		chequeDetails.setAppDate(DateUtility.getAppValueDate(DateFormat.LONG_DATE));
 		chequeDetails.setCustName(finScheduleData.getFinanceMain().getLovDescCustFName() + " "
 				+ StringUtils.trimToEmpty(finScheduleData.getFinanceMain().getLovDescCustLName()));
@@ -494,8 +493,7 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Method to fill the ScheduleList
 	 * 
-	 * @param FinanceDetail
-	 *            (aFinanceDetail)
+	 * @param FinanceDetail (aFinanceDetail)
 	 */
 	public void doFillScheduleList(FinScheduleData finScheduleData) {
 		logger.debug("Entering");

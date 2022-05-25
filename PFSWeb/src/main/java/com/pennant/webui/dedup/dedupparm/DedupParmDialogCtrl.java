@@ -1265,9 +1265,6 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		itemCount++;
 		// Continue the process of building if size is not zero
 		if (queryValues.size() > 0 && !aDedupParm.isNewRecord()) {
-
-			System.out.println("THE QUERY VALUES " + queryValues.get(0));
-
 			if ((")").equals(queryValues.get(0))) {
 				int size = queryValues.size();
 				for (int i = 0; i < size; i++) {

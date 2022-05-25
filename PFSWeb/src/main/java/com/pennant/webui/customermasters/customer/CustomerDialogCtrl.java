@@ -4058,7 +4058,6 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 			details = (ShowBlackListDetailBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
 			}
