@@ -581,7 +581,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 	// 6 WorkFlow Edit
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
-		System.out.println();
+
 		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
 				this.userAction, this.limitStructureCode, this.limitStructureCode));
 		if (!getLimitHeader().isNewRecord()) {

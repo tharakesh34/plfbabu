@@ -2396,7 +2396,6 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 		} else {
 			this.repayCpzFrq.setDisabled(true);
 			readOnlyComponent(true, this.nextRepayCpzDate);
-			System.out.println(nextRepayCpzDate.isDisabled());
 		}
 
 		if (!isOverdraft && (!aFinanceMain.isNewRecord() || StringUtils.isNotBlank(aFinanceMain.getFinReference()))) {
