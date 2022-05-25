@@ -1700,7 +1700,6 @@ public class FinanceType extends AbstractWorkflowEntity {
 		finTypeAccountingMap.clear();
 		if (finTypeAccountingList != null) {
 			for (FinTypeAccounting finTypeAcc : finTypeAccountingList) {
-				System.out.println(finTypeAcc.getEvent());
 				finTypeAccountingMap.put(finTypeAcc.getEvent(), finTypeAcc.getAccountSetID());
 			}
 		}

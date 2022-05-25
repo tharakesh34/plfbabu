@@ -957,8 +957,6 @@ public class ExtendedFieldDetailsService {
 			efr.setBefImage(efr);
 			deatils.get(i).setExtended(true);
 			deatils.get(i).setModelData(efr);
-
-			System.out.println("");
 		}
 		logger.debug(Literal.LEAVING);
 		return deatils;

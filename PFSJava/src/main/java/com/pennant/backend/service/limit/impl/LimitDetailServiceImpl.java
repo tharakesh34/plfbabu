@@ -1008,10 +1008,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		status = successRcdCount + " records has been processed out of " + rcdCount;
 
 		try {
-			System.out.println("======================        START     ==========================");
-			System.out.println("==================================================================");
-			System.out.println("----> START EXTENDED FINANCE UPLOAD  --------> :: "
-					+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 			POIFSFileSystem finFileSystem = new POIFSFileSystem(finInput);
 			@SuppressWarnings("resource")
 			HSSFWorkbook finWorkBook = new HSSFWorkbook(finFileSystem);
@@ -1126,9 +1122,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			throws DatatypeConfigurationException {
 		logger.debug(Literal.ENTERING);
 
-		System.out.println("----> START PREPARING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
-
 		// Customer Id
 		if (StringUtils.isNotEmpty(getValue(finRow.getCell(0)))) {
 			headerDetails.setCustomerId(Long.valueOf(getValue(finRow.getCell(0))));
@@ -1204,8 +1197,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 		headerDetails.setCustomerLimitDetailsList(limitDetailsList);
 
 		logger.debug(Literal.LEAVING);
-		System.out.println("----> END SETTING EXT FINANCE DATA TO FINANCE MAIN OBJ  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return headerDetails;
 	}
 
@@ -1270,8 +1261,6 @@ public class LimitDetailServiceImpl extends GenericService<LimitDetails> impleme
 			return headerDetails;
 		}
 
-		System.out.println("----> END VALIDATION FINANCE UPLOAD  --------> :: "
-				+ DateUtility.format(new Date(), "yyyy-MM-dd HH:mm:ss:SSS"));
 		return headerDetails;
 	}
 
