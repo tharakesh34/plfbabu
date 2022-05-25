@@ -241,14 +241,6 @@ public class RepaymentProcessUtil {
 						totPriPaid = totPriPaid
 								.add(rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow()));
 
-						System.out.print("\n");
-						System.out.print("Iteraltion : " + i);
-						System.out.print(" PrincipalSchdPayNow : " + rpySchd.getPrincipalSchdPayNow());
-						System.out.print(" PriSchdWaivedNow : " + rpySchd.getPriSchdWaivedNow());
-						System.out.print(" Sum(PayNow & WaivedNow) : "
-								+ (rpySchd.getPrincipalSchdPayNow().add(rpySchd.getPriSchdWaivedNow())));
-						System.out.print(" Total Paid : " + totPriPaid);
-						System.out.print("\n");
 						i++;
 					}
 				}
