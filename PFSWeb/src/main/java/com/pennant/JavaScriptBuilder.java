@@ -2823,7 +2823,6 @@ public class JavaScriptBuilder extends Groupbox {
 		logger.debug("Entering");
 
 		getSqlQuery();
-		System.out.println(this.actualBlock);
 		setSelectedTab(RuleConstants.TAB_SCRIPT);
 
 		logger.debug("Leaving");

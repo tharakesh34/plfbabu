@@ -83,7 +83,6 @@ public class FetchDedupDetails {
 			details = (ShowDedupListBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
 			}
@@ -201,7 +200,6 @@ public class FetchDedupDetails {
 			details = (ShowDedupListBox) dataObject;
 
 			if (details != null) {
-				System.out.println("THE ACTIONED VALUE IS ::::" + details.getUserAction());
 				logger.debug("The User Action is " + details.getUserAction());
 				userAction = details.getUserAction();
 				setFinanceDedupList((List<FinanceDedup>) details.getObject());
