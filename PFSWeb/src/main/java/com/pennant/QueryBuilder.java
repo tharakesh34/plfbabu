@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QueryBuilder.java		                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  05-07-2013    														*
- *                                                                  						*
- * Modified Date    :  23-05-2013    														*
- *                                                                  						*
- * Description 		:  Query Builder                  		                          		*
- *                                                                                          *
+ * * FileName : QueryBuilder.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 05-07-2013 * * Modified Date :
+ * 23-05-2013 * * Description : Query Builder * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 05-07-2013       Chaitanya Varma	   	      0.1       		                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 05-07-2013 Chaitanya Varma 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant;
@@ -98,6 +80,7 @@ import com.pennant.webui.util.searchdialogs.ExtendedSearchListBox;
 import com.pennanttech.pennapps.core.feature.ModuleUtil;
 import com.pennanttech.pennapps.core.feature.model.ModuleMapping;
 import com.pennanttech.pennapps.core.model.GlobalVariable;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
 @SuppressWarnings("rawtypes")
@@ -164,8 +147,7 @@ public class QueryBuilder extends Groupbox {
 	/**
 	 * Create a new Condition
 	 * 
-	 * @param condition
-	 *            (String) to build new condition based on the dbQuery
+	 * @param condition (String) to build new condition based on the dbQuery
 	 * @return treeItem(TreeItem)
 	 */
 	private Treeitem createNewCondition(String condition) {
@@ -712,8 +694,7 @@ public class QueryBuilder extends Groupbox {
 	/**
 	 * Get the Excludefields for rightOperandType
 	 * 
-	 * @param operator
-	 *            (Combobox),leftOperand(Component)
+	 * @param operator (Combobox),leftOperand(Component)
 	 * @return excludeFields(String)
 	 */
 	public String getExcludeFieldsByRightOperandType(Combobox operator, Component leftOperand,
@@ -883,7 +864,7 @@ public class QueryBuilder extends Groupbox {
 			}
 
 		} catch (Exception e) {
-			System.out.println(e);
+			logger.error(Literal.EXCEPTION, e);
 		}
 		return excludeFields;
 	}
@@ -1478,7 +1459,6 @@ public class QueryBuilder extends Groupbox {
 					String[] values = staticvalue.split(",");
 					String newValue = StringUtils.join(values, "'");
 
-					System.out.println(newValue);
 					return "(" + "'" + newValue.trim().replace("' ", "','") + "'" + ")";
 				}
 
@@ -1595,11 +1575,9 @@ public class QueryBuilder extends Groupbox {
 			actualBlock = "";
 			textbox.setValue("");
 			sqlQuery = getQuery(tree.getTreechildren());
-			System.out.println(sqlQuery);
 		}
 		String actualQuery = StringReplacement.getReplacedQuery(sqlQuery, globalVariableList, subQueriesList);
 		this.queryValue = actualQuery;
-		System.out.println("queryValue : " + this.queryValue);
 		JdbcSearchObject searchObject = new JdbcSearchObject();
 		searchObject.addTabelName(queryModule.getTableName());
 		searchObject.addWhereClause(actualQuery);
@@ -1640,7 +1618,7 @@ public class QueryBuilder extends Groupbox {
 		listBox.setWidth("100%");
 		listBox.setParent(window);
 		listBox.setFixedLayout(true);
-		//listBox.setVflex(true);
+		// listBox.setVflex(true);
 		listBox.setSpan(true);
 		// listBox.setStyle("border:1px solid #C5C5C5;");
 		Listhead listHead = new Listhead();
@@ -1773,10 +1751,7 @@ public class QueryBuilder extends Groupbox {
 				}
 
 			}
-			System.out.println();
-
 		}
-
 	}
 
 	public int getListRows() {
