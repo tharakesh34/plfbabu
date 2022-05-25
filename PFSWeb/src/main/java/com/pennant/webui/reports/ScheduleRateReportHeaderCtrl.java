@@ -287,9 +287,6 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 		FinanceScheduleDetail prvSchd = scheduleDetails.get(0);
 		boolean endDateCompleted = false;
 
-		System.out.println("INST NO" + "/t" + "BALPFTCAL" + "/t" + "STARTDATE" + "/t" + "ENDDATE" + "/t" + "DAYS" + "/t"
-				+ "RATE" + "/t" + "PFTCAL");
-
 		for (int i = 1; i < size; i++) {
 
 			FinanceScheduleDetail curSchd = scheduleDetails.get(i);
@@ -347,9 +344,6 @@ public class ScheduleRateReportHeaderCtrl extends GFCBaseCtrl<ScheduleRateReport
 				rateReport.setCalcPft(PennantApplicationUtil.amountFormate(calIntRounded, formatter));
 			}
 			rateReportsList.add(rateReport);
-			System.out.println(rateReport.getInstNo() + "/t" + rateReport.getBalForPftCal() + "/t"
-					+ rateReport.getStartDate() + "/t" + rateReport.getEndDate() + "/t" + rateReport.getDays() + "/t"
-					+ rateReport.getRate() + "/t" + rateReport.getCalcPft());
 		}
 
 		rrh.setRateReports(rateReportsList);

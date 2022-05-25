@@ -537,7 +537,7 @@ public class ScoringMetricsDialogCtrl extends GFCBaseCtrl<ScoringMetrics> {
 			}
 			if (codevalue[i].contains(";")) {
 				String code = codevalue[i].substring(codevalue[i].indexOf('=') + 1, codevalue[i].indexOf(';'));
-				System.out.println("values " + code);
+
 				if (code.contains("'")) {
 					code = code.replace("'", "");
 				}

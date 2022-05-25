@@ -244,7 +244,7 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 * @param event
 	 */
 	public List<QueryModule> onCheck$subQuery(Event event) {
-		System.out.println("On check");
+		logger.debug(Literal.ENTERING);
 		this.cb_queryModule.getChildren().clear();
 		listQueryModule.clear();
 		if (subQuery.isChecked()) {

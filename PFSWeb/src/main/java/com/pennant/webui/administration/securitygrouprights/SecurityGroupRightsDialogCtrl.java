@@ -294,7 +294,6 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 			while (it.hasNext()) {
 				li = (Listitem) it.next();
 				final SecurityRight aSecRight = (SecurityRight) li.getAttribute("data");
-				System.out.println(li.getLabel());
 				Listcell slecteditem = new Listcell();
 				List selectedRowValues = new ArrayList();// TO get each row Details
 				selectedRowValues = li.getChildren();
