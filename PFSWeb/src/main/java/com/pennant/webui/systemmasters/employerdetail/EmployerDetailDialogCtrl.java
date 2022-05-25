@@ -490,7 +490,6 @@ public class EmployerDetailDialogCtrl extends GFCBaseCtrl<EmployerDetail> {
 	private void displayComponents(int mode) {
 		logger.debug("Entering");
 
-		System.out.println();
 		doReadOnly(ScreenCTL.initButtons(mode, this.btnCtrl, this.btnNotes, isWorkFlowEnabled(), isFirstTask(),
 				this.userAction, this.empIndustry, this.empAlocationType));
 

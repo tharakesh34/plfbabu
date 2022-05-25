@@ -1413,9 +1413,6 @@ public class LimitRuleDialogCtrl extends GFCBaseCtrl<LimitFilterQuery> implement
 		itemCount++;
 		// Continue the process of building if size is not zero
 		if (queryValues.size() > 0 && !aLimitRule.isNewRecord()) {
-
-			System.out.println("THE QUERY VALUES " + queryValues.get(0));
-
 			if (queryValues.get(0).equals(")")) {
 				int size = queryValues.size();
 				for (int i = 0; i < size; i++) {
