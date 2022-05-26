@@ -501,11 +501,7 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 												folder = new File(insideFileFolder.getPath() + "/"
 														+ ckycdtl20.getCustCif() + "_" + rowNo);
 												if (!folder.exists()) {
-													if (folder.mkdir()) {
-														//
-													} else {
-														//
-													}
+													folder.mkdir();
 												}
 
 												if (folder.exists()) {
@@ -1467,8 +1463,6 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 			fileList.add(file);
 			if (file.isDirectory()) {
 				getAllFiles(file, fileList);
-			} else {
-				//
 			}
 		}
 	}
