@@ -39,7 +39,7 @@ public class CoalesceSqlParameterSource extends AbstractSqlParameterSource {
 	}
 
 	@Override
-	public Object getValue(String paramName) throws IllegalArgumentException {
+	public Object getValue(String paramName) {
 		return mapSqlParameterSource.hasValue(paramName) ? mapSqlParameterSource.getValue(paramName)
 				: beanPropertySqlParameterSource.getValue(paramName);
 	}
