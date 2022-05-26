@@ -225,10 +225,10 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 				boolean folderData = false;
 				if (mainfolder.mkdir()) {
 					File file = new File(mainfolder.getPath() + "/" + fname + ".txt");
-					FileOutputStream fos = null;
-					try {
-						fos = new FileOutputStream(file);
-						BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+
+					try (FileOutputStream fos = new FileOutputStream(file);
+							BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos))) {
+
 						StringBuilder ckycHeaderBuilder = new StringBuilder();
 						ckycHeaderBuilder.append(numValueCheck(ckycHeader.getRecordType()) + "|"
 								+ stringValueCheck(ckycHeader.getBatchNo()) + "|");
@@ -531,25 +531,14 @@ public class CKYCServiceImpl extends GenericService implements CKYCService {
 
 								rowNo++;
 							}
-
 						}
+						
 						bw.flush();
-						bw.close();
-
+						fos.flush();
 					} catch (Exception e) {
-
 						logger.error(Literal.EXCEPTION + e);
-					} finally {
-						if (fos != null) {
-							try {
-								fos.flush();
-								fos.close();
-							} catch (IOException e) {
-								logger.warn(Literal.EXCEPTION + e);
-							}
-
-						} // fileDownload(ckycHeader);
 					}
+
 					if (fileFolder != null && fileFolder.exists() && folderData) {
 						File directoryToZip = new File(fileFolder.getPath());
 						try {
