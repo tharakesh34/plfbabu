@@ -70,19 +70,16 @@ public class QueryDetail extends AbstractWorkflowEntity {
 	private long raisedBy = 0;
 	private String usrLogin;
 
-	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	private Timestamp raisedOn;
 	@XmlElement(name = "remarks")
 	private String responsNotes;
 	private long responseBy = 0;
-	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	@XmlElement
 	private Timestamp responseOn;
 	private String closerNotes;
 	private String code;
 	private String description;
 	private long closerBy = 0;
-	// @XmlJavaTypeAdapter(TimestampFormatterAdapter.class)
 	private Timestamp closerOn;
 	@XmlTransient
 	private String lovValue;
