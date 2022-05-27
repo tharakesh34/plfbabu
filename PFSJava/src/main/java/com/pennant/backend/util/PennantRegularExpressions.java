@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  PennantConstants.java												*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  26-04-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : PennantConstants.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 26-04-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.backend.util;
@@ -52,16 +43,15 @@ import com.pennanttech.pennapps.core.App;
  */
 public class PennantRegularExpressions {
 
-	//-------------------------------------------------//+
-	//***** Security Modules -- Mandatory Fields ******//
-	//-------------------------------------------------//
+	// -------------------------------------------------//+
+	// ***** Security Modules -- Mandatory Fields ******//
+	// -------------------------------------------------//
 
 	public static final String USER_LOGIN_REGIX = "[a-zA-Z0-9]{5,}";
-	public static final String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=[^\\s]+$)(?=.*[!@#$%^&*_-])";
 
-	//-------------------------------------------------//
-	//********** Modules -- Mandatory Fields **********//
-	//-------------------------------------------------//
+	// -------------------------------------------------//
+	// ********** Modules -- Mandatory Fields **********//
+	// -------------------------------------------------//
 
 	public static final String CHARACTER_REGEX = "[A-Za-z]+";
 	public static final String NUMBER_REGEX = "[0-9]+";
@@ -71,9 +61,9 @@ public class PennantRegularExpressions {
 	public static final String ALPHA_NUMERIC_SPL_REGEX = "[A-Za-z0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s]+";
 	public static final String NUMERIC_SPL_REGEX = "[0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s]+";
 
-	//-------------------------------------------------//
-	//******** Modules -- Non Mandatory Fields ********//
-	//-------------------------------------------------//
+	// -------------------------------------------------//
+	// ******** Modules -- Non Mandatory Fields ********//
+	// -------------------------------------------------//
 
 	public static final String NM_CHARACTER_REGEX = "[A-Za-z]*";
 	public static final String NM_NUMBER_REGEX = "[0-9]*";
@@ -83,9 +73,9 @@ public class PennantRegularExpressions {
 	public static final String NM_ALPHA_NUMERIC_SPL_REGEX = "[A-Za-z0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s]*";
 	public static final String NM_NUMERIC_SPL_REGEX = "[0-9.\\>\\<\\!\\@\\$\\%\\&\\#\\*\\(\\)\\[\\]\\{\\}\\s]*";
 
-	//-------------------------------------------------//
-	//******** Modules -- Fixed Length  Fields ********//
-	//-------------------------------------------------//
+	// -------------------------------------------------//
+	// ******** Modules -- Fixed Length Fields ********//
+	// -------------------------------------------------//
 
 	public static final String ALPHA_CAPS_FL3_REGEX = "[a-zA-z]{3}";
 	public static final String ALPHANUM_CAPS_FL3_REGEX = "[a-zA-z0-9]{3}";
@@ -94,9 +84,9 @@ public class PennantRegularExpressions {
 	public static final String NUMERIC_FL5_REGEX = "[0-9]{5,}";
 	public static final String ALPHANUM_FL23_REGEX = "[a-zA-z0-9]{23}";
 
-	//-------------------------------------------------//
-	//*********** Modules -- Other Fields *************//
-	//-------------------------------------------------//
+	// -------------------------------------------------//
+	// *********** Modules -- Other Fields *************//
+	// -------------------------------------------------//
 
 	public static final String NAME_REGEX = "^[A-Za-z]+[A-Za-z\\.\\s]*";
 	public static final String NM_NAME_REGEX = "[a-zA-Z.\\s]*";
@@ -109,7 +99,7 @@ public class PennantRegularExpressions {
 	public static final String ALPHA_SPACE_UNDERSCORE_REGEX = "^[A-Za-z]+[A-Za-z\\s\\_]*";
 	public static final String NM_DESCRIPTION_REGEX = "[A-Za-z0-9\\.\\-\\s\\(\\)]*";
 	public static final String ID_CODES = "([A-Za-z\\/]*|[0-9\\/]*|[a-zA-Z0-9\\/]*)+\\s*";
-	//public static final String	ID_CODES							= "([A-Za-z\\s]*|[0-9\\s]*|[a-zA-Z0-9\\s]*)";
+	// public static final String ID_CODES = "([A-Za-z\\s]*|[0-9\\s]*|[a-zA-Z0-9\\s]*)";
 
 	public static final String REGEX_TELEPHONE = "REGEX_TELEPHONE";
 	public static final String REGEX_FAX = "REGEX_FAX";
@@ -167,7 +157,8 @@ public class PennantRegularExpressions {
 	public static final String REGEX_UPP_BOX_ALPHA = "REGEX_UPP_BOX_ALPHA";
 	public static final String REGEX_UPP_BOX_ALPHANUM = "REGEX_UPP_BOX_ALPHANUM";
 	public static final String REGEX_UPPER_ALPHANUM_SPACE = "REGEX_UPPER_ALPHANUM_SPACE";
-	public static final String REGEX_ALPHANUM_FSLASH_SPACE = "REGEX_ALPHANUM_FSLASH_SPACE";//Expression Accepts Alpha numerics and /,space,-
+	public static final String REGEX_ALPHANUM_FSLASH_SPACE = "REGEX_ALPHANUM_FSLASH_SPACE";// Expression Accepts Alpha
+																							// numerics and /,space,-
 	public static final String REGEX_CUSTCIF = "REGEX_CUSTCIF";
 	public static final String REGEX_UPPBOX_ALPHA_CODE = "REGEX_UPPBOX_ALPHA_CODE";
 	public static final String REGEX_UPPBOX_ALPHANUM_UNDERSCORE = "REGEX_UPPBOX_ALPHANUM_UNDERSCORE";

@@ -54,7 +54,7 @@ public class ReferenceGenerator implements Serializable {
 	private static final String SEQUENCE = "S";
 
 	// First 4 letters of the customer and DOB in DDMMYY format
-	private static final String DEFAULT_PWD_FORMAT = "LLLL_ddMMyy";
+	private static final String DEFAULT_PDFK_FORMAT = "LLLL_ddMMyy";
 	private static final String LETTER = "L";
 	private static final String DAY = "d";
 	private static final String YEAR = "y";
@@ -240,7 +240,7 @@ public class ReferenceGenerator implements Serializable {
 		if (customer != null && customer.getCustShrtName() != null) {
 			String format = SysParamUtil.getValueAsString(SMTParameterConstants.PDF_PASSWORD_FORMAT);
 			if (StringUtils.isBlank(format)) {
-				format = DEFAULT_PWD_FORMAT;
+				format = DEFAULT_PDFK_FORMAT;
 			}
 			String name = StringUtils.trimToEmpty(customer.getCustShrtName());
 			name = StringUtils.upperCase(name);

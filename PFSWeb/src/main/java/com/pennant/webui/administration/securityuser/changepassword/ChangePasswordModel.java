@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ChangePasswordModel.java                                            * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    : 13-07-2011    														*
- *                                                                  						*
- * Modified Date    : 30-07-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ChangePasswordModel.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 13-07-2011 * * Modified
+ * Date : 30-07-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-07-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-07-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.securityuser.changepassword;
@@ -59,21 +41,19 @@ import org.zkoss.zul.Label;
 import com.pennant.app.util.SysParamUtil;
 import com.pennant.backend.dao.administration.SecurityUserPasswordsDAO;
 import com.pennant.backend.model.administration.SecurityUser;
-import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennanttech.pennapps.core.resource.Literal;
 
 public class ChangePasswordModel {
 	private static final Logger logger = LogManager.getLogger(ChangePasswordModel.class);
 	private static SecurityUserPasswordsDAO securityUserPasswordsDAO;
+	private static final String DEFAULT_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=[^\\s]+$)(?=.*[!@#$%^&*_-])";
 
 	/**
 	 * This method checking whether EncriptedPassword and raw password are same or not by calling PasswordEncoderImpl's
 	 * isPasswordValid() method
 	 * 
-	 * @param oldPassword
-	 *            //encrypted Old password
-	 * @param password
-	 *            //newPassword or oldPassword depend on method call
+	 * @param oldPassword //encrypted Old password
+	 * @param password    //newPassword or oldPassword depend on method call
 	 * @return boolean
 	 */
 
@@ -104,8 +84,7 @@ public class ChangePasswordModel {
 		String pattern = "";
 		int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
 		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
-		pattern = PennantRegularExpressions.PASSWORD_PATTERN + ".{" + String.valueOf(pwdMinLenght) + ","
-				+ String.valueOf(pwdMaxLenght) + "})";
+		pattern = DEFAULT_PATTERN + ".{" + String.valueOf(pwdMinLenght) + "," + String.valueOf(pwdMaxLenght) + "})";
 		Pattern p = Pattern.compile(pattern);
 		Matcher matcher = p.matcher(password);
 		if (!matcher.matches()) {
@@ -152,10 +131,8 @@ public class ChangePasswordModel {
 	 * 3)if Password matches <code>@returns true
 	 *       <br>  else<br> @return false</Code>
 	 * 
-	 * @param aSecurityUser
-	 *            (SecurityUser )
-	 * @param newPassword
-	 *            (String)
+	 * @param aSecurityUser (SecurityUser )
+	 * @param newPassword   (String)
 	 * @return boolean
 	 */
 	public boolean checkWithPreviousPasswords(SecurityUser aSecurityUser, String newPassword) {
@@ -195,8 +172,7 @@ public class ChangePasswordModel {
 	/**
 	 * This method displays passwordStatusMeter and label_PwdStatus
 	 * 
-	 * @param pwdstatusCode
-	 *            (int)
+	 * @param pwdstatusCode (int)
 	 */
 	public static void showPasswordStatusMeter(Div divPwdStatusMeter, Label labelPwdStatus, int pwdstatusCode) {
 		switch (pwdstatusCode) {
