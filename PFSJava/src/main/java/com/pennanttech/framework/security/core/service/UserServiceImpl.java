@@ -50,6 +50,7 @@ import com.pennant.backend.model.SecLoginlog;
 import com.pennant.backend.model.administration.SecurityRight;
 import com.pennant.backend.model.administration.SecurityRole;
 import com.pennant.backend.model.administration.SecurityUser;
+import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 
 public class UserServiceImpl implements UserService {
@@ -150,8 +151,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public long logLoginAttempt(SecLoginlog logingLog) {
-		logger.info("Saving the login attempt details for: " + logingLog.getLoginUsrLogin() + " Host:"
-				+ logingLog.getLoginIP() + " SessionId: " + logingLog.getLoginSessionID());
+		logger.info(Literal.ENTERING + logingLog.getLoginUsrLogin());
 
 		return this.secLoginlogDAO.saveLog(logingLog);
 	}

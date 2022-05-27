@@ -43,7 +43,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -983,22 +982,18 @@ public class DefaultMandateProcess extends AbstractInterface implements MandateP
 
 		logger.debug(Literal.SQL + sql);
 
-		try {
-			this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
-				public void setValues(PreparedStatement ps, int i) throws SQLException {
-					ps.setString(1, "SUCCESS");
-					ps.setString(2, "Sent for Registration Process");
-					ps.setLong(3, mandateIdList.get(i));
-					ps.setLong(4, batchId);
-				}
+		this.jdbcOperations.batchUpdate(sql, new BatchPreparedStatementSetter() {
+			public void setValues(PreparedStatement ps, int i) throws SQLException {
+				ps.setString(1, "SUCCESS");
+				ps.setString(2, "Sent for Registration Process");
+				ps.setLong(3, mandateIdList.get(i));
+				ps.setLong(4, batchId);
+			}
 
-				public int getBatchSize() {
-					return mandateIdList.size();
-				}
-			});
-		} catch (DataAccessException e) {
-			e.printStackTrace();
-		}
+			public int getBatchSize() {
+				return mandateIdList.size();
+			}
+		});
 	}
 
 	public void updateMandateStatus(List<Long> mandateIdList) throws Exception {

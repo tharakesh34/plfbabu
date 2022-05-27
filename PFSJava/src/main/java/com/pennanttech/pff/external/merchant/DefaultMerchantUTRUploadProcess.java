@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -157,24 +156,22 @@ public class DefaultMerchantUTRUploadProcess extends AbstractInterface implement
 
 	private void updateResponseStatus(List<String> lanRefList, long batchId) {
 		logger.debug(Literal.ENTERING);
-		try {
-			this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
-					"update Merchant_UTR_Upload set status = ?, remarks = ? where LanReference=? and RESP_BATCH_ID=?",
-					new BatchPreparedStatementSetter() {
-						public void setValues(PreparedStatement ps, int i) throws SQLException {
-							ps.setString(1, "SUCCESS");
-							ps.setString(2, "Uploaded Successfully");
-							ps.setString(3, lanRefList.get(i));
-							ps.setLong(4, batchId);
-						}
 
-						public int getBatchSize() {
-							return lanRefList.size();
-						}
-					});
-		} catch (DataAccessException e) {
-			e.printStackTrace();
-		}
+		this.namedJdbcTemplate.getJdbcOperations().batchUpdate(
+				"update Merchant_UTR_Upload set status = ?, remarks = ? where LanReference=? and RESP_BATCH_ID=?",
+				new BatchPreparedStatementSetter() {
+					public void setValues(PreparedStatement ps, int i) throws SQLException {
+						ps.setString(1, "SUCCESS");
+						ps.setString(2, "Uploaded Successfully");
+						ps.setString(3, lanRefList.get(i));
+						ps.setLong(4, batchId);
+					}
+
+					public int getBatchSize() {
+						return lanRefList.size();
+					}
+				});
+
 		logger.debug(Literal.LEAVING);
 	}
 
