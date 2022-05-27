@@ -1799,8 +1799,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 		String dType = this.receiptMode.getSelectedItem().getValue().toString();
 
-		if (!StringUtils.isEmpty(dType) && !StringUtils.equals(dType, PennantConstants.List_Select)
-				&& StringUtils.equals(dType, RepayConstants.RECEIPTMODE_ESCROW)) {
+		if (!StringUtils.isEmpty(dType) && !PennantConstants.List_Select.equals(dType)
+				&& ReceiptMode.ESCROW.equals(dType)) {
 
 			fillComboBox(this.receiptPurpose, FinServiceEvent.EARLYRPY, PennantStaticListUtil.getReceiptPurpose(),
 					",FeePayment,");

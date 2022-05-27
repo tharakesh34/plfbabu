@@ -96,6 +96,7 @@ import com.pennanttech.pff.advancepayment.AdvancePaymentUtil.AdvanceType;
 import com.pennanttech.pff.constants.AccountingEvent;
 import com.pennanttech.pff.constants.FinServiceEvent;
 import com.pennanttech.pff.core.TableType;
+import com.pennanttech.pff.receipt.constants.Allocation;
 import com.pennanttech.pff.receipt.util.ReceiptUtil;
 
 public class RepaymentProcessUtil {
@@ -1952,13 +1953,13 @@ public class RepaymentProcessUtil {
 				BigDecimal waivedNow = rad.getWaivedAmount();
 
 				switch (allocType) {
-				case RepayConstants.ALLOCATION_EMI:
+				case Allocation.EMI:
 					break;
-				case RepayConstants.ALLOCATION_PRI:
+				case Allocation.PRI:
 					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(paidNow));
 					rpyQueueHeader.setPriWaived(rpyQueueHeader.getPriWaived().add(waivedNow));
 					break;
-				case RepayConstants.ALLOCATION_FUT_PRI:
+				case Allocation.FUT_PRI:
 					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(paidNow));
 					rpyQueueHeader.setPriWaived(rpyQueueHeader.getPriWaived().add(waivedNow));
 
@@ -1966,19 +1967,19 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader.setFutPriWaived(waivedNow);
 
 					break;
-				case RepayConstants.ALLOCATION_PP:
+				case Allocation.PP:
 					rpyQueueHeader.setPrincipal(rpyQueueHeader.getPrincipal().add(paidNow));
 					rpyQueueHeader.setPriWaived(rpyQueueHeader.getPriWaived().add(waivedNow));
 
 					rpyQueueHeader.setPartialPaid(paidNow);
 
 					break;
-				case RepayConstants.ALLOCATION_PFT:
+				case Allocation.PFT:
 					rpyQueueHeader.setProfit(rpyQueueHeader.getProfit().add(paidNow));
 					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(waivedNow));
 					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(rad.getTdsPaid()));
 					break;
-				case RepayConstants.ALLOCATION_FUT_PFT:
+				case Allocation.FUT_PFT:
 					rpyQueueHeader.setProfit(rpyQueueHeader.getProfit().add(paidNow));
 					rpyQueueHeader.setPftWaived(rpyQueueHeader.getPftWaived().add(waivedNow));
 					rpyQueueHeader.setTds(rpyQueueHeader.getTds().add(rad.getTdsPaid()));
@@ -1987,31 +1988,30 @@ public class RepaymentProcessUtil {
 					rpyQueueHeader.setFutProfit(paidNow);
 					rpyQueueHeader.setFutPftWaived(waivedNow);
 					break;
-				case RepayConstants.ALLOCATION_LPFT:
+				case Allocation.LPFT:
 					rpyQueueHeader.setLateProfit(rpyQueueHeader.getLateProfit().add(paidNow));
 					rpyQueueHeader.setLatePftWaived(rpyQueueHeader.getLatePftWaived().add(waivedNow));
 					rpyQueueHeader.setFeeTds(rpyQueueHeader.getFeeTds().add(rad.getTdsPaid()));
 					break;
-				case RepayConstants.ALLOCATION_ODC:
+				case Allocation.ODC:
 					rpyQueueHeader.setPenalty(rpyQueueHeader.getPenalty().add(paidNow));
 					rpyQueueHeader.setPenaltyWaived(rpyQueueHeader.getPenaltyWaived().add(waivedNow));
 					extDataMap.put("LPP_TDS_P", rad.getTdsPaid());
 					extDataMap.put("LPP_TDS_W", rad.getTdsWaived());
 					break;
-				case RepayConstants.ALLOCATION_FEE:
+				case Allocation.FEE:
 					rpyQueueHeader.setFee(rpyQueueHeader.getFee().add(paidNow));
 					rpyQueueHeader.setFeeWaived(rpyQueueHeader.getFeeWaived().add(waivedNow));
 					break;
-				case RepayConstants.ALLOCATION_MANADV:
-				case RepayConstants.ALLOCATION_BOUNCE:
+				case Allocation.MANADV:
+				case Allocation.BOUNCE:
 					rpyQueueHeader.setAdviseAmount(rpyQueueHeader.getAdviseAmount().add(paidNow).add(waivedNow));
 					break;
 				default:
 					break;
 				}
 
-				if (!RepayConstants.ALLOCATION_EMI.equals(allocType)
-						&& RepayConstants.ALLOCATION_PP.equals(allocType)) {
+				if (!Allocation.EMI.equals(allocType) && Allocation.PP.equals(allocType)) {
 					totRecvAmount = totRecvAmount.add(paidNow);
 				}
 			}
