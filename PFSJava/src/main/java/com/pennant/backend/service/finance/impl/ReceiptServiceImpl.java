@@ -66,6 +66,7 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
+import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReferenceGenerator;
@@ -5635,7 +5636,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 			}
 		}
 
-		if (requestSource != RequestSource.UPLOAD) {
+		if (RequestSource.UPLOAD != requestSource) {
 			FinServiceInstruction tempFsi = schdData.getFinServiceInstruction().copyEntity();
 			FinReceiptHeader rch = rd.getReceiptHeader().copyEntity();
 
@@ -5685,11 +5686,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
+		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
+		RequestSource requestSource = fsi.getRequestSource();
 
 		BigDecimal totalDues = getTotalDues(rd);
 		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(fm.getFinCcy()));
 
-		if (totalDues.compareTo(rd.getReceiptHeader().getReceiptAmount()) > 0) {
+		if (RequestSource.UPLOAD == requestSource
+				&& totalDues.compareTo(rd.getReceiptHeader().getReceiptAmount()) > 0) {
 			setError(schdData, "RU0051");
 			return;
 		}
@@ -6266,13 +6270,12 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 				setError(schdData, "90330", receiptPurpose.code(), "");
 				return;
 			}
+
+			rd.setBuildProcess("R");
+			receiptCalculator.initiateReceipt(rd, false);
+
+			schdData.setFinanceScheduleDetails(originalSchedules);
 		}
-
-		rd.setBuildProcess("R");
-		receiptCalculator.initiateReceipt(rd, false);
-
-		schdData.setFinanceScheduleDetails(originalSchedules);
-
 	}
 
 	/**
