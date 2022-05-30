@@ -99,9 +99,8 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 	 * selected ScoringType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScoringTypeDialog(Event event) throws Exception {
+	public void onCreate$window_ScoringTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -320,9 +319,8 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aScoringType
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ScoringType aScoringType) throws InterruptedException {
+	public void doShowDialog(ScoringType aScoringType) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -744,10 +742,8 @@ public class ScoringTypeDialogCtrl extends GFCBaseCtrl<ScoringType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.scoringType);
 	}
 

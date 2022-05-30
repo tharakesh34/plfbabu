@@ -111,9 +111,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * selected RatingCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RatingCodeDialog(Event event) throws Exception {
+	public void onCreate$window_RatingCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -369,9 +368,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aRatingCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(RatingCode aRatingCode) throws Exception {
+	public void doShowDialog(RatingCode aRatingCode) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -819,10 +817,8 @@ public class RatingCodeDialogCtrl extends GFCBaseCtrl<RatingCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ScoringTypeListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  08-11-2011    														*
- *                                                                  						*
- * Modified Date    :  08-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ScoringTypeListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 08-11-2011 * * Modified
+ * Date : 08-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 08-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 08-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.bmtmasters.scoringtype;
@@ -120,9 +102,8 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 	 * selected ScoringType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScoringTypeList(Event event) throws Exception {
+	public void onCreate$window_ScoringTypeList(Event event) {
 		logger.debug("Entering");
 
 		/* set components visible dependent on the users rights */
@@ -196,9 +177,8 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 	 * see: com.pennant.webui.bmtmasters.scoringtype.model.ScoringTypeListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onScoringTypeItemDoubleClicked(Event event) throws Exception {
+	public void onScoringTypeItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected ScoringType object
@@ -243,7 +223,7 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 	/**
 	 * Call the ScoringType dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_ScoringTypeList_NewScoringType(Event event) throws Exception {
+	public void onClick$button_ScoringTypeList_NewScoringType(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new ScoringType object, We GET it from the backEnd.
 		final ScoringType aScoringType = getScoringTypeService().getNewScoringType();
@@ -255,11 +235,9 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 	 * Opens the detail view. <br>
 	 * OverHanded some parameters in a map if needed. <br>
 	 * 
-	 * @param ScoringType
-	 *            (aScoringType)
-	 * @throws Exception
+	 * @param ScoringType (aScoringType)
 	 */
-	private void showDetailView(ScoringType aScoringType) throws Exception {
+	private void showDetailView(ScoringType aScoringType) {
 		logger.debug("Entering");
 
 		/*
@@ -320,9 +298,8 @@ public class ScoringTypeListCtrl extends GFCBaseListCtrl<ScoringType> {
 	 * Method for calling the ScoringType dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_ScoringTypeList_ScoringTypeSearchDialog(Event event) throws Exception {
+	public void onClick$button_ScoringTypeList_ScoringTypeSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		/*
