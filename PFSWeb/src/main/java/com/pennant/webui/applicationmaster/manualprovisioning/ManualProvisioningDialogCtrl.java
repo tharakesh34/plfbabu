@@ -136,9 +136,8 @@ public class ManualProvisioningDialogCtrl extends GFCBaseCtrl<Provision> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_ManualProvisioningDialog(Event event) throws Exception {
+	public void onCreate$window_ManualProvisioningDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

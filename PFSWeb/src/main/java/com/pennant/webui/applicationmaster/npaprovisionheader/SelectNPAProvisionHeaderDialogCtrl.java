@@ -155,9 +155,8 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING + " " + event.toString());
 
 		doSetFieldValidation();
