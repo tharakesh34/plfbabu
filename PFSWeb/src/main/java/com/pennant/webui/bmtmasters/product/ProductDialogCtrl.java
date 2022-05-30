@@ -157,9 +157,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	 * selected Product object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProductDialog(Event event) throws Exception {
+	public void onCreate$window_ProductDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -433,9 +432,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProduct
-	 * @throws Exception
 	 */
-	public void doShowDialog(Product aProduct) throws Exception {
+	public void doShowDialog(Product aProduct) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -859,7 +857,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 
 	// New Button & Double Click Events for Product Asset List
 
-	public void onClick$btnNew_ProductAsset(Event event) throws Exception {
+	public void onClick$btnNew_ProductAsset(Event event) {
 		logger.debug("Entering");
 
 		if (StringUtils.trimToNull(this.productCode.getValue()) != null) {
@@ -887,7 +885,7 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 		logger.debug("Leaving");
 	}
 
-	public void onProductAssetItemDoubleClicked(Event event) throws Exception {
+	public void onProductAssetItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listboxProductAsset.getSelectedItem();
@@ -1004,10 +1002,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.product);
 	}
 
@@ -1019,9 +1015,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnManualDeviation(Event event) throws Exception {
+	public void onClick$btnManualDeviation(Event event) {
 		logger.debug("Entering  " + event.toString());
 
 		this.manualDeviations.setErrorMessage("");
@@ -1040,9 +1035,8 @@ public class ProductDialogCtrl extends GFCBaseCtrl<Product> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$allowDeviation(Event event) throws Exception {
+	public void onCheck$allowDeviation(Event event) {
 		logger.debug("Entering  " + event.toString());
 		allowManualDeviation();
 		logger.debug("Leaving  " + event.toString());

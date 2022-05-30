@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  QuestionSearchCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  21-11-2011    														*
- *                                                                  						*
- * Modified Date    :  21-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : QuestionSearchCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 21-11-2011 * * Modified
+ * Date : 21-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 21-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 21-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.bmtmasters.question;
 
 import java.util.List;
@@ -124,10 +106,9 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question> {
 
 	/**
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_QuestionSearch(Event event) throws Exception {
+	public void onCreate$window_QuestionSearch(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -232,7 +213,7 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question> {
 					this.correctAnswer.setValue(filter.getValue().toString());
 				} else if ("questionIsActive".equals(filter.getProperty())) {
 					SearchOperators.restoreStringOperator(this.sortOperator_questionIsActive, filter);
-					//this.questionIsActive.setValue(filter.getValue().toString());
+					// this.questionIsActive.setValue(filter.getValue().toString());
 					if (Integer.parseInt(filter.getValue().toString()) == 1) {
 						this.questionIsActive.setChecked(true);
 					} else {
@@ -271,8 +252,7 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -281,7 +261,7 @@ public class QuestionSearchCtrl extends GFCBaseCtrl<Question> {
 	/**
 	 * Opens the SearchDialog window modal.
 	 */
-	private void showQuestionSeekDialog() throws InterruptedException {
+	private void showQuestionSeekDialog() {
 
 		try {
 			// open the dialog in modal mode
