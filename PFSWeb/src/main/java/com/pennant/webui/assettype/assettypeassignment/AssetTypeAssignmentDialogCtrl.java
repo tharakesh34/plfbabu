@@ -94,9 +94,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 	 * Method for creating window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AssetTypeAssignmentDialog(Event event) throws Exception {
+	public void onCreate$window_AssetTypeAssignmentDialog(Event event) {
 		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_AssetTypeAssignmentDialog);
@@ -153,9 +152,8 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param collateralAssignment
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ExtendedFieldRender extendedFieldRender) throws InterruptedException {
+	public void doShowDialog(ExtendedFieldRender extendedFieldRender) {
 		logger.debug("Entering");
 
 		if (isNewRecord()) {
@@ -340,13 +338,13 @@ public class AssetTypeAssignmentDialogCtrl extends GFCBaseCtrl<ExtendedFieldRend
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		try {
