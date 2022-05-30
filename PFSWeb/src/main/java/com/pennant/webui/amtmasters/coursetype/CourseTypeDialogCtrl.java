@@ -99,9 +99,8 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 	 * selected CourseType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CourseTypeDialog(Event event) throws Exception {
+	public void onCreate$window_CourseTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -261,9 +260,8 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 	 * When user clicks on "Notes" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.courseType);
 	}
 
@@ -339,9 +337,8 @@ public class CourseTypeDialogCtrl extends GFCBaseCtrl<CourseType> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCourseType
-	 * @throws Exception
 	 */
-	public void doShowDialog(CourseType aCourseType) throws Exception {
+	public void doShowDialog(CourseType aCourseType) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.

@@ -206,9 +206,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 * selected VehicleDealer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_VehicleDealerDialog(Event event) throws Exception {
+	public void onCreate$window_VehicleDealerDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1198,9 +1197,8 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVehicleDealer
-	 * @throws Exception
 	 */
-	public void doShowDialog(VehicleDealer aVehicleDealer) throws Exception {
+	public void doShowDialog(VehicleDealer aVehicleDealer) {
 		logger.debug(Literal.ENTERING);
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -1955,27 +1953,6 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	private void fillCitydetails(String state) {
-		logger.debug("Entering");
-
-		this.dealerCity.setModuleName("City");
-		this.dealerCity.setValueColumn("PCCity");
-		this.dealerCity.setDescColumn("PCCityName");
-		this.dealerCity.setValidateColumns(new String[] { "PCCity" });
-		Filter[] filters = new Filter[2];
-
-		if (state == null) {
-			filters[0] = new Filter("PCProvince", null, Filter.OP_NOT_EQUAL);
-		} else {
-			filters[0] = new Filter("PCProvince", state, Filter.OP_EQUAL);
-		}
-
-		filters[1] = new Filter("CITYISACTIVE", 1, Filter.OP_EQUAL);
-		this.dealerCity.setFilters(filters);
-
-		logger.debug(Literal.LEAVING);
-	}
-
 	public void onFulfill$dealerCity(Event event) throws InterruptedException {
 		logger.debug("Entering");
 
@@ -2118,7 +2095,7 @@ public class VehicleDealerDialogCtrl extends GFCBaseCtrl<VehicleDealer> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.vehicleDealer);
 	}
 
