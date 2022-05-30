@@ -197,7 +197,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 		}
 	}
 
-	public void onCreate$window_VASRecordingList(Event event) throws Exception {
+	public void onCreate$window_VASRecordingList(Event event) {
 		logger.debug("Entering");
 
 		// Getting moduleName from mainmenu.xml
@@ -293,7 +293,7 @@ public class VASRecordingListCtrl extends GFCBaseListCtrl<VASRecording> {
 	 * @param event An event sent to the event handler of the component.
 	 */
 
-	public void onVASRecordingItemDoubleClicked(Event event) throws Exception {
+	public void onVASRecordingItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.

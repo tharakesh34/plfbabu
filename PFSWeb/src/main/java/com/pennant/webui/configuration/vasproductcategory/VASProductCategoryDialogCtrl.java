@@ -105,9 +105,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 * selected VASProductCategory object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_VASProductCategoryDialog(Event event) throws Exception {
+	public void onCreate$window_VASProductCategoryDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 		try {
 			setPageComponents(window_VASProductCategoryDialog);
@@ -239,9 +238,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_VASProductCategoryDialog(Event event) throws Exception {
+	public void onClose$window_VASProductCategoryDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClose();
 		logger.debug("Leaving" + event.toString());
@@ -251,10 +249,8 @@ public class VASProductCategoryDialogCtrl extends GFCBaseCtrl<VASProductCategory
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		doShowNotes(this.vASProductCategory);
 		logger.debug("Leaving" + event.toString());

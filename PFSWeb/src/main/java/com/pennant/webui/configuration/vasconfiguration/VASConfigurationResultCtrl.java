@@ -59,9 +59,8 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	 * selected VASConfigurationResult object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_VASConfigurationResult(Event event) throws Exception {
+	public void onCreate$window_VASConfigurationResult(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -134,8 +133,7 @@ public class VASConfigurationResultCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
