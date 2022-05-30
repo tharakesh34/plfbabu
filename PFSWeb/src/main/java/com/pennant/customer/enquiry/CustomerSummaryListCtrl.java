@@ -463,25 +463,15 @@ public class CustomerSummaryListCtrl extends GFCBaseListCtrl<Customer> {
 				cell = new Listcell(customerCollateral.getCollCcy());
 				cell.setParent(item);
 
-				// Date date = DateUtility.convertDateFromAS400(new
-				// BigDecimal(customerCollateral.getCollExpDate().toString()));
 				cell = new Listcell(
 						DateUtility.format((Date) customerCollateral.getCollExpDate(), PennantConstants.dateFormat));
 				cell.setParent(item);
-				// Date date1 = DateUtility.convertDateFromAS400(new
-				// BigDecimal(customerCollateral.getColllastRvwDate().toString()));
 				cell = new Listcell(DateUtility.format((Date) customerCollateral.getColllastRvwDate(),
 						PennantConstants.dateFormat));
 				cell.setParent(item);
-				// cell = new Listcell(PennantAppUtil.amountFormate(new
-				// BigDecimal(customerCollateral.getCollValue().toString()).divide(new BigDecimal(Math.pow(10,
-				// formatter)), RoundingMode.HALF_UP), 0));
 				cell = new Listcell(customerCollateral.getCollValue().toString());
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);
-				// cell = new Listcell(PennantAppUtil.amountFormate(new
-				// BigDecimal(customerCollateral.getCollBankVal().toString()).divide(new BigDecimal(Math.pow(10,
-				// formatter)), RoundingMode.HALF_UP), 0));
 				cell = new Listcell(customerCollateral.getCollBankVal().toString());
 				cell.setStyle("text-align:right;");
 				cell.setParent(item);

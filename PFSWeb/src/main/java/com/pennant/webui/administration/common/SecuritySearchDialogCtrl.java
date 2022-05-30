@@ -121,14 +121,12 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	 * when the "search/filter" button is clicked.
 	 * 
 	 * @param event
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnSearch(Event event) throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void onClick$btnSearch(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
@@ -199,14 +197,11 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * This method do search operation
 	 * 
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	private void doSearch() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
+	private void doSearch() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		filters[0] = Integer.valueOf(-1);

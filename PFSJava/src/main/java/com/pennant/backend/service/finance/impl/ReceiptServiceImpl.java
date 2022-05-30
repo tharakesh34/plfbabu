@@ -66,7 +66,6 @@ import com.pennant.app.core.LatePayMarkingService;
 import com.pennant.app.finance.limits.LimitCheckDetails;
 import com.pennant.app.util.CalculationUtil;
 import com.pennant.app.util.CurrencyUtil;
-import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.ErrorUtil;
 import com.pennant.app.util.GSTCalculator;
 import com.pennant.app.util.ReferenceGenerator;
@@ -7049,7 +7048,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	public Date getLastWaiverDate(long finID, Date appDate, Date receiptDate) {
 		return feeWaiverHeaderDAO.getLastWaiverDate(finID, appDate, receiptDate);
 	}
-	
+
 	private void prepareFinanceSummary(FinanceDetail fd) {
 		logger.debug(Literal.ENTERING);
 

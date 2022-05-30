@@ -209,14 +209,12 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * 
 	 * @param event
 	 * @throws ClassNotFoundException
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnSearch(Event event) throws IllegalAccessException, IllegalArgumentException,
-			InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
+	public void onClick$btnSearch(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
@@ -254,15 +252,13 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 * 
 	 * @throws ClassNotFoundException
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
 	@SuppressWarnings("unchecked")
-	public void doSearch() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException, ClassNotFoundException {
+	public void doSearch()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
 		logger.debug("Entering ");
 		final JdbcSearchObject<SecurityGroup> so = new JdbcSearchObject<SecurityGroup>(SecurityGroup.class);
 		so.addTabelName("SecGroups_View");
