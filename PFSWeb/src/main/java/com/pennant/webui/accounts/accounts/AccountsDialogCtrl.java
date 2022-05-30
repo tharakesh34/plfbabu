@@ -161,9 +161,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * selected Accounts object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AccountsDialog(Event event) throws Exception {
+	public void onCreate$window_AccountsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -614,9 +613,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccounts
-	 * @throws Exception
 	 */
-	public void doShowDialog(Accounts aAccounts) throws Exception {
+	public void doShowDialog(Accounts aAccounts) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1223,9 +1221,8 @@ public class AccountsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.accounts);
 	}
 
