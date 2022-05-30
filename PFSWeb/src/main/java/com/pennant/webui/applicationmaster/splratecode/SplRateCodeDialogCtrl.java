@@ -100,9 +100,8 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 * selected SplRateCode object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SplRateCodeDialog(Event event) throws Exception {
+	public void onCreate$window_SplRateCodeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -337,9 +336,8 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSplRateCode
-	 * @throws Exception
 	 */
-	public void doShowDialog(SplRateCode aSplRateCode) throws Exception {
+	public void doShowDialog(SplRateCode aSplRateCode) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -768,10 +766,8 @@ public class SplRateCodeDialogCtrl extends GFCBaseCtrl<SplRateCode> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
