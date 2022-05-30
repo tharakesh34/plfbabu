@@ -52,7 +52,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_SelectNPAProvisionHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_SelectNPAProvisionHeaderDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -77,7 +77,7 @@ public class SelectNPAProvisionHeaderDialogCtrl extends GFCBaseCtrl<NPAProvision
 		logger.debug(Literal.LEAVING);
 	}
 
-	private void showSelectNPAProvisionHeaderDialog() throws InterruptedException {
+	private void showSelectNPAProvisionHeaderDialog() {
 		logger.debug(Literal.ENTERING);
 		try {
 			// open the dialog in modal mode

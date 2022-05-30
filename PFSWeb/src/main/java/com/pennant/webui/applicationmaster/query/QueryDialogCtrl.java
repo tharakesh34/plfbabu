@@ -163,9 +163,8 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 * selected Query object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_QueryDialog(Event event) throws Exception {
+	public void onCreate$window_QueryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -349,10 +348,8 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -373,9 +370,8 @@ public class QueryDialogCtrl extends GFCBaseCtrl<Query> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aQuery
-	 * @throws Exception
 	 */
-	public void doShowDialog(Query aQuery) throws Exception {
+	public void doShowDialog(Query aQuery) {
 		logger.debug("Entering");
 
 		try {
