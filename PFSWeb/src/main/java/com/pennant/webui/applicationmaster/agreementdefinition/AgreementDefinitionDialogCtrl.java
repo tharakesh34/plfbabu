@@ -153,9 +153,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * selected AgreementDefinition object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AgreementDefinitionDialog(Event event) throws Exception {
+	public void onCreate$window_AgreementDefinitionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -761,9 +760,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAgreementDefinition
-	 * @throws Exception
 	 */
-	public void doShowDialog(AgreementDefinition aAgreementDefinition) throws Exception {
+	public void doShowDialog(AgreementDefinition aAgreementDefinition) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1285,10 +1283,8 @@ public class AgreementDefinitionDialogCtrl extends GFCBaseCtrl<AgreementDefiniti
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

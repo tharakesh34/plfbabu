@@ -113,9 +113,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * selected CheckListDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CheckListDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CheckListDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -441,9 +440,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCheckListDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(CheckListDetail aCheckListDetail) throws Exception {
+	public void doShowDialog(CheckListDetail aCheckListDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -848,10 +846,8 @@ public class CheckListDetailDialogCtrl extends GFCBaseCtrl<CheckListDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.checkList);
 	}
 

@@ -75,9 +75,8 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	 * selected AccountTypeGroup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AccounTypeGroupDialog(Event event) throws Exception {
+	public void onCreate$window_AccounTypeGroupDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -352,10 +351,8 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aAccountTypeGroup
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog(AccountTypeGroup aAccountTypeGroup) throws Exception {
+	public void doShowDialog(AccountTypeGroup aAccountTypeGroup) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -833,10 +830,8 @@ public class AccountTypeGroupDialogCtrl extends GFCBaseCtrl<AccountTypeGroup> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.accountTypeGroup);
 	}
 

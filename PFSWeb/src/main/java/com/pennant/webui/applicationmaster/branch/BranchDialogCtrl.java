@@ -169,9 +169,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 * selected Branch object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_BranchDialog(Event event) throws Exception {
+	public void onCreate$window_BranchDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -793,9 +792,8 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBranch
-	 * @throws Exception
 	 */
-	public void doShowDialog(Branch aBranch) throws Exception {
+	public void doShowDialog(Branch aBranch) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1791,20 +1789,16 @@ public class BranchDialogCtrl extends GFCBaseCtrl<Branch> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.branch);
 	}
 
 	/**
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onCheck$branchIsActive(Event event) throws Exception {
+	public void onCheck$branchIsActive(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSetNewBranchProp();
 		logger.debug("Leaving" + event.toString());

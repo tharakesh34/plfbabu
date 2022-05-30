@@ -67,9 +67,8 @@ public class NormAccountMappingDialogCtrl extends GFCBaseCtrl<AccountMapping> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_NormAccountMappingDialog(Event event) throws Exception {
+	public void onCreate$window_NormAccountMappingDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

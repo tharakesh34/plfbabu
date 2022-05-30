@@ -111,9 +111,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * selected BaseRate object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_BaseRateDialog(Event event) throws Exception {
+	public void onCreate$window_BaseRateDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -405,9 +404,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aBaseRate
-	 * @throws Exception
 	 */
-	public void doShowDialog(BaseRate aBaseRate) throws Exception {
+	public void doShowDialog(BaseRate aBaseRate) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -872,10 +870,8 @@ public class BaseRateDialogCtrl extends GFCBaseCtrl<BaseRate> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.baseRate);
 	}
 
