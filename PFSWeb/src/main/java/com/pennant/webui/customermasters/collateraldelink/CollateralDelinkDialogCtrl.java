@@ -160,10 +160,9 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CollateralDelinkDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_CollateralDelinkDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -253,9 +252,11 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		try {
@@ -294,9 +295,8 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_CollateralDelinkDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -331,8 +331,7 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug(Literal.LEAVING);
 	}
 
-	private int getFormat() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
-			NoSuchMethodException, SecurityException {
+	private int getFormat() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		int ccyFormat = 0;
 		if (getFinanceMainDialogCtrl() != null && getFinanceMainDialogCtrl() instanceof CommitmentDialogCtrl) {
 			ccyFormat = 2;
@@ -604,15 +603,12 @@ public class CollateralDelinkDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * Method for Filling List box with the list rendering for Assignments
 	 * 
 	 * @param collateralAssignments
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
 	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
 	public void doFillCollateralDetails(List<CollateralAssignment> collateralAssignments, boolean fromAssignment)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-			SecurityException {
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		// ### 10-05-2018 Start Development Item 82

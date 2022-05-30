@@ -156,9 +156,8 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * selected CorporateCustomerDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CorporateCustomerDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CorporateCustomerDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -725,9 +724,8 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCorporateCustomerDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CorporateCustomerDetail aCorporateCustomerDetail) throws InterruptedException {
+	public void doShowDialog(CorporateCustomerDetail aCorporateCustomerDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1382,10 +1380,8 @@ public class CorporateCustomerDetailDialogCtrl extends GFCBaseCtrl<CorporateCust
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.corporateCustomerDetail);
 	}
 
