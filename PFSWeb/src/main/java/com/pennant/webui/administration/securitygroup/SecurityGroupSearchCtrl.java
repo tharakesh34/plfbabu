@@ -1,47 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SecurityGroupSearchCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  10-08-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecurityGroupSearchCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * *
+ * Modified Date : 10-08-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-08-2011        Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-08-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.securitygroup;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -123,10 +106,10 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * selected SecurityGroup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SecurityGroupSearch(Event event) throws Exception {
+	public void onCreate$window_SecurityGroupSearch(Event event) throws InterruptedException {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -225,9 +208,15 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * when the "search/filter" button is clicked.
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws ClassNotFoundException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnSearch(Event event) throws Exception {
+	public void onClick$btnSearch(Event event) throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException, ClassNotFoundException {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
@@ -236,8 +225,7 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -265,10 +253,16 @@ public class SecurityGroupSearchCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * 3. Store the filter and value in the searchObject. <br>
 	 * 4. Call the ServiceDAO method with searchObject as parameter. <br>
 	 * 
-	 * @throws Exception
+	 * @throws ClassNotFoundException
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
 	@SuppressWarnings("unchecked")
-	public void doSearch() throws Exception {
+	public void doSearch() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException, ClassNotFoundException {
 		logger.debug("Entering ");
 		final JdbcSearchObject<SecurityGroup> so = new JdbcSearchObject<SecurityGroup>(SecurityGroup.class);
 		so.addTabelName("SecGroups_View");

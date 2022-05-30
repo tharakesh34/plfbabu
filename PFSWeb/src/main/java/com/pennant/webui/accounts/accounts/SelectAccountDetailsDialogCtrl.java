@@ -49,7 +49,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	protected Textbox lovDescCustCIF; // autoWired
 	protected Textbox accType; // autoWired
 	protected Textbox lovDescAccType; // autoWired
-	protected Textbox currency; // autoWired             
+	protected Textbox currency; // autoWired
 	protected Textbox lovDescCurrency; // autoWired
 	protected Textbox branchCode; // autoWired
 	protected Textbox lovDescBranchCodeName; // autoWired
@@ -84,9 +84,8 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectAccountDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_SelectAccountDetailsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -110,7 +109,7 @@ public class SelectAccountDetailsDialogCtrl extends GFCBaseCtrl<Accounts> {
 
 	}
 
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		doClearMessage();
 		this.window_SelectAccountDetailsDialog.onClose();
 	}

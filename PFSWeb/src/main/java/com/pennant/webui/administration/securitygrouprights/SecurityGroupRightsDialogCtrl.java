@@ -102,9 +102,8 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * selected SecurityGroup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$win_SecGroupRightsDialog(Event event) throws Exception {
+	public void onCreate$win_SecGroupRightsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -146,9 +145,8 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * When user clicks on "cancel" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering " + event.toString());
 		doCancel();
 		logger.debug("Leaving " + event.toString());
@@ -156,8 +154,10 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 	/**
 	 * When user clicks on "save" button
+	 * 
+	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) throws InterruptedException {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving " + event.toString());
@@ -167,7 +167,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	/**
 	 * When clicks on "Close" button
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug("Entering " + event.toString());
 		doShowUnAssignedRightsList();
 		logger.debug("Leaving " + event.toString());
@@ -186,10 +186,8 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * when clicks on "btnSearchRights"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onClick$btnSearchRights(Event event) throws Exception {
+	public void onClick$btnSearchRights(Event event) {
 
 		logger.debug("Entering " + event.toString());
 
@@ -211,10 +209,9 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * when clicks on "btnSelectRights"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void onClick$btnSelectRights(Event event) throws Exception {
+	public void onClick$btnSelectRights(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (this.listbox_UnAssignedRights.getSelectedCount() != 0) {
@@ -244,10 +241,9 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * when clicks on "btnUnSelectRights"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void onClick$btnUnSelectRights(Event event) throws Exception {
+	public void onClick$btnUnSelectRights(Event event) {
 		logger.debug(event.toString());
 
 		if (this.listbox_AssignedRights.getSelectedCount() != 0) {
@@ -278,10 +274,9 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 	 * when clicks on "btnUnSelectAllRights"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public void onClick$btnUnSelectAllRights(Event event) throws Exception {
+	public void onClick$btnUnSelectAllRights(Event event) {
 		logger.debug(event.toString());
 		this.listbox_AssignedRights.selectAll();
 		if (this.listbox_AssignedRights.getSelectedCount() != 0) {
@@ -344,11 +339,8 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 	/**
 	 * Opens the Dialog window modal.
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering ");
 
 		for (SecurityRight secRight : unAssignedRights) {
@@ -522,7 +514,7 @@ public class SecurityGroupRightsDialogCtrl extends GFCBaseCtrl<SecurityRight> {
 
 	// Helpers
 
-	private void doCancel() throws Exception {
+	private void doCancel() {
 		getNewAssignedMap().clear();
 		doShowDialogPage(this.securityGroup);
 	}

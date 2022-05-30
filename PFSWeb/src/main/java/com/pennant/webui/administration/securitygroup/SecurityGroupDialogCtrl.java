@@ -100,9 +100,8 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * selected SecurityGroup object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SecurityGroupDialog(Event event) throws Exception {
+	public void onCreate$window_SecurityGroupDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -329,9 +328,8 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityGroup
-	 * @throws Exception
 	 */
-	public void doShowDialog(SecurityGroup aSecurityGroup) throws Exception {
+	public void doShowDialog(SecurityGroup aSecurityGroup) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -706,7 +704,7 @@ public class SecurityGroupDialogCtrl extends GFCBaseCtrl<SecurityGroup> {
 				auditHeader.setOverideMessage(null);
 			}
 		}
-		
+
 		setOverideMap(auditHeader.getOverideMap());
 		logger.debug("Leaving ");
 		return processCompleted;

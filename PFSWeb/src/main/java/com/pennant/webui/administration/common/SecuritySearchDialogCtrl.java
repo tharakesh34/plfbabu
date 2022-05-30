@@ -1,47 +1,30 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		: SecuritySearchByNameDialogCtrl.java                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  17-09-2011    														*
- *                                                                  						*
- * Modified Date    :  19-09-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SecuritySearchByNameDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 17-09-2011 *
+ * * Modified Date : 19-09-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 19-09-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 19-09-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.common;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -101,7 +84,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SecuritySearchDialog(Event event) throws Exception {
+	public void onCreate$window_SecuritySearchDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -138,9 +121,14 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	 * when the "search/filter" button is clicked.
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnSearch(Event event) throws Exception {
+	public void onClick$btnSearch(Event event) throws IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering " + event.toString());
 		doSearch();
 		logger.debug("Leaving " + event.toString());
@@ -202,8 +190,7 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -212,9 +199,14 @@ public class SecuritySearchDialogCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * This method do search operation
 	 * 
-	 * @throws Exception
+	 * @throws SecurityException
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
-	private void doSearch() throws Exception {
+	private void doSearch() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException,
+			NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 
 		filters[0] = Integer.valueOf(-1);
