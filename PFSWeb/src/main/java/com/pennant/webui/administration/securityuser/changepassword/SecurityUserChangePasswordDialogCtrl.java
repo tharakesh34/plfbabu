@@ -52,6 +52,7 @@ import com.pennant.backend.service.administration.SecurityUserService;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.AESCipherUtil;
@@ -287,9 +288,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 				closeDialog();
 			}
 
-		} catch (DataAccessException e) {
-			logger.debug(Literal.EXCEPTION, e);
-			showMessage(e);
+		} catch (DataAccessException | AppException e) {
+			MessageUtil.showError(e);
 		}
 		logger.debug("Leaving ");
 	}

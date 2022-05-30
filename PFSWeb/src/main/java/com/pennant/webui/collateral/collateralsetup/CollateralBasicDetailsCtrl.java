@@ -76,8 +76,8 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CollateralBasicDetails(ForwardEvent event) throws IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	public void onCreate$window_CollateralBasicDetails(ForwardEvent event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		// Set the page level components.

@@ -84,7 +84,7 @@ public class ChangePasswordModel {
 		String pattern = "";
 		int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
 		int pwdMaxLenght = SysParamUtil.getValueAsInt("USR_PWD_MAX_LEN");
-		pattern = DEFAULT_PATTERN + ".{" + String.valueOf(pwdMinLenght) + "," + String.valueOf(pwdMaxLenght) + "})";
+		pattern = DEFAULT_PATTERN + ".{" + pwdMinLenght + "," + pwdMaxLenght + "})";
 		Pattern p = Pattern.compile(pattern);
 		Matcher matcher = p.matcher(password);
 		if (!matcher.matches()) {

@@ -48,6 +48,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
+import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -1040,8 +1041,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
-		} catch (InterruptedException e) {
-			logger.error("Exception: ", e);
+		} catch (UiException e) {
+			logger.error(Literal.EXCEPTION, e);
 			this.window_CommitmentDialog.onClose();
 		}
 
@@ -1349,9 +1350,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCommitment Commitment
-	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents(Commitment aCommitment) throws InterruptedException {
+	public void doWriteBeanToComponents(Commitment aCommitment) {
 		logger.debug("Entering");
 
 		if (aCommitment.isNewRecord()) { // New Record
@@ -2089,10 +2089,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendCustomerDetailTab(boolean onLoad) throws InterruptedException {
+	protected void appendCustomerDetailTab(boolean onLoad) {
 		logger.debug("Entering");
 
 		try {
@@ -2250,10 +2248,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Method for Append Recommend Details Tab
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
+	protected void appendRecommendDetailTab(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		if (onLoadProcess) {
