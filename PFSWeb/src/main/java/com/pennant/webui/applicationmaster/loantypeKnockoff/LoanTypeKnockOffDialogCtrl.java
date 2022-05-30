@@ -95,7 +95,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 		return referenceBuffer.toString();
 	}
 
-	public void onCreate$window_LoanTypeKnockOffDialog(Event event) throws Exception {
+	public void onCreate$window_LoanTypeKnockOffDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_LoanTypeKnockOffDialog);
@@ -729,7 +729,7 @@ public class LoanTypeKnockOffDialogCtrl extends GFCBaseCtrl<FinTypeKnockOff> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onLoanTypeMappingItemDoubleClicked(Event event) throws Exception {
+	public void onLoanTypeMappingItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		// get the selected invoiceHeader object

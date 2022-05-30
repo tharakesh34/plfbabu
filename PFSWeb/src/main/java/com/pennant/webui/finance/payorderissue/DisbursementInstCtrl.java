@@ -470,7 +470,7 @@ public class DisbursementInstCtrl {
 	}
 
 	public void onClickNew(Object listCtrl, Object dialogCtrl, String module, List<FinAdvancePayments> list,
-			PayOrderIssueHeader payOrderIssueHeader, String moduleDefiner) throws Exception {
+			PayOrderIssueHeader payOrderIssueHeader, String moduleDefiner) {
 		logger.debug("Entering");
 
 		final FinAdvancePayments aFinAdvancePayments = new FinAdvancePayments();
@@ -492,7 +492,7 @@ public class DisbursementInstCtrl {
 	}
 
 	public void onDoubleClick(Object listCtrl, Object dialogCtrl, String module, boolean isEnquiry,
-			PayOrderIssueHeader payOrderIssueHeader) throws Exception {
+			PayOrderIssueHeader payOrderIssueHeader) {
 		logger.debug("Entering");
 
 		Listitem listitem = listbox.getSelectedItem();
@@ -536,7 +536,7 @@ public class DisbursementInstCtrl {
 	}
 
 	private void doshowDialog(Map<String, Object> map, Object listCtrl, Object dialogCtrl, String module,
-			boolean isEnquiry, PayOrderIssueHeader payOrderIssueHeader) throws InterruptedException {
+			boolean isEnquiry, PayOrderIssueHeader payOrderIssueHeader) {
 
 		map.put("ccyFormatter", ccyFormat);
 		map.put("custID", financeMain.getCustID());
