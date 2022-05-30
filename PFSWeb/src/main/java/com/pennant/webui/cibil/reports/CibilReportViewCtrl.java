@@ -19,7 +19,7 @@ public class CibilReportViewCtrl extends GFCBaseCtrl<Object> {
 	private String format;
 	private String ctype;
 
-	public void onCreate$window_Report(Event event) throws Exception {
+	public void onCreate$window_Report(Event event) {
 
 		setPageComponents(window_Report);
 		// READ OVERHANDED parameters !

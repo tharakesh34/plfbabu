@@ -55,7 +55,6 @@ import com.pennant.webui.util.ScreenCTL;
 import com.pennanttech.pennapps.core.jdbc.JdbcUtil;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
-import com.pennanttech.pennapps.jdbc.search.Search;
 import com.pennanttech.pennapps.jdbc.search.SearchProcessor;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -107,7 +106,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CollateralAssignmentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralAssignmentDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -200,7 +199,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -243,10 +242,8 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(
@@ -1025,7 +1022,7 @@ public class CollateralAssignmentDialogCtrl extends GFCBaseCtrl<CollateralAssign
 		logger.debug("Leaving");
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final CollateralAssignment aCollateralAssignment = new CollateralAssignment();

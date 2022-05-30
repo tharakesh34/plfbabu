@@ -1,5 +1,6 @@
 package com.pennant.webui.collateral.collateralsetup;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.StringUtils;
@@ -75,7 +76,8 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CollateralBasicDetails(ForwardEvent event) throws Exception {
+	public void onCreate$window_CollateralBasicDetails(ForwardEvent event) throws IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -204,9 +206,9 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.colBasic_colType.setValue(String.valueOf(finHeaderList.get(4)));
 			this.colBasic_colLoc.setValue(String.valueOf(finHeaderList.get(5)));
 		}
-		//up front fee receipt cancellation doc
+		// up front fee receipt cancellation doc
 		if (StringUtils.equals(getModuleName(), DocumentCategories.UPFNT_FEE_RECEIPTS.getKey())) {
-			//label setting 
+			// label setting
 			this.label_CollateralBasicDetails_depositerCif
 					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_ReceiptId.value"));
 			this.label_CollateralBasicDetails_colRef
@@ -220,7 +222,7 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			this.label_CollateralBasicDetails_colLoc
 					.setValue(Labels.getLabel("label_ReceiptCancellationDialog_FinBranch.value"));
 			this.label_LoanNo.setValue(Labels.getLabel("label_ReceiptCancellationDialog_CustID.value"));
-			//data setting
+			// data setting
 			this.colBasic_depositerCif.setValue(String.valueOf(finHeaderList.get(0)));
 			this.colBasic_colRef.setValue(String.valueOf(finHeaderList.get(1)));
 			this.colBasic_depositerName.setValue(String.valueOf(finHeaderList.get(2)));
@@ -233,9 +235,9 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 			row_ROI.setVisible(false);
 		}
 
-		//payable advice documents ribbon
+		// payable advice documents ribbon
 		if (StringUtils.equals(getModuleName(), DocumentCategories.MANUAL_ADVISE_PAYABLE.getKey())) {
-			//label setting 
+			// label setting
 			this.label_CollateralBasicDetails_depositerCif
 					.setValue(Labels.getLabel("label_ManualAdviseDialog_LoanReference.value"));
 			this.label_CollateralBasicDetails_colRef
@@ -247,7 +249,7 @@ public class CollateralBasicDetailsCtrl extends GFCBaseCtrl<FinanceDetail> {
 					.setValue(Labels.getLabel("label_ManualAdviseDialog_LoanStartDate.value"));
 			this.label_CollateralBasicDetails_colLoc
 					.setValue(Labels.getLabel("label_ManualAdviseDialog_MaturityDate.value"));
-			//data setting
+			// data setting
 			this.colBasic_depositerCif.setValue(String.valueOf(finHeaderList.get(0)));
 			this.colBasic_colRef.setValue(String.valueOf(finHeaderList.get(1)));
 			this.colBasic_depositerName.setValue(String.valueOf(finHeaderList.get(2)));
