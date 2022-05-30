@@ -53,8 +53,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.AppException;
-import com.pennanttech.pennapps.core.model.ErrorDetail;
-import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.AESCipherUtil;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 
@@ -327,21 +325,6 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	}
 
 	// Helpers
-
-	/**
-	 * This method Shows Message Box with error message
-	 * 
-	 * @param error
-	 */
-	private void showMessage(Exception e) {
-		AuditHeader auditHeader = new AuditHeader();
-		try {
-			auditHeader.setErrorDetails(new ErrorDetail(PennantConstants.ERR_UNDEF, e.getMessage(), null));
-			ErrorControl.showErrorControl(this.win_SecurityUserChangePasswordDialog, auditHeader);
-		} catch (Exception e1) {
-			logger.error(Literal.EXCEPTION, e1);
-		}
-	}
 
 	private void doCancel() {
 		this.btnCtrl.setBtnStatus_Save();
