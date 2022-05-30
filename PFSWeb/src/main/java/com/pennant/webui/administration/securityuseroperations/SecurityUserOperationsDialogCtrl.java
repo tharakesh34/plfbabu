@@ -160,9 +160,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * selected SecurityUsers object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$win_SecurityUserOperationsDialog(Event event) throws Exception {
+	public void onCreate$win_SecurityUserOperationsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -248,9 +247,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * When user clicks on "cancel" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering " + event.toString());
 		doCancel();
 		logger.debug("Leaving " + event.toString());
@@ -283,10 +281,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	/**
 	 * Opens the Dialog window modal.
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering ");
 		doSetPanelProperties();
 
@@ -735,11 +731,9 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	}
 
 	/**
-	 * This method cancels the previous operations
-	 * 
-	 * @throws Exception
+	 * This method cancels the previous operations.
 	 */
-	private void doCancel() throws Exception {
+	private void doCancel() {
 		/*
 		 * tempUnAsgnRoleMap.clear(); newAssignedMap.clear(); unAssignedRoleList=tempUnAssignedRoleList; doShowDialog();
 		 */
@@ -753,9 +747,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when "reset" button is clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug("Entering " + event.toString());
 		this.listbox_UnAssignedRoles.getItems().clear();
 		refreshListBox(getUnAssigneListWrapper(), new ArrayList<SecurityUserOperations>(unAssignedHashMap.values()),
@@ -768,9 +761,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btn_SearchUnAssignedRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btn_SearchOperations(Event event) throws Exception {
+	public void onClick$btn_SearchOperations(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -793,9 +785,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btnSelectRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSelectRoles(Event event) throws Exception {
+	public void onClick$btnSelectRoles(Event event) {
 		logger.debug(event.toString());
 		setAssignedRoles();
 
@@ -805,10 +796,9 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btnUnSelectRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 
-	public void onClick$btnUnSelectRoles(Event event) throws Exception {
+	public void onClick$btnUnSelectRoles(Event event) {
 		logger.debug(event.toString());
 		setUnAssignedRoles();
 
@@ -818,10 +808,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * when clicks on "btnUnSelectRoles"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onClick$btnUnSelectAllRoles(Event event) throws Exception {
+	public void onClick$btnUnSelectAllRoles(Event event) {
 		logger.debug(event.toString());
 		if (this.listbox_AssignedRoles.getItemCount() > 0) {
 			this.listbox_AssignedRoles.setMultiple(true);
@@ -987,9 +975,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * This method is forwarded from the listBoxes item renderer. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSecurityRoleItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onSecurityRoleItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering ");
 		this.panel_SecurityRoleGroups.setOpen(true);
 		doShowRoleGroups(event);
@@ -998,10 +985,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	/**
 	 * This method display the list of Roles Assigned to selected Operation
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowRoleGroups(ForwardEvent event) throws InterruptedException {
+	public void doShowRoleGroups(ForwardEvent event) {
 
 		logger.debug("Entering ");
 
@@ -1034,9 +1019,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * This method is forwarded from the listBoxes item renderer. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSecurityOprRoleItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onSecurityOprRoleItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering " + event.toString());
 		this.panel_SecurityOperationRoles.setOpen(true);
 		doShowOperationRoles(event);
@@ -1045,10 +1029,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 
 	/**
 	 * This method display the list of groups assigned to selected role.
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowOperationRoles(ForwardEvent event) throws InterruptedException {
+	public void doShowOperationRoles(ForwardEvent event) {
 
 		logger.debug("Entering ");
 
@@ -1084,7 +1066,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityUserOperations userOperations, int count) throws Exception {
+		public void render(Listitem item, SecurityUserOperations userOperations, int count) {
 
 			Listcell listCell;
 
@@ -1111,7 +1093,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityUserOperations userOperations, int count) throws Exception {
+		public void render(Listitem item, SecurityUserOperations userOperations, int count) {
 
 			Listcell listCell;
 
@@ -1137,7 +1119,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityRoleGroups securityRoleGroups, int count) throws Exception {
+		public void render(Listitem item, SecurityRoleGroups securityRoleGroups, int count) {
 
 			Listcell listCell;
 
@@ -1162,7 +1144,7 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, SecurityOperationRoles secOperationRoles, int count) throws Exception {
+		public void render(Listitem item, SecurityOperationRoles secOperationRoles, int count) {
 
 			Listcell listCell;
 
@@ -1255,10 +1237,8 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.securityUser);
 	}
 
@@ -1348,22 +1328,6 @@ public class SecurityUserOperationsDialogCtrl extends GFCBaseCtrl<SecurityOperat
 		}
 
 	}
-
-	/**
-	 * Get the window for entering Notes
-	 * 
-	 * @param event (Event)
-	 * 
-	 * @throws Exception
-	 */
-	/*
-	 * public void onClick$btnNotes(Event event) throws Exception { logger.debug("Entering" +event.toString()); try {
-	 * ScreenCTL.displayNotes(getNotes ("SecurityUser",getSecurityUser().getUsrLogin
-	 * (),getSecurityUser().getVersion()),this); } catch (Exception e) { logger.error("Exception: Opening window", e);
-	 * MessageUtil.showErrorMessage(e); } logger.debug("Leaving" +event.toString());
-	 * 
-	 * }
-	 */
 
 	// ++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 	// ++++++++++++++++++ getter / setter +++++++++++++++++++//

@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  SecurityOperationRolesListCtrl .java														*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  10-03-2014															*
- *                                                                  
- * Modified Date    :  10-03-2014															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : SecurityOperationRolesListCtrl .java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 10-03-2014 *
+ * 
+ * Modified Date : 10-03-2014 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *10-03-2014	      Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-03-2014 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.administration.SecurityOperationRoles;
@@ -115,8 +106,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_OperationRolesList(Event event) {
 		setPageComponents(window_OperationRolesList, borderLayout_OperationRolesList, listBoxOperationRoles,
@@ -137,8 +127,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_OperationRolesList_OperationRolesSearchDialog(Event event) {
 		search();
@@ -147,8 +136,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -160,7 +148,6 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	 * see: com.pennant.webui.administration.securityoperation.model.SecurityOperationListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onSecurityOperationItemDoubleClicked(Event event) {
 
@@ -203,8 +190,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aSecurityOperation
-	 *            The entity that need to be passed to the dialog.
+	 * @param aSecurityOperation The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(SecurityOperation aSecurityOperation) {
 		logger.debug("Entering");
@@ -228,8 +214,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -238,8 +223,7 @@ public class SecurityOperationRolesListCtrl extends GFCBaseListCtrl<SecurityOper
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

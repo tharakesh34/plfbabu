@@ -102,9 +102,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * Creating Dialog window
 	 * 
 	 * @param event (Event)
-	 * @throws Exception
 	 */
-	public void onCreate$win_SecurityUserChangePasswordDialog(Event event) throws Exception {
+	public void onCreate$win_SecurityUserChangePasswordDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -137,9 +136,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * When user clicks on "cancel" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		doCancel();
 	}
 
@@ -147,9 +145,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * when user clicks "save" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		doValidations();
 		doSave();// update password
 
@@ -159,9 +156,8 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	 * when user clicks "close" method
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		closeDialog();
 	}
 
@@ -268,11 +264,9 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 	// CRUD operations
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() {
 		doValidations();
 		AuditHeader auditHeader = null;
 		try {
@@ -349,7 +343,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		}
 	}
 
-	private void doCancel() throws InterruptedException {
+	private void doCancel() {
 		this.btnCtrl.setBtnStatus_Save();
 	}
 
@@ -364,7 +358,7 @@ public class SecurityUserChangePasswordDialogCtrl extends GFCBaseCtrl<SecurityUs
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 			logger.debug("Entering ");
 			int pwdMinLenght = SysParamUtil.getValueAsInt("USR_PWD_MIN_LEN");
 			int specialCharCount = SysParamUtil.getValueAsInt("USR_PWD_SPECIAL_CHAR_COUNT");

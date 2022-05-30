@@ -102,9 +102,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	 * selected SecurityRole object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SecurityRoleDialog(Event event) throws Exception {
+	public void onCreate$window_SecurityRoleDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -357,9 +356,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSecurityRole
-	 * @throws Exception
 	 */
-	public void doShowDialog(SecurityRole aSecurityRole) throws Exception {
+	public void doShowDialog(SecurityRole aSecurityRole) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -790,9 +788,8 @@ public class SecurityRoleDialogCtrl extends GFCBaseCtrl<SecurityRole> {
 	 * When user Clicks on "Notes" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.securityRole);
 	}
 
