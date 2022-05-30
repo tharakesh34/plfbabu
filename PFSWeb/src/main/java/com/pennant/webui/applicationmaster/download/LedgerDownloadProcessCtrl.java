@@ -31,13 +31,13 @@ public class LedgerDownloadProcessCtrl extends GFCBaseCtrl {
 		super();
 	}
 
-	public void onCreate$window_Download(Event event) throws Exception {
+	public void onCreate$window_Download(Event event) {
 		logger.debug(Literal.ENTERING);
 		setPageComponents(window_Download);
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnStartLedgerFile(ForwardEvent event) throws Exception {
+	public void onClick$btnStartLedgerFile(ForwardEvent event) {
 		if (ledgerDownloadService != null) {
 			ledgerDownloadService.downloadLedgerData();
 		}

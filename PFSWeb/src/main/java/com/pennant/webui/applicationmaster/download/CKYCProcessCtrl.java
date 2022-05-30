@@ -52,7 +52,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		super();
 	}
 
-	public void onCreate$window_Download(Event event) throws Exception {
+	public void onCreate$window_Download(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -61,7 +61,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onCheck$radiogroupCKYC(Event event) throws Exception {
+	public void onCheck$radiogroupCKYC(Event event) {
 
 		if (radioUpload.isChecked()) {
 			rowDownload.setVisible(false);
@@ -73,7 +73,7 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		}
 	}
 
-	public void onUpload$btnUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnUpload(UploadEvent event) throws IOException {
 		logger.debug(Literal.ENTERING);
 		fileName.setText("");
 		Media media = event.getMedia();
@@ -144,13 +144,13 @@ public class CKYCProcessCtrl extends GFCBaseCtrl {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void btndownload(Event event) throws Exception {
+	public void btndownload(Event event) {
 		rowUpload.setVisible(false);
 		rowDownload.setVisible(true);
 
 	}
 
-	public void onClick$btnStartCkycFile(ForwardEvent event) throws Exception {
+	public void onClick$btnStartCkycFile(ForwardEvent event) {
 		boolean flag = false;
 		List<Long> id = ckycService.getId();
 		if (!flag) {
