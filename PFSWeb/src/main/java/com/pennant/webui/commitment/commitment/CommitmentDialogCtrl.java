@@ -48,7 +48,6 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.Executions;
 import org.zkoss.zk.ui.HtmlBasedComponent;
 import org.zkoss.zk.ui.SuspendNotAllowedException;
-import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
@@ -414,9 +413,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * selected Commitment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CommitmentDialog(Event event) throws Exception {
+	public void onCreate$window_CommitmentDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -520,9 +518,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doSave();
@@ -570,10 +567,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -813,7 +808,6 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * @param event
 	 * @throws InterruptedException
 	 * @throws InterfaceException
-	 * @throws Exception
 	 */
 	public CustomerDetails fetchCustomerData(String cif) throws InterruptedException, InterfaceException {
 		logger.debug("Entering");
@@ -1015,9 +1009,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCommitment
-	 * @throws Exception
 	 */
-	public void doShowDialog(Commitment aCommitment) throws Exception {
+	public void doShowDialog(Commitment aCommitment) {
 		logger.debug("Entering");
 
 		try {
@@ -1047,12 +1040,11 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 			} else {
 				setDialog(DialogType.EMBEDDED);
 			}
-		} catch (UiException e) {
+		} catch (InterruptedException e) {
 			logger.error("Exception: ", e);
 			this.window_CommitmentDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1526,9 +1518,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aCommitment
-	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(Commitment aCommitment) throws InterruptedException {
+	public void doWriteComponentsToBean(Commitment aCommitment) {
 		logger.debug("Entering");
 
 		doSetLOVValidation();
@@ -2722,10 +2713,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 
 	/**
 	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final Commitment aCommitment = new Commitment();
@@ -2883,9 +2872,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	 * This method set the check list details to aCommitment
 	 * 
 	 * @param aCommitment
-	 * @throws Exception
 	 */
-	protected boolean doSave_CheckList(Commitment aCommitment, boolean isForAgreementGen) throws Exception {
+	protected boolean doSave_CheckList(Commitment aCommitment, boolean isForAgreementGen) {
 		logger.debug("Entering ");
 
 		boolean validationSuccess = true;
@@ -3149,9 +3137,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSearchCommitmentFlags(Event event) throws Exception {
+	public void onClick$btnSearchCommitmentFlags(Event event) {
 		logger.debug("Entering  " + event.toString());
 
 		this.commitmentFlags.setErrorMessage("");
@@ -3459,7 +3446,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Leaving");
 	}
 
-	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceMainItemDoubleClicked(Event event) {
 		Object object = event.getData();
 		if (object != null) {
 			getCommitmentMovementDetails(this.cmtReference.getValue(), object.toString());
@@ -3547,7 +3534,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		}
 
 		@Override
-		public void render(Listitem item, ReturnDataSet returnDataSet, int count) throws Exception {
+		public void render(Listitem item, ReturnDataSet returnDataSet, int count) {
 			logger.debug("Entering");
 
 			if (item instanceof Listgroup) {
@@ -3833,9 +3820,8 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNew_CmtRate(Event event) throws Exception {
+	public void onClick$btnNew_CmtRate(Event event) {
 		logger.debug("Entering");
 
 		CommitmentRate commitmentRate = new CommitmentRate();
@@ -3867,7 +3853,7 @@ public class CommitmentDialogCtrl extends GFCBaseCtrl<Commitment> {
 		logger.debug("Leaving");
 	}
 
-	public void onCommitmentRateItemDoubleClicked(Event event) throws Exception {
+	public void onCommitmentRateItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// get the selected invoiceHeader object

@@ -207,9 +207,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_CollateralStructureDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralStructureDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -940,9 +939,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aAcademic
-	 * @throws Exception
 	 */
-	public void onCheck$collateralValuatorReq(Event event) throws Exception {
+	public void onCheck$collateralValuatorReq(Event event) {
 		allowValuationFrequency();
 	}
 
@@ -1340,9 +1338,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * Method for Changing LTV Type
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$ltvType(Event event) throws Exception {
+	public void onChange$ltvType(Event event) {
 		logger.debug("Entering");
 		setLtvType(getComboboxValue(this.ltvType), true);
 		logger.debug("Leaving");
@@ -1543,7 +1540,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	}
 
 	/**
-	 * Method for Saves the components to table. <br>
+	 * Method for Saves the components to table.
 	 * 
 	 * @throws Exception
 	 */

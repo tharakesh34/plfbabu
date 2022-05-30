@@ -20,7 +20,6 @@ import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
 import org.zkoss.zul.Longbox;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Textbox;
 import org.zkoss.zul.Window;
 
@@ -85,7 +84,7 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 		super.pageRightName = "CollateralThirdPartyDialog";
 	}
 
-	public void onCreate$window_CollateralThirdPartyDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralThirdPartyDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -218,10 +217,8 @@ public class CollateralThirdPartyDialogCtrl extends GFCBaseCtrl<CollateralThirdP
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("CollateralThirdParty",

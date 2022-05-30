@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  SelectCollateralTypeDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  14-12-2016    														*
- *                                                                  						*
- * Modified Date    :  14-12-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : SelectCollateralTypeDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 14-12-2016 *
+ * * Modified Date : 14-12-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- *14-12-2016        Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 14-12-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.collateral.collateralsetup;
@@ -83,7 +65,6 @@ import com.pennant.backend.util.WorkFlowUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.FinServiceEvent;
@@ -127,7 +108,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectCollateralDialog(Event event) throws Exception {
+	public void onCreate$window_SelectCollateralDialog(Event event) {
 		logger.debug("Entering");
 
 		try {
@@ -168,7 +149,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
-	private void showSelectCollateralTypeDialog() throws InterruptedException {
+	private void showSelectCollateralTypeDialog() {
 		logger.debug("Entering");
 		try {
 			// open the dialog in modal mode
@@ -265,9 +246,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		if (!doFieldValidation()) {
@@ -285,8 +265,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private void setLoanCollateralSetupDetails() throws InterruptedException {
-		//Customer Data Fetching
+	private void setLoanCollateralSetupDetails() {
+		// Customer Data Fetching
 
 		CustomerDetails customerDetails = getFinanceDetail().getCustomerDetails();
 		if (customerDetails == null) {
@@ -300,7 +280,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			setWorkFlowEnabled(false);
 			collateralSetup.setWorkflowId(0);
 		}
-		//Role  need to send 
+		// Role need to send
 		collateralSetup.setNewRecord(true);
 
 		collateralSetup.setCollateralType(this.collateralType.getValue());
@@ -311,7 +291,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		collateralSetup.setDepositorId(customerDetails.getCustomer().getCustID());
 		collateralSetup.setDepositorName(customerDetails.getCustomer().getCustShrtName());
 
-		//Fetching the collateral Structure details
+		// Fetching the collateral Structure details
 		collateralSetup.setCollateralStructure(getCollateralStructureService()
 				.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
 		// Fetching Finance Reference Detail
@@ -319,8 +299,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 				FinServiceEvent.ORG);
 	}
 
-	private boolean setCollateralSetupDetails() throws InterruptedException {
-		//Customer Data Fetching
+	private boolean setCollateralSetupDetails() {
+		// Customer Data Fetching
 		CustomerDetails customerDetails = fetchCustomerData();
 		if (customerDetails == null) {
 			MessageUtil.showError(Labels.getLabel("Cust_NotFound"));
@@ -373,7 +353,7 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 		collateralSetup.setDepositorId(customerDetails.getCustomer().getCustID());
 		collateralSetup.setDepositorName(customerDetails.getCustomer().getCustShrtName());
 
-		//Fetching the collateral Structure details
+		// Fetching the collateral Structure details
 		collateralSetup.setCollateralStructure(getCollateralStructureService()
 				.getApprovedCollateralStructureByType(collateralSetup.getCollateralType()));
 
@@ -452,11 +432,8 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData() throws InterruptedException, InterfaceException {
+	public CustomerDetails fetchCustomerData() {
 		logger.debug("Entering");
 
 		// Get the data of Customer from Core Banking Customer
@@ -467,14 +444,14 @@ public class SelectCollateralTypeDialogCtrl extends GFCBaseCtrl<CollateralSetup>
 			this.custCIF.clearErrorMessage();
 			String cif = StringUtils.trimToEmpty(this.custCIF.getValue());
 
-			//If  customer exist is checked 
+			// If customer exist is checked
 			Customer customer = null;
 			if (StringUtils.isEmpty(cif)) {
 				throw new WrongValueException(this.custCIF, Labels.getLabel("FIELD_NO_EMPTY",
 						new String[] { Labels.getLabel("label_CustomerDialog_CoreCustID.value") }));
 			} else {
 
-				//check Customer Data in LOCAL PFF system
+				// check Customer Data in LOCAL PFF system
 				customer = getCustomerDetailsService().getCheckCustomerByCIF(cif);
 			}
 
