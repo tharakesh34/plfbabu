@@ -156,9 +156,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * selected CustomerIncome object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerIncomeDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerIncomeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -583,9 +582,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerIncome
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerIncome aCustomerIncome) throws InterruptedException {
+	public void doShowDialog(CustomerIncome aCustomerIncome) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1277,12 +1275,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-
-	private void onload() throws SuspendNotAllowedException, InterruptedException {
+	private void onload() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		List<Filter> filtersList = new ArrayList<Filter>();
@@ -1361,10 +1355,8 @@ public class CustomerIncomeDialogCtrl extends GFCBaseCtrl<CustomerIncome> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerIncome);
 	}
 

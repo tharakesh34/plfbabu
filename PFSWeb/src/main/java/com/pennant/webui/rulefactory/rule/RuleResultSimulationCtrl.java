@@ -84,10 +84,9 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_RuleResultSimulation(Event event) throws Exception {
+	public void onCreate$window_RuleResultSimulation(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -188,8 +187,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -272,7 +270,9 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 						map.put(intbox.getId().trim(), intbox.intValue());
 					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Decimalbox) {
 						decimalbox = (Decimalbox) rows_Fields.getFellowIfAny(variables.get(i));
-						//map.put(decimalbox.getId().trim(), PennantApplicationUtil.unFormateAmount(decimalbox.getValue(), PennantConstants.defaultCCYDecPos));
+						// map.put(decimalbox.getId().trim(),
+						// PennantApplicationUtil.unFormateAmount(decimalbox.getValue(),
+						// PennantConstants.defaultCCYDecPos));
 						map.put(decimalbox.getId().trim(), decimalbox.getValue());
 					} else if (rows_Fields.getFellowIfAny(variables.get(i)) instanceof Datebox) {
 						datebox = (Datebox) rows_Fields.getFellowIfAny(variables.get(i));
@@ -311,7 +311,7 @@ public class RuleResultSimulationCtrl extends GFCBaseCtrl<Object> {
 			switch (returnType) {
 			case DECIMAL:
 				BigDecimal tempResult = (BigDecimal) object;
-				//resultValue = PennantApplicationUtil.amountFormate(tempResult, PennantConstants.defaultCCYDecPos);
+				// resultValue = PennantApplicationUtil.amountFormate(tempResult, PennantConstants.defaultCCYDecPos);
 				resultValue = tempResult.toString();
 				break;
 

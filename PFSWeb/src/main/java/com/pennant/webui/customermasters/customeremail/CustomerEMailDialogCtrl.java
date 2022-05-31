@@ -142,9 +142,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * selected CustomerEMail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerEMailDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerEMailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -463,9 +462,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerEMail
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerEMail aCustomerEMail) throws Exception {
+	public void doShowDialog(CustomerEMail aCustomerEMail) {
 		logger.debug("Entering");
 
 		if (isNewRecord()) {
@@ -1200,10 +1198,8 @@ public class CustomerEMailDialogCtrl extends GFCBaseCtrl<CustomerEMail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerEMail);
 	}
 

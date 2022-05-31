@@ -157,9 +157,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	 * selected CustomerEmploymentDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerEmploymentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerEmploymentDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -704,9 +703,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerEmploymentDetail
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerEmploymentDetail aCustomerEmploymentDetail) throws InterruptedException {
+	public void doShowDialog(CustomerEmploymentDetail aCustomerEmploymentDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1396,11 +1394,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 
 	/**
 	 * To load the customerSelect filter dialog
-	 * 
-	 * @throws SuspendNotAllowedException
-	 * @throws InterruptedException
 	 */
-	private void onload() throws SuspendNotAllowedException, InterruptedException {
+	private void onload() {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("DialogCtrl", this);
@@ -1467,10 +1462,8 @@ public class CustomerEmploymentDetailDialogCtrl extends GFCBaseCtrl<CustomerEmpl
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerEmploymentDetail);
 	}
 

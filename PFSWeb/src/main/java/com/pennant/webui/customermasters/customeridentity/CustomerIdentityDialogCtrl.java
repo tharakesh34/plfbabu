@@ -141,9 +141,8 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	 * selected CustomerIdentity object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerIdentityDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerIdentityDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -433,9 +432,8 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerIdentity
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerIdentity aCustomerIdentity) throws Exception {
+	public void doShowDialog(CustomerIdentity aCustomerIdentity) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -974,10 +972,8 @@ public class CustomerIdentityDialogCtrl extends GFCBaseCtrl<CustomerIdentity> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerIdentity);
 	}
 

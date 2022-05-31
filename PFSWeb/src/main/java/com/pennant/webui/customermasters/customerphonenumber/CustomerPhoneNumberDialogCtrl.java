@@ -144,9 +144,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 * selected CustomerPhoneNumber object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerPhoneNumberDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerPhoneNumberDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -478,9 +477,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerPhoneNumber
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerPhoneNumber aCustomerPhoneNumber) throws Exception {
+	public void doShowDialog(CustomerPhoneNumber aCustomerPhoneNumber) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -1225,10 +1223,8 @@ public class CustomerPhoneNumberDialogCtrl extends GFCBaseCtrl<CustomerPhoneNumb
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerPhoneNumber);
 	}
 
