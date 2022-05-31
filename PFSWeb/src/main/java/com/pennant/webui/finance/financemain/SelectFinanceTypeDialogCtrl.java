@@ -30,8 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -858,8 +856,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName)
-			throws InterruptedException, FactoryConfigurationError {
+	protected boolean processCustomer(boolean isRetail, boolean isNewCustomer, String primaryIdName) {
 		FinanceDetail fd = null;
 
 		// Customer Data Fetching
@@ -1182,7 +1179,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	}
 
 	// GUI Process
-	private void showDetailView(FinanceDetail financeDetail) throws InterruptedException {
+	private void showDetailView(FinanceDetail financeDetail) {
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
@@ -1581,11 +1578,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws InterfaceException
-	 * @throws Exception
 	 */
-	public CustomerDetails fetchCustomerData(boolean isRetail) throws InterruptedException, InterfaceException {
+	public CustomerDetails fetchCustomerData(boolean isRetail) {
 		logger.debug("Entering");
 
 		CustomerDetails customerDetails = new CustomerDetails();

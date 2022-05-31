@@ -135,9 +135,8 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerDedupDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerDedupDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -240,7 +239,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Filling the CustomerDedup details based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onCheck_listCellRadioBtn(ForwardEvent event) throws Exception {
+	public void onCheck_listCellRadioBtn(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		Radio checkBox = (Radio) event.getOrigin().getTarget();
 
@@ -305,7 +304,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		doClose(this.btnExistingCustomer.isVisible());
 	}
 
-	public void onClick$btnNewCustomer(Event event) throws Exception {
+	public void onClick$btnNewCustomer(Event event) {
 		if (isFromLoan) {
 			selectFinanceTypeDialogCtrl.existingCust.setSelected(false);
 			if (isInternalDedupLoan) {
@@ -337,7 +336,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		closeDialog();
 	}
 
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 
 		Clients.clearWrongValue(this.btnProceed);
 
@@ -353,7 +352,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	}
 
-	public void onClick$btnExistingCustomer(Event event) throws Exception {
+	public void onClick$btnExistingCustomer(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doRemoveValidation();
@@ -461,7 +460,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, CustomerDedup customerDedup, int count) throws Exception {
+		public void render(Listitem item, CustomerDedup customerDedup, int count) {
 
 			Listcell lc = new Listcell();
 			if (StringUtils.isNotEmpty(customerDedup.getCustCIF())) {
@@ -516,7 +515,7 @@ public class CustomerDedupDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
-	private void showSelectFinanceTypeDialog() throws InterruptedException {
+	private void showSelectFinanceTypeDialog() {
 		logger.debug(Literal.ENTERING);
 		try {
 			// open the dialog in modal mode

@@ -6538,9 +6538,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Checking Recommendation for Mandatory
 	 * 
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doValidateRecommendation() throws InterruptedException {
+	protected boolean doValidateRecommendation() {
 		logger.debug("Entering");
 		boolean isRecommendEntered = true;
 		/*
@@ -6781,9 +6780,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) throws Exception {
+	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) {
 		logger.debug("Entering ");
 
 		setFinanceDetail(aFinanceDetail);

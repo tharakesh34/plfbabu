@@ -180,9 +180,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 	 * selected PayOrderIssueHeader object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PayOrderIssueDialog(Event event) throws Exception {
+	public void onCreate$window_PayOrderIssueDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -489,9 +488,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param header
-	 * @throws Exception
 	 */
-	public void doShowDialog(PayOrderIssueHeader header) throws Exception {
+	public void doShowDialog(PayOrderIssueHeader header) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -980,7 +978,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 		logger.debug("Leaving fillComboBox()");
 	}
 
-	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) throws Exception {
+	public void onClick$button_PayOrderIssueDialog_NewDisbursement(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getFinFeeDetailList())) {
 			disbursementInstCtrl.setFinFeeDetailList(this.payOrderIssueHeader.getFinFeeDetailList());
@@ -995,7 +993,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
+	public void onFinAdvancePaymentsItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (CollectionUtils.isNotEmpty(this.payOrderIssueHeader.getFinFeeDetailList())) {
 			disbursementInstCtrl.setFinFeeDetailList(this.payOrderIssueHeader.getFinFeeDetailList());
@@ -1008,7 +1006,7 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onVASRecordingItemDoubleClicked(Event event) throws Exception {
+	public void onVASRecordingItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem selectedItem = this.listboxVasRecording.getSelectedItem();
@@ -1067,10 +1065,8 @@ public class PayOrderIssueDialogCtrl extends GFCBaseCtrl<PayOrderIssueHeader> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.payOrderIssueHeader);
 	}
 

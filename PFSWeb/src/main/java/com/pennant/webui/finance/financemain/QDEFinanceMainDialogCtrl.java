@@ -196,9 +196,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_QDEFinanceMainDialog(Event event) throws Exception {
+	public void onCreate$window_QDEFinanceMainDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -364,7 +363,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 		}
 	}
 
-	public void doFillReasons(int reason) throws InterruptedException {
+	public void doFillReasons(int reason) {
 		logger.debug("Entering");
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("financeMainDialogCtrl", this);
@@ -612,10 +611,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(FinanceDetail detail, boolean increasePhoneVersion)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinanceDetail detail, boolean increasePhoneVersion) {
 		logger.debug("Entering");
 
 		doClearMessage();
@@ -874,9 +871,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1560,7 +1556,7 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 
 	// WorkFlow Creations
 
-	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) throws Exception {
+	private boolean doCustomerDedupe(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
@@ -1713,9 +1709,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws InterruptedException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -2477,9 +2472,8 @@ public class QDEFinanceMainDialogCtrl extends FinanceBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		this.btnNotes.setSclass("");

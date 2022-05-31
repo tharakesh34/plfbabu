@@ -1,43 +1,34 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
  *
- * FileName    		:  DedupValidation.java													*                           
- *                                                                    
- * Author      		:  PENNANT TECHONOLOGIES												*
- *                                                                  
- * Creation Date    :  26-04-2011															*
- *                                                                  
- * Modified Date    :  30-07-2011															*
- *                                                                  
- * Description 		:												 						*                                 
- *                                                                                          
+ * FileName : DedupValidation.java *
+ * 
+ * Author : PENNANT TECHONOLOGIES *
+ * 
+ * Creation Date : 26-04-2011 *
+ * 
+ * Modified Date : 30-07-2011 *
+ * 
+ * Description : *
+ * 
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-04-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-04-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.dedup.dedupparm;
@@ -79,10 +70,9 @@ public class DedupValidation implements Serializable {
 	 * @param curLoginUser
 	 * 
 	 * @return boolean
-	 * @throws Exception
 	 */
 	public boolean doCheckDedup(FinanceDetail aFinanceDetail, String ref, String role, Window window,
-			String curLoginUser) throws Exception {
+			String curLoginUser) {
 		try {
 			// Customer Dedup Process Check
 			boolean processCompleted = doCustomerDedupe(aFinanceDetail.getCustomerDetails(),
@@ -106,7 +96,7 @@ public class DedupValidation implements Serializable {
 				}
 			}
 
-			//Finance Dedup List Process Checking
+			// Finance Dedup List Process Checking
 			processCompleted = doFinanceDedupe(aFinanceDetail, role, window, curLoginUser);
 			if (!processCompleted) {
 				return false;
@@ -118,7 +108,7 @@ public class DedupValidation implements Serializable {
 				return false;
 			}
 
-			//Returned Cheque List
+			// Returned Cheque List
 			processCompleted = doReturnChequeDedupe(aFinanceDetail, role, window);
 			if (!processCompleted) {
 				return false;
@@ -140,15 +130,14 @@ public class DedupValidation implements Serializable {
 	 * @param window
 	 * @param curLoginUser
 	 * @return
-	 * @throws Exception
 	 */
 	private boolean doCustomerDedupe(CustomerDetails details, String finType, String ref, String role, Window window,
-			String curLoginUser) throws Exception {
+			String curLoginUser) {
 		logger.debug("Entering");
 
 		String corebank = details.getCustomer().getCustCoreBank();
 
-		//If Core Bank ID is Exists then Customer is already existed in Core Banking System
+		// If Core Bank ID is Exists then Customer is already existed in Core Banking System
 		if ("Y".equalsIgnoreCase(SysParamUtil.getValueAsString("POSIDEX_DEDUP_REQD"))) {
 			if (StringUtils.isBlank(corebank)) {
 				details = FetchFinCustomerDedupDetails.getFinCustomerDedup(role, finType, ref, details, window,
@@ -203,15 +192,15 @@ public class DedupValidation implements Serializable {
 		boolean isProcessCompleted = true;
 		String corebank = aFinanceDetail.getCustomerDetails().getCustomer().getCustCoreBank();
 
-		//Dedupe Check is done if the customer exists in CoreBank
+		// Dedupe Check is done if the customer exists in CoreBank
 		if (StringUtils.isNotBlank(corebank)) {
 
 			// Return Cheques display or not validation based on Process editor Details
 			List<Long> list = getFinanceReferenceDetailService().getRefIdListByFinType(
-					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(),
-					FinServiceEvent.ORG, role, "_TRCView");
+					aFinanceDetail.getFinScheduleData().getFinanceMain().getFinType(), FinServiceEvent.ORG, role,
+					"_TRCView");
 
-			//If List doesnot exists based on conditions , no need to display return cheques window.
+			// If List doesnot exists based on conditions , no need to display return cheques window.
 			if (list == null || list.isEmpty()) {
 				isProcessCompleted = true;
 			} else {

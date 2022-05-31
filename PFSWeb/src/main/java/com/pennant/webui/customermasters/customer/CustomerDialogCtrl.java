@@ -3822,13 +3822,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
-	 * @throws ParseException
-	 * @throws CustomerNotFoundException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws InterruptedException, ParseException, InterfaceException {
+	public void doSave() {
 		logger.debug("Entering");
 
 		Cloner cloner = new Cloner();
@@ -7564,7 +7560,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return dateDiff;
 	}
 
-	public void setCustCoreBankid(String custCoreBankId) throws InterruptedException, ParseException {
+	public void setCustCoreBankid(String custCoreBankId) {
 		this.custCoreBank.setValue(custCoreBankId);
 		this.customerDetails.setCustCoreBank(custCoreBankId);
 		try {
