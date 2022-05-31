@@ -155,7 +155,6 @@ public class JavaScriptBuilder extends Groupbox {
 	 * selected Query object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public JavaScriptBuilder() {
 		super();
@@ -2082,7 +2081,7 @@ public class JavaScriptBuilder extends Groupbox {
 	 * @param treeChildren
 	 * @return
 	 */
-	public String getQuery(Treechildren treeChildren) throws Exception {
+	public String getQuery(Treechildren treeChildren) {
 		logger.debug("Entering");
 
 		Treecell treeCell;
@@ -2654,10 +2653,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Validate the Query
-	 * 
-	 * @throws Exception
 	 */
-	public void validateQuery() throws Exception {
+	public void validateQuery() {
 		logger.debug("Entering");
 
 		if (this.editable) {
@@ -2676,10 +2673,8 @@ public class JavaScriptBuilder extends Groupbox {
 
 	/**
 	 * Simulate the Query
-	 * 
-	 * @throws Exception
 	 */
-	public void simulateQuery() throws Exception {
+	public void simulateQuery() {
 		logger.debug("Entering");
 
 		if (this.editable) {
@@ -2802,9 +2797,8 @@ public class JavaScriptBuilder extends Groupbox {
 	 * Method for Simulation of builded code
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSimulation(ForwardEvent event) throws Exception {
+	public void onClick$btnSimulation(ForwardEvent event) {
 		logger.debug("Entering");
 
 		simulateQuery();
@@ -2817,9 +2811,8 @@ public class JavaScriptBuilder extends Groupbox {
 	 * Method for Simulation of builded code
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(ForwardEvent event) throws Exception {
+	public void onClick$btnValidate(ForwardEvent event) {
 		logger.debug("Entering");
 
 		getSqlQuery();
@@ -2885,7 +2878,7 @@ public class JavaScriptBuilder extends Groupbox {
 		this.actualBlock = actualBlock;
 	}
 
-	public String getSqlQuery() throws Exception {
+	public String getSqlQuery() {
 		logger.debug("Entering");
 
 		sqlQuery = "";

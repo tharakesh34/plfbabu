@@ -706,9 +706,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// TODO: Open Comment If, save is working on ZK scripts for validation
@@ -952,8 +951,7 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 		}
 	}
 
-	public void doWriteComponentsToBean(CollateralStructure collateralStructure, boolean validationReq)
-			throws Exception {
+	public void doWriteComponentsToBean(CollateralStructure collateralStructure, boolean validationReq) {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -1541,10 +1539,8 @@ public class CollateralStructureDialogCtrl extends GFCBaseCtrl<CollateralStructu
 
 	/**
 	 * Method for Saves the components to table.
-	 * 
-	 * @throws Exception
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		final CollateralStructure aCollateralStructure = new CollateralStructure();
