@@ -119,9 +119,8 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerSummaryDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerSummaryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -161,9 +160,8 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerDetails aCustomerDetails) throws Exception {
+	public void doShowDialog(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -178,21 +176,19 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 		try {
 			doWriteBeanToComponents(aCustomerDetails);
 			this.window_CustomerSummaryDialog.doModal();
-			//setDialog(DialogType.EMBEDDED);
-		} catch (UiException e) {
+			// setDialog(DialogType.EMBEDDED);
+		} catch (UiException | IOException e) {
 			logger.error("Exception: ", e);
 			window_CustomerSummaryDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomer
-	 *            Customer
+	 * @param aCustomer Customer
 	 * @throws IOException
 	 */
 
@@ -459,8 +455,7 @@ public class CustomerSummaryViewCtrl extends GFCBaseCtrl<CustomerDetails> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);

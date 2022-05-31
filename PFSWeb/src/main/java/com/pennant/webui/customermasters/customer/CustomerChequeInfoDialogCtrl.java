@@ -133,9 +133,8 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 * selected CustomerChequeInfo object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerChequeInfoDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerChequeInfoDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -494,9 +493,8 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerChequeInfo
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerChequeInfo aCustomerChequeInfo) throws Exception {
+	public void doShowDialog(CustomerChequeInfo aCustomerChequeInfo) {
 		logger.debug("Entering");
 
 		if (isNewRecord()) {
@@ -1020,10 +1018,8 @@ public class CustomerChequeInfoDialogCtrl extends GFCBaseCtrl<CustomerChequeInfo
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerChequeInfo);
 	}
 

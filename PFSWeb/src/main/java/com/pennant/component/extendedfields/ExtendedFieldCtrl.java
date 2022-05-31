@@ -222,7 +222,7 @@ public class ExtendedFieldCtrl {
 	 * 
 	 * @return ExtendedFieldRender extendedFieldRender
 	 */
-	public ExtendedFieldRender save(boolean validationReq, CustomerDetails customerDetails) throws ParseException {
+	public ExtendedFieldRender save(boolean validationReq, CustomerDetails customerDetails) {
 		logger.debug(Literal.ENTERING);
 
 		if (this.extendedFieldHeader == null) {

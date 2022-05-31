@@ -48,7 +48,6 @@ import org.zkoss.zul.Borderlayout;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Combobox;
 import org.zkoss.zul.Label;
-import org.zkoss.zul.Messagebox;
 import org.zkoss.zul.Radio;
 import org.zkoss.zul.Row;
 import org.zkoss.zul.Space;
@@ -163,9 +162,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CoreCustomer(Event event) throws Exception {
+	public void onCreate$window_CoreCustomer(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -296,9 +294,8 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Call the Customer dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSearchCustFetch(Event event) throws Exception {
+	public void onClick$btnSearchCustFetch(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doSetValidation();
@@ -507,8 +504,7 @@ public class CoreCustomerSelectCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber)
-			throws Exception {
+	private CustomerDetails checkExternalDedup(CustomerDetails customerDetails, String primaryIdNumber) {
 		customerDetails = new CustomerDetails();
 		customerDetails.getCustomer().setCustCtgCode(custCtgType.getSelectedItem().getValue().toString());
 		CustomerDedup custDedup = new CustomerDedup();

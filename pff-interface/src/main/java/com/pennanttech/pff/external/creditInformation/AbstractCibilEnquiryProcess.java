@@ -181,11 +181,10 @@ public class AbstractCibilEnquiryProcess extends AbstractInterface implements Cr
 	 * 
 	 * @param auditHeader
 	 * @return auditHeader
-	 * @throws Exception
 	 */
 	@Override
 	public CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails, FinanceMain financeMain,
-			boolean override) throws Exception {
+			boolean override) {
 		logger.debug(Literal.ENTERING);
 
 		try {

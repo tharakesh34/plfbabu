@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerMaintenaceListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2011    														*
- *                                                                  						*
- * Modified Date    :  27-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerMaintenaceListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2011 * *
+ * Modified Date : 27-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.customermasters.customer;
@@ -128,9 +110,8 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerBasicDetailsList(Event event) throws Exception {
+	public void onCreate$window_CustomerBasicDetailsList(Event event) {
 		logger.debug("Entering");
 
 		/* set components visible dependent of the users rights */
@@ -206,9 +187,8 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	 * see: com.pennant.webui.customermasters.customer.model. CustomerMaintenaceListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCustomerItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected Customer object
@@ -259,17 +239,15 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	 * Opens the detail view. <br>
 	 * OverHanded some parameters in a map if needed. <br>
 	 * 
-	 * @param CustomerDetails
-	 *            (aCustomerDetails)
-	 * @throws Exception
+	 * @param CustomerDetails (aCustomerDetails)
 	 */
-	private void showDetailView(Customer aCustomer) throws Exception {
+	private void showDetailView(Customer aCustomer) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
 		 * handed over these parameter only a Map is accepted. So we put the object in a HashMap.
 		 */
-		//Customer aCustomer = aCustomerDetails.getCustomer();
+		// Customer aCustomer = aCustomerDetails.getCustomer();
 		if (aCustomer.getWorkflowId() == 0 && isWorkFlowEnabled()) {
 			aCustomer.setWorkflowId(getWorkFlowId());
 		}
@@ -331,9 +309,8 @@ public class CustomerDetailsListCtrl extends GFCBaseListCtrl<Customer> {
 	 * Method for call the Customer dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_CustomerDetailsList_CustomerSearchDialog(Event event) throws Exception {
+	public void onClick$button_CustomerDetailsList_CustomerSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		/*
 		 * we can call our CustomerDialog ZUL-file with parameters. So we can call them with a object of the selected

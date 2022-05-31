@@ -161,9 +161,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CustomerQDEDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerQDEDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -262,9 +261,8 @@ public class CustomerQDEDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(CustomerDetails aCustomerDetails) throws InterruptedException {
+	public void doShowDialog(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.

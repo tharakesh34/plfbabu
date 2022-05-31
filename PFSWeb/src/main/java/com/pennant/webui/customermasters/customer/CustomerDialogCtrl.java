@@ -188,6 +188,7 @@ import com.pennant.webui.finance.jointaccountdetail.JointAccountDetailDialogCtrl
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.App;
 import com.pennanttech.pennapps.core.App.Database;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
@@ -620,10 +621,9 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -1631,9 +1631,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aCustomer
-	 * @throws ParseException
 	 */
-	public void doWriteComponentsToBean(CustomerDetails aCustomerDetails, Tab custTab) throws ParseException {
+	public void doWriteComponentsToBean(CustomerDetails aCustomerDetails, Tab custTab) {
 		logger.debug("Entering");
 		doClearErrorMessage();
 		doSetValidation();
@@ -2390,9 +2389,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomer
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerDetails aCustomerDetails) throws Exception {
+	public void doShowDialog(CustomerDetails aCustomerDetails) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -3653,12 +3651,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return false;
 	}
 
-	public void onClick$btn_GenerateCibil(Event event) throws Exception {
+	public void onClick$btn_GenerateCibil(Event event) {
 		onCibilButtonClick();
 
 	}
 
-	private void onCibilButtonClick() throws ParseException, Exception {
+	private void onCibilButtonClick() {
 		doWriteComponentsToBean(customerDetails, null);
 
 		if (!validateAddressDetails(this.tabkYCDetails)) {
@@ -4184,7 +4182,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
-	private boolean doCustomerDedupe(CustomerDetails customerDetails) throws Exception {
+	private boolean doCustomerDedupe(CustomerDetails customerDetails) {
 		logger.debug("Entering");
 
 		String corebank = customerDetails.getCustomer().getCustCoreBank();
@@ -5758,7 +5756,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ***** New Button & Double Click Events for Customer Rating List ****//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerRatings(Event event) throws Exception {
+	public void onClick$btnNew_CustomerRatings(Event event) {
 		logger.debug("Entering");
 		CustomerRating customerRating = new CustomerRating();
 		customerRating.setNewRecord(true);
@@ -5780,7 +5778,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerRatingItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerRatingItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerRating.getSelectedItem();
@@ -5810,7 +5808,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// *** New Button & Double Click Events for Customer Employmnet List **//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerEmploymentDetail(Event event) throws Exception {
+	public void onClick$btnNew_CustomerEmploymentDetail(Event event) {
 		logger.debug("Entering");
 		CustomerEmploymentDetail customerEmploymentDetail = new CustomerEmploymentDetail();
 		customerEmploymentDetail.setNewRecord(true);
@@ -5839,7 +5837,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// *** New Button for Customer GST Details **//
 	// ********************************************************************//
 
-	public void onClick$btnNew_CustomerGSTDetails(Event event) throws Exception {
+	public void onClick$btnNew_CustomerGSTDetails(Event event) {
 		logger.debug("Entering");
 		CustomerGST customerGST = new CustomerGST();
 		customerGST.setNewRecord(true);
@@ -5918,7 +5916,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 
 	}
 
-	public void onCustomerGstDetailsItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerGstDetailsItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerGst.getSelectedItem();
@@ -5967,7 +5965,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return isCurrentEmp;
 	}
 
-	public void onCustomerEmploymentDetailItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerEmploymentDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerEmploymentDetail.getSelectedItem();
@@ -6001,7 +5999,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ***** New Button & Double Click Events for CustomerAddress List ****//
 	// ********************************************************************//
-	public void onClick$btnNew_DirectorDetail(Event event) throws Exception {
+	public void onClick$btnNew_DirectorDetail(Event event) {
 		logger.debug("Entering");
 		final DirectorDetail directorDetail = getDirectorDetailService().getNewDirectorDetail();
 		directorDetail.setWorkflowId(0);
@@ -6027,7 +6025,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onDirectorDetailItemDoubleClicked(Event event) throws Exception {
+	public void onDirectorDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerDirectory.getSelectedItem();
@@ -6077,7 +6075,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ***** New Button & Double Click Events for Customer Income List ****//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerIncome(Event event) throws Exception {
+	public void onClick$btnNew_CustomerIncome(Event event) {
 		logger.debug("Entering");
 
 		reallocateRights("CustomerDialog_custIncomeType");
@@ -6090,7 +6088,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerIncomeItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerIncomeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerIncome.getSelectedItem();
@@ -6157,7 +6155,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ***** New Button & Double Click Events for Customer Income List ****//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerDocuments(Event event) throws Exception {
+	public void onClick$btnNew_CustomerDocuments(Event event) {
 		logger.debug("Entering");
 		CustomerDocument customerDocument = new CustomerDocument();
 		customerDocument.setNewRecord(true);
@@ -6191,7 +6189,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerDocumentItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerDocumentItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerDocuments.getSelectedItem();
@@ -6305,7 +6303,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ***** New Button & Double Click Events for CustomerAddress List ****//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerAddress(Event event) throws Exception {
+	public void onClick$btnNew_CustomerAddress(Event event) {
 		logger.debug("Entering");
 		CustomerAddres customerAddres = new CustomerAddres();
 		List<String> custCIFs = new ArrayList<String>();
@@ -6362,7 +6360,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		return custId;
 	}
 
-	public void onCustomerAddressItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerAddressItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerAddress.getSelectedItem();
@@ -6429,7 +6427,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ** New Button & Double Click Events for CustomerPhoneNumbers List **//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerPhoneNumber(Event event) throws Exception {
+	public void onClick$btnNew_CustomerPhoneNumber(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		CustomerPhoneNumber customerPhoneNumber = new CustomerPhoneNumber();
@@ -6450,7 +6448,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onCustomerPhoneNumberItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerPhoneNumberItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerPhoneNumbers.getSelectedItem();
@@ -6492,7 +6490,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ++ New Button & Double Click Events for CustomerEmailAddress List ++//
 	// ********************************************************************//
-	public void onClick$btnNew_CustomerEmail(Event event) throws Exception {
+	public void onClick$btnNew_CustomerEmail(Event event) {
 		logger.debug("Entering");
 		CustomerEMail customerEMail = new CustomerEMail();
 		customerEMail.setNewRecord(true);
@@ -6512,7 +6510,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerEmailAddressItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerEmailAddressItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerEmails.getSelectedItem();
@@ -6556,7 +6554,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ++ New Button & Double Click Events for Customer Bank Information List
 	// ++//
 	// ********************************************************************//
-	public void onClick$btnNew_BankInformation(Event event) throws Exception {
+	public void onClick$btnNew_BankInformation(Event event) {
 		logger.debug("Entering");
 		CustomerBankInfo custBankInfo = new CustomerBankInfo();
 		Customer customer = getCustomerDetails().getCustomer();
@@ -6591,7 +6589,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerBankInfoItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerBankInfoItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerBankInformation.getSelectedItem();
@@ -6687,7 +6685,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ++ New Button & Double Click Events for Cheque Information List ++//
 	// ********************************************************************//
-	public void onClick$btnNew_ChequeInformation(Event event) throws Exception {
+	public void onClick$btnNew_ChequeInformation(Event event) {
 		logger.debug("Entering");
 		CustomerChequeInfo custChequeInfo = new CustomerChequeInfo();
 		custChequeInfo.setNewRecord(true);
@@ -6712,7 +6710,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerChequeInfoItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerChequeInfoItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerChequeInformation.getSelectedItem();
@@ -6780,7 +6778,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	// ********************************************************************//
 	// ++ New Button & Double Click Events for Cheque Information List ++//
 	// ********************************************************************//
-	public void onClick$btnNew_ExternalLiability(Event event) throws Exception {
+	public void onClick$btnNew_ExternalLiability(Event event) {
 		logger.debug("Entering");
 		CustomerExtLiability externalLiability = new CustomerExtLiability();
 		externalLiability.setNewRecord(true);
@@ -6805,7 +6803,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerExtLiabilityItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerExtLiabilityItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerExternalLiability.getSelectedItem();
@@ -6938,7 +6936,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_CardSalesInformation(Event event) throws Exception {
+	public void onClick$btnNew_CardSalesInformation(Event event) {
 		logger.debug("Entering");
 		CustCardSales custCardSales = new CustCardSales();
 		custCardSales.setNewRecord(true);
@@ -6963,7 +6961,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug("Leaving");
 	}
 
-	public void onCustomerCardSalesInfoItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerCardSalesInfoItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerCardSalesInformation.getSelectedItem();
@@ -7126,10 +7124,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("notes", getNotes());
@@ -7218,12 +7214,12 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	private Template getTemplate(String templateName) throws Exception {
+	private Template getTemplate(String templateName) throws IOException {
 		Configuration config = null;
 		config = TEMPLATES.get(templateName);
 
 		if (config == null) {
-			throw new Exception("Template not found for the name " + templateName);
+			throw new AppException("The required template not found.");
 		}
 
 		return config.getTemplate(templateName);

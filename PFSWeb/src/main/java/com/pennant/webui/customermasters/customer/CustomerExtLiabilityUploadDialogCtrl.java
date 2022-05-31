@@ -99,7 +99,7 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 		super.pageRightName = "CustomerExtLiabilityUploadDialog";
 	}
 
-	public void onCreate$window_CustomerExtLiabilityUpload(Event event) throws Exception {
+	public void onCreate$window_CustomerExtLiabilityUpload(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_CustomerExtLiabilityUpload);
@@ -160,9 +160,9 @@ public class CustomerExtLiabilityUploadDialogCtrl extends GFCBaseCtrl<CustomerEx
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public void onUpload$extBtnUpload(UploadEvent event) throws Exception {
+	public void onUpload$extBtnUpload(UploadEvent event) throws IOException {
 		logger.debug(Literal.ENTERING + event.toString());
 		media = event.getMedia();
 		if (!uploadDocFormatValidation(media)) {
