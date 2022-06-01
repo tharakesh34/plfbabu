@@ -199,9 +199,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * selected FeeType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FeeTypeDialog(Event event) throws Exception {
+	public void onCreate$window_FeeTypeDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 
 		try {
@@ -335,9 +334,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_FeeTypeDialog(Event event) throws Exception {
+	public void onClose$window_FeeTypeDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClose();
 		logger.debug("Leaving" + event.toString());
@@ -347,10 +345,8 @@ public class FeeTypeDialogCtrl extends GFCBaseCtrl<FeeType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.feeType);
 
 	}

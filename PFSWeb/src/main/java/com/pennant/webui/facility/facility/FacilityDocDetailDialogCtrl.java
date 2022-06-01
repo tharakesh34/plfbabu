@@ -134,10 +134,9 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * selected DocumentDetails object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinDocumentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_FinDocumentDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -454,9 +453,8 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentDetails
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(DocumentDetails aDocumentDetails) throws InterruptedException {
+	public void doShowDialog(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -902,10 +900,8 @@ public class FacilityDocDetailDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(finDocumentDetail);
 	}
 

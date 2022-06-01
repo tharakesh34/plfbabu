@@ -309,9 +309,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 * selected Facility object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FacilityDialog(Event event) throws Exception {
+	public void onCreate$window_FacilityDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -396,9 +395,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -445,10 +443,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("Facility", getFacility().getCAFReference(), getFacility().getVersion()),
@@ -1372,12 +1368,10 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
 	@SuppressWarnings("unchecked")
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		Facility aFacility = new Facility();
@@ -1636,10 +1630,8 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 	 * @param tranType                       (String)
 	 * 
 	 * @return boolean
-	 * @throws InterruptedException
-	 * 
 	 */
-	protected boolean doProcess(Facility aFacility, String tranType) throws InterruptedException {
+	protected boolean doProcess(Facility aFacility, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -2044,7 +2036,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$button_CollateralList_NewCollateral(Event event) throws Exception {
+	public void onClick$button_CollateralList_NewCollateral(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new IncomeExpenseDetail object, We GET it from the backEnd.
 		final Collateral aCollateral = getFacilityService().getNewCollateral();
@@ -2120,7 +2112,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		return ratingsList;
 	}
 
-	public void onCustomerRatingItemDoubleClicked(Event event) throws Exception {
+	public void onCustomerRatingItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 		// get the selected invoiceHeader object
 		final Listitem item = this.listBoxCustomerRating.getSelectedItem();
@@ -2147,7 +2139,7 @@ public class FacilityDialogCtrl extends GFCBaseCtrl<Facility> {
 		logger.debug("Leaving");
 	}
 
-	public Facility getAgrFacilitty() throws Exception {
+	public Facility getAgrFacilitty() {
 		logger.debug("Entering");
 		doWriteComponentsToBean(getFacility());
 		Facility aFacility = new Facility();

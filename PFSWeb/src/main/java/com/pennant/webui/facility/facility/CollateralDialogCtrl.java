@@ -117,9 +117,8 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 	 * selected Collateral object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CollateralDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -814,7 +813,7 @@ public class CollateralDialogCtrl extends GFCBaseCtrl<Collateral> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.collateral);
 	}
 

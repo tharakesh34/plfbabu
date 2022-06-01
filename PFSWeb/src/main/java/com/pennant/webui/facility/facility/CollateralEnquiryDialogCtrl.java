@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  04-12-2013    														*
- *                                                                  						*
- * Modified Date    :  04-12-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 04-12-2013 * * Modified
+ * Date : 04-12-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 04-12-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 04-12-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -103,9 +85,8 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 	 * selected Collateral object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CollateralEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_CollateralEnquiryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -151,8 +132,7 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -161,8 +141,7 @@ public class CollateralEnquiryDialogCtrl extends GFCBaseCtrl<CustomerCollateral>
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aCustomerCollateral
-	 *            Collateral
+	 * @param aCustomerCollateral Collateral
 	 */
 	public void doWriteBeanToComponents(CustomerCollateral aCustomerCollateral) {
 		logger.debug("Entering");

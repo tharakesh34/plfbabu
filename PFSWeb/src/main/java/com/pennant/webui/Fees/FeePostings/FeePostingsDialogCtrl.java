@@ -180,9 +180,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * selected JVPosting object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_feePostingsDialog(Event event) throws Exception {
+	public void onCreate$window_feePostingsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -254,9 +253,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -302,10 +300,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -327,10 +323,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
-	 * @param aJVPosting
-	 * @throws Exception
+	 * @param aFeePostings
 	 */
-	public void doShowDialog(FeePostings aFeePostings) throws Exception {
+	public void doShowDialog(FeePostings aFeePostings) {
 		logger.debug("Entering");
 		// set Read only mode accordingly if the object is new or not.
 		if (aFeePostings.isNewRecord()) {
@@ -415,10 +410,8 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 
 	/**
 	 * Method for Executing Accountng Details
-	 * 
-	 * @throws Exception
 	 */
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		logger.debug("Entering");
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -686,7 +679,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	 * 
 	 * @param aJVPosting
 	 */
-	public void doWriteComponentsToBean(FeePostings aFeePostings) throws InterruptedException {
+	public void doWriteComponentsToBean(FeePostings aFeePostings) {
 
 		logger.debug("Entering");
 		// doSetValidation();
@@ -858,7 +851,7 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 		this.partnerBankID.setConstraint("");
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + "Entering");
 		String module = getIDbyTab(tab.getId());
@@ -1025,11 +1018,9 @@ public class FeePostingsDialogCtrl extends GFCBaseCtrl<FeePostings> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final FeePostings aFeePosting = new FeePostings();

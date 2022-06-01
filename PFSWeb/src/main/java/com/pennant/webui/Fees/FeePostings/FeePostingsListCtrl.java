@@ -113,7 +113,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_FeePostingList(Event event) throws Exception {
+	public void onCreate$window_FeePostingList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -184,7 +184,7 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onFeePostingItemDoubleClicked(Event event) throws Exception {
+	public void onFeePostingItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.
@@ -219,9 +219,8 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	 * Displays the dialog page with the required parameters as map.
 	 * 
 	 * @param academic The entity that need to be passed to the dialog.
-	 * @throws InterruptedException
 	 */
-	private void doShowDialogPage(FeePostings aFeePostings) throws InterruptedException {
+	private void doShowDialogPage(FeePostings aFeePostings) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -283,9 +282,8 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromApproved(Event event) throws Exception {
+	public void onCheck$fromApproved(Event event) {
 		logger.debug("Entering " + event.toString());
 		search();
 		logger.debug("Leaving " + event.toString());
@@ -295,9 +293,8 @@ public class FeePostingsListCtrl extends GFCBaseListCtrl<FeePostings> {
 	 * When user clicks on "fromWorkflow"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromWorkFlow(Event event) throws Exception {
+	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
 

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FacilityListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  25-11-2013    														*
- *                                                                  						*
- * Modified Date    :  25-11-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FacilityListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 25-11-2013 * * Modified
+ * Date : 25-11-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 25-11-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 25-11-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -171,8 +153,7 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FacilityList(Event event) {
 		// Set the page level components.
@@ -212,8 +193,7 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FacilityList_FacilitySearch(Event event) {
 		search();
@@ -222,8 +202,7 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -233,11 +212,9 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 * @throws Exception
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onClick$button_FacilityList_NewFacility(Event event) throws Exception {
+	public void onClick$button_FacilityList_NewFacility(Event event) {
 		logger.debug("Entering");
 
 		// Create a new entity.
@@ -265,8 +242,7 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onFacilityItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -321,9 +297,8 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromApproved(Event event) throws Exception {
+	public void onCheck$fromApproved(Event event) {
 		logger.debug("Entering " + event.toString());
 		search();
 		logger.debug("Leaving " + event.toString());
@@ -333,9 +308,8 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromWorkFlow(Event event) throws Exception {
+	public void onCheck$fromWorkFlow(Event event) {
 		logger.debug("Entering " + event.toString());
 		search();
 		logger.debug("Leaving " + event.toString());
@@ -346,8 +320,7 @@ public class FacilityListCtrl extends GFCBaseListCtrl<Facility> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aFacility
-	 *            The entity that need to be passed to the dialog.
+	 * @param aFacility The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(Facility aFacility) {
 		logger.debug("Entering");

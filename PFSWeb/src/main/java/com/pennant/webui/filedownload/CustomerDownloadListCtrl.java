@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CustomerDownloadListCtrl.java                                        * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  24-07-2019 															*
- *                                                                  						*
- * Modified Date    :  			    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CustomerDownloadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 24-07-2019 * *
+ * Modified Date : * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 24-07-2019       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 24-07-2019 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -187,8 +169,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_CustomerDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -259,7 +240,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnDownload(ForwardEvent event) throws Exception {
+	public void onClick$btnDownload(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		List<Customer> customerList;
 		List<Long> custId = new ArrayList<>();
@@ -360,7 +341,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		renderCustomers();
 	}
 
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxCustomerDownload.getItems().size(); i++) {
@@ -378,7 +359,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
@@ -549,7 +530,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, Customer customer, int count) throws Exception {
+		public void render(Listitem item, Customer customer, int count) {
 			Listcell lc;
 			lc = new Listcell();
 			list_CheckBox = new Checkbox();
@@ -597,8 +578,7 @@ public class CustomerDownloadListCtrl extends GFCBaseListCtrl<Customer> implemen
 	}
 
 	/**
-	 * @param customerDownloadService
-	 *            the customerDownloadService to set
+	 * @param customerDownloadService the customerDownloadService to set
 	 */
 	public void setCustomerDownloadService(CustomerDownloadService customerDownloadService) {
 		this.customerDownloadService = customerDownloadService;

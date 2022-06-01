@@ -1,42 +1,24 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainQDEDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  16-11-2011    														*
- *                                                                  						*
- * Modified Date    :  16-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainQDEDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 16-11-2011 * *
+ * Modified Date : 16-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 16-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 16-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.facility.facility;
@@ -116,9 +98,8 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectFacilityTypeDialog(Event event) throws Exception {
+	public void onCreate$window_SelectFacilityTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -163,9 +144,8 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 		if (StringUtils.isBlank(this.custId.getValue())) {
 			throw new WrongValueException(this.custId, Labels.getLabel("FIELD_IS_MAND",
@@ -217,7 +197,7 @@ public class SelectFacilityTypeDialogCtrl extends GFCBaseCtrl<Facility> {
 				}
 
 				getFacility().setUserRole(getRole());
-				//set Previous Facility  Data if any
+				// set Previous Facility Data if any
 				setFacility(setPreviousCAfDetails(getFacility()));
 				// Fetching Finance Reference Detail
 				setFacility(getFacilityService().getFacilityChildRecords(getFacility()));
