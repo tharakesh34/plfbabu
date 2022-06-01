@@ -3063,16 +3063,6 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		FinReceiptHeader rch = rd.getReceiptHeader();
 		FinReceiptDetail rcd = rch.getReceiptDetails().get(0);
 
-		Date valueDate = fsi.getValueDate();
-
-		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
-			validateEarlySettlement(schdData, rd, valueDate);
-
-			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
-				return;
-			}
-		}
-
 		doDataValidations(rd);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
@@ -3183,6 +3173,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	private void validateEarlySettlement(FinScheduleData schdData, FinReceiptData receiptData, Date valueDate) {
 		FinanceDetail fd = receiptData.getFinanceDetail();
 		FinScheduleData aSchdData = fd.getFinScheduleData();
+		FinanceMain fm = aSchdData.getFinanceMain();
 		FinanceType finType = aSchdData.getFinanceType();
 
 		if (finType.isAlwCloBefDUe()) {
@@ -3194,6 +3185,14 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 
 		if (DateUtil.compare(valueDate, firstInstDate) < 0) {
 			setError(schdData, "21005", "Not allowed to do Early Settlement before first installment");
+		}
+
+		BigDecimal totalDues = getTotalDues(receiptData);
+		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(fm.getFinCcy()));
+
+		if (totalDues.compareTo(receiptData.getReceiptHeader().getReceiptAmount()) > 0) {
+			setError(schdData, "RU0051");
+			return;
 		}
 	}
 
@@ -5621,6 +5620,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		doReceiptValidations(rd);
 
 		if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
+			fd.setFinScheduleData(schdData);
 			logger.info(Literal.LEAVING);
 			return fd;
 		}
@@ -5628,9 +5628,19 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		calcuateDues(rd);
 
 		if (ReceiptPurpose.EARLYRPY == receiptPurpose) {
-			validateEarlySettle(rd);
+			validateEarlyPay(rd);
 			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				logger.info(Literal.LEAVING);
+				return fd;
+			}
+		}
+
+		Date valueDate = fsi.getValueDate();
+
+		if (ReceiptPurpose.EARLYSETTLE == receiptPurpose) {
+			validateEarlySettlement(schdData, rd, valueDate);
+
+			if (CollectionUtils.isNotEmpty(schdData.getErrorDetails())) {
 				return fd;
 			}
 		}
@@ -5681,21 +5691,10 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 		return fd;
 	}
 
-	private void validateEarlySettle(FinReceiptData rd) {
+	private void validateEarlyPay(FinReceiptData rd) {
 		FinanceDetail fd = rd.getFinanceDetail();
 		FinScheduleData schdData = fd.getFinScheduleData();
 		FinanceMain fm = schdData.getFinanceMain();
-		FinServiceInstruction fsi = schdData.getFinServiceInstruction();
-		RequestSource requestSource = fsi.getRequestSource();
-
-		BigDecimal totalDues = getTotalDues(rd);
-		totalDues = PennantApplicationUtil.formateAmount(totalDues, CurrencyUtil.getFormat(fm.getFinCcy()));
-
-		if (RequestSource.UPLOAD == requestSource
-				&& totalDues.compareTo(rd.getReceiptHeader().getReceiptAmount()) > 0) {
-			setError(schdData, "RU0051");
-			return;
-		}
 
 		if (rd.getReceiptHeader().getPartPayAmount().compareTo(BigDecimal.ZERO) <= 0) {
 			setError(schdData, "90332", ReceiptPurpose.EARLYRPY.code(), "");
