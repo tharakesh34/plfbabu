@@ -167,9 +167,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_RateChangeDialog(Event event) throws Exception {
+	public void onCreate$window_RateChangeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -226,9 +225,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	public void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		try {
 			// fill the components with the data
@@ -238,8 +236,6 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_RateChangeDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
 		logger.debug("Leaving");
 	}
@@ -282,9 +278,8 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain FinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents(FinScheduleData aFinSchData) throws InterruptedException {
+	public void doWriteBeanToComponents(FinScheduleData aFinSchData) {
 		logger.debug("Entering");
 		FinanceMain aFinanceMain = aFinSchData.getFinanceMain();
 		FinanceType aFinType = aFinSchData.getFinanceType();
@@ -1640,7 +1635,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	public void onCheck$reviewDates(Event event) throws Exception {
+	public void onCheck$reviewDates(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		doClearMessage();
@@ -1682,7 +1677,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void onCheck$anyDate(Event event) throws Exception {
+	public void onCheck$anyDate(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		doClearMessage();
@@ -1717,7 +1712,7 @@ public class RateChangeDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	private void setEffectiveRate() throws InterruptedException {
+	private void setEffectiveRate() {
 		if (StringUtils.isBlank(this.rate.getBaseValue())) {
 			this.rate.setEffRateText(PennantApplicationUtil.formatRate(
 					(this.rate.getMarginValue() == null ? BigDecimal.ZERO : this.rate.getMarginValue()).doubleValue(),

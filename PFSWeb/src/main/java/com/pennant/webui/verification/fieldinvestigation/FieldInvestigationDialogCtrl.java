@@ -12,7 +12,6 @@
 package com.pennant.webui.verification.fieldinvestigation;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -618,11 +617,7 @@ public class FieldInvestigationDialogCtrl extends GFCBaseCtrl<FieldInvestigation
 
 		// Extended Field validations
 		if (fi.getExtendedFieldHeader() != null) {
-			try {
-				fi.setExtendedFieldRender(extendedFieldCtrl.save(true));
-			} catch (ParseException e) {
-				logger.debug(Literal.EXCEPTION);
-			}
+			fi.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		try {

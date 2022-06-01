@@ -1,7 +1,6 @@
 package com.pennant.webui.organization;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -424,11 +423,7 @@ public class OrganizationDialogCtrl extends GFCBaseCtrl<Organization> {
 
 		// Extended Field validations
 		if (org.getExtendedFieldHeader() != null) {
-			try {
-				org.setExtendedFieldRender(extendedFieldCtrl.save(true));
-			} catch (ParseException e) {
-				logger.debug(Literal.EXCEPTION);
-			}
+			org.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		logger.debug(Literal.LEAVING);

@@ -440,7 +440,7 @@ public class ChangeGraceEndService extends ServiceHelper {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) throws Exception {
+	public AEEvent getChangeGrcEndPostings(FinScheduleData fsd) {
 		FinanceMain fm = fsd.getFinanceMain();
 
 		long finID = fm.getFinID();

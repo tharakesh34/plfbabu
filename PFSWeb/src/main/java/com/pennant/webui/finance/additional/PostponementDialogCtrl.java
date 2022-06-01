@@ -24,7 +24,6 @@
  */
 package com.pennant.webui.finance.additional;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -117,9 +116,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PostponementDialog(Event event) throws Exception {
+	public void onCreate$window_PostponementDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -191,7 +189,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnPostponement(Event event) throws Exception {
+	public void onClick$btnPostponement(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -216,7 +214,7 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug("Entering");
 		doWriteComponentsToBean();
 		this.window_PostponementDialog.onClose();
@@ -434,12 +432,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceMain
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
 	 */
-	private void doWriteComponentsToBean()
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private void doWriteComponentsToBean() {
 		logger.debug("Entering");
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		FinServiceInstruction finServiceInstruction = new FinServiceInstruction();
@@ -665,9 +659,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * 
 	 * @param defDate
 	 * @return
-	 * @throws InterruptedException
 	 */
-	public boolean checkPlannedDeferment(Date defDate) throws InterruptedException {
+	public boolean checkPlannedDeferment(Date defDate) {
 		logger.debug(" Entering ");
 
 		List<FinanceScheduleDetail> list = getFinScheduleData().getFinanceScheduleDetails();
@@ -738,9 +731,8 @@ public class PostponementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	private void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	private void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		try {
 			// fill the components with the data

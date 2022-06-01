@@ -154,9 +154,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_AddDisbursementDialog(Event event) throws Exception {
+	public void onCreate$window_AddDisbursementDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -238,9 +237,8 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	private void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	private void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug("Entering");
 		try {
 			// fill the components with the data
@@ -507,11 +505,9 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * @param aFinanceMain
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
-	 * @throws InterruptedException
-	 * @throws WrongValueException
 	 */
 	private void doWriteComponentsToBean(FinScheduleData aFinScheduleData)
-			throws WrongValueException, InterruptedException, IllegalAccessException, InvocationTargetException {
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 
 		doSetValidation();
@@ -1148,7 +1144,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnAddDisbursement(Event event) throws Exception {
+	public void onClick$btnAddDisbursement(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 		if (getFinanceScheduleDetail() != null) {
 			if (isDataChanged()) {
@@ -1181,7 +1177,7 @@ public class AddDisbursementDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		doClose(false);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		doSetValidation();
 		doWriteComponentsToBean(getFinScheduleData());

@@ -146,7 +146,7 @@ abstract public class ServiceHelper {
 				FinanceConstants.MODULEID_FINTYPE);
 	}
 
-	public final void postAccountingEOD(AEEvent aeEvent) throws Exception {
+	public final void postAccountingEOD(AEEvent aeEvent) {
 		aeEvent.setPostingUserBranch("EOD");
 		aeEvent.setEOD(true);
 		postingsPreparationUtil.postAccountingEOD(aeEvent);

@@ -46,7 +46,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jaxen.JaxenException;
 import org.springframework.beans.BeanUtils;
 
 import com.pennant.app.core.ChangeGraceEndService;
@@ -75,7 +74,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantStaticListUtil;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.model.LoggedInUser;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -165,7 +163,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 		return schdData;
 	}
 
-	public AEEvent getChangeGrcEndPostings(FinScheduleData schdData) throws Exception {
+	public AEEvent getChangeGrcEndPostings(FinScheduleData schdData) {
 		return changeGraceEndService.getChangeGrcEndPostings(schdData);
 
 	}
@@ -259,7 +257,7 @@ public class LoanDownSizingServiceImpl extends GenericFinanceDetailService imple
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) throws InterfaceException, JaxenException {
+	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";

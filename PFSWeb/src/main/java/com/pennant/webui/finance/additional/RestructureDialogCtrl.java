@@ -150,7 +150,7 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_RestructureDialog(Event event) throws Exception {
+	public void onCreate$window_RestructureDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -190,9 +190,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceScheduleDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinScheduleData aFinScheduleData) throws Exception {
+	public void doShowDialog(FinScheduleData aFinScheduleData) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -885,9 +884,8 @@ public class RestructureDialogCtrl extends GFCBaseCtrl<FinScheduleData> {
 	 * Method for selecting charges for capitalization calculation amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick_Capitalized(ForwardEvent event) throws Exception {
+	public void onClick_Capitalized(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();

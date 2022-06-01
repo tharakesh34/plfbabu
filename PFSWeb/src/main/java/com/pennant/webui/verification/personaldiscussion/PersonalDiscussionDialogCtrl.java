@@ -12,7 +12,6 @@
 package com.pennant.webui.verification.personaldiscussion;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -620,11 +619,7 @@ public class PersonalDiscussionDialogCtrl extends GFCBaseCtrl<PersonalDiscussion
 
 		// Extended Field validations
 		if (pd.getExtendedFieldHeader() != null) {
-			try {
-				pd.setExtendedFieldRender(extendedFieldCtrl.save(true));
-			} catch (ParseException e) {
-				logger.debug(Literal.EXCEPTION);
-			}
+			pd.setExtendedFieldRender(extendedFieldCtrl.save(true));
 		}
 
 		try {

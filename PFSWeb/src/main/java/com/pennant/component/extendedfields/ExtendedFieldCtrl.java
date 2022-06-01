@@ -1,7 +1,6 @@
 package com.pennant.component.extendedfields;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -212,7 +211,7 @@ public class ExtendedFieldCtrl {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public ExtendedFieldRender save(boolean validationReq) throws ParseException {
+	public ExtendedFieldRender save(boolean validationReq) {
 		logger.debug(Literal.ENTERING);
 		return save(validationReq, null);
 	}
