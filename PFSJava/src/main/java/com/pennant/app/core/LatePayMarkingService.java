@@ -243,7 +243,7 @@ public class LatePayMarkingService extends ServiceHelper {
 
 	}
 
-	public void processLatePayMarking(CustEODEvent custEODEvent) throws Exception {
+	public void processLatePayMarking(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -255,7 +255,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		}
 	}
 
-	public void findLatePay(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	public void findLatePay(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		Date valueDate = custEODEvent.getEodValueDate();
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
@@ -348,7 +348,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		logger.info("Checking penalties for the FinReference {} completed.", finReference);
 	}
 
-	public FinODDetails findExisingOD(List<FinODDetails> fodList, FinanceScheduleDetail curSchd) throws Exception {
+	public FinODDetails findExisingOD(List<FinODDetails> fodList, FinanceScheduleDetail curSchd) {
 		for (FinODDetails finODDetails : fodList) {
 			if (finODDetails.getFinODSchdDate().compareTo(curSchd.getSchDate()) == 0) {
 				return finODDetails;
@@ -376,7 +376,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return true;
 	}
 
-	public void lppAccrualProcess(CustEODEvent custEODEvent, FinEODEvent finEODEvent) throws Exception {
+	public void lppAccrualProcess(CustEODEvent custEODEvent, FinEODEvent finEODEvent) {
 		if (!ImplementationConstants.LPP_GST_DUE_ON.equals("D")) {
 			return;
 		}
@@ -502,8 +502,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return rpdList;
 	}
 
-	public void updateFinPftDetails(FinanceProfitDetail pftDetail, List<FinODDetails> fodList, Date valueDate)
-			throws Exception {
+	public void updateFinPftDetails(FinanceProfitDetail pftDetail, List<FinODDetails> fodList, Date valueDate) {
 
 		pftDetail.setODPrincipal(BigDecimal.ZERO);
 		pftDetail.setODProfit(BigDecimal.ZERO);
@@ -630,8 +629,7 @@ public class LatePayMarkingService extends ServiceHelper {
 		return finOD;
 	}
 
-	private void postLppAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent, FinODDetails fod)
-			throws Exception {
+	private void postLppAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent, FinODDetails fod) {
 		logger.info(Literal.ENTERING);
 
 		String eventCode = AccountingEvent.LPPAMZ;

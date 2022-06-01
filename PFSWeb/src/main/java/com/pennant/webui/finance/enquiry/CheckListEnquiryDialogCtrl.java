@@ -50,10 +50,9 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CheckListEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_CheckListEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -74,7 +73,7 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 					.get("financeEnquiryHeaderDialogCtrl");
 		}
 
-		//Render List in Listbox
+		// Render List in Listbox
 		doShowDialog();
 		logger.debug("Leaving" + event.toString());
 	}
@@ -85,9 +84,8 @@ public class CheckListEnquiryDialogCtrl extends GFCBaseCtrl<FinanceCheckListRefe
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {

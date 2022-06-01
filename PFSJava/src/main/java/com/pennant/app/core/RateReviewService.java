@@ -64,7 +64,7 @@ public class RateReviewService extends ServiceHelper {
 		super();
 	}
 
-	public void processRateReview(CustEODEvent custEODEvent) throws Exception {
+	public void processRateReview(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -80,7 +80,7 @@ public class RateReviewService extends ServiceHelper {
 		}
 	}
 
-	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) throws Exception {
+	private void processRateReview(FinEODEvent finEODEvent, Date valueDate) {
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		List<FinanceScheduleDetail> schedules = finEODEvent.getFinanceScheduleDetails();
@@ -168,7 +168,7 @@ public class RateReviewService extends ServiceHelper {
 		finEODEvent.setRateReviewExist(true);
 	}
 
-	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	private void reviewRateUpdate(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		String finReference = finEODEvent.getFinanceMain().getFinReference();
 		logger.info("Processing rate review for the FinReference >> {}", finReference);
 

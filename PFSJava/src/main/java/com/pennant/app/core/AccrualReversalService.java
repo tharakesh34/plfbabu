@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  AccrualService.java                                                  * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  11-06-2015    														*
- *                                                                  						*
- * Modified Date    :  11-06-2015    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : AccrualService.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 11-06-2015 * * Modified Date
+ * : 11-06-2015 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 11-06-2015       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 11-06-2015 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.app.core;
@@ -62,7 +44,7 @@ public class AccrualReversalService extends ServiceHelper {
 	private static final long serialVersionUID = 6161809223570900644L;
 	private static Logger logger = LogManager.getLogger(AccrualReversalService.class);
 
-	public void processAccrual(CustEODEvent custEODEvent) throws Exception {
+	public void processAccrual(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -73,9 +55,9 @@ public class AccrualReversalService extends ServiceHelper {
 		}
 	}
 
-	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 
-		//Post Accruals on Application Extended Month End OR Application Month End OR Daily
+		// Post Accruals on Application Extended Month End OR Application Month End OR Daily
 		EventProperties eventProperties = custEODEvent.getEventProperties();
 		int amzPostingEvent = eventProperties.getAmzPostingEvent();
 
@@ -107,9 +89,8 @@ public class AccrualReversalService extends ServiceHelper {
 	 * 
 	 * @param financeMain
 	 * @param resultSet
-	 * @throws Exception
 	 */
-	public void postMonthEndReversals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	public void postMonthEndReversals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		String eventCode = AccountingEvent.AMZ_MON;
 		FinanceProfitDetail finPftDetail = finEODEvent.getFinProfitDetail();
 		FinanceMain main = finEODEvent.getFinanceMain();
@@ -138,13 +119,13 @@ public class AccrualReversalService extends ServiceHelper {
 		aeEvent.getAcSetIDList().add(accountingID);
 		aeEvent.setCustAppDate(custEODEvent.getCustomer().getCustAppDate());
 
-		//Postings Process and save all postings related to finance for one time accounts update
+		// Postings Process and save all postings related to finance for one time accounts update
 		postAccountingEOD(aeEvent);
 
 		finEODEvent.getReturnDataSet().addAll(aeEvent.getReturnDataSet());
 		finEODEvent.setUpdLBDPostings(true);
 
-		//posting done update the accrual balance
+		// posting done update the accrual balance
 		finPftDetail.setAmzTillLBD(finPftDetail.getPftAmz().subtract(finEODEvent.getAccruedAmount()));
 	}
 

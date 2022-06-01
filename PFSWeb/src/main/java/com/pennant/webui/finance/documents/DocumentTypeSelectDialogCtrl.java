@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DocumentDetailsDialogCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-05-2011    														*
- *                                                                  						*
- * Modified Date    :  26-05-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DocumentDetailsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-05-2011 * *
+ * Modified Date : 26-05-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-05-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-05-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.documents;
@@ -90,9 +72,9 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	private static final Logger logger = LogManager.getLogger(DocumentTypeSelectDialogCtrl.class);
 
 	protected Window window_DocumentTypeSelectDialog;
-	//protected Combobox	                  docCategory;	                                                                 // autowired
+	// protected Combobox docCategory; // autowired
 
-	ExtendedCombobox docCategory; //autowired
+	ExtendedCombobox docCategory; // autowired
 
 	private DocumentDetails documentDetail;
 	private List<DocumentType> documentTypes = PennantAppUtil.getDocumentTypesList();
@@ -127,10 +109,9 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * selected DocumentDetails object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_DocumentTypeSelectDialog(Event event) throws Exception {
+	public void onCreate$window_DocumentTypeSelectDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -213,8 +194,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -226,9 +206,8 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDocumentDetails
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -290,8 +269,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aDocumentDetails
-	 *            DocumentDetails
+	 * @param aDocumentDetails DocumentDetails
 	 */
 	public void doWriteBeanToComponents(DocumentDetails aDocumentDetails) {
 		logger.debug("Entering");
@@ -391,8 +369,8 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 			} else {
 				CustomerDocument customerDocument = new CustomerDocument();
 				customerDocument.setNewRecord(true);
-				//customerDocument.setCustDocCategory(checkListDetail.getDocType());
-				//	customerDocument.setLovDescCustDocCategory(checkListDetail.getAnsDesc());
+				// customerDocument.setCustDocCategory(checkListDetail.getDocType());
+				// customerDocument.setLovDescCustDocCategory(checkListDetail.getAnsDesc());
 				customerDocument.setWorkflowId(0);
 				if (isFacility()) {
 					customerDocument.setCustID(getFacility().getCustID());
@@ -405,7 +383,7 @@ public class DocumentTypeSelectDialogCtrl extends GFCBaseCtrl<DocumentDetails> {
 							getCustDetails() != null ? String.valueOf(getCustDetails().get(1).toString()) : "");
 					customerDocument.setLovDescCustShrtName(
 							getCustDetails() != null ? String.valueOf(getCustDetails().get(2).toString()) : "");
-					//if  documents type is Customer Documents then set mandatory from documents masters.
+					// if documents type is Customer Documents then set mandatory from documents masters.
 					for (DocumentType document : documentTypes) {
 						if (this.docCategory.getValue() != null
 								&& this.docCategory.getValue().equals(document.getDocTypeCode())) {

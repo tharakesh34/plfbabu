@@ -30,7 +30,7 @@ public class DMSRetrievalProcessCtrl extends GFCBaseCtrl {
 		super();
 	}
 
-	public void onCreate$window_DMSRetrieve(Event event) throws Exception {
+	public void onCreate$window_DMSRetrieve(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

@@ -208,9 +208,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	 * selected FinCovenantTypeDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$covenantDialogWindow(Event event) throws Exception {
+	public void onCreate$covenantDialogWindow(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -335,10 +334,8 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.covenant);
 	}
 
@@ -2143,7 +2140,7 @@ public class CovenantsDialogCtrl extends GFCBaseCtrl<Covenant> {
 		}
 	}
 
-	public void onChange$covenantGraceDays(Event event) throws Exception {
+	public void onChange$covenantGraceDays(Event event) {
 		logger.debug(Literal.ENTERING);
 		onSelectFrequency(this.covenantFrequency.getSelectedItem().getValue().toString());
 		logger.debug(Literal.LEAVING);

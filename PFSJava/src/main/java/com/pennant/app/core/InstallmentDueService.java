@@ -32,7 +32,6 @@ import com.pennant.backend.util.FinanceConstants;
 import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.SMTParameterConstants;
 import com.pennant.cache.util.AccountingConfigCache;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pff.advancepayment.service.AdvancePaymentService;
 import com.pennanttech.pff.constants.AccountingEvent;
@@ -44,7 +43,7 @@ public class InstallmentDueService extends ServiceHelper {
 	private GSTInvoiceTxnService gstInvoiceTxnService;
 	private AdvancePaymentService advancePaymentService;
 
-	public void processDueDatePostings(CustEODEvent custEODEvent) throws Exception {
+	public void processDueDatePostings(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -66,7 +65,7 @@ public class InstallmentDueService extends ServiceHelper {
 	}
 
 	private void postInstallmentDues(FinEODEvent finEODEvent, FinanceScheduleDetail schd, CustEODEvent custEODEvent,
-			long accountingID) throws Exception {
+			long accountingID) {
 		FinanceMain fm = finEODEvent.getFinanceMain();
 		logger.info("Installment due date postings started for the FinReference {}.", fm.getFinReference());
 
@@ -267,10 +266,9 @@ public class InstallmentDueService extends ServiceHelper {
 	 * @param postdate
 	 * @param resultSet
 	 * @return
-	 * @throws Exception
 	 */
 	public List<ReturnDataSet> processbackDateInstallmentDues(FinanceDetail fd, FinanceProfitDetail pfd, Date appDate,
-			boolean post, String postBranch) throws InterfaceException {
+			boolean post, String postBranch) {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> datasets = new ArrayList<>();

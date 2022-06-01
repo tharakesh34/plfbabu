@@ -152,7 +152,7 @@ abstract public class ServiceHelper {
 		postingsPreparationUtil.postAccountingEOD(aeEvent);
 	}
 
-	public final void saveAccountingEOD(List<ReturnDataSet> returnDataSets) throws Exception {
+	public final void saveAccountingEOD(List<ReturnDataSet> returnDataSets) {
 		postingsPreparationUtil.saveAccountingEOD(returnDataSets);
 	}
 

@@ -88,10 +88,9 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ExpenseEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ExpenseEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -135,11 +134,8 @@ public class ExpenseEnquiryDialogCtrl extends GFCBaseCtrl<FinExpenseDetails> {
 	 * Opens the Dialog window modal.
 	 * 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
-	 * 
-	 * 
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 

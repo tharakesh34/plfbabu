@@ -63,9 +63,9 @@ public class StatusMovementService extends ServiceHelper {
 	/**
 	 * @param custid
 	 * @param valueDate
-	 * @throws Exception
+	 * @throws SQLException
 	 */
-	public void processMovements(Connection connection, long custId, Date date) throws Exception {
+	public void processMovements(Connection connection, long custId, Date date) throws SQLException {
 		try {
 			if (connection == null) {
 				connection = DataSourceUtils.doGetConnection(getDataSource());
@@ -73,14 +73,14 @@ public class StatusMovementService extends ServiceHelper {
 			processMovement(connection, date, custId, AccountingEvent.NORM_PD, NORM_PD);
 			processMovement(connection, date, custId, AccountingEvent.PD_NORM, PD_NORM);
 			processMovement(connection, date, custId, AccountingEvent.PD_PIS, PD_PIS);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			logger.error("Exception :", e);
 			throw e;
 		}
 	}
 
 	public void processMovement(ChunkContext context, Connection connection, String sql, String event, Date valueDate,
-			int processed) throws Exception {
+			int processed) throws SQLException {
 
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
@@ -96,7 +96,7 @@ public class StatusMovementService extends ServiceHelper {
 
 				processed++;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			logger.error("Exception: ", e);
 			throw e;
 		} finally {
@@ -116,10 +116,10 @@ public class StatusMovementService extends ServiceHelper {
 	 * @param connection
 	 * @param valueDate
 	 * @param custId
-	 * @throws Exception
+	 * @throws SQLException
 	 */
 	private void processMovement(Connection connection, Date valueDate, long custId, String event, String sql)
-			throws Exception {
+			throws SQLException {
 
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
@@ -148,7 +148,7 @@ public class StatusMovementService extends ServiceHelper {
 
 	}
 
-	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws Exception {
+	private void processPostings(ResultSet resultSet, String event, Date valueDate) throws SQLException {
 		// Amount Codes preparation using FinProfitDetails
 		AEEvent aeEvent = getAEAmountCodes(resultSet, event, valueDate);
 

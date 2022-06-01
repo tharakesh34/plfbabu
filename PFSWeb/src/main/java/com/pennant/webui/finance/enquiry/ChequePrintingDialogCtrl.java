@@ -1,5 +1,6 @@
 package com.pennant.webui.finance.enquiry;
 
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,6 +49,8 @@ import com.pennant.webui.finance.financemain.model.FinScheduleListItemRenderer;
 import com.pennant.webui.util.GFCBaseCtrl;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
+
+import net.sf.jasperreports.engine.JRException;
 
 public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail> {
 	private static final long serialVersionUID = -2919106187676267998L;
@@ -104,9 +107,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ChequePrintingDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ChequePrintingDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -143,9 +145,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -174,9 +175,10 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * When user clicks on button "button_Print" button
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws JRException
+	 * @throws FileNotFoundException
 	 */
-	public void onClick$button_Print(Event event) throws Exception {
+	public void onClick$button_Print(Event event) throws FileNotFoundException, JRException {
 		logger.debug("Entering " + event.toString());
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
@@ -287,10 +289,8 @@ public class ChequePrintingDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * @param startIndex
 	 * @param endIndex
 	 * @return
-	 * @throws Exception
 	 */
-	public ArrayList<ChequeDetails> getChequeDetailsList(ChequeDetails chequeDetails, int startIndex, int endIndex)
-			throws Exception {
+	public ArrayList<ChequeDetails> getChequeDetailsList(ChequeDetails chequeDetails, int startIndex, int endIndex) {
 		ArrayList<ChequeDetails> chequeDetailsList = new ArrayList<ChequeDetails>();
 		chequeDetailsList.add(null);
 		BigDecimal repaymentAmount = null;

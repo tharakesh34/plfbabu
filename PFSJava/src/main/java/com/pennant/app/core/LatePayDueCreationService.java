@@ -86,7 +86,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 		super();
 	}
 
-	public void processLatePayAccrual(CustEODEvent custEODEvent) throws Exception {
+	public void processLatePayAccrual(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		// Post LPP / LPI Accruals on Application Extended Month End OR Application Month End OR Daily
@@ -100,7 +100,7 @@ public class LatePayDueCreationService extends ServiceHelper {
 
 	}
 
-	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	public void postLatePayAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		long custID = custEODEvent.getCustomer().getCustID();
 
 		String lppEventCode = AccountingEvent.LPPAMZ;

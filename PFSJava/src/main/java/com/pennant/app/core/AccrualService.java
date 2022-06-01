@@ -74,7 +74,7 @@ public class AccrualService extends ServiceHelper {
 	public BigDecimal TDS_MULTIPLIER = BigDecimal.ZERO;
 	public int TDS_SCHD_INDEX = -2;
 
-	public void processAccrual(CustEODEvent custEODEvent) throws Exception {
+	public void processAccrual(CustEODEvent custEODEvent) {
 		List<FinEODEvent> finEODEvents = custEODEvent.getFinEODEvents();
 
 		for (FinEODEvent finEODEvent : finEODEvents) {
@@ -87,7 +87,7 @@ public class AccrualService extends ServiceHelper {
 		}
 	}
 
-	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	public FinEODEvent calculateAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		logger.info(Literal.ENTERING);
 
 		FinanceMain fm = finEODEvent.getFinanceMain();
@@ -709,9 +709,8 @@ public class AccrualService extends ServiceHelper {
 	/**
 	 * @param financeMain
 	 * @param resultSet
-	 * @throws Exception
 	 */
-	public void postAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) throws Exception {
+	public void postAccruals(FinEODEvent finEODEvent, CustEODEvent custEODEvent) {
 		String eventCode = AccountingEvent.AMZ;
 		FinanceProfitDetail pfd = finEODEvent.getFinProfitDetail();
 		FinanceMain fm = finEODEvent.getFinanceMain();
