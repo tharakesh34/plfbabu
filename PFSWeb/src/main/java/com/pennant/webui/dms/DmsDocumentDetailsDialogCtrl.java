@@ -36,12 +36,10 @@ public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 * @throws Exception
+	 * @param event An event sent to the event handler of the component.
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_DmsDocumentDetailDialog(Event event) throws Exception {
+	public void onCreate$window_DmsDocumentDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -97,8 +95,7 @@ public class DmsDocumentDetailsDialogCtrl extends GFCBaseCtrl<DMSDocumentDetails
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);

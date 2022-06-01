@@ -3,6 +3,7 @@ package com.pennant.batchupload.fileprocessor;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -92,9 +95,11 @@ public class BatchUploadProcessor {
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
 	 * @return String
-	 * @throws Exception
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
-	public void process() throws Exception {
+	public void process() throws JsonParseException, JsonMappingException, IOException {
 		logger.debug("Entering");
 		// sanity check
 		validateFile();
@@ -245,8 +250,7 @@ public class BatchUploadProcessor {
 	 * @param flag
 	 * @finalRequestJson append prepared json to this.
 	 */
-	private boolean doCompare(String key, Object value, JSONObject finalRequestJson, JSONObject jsonForextendedField)
-			throws Exception {
+	private boolean doCompare(String key, Object value, JSONObject finalRequestJson, JSONObject jsonForextendedField) {
 		logger.debug("Entering");
 		int numberOfSheet = workbook.getNumberOfSheets();
 		JSONObject nestedJSONObjects = new JSONObject();
@@ -331,7 +335,7 @@ public class BatchUploadProcessor {
 
 	/** Prepare jsonObject for column other than <ROOT>_id (EX:finaceSchedule_id) */
 	private JSONObject prepareNestedJSONObjects(String key, List<Map<String, Object>> singleSheetMappedRows,
-			JSONObject nestedJSONObjects, String originalKey) throws Exception {
+			JSONObject nestedJSONObjects, String originalKey) {
 		if (originalKey.equals(BatchUploadProcessorConstatnt.NA)) { // its a json object
 			nestedJSONObjects.put(key, listOfMapToJson(singleSheetMappedRows));
 		} else { // its a jsonArray
@@ -517,17 +521,27 @@ public class BatchUploadProcessor {
 	 * @param writebleSheet response will write to this field
 	 * @param messageId     to pass as input header
 	 * @param lastCellIndex cell index where the response will written
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
 	 */
 	private synchronized void callApiNWriteToSheet(JSONObject json, Sheet writebleSheet, String messageId,
-			int lastCellIndex) throws Exception {
+			int lastCellIndex) throws JsonParseException, JsonMappingException, IOException {
 		if (json.length() > 0) {
 			String[] response = callApi(json, messageId);
 			write(response, writebleSheet, lastCellIndex);
 		}
 	}
 
-	/** calling api with jsonobject and returning array as response */
-	private String[] callApi(JSONObject jsondata, String messageId) throws Exception {
+	/**
+	 * calling api with jsonobject and returning array as response
+	 * 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
+	 */
+	private String[] callApi(JSONObject jsondata, String messageId)
+			throws JsonParseException, JsonMappingException, IOException {
 		logger.debug("API REQUEST :: " + jsondata.toString());
 		String ReturnText = null;
 		String ReturnCode = null;

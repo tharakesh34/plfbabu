@@ -57,7 +57,13 @@ public class BatchProcessorUtil {
 		}
 	}
 
-	/** util method accepting payload and converting to list of FaultDetails */
+	/**
+	 * util method accepting payload and converting to list of FaultDetails
+	 * 
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonParseException
+	 */
 	public static List<FaultDetails> convertJsonArrayToList(String payload)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objMapper = new ObjectMapper();

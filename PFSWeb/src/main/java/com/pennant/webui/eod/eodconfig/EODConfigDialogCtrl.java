@@ -164,9 +164,8 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_EODConfigDialog(Event event) throws Exception {
+	public void onCreate$window_EODConfigDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -216,7 +215,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$eodStartJobFrequency(Event event) throws Exception {
+	public void onChange$eodStartJobFrequency(Event event) {
 		if (this.eodStartJobFrequency.getValue() != null) {
 			this.label_cronexp.setVisible(true);
 			this.label_cronexp.setValue(toCron(this.eodStartJobFrequency.getValue()));
@@ -1302,7 +1301,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		this.eODConfigService = eODConfigService;
 	}
 
-	public void onCheck$autoEodRequired(Event event) throws Exception {
+	public void onCheck$autoEodRequired(Event event) {
 		if (this.autoEodRequired.isChecked()) {
 			this.eodStartJobFrequency.setDisabled(false);
 			this.enableAutoEOD.setDisabled(false);
@@ -1315,7 +1314,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		CheckGbNotifVisibility();
 	}
 
-	public void onCheck$sendEmailRequired(Event event) throws Exception {
+	public void onCheck$sendEmailRequired(Event event) {
 		if (this.sendEmailRequired.isChecked()) {
 			this.sMTPUserName.setDisabled(false);
 			this.fromName.setDisabled(false);
@@ -1346,7 +1345,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		CheckGbNotifVisibility();
 	}
 
-	public void onCheck$sMTPAuthenticationRequired(Event event) throws Exception {
+	public void onCheck$sMTPAuthenticationRequired(Event event) {
 		if (this.sMTPAuthenticationRequired.isChecked()) {
 			this.sMTPPassword.setDisabled(false);
 		} else {
@@ -1354,11 +1353,11 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 	}
 
-	public void onCheck$eMailNotificationsRequired(Event event) throws Exception {
+	public void onCheck$eMailNotificationsRequired(Event event) {
 		CheckGbNotifVisibility();
 	}
 
-	public void onCheck$publishNotificationsRequired(Event event) throws Exception {
+	public void onCheck$publishNotificationsRequired(Event event) {
 		CheckGbNotifVisibility();
 	}
 
@@ -1393,7 +1392,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 
 	}
 
-	public void onCheck$delayRequired(Event event) throws Exception {
+	public void onCheck$delayRequired(Event event) {
 		CheckDelayNotifVisibility();
 	}
 
@@ -1408,7 +1407,7 @@ public class EODConfigDialogCtrl extends GFCBaseCtrl<EODConfig> {
 		}
 	}
 
-	public void onCheck$extMnthRequired(Event event) throws Exception {
+	public void onCheck$extMnthRequired(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (this.extMnthRequired.isChecked()) {

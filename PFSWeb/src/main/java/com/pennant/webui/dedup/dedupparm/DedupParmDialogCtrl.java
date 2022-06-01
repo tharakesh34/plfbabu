@@ -182,9 +182,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * selected DedupParm object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_DedupParmDialog(Event event) throws Exception {
+	public void onCreate$window_DedupParmDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -312,9 +311,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering");
 		doSave();
 		logger.debug("Leaving");
@@ -419,9 +417,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aDedupParm
-	 * @throws Exception
 	 */
-	public void doWriteComponentsToBean(DedupParm aDedupParm) throws Exception {
+	public void doWriteComponentsToBean(DedupParm aDedupParm) {
 		logger.debug("Entering");
 		doSetLOVValidation();
 
@@ -504,9 +501,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aDedupParm
-	 * @throws Exception
 	 */
-	public void doShowDialog(DedupParm aDedupParm) throws Exception {
+	public void doShowDialog(DedupParm aDedupParm) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -575,9 +571,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_DedupParmDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -586,9 +581,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * the message
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$collateralType(Event event) throws Exception {
+	public void onChange$collateralType(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (collateralType.getSelectedIndex() == 0) {
@@ -633,9 +627,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * the message
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$custCtgCode(Event event) throws Exception {
+	public void onChange$custCtgCode(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (custCtgCode.getSelectedIndex() == 0) {
@@ -676,10 +669,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 	/**
 	 * This method for clearing tree children and build a new tree
-	 * 
-	 * @throws Exception
 	 */
-	public void clearAndBuildTree(String ctgCode) throws Exception {
+	public void clearAndBuildTree(String ctgCode) {
 		logger.debug("Entering");
 		itemCount = 1;
 		tree.getChildren().clear();
@@ -700,9 +691,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Method for Build Sibling TreeItem
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAddButtonClicked(Event event) throws Exception {
+	public void onAddButtonClicked(Event event) {
 		logger.debug("Entering");
 
 		this.addBtnClicked = true;
@@ -718,7 +708,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Build Tree using List of component values or for new tree
 	 */
-	public void buildingTree(List<String> queryValues, DedupParm aDedupParm) throws Exception {
+	public void buildingTree(List<String> queryValues, DedupParm aDedupParm) {
 		logger.debug("Entering");
 
 		Component component1 = tree;
@@ -930,9 +920,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Logic for creating sibling treeItem
 	 * 
 	 * @param cmp
-	 * @throws InterruptedException
 	 */
-	public void addButtonLogic(Component cmp) throws InterruptedException {
+	public void addButtonLogic(Component cmp) {
 		logger.debug("Entering");
 
 		treeitem.appendChild(treerow);
@@ -974,9 +963,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Method for adding child treeItem calling Component
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAddSubButtonClicked(Event event) throws Exception {
+	public void onAddSubButtonClicked(Event event) {
 		logger.debug("Entering");
 
 		this.addBtnClicked = false;
@@ -992,9 +980,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Logic for creating Child treeItem
 	 * 
 	 * @param cmp
-	 * @throws InterruptedException
 	 */
-	public void addSubButtonLogic(Component cmp) throws InterruptedException {
+	public void addSubButtonLogic(Component cmp) {
 		logger.debug("Entering");
 
 		Component nextcomp = null;
@@ -1077,10 +1064,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * 
 	 * @param queryValues
 	 * @param aQuery
-	 * @throws Exception
 	 */
 	@SuppressWarnings("deprecation")
-	public void buildTreeCell(List<String> queryValues, DedupParm aDedupParm) throws Exception {
+	public void buildTreeCell(List<String> queryValues, DedupParm aDedupParm) {
 		logger.debug("Entering");
 
 		// Add treeItem to Component itemList
@@ -1310,7 +1296,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * build a query for values and generate in textBox
 	 */
-	public void onClick$btnReadValues(Event event) throws Exception {
+	public void onClick$btnReadValues(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.tab_queryDesign.setSelected(true);
 		readButtonClicked();// calling read button method for generating query
@@ -1320,7 +1306,7 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	/**
 	 * Method for Validating Builded Query and show result in 'SqlViewResult.zul'
 	 */
-	public void onClick$btnValidation(Event event) throws Exception {
+	public void onClick$btnValidation(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.tab_queryDesign.setSelected(true);
 		if (this.custCtgCode.getSelectedIndex() == 0) {
@@ -1371,10 +1357,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 
 	/**
 	 * Method for building SQLquery
-	 * 
-	 * @throws Exception
 	 */
-	public void readButtonClicked() throws Exception {
+	public void readButtonClicked() {
 		logger.debug("Entering");
 		sQLQuery.setValue("");
 		queryFieldMap = new LinkedHashMap<String, String[]>();
@@ -1391,9 +1375,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Method for Generating Query by using Builded Structure of Tree
 	 * 
 	 * @param selectionComp
-	 * @throws Exception
 	 */
-	public void doBuildQuery(Component selectionComp) throws Exception {
+	public void doBuildQuery(Component selectionComp) {
 		logger.debug("Entering");
 
 		if (selectionComp.getChildren() != null) {
@@ -1647,11 +1630,9 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Enterring");
 
 		final DedupParm aDedupParm = new DedupParm();
@@ -1902,10 +1883,8 @@ public class DedupParmDialogCtrl extends GFCBaseCtrl<DedupParm> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dedupParm);
 	}
 

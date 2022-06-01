@@ -181,7 +181,7 @@ public class LegalExpensesListCtrl extends GFCBaseListCtrl<LegalExpenses> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onLegalExpensesItemDoubleClicked(Event event) throws Exception {
+	public void onLegalExpensesItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.

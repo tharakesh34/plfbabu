@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  PaymentHeaderListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  27-05-2017    														*
- *                                                                  						*
- * Modified Date    :  27-05-2017    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : PaymentHeaderListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 27-05-2017 * *
+ * Modified Date : 27-05-2017 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 27-05-2017       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 27-05-2017 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.externalupload;
 
 import java.io.ByteArrayOutputStream;
@@ -55,6 +37,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.zkoss.util.media.Media;
 import org.zkoss.util.resource.Labels;
@@ -96,7 +80,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	private File file;
 	@Value("${api.authkey}")
 	private String authorization;
-	// ### 10-05-2018---- PSD TCT No :125164 
+	// ### 10-05-2018---- PSD TCT No :125164
 	@Value("${api.url}")
 	private String baseurl;
 	@Value("${api.entityId}")
@@ -122,12 +106,11 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_ExternalUploadsList(Event event) {
 		setPageComponents(window_ExternalUploadsList);
-		//String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
+		// String baseurl = SysParamUtil.getValueAsString("PFFAPI_SERVICE_URL");
 		// String baseurl = "http://192.168.1.160:8080/pff-api/services";
 
 		if (StringUtils.isBlank(baseurl)) {
@@ -179,10 +162,8 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 	 * when the Source type is changed. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onChange$apiType(Event event) throws Exception {
+	public void onChange$apiType(Event event) {
 		logger.debug(Literal.ENTERING);
 		try {
 			String[] valueArray = org.apache.commons.lang3.StringUtils.split(this.apiType.getSelectedItem().getValue(),
@@ -218,9 +199,8 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 
 	/**
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onUpload$btnFileUpload(UploadEvent event) throws Exception {
+	public void onUpload$btnFileUpload(UploadEvent event) {
 		fileName.setText("");
 		media = event.getMedia();
 
@@ -248,7 +228,7 @@ public class ExternalUploadListCtrl extends GFCBaseListCtrl<Object> {
 		FileUtils.writeByteArrayToFile(file, media.getByteData());
 	}
 
-	private void doFileProcess() throws Exception {
+	private void doFileProcess() throws JsonParseException, JsonMappingException, IOException {
 		logger.debug(Literal.ENTERING);
 		if (org.apache.commons.lang3.StringUtils.isNotBlank(apiUrl)) {
 			long userId = getUserWorkspace().getUserId();

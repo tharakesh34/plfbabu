@@ -92,7 +92,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SqlViewResult(Event event) throws Exception {
+	public void onCreate$window_SqlViewResult(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -259,7 +259,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 			throw new WrongValuesException(wvea);
 		}
 
-		//query for getting list of values on validation		
+		// query for getting list of values on validation
 		resultList = getDedupParmService().validate(resultQuery, (CustomerDedup) object);
 		resultCount.setValue("Total number of records are :" + resultList.size());
 		this.gb_resultCount.setVisible(true);
@@ -276,7 +276,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 
 	}
 
-	//paging Event Class for pagination
+	// paging Event Class for pagination
 	public final class OnPagingEventListener implements EventListener<Event> {
 
 		public OnPagingEventListener() {
@@ -284,7 +284,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 		}
 
 		@Override
-		public void onEvent(Event event) throws Exception {
+		public void onEvent(Event event) {
 
 			final PagingEvent pe = (PagingEvent) event;
 			final int pageNo = pe.getActivePage();
@@ -297,7 +297,7 @@ public class SqlViewResultCtrl extends GFCBaseCtrl<Query> {
 		}
 	}
 
-	//method for rendering values into listBox
+	// method for rendering values into listBox
 	public void renderlist(int start, int incValue) {
 		logger.debug("Entering");
 

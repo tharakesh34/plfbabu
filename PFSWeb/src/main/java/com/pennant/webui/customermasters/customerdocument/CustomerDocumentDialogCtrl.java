@@ -25,6 +25,7 @@
 package com.pennant.webui.customermasters.customerdocument;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -227,10 +228,9 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * selected CustomerDocument object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CustomerDocumentDialog(Event event) throws Exception {
+	public void onCreate$window_CustomerDocumentDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -840,9 +840,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerDocument
-	 * @throws Exception
 	 */
-	public void doShowDialog(CustomerDocument aCustomerDocument) throws Exception {
+	public void doShowDialog(CustomerDocument aCustomerDocument) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -2301,10 +2300,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.customerDocument);
 
 	}
@@ -2453,7 +2450,8 @@ public class CustomerDocumentDialogCtrl extends GFCBaseCtrl<CustomerDocument> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	public void setDeviationExecutionCtrl() throws Exception {
+	public void setDeviationExecutionCtrl()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		if (getFinanceMainDialogCtrl() != null && isFinanceProcess) {
 			deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass()
 					.getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
