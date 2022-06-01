@@ -1494,7 +1494,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		if (orgReceiptData != null) {
 			receiptData = orgReceiptData;
 		} else {
-			befFinSchedData = receiptData.getFinanceDetail().getFinScheduleData();
+			befFinSchedData = receiptData.getFinanceDetail().getFinScheduleData().copyEntity();
 			receiptService.calcuateDues(receiptData);
 			if (!AllocationType.MANUAL.equals(receiptData.getReceiptHeader().getAllocationType())
 					&& receiptData.isCalReq()) {
@@ -1708,7 +1708,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.btnCalcReceipts.setDisabled(!getUserWorkspace().isAllowed("button_ReceiptDialog_btnCalcReceipts"));
 
 		readOnlyComponent(isReadOnly("ReceiptDialog_allocationMethod"), this.allocationMethod);
-		fillComboBox(this.allocationMethod, AllocationType.AUTO,PennantStaticListUtil.getAllocationMethods(), "");
+		fillComboBox(this.allocationMethod, AllocationType.AUTO, PennantStaticListUtil.getAllocationMethods(), "");
 
 		resetAllocationPayments();
 
