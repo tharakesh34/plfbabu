@@ -93,10 +93,9 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_ScoringEnquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ScoringEnquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -133,9 +132,8 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -224,7 +222,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 					for (int i = 0; i < scoreDetailList.size(); i++) {
 						FinanceScoreDetail curScoreDetail = scoreDetailList.get(i);
 
-						//Adding List Group 
+						// Adding List Group
 						if ((prvGrpId == 0) || (prvGrpId != curScoreDetail.getSubGroupId())) {
 							totalgrpExecScore = BigDecimal.ZERO;
 							totalgrpMaxScore = BigDecimal.ZERO;
@@ -237,7 +235,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 							}
 						}
 
-						//Adding List Item
+						// Adding List Item
 						if ("F".equals(curScoreDetail.getCategoryType())) {
 							addExecutedListItem(curScoreDetail, this.listBoxFinancialScoRef);
 							finTotalScore = finTotalScore.add(curScoreDetail.getMaxScore());
@@ -249,7 +247,7 @@ public class ScoringEnquiryDialogCtrl extends GFCBaseCtrl<FinanceScoreDetail> {
 						totalgrpMaxScore = totalgrpMaxScore.add(curScoreDetail.getMaxScore());
 						calTotalScore = calTotalScore.add(curScoreDetail.getExecScore());
 
-						//Adding List Group Footer
+						// Adding List Group Footer
 						if ((i == scoreDetailList.size() - 1)
 								|| (curScoreDetail.getSubGroupId() != scoreDetailList.get(i + 1).getSubGroupId())) {
 							if ("F".equals(curScoreDetail.getCategoryType())) {

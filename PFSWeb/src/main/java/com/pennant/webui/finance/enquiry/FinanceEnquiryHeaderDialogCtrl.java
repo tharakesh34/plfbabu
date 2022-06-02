@@ -257,9 +257,8 @@ public class FinanceEnquiryHeaderDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected Academic object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinEnqHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_FinEnqHeaderDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

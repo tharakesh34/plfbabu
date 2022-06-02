@@ -193,9 +193,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * selected Academic object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceEnquiry(Event event) throws Exception {
+	public void onCreate$window_FinanceEnquiry(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Listbox Sorting
@@ -1097,9 +1096,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * Method for fetching Finance Record
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLoanItemDoubleClicked(Event event) throws Exception {
+	public void onLoanItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		final Listitem item = this.listBoxEnquiryResult.getSelectedItem();
@@ -1157,9 +1155,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromApproved(Event event) throws Exception {
+	public void onCheck$fromApproved(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSearch();
 		logger.debug(Literal.LEAVING);
@@ -1169,9 +1166,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromWorkFlow(Event event) throws Exception {
+	public void onCheck$fromWorkFlow(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSearch();
 		logger.debug(Literal.LEAVING);
@@ -1181,9 +1177,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * When user clicks on "myRecords"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$myRecords(Event event) throws Exception {
+	public void onCheck$myRecords(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSearch();
 		logger.debug(Literal.LEAVING);
@@ -1193,9 +1188,8 @@ public class FinanceEnquiryListCtrl extends GFCBaseListCtrl<FinanceEnquiry> {
 	 * When user clicks on "myTeamRecords"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$myTeamRecords(Event event) throws Exception {
+	public void onCheck$myTeamRecords(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSearch();
 		logger.debug(Literal.LEAVING);

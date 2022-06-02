@@ -328,7 +328,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onCheck$fromApproved(Event event) {
 		approvedList = true;
@@ -346,7 +345,6 @@ public class FinApprovalStsInquiryListCtrl extends GFCBaseListCtrl<CustomerFinan
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onCheck$fromWorkFlow(Event event) {
 		approvedList = false;

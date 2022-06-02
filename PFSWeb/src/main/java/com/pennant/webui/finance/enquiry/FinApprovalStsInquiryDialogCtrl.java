@@ -128,10 +128,9 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinApprovalStsInquiryDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinApprovalStsInquiryDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -195,9 +194,8 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aFinanceMain financeMain
-	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents() throws InterruptedException {
+	public void doWriteBeanToComponents() {
 		logger.debug("Entering");
 		this.custCIF.setValue(customerFinanceDetail.getCustCIF());
 		this.custShrtName.setValue(customerFinanceDetail.getCustShrtName());
@@ -257,9 +255,8 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param appList
 	 * @return
-	 * @throws Exception
 	 */
-	public Listbox renderNotes(List<Notes> appList) throws Exception {
+	public Listbox renderNotes(List<Notes> appList) {
 		logger.debug("Entering");
 
 		// Retrieve Notes List By Module Reference
@@ -471,9 +468,8 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		doReadOnly();
 		try {
@@ -493,8 +489,6 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_FinApprovalStsInquiryDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
 		logger.debug("Leaving");
 	}
@@ -532,7 +526,7 @@ public class FinApprovalStsInquiryDialogCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void onClick$reasonDeatilsLog(Event event) throws Exception {
+	public void onClick$reasonDeatilsLog(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		doReasonDeatilsLog();
 		logger.debug(Literal.LEAVING + event.toString());
