@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FileDownloadListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-06-2013    														*
- *                                                                  						*
- * Modified Date    :  26-06-2013    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FileDownloadListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-06-2013 * * Modified
+ * Date : 26-06-2013 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-06-2013       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-06-2013 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -78,6 +60,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.service.AmazonS3Bucket;
@@ -131,7 +114,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_DisbursementFileDownloadList(Event event) throws Exception {
+	public void onCreate$window_DisbursementFileDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -157,7 +140,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 
 	protected void doAddFilters() {
 		super.doAddFilters();
-		//List<String> list = new ArrayList<>();
+		// List<String> list = new ArrayList<>();
 
 		searchObject.removeField("PARTNERBANKNAME");
 		searchObject.removeField("ALWFILEDOWNLOAD");
@@ -165,10 +148,10 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		this.searchObject.addField("PARTNERBANKNAME");
 		this.searchObject.addField("ALWFILEDOWNLOAD");
 
-		//list.add("DISB_EXPORT_DEFAULT");
-		//list.add("DISB_EXPORT_IMPS");
-		//list.add("DISB_EXPORT_OTHER_CHEQUE_DD");
-		//list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
+		// list.add("DISB_EXPORT_DEFAULT");
+		// list.add("DISB_EXPORT_IMPS");
+		// list.add("DISB_EXPORT_OTHER_CHEQUE_DD");
+		// list.add("DISB_EXPORT_OTHER_NEFT_RTGS");
 
 		this.searchObject.addFilterLike("NAME", "DISB_");
 		this.searchObject.addSortDesc("ENDTIME");
@@ -177,7 +160,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
@@ -186,7 +169,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		search();
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -241,11 +224,15 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		stream.close();
 	}
 
-	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+	private void downloadFromS3Bucket(String prefix, String fileName) {
 		String key = prefix.concat("/").concat(fileName);
 
-		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "application/octet-stream", fileName);
+		try {
+			byte[] fileData = bucket.getObject(key);
+			Filedownload.save(fileData, "application/octet-stream", fileName);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage(), e);
+		}
 	}
 
 	/**
@@ -256,7 +243,7 @@ public class DisbursementFileDownloadListCtrl extends GFCBaseListCtrl<FileDownla
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 
 			lc = new Listcell(fileDownlaod.getName());

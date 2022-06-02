@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  CollateralStructureListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  29-11-2016    														*
- *                                                                  						*
- * Modified Date    :  29-11-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : CollateralStructureListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 29-11-2016 * *
+ * Modified Date : 29-11-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 29-11-2016       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 29-11-2016 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 
@@ -151,10 +133,9 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_ExtFieldConfigList(Event event) throws Exception {
+	public void onCreate$window_ExtFieldConfigList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_ExtFieldConfigList, borderLayout_ExtFieldConfigList, listBoxExtFieldConfig,
 				pagingExtFieldConfigList);
@@ -188,8 +169,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_ExtendedFieldHeaderList_ExtendedFieldHeaderSearchDialog(Event event) {
 		search();
@@ -198,8 +178,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -209,8 +188,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 * @throws InvocationTargetException
 	 * @throws IllegalAccessException
 	 */
@@ -232,8 +210,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCustomerExteItemDoubleClicked(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
@@ -271,8 +248,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param academic
-	 *            The entity that need to be passed to the dialog.
+	 * @param academic The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(ExtendedFieldHeader extendedFieldHeader) {
 		logger.debug(Literal.ENTERING);
@@ -295,7 +271,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, ExtendedFieldHeader ext, int count) throws Exception {
+		public void render(Listitem item, ExtendedFieldHeader ext, int count) {
 
 			Listcell lc;
 
@@ -339,8 +315,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -349,8 +324,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);
@@ -382,8 +356,7 @@ public class ExtFieldConfigListCtrl extends GFCBaseListCtrl<ExtendedFieldHeader>
 	}
 
 	/**
-	 * @param extFieldConfigService
-	 *            the extFieldConfigService to set
+	 * @param extFieldConfigService the extFieldConfigService to set
 	 */
 	public void setExtFieldConfigService(ExtFieldConfigService extFieldConfigService) {
 		this.extFieldConfigService = extFieldConfigService;

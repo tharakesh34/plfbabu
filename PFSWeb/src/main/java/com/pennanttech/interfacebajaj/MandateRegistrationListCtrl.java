@@ -351,7 +351,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	/**
 	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) {
 		logger.debug("Entering");
 
 		for (int i = 0; i < listBoxMandateRegistration.getItems().size(); i++) {
@@ -377,7 +377,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	/**
 	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
@@ -403,7 +403,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, Mandate mandate, int count) throws Exception {
+		public void render(Listitem item, Mandate mandate, int count) {
 
 			Listcell lc;
 
@@ -781,10 +781,8 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	 * when the "Upload" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onClick$btnDownload(Event event) throws Exception {
+	public void onClick$btnDownload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		List<Long> mandateIdList;

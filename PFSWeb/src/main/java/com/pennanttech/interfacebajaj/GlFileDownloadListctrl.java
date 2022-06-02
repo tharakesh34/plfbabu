@@ -93,6 +93,7 @@ import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
 import com.pennanttech.pennapps.core.App;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -172,7 +173,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_GlFileDownloadList(Event event) throws Exception {
+	public void onCreate$window_GlFileDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (isTrailBalance) {
@@ -289,14 +290,14 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnexecute(Event event) throws Exception {
+	public void onClick$btnexecute(Event event) {
 		doSetValidations();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
@@ -458,7 +459,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
-	private void doSetValidations() throws Exception {
+	private void doSetValidations() {
 		if (!this.dimention.isDisabled()) {
 			this.dimention.setConstraint(
 					new StaticListValidator(dimentionsList, Labels.getLabel("label_GLFileList_Dimension.value")));
@@ -496,7 +497,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		logger.debug("Leaving ");
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -551,11 +552,15 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		stream.close();
 	}
 
-	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+	private void downloadFromS3Bucket(String prefix, String fileName) {
 		String key = prefix.concat("/").concat(fileName);
 
-		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "text/csv", fileName);
+		try {
+			byte[] fileData = bucket.getObject(key);
+			Filedownload.save(fileData, "text/csv", fileName);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage(), e);
+		}
 	}
 
 	private void refresh() {
@@ -594,7 +599,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 
 			if (item instanceof Listgroup) {
@@ -698,7 +703,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 
 			lc = new Listcell(fileDownlaod.getFileName());
@@ -816,7 +821,7 @@ public class GlFileDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$btnSearchState(Event event) throws Exception {
+	public void onClick$btnSearchState(Event event) {
 		logger.debug("Entering  " + event.toString());
 		this.stateCode.setErrorMessage("");
 		Object dataObject = MultiSelectionSearchListBox.show(this.window_GlFileDownloadList, "Province",

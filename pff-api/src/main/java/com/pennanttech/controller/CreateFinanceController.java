@@ -792,7 +792,7 @@ public class CreateFinanceController extends SummaryDetailService {
 
 	private DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
 			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
-			AgreementDetail detail) throws Exception {
+			AgreementDetail detail) {
 		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
 

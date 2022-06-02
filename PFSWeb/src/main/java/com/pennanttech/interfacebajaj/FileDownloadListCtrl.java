@@ -60,6 +60,7 @@ import com.pennanttech.dataengine.constants.ExecutionStatus;
 import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.jdbc.search.Filter;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -134,7 +135,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_FleDownloadList(Event event) throws Exception {
+	public void onCreate$window_FleDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -198,7 +199,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
@@ -207,7 +208,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		search();
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -262,11 +263,15 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		stream.close();
 	}
 
-	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+	private void downloadFromS3Bucket(String prefix, String fileName) {
 		String key = prefix.concat("/").concat(fileName);
 
-		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "text/plain", fileName);
+		try {
+			byte[] fileData = bucket.getObject(key);
+			Filedownload.save(fileData, "text/plain", fileName);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage(), e);
+		}
 	}
 
 	/**
@@ -277,7 +282,7 @@ public class FileDownloadListCtrl extends GFCBaseListCtrl<FileDownlaod> implemen
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 
 			if ("DISBURSEMENT".equals(module)) {

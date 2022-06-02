@@ -41,6 +41,7 @@ import com.pennanttech.dataengine.model.EventProperties;
 import com.pennanttech.dataengine.util.EncryptionUtil;
 import com.pennanttech.framework.core.constants.SortOrder;
 import com.pennanttech.interfacebajaj.model.FileDownlaod;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
@@ -270,11 +271,15 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		stream.close();
 	}
 
-	private void downloadFromS3Bucket(String prefix, String fileName) throws Exception {
+	private void downloadFromS3Bucket(String prefix, String fileName) {
 		String key = prefix.concat("/").concat(fileName);
 
-		byte[] fileData = bucket.getObject(key);
-		Filedownload.save(fileData, "text/plain", fileName);
+		try {
+			byte[] fileData = bucket.getObject(key);
+			Filedownload.save(fileData, "text/plain", fileName);
+		} catch (Exception e) {
+			throw new AppException(e.getMessage(), e);
+		}
 	}
 
 	private void refresh() {
