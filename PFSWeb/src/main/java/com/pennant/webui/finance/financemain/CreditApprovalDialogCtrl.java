@@ -126,9 +126,8 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CreditApprovalDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_CreditApprovalDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -155,9 +154,8 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -260,8 +258,8 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 				lc.setParent(item);
 				lc = new Listcell(finEnquiry.getFinReference());
 				lc.setParent(item);
-				BigDecimal totAmt = finEnquiry.getFinAmount().subtract(finEnquiry.getDownPayment()
-						.add(finEnquiry.getFeeChargeAmt()));
+				BigDecimal totAmt = finEnquiry.getFinAmount()
+						.subtract(finEnquiry.getDownPayment().add(finEnquiry.getFeeChargeAmt()));
 				lc = new Listcell(PennantAppUtil.amountFormate(totAmt, CurrencyUtil.getFormat(finEnquiry.getFinCcy())));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
@@ -622,7 +620,7 @@ public class CreditApprovalDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 			chartDetail.setiFrameWidth("100%");
 			dashboardCreate.setChartDetail(chartDetail);
 
-			//new code to display chart by skipping jsps
+			// new code to display chart by skipping jsps
 			String strXML = chartDetail.getStrXML();
 			strXML = strXML.replace("\n", "").replaceAll("\\s{2,}", " ");
 			strXML = StringEscapeUtils.escapeJavaScript(strXML);

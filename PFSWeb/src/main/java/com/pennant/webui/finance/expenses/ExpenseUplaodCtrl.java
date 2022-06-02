@@ -1,12 +1,15 @@
 package com.pennant.webui.finance.expenses;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -110,9 +113,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExpenseUpload(Event event) throws Exception {
+	public void onCreate$window_ExpenseUpload(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -291,9 +293,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * where we go the wrong data
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onUpload$btnBrowse(UploadEvent event) throws Exception {
+	public void onUpload$btnBrowse(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		this.txtFileName.setText("");
@@ -363,7 +364,6 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * entry point of program, reading whole excel and calling other methods to prepare jsonObject.
 	 * 
 	 * @return String
-	 * @throws Exception
 	 */
 	private List<UploadFinExpenses> processUploadFinExpenses(Workbook workbook, String moduleType, long uploadId) {
 		logger.debug("Entering");
@@ -789,9 +789,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		doResetData();
@@ -824,9 +823,8 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		File folderPath = new File(PathUtil.getPath(getFolderPath()));
@@ -899,7 +897,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() throws IOException, DataFormatException {
 		logger.debug(Literal.ENTERING);
 
 		if (media == null) {
@@ -1097,7 +1095,7 @@ public class ExpenseUplaodCtrl extends GFCBaseCtrl<UploadHeader> {
 	}
 
 	// sample file download for adding to include or exclude manually
-	public void onClick$sampleFileDownload(Event event) throws Exception {
+	public void onClick$sampleFileDownload(Event event) throws FileNotFoundException {
 		logger.debug(Literal.ENTERING);
 		String path = PathUtil.getPath(PathUtil.TEMPLATES);
 		String fileName = "Expense_Upload_" + getComboboxValue(this.moduleType) + ".xlsx";

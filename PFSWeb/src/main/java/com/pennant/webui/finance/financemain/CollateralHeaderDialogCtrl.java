@@ -157,10 +157,9 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_CollateralAssignmentDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_CollateralAssignmentDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -264,9 +263,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {
@@ -345,7 +343,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_CollateralAssignment(Event event) throws Exception {
+	public void onClick$btnNew_CollateralAssignment(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// If Record is processing with Prospect Customer and not yet created in Application
@@ -371,7 +369,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnNew_AssetType(Event event) throws Exception {
+	public void onClick$btnNew_AssetType(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		ExtendedFieldRender extendedFieldRender = new ExtendedFieldRender();
@@ -497,9 +495,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * Method for Double Click of Extended Field Details edition
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAssetTypeItemDoubleClicked(Event event) throws Exception {
+	public void onAssetTypeItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxAssetTypeHeader.getSelectedItem();
@@ -725,9 +722,8 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 	 * Method for Editing the Collateral Assignment Details on Double Click
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCollateralAssignItemDoubleClicked(Event event) throws Exception {
+	public void onCollateralAssignItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected invoiceHeader object
@@ -799,7 +795,7 @@ public class CollateralHeaderDialogCtrl extends GFCBaseCtrl<CollateralAssignment
 		}
 	}
 
-	public void updateUtilizedAmount(BigDecimal utilizedAmt) throws Exception {
+	public void updateUtilizedAmount(BigDecimal utilizedAmt) {
 		logger.debug("Entering");
 		this.utilizedAmount = utilizedAmt;
 		doFillCollateralDetails(getCollateralAssignments(), false);

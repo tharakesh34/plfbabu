@@ -121,9 +121,8 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	 * selected CustomerEmploymentDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinStepPolicyDialog(Event event) throws Exception {
+	public void onCreate$window_FinStepPolicyDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -437,9 +436,8 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinStepPolicy
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinanceStepPolicyDetail aFinStepPolicy) throws InterruptedException {
+	public void doShowDialog(FinanceStepPolicyDetail aFinStepPolicy) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -973,10 +971,8 @@ public class FinStepPolicyDetailDialogCtrl extends GFCBaseCtrl<FinanceStepPolicy
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeStepPolicyDetail);
 	}
 
