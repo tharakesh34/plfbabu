@@ -226,9 +226,8 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * selected Provision object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProvisionList(Event event) throws Exception {
+	public void onCreate$window_ProvisionList(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if ("PROV".equals(moduleName.getValue())) {
@@ -342,9 +341,8 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * see: com.pennant.webui.provision.provision.model.ProvisionListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onProvisionItemDoubleClicked(Event event) throws Exception {
+	public void onProvisionItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected Provision object
@@ -425,9 +423,8 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * Call the Provision dialog with a new empty entry. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_ProvisionList_NewProvision(Event event) throws Exception {
+	public void onClick$button_ProvisionList_NewProvision(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new Provision object, We GET it from the backend.
 		final Provision aProvision = getProvisionService().getProvision();
@@ -440,9 +437,8 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * Overhanded some params in a map if needed. <br>
 	 * 
 	 * @param Provision (aProvision)
-	 * @throws Exception
 	 */
-	private void showDetailView(Provision aProvision) throws Exception {
+	private void showDetailView(Provision aProvision) {
 		logger.debug("Entering");
 
 		/*
@@ -533,9 +529,8 @@ public class ProvisionListCtrl extends GFCBaseListCtrl<Provision> {
 	 * Call the Provision dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_ProvisionList_ProvisionSearchDialog(Event event) throws Exception {
+	public void onClick$button_ProvisionList_ProvisionSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving" + event.toString());

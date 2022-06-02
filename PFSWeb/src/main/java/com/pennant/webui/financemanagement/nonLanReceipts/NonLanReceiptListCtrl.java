@@ -409,7 +409,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxReceipts.getItems().size(); i++) {
@@ -430,7 +430,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 	/**
 	 * Filling the MandateIdMap details based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
@@ -460,7 +460,7 @@ public class NonLanReceiptListCtrl extends GFCBaseListCtrl<FinReceiptHeader> {
 		}
 
 		@Override
-		public void render(Listitem item, FinReceiptHeader finReceiptHeader, int count) throws Exception {
+		public void render(Listitem item, FinReceiptHeader finReceiptHeader, int count) {
 
 			headerMap.put(finReceiptHeader.getReceiptID(), finReceiptHeader); // Setting all FinReceiptHeader into Map
 

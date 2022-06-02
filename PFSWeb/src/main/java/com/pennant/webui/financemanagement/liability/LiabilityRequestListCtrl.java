@@ -198,7 +198,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 		}
 	}
 
-	public void onCreate$window_LiabilityRequestList(Event event) throws Exception {
+	public void onCreate$window_LiabilityRequestList(Event event) {
 		logger.debug("Entering");
 
 		if (event.getTarget().getParent() != null) {
@@ -297,8 +297,7 @@ public class LiabilityRequestListCtrl extends GFCBaseListCtrl<LiabilityRequest> 
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-
-	public void onLiabilityRequestItemDoubleClicked(Event event) throws Exception {
+	public void onLiabilityRequestItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.

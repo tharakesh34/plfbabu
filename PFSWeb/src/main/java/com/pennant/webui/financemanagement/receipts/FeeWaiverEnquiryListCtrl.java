@@ -167,10 +167,9 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * selected Customer object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FeeWaiverEnquiry(Event event) throws Exception {
+	public void onCreate$window_FeeWaiverEnquiry(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (event.getTarget() != null && event.getTarget().getParent() != null
@@ -956,7 +955,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	}
 
 	// When item double clicked
-	public void onFinanceItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Listitem item;
 		item = this.getListBoxFinance().getSelectedItem();
@@ -970,9 +969,8 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * 
 	 * @param item
-	 * @throws Exception
 	 */
-	private void openFeeWaiverHeaderDialog(Listitem item) throws Exception {
+	private void openFeeWaiverHeaderDialog(Listitem item) {
 		logger.debug("Entering ");
 		// CAST AND STORE THE SELECTED OBJECT
 		final FinanceMain aFinanceMain = (FinanceMain) item.getAttribute("data");
@@ -992,8 +990,7 @@ public class FeeWaiverEnquiryListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving ");
 	}
 
-	private void showFeeWaiverHeaderView(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail)
-			throws Exception {
+	private void showFeeWaiverHeaderView(FeeWaiverHeader feeWaiverHeader, FinanceDetail financeDetail) {
 		logger.debug("Entering");
 
 		if (feeWaiverHeader.getWorkflowId() == 0 && isWorkFlowEnabled()) {

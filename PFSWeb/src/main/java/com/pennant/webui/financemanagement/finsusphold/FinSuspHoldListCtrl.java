@@ -188,9 +188,8 @@ public class FinSuspHoldListCtrl extends GFCBaseListCtrl<FinSuspHold> {
 	 * FinSuspHoldListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFinSuspHoldItemDoubleClicked(Event event) throws Exception {
+	public void onFinSuspHoldItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.

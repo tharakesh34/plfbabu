@@ -238,7 +238,7 @@ public class SuspenseListCtrl extends GFCBaseListCtrl<FinanceSuspHead> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onSuspenseItemDoubleClicked(Event event) throws Exception {
+	public void onSuspenseItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.
