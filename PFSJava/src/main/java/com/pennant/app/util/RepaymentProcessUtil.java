@@ -1838,11 +1838,10 @@ public class RepaymentProcessUtil {
 	 * @param scheduleDetails
 	 * @param profitDetail
 	 * @return
-	 * @throws Exception
 	 */
 	public FinanceMain updateStatus(FinanceMain financeMain, Date valueDate,
 			List<FinanceScheduleDetail> scheduleDetails, FinanceProfitDetail profitDetail,
-			List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc) throws Exception {
+			List<FinODDetails> overdueList, String receiptPurpose, boolean isPresentProc) {
 		return repayPostingUtil.updateStatus(financeMain, valueDate, scheduleDetails, profitDetail, overdueList,
 				receiptPurpose, isPresentProc);
 	}
@@ -2340,7 +2339,7 @@ public class RepaymentProcessUtil {
 		}
 	}
 
-	public void processAutoKnockOff(FinReceiptData receiptData) throws Exception {
+	public void processAutoKnockOff(FinReceiptData receiptData) {
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		CustomerDetails customerDetails = financeDetail.getCustomerDetails();
 		FinScheduleData scheduleData = financeDetail.getFinScheduleData();

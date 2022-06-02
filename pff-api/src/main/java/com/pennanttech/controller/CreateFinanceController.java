@@ -3492,7 +3492,7 @@ public class CreateFinanceController extends SummaryDetailService {
 		return errorDetails;
 	}
 
-	private String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
+	private String validateTemplate(FinanceReferenceDetail frefdata) {
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		String templateName = "";
 		String msg = "Y";

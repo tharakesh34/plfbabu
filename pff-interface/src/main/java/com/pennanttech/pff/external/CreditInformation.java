@@ -6,7 +6,7 @@ import com.pennant.backend.model.finance.FinanceMain;
 
 public interface CreditInformation {
 
-	AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer) throws Exception;
+	AuditHeader getCreditEnquiryDetails(AuditHeader auditHeader, boolean isFromCustomer);
 
 	CustomerDetails procesCreditEnquiry(CustomerDetails customerDetails, FinanceMain financeMain, boolean override);
 

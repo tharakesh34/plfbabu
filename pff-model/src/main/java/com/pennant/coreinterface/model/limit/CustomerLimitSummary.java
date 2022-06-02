@@ -2,6 +2,7 @@ package com.pennant.coreinterface.model.limit;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -212,12 +213,12 @@ public class CustomerLimitSummary implements Serializable {
 		private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
 
 		@Override
-		public Date unmarshal(final String v) throws Exception {
+		public Date unmarshal(final String v) throws ParseException {
 			return dateFormat.parse(v);
 		}
 
 		@Override
-		public String marshal(final Date v) throws Exception {
+		public String marshal(final Date v) {
 			return dateFormat.format(v);
 		}
 	}

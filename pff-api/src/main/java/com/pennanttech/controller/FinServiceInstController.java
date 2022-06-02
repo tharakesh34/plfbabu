@@ -2540,7 +2540,7 @@ public class FinServiceInstController extends SummaryDetailService {
 		return APIErrorHandlerService.getSuccessStatus();
 	}
 
-	public FinanceDetail doProcessNonLanReceipt(FinReceiptData receiptData, String receiptPurpose) throws Exception {
+	public FinanceDetail doProcessNonLanReceipt(FinReceiptData receiptData, String receiptPurpose) {
 		logger.info(Literal.ENTERING);
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();

@@ -81,7 +81,7 @@ public class AutoKnockOffProcessService extends ServiceHelper {
 	private transient EntityDAO entityDAO;
 	private transient ManualAdviseDAO manualAdviseDAO;
 
-	public void processAutoKnockOff(AutoKnockOffData knockOffData) throws Exception {
+	public void processAutoKnockOff(AutoKnockOffData knockOffData) {
 		String finreference = knockOffData.getFinReference();
 		List<AutoKnockOffFeeMapping> feeMappingList = knockOffData.getFeeMappingList();
 

@@ -416,7 +416,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
@@ -885,7 +885,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) throws Exception {
+	public PresentmentDetail presentmentCancellation(PresentmentDetail pd, CustEODEvent custEODEvent) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain fm = custEODEvent.getFinEODEvents().get(0).getFinanceMain();
@@ -1045,7 +1045,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 		return manualAdvise;
 	}
 
-	private String procReceiptCancellation(FinReceiptHeader rch, String postBranch, FinanceMain fm) throws Exception {
+	private String procReceiptCancellation(FinReceiptHeader rch, String postBranch, FinanceMain fm) {
 		logger.debug(Literal.ENTERING);
 
 		boolean alwSchdReversalByLog = false;
@@ -2133,7 +2133,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	private FinanceProfitDetail postReceiptCanAdjust(FinScheduleData scheduleData, FinanceProfitDetail profitDetail,
-			FinTaxReceivable newTaxRcv, Date appDate, Date valueDate) throws Exception {
+			FinTaxReceivable newTaxRcv, Date appDate, Date valueDate) {
 		FinanceMain financeMain = scheduleData.getFinanceMain();
 
 		// Accrual Difference Postings
@@ -3066,7 +3066,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 	}
 
 	@Override
-	public AuditHeader doApproveNonLanReceipt(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApproveNonLanReceipt(AuditHeader aAuditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		String tranType = "";
@@ -3236,7 +3236,7 @@ public class ReceiptCancellationServiceImpl extends GenericFinanceDetailService 
 
 	@Override
 	public PresentmentDetail presentmentCancellation(PresentmentDetail presentmentDetail, String returnCode,
-			String bounceRemarks) throws Exception {
+			String bounceRemarks) {
 		return null;
 	}
 

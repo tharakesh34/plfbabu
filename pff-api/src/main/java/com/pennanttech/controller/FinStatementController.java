@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -275,9 +276,8 @@ public class FinStatementController extends SummaryDetailService {
 	 * 
 	 * @param fd
 	 * @return
-	 * @throws Exception
 	 */
-	private FinanceDetail getForeClosureDetails(FinanceDetail fd, int days, Date fromDate) throws Exception {
+	private FinanceDetail getForeClosureDetails(FinanceDetail fd, int days, Date fromDate) {
 		logger.debug(Literal.ENTERING);
 
 		FinScheduleData schdData = fd.getFinScheduleData();
@@ -491,9 +491,8 @@ public class FinStatementController extends SummaryDetailService {
 	 * @param fd
 	 * @param fsi
 	 * @return
-	 * @throws Exception
 	 */
-	public FinanceDetail doProcessPayments(FinanceDetail fd, FinServiceInstruction fsi) throws Exception {
+	public FinanceDetail doProcessPayments(FinanceDetail fd, FinServiceInstruction fsi) {
 		logger.debug(Literal.ENTERING);
 
 		if (fsi.getFromDate() == null) {
@@ -1878,7 +1877,7 @@ public class FinStatementController extends SummaryDetailService {
 	JndiObjectFactoryBean jndiObjectFactoryBean;
 
 	private byte[] doShowReport(String whereCond, String whereCond1, Date fromDate, Date toDate, String finRefernce)
-			throws Exception {
+			throws SQLException {
 
 		logger.debug(Literal.ENTERING);
 		LoggedInUser userDetails = SessionUserDetails.getUserDetails(SessionUserDetails.getLogiedInUser());
