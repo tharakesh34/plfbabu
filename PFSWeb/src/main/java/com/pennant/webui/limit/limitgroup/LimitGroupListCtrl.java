@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  LimitGroupListCtrl.java                                              * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  31-03-2016    														*
- *                                                                  						*
- * Modified Date    :  31-03-2016    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : LimitGroupListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 31-03-2016 * * Modified
+ * Date : 31-03-2016 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-03-2016       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-03-2016 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.limit.limitgroup;
@@ -137,7 +119,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	// *************** Component Events ******************//
 	// ***************************************************//
 
-	public void onCreate$window_LimitGroupList(Event event) throws Exception {
+	public void onCreate$window_LimitGroupList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -167,7 +149,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	/**
 	 * Invoke Search
 	 */
-	public void onClick$button_LimitGroupList_LimitGroupSearch(Event event) throws Exception {
+	public void onClick$button_LimitGroupList_LimitGroupSearch(Event event) {
 		logger.debug("Entering" + event.toString());
 		search();
 		logger.debug("Leaving" + event.toString());
@@ -176,8 +158,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		doReset();
@@ -187,7 +168,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	/**
 	 * Call the LimitGroup dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_LimitGroupList_NewLimitGroup(Event event) throws Exception {
+	public void onClick$button_LimitGroupList_NewLimitGroup(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new LimitGroup object, We GET it from the backend.
 
@@ -206,10 +187,8 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	 * see: com.pennant.webui.limit.limitgroup.model.LimitGroupListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-
-	public void onLimitGroupItemDoubleClicked(Event event) throws Exception {
+	public void onLimitGroupItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Get the selected record.
@@ -243,8 +222,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param limitGroup
-	 *            The entity that need to be passed to the dialog.
+	 * @param limitGroup The entity that need to be passed to the dialog.
 	 */
 	private void doShowDialogPage(LimitGroup limitGroup) {
 		logger.debug("Entering");
@@ -266,8 +244,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -276,8 +253,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		doShowHelp(event);
@@ -302,7 +278,7 @@ public class LimitGroupListCtrl extends GFCBaseListCtrl<LimitGroup> implements S
 	}
 
 	// ******************************************************//
-	// ****************** getter / setter  ******************//
+	// ****************** getter / setter ******************//
 	// ******************************************************//
 
 	public void setLimitGroupService(LimitGroupService limitGroupService) {

@@ -1,47 +1,30 @@
 /**
-Copyright 2011 - Pennant Technologies
+ * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceTypeListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  30-06-2011    														*
- *                                                                  						*
- * Modified Date    :  30-06-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceTypeListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 30-06-2011 * * Modified
+ * Date : 30-06-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 30-06-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 30-06-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.rmtmasters.financetype;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -189,8 +172,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onCreate$window_FinanceTypeList(Event event) {
 
@@ -252,8 +234,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * The framework calls this event handler when user clicks the search button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$button_FinanceTypeList_FinanceTypeSearchDialog(Event event) {
 		search();
@@ -262,8 +243,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) throws InterruptedException {
 		doReset();
@@ -273,11 +253,12 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * The framework calls this event handler when user clicks the new button. Show the dialog page with a new entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-
-	public void onClick$button_FinanceTypeList_NewFinanceType(Event event) throws Exception {
+	public void onClick$button_FinanceTypeList_NewFinanceType(Event event)
+			throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering");
 		// create a new FinanceType object, We GET it from the backEnd.
 		final FinanceType aFinanceType = financeTypeService.getNewFinanceType();
@@ -345,7 +326,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 					aFinanceType.getFinTypePartnerBankList().add(finTypePartnerBank);
 				}
 			}
-			//FinType Expenses
+			// FinType Expenses
 			List<FinTypeExpense> finTypeExpensesList = sourceFin.getFinTypeExpenseList();
 			if (finTypeExpensesList != null && !finTypeExpensesList.isEmpty()) {
 				aFinanceType.setFinTypeExpenseList(new ArrayList<FinTypeExpense>());
@@ -389,8 +370,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	 * The framework calls this event handler when user opens a record to view it's details. Show the dialog page with
 	 * the selected entity.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onFinanceTypeItemDoubleClicked(Event event) {
 		logger.debug("Entering");
@@ -424,8 +404,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * Displays the dialog page with the required parameters as map.
 	 * 
-	 * @param aFinanceType
-	 *            The entity that need to be passed to the dialog.
+	 * @param aFinanceType  The entity that need to be passed to the dialog.
 	 * @param isCopyProcess
 	 */
 	private void doShowDialogPage(FinanceType aFinanceType, boolean isCopyProcess) {
@@ -461,8 +440,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * The framework calls this event handler when user clicks the print button to print the results.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$print(Event event) {
 		doPrintResults();
@@ -471,8 +449,7 @@ public class FinanceTypeListCtrl extends GFCBaseListCtrl<FinanceType> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$help(Event event) {
 		doShowHelp(event);

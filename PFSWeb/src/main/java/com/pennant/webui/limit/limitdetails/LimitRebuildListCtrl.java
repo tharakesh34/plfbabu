@@ -55,9 +55,8 @@ public class LimitRebuildListCtrl extends GFCBaseCtrl<LimitHeader> {
 	 * On creating Window
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitRebuildList(Event event) throws Exception {
+	public void onCreate$window_LimitRebuildList(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -126,9 +125,8 @@ public class LimitRebuildListCtrl extends GFCBaseCtrl<LimitHeader> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClear(Event event) throws Exception {
+	public void onClick$btnClear(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		doClearMessage();
@@ -141,9 +139,8 @@ public class LimitRebuildListCtrl extends GFCBaseCtrl<LimitHeader> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFulfill$customer(Event event) throws Exception {
+	public void onFulfill$customer(Event event) {
 		logger.debug("Entering");
 
 		this.customer.setConstraint("");
@@ -168,9 +165,8 @@ public class LimitRebuildListCtrl extends GFCBaseCtrl<LimitHeader> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFulfill$group(Event event) throws Exception {
+	public void onFulfill$group(Event event) {
 		logger.debug("Entering");
 
 		this.group.setConstraint("");

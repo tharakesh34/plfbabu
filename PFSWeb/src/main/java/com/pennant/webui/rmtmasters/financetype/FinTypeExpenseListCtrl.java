@@ -90,7 +90,7 @@ public class FinTypeExpenseListCtrl extends GFCBaseCtrl<FinTypeExpense> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinTypeExpenseList(Event event) throws Exception {
+	public void onCreate$window_FinTypeExpenseList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.

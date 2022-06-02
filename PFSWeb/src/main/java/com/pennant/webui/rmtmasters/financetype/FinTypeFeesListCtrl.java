@@ -52,7 +52,6 @@ import org.zkoss.zul.Listheader;
 import org.zkoss.zul.Listitem;
 import org.zkoss.zul.Window;
 
-import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.backend.model.ValueLabel;
 import com.pennant.backend.model.bmtmasters.AccountEngineEvent;
@@ -114,7 +113,7 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinTypeFeesList(Event event) throws Exception {
+	public void onCreate$window_FinTypeFeesList(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -314,14 +313,14 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 				lc.setParent(item);
 
 				// ### START SFA_20210405 -->
-//				if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
-//					lc = new Listcell();
-//					Checkbox inclForAssignment = new Checkbox();
-//					inclForAssignment.setChecked(finTypeFee.isInclForAssignment());
-//					inclForAssignment.setDisabled(true);
-//					inclForAssignment.setParent(lc);
-//					lc.setParent(item);
-//				}
+				// if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+				// lc = new Listcell();
+				// Checkbox inclForAssignment = new Checkbox();
+				// inclForAssignment.setChecked(finTypeFee.isInclForAssignment());
+				// inclForAssignment.setDisabled(true);
+				// inclForAssignment.setParent(lc);
+				// lc.setParent(item);
+				// }
 				// ### END SFA_20210405 <--
 
 				lc = new Listcell(finTypeFee.getRecordStatus());
@@ -507,14 +506,14 @@ public class FinTypeFeesListCtrl extends GFCBaseCtrl<FinTypeFees> {
 					lc.setParent(item);
 
 					// ### START SFA_20210405 -->
-//					if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
-//						lc = new Listcell();
-//						Checkbox inclForAssignment = new Checkbox();
-//						inclForAssignment.setChecked(finTypeFee.isInclForAssignment());
-//						inclForAssignment.setDisabled(true);
-//						inclForAssignment.setParent(lc);
-//						lc.setParent(item);
-//					}
+					// if (ImplementationConstants.ALLOW_SINGLE_FEE_CONFIG) {
+					// lc = new Listcell();
+					// Checkbox inclForAssignment = new Checkbox();
+					// inclForAssignment.setChecked(finTypeFee.isInclForAssignment());
+					// inclForAssignment.setDisabled(true);
+					// inclForAssignment.setParent(lc);
+					// lc.setParent(item);
+					// }
 					// ### END SFA_20210405 <--
 
 					lc = new Listcell(finTypeFee.getRecordStatus());

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceReferenceDetailListCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  26-11-2011    														*
- *                                                                  						*
- * Modified Date    :  26-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceReferenceDetailListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 26-11-2011 *
+ * * Modified Date : 26-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 26-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 26-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.lmtmasters.financereferencedetail;
@@ -153,9 +135,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 	 * selected FinanceCheckList object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceReferenceDetailList(Event event) throws Exception {
+	public void onCreate$window_FinanceReferenceDetailList(Event event) {
 		logger.debug("Entering");
 
 		this.moduleName = getArgument("module");
@@ -260,9 +241,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 	 * <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onFinanceReferenceDetailItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceReferenceDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected FinanceReferenceDetail object
@@ -316,11 +296,9 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 	 * Opens the detail view. <br>
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
-	 * @param FinanceReferenceDetail
-	 *            (aFinanceReferenceDetail)
-	 * @throws Exception
+	 * @param FinanceReferenceDetail (aFinanceReferenceDetail)
 	 */
-	private void showDetailView(FinanceReference aFinanceReference, boolean isOverDraft) throws Exception {
+	private void showDetailView(FinanceReference aFinanceReference, boolean isOverDraft) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog ZUL-file with parameters. So we can call them with a object of the selected item. For
@@ -394,10 +372,8 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 	 * Method for Call the FinanceReferenceDetail dialog
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog(Event event)
-			throws Exception {
+	public void onClick$button_FinanceReferenceDetailList_FinanceReferenceDetailSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving");
@@ -445,12 +421,10 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 
 		if (StringUtils.equals(eventName, FinServiceEvent.ORG)) {
 			this.searchObj.addFilter(new Filter("FinEvent",
-					new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL },
-					Filter.OP_IN));
+					new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL }, Filter.OP_IN));
 		} else {
 			this.searchObj.addFilter(new Filter("FinEvent",
-					new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL },
-					Filter.OP_NOT_IN));
+					new String[] { FinServiceEvent.ORG, FinServiceEvent.PREAPPROVAL }, Filter.OP_NOT_IN));
 		}
 
 		// WorkFlow
@@ -475,7 +449,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 			}
 		}
 
-		//Finance Type
+		// Finance Type
 		if (StringUtils.isNotBlank(this.finType.getValue())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finType.getSelectedItem(), this.finType.getValue(),
 					"FinType");
@@ -501,7 +475,7 @@ public class FinanceReferenceDetailListCtrl extends GFCBaseListCtrl<FinanceWorkF
 						this.finTypeDesc.getValue(), "LovDescFinTypeName");
 			}
 		}
-		//Fin Event
+		// Fin Event
 		if (!"#".equals(this.finEvent.getSelectedItem().getValue().toString())) {
 			searchObj = getSearchFilter(searchObj, this.sortOperator_finEvent.getSelectedItem(),
 					this.finEvent.getSelectedItem().getValue().toString(), "FinEvent");
