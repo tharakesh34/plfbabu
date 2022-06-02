@@ -223,7 +223,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		moduleCode = "FinanceMain";
 	}
 
-	public void onCreate$window_FinanceMainList(Event event) throws Exception {
+	public void onCreate$window_FinanceMainList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Getting Menu Item Right Name
@@ -475,7 +475,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 		logger.debug("Leaving");
 	}
 
-	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceMainItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 		// get the selected FinanceMain object
 		final Listitem item = this.listBoxFinanceMain.getSelectedItem();
@@ -644,9 +644,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * if required
 	 * 
 	 * @param financeDetail
-	 * @throws Exception
 	 */
-	private void validateCustExistance(FinanceDetail financeDetail) throws Exception {
+	private void validateCustExistance(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		Customer customer = financeDetail.getCustomerDetails().getCustomer();
@@ -781,7 +780,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * Call the FinanceMain dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_FinanceMainList_NewFinanceMain(Event event) throws Exception {
+	public void onClick$button_FinanceMainList_NewFinanceMain(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		/*
@@ -827,9 +826,8 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Over handed some parameters in a map if needed. <br>
 	 * 
 	 * @param FinanceMain (aFinanceMain)
-	 * @throws Exception
 	 */
-	protected void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
+	protected void showDetailView(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		/*
@@ -970,7 +968,7 @@ public class FinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * Method for call the FinanceMain dialog
 	 */
-	public void onClick$button_FinanceMainList_FinanceMainSearchDialog(Event event) throws Exception {
+	public void onClick$button_FinanceMainList_FinanceMainSearchDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		doSearch();
 		logger.debug(Literal.LEAVING);

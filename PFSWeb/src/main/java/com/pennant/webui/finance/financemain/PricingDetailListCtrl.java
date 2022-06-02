@@ -215,9 +215,8 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_PricingDetailList(ForwardEvent event) throws Exception {
+	public void onCreate$window_PricingDetailList(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.

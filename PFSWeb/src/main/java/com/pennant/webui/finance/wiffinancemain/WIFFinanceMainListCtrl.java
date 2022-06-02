@@ -155,7 +155,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 
 	}
 
-	public void onCreate$window_WIFFinanceMainList(Event event) throws Exception {
+	public void onCreate$window_WIFFinanceMainList(Event event) {
 		logger.debug("Entering");
 
 		this.sortOperator_finReference
@@ -264,10 +264,9 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * see: com.pennant.webui.finance.wiffinancemain.model.WIFFinanceMainListModelItemRenderer.java <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 
-	public void onWIFFinanceMainItemDoubleClicked(Event event) throws Exception {
+	public void onWIFFinanceMainItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// get the selected WIFFinanceMain object
@@ -308,7 +307,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/**
 	 * Call the WIFFinanceMain dialog with a new empty entry. <br>
 	 */
-	public void onClick$button_WIFFinanceMainList_NewWIFFinanceMain(Event event) throws Exception {
+	public void onClick$button_WIFFinanceMainList_NewWIFFinanceMain(Event event) {
 		logger.debug("Entering" + event.toString());
 		// create a new WIFFinanceMain object, We GET it from the backend.
 		final FinanceDetail aFinanceDetail = getFinanceDetailService().getNewFinanceDetail(true);
@@ -342,9 +341,8 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * Overhanded some params in a map if needed. <br>
 	 * 
 	 * @param WIFFinanceMain (aWIFFinanceMain)
-	 * @throws Exception
 	 */
-	private void showDetailView(FinanceDetail aFinanceDetail) throws Exception {
+	private void showDetailView(FinanceDetail aFinanceDetail) {
 		logger.debug("Entering");
 		/*
 		 * We can call our Dialog zul-file with parameters. So we can call them with a object of the selected item. For
@@ -452,8 +450,7 @@ public class WIFFinanceMainListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	/*
 	 * call the WIFFinanceMain dialog
 	 */
-
-	public void onClick$button_WIFFinanceMainList_WIFFinanceMainSearchDialog(Event event) throws Exception {
+	public void onClick$button_WIFFinanceMainList_WIFFinanceMainSearchDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSearch();
 		logger.debug("Leaving" + event.toString());

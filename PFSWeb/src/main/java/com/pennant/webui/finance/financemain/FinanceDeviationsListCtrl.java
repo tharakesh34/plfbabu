@@ -280,7 +280,7 @@ public class FinanceDeviationsListCtrl extends GFCBaseListCtrl<FinanceMain> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onFinanceMainItemDoubleClicked(Event event) throws Exception {
+	public void onFinanceMainItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Get the selected record.

@@ -229,9 +229,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FeeDetailList(ForwardEvent event) throws Exception {
+	public void onCreate$window_FeeDetailList(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -2141,9 +2140,8 @@ public class FinFeeDetailListCtrl extends GFCBaseCtrl<FinFeeDetail> {
 	 * onClick FeeType Hyper Link it will redirect to FeeType Master
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClickFeeType(ForwardEvent event) throws Exception {
+	public void onClickFeeType(ForwardEvent event) {
 		logger.debug("Entering");
 
 		FinFeeDetail details = (FinFeeDetail) event.getData();

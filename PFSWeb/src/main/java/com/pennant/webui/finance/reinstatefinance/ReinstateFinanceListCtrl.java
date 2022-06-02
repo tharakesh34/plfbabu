@@ -181,7 +181,7 @@ public class ReinstateFinanceListCtrl extends GFCBaseListCtrl<ReinstateFinance> 
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_ReinstateFinanceList(Event event) throws Exception {
+	public void onCreate$window_ReinstateFinanceList(Event event) {
 		// Set the page level components.
 		setPageComponents(window_ReinstateFinanceList, borderLayout_ReinstateFinanceList, listBoxReinstateFinance,
 				pagingReinstateFinanceList);

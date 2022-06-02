@@ -23,6 +23,7 @@
  */
 package com.pennant.webui.finance.financemain;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -124,10 +125,9 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 	 * selected FinAdvancePayment object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinAdvancePaymentsList(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinAdvancePaymentsList(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -477,7 +477,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNew_NewFinAdvancePayments(Event event) throws Exception {
+	public void onClick$btnNew_NewFinAdvancePayments(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.btnNew_NewFinAdvancePayments);
 		Clients.clearWrongValue(this.label_AdvancePayments_Title);
@@ -499,7 +500,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onFinAdvancePaymentsItemDoubleClicked(Event event) throws Exception {
+	public void onFinAdvancePaymentsItemDoubleClicked(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		Clients.clearWrongValue(this.btnNew_NewFinAdvancePayments);
 		FinanceDetail findetails = getFinancedetailsFromBase();
@@ -562,7 +564,8 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 
 	}
 
-	private DocumentDetails getDisbursmentDoc() throws Exception {
+	private DocumentDetails getDisbursmentDoc()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		if (financeMainDialogCtrl != null) {

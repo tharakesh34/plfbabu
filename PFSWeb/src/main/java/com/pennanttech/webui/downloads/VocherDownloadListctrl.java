@@ -88,7 +88,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	// +++++++++++++++ Component Events ++++++++++++++++ //
 	// +++++++++++++++++++++++++++++++++++++++++++++++++ //
 
-	public void onCreate$window_VocherDownloadList(Event event) throws Exception {
+	public void onCreate$window_VocherDownloadList(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -131,14 +131,14 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		refresh();
 	}
 
 	/**
 	 * Call the FileDownload dialog with a new empty entry. <br>
 	 */
-	public void onClick$btnexecute(Event event) throws Exception {
+	public void onClick$btnexecute(Event event) {
 		doSetValidations();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 
@@ -178,7 +178,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
 	 */
-	private void doSetValidations() throws Exception {
+	private void doSetValidations() {
 		Date appDate = SysParamUtil.getAppDate();
 
 		if (this.fromDate.getValue() != null && this.fromDate.getValue().compareTo(SysParamUtil.getAppDate()) > 0) {
@@ -217,7 +217,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick_Downlaod(ForwardEvent event) throws Exception {
+	public void onClick_Downlaod(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		try {
 
@@ -293,7 +293,7 @@ public class VocherDownloadListctrl extends GFCBaseListCtrl<FileDownlaod> implem
 		private static final long serialVersionUID = 1L;
 
 		@Override
-		public void render(Listitem item, FileDownlaod fileDownlaod, int count) throws Exception {
+		public void render(Listitem item, FileDownlaod fileDownlaod, int count) {
 			Listcell lc;
 
 			lc = new Listcell(fileDownlaod.getFileName());

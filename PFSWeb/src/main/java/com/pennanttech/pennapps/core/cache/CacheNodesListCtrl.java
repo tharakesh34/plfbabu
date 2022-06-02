@@ -144,8 +144,7 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 	/**
 	 * The framework calls this event handler when user clicks the refresh button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnRefresh(Event event) {
 		logger.debug("Entering" + event.toString());
@@ -156,7 +155,7 @@ public class CacheNodesListCtrl extends GFCBaseListCtrl<CacheStats> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCacheAdministrationItemDoubleClicked(Event event) throws Exception {
+	public void onCacheAdministrationItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Listitem item = this.listBoxCacheNodes.getSelectedItem();

@@ -276,7 +276,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 	/**
 	 * Filling the MandateIdMap details and based on checked and unchecked events of listCellCheckBox.
 	 */
-	public void onClick_listHeaderCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listHeaderCheckBox(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		for (int i = 0; i < listBoxReceiptUpload.getItems().size(); i++) {
@@ -712,7 +712,7 @@ public class ReceiptUploadHeaderListCtrl extends GFCBaseListCtrl<ReceiptUploadHe
 		});
 	}
 
-	public void onClick_listCellCheckBox(ForwardEvent event) throws Exception {
+	public void onClick_listCellCheckBox(ForwardEvent event) {
 
 		Checkbox checkBox = (Checkbox) event.getOrigin().getTarget();
 		if (checkBox.isChecked()) {

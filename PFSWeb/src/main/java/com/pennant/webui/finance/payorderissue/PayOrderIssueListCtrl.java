@@ -180,7 +180,7 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onPayOrderIssueItemDoubleClicked(Event event) throws Exception {
+	public void onPayOrderIssueItemDoubleClicked(Event event) {
 		logger.debug("Entering");
 
 		// Get the selected record.
@@ -258,9 +258,8 @@ public class PayOrderIssueListCtrl extends GFCBaseListCtrl<PayOrderIssueHeader> 
 	 * When user clicks on "fromApproved"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCheck$fromWorkFlow(Event event) throws Exception {
+	public void onCheck$fromWorkFlow(Event event) {
 		search();
 	}
 
