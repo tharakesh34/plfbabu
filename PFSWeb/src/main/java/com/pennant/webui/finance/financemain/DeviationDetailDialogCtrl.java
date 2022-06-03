@@ -105,10 +105,9 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_deviationDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_deviationDetailDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -201,9 +200,8 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {
@@ -335,7 +333,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	}
 
-	public void onClick$btnNew_ManualDeviation(Event event) throws Exception {
+	public void onClick$btnNew_ManualDeviation(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (StringUtils.isEmpty(financeMain.getFinReference())) {
 			MessageUtil.showMessage(Labels.getLabel("label_Finance_GenSchedule"));
@@ -364,7 +362,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onManualDeviationItemDoubleClicked(Event event) throws Exception {
+	public void onManualDeviationItemDoubleClicked(Event event) {
 		Listitem listitem = listBoxManualDeviations.getSelectedItem();
 
 		if (listitem != null && listitem.getAttribute("data") != null) {
@@ -393,7 +391,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	}
 
-	private void doshowDialog(Map<String, Object> map, boolean isEnquiry) throws InterruptedException {
+	private void doshowDialog(Map<String, Object> map, boolean isEnquiry) {
 
 		map.put("enqModule", isEnquiry);
 		map.put("roleCode", roleCode);
@@ -410,7 +408,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 
 	}
 
-	public void onChangeAutoDevStatus(ForwardEvent event) throws Exception {
+	public void onChangeAutoDevStatus(ForwardEvent event) {
 		FinanceDeviations deviation = (FinanceDeviations) event.getData();
 		Combobox combobox = (Combobox) event.getOrigin().getTarget();
 
@@ -427,7 +425,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		}
 	}
 
-	public void onClickViewNotes(ForwardEvent event) throws Exception {
+	public void onClickViewNotes(ForwardEvent event) {
 		logger.debug(" Entering ");
 
 		FinanceDeviations deviationDetail = (FinanceDeviations) event.getData();
@@ -436,7 +434,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		logger.debug(" Leaving ");
 	}
 
-	private void showNotes(FinanceDeviations deviationDetail, boolean enquiry) throws InterruptedException {
+	private void showNotes(FinanceDeviations deviationDetail, boolean enquiry) {
 		logger.debug("Entering ");
 
 		Notes notes = new Notes();
@@ -461,7 +459,7 @@ public class DeviationDetailDialogCtrl extends GFCBaseCtrl<FinanceDeviations> {
 		logger.debug("Leaving ");
 	}
 
-	public void onClickAddNotes(ForwardEvent event) throws Exception {
+	public void onClickAddNotes(ForwardEvent event) {
 		logger.debug(" Entering ");
 
 		FinanceDeviations deviationDetail = (FinanceDeviations) event.getData();

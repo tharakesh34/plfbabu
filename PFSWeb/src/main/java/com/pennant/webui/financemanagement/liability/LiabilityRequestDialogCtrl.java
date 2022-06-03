@@ -24,8 +24,6 @@
  */
 package com.pennant.webui.financemanagement.liability;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -38,8 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -169,9 +165,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LiabilityFinanceMainDialog(Event event) throws Exception {
+	public void onCreate$window_LiabilityFinanceMainDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -279,9 +274,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	protected void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
+	protected void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -362,9 +356,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_LiabilityFinanceMainDialog(Event event) throws Exception {
+	public void onClose$window_LiabilityFinanceMainDialog(Event event) {
 		logger.debug("Entering " + event.toString());
 		doClose();
 		logger.debug("Leaving " + event.toString());
@@ -374,9 +367,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering " + event.toString());
 		doSave();
 		logger.debug("Leaving " + event.toString());
@@ -398,20 +390,17 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
 	}
 
 	// CRUD operations
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -615,9 +604,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = true;
@@ -801,7 +789,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		return processCompleted;
 	}
 
-	private void generateAggrement(FinanceDetail aFinanceDetail) throws Exception {
+	private void generateAggrement(FinanceDetail aFinanceDetail) {
 		if (recSave) {
 			return;
 		}
@@ -1000,9 +988,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1690,9 +1677,8 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 	 * To pass Data For Agreement Child Windows Used in reflection
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
-	public FinanceDetail getAgrFinanceDetails() throws Exception {
+	public FinanceDetail getAgrFinanceDetails() {
 		logger.debug("Entering");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
@@ -1729,8 +1715,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		return aFinanceDetail;
 	}
 
-	public void doShowLiabilityDialog() throws FileNotFoundException, XMLStreamException, InterruptedException,
-			UnsupportedEncodingException, FactoryConfigurationError {
+	public void doShowLiabilityDialog() {
 		logger.debug("Entering ");
 		// Workflow Details
 		setWorkflowDetails(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinType());
@@ -1780,8 +1765,7 @@ public class LiabilityRequestDialogCtrl extends FinanceMainBaseCtrl {
 		}
 	}
 
-	private void doLoadWorkFlow(LiabilityRequest liabilityRequest)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	private void doLoadWorkFlow(LiabilityRequest liabilityRequest) {
 		logger.debug("Entering");
 		String roleCode = null;
 		if (!liabilityRequest.isNewRecord()

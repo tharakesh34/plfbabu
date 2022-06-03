@@ -105,9 +105,8 @@ public class DeviationExecutionCtrl {
 	 * 
 	 * @param financeDetail
 	 * @return
-	 * @throws ScriptException
 	 */
-	public void checkProductDeviations(FinanceDetail financeDetail) throws ScriptException {
+	public void checkProductDeviations(FinanceDetail financeDetail) {
 		logger.debug(Literal.ENTERING);
 
 		// Prepare the script engine with the required bindings.
@@ -150,8 +149,7 @@ public class DeviationExecutionCtrl {
 	/**
 	 * Check custom deviations and add to finance deviations, if any.
 	 * 
-	 * @param financeDetail
-	 *            Finance detail object.
+	 * @param financeDetail Finance detail object.
 	 */
 	@SuppressWarnings("unchecked")
 	public void checkCustomDeviations(FinanceDetail financeDetail) {
@@ -204,7 +202,7 @@ public class DeviationExecutionCtrl {
 			}
 		}
 
-		//Setting the collateral setup list
+		// Setting the collateral setup list
 		collateralSetupFetchingService.getCollateralSetupList(aFinanceDetail, true);
 
 		// Call the customization hook.
@@ -308,7 +306,7 @@ public class DeviationExecutionCtrl {
 		switch (ruleReturnType) {
 		case DECIMAL:
 			if (object != null && object instanceof BigDecimal) {
-				//unFormating object
+				// unFormating object
 				int formatter = CurrencyUtil.getFormat(finCcy);
 				object = PennantApplicationUtil.unFormateAmount((BigDecimal) object, formatter);
 			}
@@ -328,7 +326,7 @@ public class DeviationExecutionCtrl {
 			finElgDetail.setRuleResult(resultValue);
 			break;
 
-		case OBJECT: //FIXME to discuss with Sathish
+		case OBJECT: // FIXME to discuss with Sathish
 			RuleResult ruleResult = (RuleResult) object;
 			Object resultval = ruleResult.getValue();
 			Object resultvalue = ruleResult.getDeviation();
@@ -357,7 +355,7 @@ public class DeviationExecutionCtrl {
 			break;
 
 		default:
-			//do-nothing
+			// do-nothing
 			break;
 		}
 
@@ -876,10 +874,8 @@ public class DeviationExecutionCtrl {
 	/**
 	 * Check whether the deviation is already available in the approved list of deviations.
 	 * 
-	 * @param list
-	 *            The list of deviations.
-	 * @param deviation
-	 *            The deviation to check.
+	 * @param list      The list of deviations.
+	 * @param deviation The deviation to check.
 	 * @return <code>true</code> if the deviation is in approved list of deviations; otherwise <code>false</code>.
 	 */
 	private boolean isInApprovedList(List<FinanceDeviations> list, FinanceDeviations deviation) {
@@ -975,9 +971,8 @@ public class DeviationExecutionCtrl {
 	 * @param rule
 	 * @param engine
 	 * @return
-	 * @throws ScriptException
 	 */
-	private Object executeRule(String rule, Map<String, Object> dataMap) throws ScriptException {
+	private Object executeRule(String rule, Map<String, Object> dataMap) {
 		return RuleExecutionUtil.executeRule(rule, dataMap, RuleReturnType.OBJECT);
 	}
 
@@ -1005,16 +1000,11 @@ public class DeviationExecutionCtrl {
 	 * Process the deviation and consider / ignore based on the result and previous history of the deviation, if
 	 * available.
 	 * 
-	 * @param header
-	 *            Deviation header object.
-	 * @param category
-	 *            Category of the deviation.
-	 * @param module
-	 *            Type of deviation.
-	 * @param reference
-	 *            Finance reference number.
-	 * @param result
-	 *            Deviated value.
+	 * @param header    Deviation header object.
+	 * @param category  Category of the deviation.
+	 * @param module    Type of deviation.
+	 * @param reference Finance reference number.
+	 * @param result    Deviated value.
 	 */
 	private void processAutoDeviation(String category, String module, String code, Object result, String approverRole,
 			String reference, DeviationHeader header, String desc) {

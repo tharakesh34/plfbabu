@@ -8,8 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.stream.FactoryConfigurationError;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -438,8 +436,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		this.role = role;
 	}
 
-	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID)
-			throws FactoryConfigurationError {
+	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID) {
 		this.workFlowEnabled = workFlowEnabled;
 		this.workFlowId = workFlowId;
 
@@ -449,8 +446,7 @@ public abstract class AbstractController<T> extends GenericForwardComposer<Compo
 		}
 	}
 
-	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID, String roleCode)
-			throws FactoryConfigurationError {
+	public void doLoadWorkFlow(boolean workFlowEnabled, long workFlowId, String nextTaskID, String roleCode) {
 		this.workFlowEnabled = workFlowEnabled;
 		this.workFlowId = workFlowId;
 

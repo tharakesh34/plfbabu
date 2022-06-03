@@ -185,10 +185,9 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinanceTaxDetailDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceTaxDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1785,9 +1784,8 @@ public class FinanceTaxDetailDialogCtrl extends GFCBaseCtrl<FinanceTaxDetail> {
 	 * @param fd
 	 * @param tab
 	 * @param recSave
-	 * @throws InterruptedException
 	 */
-	public void doSave_Tax(FinanceDetail fd, Tab tab, boolean recSave) throws InterruptedException {
+	public void doSave_Tax(FinanceDetail fd, Tab tab, boolean recSave) {
 		logger.debug("Entering");
 
 		doClearMessage();

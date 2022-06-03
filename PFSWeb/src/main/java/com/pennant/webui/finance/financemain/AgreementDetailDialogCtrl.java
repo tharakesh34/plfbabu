@@ -365,9 +365,8 @@ public class AgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementDetail> {
 	 * Method for Generating Template replaced to Finance Details
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onGenerateReportClicked(FinanceReferenceDetail data, FinanceDetail detail) throws Exception {
+	public void onGenerateReportClicked(FinanceReferenceDetail data, FinanceDetail detail) {
 		logger.debug(Literal.ENTERING);
 
 		if (isFinanceProcess) {

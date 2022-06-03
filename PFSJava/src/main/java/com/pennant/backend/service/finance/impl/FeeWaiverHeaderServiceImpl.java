@@ -781,7 +781,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		return auditHeader;
 	}
 
-	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		List<AuditDetail> auditDetails = new ArrayList<>();
@@ -909,7 +909,7 @@ public class FeeWaiverHeaderServiceImpl extends GenericService<FeeWaiverHeader> 
 		return auditHeader;
 	}
 
-	private void allocateWaiverAmounts(FeeWaiverHeader fwh) throws Exception {
+	private void allocateWaiverAmounts(FeeWaiverHeader fwh) {
 		long finID = fwh.getFinID();
 
 		List<FinODDetails> odList = finODDetailsDAO.getFinODPenalityByFinRef(finID, true, false);

@@ -42,8 +42,6 @@ package com.pennant.webui.finance.financemain;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -67,8 +65,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -2716,10 +2712,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Creates a page from a zul-file in a tab in the center area of the borderlayout.
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendCustomerDetailTab(boolean onLoad) throws InterruptedException {
+	protected void appendCustomerDetailTab(boolean onLoad) {
 		logger.debug(Literal.ENTERING);
 		try {
 			if (onLoad) {
@@ -2853,10 +2847,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Append Recommend Details Tab
-	 * 
-	 * @throws InterruptedException
 	 */
-	protected void appendRecommendDetailTab(boolean onLoadProcess) throws InterruptedException {
+	protected void appendRecommendDetailTab(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		if (onLoadProcess) {
 			createTab(AssetConstants.UNIQUE_ID_RECOMMENDATIONS, true);
@@ -3075,7 +3067,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.trace(Literal.LEAVING);
 	}
 
-	public void onSelectTab(ForwardEvent event) throws Exception {
+	public void onSelectTab(ForwardEvent event) {
 		Tab tab = (Tab) event.getOrigin().getTarget();
 		logger.debug(tab.getId() + " --> " + Literal.ENTERING);
 		String module = getIDbyTab(tab.getId());
@@ -4965,9 +4957,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	protected void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
+	protected void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
@@ -9420,7 +9411,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Allow Loan Start Date set to update based on AppDate
-	public void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) throws ParseException {
+	public void autoFinStartDateUpdation(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 		if (!SysParamUtil.isAllowed(SMTParameterConstants.ALW_AUTO_SCHD_BUILD)) {
 			return;
@@ -9442,7 +9433,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		this.financeTypeDetailsTab.setSelected(true);
 	}
 
-	public void setLlDateInAdvPayments(FinanceDetail aFinanceDetail) throws ParseException {
+	public void setLlDateInAdvPayments(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -12355,12 +12346,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Writes the components values to the bean.<br>
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterruptedException
 	 */
-	protected ArrayList<WrongValueException> doWriteComponentsToBean(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	protected ArrayList<WrongValueException> doWriteComponentsToBean(FinScheduleData aFinanceSchData) {
 
 		// PSD#163298 Issue addressed for mandatory validations While Resubmitting.
 		boolean validateDetails = true;
@@ -15157,9 +15144,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
 	 */
-	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) throws Exception {
+	protected boolean doSave_CheckList(FinanceDetail aFinanceDetail, boolean isForAgreementGen) {
 		logger.debug(Literal.ENTERING);
 
 		setFinanceDetail(aFinanceDetail);
@@ -15200,11 +15186,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param financeDetail
 	 * @param validatePhone
 	 * @return
-	 * @throws ParseException
-	 * @throws InterruptedException
 	 */
-	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone)
-			throws ParseException, InterruptedException {
+	public boolean processCustomerDetails(FinanceDetail financeDetail, boolean validatePhone) {
 		logger.debug(Literal.ENTERING);
 		if (customerDialogCtrl.getCustomerDetails() != null) {
 			return customerDialogCtrl.doSave_CustomerDetail(financeDetail, custDetailTab, validatePhone);
@@ -17245,9 +17228,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws InterruptedException
 	 */
-	private boolean doValidateCommitment(FinanceDetail aFinanceDetail) throws InterruptedException {
+	private boolean doValidateCommitment(FinanceDetail aFinanceDetail) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain finMain = aFinanceDetail.getFinScheduleData().getFinanceMain();
@@ -17339,9 +17321,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Method for Checking Recommendation for Mandatory
 	 * 
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doValidateRecommendation() throws InterruptedException {
+	protected boolean doValidateRecommendation() {
 		logger.debug(Literal.ENTERING);
 		boolean isRecommendEntered = true;
 		logger.debug(Literal.LEAVING);
@@ -19491,8 +19472,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	// WorkFlow Components
 
-	protected void doLoadWorkFlow(FinanceMain financeMain)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	protected void doLoadWorkFlow(FinanceMain financeMain) {
 		logger.debug(Literal.ENTERING);
 		String roleCode = null;
 		if (StringUtils.isEmpty(moduleDefiner) && !financeMain.isNewRecord()
@@ -20807,7 +20787,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	// tasks #503 Auto Generation of Agreements
 	protected DocumentDetails autoGenerateAgreement(FinanceReferenceDetail frefdata, FinanceDetail financeDetail,
 			AgreementDefinition agreementDefinition, List<DocumentDetails> existingUploadDocList,
-			AgreementDetail detail) throws Exception {
+			AgreementDetail detail) {
 		logger.debug(Literal.ENTERING);
 		DocumentDetails details = new DocumentDetails();
 
@@ -22224,12 +22204,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceSchData
 	 * @return
-	 * @throws InterruptedException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
 	 */
-	private FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();

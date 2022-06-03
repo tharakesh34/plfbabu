@@ -189,9 +189,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScheduleDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ScheduleDetailDialog(ForwardEvent event) {
 		logger.debug("Entering " + event.toString());
 
 		// READ OVERHANDED parameters !
@@ -285,10 +284,9 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("rawtypes")
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 
 		try {
@@ -426,9 +424,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method Event for Showing Summary detail on Pop up with all entries
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onPopupOutStandPriSummary(ForwardEvent event) throws Exception {
+	public void onPopupOutStandPriSummary(ForwardEvent event) {
 		logger.debug("Entering");
 
 		FinanceMain finmain = getFinanceMainData();
@@ -451,9 +448,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method to get the Finance main Details from basic Details
 	 * 
 	 * @return
-	 * @throws Exception
 	 */
-	private FinanceMain getFinanceMainData() throws Exception {
+	private FinanceMain getFinanceMainData() {
 		logger.debug("Entering");
 		FinanceMain main = null;
 		try {
@@ -470,9 +466,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Dynamic method for clicking "ADD" button for creating new Schedule Item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClickAddBtn(ForwardEvent event) throws Exception {
+	public void onClickAddBtn(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Listitem curListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
@@ -525,9 +520,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for action Forward event for changing Schedule Term Date
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSchDateChange(ForwardEvent event) throws Exception {
+	public void onSchDateChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		validateAndRecalSchd();
@@ -685,9 +679,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for action Event of Changing Rate on Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSchRateChange(ForwardEvent event) throws Exception {
+	public void onSchRateChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		validateAndRecalSchd();
@@ -699,9 +692,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for action Event of Changing Profit Amount/Schedule Profit on Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSchPftChange(ForwardEvent event) throws Exception {
+	public void onSchPftChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		validateAndRecalSchd();
@@ -713,9 +705,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for action Event of Changing Principal Amount on Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSchPriChange(ForwardEvent event) throws Exception {
+	public void onSchPriChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		validateAndRecalSchd();
@@ -727,9 +718,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for action Event of Changing EMI Amount on Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onSchEMIChange(ForwardEvent event) throws Exception {
+	public void onSchEMIChange(ForwardEvent event) {
 		logger.debug("Entering");
 
 		validateAndRecalSchd();
@@ -741,9 +731,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for action Event of Clicking Remove button to remove added Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClickRmvBtn(ForwardEvent event) throws Exception {
+	public void onClickRmvBtn(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Listitem curListItem = (Listitem) event.getOrigin().getTarget().getParent().getParent().getParent();
@@ -757,9 +746,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * Method for checking End Balance was cleared by adjusted to Schedule terms or not
 	 * 
 	 * @return
-	 * @throws InterruptedException
 	 */
-	protected boolean doCheckEndingBal() throws InterruptedException {
+	protected boolean doCheckEndingBal() {
 		logger.debug("Entering");
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
@@ -1072,10 +1060,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * 
 	 * @param finSchdData
 	 * @param isNewRecord
-	 * @throws Exception
 	 */
-	protected void doPrepareSchdTerm(FinScheduleData finSchdData, boolean isAddBtnClicked, Listitem actionListItem)
-			throws Exception {
+	protected void doPrepareSchdTerm(FinScheduleData finSchdData, boolean isAddBtnClicked, Listitem actionListItem) {
 		logger.debug("Entering");
 
 		boolean newRecord = false;
@@ -1120,8 +1106,7 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 					isPriEditable = true;
 				}
 
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-					| NoSuchMethodException | SecurityException e) {
+			} catch (IllegalArgumentException | SecurityException e) {
 				logger.error("Exception: ", e);
 			}
 		}
@@ -1923,9 +1908,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * when the "btnPrintSchedule" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintSchedule(Event event) throws Exception {
+	public void onClick$btnPrintSchedule(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		List<Object> list = new ArrayList<Object>();
@@ -2018,9 +2002,8 @@ public class ManualScheduleDetailDialogCtrl extends GFCBaseListCtrl<FinanceSched
 	 * when the "Linked Reference " Label is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$label_ScheduleDetailDialog_DPScheduleLink(Event event) throws Exception {
+	public void onClick$label_ScheduleDetailDialog_DPScheduleLink(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		try {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  EligibilityDetailDialogCtrl.java                                     * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : EligibilityDetailDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -107,14 +89,14 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	protected Window window_EligibilityDetailDialog; // autoWired
 	protected Borderlayout borderlayoutEligibilityDetail; // autoWired
 
-	//Finance Eligibility Details Tab
+	// Finance Eligibility Details Tab
 	protected Button btnElgRule; // autoWired
 	protected Label label_ElgRuleSummaryVal; // autoWired
 	protected Listbox listBoxFinElgRef; // autoWired
 
 	List<FinanceEligibilityDetail> eligibilityRuleList = null;
 
-	//External Fields usage for Individuals ----> Eligibility Details
+	// External Fields usage for Individuals ----> Eligibility Details
 
 	private transient boolean custisEligible = true;
 	private boolean isWIF = false;
@@ -150,9 +132,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_EligibilityDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_EligibilityDetailDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -175,7 +156,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 
 		if (arguments.containsKey("roleCode")) {
-			//this.userRole = arguments.get("roleCode").toString();
+			// this.userRole = arguments.get("roleCode").toString();
 		}
 
 		doShowDialog();
@@ -188,12 +169,11 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
-			// append finance basic details 
+			// append finance basic details
 			appendFinBasicDetails();
 
 			eligibilityRuleList = getFinanceDetail().getElgRuleList();
@@ -204,15 +184,15 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				deviationExecutionCtrl = (DeviationExecutionCtrl) getFinanceMainDialogCtrl().getClass()
 						.getMethod("getDeviationExecutionCtrl").invoke(getFinanceMainDialogCtrl());
 
-				//Set Eligibility based on deviations and rule result
+				// Set Eligibility based on deviations and rule result
 				for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
 					setStatusByDevaition(financeEligibilityDetail);
 				}
 
-				//Fill eligibility details
+				// Fill eligibility details
 				doFillFinEligibilityDetails(eligibilityRuleList);
 
-				//Set eligibility grtoup status
+				// Set eligibility grtoup status
 				setCustEligibilityGropuStatus();
 			}
 
@@ -513,15 +493,15 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 		deviationExecutionCtrl.fillDeviationListbox(elgDeviations, getUserRole(), DeviationConstants.TY_ELIGIBILITY);
 
-		//Set Eligibility based on deviations and rule result
+		// Set Eligibility based on deviations and rule result
 		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
 			setStatusByDevaition(financeEligibilityDetail);
 		}
 
-		//Fill eligibility details
+		// Fill eligibility details
 		doFillFinEligibilityDetails(eligibilityRuleList);
 
-		//Set eligibility group status
+		// Set eligibility group status
 		setCustEligibilityGropuStatus();
 
 		logger.debug(Literal.LEAVING);
@@ -590,9 +570,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * Method to capture event when eligible rule item double clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onElgRuleItemChecked(ForwardEvent event) throws Exception {
+	public void onElgRuleItemChecked(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Checkbox cb = (Checkbox) event.getOrigin().getTarget();
 		FinanceEligibilityDetail financeEligibilityDetail = (FinanceEligibilityDetail) event.getData();
@@ -675,10 +654,10 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 		}
 		aFinanceDetail = null;
 
-		//Fill eligibility details
+		// Fill eligibility details
 		doFillWIFFinEligibilityDetails(this.eligibilityRuleList);
 
-		//Set eligibility group status
+		// Set eligibility group status
 		setCustEligibilityGropuStatus();
 
 		logger.debug("Leaving");
@@ -699,19 +678,19 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				Listitem item = new Listitem();
 				Listcell lc;
 
-				//Rule Source
+				// Rule Source
 				lc = new Listcell("");
 				lc.setParent(item);
 
-				//Rule Code
+				// Rule Code
 				lc = new Listcell(detail.getLovDescElgRuleCode());
 				lc.setParent(item);
 
-				//Rule Code Desc
+				// Rule Code Desc
 				lc = new Listcell(detail.getLovDescElgRuleCodeDesc());
 				lc.setParent(item);
 
-				//Can Override
+				// Can Override
 				lc = new Listcell();
 				Checkbox cbOverride = new Checkbox();
 				cbOverride.setDisabled(true);
@@ -726,11 +705,11 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 				lc.appendChild(cbOverride);
 				lc.setParent(item);
 
-				//Override Value
+				// Override Value
 				lc = new Listcell(overridePerc);
 				lc.setParent(item);
 
-				//If Rule Not Executed 
+				// If Rule Not Executed
 				if (StringUtils.isEmpty(detail.getRuleResult())) {
 					lc = new Listcell("");
 					lc.setParent(item);
@@ -741,9 +720,9 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 					lc = new Listcell("");
 					lc.setParent(item);
 				} else {
-					//If Decimal Result for Eligibility
+					// If Decimal Result for Eligibility
 					if (RuleConstants.RETURNTYPE_DECIMAL.equals(detail.getRuleResultType())) {
-						//IF Error in Executing the Rule
+						// IF Error in Executing the Rule
 						if ("E".equals(detail.getRuleResult())) {
 							lc = new Listcell(Labels.getLabel("common.InSuffData"));
 							lc.setStyle("font-weight:bold;color:red;");
@@ -751,7 +730,7 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 
 							lc = new Listcell("");
 							lc.setParent(item);
-							//IF DSR Calculation Rule
+							// IF DSR Calculation Rule
 						} else if (RuleConstants.ELGRULE_DSRCAL.equals(detail.getLovDescElgRuleCode())
 								|| RuleConstants.ELGRULE_PDDSRCAL.equals(detail.getLovDescElgRuleCode())) {
 

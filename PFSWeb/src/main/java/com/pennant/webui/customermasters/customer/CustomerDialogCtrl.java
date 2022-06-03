@@ -4507,10 +4507,8 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 	 * This method set the customer details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws ParseException
 	 */
-	public boolean doSave_CustomerDetail(FinanceDetail aFinanceDetail, Tab tab, boolean validateChildDetails)
-			throws ParseException {
+	public boolean doSave_CustomerDetail(FinanceDetail aFinanceDetail, Tab tab, boolean validateChildDetails) {
 		logger.debug("Entering ");
 		if (getCustomerDetails() != null) {
 			Cloner cloner = new Cloner();

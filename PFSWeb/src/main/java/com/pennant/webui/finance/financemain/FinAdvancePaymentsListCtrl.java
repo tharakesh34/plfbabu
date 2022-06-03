@@ -297,7 +297,7 @@ public class FinAdvancePaymentsListCtrl extends GFCBaseCtrl<FinAdvancePayments> 
 		}
 	}
 
-	public boolean onAdvancePaymentValidation(Map<String, Object> map) throws InterruptedException {
+	public boolean onAdvancePaymentValidation(Map<String, Object> map) {
 		logger.debug("Entering");
 
 		boolean proceed = true;

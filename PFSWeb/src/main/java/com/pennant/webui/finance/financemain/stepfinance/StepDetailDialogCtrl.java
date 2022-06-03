@@ -408,12 +408,8 @@ public class StepDetailDialogCtrl extends GFCBaseCtrl<StepPolicyHeader> {
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
 	 * @param tab
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws InterruptedException
 	 */
-	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, Tab tab, String method)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, Tab tab, String method) {
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();
 		ArrayList<WrongValueException> wve = new ArrayList<>();
 		doClearMessage();

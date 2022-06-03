@@ -65,6 +65,7 @@ import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.component.extendedfields.ExtendedFieldCtrl;
 import com.pennant.util.ErrorControl;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.model.ErrorDetail;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -110,9 +111,8 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ExtendedFieldMaintenanceDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ExtendedFieldMaintenanceDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -129,7 +129,7 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 		}
 
 		if (this.extendedFieldMaintenance == null) {
-			throw new Exception(Labels.getLabel("error.unhandled"));
+			throw new AppException(Labels.getLabel("error.unhandled"));
 		}
 
 		if (arguments.containsKey("moduleCode")) {
@@ -203,9 +203,8 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(ExtendedFieldMaintenance extendedFieldMaintenance) throws InterruptedException {
+	public void doShowDialog(ExtendedFieldMaintenance extendedFieldMaintenance) {
 		logger.debug(Literal.ENTERING);
 		try {
 			// set ReadOnly mode accordingly if the object is new or not.
@@ -243,10 +242,8 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		doShowNotes(this.extendedFieldMaintenance);
 		logger.debug(Literal.LEAVING + event.toString());
@@ -422,9 +419,8 @@ public class ExtendedFieldMaintenanceDialogCtrl extends GFCBaseCtrl<ExtendedFiel
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onExtendedFieldDetailItemDoubleClicked(Event event) throws Exception {
+	public void onExtendedFieldDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Listitem item = this.listBox_ExtendedFields.getSelectedItem();

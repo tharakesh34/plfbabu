@@ -158,9 +158,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_feeWaiverHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_feeWaiverHeaderDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -279,7 +278,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * 
 	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		doSave();
 	}
 
@@ -685,7 +684,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * Saves the components to table. <br>
 	 * 
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		FeeWaiverHeader aFeeWaiverHeader = new FeeWaiverHeader();
@@ -756,9 +755,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * @param aFeeWaiverHeader
 	 * @param tranType         (String)
 	 * @return boolean
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FeeWaiverHeader aFeeWaiverHeader, String tranType) throws Exception {
+	protected boolean doProcess(FeeWaiverHeader aFeeWaiverHeader, String tranType) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -844,9 +842,8 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 	 * @param method
 	 * 
 	 * @return boolean
-	 * @throws Exception
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 
 		boolean processCompleted = false;
@@ -1403,7 +1400,7 @@ public class FeeWaiverHeaderDialogCtrl extends GFCBaseCtrl<FeeWaiverHeader> {
 
 	}
 
-	public void onChangeCurrWaivedAmount(ForwardEvent event) throws Exception {
+	public void onChangeCurrWaivedAmount(ForwardEvent event) {
 		logger.debug("Entering");
 
 		Decimalbox currWaivedAmt = (Decimalbox) event.getOrigin().getTarget();
