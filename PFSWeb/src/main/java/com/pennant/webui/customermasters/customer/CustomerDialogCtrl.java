@@ -4499,7 +4499,7 @@ public class CustomerDialogCtrl extends GFCBaseCtrl<CustomerDetails> {
 		doWriteBeanToComponents(customerDetails);
 	}
 
-	public void doSave_CustomerDetail(FinanceDetail aFinanceDetail, boolean validatePhoneNum) throws ParseException {
+	public void doSave_CustomerDetail(FinanceDetail aFinanceDetail, boolean validatePhoneNum) {
 		doSave_CustomerDetail(aFinanceDetail, null, validatePhoneNum);
 	}
 

@@ -10,11 +10,11 @@ public interface FinanceMaintenanceService {
 
 	FinanceDetail getFinanceDetailById(long finID, String type, String userRole, String procEdtEvent, String eventCode);
 
-	AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws Exception;
+	AuditHeader saveOrUpdate(AuditHeader aAuditHeader);
 
-	AuditHeader doReject(AuditHeader auditHeader) throws Exception;
+	AuditHeader doReject(AuditHeader auditHeader);
 
-	AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception;
+	AuditHeader doApprove(AuditHeader aAuditHeader);
 
 	boolean isFinActive(long finID);
 

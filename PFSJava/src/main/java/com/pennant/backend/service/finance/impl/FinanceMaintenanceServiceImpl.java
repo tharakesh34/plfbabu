@@ -256,7 +256,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	@Override
-	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader saveOrUpdate(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
 		FinanceDetail fd = (FinanceDetail) aAuditHeader.getAuditDetail().getModelData();
@@ -635,7 +635,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	@Override
-	public AuditHeader doReject(AuditHeader auditHeader) throws Exception {
+	public AuditHeader doReject(AuditHeader auditHeader) {
 		logger.debug("Entering");
 
 		List<AuditDetail> auditDetailList = new ArrayList<>();
@@ -774,7 +774,7 @@ public class FinanceMaintenanceServiceImpl extends GenericFinanceDetailService i
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader aAuditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader aAuditHeader) {
 		logger.debug("Entering");
 
 		String tranType = "";

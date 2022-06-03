@@ -3883,7 +3883,7 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceSchData (FinScheduleData)
 	 */
-	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, ArrayList<WrongValueException> wve) {
+	public void doWriteComponentsToBean(FinScheduleData aFinanceSchData, List<WrongValueException> wve) {
 
 		int formatter = CurrencyUtil.getFormat(getFinanceDetail().getFinScheduleData().getFinanceMain().getFinCcy());
 		FinanceType financeType = getFinanceDetail().getFinScheduleData().getFinanceType();
@@ -5013,12 +5013,8 @@ public class FinanceBaseCtrl<T> extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param aFinanceSchData
 	 * @return
-	 * @throws InterruptedException
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
 	 */
-	protected FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	protected FinScheduleData doWriteSchData(FinScheduleData aFinanceSchData) {
 		logger.debug("Entering");
 
 		FinanceMain aFinanceMain = aFinanceSchData.getFinanceMain();

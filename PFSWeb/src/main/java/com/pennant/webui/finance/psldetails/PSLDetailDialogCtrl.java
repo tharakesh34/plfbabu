@@ -172,10 +172,9 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_PSLDetailDialog(Event event) throws Exception {
+	public void onCreate$window_PSLDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1535,7 +1534,7 @@ public class PSLDetailDialogCtrl extends GFCBaseCtrl<PSLDetail> {
 		this.financeMainDialogCtrl = financeMainDialogCtrl;
 	}
 
-	public void doSave(FinanceDetail aFd, Tab pslDetailsTab, boolean recSave) throws InterruptedException {
+	public void doSave(FinanceDetail aFd, Tab pslDetailsTab, boolean recSave) {
 
 		logger.debug("Entering");
 

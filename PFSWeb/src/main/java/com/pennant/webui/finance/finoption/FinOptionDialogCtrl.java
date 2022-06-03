@@ -130,7 +130,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$finOptionListWindow(Event event) throws Exception {
+	public void onCreate$finOptionListWindow(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(finOptionListWindow);
@@ -338,7 +338,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 
 	List<FinOption> finOptions = new ArrayList<>();
 
-	public void onClick$btnNew_NewFinOption(Event event) throws Exception {
+	public void onClick$btnNew_NewFinOption(Event event) {
 		FinOption option = new FinOption();
 		// FIXME GDP Default value set to 7, need to parameterized.
 		option.setAlertDays(7);
@@ -1003,7 +1003,7 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		return (Map<String, Object>) object;
 	}
 
-	public boolean doSave(FinanceDetail aFinanceDetail, Tab tab) throws Exception {
+	public boolean doSave(FinanceDetail aFinanceDetail, Tab tab) {
 		logger.debug(Literal.ENTERING);
 		doClearMessage();
 
@@ -1275,11 +1275,11 @@ public class FinOptionDialogCtrl extends GFCBaseCtrl<FinOption> {
 		this.finBasicDetailsCtrl = finBasicDetailsCtrl;
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		doSave();
 	}
 
-	protected void doSave() throws Exception {
+	protected void doSave() {
 		logger.debug(Literal.ENTERING);
 
 		FinMaintainInstruction aFinMaintainInstruction = new FinMaintainInstruction();

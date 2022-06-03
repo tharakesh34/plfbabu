@@ -8856,9 +8856,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) throws Exception, InterfaceException {
+	protected boolean doProcess(FinanceDetail aFinanceDetail, String tranType) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = true;
@@ -9145,8 +9144,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return processCompleted;
 	}
 
-	private boolean doSaveProcess(AuditHeader auditHeader, String method)
-			throws InterfaceException, InterruptedException {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 
 		boolean processCompleted = false;
@@ -11649,7 +11647,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * 
 	 * @param AuditHeader (auditHeader)
 	 */
-	private boolean doValidation(AuditHeader auditHeader) throws InterruptedException {
+	private boolean doValidation(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -14763,10 +14761,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		buildEvent = false;
 
@@ -14828,11 +14824,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 
 		List<ReturnDataSet> accountingSetEntries = new ArrayList<ReturnDataSet>();
@@ -14975,8 +14968,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		}
 	}
 
-	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail)
-			throws InterruptedException, IllegalAccessException, InvocationTargetException {
+	private AEEvent prepareAccountingData(boolean onLoadProcess, FinanceProfitDetail profitDetail) {
 
 		FinScheduleData finScheduleData = getFinanceDetail().getFinScheduleData();
 		FinanceMain finMain = finScheduleData.getFinanceMain();
@@ -16765,7 +16757,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void onClick$btnSearchCommitmentRef(Event event) throws Exception {
+	public void onClick$btnSearchCommitmentRef(Event event) {
 		logger.debug(Literal.ENTERING);
 		this.commitmentRef.setErrorMessage("");
 
@@ -17400,9 +17392,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeDetail.getFinScheduleData().getFinanceMain());
 	}
 
@@ -18955,9 +18946,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Stores the default values, sets the validation and validates the given finance details.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception {
+	public void onClick$btnValidate(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		buildEvent = false;
 		validate();
@@ -18969,9 +18959,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	 * Stores the default values, sets the validation, validates the given finance details, builds the schedule.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnBuildSchedule(Event event) throws Exception {
+	public void onClick$btnBuildSchedule(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		this.buildEvent = true;
@@ -19261,10 +19250,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to Rebuild the Schedule and recalculate the Overdraft Schedule Details
-	 * 
-	 * @throws InterruptedException
 	 */
-	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) throws InterruptedException {
+	private FinScheduleData rebuildODSchd(FinScheduleData finScheduleData) {
 		logger.debug(Literal.ENTERING);
 
 		// Validate Limit Increases after New Maturity Date
@@ -19305,15 +19292,8 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 
 	/**
 	 * Method to validate given details
-	 * 
-	 * @throws InterruptedException
-	 * @return validfinanceDetail
-	 * @throws InvocationTargetException
-	 * @throws IllegalAccessException
-	 * @throws ParseException
 	 */
-	private FinanceDetail validate()
-			throws InterruptedException, IllegalAccessException, InvocationTargetException, ParseException {
+	private FinanceDetail validate() {
 		logger.debug(Literal.ENTERING);
 
 		recSave = false;
@@ -20679,7 +20659,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onChange$enquiryCombobox(Event event) throws Exception {
+	public void onChange$enquiryCombobox(Event event) {
 		logger.debug(Literal.ENTERING);
 		String enquiryType = this.enquiryCombobox.getSelectedItem().getValue();
 		FinanceMain financeMain = null;
@@ -20763,7 +20743,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	//
-	protected String validateTemplate(FinanceReferenceDetail frefdata) throws Exception {
+	protected String validateTemplate(FinanceReferenceDetail frefdata) {
 		String templatePath = PathUtil.getPath(PathUtil.FINANCE_AGREEMENTS);
 		String templateName = "";
 		String msg = "Y";
@@ -20967,7 +20947,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		return null;
 	}
 
-	public void onClick$btnLockRecord(Event event) throws Exception {
+	public void onClick$btnLockRecord(Event event) {
 		logger.info(Literal.ENTERING);
 
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -21153,7 +21133,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 	}
 
 	// Split screen start
-	public void onOpen$btnSplitDoc(Event event) throws Exception {
+	public void onOpen$btnSplitDoc(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (this.btnSplitDoc.isOpen()) {
@@ -21325,7 +21305,7 @@ public class FinanceMainBaseCtrl extends GFCBaseCtrl<FinanceMain> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClicked(ForwardEvent event) throws Exception {
+	public void onClicked(ForwardEvent event) {
 
 		A href = (A) event.getOrigin().getTarget();
 		DocumentDetails details = (DocumentDetails) href.getAttribute("Object");

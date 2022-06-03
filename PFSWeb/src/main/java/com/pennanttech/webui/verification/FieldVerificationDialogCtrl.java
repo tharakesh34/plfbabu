@@ -148,7 +148,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_FIVerificationDialog(Event event) throws Exception {
+	public void onCreate$window_FIVerificationDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_FIVerificationDialog);
@@ -256,7 +256,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		return null;
 	}
 
-	public void onChnageFiv(ForwardEvent event) throws Exception {
+	public void onChnageFiv(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 
 		Combobox cfiv = (Combobox) getComponent(listitem, "RequestType");
@@ -295,7 +295,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeAgency(ForwardEvent event) throws Exception {
+	public void onChangeAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "Agency");
 		Object dataObject = agency.getObject();
@@ -311,7 +311,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReInitAgency(ForwardEvent event) throws Exception {
+	public void onChangeReInitAgency(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox agency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Object dataObject = agency.getObject();
@@ -327,7 +327,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeReason(ForwardEvent event) throws Exception {
+	public void onChangeReason(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reason = (ExtendedCombobox) getComponent(listitem, "Reason");
 		Object dataObject = reason.getObject();
@@ -343,7 +343,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		}
 	}
 
-	public void onChangeDecision(ForwardEvent event) throws Exception {
+	public void onChangeDecision(ForwardEvent event) {
 		Listitem listitem = (Listitem) event.getData();
 		ExtendedCombobox reInitAgency = (ExtendedCombobox) getComponent(listitem, "ReInitAgency");
 		Combobox decisionBox = (Combobox) getComponent(listitem, "Decision");
@@ -1272,8 +1272,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
-			throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) {
 		logger.debug(Literal.ENTERING);
 		this.userAction = userAction;
 		this.recSave = recSave;
@@ -1420,11 +1419,7 @@ public class FieldVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void onClick$btnFIInitiateSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		try {
-			doSave(financeDetail, null, recSave, fi);
-		} catch (InterruptedException e1) {
-			logger.error(Literal.EXCEPTION, e1);
-		}
+		doSave(financeDetail, null, recSave, fi);
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.FI, PennantConstants.TRAN_WF, initType);
 			refreshList();

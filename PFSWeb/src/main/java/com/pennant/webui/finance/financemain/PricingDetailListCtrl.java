@@ -364,7 +364,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		getFinBasicDetailsCtrl().doWriteBeanToComponents(finHeaderList);
 	}
 
-	public boolean doSave(FinanceDetail aFinanceDetail, Tab pricingTab, boolean recSave) throws InterruptedException {
+	public boolean doSave(FinanceDetail aFinanceDetail, Tab pricingTab, boolean recSave) {
 		logger.debug(Literal.ENTERING);
 
 		doClearMessage();
@@ -620,8 +620,7 @@ public class PricingDetailListCtrl extends GFCBaseCtrl<PricingDetail> {
 		}
 	}
 
-	public ArrayList<WrongValueException> doWriteComponentsToBean(PricingDetail pricingDetail, boolean saveAction)
-			throws InterruptedException {
+	public ArrayList<WrongValueException> doWriteComponentsToBean(PricingDetail pricingDetail, boolean saveAction) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain parentFinMain = getFinanceDetail().getFinScheduleData().getFinanceMain();

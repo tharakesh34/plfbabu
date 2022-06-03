@@ -1783,8 +1783,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 		logger.debug("Leaving");
 	}
 
-	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction)
-			throws InterruptedException {
+	public boolean doSave(FinanceDetail financeDetail, Tab tab, boolean recSave, Radiogroup userAction) {
 		logger.debug(Literal.ENTERING);
 		this.recSave = recSave;
 		this.userAction = userAction;
@@ -1951,11 +1950,7 @@ public class TVerificationDialogCtrl extends GFCBaseCtrl<Verification> {
 	 */
 	public void onClick$btnTVInitiateSave(Event event) {
 		logger.debug(Literal.ENTERING);
-		try {
-			doSave(financeDetail, null, recSave, tv);
-		} catch (InterruptedException e1) {
-			logger.error(Literal.EXCEPTION, e1);
-		}
+		doSave(financeDetail, null, recSave, tv);
 		try {
 			verificationService.saveOrUpdate(financeDetail, VerificationType.TV, PennantConstants.TRAN_WF, initType);
 			refreshList();
