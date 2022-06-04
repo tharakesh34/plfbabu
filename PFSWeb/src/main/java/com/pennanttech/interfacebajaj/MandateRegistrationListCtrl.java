@@ -75,6 +75,8 @@ import com.pennant.app.constants.ImplementationConstants;
 import com.pennant.app.util.CurrencyUtil;
 import com.pennant.app.util.DateUtility;
 import com.pennant.app.util.SysParamUtil;
+import com.pennant.backend.model.ValueLabel;
+import com.pennant.backend.model.applicationmaster.Branch;
 import com.pennant.backend.model.applicationmaster.Entity;
 import com.pennant.backend.model.customermasters.Customer;
 import com.pennant.backend.model.mandate.Mandate;
@@ -88,7 +90,6 @@ import com.pennant.backend.util.PennantJavaUtil;
 import com.pennant.backend.util.PennantRegularExpressions;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.backend.util.SMTParameterConstants;
-import com.pennant.component.Uppercasebox;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.util.Constraint.PTDateValidator;
 import com.pennant.util.Constraint.PTStringValidator;
@@ -156,10 +157,10 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 	protected Datebox fromDate;
 	protected Datebox toDate;
-	protected Uppercasebox branchDetails;
-	protected Button btnbranchDetails;
+	protected ExtendedCombobox bankBranchID;
 
 	protected Listbox sortOperator_MandateID;
+	protected Listbox sortOperator_bankBranchID;
 	protected Listbox sortOperator_CustCIF;
 	protected Listbox sortOperator_MandateType;
 	protected Listbox sortOperator_BankName;
@@ -167,7 +168,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 	protected Listbox sortOperator_AccType;
 	protected Listbox sortOperator_ExpiryDate;
 	protected Listbox sortOperator_Status;
-	protected Listbox sortOperator_btnbranchDetails;
 	protected ExtendedCombobox entityCode;
 	protected Listbox sortOperator_entityCode;
 	protected ExtendedCombobox partnerBank;
@@ -218,7 +218,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		registerField("inputDate");
 
-		registerField("BranchCode", branchDetails, SortOrder.ASC, sortOperator_btnbranchDetails, Operators.MULTISELECT);
+		registerField("BranchCode", bankBranchID, SortOrder.ASC, sortOperator_bankBranchID, Operators.MULTISELECT);
 		registerField("mandateID", mandateID, SortOrder.ASC, sortOperator_MandateID, Operators.NUMERIC);
 		registerField("mandateType", listheader_MandateType, SortOrder.NONE, mandateType, sortOperator_MandateType,
 				Operators.STRING);
@@ -294,6 +294,13 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			this.partnerBank.setButtonDisabled(true);
 		}
 
+		this.bankBranchID.setModuleName("Branch");
+		this.bankBranchID.setMandatoryStyle(false);
+		this.bankBranchID.setValueColumn("BranchCode");
+		this.bankBranchID.setDescColumn("BranchDesc");
+		this.bankBranchID.setDisplayStyle(2);
+		this.bankBranchID.setValidateColumns(new String[] { "BranchCode" });
+
 		if (ImplementationConstants.MANDATE_AUTO_DOWNLOAD
 				&& SysParamUtil.isAllowed(SMTParameterConstants.MANDATE_AUTO_DOWNLOAD_JOB_ENABLED)) {
 			this.btnDownload.setDisabled(true);
@@ -334,6 +341,25 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 
 		}
 		logger.debug("Leaving");
+	}
+
+	public void onFulfill$bankBranchID(Event event) {
+		logger.debug("Entering" + event.toString());
+
+		Object dataObject = this.bankBranchID.getObject();
+
+		if (dataObject == null || dataObject instanceof String) {
+			this.bankBranchID.setValue("");
+			this.bankBranchID.setDescription("");
+			this.bankBranchID.setAttribute("BranchCode", null);
+		} else {
+			Branch details = (Branch) dataObject;
+			if (details != null) {
+				this.bankBranchID.setAttribute("BranchCode", details.getBranchCode());
+			}
+		}
+
+		logger.debug("Leaving" + event.toString());
 	}
 
 	public void onFulfill$partnerBank(Event event) {
@@ -569,6 +595,17 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 		for (SearchFilterControl searchControl : searchControls) {
 			Filter filter = searchControl.getFilter();
 			if (filter != null) {
+
+				if (filter.getProperty().equals("accType")) {
+					List<ValueLabel> accTypeList = PennantStaticListUtil.getAccTypeList();
+					for (ValueLabel valueLabel : accTypeList) {
+						if (valueLabel.getValue().equals(filter.getValue())) {
+							filter.setValue(valueLabel.getLabel());
+							break;
+						}
+					}
+				}
+
 				if (App.DATABASE == Database.ORACLE && "recordType".equals(filter.getProperty())
 						&& Filter.OP_NOT_EQUAL == filter.getOperator()) {
 					Filter[] filters = new Filter[2];
@@ -582,14 +619,6 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			}
 		}
 		logger.debug("Leaving");
-	}
-
-	public void onClick$btnbranchDetails(Event event) {
-		logger.debug("Entering  " + event.toString());
-
-		setSearchValue(sortOperator_btnbranchDetails, this.branchDetails, "DataEngine");
-
-		logger.debug("Leaving" + event.toString());
 	}
 
 	private void doSetValidations() {
@@ -819,7 +848,7 @@ public class MandateRegistrationListCtrl extends GFCBaseListCtrl<Mandate> {
 			mandateData.setUserId(loggedInUser.getUserId());
 			mandateData.setUserName(loggedInUser.getUserName());
 			mandateData.setEntity(this.entityCode.getValue());
-			mandateData.setSelectedBranchs(this.branchDetails.getValue());
+			mandateData.setSelectedBranchs(this.bankBranchID.getValue());
 			mandateData.setType(getComboboxValue(this.mandateType));
 			Object object = this.partnerBank.getAttribute("PartnerBankId");
 			if (object != null) {

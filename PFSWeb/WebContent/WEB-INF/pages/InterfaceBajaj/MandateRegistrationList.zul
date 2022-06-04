@@ -92,12 +92,9 @@
 									<datebox id="startDate" width="171px" />
 								</row>
 								<row>
-									<label value="${c:l('label_Branches.value')}" />
-									<listbox id="sortOperator_btnbranchDetails" width="43px" mold="select" rows="1" />
-									<cell colspan="1">
-										<uppercasebox id="branchDetails" width="132px" />
-										<button id="btnbranchDetails" image="/images/icons/LOVSearch.png" />
-									</cell>
+									<label value="${c:l('label_MandateDialog_BankBranchID.value')}" />
+									<listbox id="sortOperator_bankBranchID" width="43px" mold="select" rows="1" />
+									<extendedcombobox id="bankBranchID" />
 									<label id="label_EntityCode" value="${c:l('label_MandateDialog_EntityCode.value')}" />
 									<listbox id="sortOperator_entityCode" width="43px" mold="select" rows="1" />
 									<extendedcombobox id="entityCode" />
