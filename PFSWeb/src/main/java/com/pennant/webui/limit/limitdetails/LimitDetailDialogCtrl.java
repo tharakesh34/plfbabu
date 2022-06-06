@@ -210,9 +210,8 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 	 * selected LimitHeader object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_LimitHeaderDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -358,7 +357,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$currency(Event event) throws Exception {
+	public void onFulfill$currency(Event event) {
 		logger.debug("Entering");
 		Clients.clearWrongValue(this.currency);
 		Object dataObject = currency.getObject();
@@ -375,7 +374,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$limiDialogRule(Event event) throws Exception {
+	public void onFulfill$limiDialogRule(Event event) {
 		Clients.clearWrongValue(this.limiDialogRule);
 		logger.debug("Entering");
 		Object dataObject = limiDialogRule.getObject();
@@ -393,7 +392,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$limitStructureCode(Event event) throws Exception {
+	public void onFulfill$limitStructureCode(Event event) {
 		logger.debug(Literal.ENTERING);
 		Clients.clearWrongValue(this.limitStructureCode);
 
@@ -437,7 +436,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		}
 	}
 
-	public void onClickExpirydate(ForwardEvent event) throws Exception {
+	public void onClickExpirydate(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Datebox expDate = (Datebox) event.getOrigin().getTarget();
@@ -448,7 +447,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClickSanctionedAmount(ForwardEvent event) throws Exception {
+	public void onClickSanctionedAmount(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Decimalbox sanctionAmount = (Decimalbox) event.getOrigin().getTarget();
@@ -462,7 +461,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClickLimitCheck(ForwardEvent event) throws Exception {
+	public void onClickLimitCheck(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Checkbox limitCheck = (Checkbox) event.getOrigin().getTarget();
@@ -482,7 +481,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClickActulOrReserved(ForwardEvent event) throws Exception {
+	public void onClickActulOrReserved(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Combobox actualOrResevd = (Combobox) event.getOrigin().getTarget();
@@ -495,7 +494,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 	}
 
 	// ===================
-	public void onClickBankAggrmt(ForwardEvent event) throws Exception {
+	public void onClickBankAggrmt(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Combobox bnkAggrmt = (Combobox) event.getOrigin().getTarget();
@@ -505,7 +504,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClickLimitCondition(ForwardEvent event) throws Exception {
+	public void onClickLimitCondition(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Combobox bnkAggrmt = (Combobox) event.getOrigin().getTarget();
@@ -515,7 +514,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClickReference(ForwardEvent event) throws Exception {
+	public void onClickReference(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Textbox reference = (Textbox) event.getOrigin().getTarget();
@@ -525,7 +524,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClickReference1(ForwardEvent event) throws Exception {
+	public void onClickReference1(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Textbox reference1 = (Textbox) event.getOrigin().getTarget();
@@ -535,7 +534,7 @@ public class LimitDetailDialogCtrl extends GFCBaseCtrl<LimitHeader> implements S
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClicktenor(ForwardEvent event) throws Exception {
+	public void onClicktenor(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		Listitem item = (Listitem) event.getOrigin().getTarget().getParent().getParent();
 		Intbox tenor = (Intbox) event.getOrigin().getTarget();

@@ -106,7 +106,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_Welcome(Event event) throws Exception {
+	public void onCreate$window_Welcome(Event event) {
 		// Set the page level components.
 		setPageComponents(window_Welcome);
 
@@ -351,7 +351,7 @@ public class WelcomeCtrl extends GFCBaseCtrl<DashBoard> {
 	/**
 	 * On Select DashBoard Tab
 	 */
-	public synchronized void onDashBoardTabSelected(Event event) throws Exception {
+	public synchronized void onDashBoardTabSelected(Event event) {
 		logger.debug("Entering");
 		initilizeDashBords(true);
 		logger.debug("Leaving");

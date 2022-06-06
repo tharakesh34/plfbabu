@@ -185,9 +185,8 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	 * selected LimitStructure object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitStructureDialog(Event event) throws Exception {
+	public void onCreate$window_LimitStructureDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 		setPageComponents(window_LimitStructureDialog);
 		try {
@@ -541,7 +540,7 @@ public class LimitStructureDialogCtrl extends GFCBaseCtrl<LimitStructure> implem
 	private class AssignedLimitStructureDetailItemListModelRenderer implements ListitemRenderer<LimitStructureDetail> {
 
 		@Override
-		public void render(Listitem item, LimitStructureDetail limitStructureDetail, int count) throws Exception {
+		public void render(Listitem item, LimitStructureDetail limitStructureDetail, int count) {
 			logger.debug("Entering");
 			Combobox groupCode;
 			Listcell lc;

@@ -95,9 +95,8 @@ public class LegalPropertyTitleDialogCtrl extends GFCBaseCtrl<LegalPropertyTitle
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_LegalPropertyTitleDialog(Event event) throws Exception {
+	public void onCreate$window_LegalPropertyTitleDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(window_LegalPropertyTitleDialog);

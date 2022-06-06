@@ -64,7 +64,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 	// *************** Component Events ******************//
 	// ***************************************************//
 
-	public void onCreate$window_LimtDetailsHeaderDialog(Event event) throws Exception {
+	public void onCreate$window_LimtDetailsHeaderDialog(Event event) {
 		logger.debug("Entering");
 
 		setPageComponents(window_LimtDetailsHeaderDialog);
@@ -117,7 +117,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$customer(Event event) throws Exception {
+	public void onFulfill$customer(Event event) {
 		logger.debug("Entering");
 		btnProceed.setDisabled(false);
 		Object dataObject = customer.getObject();
@@ -146,7 +146,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$group(Event event) throws Exception {
+	public void onFulfill$group(Event event) {
 		logger.debug("Entering");
 		btnProceed.setDisabled(false);
 		Object dataObject = group.getObject();
@@ -181,7 +181,7 @@ public class LimtDetailsHeaderDialogCtrl extends GFCBaseCtrl<LimitHeader> implem
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering" + event.toString());
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 		if (getLimitHeader().getCustomerId() != 0 || getLimitHeader().getCustomerGroup() != 0) {

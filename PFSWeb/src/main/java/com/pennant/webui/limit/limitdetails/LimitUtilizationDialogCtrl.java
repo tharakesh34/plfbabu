@@ -120,9 +120,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	 * selected LimitHeader object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LimitUtilizationDialog(Event event) throws Exception {
+	public void onCreate$window_LimitUtilizationDialog(Event event) {
 		logger.debug("Entring" + event.toString());
 		try {
 
@@ -211,10 +210,8 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 
@@ -228,7 +225,7 @@ public class LimitUtilizationDialogCtrl extends GFCBaseCtrl<LimitHeader> impleme
 
 	}
 
-	public void onItemClick(ForwardEvent event) throws Exception {
+	public void onItemClick(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		try {

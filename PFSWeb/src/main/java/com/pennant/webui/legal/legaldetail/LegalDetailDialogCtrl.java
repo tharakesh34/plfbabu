@@ -288,9 +288,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
 	 * @param event An event sent to the event handler of the component.
-	 * @throws Exception
 	 */
-	public void onCreate$window_LegalDetailDialog(Event event) throws Exception {
+	public void onCreate$window_LegalDetailDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 		// Set the page level components.
 		setPageComponents(window_LegalDetailDialog);
@@ -1470,9 +1469,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLegalApplicantDetailItemDoubleClicked(Event event) throws Exception {
+	public void onLegalApplicantDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Listitem item = this.listBoxLegalApplicantDetail.getSelectedItem();
@@ -1654,9 +1652,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLegalPropertyDetailItemDoubleClicked(Event event) throws Exception {
+	public void onLegalPropertyDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Listitem item = this.listBoxLegalPropertyDetail.getSelectedItem();
@@ -1854,9 +1851,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLegalDocumentItemDoubleClicked(Event event) throws Exception {
+	public void onLegalDocumentItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Listitem item = this.listBoxLegalDocument.getSelectedItem();
@@ -2013,9 +2009,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLegalPropertyTitleItemDoubleClicked(Event event) throws Exception {
+	public void onLegalPropertyTitleItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		Listitem item = this.listBoxLegalPropertyTitle.getSelectedItem();
@@ -2127,9 +2122,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLegalECDetailItemDoubleClicked(Event event) throws Exception {
+	public void onLegalECDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		Listitem item = this.listBoxLegalECDetail.getSelectedItem();
@@ -2246,9 +2240,8 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 	 * Double click the item
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onLegalNoteItemDoubleClicked(Event event) throws Exception {
+	public void onLegalNoteItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		Listitem item = this.listBoxLegalNote.getSelectedItem();
@@ -2372,7 +2365,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		return arrayList;
 	}
 
-	public void onSelectCovTab(ForwardEvent event) throws Exception {
+	public void onSelectCovTab(ForwardEvent event) {
 		if (getFinCovenantTypeListCtrl() != null) {
 			getFinCovenantTypeListCtrl().doSetLabels(getHeaderBasicDetails());
 		}
@@ -2433,7 +2426,7 @@ public class LegalDetailDialogCtrl extends GFCBaseCtrl<LegalDetail> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onDocViewButtonClicked(Event event) throws Exception {
+	public void onDocViewButtonClicked(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		long docId = Long.parseLong(event.getData().toString());
