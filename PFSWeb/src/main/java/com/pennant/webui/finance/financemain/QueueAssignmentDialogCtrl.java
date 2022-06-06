@@ -143,9 +143,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 	 * selected QueueAssignments object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_QueueAssignmentDialog(Event event) throws Exception {
+	public void onCreate$window_QueueAssignmentDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -255,9 +254,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 	 * When user clicks on "cancel" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancel(Event event) throws Exception {
+	public void onClick$btnCancel(Event event) {
 		logger.debug("Entering " + event.toString());
 		doCancel();
 		logger.debug("Leaving " + event.toString());
@@ -287,10 +285,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 
 	/**
 	 * Opens the Dialog window modal.
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog() throws Exception {
+	public void doShowDialog() {
 		logger.debug("Entering ");
 
 		if (queueAssignmentHeader.isManualAssign()) {
@@ -701,10 +697,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 
 	/**
 	 * This method cancels the previous operations
-	 * 
-	 * @throws Exception
 	 */
-	private void doCancel() throws Exception {
+	private void doCancel() {
 		/*
 		 * tempUnAsgnRoleMap.clear(); newAssignedMap.clear(); unAssignedRoleList=tempUnAssignedRoleList; doShowDialog();
 		 */
@@ -839,10 +833,8 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.queueAssignmentHeader);
 	}
 
@@ -1118,7 +1110,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btn_Search(Event event) throws Exception {
+	public void onClick$btn_Search(Event event) {
 		logger.debug("Entering" + event.toString());
 		Listitem itemName = this.sortOperator_finReference.getSelectedItem();
 		int finFilterCode = ((SearchOperators) itemName.getAttribute("data")).getSearchOperatorId();
@@ -1134,7 +1126,7 @@ public class QueueAssignmentDialogCtrl extends GFCBaseCtrl<QueueAssignmentHeader
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$btn_Refresh(Event event) throws Exception {
+	public void onClick$btn_Refresh(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.sortOperator_finReference.setSelectedIndex(0);
 		this.finReference.setValue("");

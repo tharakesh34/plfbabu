@@ -225,10 +225,9 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectFinanceTypeDialog(Event event) throws Exception {
+	public void onCreate$window_SelectFinanceTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -809,9 +808,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (!isPromotionPick) {
@@ -1254,7 +1252,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
-	private void showSelectFinanceTypeDialog() throws InterruptedException {
+	private void showSelectFinanceTypeDialog() {
 		logger.debug("Entering");
 		try {
 			// open the dialog in modal mode
@@ -1267,10 +1265,8 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	/**
 	 * Sets the Validation by setting the accordingly constraints to the fields.
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doFieldValidation() throws InterruptedException {
+	private void doFieldValidation() {
 		logger.debug("Entering ");
 		doClearMessage();
 		doRemoveValidation();
@@ -1390,7 +1386,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving ");
 	}
 
-	private boolean checkDedup() throws Exception {
+	private boolean checkDedup() {
 		if (newCust.isChecked()) {
 			String primaryId = eidNumber.getValue();
 
@@ -1424,7 +1420,7 @@ public class SelectFinanceTypeDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		return false;
 	}
 
-	private boolean checkExternalDedup(String primaryId) throws Exception {
+	private boolean checkExternalDedup(String primaryId) {
 		CustomerDetails customerDetails = new CustomerDetails();
 		CustomerDedup custDedup = new CustomerDedup();
 		String primaryIDType = null;

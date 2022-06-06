@@ -301,9 +301,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ScheduleDetailDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_ScheduleDetailDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -646,10 +645,9 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("rawtypes")
-	public void doShowDialog() throws InterruptedException {
+	public void doShowDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -1231,9 +1229,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnPrintSchedule" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintSchedule(Event event) throws Exception {
+	public void onClick$btnPrintSchedule(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		if (getFinScheduleData() == null) {
@@ -1574,9 +1571,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Mehtod to capture event when review rate item double clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onReviewRateItemDoubleClicked(Event event) throws Exception {
+	public void onReviewRateItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem item = this.listBoxSchedule.getSelectedItem();
@@ -1609,9 +1605,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Method to capture event when disbursement item double clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onDisburseItemDoubleClicked(Event event) throws Exception {
+	public void onDisburseItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem item = this.listBoxSchedule.getSelectedItem();
@@ -1643,9 +1638,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * Method to capture event when repay item is double clicked
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onRepayItemDoubleClicked(Event event) throws Exception {
+	public void onRepayItemDoubleClicked(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem item = this.listBoxSchedule.getSelectedItem();
@@ -1676,9 +1670,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "AddReviewRate" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAddReviewRate(Event event) throws Exception {
+	public void onClick$btnAddReviewRate(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1702,9 +1695,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "AddDatedSchedule" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAddDatedSchedule(Event event) throws Exception {
+	public void onClick$btnAddDatedSchedule(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1725,9 +1717,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "AddRepay" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnChangeRepay(Event event) throws Exception {
+	public void onClick$btnChangeRepay(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1752,9 +1743,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the button ChangeRepay button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnChangeProfit(Event event) throws Exception {
+	public void onClick$btnChangeProfit(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
@@ -1775,9 +1765,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the button Change frequency button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnChangeFrq(Event event) throws Exception {
+	public void onClick$btnChangeFrq(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1799,9 +1788,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the button Re Scheduling button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReschedule(Event event) throws Exception {
+	public void onClick$btnReschedule(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1823,9 +1811,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "AddDisbursement" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAddDisbursement(Event event) throws Exception {
+	public void onClick$btnAddDisbursement(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
@@ -1849,9 +1836,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "CancelDisbursement" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnCancelDisbursement(Event event) throws Exception {
+	public void onClick$btnCancelDisbursement(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
@@ -1874,9 +1860,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnPostponement" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPostponement(Event event) throws Exception {
+	public void onClick$btnPostponement(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1899,9 +1884,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnUnPlanned EMI" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnUnPlanEMIH(Event event) throws Exception {
+	public void onClick$btnUnPlanEMIH(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1924,9 +1908,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnReAge" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReAgeHolidays(Event event) throws Exception {
+	public void onClick$btnReAgeHolidays(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1949,9 +1932,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnAddTerms" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnAddTerms(Event event) throws Exception {
+	public void onClick$btnAddTerms(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -1975,9 +1957,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnRmvTerms" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRmvTerms(Event event) throws Exception {
+	public void onClick$btnRmvTerms(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -2001,9 +1982,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnSubSchedule" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSubSchedule(Event event) throws Exception {
+	public void onClick$btnSubSchedule(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -2025,9 +2005,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "btnReCalcualte" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReCalcualte(Event event) throws Exception {
+	public void onClick$btnReCalcualte(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -2051,9 +2030,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "AddRepay" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnHoldEMI(Event event) throws Exception {
+	public void onClick$btnHoldEMI(Event event) {
 		logger.debug("Entering" + event.toString());
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finScheduleData", getFinScheduleData());
@@ -2076,9 +2054,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the button Scheduling method Change button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSchdChng(Event event) throws Exception {
+	public void onClick$btnSchdChng(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();
@@ -2201,9 +2178,8 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "Linked Reference " Label is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$label_ScheduleDetailDialog_DPScheduleLink(Event event) throws Exception {
+	public void onClick$label_ScheduleDetailDialog_DPScheduleLink(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		try {
@@ -2223,9 +2199,12 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	 * when the "AddReviewRate" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnRecalEMIH(Event event) throws Exception {
+	public void onClick$btnRecalEMIH(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		if (validPlanEMIHs()) {
 
@@ -2374,15 +2353,11 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 	/**
 	 * Method for Validating Selected Plan EMI Holiday Months
 	 * 
-	 * @throws InterruptedException
-	 * @throws InvocationTargetException
-	 * @throws IllegalArgumentException
-	 * @throws IllegalAccessException
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	private boolean validPlanEMIHs() throws InterruptedException, NoSuchMethodException, SecurityException,
-			IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	private boolean validPlanEMIHs() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 
 		// Finance Basic Details comparison for Schedule Regeneration Required
@@ -2522,7 +2497,7 @@ public class ScheduleDetailDialogCtrl extends GFCBaseCtrl<FinanceScheduleDetail>
 		return appDatevalidationReq;
 	}
 
-	public void onClick$btnRestructure(Event event) throws Exception {
+	public void onClick$btnRestructure(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		final Map<String, Object> map = new HashMap<String, Object>();

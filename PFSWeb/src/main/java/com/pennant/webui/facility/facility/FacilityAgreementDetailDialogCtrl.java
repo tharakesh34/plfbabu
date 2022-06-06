@@ -37,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.spring.SpringUtil;
 import org.zkoss.util.resource.Labels;
-import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Html;
@@ -282,22 +281,17 @@ public class FacilityAgreementDetailDialogCtrl extends GFCBaseCtrl<FinAgreementD
 	 * Method for Generating Template replaced to Finance Details
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onGenerateReportClicked(ForwardEvent event) throws Exception {
+	public void onGenerateReportClicked(ForwardEvent event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		FacilityReferenceDetail data = (FacilityReferenceDetail) event.getData();
+
 		try {
 			Object object = getCtrlObject().getClass().getMethod("getAgrFacilitty").invoke(ctrlObject);
 			if (object != null) {
 				setFacility((Facility) object);
 			}
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(WrongValuesException.class)) {
-				throw e;
-			}
-		}
-		try {
+
 			if (getFacility() != null) {
 				custid = getFacility().getCustID();
 				AgreementEngine engine = new AgreementEngine();

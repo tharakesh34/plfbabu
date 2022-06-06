@@ -32,14 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.script.ScriptException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zk.ui.event.ForwardEvent;
 import org.zkoss.zul.Borderlayout;
@@ -368,30 +365,27 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * Method for Executing Finance Eligibility Details List
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnElgRule(Event event) throws Exception {
+	public void onClick$btnElgRule(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug(Literal.ENTERING);
 
 		if (isWIF) {
 			doCheckWIFFinEligibility(true);
 		} else {
 			boolean custValidated = true;
-			try {
-				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation")
-						.invoke(getFinanceMainDialogCtrl());
-				setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail")
-						.invoke(getFinanceMainDialogCtrl()));
-				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doExtendedDetailsValidation")
-						.invoke(getFinanceMainDialogCtrl());
-				custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doPSLDetailsValidation")
-						.invoke(getFinanceMainDialogCtrl());
-			} catch (Exception e) {
-				if (e.getCause().getClass().equals(WrongValuesException.class)) {
-					throw e;
-				}
-				logger.error("Exception: ", e);
-			}
+
+			custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doCustomerValidation")
+					.invoke(getFinanceMainDialogCtrl());
+			setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("getFinanceDetail")
+					.invoke(getFinanceMainDialogCtrl()));
+			custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doExtendedDetailsValidation")
+					.invoke(getFinanceMainDialogCtrl());
+			custValidated = (Boolean) getFinanceMainDialogCtrl().getClass().getMethod("doPSLDetailsValidation")
+					.invoke(getFinanceMainDialogCtrl());
 
 			if (custValidated) {
 				doCheckFinEligibility(false);
@@ -405,9 +399,8 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * Click event for eligibility
 	 * 
 	 * @param isSave
-	 * @throws ScriptException
 	 */
-	public void doCheckFinEligibility(boolean isSave) throws ScriptException {
+	public void doCheckFinEligibility(boolean isSave) {
 		logger.debug(Literal.ENTERING);
 
 		// Clear eligibility summary status.
@@ -513,10 +506,9 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * @param finElgDet
 	 * @param aFinanceDetail
 	 * @return
-	 * @throws ScriptException
 	 */
 	public FinanceDeviations doExecuteAndCheckDeviations(FinanceEligibilityDetail finElgDet,
-			FinanceDetail aFinanceDetail) throws ScriptException {
+			FinanceDetail aFinanceDetail) {
 
 		CustomerEligibilityCheck customerEligibilityCheck = aFinanceDetail.getCustomerEligibilityCheck();
 		String finCcy = aFinanceDetail.getFinScheduleData().getFinanceMain().getFinCcy();
@@ -600,9 +592,12 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * This method set the check list details to aFinanceDetail
 	 * 
 	 * @param aFinanceDetail
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public FinanceDetail doSave_EligibilityList(FinanceDetail aFinanceDetail) throws Exception {
+	public FinanceDetail doSave_EligibilityList(FinanceDetail aFinanceDetail)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering ");
 		setFinanceDetail(aFinanceDetail);
 		if (isWIF) {
@@ -620,24 +615,21 @@ public class EligibilityDetailDialogCtrl extends GFCBaseCtrl<FinanceEligibilityD
 	 * Click event for eligibility
 	 * 
 	 * @param isSave
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void doCheckWIFFinEligibility(boolean isUserAction) throws Exception {
+	public void doCheckWIFFinEligibility(boolean isUserAction)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering");
 		this.label_ElgRuleSummaryVal.setValue("");
 
 		FinanceDetail aFinanceDetail = new FinanceDetail();
 		Cloner cloner = new Cloner();
 		aFinanceDetail = cloner.deepClone(getFinanceDetail());
-		try {
-			aFinanceDetail = (FinanceDetail) getFinanceMainDialogCtrl().getClass()
-					.getMethod("dofillEligibilityData", Boolean.class).invoke(getFinanceMainDialogCtrl(), isUserAction);
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(WrongValuesException.class)) {
-				throw e;
-			}
-			logger.error("Exception: ", e);
-		}
+
+		aFinanceDetail = (FinanceDetail) getFinanceMainDialogCtrl().getClass()
+				.getMethod("dofillEligibilityData", Boolean.class).invoke(getFinanceMainDialogCtrl(), isUserAction);
 
 		for (FinanceEligibilityDetail financeEligibilityDetail : eligibilityRuleList) {
 			if (financeEligibilityDetail.isExecute()) {

@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  FinanceMainDialogCtrl.java                                           * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  12-11-2011    														*
- *                                                                  						*
- * Modified Date    :  12-11-2011    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : FinanceMainDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 12-11-2011 * *
+ * Modified Date : 12-11-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 12-11-2011       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 12-11-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.finance.financemain;
@@ -55,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zkoss.util.resource.Labels;
 import org.zkoss.zk.ui.Executions;
-import org.zkoss.zk.ui.WrongValuesException;
 import org.zkoss.zk.ui.event.Event;
 import org.zkoss.zul.Button;
 import org.zkoss.zul.Groupbox;
@@ -91,7 +72,6 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.util.PennantAppUtil;
 import com.pennant.webui.util.GFCBaseCtrl;
-import com.pennanttech.pennapps.core.InterfaceException;
 import com.pennanttech.pennapps.web.util.MessageUtil;
 import com.pennanttech.pff.constants.AccountingEvent;
 
@@ -143,7 +123,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	private PagedListService pagedListService;
 	public List<ReturnDataSet> postingAccountSet = null;
 
-	//Bean Setters  by application Context
+	// Bean Setters by application Context
 	private AccountEngineExecution engineExecution;
 	private String roleCode = "";
 
@@ -166,9 +146,8 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_StageAccountingDetailsDialog(Event event) throws Exception {
+	public void onCreate$window_StageAccountingDetailsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -206,13 +185,12 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param afinanceMain
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(FinanceDetail afinanceDetail) throws InterruptedException {
+	public void doShowDialog(FinanceDetail afinanceDetail) {
 		logger.debug("Entering");
 		try {
 
-			// append finance basic details 
+			// append finance basic details
 			appendFinBasicDetails();
 
 			// fill the components with the data
@@ -354,9 +332,12 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	 * Method for Executing Stage Accounting Details List
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
 	 */
-	public void onClick$btnStageAccounting(Event event) throws Exception {
+	public void onClick$btnStageAccounting(Event event)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		logger.debug("Entering" + event.toString());
 		validateFinanceDetail();
 
@@ -365,7 +346,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	}
 
 	@SuppressWarnings("unchecked")
-	public void doSetStageAccounting() throws InterfaceException, IllegalAccessException, InvocationTargetException {
+	public void doSetStageAccounting() {
 
 		if (StringUtils.trimToEmpty(getFinanceMain().getRecordType()).equals(PennantConstants.RECORD_TYPE_NEW)) {
 			getFinanceMain().setCurDisbursementAmt(getFinanceMain().getFinAmount());
@@ -400,26 +381,26 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 		dofillStageAccountingSetbox(accountingSetEntries);
 	}
 
-	/** Validate basic Finance Details **/
-	public void validateFinanceDetail() throws Exception {
-		try {
-			setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("onExecuteStageAccDetail")
-					.invoke(getFinanceMainDialogCtrl()));
-		} catch (Exception e) {
-			if (e.getCause().getClass().equals(WrongValuesException.class)) {
-				throw e;
-			}
-			logger.error("Exception: ", e);
-		}
+	/**
+	 * Validate basic Finance Details
+	 * 
+	 * @throws NoSuchMethodException
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 **/
+	public void validateFinanceDetail()
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		setFinanceDetail((FinanceDetail) getFinanceMainDialogCtrl().getClass().getMethod("onExecuteStageAccDetail")
+				.invoke(getFinanceMainDialogCtrl()));
+
 	}
 
 	/**
 	 * when the "btnPrintStageAccounting" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintStageAccounting(Event event) throws Exception {
+	public void onClick$btnPrintStageAccounting(Event event) {
 		logger.debug("Entering" + event.toString());
 		String usrName = getUserWorkspace().getUserDetails().getUsername();
 		FinanceMain financeMain = getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -437,8 +418,9 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				detail.setTransDesc(dataSet.getTranDesc());
 				detail.setCcy(dataSet.getAcCcy());
 				detail.setAccount(PennantApplicationUtil.formatAccountNumber(dataSet.getAccount()));
-				detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(), dataSet.getFormatter() == 0
-						? CurrencyUtil.getFormat(getFinanceMain().getFinCcy()) : dataSet.getFormatter()));
+				detail.setPostAmount(PennantAppUtil.amountFormate(dataSet.getPostAmount(),
+						dataSet.getFormatter() == 0 ? CurrencyUtil.getFormat(getFinanceMain().getFinCcy())
+								: dataSet.getFormatter()));
 				accountingDetails.add(detail);
 			}
 
@@ -477,8 +459,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 	/**
 	 * Method to fill list box in Accounting Tab <br>
 	 * 
-	 * @param postingAccountingset
-	 *            (List)
+	 * @param postingAccountingset (List)
 	 * 
 	 */
 	public void doFillPostAccountings(List<ReturnDataSet> postingAccountingset) {
@@ -498,7 +479,7 @@ public class StageAccountingDetailDialogCtrl extends GFCBaseCtrl<ReturnDataSet> 
 				Listcell lc;
 				ReturnDataSet postAccountSet = (ReturnDataSet) postingAccountingset.get(i);
 
-				//Highlighting Failed Posting Details 
+				// Highlighting Failed Posting Details
 				String sClassStyle = "";
 				if (StringUtils.isNotBlank(postAccountSet.getErrorId())
 						&& !"0000".equals(StringUtils.trimToEmpty(postAccountSet.getErrorId()))) {

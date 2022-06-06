@@ -755,7 +755,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onCheck$useExisting(Event event) throws WrongValueException, Exception {
+	public void onCheck$useExisting(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClearMessage();
 		useExisting();
@@ -2194,7 +2194,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		}
 	}
 
-	public void onFulfill$mandateRef(Event event) throws WrongValueException, Exception {
+	public void onFulfill$mandateRef(Event event) {
 		logger.debug("Entering");
 
 		Object dataObject = mandateRef.getObject();
@@ -2262,7 +2262,7 @@ public class MandateDialogCtrl extends GFCBaseCtrl<Mandate> {
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$maxLimit(Event event) throws WrongValueException, Exception {
+	public void onFulfill$maxLimit(Event event) {
 		logger.debug("Entering");
 
 		this.amountInWords.setValue(AmtInitialCap());

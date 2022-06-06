@@ -106,9 +106,8 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * selected FinanceRepayPriority object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceRepayPriorityDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceRepayPriorityDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -348,9 +347,8 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceRepayPriority
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceRepayPriority aFinanceRepayPriority) throws Exception {
+	public void doShowDialog(FinanceRepayPriority aFinanceRepayPriority) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -764,7 +762,7 @@ public class FinanceRepayPriorityDialogCtrl extends GFCBaseCtrl<FinanceRepayPrio
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeRepayPriority);
 	}
 
