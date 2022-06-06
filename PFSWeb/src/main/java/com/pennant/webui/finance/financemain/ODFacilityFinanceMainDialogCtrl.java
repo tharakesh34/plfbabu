@@ -47,9 +47,8 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 	 * selected financeMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ODFacilityFinanceMainDialog(Event event) throws Exception {
+	public void onCreate$window_ODFacilityFinanceMainDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -158,9 +157,8 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClose$window_ODFacilityFinanceMainDialog(Event event) throws Exception {
+	public void onClose$window_ODFacilityFinanceMainDialog(Event event) {
 		logger.debug("Entering " + event.toString());
 		doClose();
 		logger.debug("Leaving " + event.toString());
@@ -194,9 +192,8 @@ public class ODFacilityFinanceMainDialogCtrl extends FinanceMainBaseCtrl impleme
 	 * when the "close" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		try {

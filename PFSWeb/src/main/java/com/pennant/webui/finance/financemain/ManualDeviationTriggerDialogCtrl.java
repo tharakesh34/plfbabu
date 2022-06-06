@@ -136,9 +136,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * selected FinAdvancePaymentsDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ManualDeviationTrigger(Event event) throws Exception {
+	public void onCreate$window_ManualDeviationTrigger(Event event) {
 		logger.debug("Entering");
 		// Set the page level components.
 		setPageComponents(window_ManualDeviationTrigger);
@@ -294,10 +293,8 @@ public class ManualDeviationTriggerDialogCtrl extends GFCBaseCtrl<FinanceDeviati
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeDeviations);
 	}
 

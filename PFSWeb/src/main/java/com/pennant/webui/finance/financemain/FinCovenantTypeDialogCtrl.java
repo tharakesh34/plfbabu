@@ -162,9 +162,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 * selected FinCovenantTypeDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinCovenantTypeDialog(Event event) throws Exception {
+	public void onCreate$window_FinCovenantTypeDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -333,10 +332,8 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finCovenantTypes);
 	}
 
@@ -1040,7 +1037,7 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		return auditHeader;
 	}
 
-	public void onCheck$alwWaiver(Event event) throws Exception {
+	public void onCheck$alwWaiver(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSetWaiverProp();
 
@@ -1052,11 +1049,11 @@ public class FinCovenantTypeDialogCtrl extends GFCBaseCtrl<FinCovenantType> {
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onCheck$alwPostpone(Event event) throws Exception {
+	public void onCheck$alwPostpone(Event event) {
 		doSetPostponeProp();
 	}
 
-	public void onCheck$alwOtc(Event event) throws Exception {
+	public void onCheck$alwOtc(Event event) {
 		doSetOTCProp();
 	}
 

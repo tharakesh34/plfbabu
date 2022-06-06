@@ -167,10 +167,9 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 * selected FinOCRDialog object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_FinOCRDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinOCRDialog(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1490,10 +1489,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 * Called when changing the value of the text box
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws WrongValueException
 	 */
-	public void onValueChange$totalDemand(Event event) throws Exception {
+	public void onValueChange$totalDemand(Event event) {
 		logger.trace(Literal.ENTERING);
 		// this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
 		this.totalReceivable
@@ -1505,10 +1502,8 @@ public class FinOCRDialogCtrl extends GFCBaseCtrl<FinOCRHeader> {
 	 * Called when changing the value of the text box
 	 * 
 	 * @param event
-	 * @throws InterruptedException
-	 * @throws WrongValueException
 	 */
-	public void onFulfill$totalDemand(Event event) throws Exception {
+	public void onFulfill$totalDemand(Event event) {
 		logger.trace(Literal.ENTERING);
 		// this.totalReceivable.setValue((totalDemand.getValue()*customerPortion.getValue())/100);
 		this.totalReceivable
