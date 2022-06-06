@@ -189,9 +189,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	 * selected OverdueChargeRecovery object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_OverdueChargeRecoveryDialog(Event event) throws Exception {
+	public void onCreate$window_OverdueChargeRecoveryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -677,9 +676,8 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aOverdueChargeRecovery
-	 * @throws InterruptedException
 	 */
-	public void doShowDialog(OverdueChargeRecovery aOverdueChargeRecovery) throws InterruptedException {
+	public void doShowDialog(OverdueChargeRecovery aOverdueChargeRecovery) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -955,11 +953,9 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws InterruptedException
+	 * Saves the components to table.
 	 */
-	public void doSave() throws InterruptedException {
+	public void doSave() {
 		logger.debug("Entering");
 		final OverdueChargeRecovery aOverdueChargeRecovery = new OverdueChargeRecovery();
 		BeanUtils.copyProperties(getOverdueChargeRecovery(), aOverdueChargeRecovery);
@@ -1219,7 +1215,7 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.overdueChargeRecovery);
 	}
 
@@ -1256,10 +1252,11 @@ public class OverdueChargeRecoveryDialogCtrl extends GFCBaseCtrl<OverdueChargeRe
 	 * when the "Recover Now" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
 	 */
 	@SuppressWarnings("serial")
-	public void onClick$btnRecoverNow(Event event) throws Exception {
+	public void onClick$btnRecoverNow(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug("Entering" + event.toString());
 
 		int format = CurrencyUtil.getFormat(getOverdueChargeRecovery().getFinCcy());

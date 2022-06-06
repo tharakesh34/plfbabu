@@ -24,8 +24,6 @@
  */
 package com.pennant.webui.financemanagement.provision;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -37,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -170,9 +166,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * selected Provision object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ProvisionDialog(Event event) throws Exception {
+	public void onCreate$window_ProvisionDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -322,9 +317,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -407,9 +401,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aProvision Provision
-	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents(Provision aProvision) throws InterruptedException {
+	public void doWriteBeanToComponents(Provision aProvision) {
 
 		logger.debug("Entering");
 
@@ -615,9 +608,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aProvision
-	 * @throws Exception
 	 */
-	public void doShowDialog(Provision aProvision) throws Exception {
+	public void doShowDialog(Provision aProvision) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -648,9 +640,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ProvisionDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -799,11 +790,9 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 	}
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final Provision aProvision = new Provision();
@@ -1196,7 +1185,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 	}
 
-	public void doshowProvisionDialog() throws Exception {
+	public void doshowProvisionDialog() {
 		logger.debug("Entering");
 		doSetFieldProperties();
 		FinanceDetail fd = getFinanceDetail();
@@ -1283,8 +1272,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 	}
 
-	private void doLoadWorkFlow(Provision provision)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	private void doLoadWorkFlow(Provision provision) {
 		logger.debug("Entering");
 		String roleCode = null;
 		if (!provision.isNewRecord() && StringUtils.trimToEmpty(provision.getNextTaskId()).contains(";")) {
@@ -1397,10 +1385,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -1426,11 +1412,8 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		FinanceDetail fd = getFinanceDetail();
@@ -1477,7 +1460,7 @@ public class ProvisionDialogCtrl extends FinanceBaseCtrl<Provision> {
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.provision);
 	}
 

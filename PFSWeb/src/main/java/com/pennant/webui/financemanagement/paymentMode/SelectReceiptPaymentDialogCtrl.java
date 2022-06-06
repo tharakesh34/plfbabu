@@ -174,7 +174,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	}
 
-	public void onCreate$window_SelectReceiptPaymentDialog(Event event) throws Exception {
+	public void onCreate$window_SelectReceiptPaymentDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -217,7 +217,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 
 	}
 
-	public void onChange$receiptPurpose(Event event) throws Exception {
+	public void onChange$receiptPurpose(Event event) {
 		loadValueDate();
 		this.btnValidate.setDisabled(false);
 		if (!isKnockOff && !isForeClosure) {
@@ -250,12 +250,12 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		this.row_valueDate.setVisible(true);
 	}
 
-	public void onChange$receiptDate(Event event) throws Exception {
+	public void onChange$receiptDate(Event event) {
 		loadValueDate();
 		this.btnValidate.setDisabled(false);
 	}
 
-	public void onChange$knockOffFrom(Event event) throws Exception {
+	public void onChange$knockOffFrom(Event event) {
 
 		this.referenceId.setMandatoryStyle(true);
 		this.referenceId.setDescColumn("BalanceAmt");
@@ -424,9 +424,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 * When user changes textbox "custCIF"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		customer = fetchCustomerDataByCIF();
 		addFilter(customer);
 	}
@@ -435,9 +434,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 * When user changes textbox "custCIF"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$receiptMode(Event event) throws Exception {
+	public void onChange$receiptMode(Event event) {
 		this.row_subReceiptMode.setVisible(false);
 		this.row_ReceiptChannel.setVisible(false);
 
@@ -476,9 +474,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 		receiptData.setEnquiry(true);
 		doSetValidation();
@@ -589,9 +586,8 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 	 * When user clicks on button "btnValidate" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnValidate(Event event) throws Exception {
+	public void onClick$btnValidate(Event event) {
 		this.btnProceed.setDisabled(true);
 		receiptData.setEnquiry(true);
 		doSetValidation();
@@ -998,7 +994,7 @@ public class SelectReceiptPaymentDialogCtrl extends GFCBaseCtrl<FinReceiptHeader
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void doWriteComponentsToBean() throws Exception {
+	public void doWriteComponentsToBean() {
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
 
 		try {
