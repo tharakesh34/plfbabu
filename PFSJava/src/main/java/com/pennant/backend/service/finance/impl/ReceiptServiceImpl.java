@@ -1523,7 +1523,7 @@ public class ReceiptServiceImpl extends GenericFinanceDetailService implements R
 	}
 
 	@Override
-	public AuditHeader doApprove(AuditHeader auditHeader) throws Exception {
+	public AuditHeader doApprove(AuditHeader auditHeader) {
 		logger.debug(Literal.ENTERING);
 
 		FinReceiptData ard = (FinReceiptData) auditHeader.getAuditDetail().getModelData();

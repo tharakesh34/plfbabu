@@ -42,8 +42,7 @@ public interface ReceiptService {
 	AuditHeader doReversal(AuditHeader auditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException;
 
-	AuditHeader doApprove(AuditHeader aAuditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException, Exception;
+	AuditHeader doApprove(AuditHeader aAuditHeader);
 
 	FinReceiptHeader getFinReceiptHeaderById(long receiptID, boolean isFeePayment, String type);
 

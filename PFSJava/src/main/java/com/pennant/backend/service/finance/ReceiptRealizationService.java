@@ -13,8 +13,7 @@ public interface ReceiptRealizationService {
 	AuditHeader saveOrUpdate(AuditHeader auditHeader)
 			throws InterfaceException, IllegalAccessException, InvocationTargetException;
 
-	AuditHeader doApprove(AuditHeader auditHeader)
-			throws InterfaceException, IllegalAccessException, InvocationTargetException;
+	AuditHeader doApprove(AuditHeader auditHeader);
 
 	AuditHeader doReject(AuditHeader auditHeader) throws InterfaceException;
 

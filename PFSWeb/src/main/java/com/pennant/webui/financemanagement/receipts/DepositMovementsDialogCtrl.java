@@ -1,45 +1,27 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  DepositDetailsDialogCtrl.java                               			* 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  10-07-2018    														*
- *                                                                  						*
- * Modified Date    :  10-07-2018    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : DepositDetailsDialogCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-07-2018 * *
+ * Modified Date : 10-07-2018 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-07-2018       PENNANT	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-07-2018 PENNANT 0.1 * * * * * * * * *
  ********************************************************************************************
-*/
+ */
 package com.pennant.webui.financemanagement.receipts;
 
 import java.math.BigDecimal;
@@ -145,11 +127,9 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	 * 
 	 * The framework calls this event handler when an application requests that the window to be created.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
-	 * @throws Exception
+	 * @param event An event sent to the event handler of the component.
 	 */
-	public void onCreate$window_DepositMovementsDialog(Event event) throws Exception {
+	public void onCreate$window_DepositMovementsDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -246,13 +226,12 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the save button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 
-		//doSave();
+		// doSave();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -260,8 +239,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the edit button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnEdit(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -274,8 +252,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the help button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnHelp(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -288,13 +265,12 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the delete button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnDelete(Event event) throws InterruptedException {
 		logger.debug(Literal.ENTERING);
 
-		//doDelete();
+		// doDelete();
 
 		logger.debug(Literal.LEAVING);
 	}
@@ -302,8 +278,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the cancel button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnCancel(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -316,8 +291,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -330,8 +304,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * The framework calls this event handler when user clicks the notes button.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of the component.
+	 * @param event An event sent to the event handler of the component.
 	 */
 	public void onClick$btnNotes(Event event) {
 		logger.debug(Literal.ENTERING);
@@ -513,34 +486,34 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 				item = new Listitem();
 				Listcell lc = null;
 
-				//FinReference
+				// FinReference
 				lc = new Listcell(depositCheque.getFinReference());
 				lc.setParent(item);
-				//Customer Name
+				// Customer Name
 				lc = new Listcell(depositCheque.getCustShrtName());
 				lc.setParent(item);
-				//Cheque/DD No
+				// Cheque/DD No
 				lc = new Listcell(depositCheque.getFavourNumber());
 				lc.setParent(item);
-				//Cheque/DD Date
+				// Cheque/DD Date
 				lc = new Listcell(DateUtility.formatToLongDate(depositCheque.getReceivedDate()));
 				lc.setParent(item);
-				//Bank Name
-				//lc = new Listcell(depositCheque.getPartnerBankCode());
-				//lc.setParent(item);
-				//Amount
+				// Bank Name
+				// lc = new Listcell(depositCheque.getPartnerBankCode());
+				// lc.setParent(item);
+				// Amount
 				lc = new Listcell(
 						PennantAppUtil.amountFormate(depositCheque.getAmount(), PennantConstants.defaultCCYDecPos));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
-				//Receipt Purpose
+				// Receipt Purpose
 				lc = new Listcell(PennantAppUtil.getlabelDesc(depositCheque.getReceiptpurpose(),
 						PennantStaticListUtil.getReceiptPurpose()));
 				lc.setParent(item);
 				lc = new Listcell(depositCheque.getRemarks());
 				lc.setParent(item);
 
-				//Postings
+				// Postings
 				Button postings = new Button("Postings");
 				lc = new Listcell();
 				lc.appendChild(postings);
@@ -626,8 +599,7 @@ public class DepositMovementsDialogCtrl extends GFCBaseCtrl<DepositDetails> {
 	/**
 	 * Displays the dialog page.
 	 * 
-	 * @param depositMovements
-	 *            The entity that need to be render.
+	 * @param depositMovements The entity that need to be render.
 	 */
 	public void doShowDialog(DepositMovements depositMovements) {
 		logger.debug(Literal.LEAVING);

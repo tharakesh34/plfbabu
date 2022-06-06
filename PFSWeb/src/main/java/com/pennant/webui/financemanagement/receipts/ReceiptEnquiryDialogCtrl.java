@@ -79,7 +79,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Window window_ReceiptEnquiryDialog;
 	protected Borderlayout borderlayout_Receipt;
 
-	//Receipt Details
+	// Receipt Details
 	protected Textbox finType;
 	protected Textbox finReference;
 	protected Textbox finCcy;
@@ -123,7 +123,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Row row_remarks;
 	protected Listbox listBoxReceipts;
 
-	//Allocation Details
+	// Allocation Details
 	protected Textbox allocation_finType;
 	protected Textbox allocation_finReference;
 	protected Textbox allocation_finCcy;
@@ -146,7 +146,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	protected Textbox extReference;
 
 	protected Groupbox gb_FeeDetail;
-	//TODO: labels are same
+	// TODO: labels are same
 	protected Listbox listBoxFeeDetail;
 	private Row row_BounceReason;
 	private Row row_BounceRemarks;
@@ -193,9 +193,8 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_ReceiptEnquiryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -234,7 +233,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				this.btnPrint.setVisible(false);
 			}
 
-			//Reset Finance Repay Header Details
+			// Reset Finance Repay Header Details
 			doWriteBeanToComponents();
 			this.borderlayout_Receipt.setHeight(getBorderLayoutHeight());
 			setDialog(DialogType.EMBEDDED);
@@ -251,10 +250,10 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 */
 	protected void doSetFieldProperties() {
 		logger.debug("Entering");
-		//Empty sent any required attributes
+		// Empty sent any required attributes
 		int formatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 
-		//Receipts Details
+		// Receipts Details
 		this.receiptAmount.setProperties(true, formatter);
 		this.realizationDate.setFormat(DateFormat.SHORT_DATE.getPattern());
 
@@ -335,19 +334,19 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			}
 		}
 
-		//Post Branch
+		// Post Branch
 		this.postBranch.setModuleName("Branch");
 		this.postBranch.setValueColumn("BranchCode");
 		this.postBranch.setDescColumn("BranchDesc");
 		this.postBranch.setValidateColumns(new String[] { "BranchCode" });
 
-		//Cashier Branch
+		// Cashier Branch
 		this.cashierBranch.setModuleName("Branch");
 		this.cashierBranch.setValueColumn("BranchCode");
 		this.cashierBranch.setDescColumn("BranchDesc");
 		this.cashierBranch.setValidateColumns(new String[] { "BranchCode" });
 
-		//Fin Division
+		// Fin Division
 		this.finDivision.setModuleName("DivisionDetail");
 		this.finDivision.setValueColumn("DivisionCode");
 		this.finDivision.setDescColumn("DivisionCodeDesc");
@@ -388,7 +387,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.effScheduleMethod);
 		readOnlyComponent(true, this.realizationDate);
 
-		//Receipt Details
+		// Receipt Details
 		readOnlyComponent(true, this.favourNo);
 		readOnlyComponent(true, this.valueDate);
 		readOnlyComponent(true, this.bankCode);
@@ -403,7 +402,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		readOnlyComponent(true, this.receivedDate);
 		readOnlyComponent(true, this.remarks);
 
-		//Upfront fees changes
+		// Upfront fees changes
 		readOnlyComponent(true, this.custID);
 		readOnlyComponent(true, this.reference);
 		readOnlyComponent(true, this.cashierBranch);
@@ -416,8 +415,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -667,7 +665,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 					this.listBoxPastdues.appendChild(item);
 					if (StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_TDS)
 							|| StringUtils.equals(allocation.getAllocationType(), RepayConstants.ALLOCATION_PFT)) {
-						//Nothing TO DO
+						// Nothing TO DO
 					} else {
 						totalPaidAmount = totalPaidAmount.add(allocation.getPaidAmount());
 						totalWaivedAmount = totalWaivedAmount.add(allocation.getWaivedAmount());
@@ -815,7 +813,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// Printer integration starts
 
-	public void onClick$btnPrint(Event event) throws Exception {
+	public void onClick$btnPrint(Event event) {
 		logger.debug(Literal.ENTERING);
 		int finFormatter = CurrencyUtil.getFormat(getReceiptHeader().getFinCcy());
 		doClearMessage();
@@ -908,7 +906,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			BigDecimal totalPaid = BigDecimal.ZERO;
 			this.gb_FeeDetail.setVisible(true);
 
-			//IMD Total Allocated Amount with GST
+			// IMD Total Allocated Amount with GST
 			Decimalbox totalPaidBox = getDecimalbox(finFormatter, true);
 			List<FinFeeDetail> tempFeeDetailList = new ArrayList<>(feeDetails.size());
 			for (int i = 0; i < feeDetails.size(); i++) {
@@ -917,28 +915,28 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 				FinFeeReceipt feeReceipt = fee.getFinFeeReceipts().get(0);
 
-				//FeeType Desc
+				// FeeType Desc
 				lc = new Listcell(
 						StringUtils.isNotEmpty(fee.getVasReference()) ? fee.getVasReference() : fee.getFeeTypeDesc());
 				lc.setStyle("font-weight:bold;color: #FF6600;");
 				lc.setParent(item);
 
-				//Net Amount Orginal
+				// Net Amount Orginal
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmountOriginal(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Net Amount GST
+				// Net Amount GST
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmountGST(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Total Net Amount
+				// Total Net Amount
 				lc = new Listcell(PennantApplicationUtil.amountFormate(fee.getNetAmount(), finFormatter));
 				lc.setStyle("text-align:right;");
 				lc.setParent(item);
 
-				//Allocated Amount total
+				// Allocated Amount total
 				Decimalbox allocAmtTotBox = getDecimalbox(finFormatter, true);
 				allocAmtTotBox.setValue(PennantApplicationUtil.formateAmount(feeReceipt.getPaidAmount(), finFormatter));
 				lc = new Listcell();
@@ -972,7 +970,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		Listcell lc;
 		Listitem item;
 
-		//Summary Details
+		// Summary Details
 		item = new Listitem();
 		item.setId("LISTITEM_SUMMARY");
 		lc = new Listcell(Labels.getLabel("listcell_Total.label"));
@@ -1020,7 +1018,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 				&& StringUtils.isNotBlank(receiptHeader.getExtReference())) {
 			this.posting_finBranch.setValue(header.getPostBranch() + "-" + header.getPostBranchDesc());
 			this.posting_CustCIF.setValue(header.getCustomerCIF() + "-" + header.getCustomerName());
-			//setting Reference as ExtReference
+			// setting Reference as ExtReference
 			this.posting_finReference.setValue(StringUtils.trimToEmpty(header.getExtReference()));
 		}
 
@@ -1030,7 +1028,7 @@ public class ReceiptEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 			for (int i = 0; i < header.getReceiptDetails().size(); i++) {
 				FinReceiptDetail receiptDetail = header.getReceiptDetails().get(i);
 				if (StringUtils.equals(this.module, RepayConstants.MODULETYPE_FEE)) {
-					//TODO:GANESH Need to discuss(In case of existing records there is no repay header.)
+					// TODO:GANESH Need to discuss(In case of existing records there is no repay header.)
 					if (receiptDetail.getRepayHeader() == null) {
 						continue;
 					}

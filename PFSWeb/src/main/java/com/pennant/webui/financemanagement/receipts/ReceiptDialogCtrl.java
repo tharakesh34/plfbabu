@@ -534,9 +534,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptDialog(Event event) throws Exception {
+	public void onCreate$window_ReceiptDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -1218,9 +1217,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param Receipt
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinReceiptHeader finReceiptHeader) throws Exception {
+	public void doShowDialog(FinReceiptHeader finReceiptHeader) {
 		logger.debug(Literal.ENTERING);
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1245,9 +1243,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (UiException e) {
 			logger.error(Literal.EXCEPTION, e);
 			this.window_ReceiptDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1264,7 +1261,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		return recData;
 	}
 
-	public void executeAccounting() throws Exception {
+	public void executeAccounting() {
 		FinReceiptData tempReceiptData = receiptData.copyEntity();
 
 		tempReceiptData.getFinanceDetail().getFinScheduleData().getFinanceMain().setSimulateAccounting(true);
@@ -2663,7 +2660,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		return receiptSeqId;
 	}
 
-	private void setRepayDetailData() throws InterruptedException {
+	private void setRepayDetailData() {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		// Repay Schedule Data rebuild
@@ -2745,16 +2742,15 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReceipt(Event event) throws Exception {
+	public void onClick$btnReceipt(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		// FIXME: PV: CODE REVIEW PENDING
 		doSave();
 		logger.debug(Literal.LEAVING + event.toString());
 	}
 
-	public void doSave() throws WrongValueException, InterruptedException {
+	public void doSave() {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		try {
@@ -2935,10 +2931,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Process Repayment Details
-	 * 
-	 * @throws Exception
 	 */
-	private void doProcessReceipt() throws Exception {
+	private void doProcessReceipt() {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		receiptData.getFinanceDetail().setUserAction(this.userAction.getSelectedItem().getLabel());
@@ -3194,10 +3188,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Writing Data into Fields from Bean
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException {
+	private void doWriteBeanToComponents() {
 		logger.debug(Literal.ENTERING);
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
@@ -3827,9 +3819,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
+	public void onAllocatePaidChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		BigDecimal tds = BigDecimal.ZERO;
 		// FIXME: PV: CODE REVIEW PENDING
@@ -3992,7 +3983,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	}
 
-	public void onAllocateNetPaidChange(ForwardEvent event) throws Exception {
+	public void onAllocateNetPaidChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
@@ -4117,9 +4108,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAllocateWaivedChange(ForwardEvent event) throws Exception {
+	public void onAllocateWaivedChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
@@ -4970,10 +4960,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -4986,10 +4974,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws Exception {
+	public FinanceDetail onExecuteStageAccDetail() {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
@@ -5008,11 +4994,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -6012,9 +5995,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
+	protected boolean doProcess(FinReceiptData aReceiptData, String tranType) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		boolean processCompleted = true;
@@ -6134,9 +6116,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws Exception
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		boolean processCompleted = false;
@@ -6933,9 +6914,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		// FIXME: PV: CODE REVIEW PENDING
 		doShowNotes(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain());
 	}
@@ -7068,9 +7048,8 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * when the "btnPrintSchedule" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintSchedule(Event event) throws Exception {
+	public void onClick$btnPrintSchedule(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		List<Object> list = new ArrayList<Object>();
@@ -7729,7 +7708,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		this.listBoxExcess.appendChild(item);
 	}
 
-	public void onClick$foreClosureLetter(Event event) throws Exception {
+	public void onClick$foreClosureLetter(Event event) {
 		logger.debug(Literal.ENTERING);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("isModelWindow", true);
@@ -7743,7 +7722,7 @@ public class ReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		logger.debug(Literal.LEAVING);
 	}
 
-	public void onClick$generateSOA(Event event) throws Exception {
+	public void onClick$generateSOA(Event event) throws IllegalAccessException, InvocationTargetException {
 		logger.debug(Literal.ENTERING);
 		String finReference = this.finReference.getValue();
 

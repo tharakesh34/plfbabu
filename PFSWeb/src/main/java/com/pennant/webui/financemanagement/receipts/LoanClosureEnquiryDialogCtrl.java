@@ -343,9 +343,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_LoanClosureEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_LoanClosureEnquiryDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -560,9 +559,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param Receipt
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinReceiptHeader finReceiptHeader) throws Exception {
+	public void doShowDialog(FinReceiptHeader finReceiptHeader) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -584,9 +582,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_LoanClosureEnquiryDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -1062,7 +1059,7 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving");
 	}
 
-	private void setRepayDetailData() throws InterruptedException {
+	private void setRepayDetailData() {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		// Repay Schedule Data rebuild
@@ -1134,10 +1131,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	/**
 	 * Method for Writing Data into Fields from Bean
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException {
+	private void doWriteBeanToComponents() {
 		logger.debug("Entering");
 
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
@@ -1492,9 +1487,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
+	public void onAllocatePaidChange(ForwardEvent event) {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
@@ -1577,9 +1571,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAllocateWaivedChange(ForwardEvent event) throws Exception {
+	public void onAllocateWaivedChange(ForwardEvent event) {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
@@ -1801,10 +1794,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -1817,10 +1808,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public FinanceDetail onExecuteStageAccDetail() throws Exception {
+	public FinanceDetail onExecuteStageAccDetail() {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		if (ImplementationConstants.DEPOSIT_PROC_REQ) {
@@ -1839,11 +1828,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 		// FIXME: PV: CODE REVIEW PENDING
 		FinanceMain finMain = receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain();
@@ -3431,10 +3417,11 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 		logger.debug("Leaving");
 	}
 
-	/** new code to display chart by skipping jsps code end */
-
-	// Printer integration starts
-
+	/**
+	 * new code to display chart by skipping jsps code end
+	 * 
+	 * @throws Exception
+	 */
 	public void onClick$btnPrint(Event event) throws Exception {
 		logger.debug(Literal.ENTERING + event.toString());
 
@@ -4008,9 +3995,8 @@ public class LoanClosureEnquiryDialogCtrl extends GFCBaseCtrl<ForeClosure> {
 	 * when the "btnPrintSchedule" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnPrintSchedule(Event event) throws Exception {
+	public void onClick$btnPrintSchedule(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 
 		List<Object> list = new ArrayList<Object>();
