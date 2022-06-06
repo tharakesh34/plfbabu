@@ -226,9 +226,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * selected JointAccountDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_MasterJointAccountDetailDialog(Event event) throws Exception {
+	public void onCreate$window_MasterJointAccountDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -462,10 +461,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("JointAccountDetail",
@@ -704,10 +701,8 @@ public class JointAccountDetailDialogCtrl extends GFCBaseCtrl<JointAccountDetail
 
 	/**
 	 * Build the Customer Dialog Window with Existing Core banking Data
-	 * 
-	 * @throws Exception
 	 */
-	public void buildDialogWindow(CustomerDetails customerDetails, boolean newRecord) throws Exception {
+	public void buildDialogWindow(CustomerDetails customerDetails, boolean newRecord) {
 		logger.debug("Entering");
 		if (customerDetails != null) {
 			if (isWorkFlowEnabled() && customerDetails.getCustomer().getWorkflowId() == 0) {

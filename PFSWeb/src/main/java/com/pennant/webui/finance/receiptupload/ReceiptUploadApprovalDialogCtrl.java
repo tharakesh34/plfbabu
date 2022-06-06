@@ -119,9 +119,8 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 	 * selected ReceiptDialog object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptUploadApproval(Event event) throws Exception {
+	public void onCreate$window_ReceiptUploadApproval(Event event) {
 
 		logger.debug("Entering");
 
@@ -429,8 +428,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(this.btnSave.isVisible());
@@ -439,8 +437,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 	/**
 	 * Writes the bean data to the components.<br>
 	 * 
-	 * @param aReceiptUploadheader
-	 *            ReceiptDialog
+	 * @param aReceiptUploadheader ReceiptDialog
 	 */
 	public void doWriteBeanToComponents(ReceiptUploadHeader aReceiptUploadheader) {
 		logger.debug("Entering");
@@ -500,9 +497,8 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aReceiptUploadHeader
-	 * @throws Exception
 	 */
-	public void doShowDialog(ReceiptUploadHeader aReceiptUploadHeader) throws Exception {
+	public void doShowDialog(ReceiptUploadHeader aReceiptUploadHeader) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -779,8 +775,7 @@ public class ReceiptUploadApprovalDialogCtrl extends GFCBaseCtrl<ReceiptUploadHe
 	/**
 	 * Display Message in Error Box
 	 * 
-	 * @param e
-	 *            (Exception)
+	 * @param e (Exception)
 	 */
 	@SuppressWarnings("unused")
 	private void showMessage(Exception e) {

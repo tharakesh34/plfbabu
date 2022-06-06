@@ -421,7 +421,7 @@ public class ManualAdviseServiceImpl extends GenericService<ManualAdvise> implem
 	}
 
 	@Override
-	public List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise) throws Exception {
+	public List<ReturnDataSet> getAccountingSetEntries(ManualAdvise manualAdvise) {
 		logger.debug(Literal.ENTERING);
 
 		FinanceMain financeMain = getFinanceDetails(manualAdvise.getFinID());

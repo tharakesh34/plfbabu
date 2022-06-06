@@ -521,12 +521,8 @@ public class PostingsPreparationUtil implements Serializable {
 	 * @param aeEvent
 	 * @param dataMap
 	 * @return
-	 * @throws IllegalAccessException
-	 * @throws InvocationTargetException
-	 * @throws InterfaceException
 	 */
-	public AEEvent getAccounting(AEEvent aeEvent)
-			throws IllegalAccessException, InvocationTargetException, InterfaceException {
+	public AEEvent getAccounting(AEEvent aeEvent) {
 		logger.debug(Literal.ENTERING);
 
 		/*

@@ -108,7 +108,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		super.pageRightName = "";
 	}
 
-	public void onCreate$window_ReceiptUpload(Event event) throws Exception {
+	public void onCreate$window_ReceiptUpload(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		setPageComponents(this.window_ReceiptUpload);
@@ -201,7 +201,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		logger.debug("Leaving");
 	}
 
-	public void onUpload$btnBrowse(UploadEvent event) throws Exception {
+	public void onUpload$btnBrowse(UploadEvent event) {
 		logger.debug(Literal.ENTERING);
 		doRemoveValidation();
 		this.fileName.setText("");
@@ -240,9 +240,8 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 	 * when the "refresh" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRefresh(Event event) throws Exception {
+	public void onClick$btnRefresh(Event event) {
 		doResetData();
 	}
 
@@ -264,7 +263,7 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 		this.formulaEvaluator = null;
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug(Literal.ENTERING);
 		final Set<String> setRowIds = new HashSet<String>();
 
@@ -446,8 +445,6 @@ public class SelectReceiptUploadHeaderDialogCtrl extends GFCBaseCtrl<UploadHeade
 
 	/**
 	 * Method for Validate uploaded file content whether data in proper manner or not
-	 * 
-	 * @throws Exception
 	 */
 	private boolean validateFileContent() {
 		logger.debug(Literal.ENTERING);

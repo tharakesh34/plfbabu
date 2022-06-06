@@ -107,9 +107,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	 * selected CustomerPhoneNumber object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_dealRecommendationMeritsDialog(Event event) throws Exception {
+	public void onCreate$window_dealRecommendationMeritsDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -340,9 +339,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aCustomerPhoneNumber
-	 * @throws Exception
 	 */
-	public void doShowDialog(DealRecommendationMerits dealRecommendationMerits) throws Exception {
+	public void doShowDialog(DealRecommendationMerits dealRecommendationMerits) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -892,10 +890,8 @@ public class DealRecommendationMeritsDialogCtrl extends GFCBaseCtrl<DealRecommen
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.dealRecommendationMerits);
 	}
 

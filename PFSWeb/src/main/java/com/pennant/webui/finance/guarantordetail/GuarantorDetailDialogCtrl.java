@@ -23,6 +23,7 @@
  */
 package com.pennant.webui.finance.guarantordetail;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -254,9 +255,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * selected GuarantorDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_GuarantorDetailDialog(Event event) throws Exception {
+	public void onCreate$window_GuarantorDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -453,10 +453,8 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering" + event.toString());
 		try {
 			ScreenCTL.displayNotes(getNotes("GuarantorDetail", String.valueOf(getGuarantorDetail().getGuarantorId()),
@@ -1392,9 +1390,9 @@ public class GuarantorDetailDialogCtrl extends GFCBaseCtrl<GuarantorDetail> {
 	 * Method for Uploading Proof Details File
 	 * 
 	 * @param event
-	 * @throws Exception
+	 * @throws IOException
 	 */
-	public void onUpload$btnUploadGuarantorProof(UploadEvent event) throws Exception {
+	public void onUpload$btnUploadGuarantorProof(UploadEvent event) throws IOException {
 		logger.debug("Entering" + event.toString());
 		Media media = event.getMedia();
 
