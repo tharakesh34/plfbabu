@@ -417,9 +417,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_ReceiptsEnquiryDialog(Event event) throws Exception {
+	public void onCreate$window_ReceiptsEnquiryDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -703,9 +702,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param Receipt
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinReceiptHeader finReceiptHeader) throws Exception {
+	public void doShowDialog(FinReceiptHeader finReceiptHeader) {
 		logger.debug(Literal.ENTERING);
 
 		try {
@@ -715,9 +713,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_ReceiptsEnquiryDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug(Literal.LEAVING);
 	}
 
@@ -1144,10 +1141,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Writing Data into Fields from Bean
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException {
+	private void doWriteBeanToComponents() {
 
 		FinanceDetail financeDetail = receiptData.getFinanceDetail();
 		FinanceMain finMain = financeDetail.getFinScheduleData().getFinanceMain();
@@ -1461,9 +1456,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAllocatePaidChange(ForwardEvent event) throws Exception {
+	public void onAllocatePaidChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
@@ -1539,9 +1533,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for action Event of Changing Allocated Paid Amount on Past due Schedule term
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onAllocateWaivedChange(ForwardEvent event) throws Exception {
+	public void onAllocateWaivedChange(ForwardEvent event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		int idx = (int) event.getData();
@@ -2028,9 +2021,8 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		// FIXME: PV: CODE REVIEW PENDING
 		doShowNotes(receiptData.getFinanceDetail().getFinScheduleData().getFinanceMain());
 	}
@@ -2143,7 +2135,7 @@ public class ReceiptsEnquiryDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	// Printer integration starts
 
-	public void onClick$btnPrint(Event event) throws Exception {
+	public void onClick$btnPrint(Event event) {
 		logger.debug(Literal.ENTERING);
 		// FIXME: PV: CODE REVIEW PENDING
 		try {

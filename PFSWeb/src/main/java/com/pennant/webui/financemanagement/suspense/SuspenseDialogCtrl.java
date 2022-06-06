@@ -24,8 +24,6 @@
  */
 package com.pennant.webui.financemanagement.suspense;
 
-import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -37,8 +35,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.login.AccountNotFoundException;
-import javax.xml.stream.FactoryConfigurationError;
-import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -170,9 +166,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * selected Suspense object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SuspenseDialog(Event event) throws Exception {
+	public void onCreate$window_SuspenseDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -288,9 +283,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
@@ -300,9 +294,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * when the "help" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws InterruptedException
 	 */
-	public void onClick$btnHelp(Event event) throws InterruptedException {
+	public void onClick$btnHelp(Event event) {
 		logger.debug("Entering" + event.toString());
 		MessageUtil.showHelpWindow(event, window_SuspenseDialog);
 		logger.debug("Leaving" + event.toString());
@@ -321,9 +314,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aSuspense Suspense
-	 * @throws InterruptedException
 	 */
-	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead) throws InterruptedException {
+	public void doWriteBeanToComponents(FinanceSuspHead aSuspHead) {
 		logger.debug("Entering");
 
 		int format = CurrencyUtil.getFormat(aSuspHead.getFinCcy());
@@ -489,9 +481,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aSuspHead
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceSuspHead aSuspHead) throws Exception {
+	public void doShowDialog(FinanceSuspHead aSuspHead) {
 		logger.debug("Entering");
 
 		// set Readonly mode accordingly if the object is new or not.
@@ -521,9 +512,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_SuspenseDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -585,7 +575,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		logger.debug("Leaving");
 	}
 
-	public void doShowSuspenseDialog(FinanceMain main) throws Exception {
+	public void doShowSuspenseDialog(FinanceMain main) {
 
 		if (main != null) {
 			this.finReference.setValue(main.getFinReference());
@@ -653,7 +643,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		}
 	}
 
-	public void onFulfill$finReference(Event event) throws Exception {
+	public void onFulfill$finReference(Event event) {
 		Object dataObject = finReference.getObject();
 		if (dataObject instanceof String) {
 			this.finReference.setDescription("");
@@ -763,8 +753,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 		}
 	}
 
-	private void doLoadWorkFlow(FinanceSuspHead suspHead)
-			throws FileNotFoundException, XMLStreamException, UnsupportedEncodingException, FactoryConfigurationError {
+	private void doLoadWorkFlow(FinanceSuspHead suspHead) {
 		logger.debug("Entering");
 		String roleCode = null;
 		if (!suspHead.isNewRecord() && StringUtils.trimToEmpty(suspHead.getNextTaskId()).contains(";")) {
@@ -802,11 +791,9 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 	// CRUD operations
 
 	/**
-	 * Saves the components to table. <br>
-	 * 
-	 * @throws Exception
+	 * Saves the components to table.
 	 */
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final FinanceSuspHead aFinanceSuspHead = new FinanceSuspHead();
@@ -1269,10 +1256,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 	/**
 	 * Method for Executing Eligibility Details
-	 * 
-	 * @throws Exception
 	 */
-	public void onExecuteAccountingDetail(Boolean onLoadProcess) throws Exception {
+	public void onExecuteAccountingDetail(Boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		getAccountingDetailDialogCtrl().getLabel_AccountingDisbCrVal().setValue("");
@@ -1298,11 +1283,8 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 
 	/**
 	 * Method for Executing Accounting tab Rules
-	 * 
-	 * @throws Exception
-	 * 
 	 */
-	private void executeAccounting(boolean onLoadProcess) throws Exception {
+	private void executeAccounting(boolean onLoadProcess) {
 		logger.debug("Entering");
 
 		FinanceDetail fd = getFinanceDetail();
@@ -1342,7 +1324,7 @@ public class SuspenseDialogCtrl extends FinanceBaseCtrl<FinanceSuspHead> {
 				aFinanceSuspHead.getUserDetails(), getOverideMap());
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		logger.debug("Entering");
 		// logger.debug(event.toString());
 

@@ -78,7 +78,7 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		super();
 	}
 
-	public void onCreate$window_RegenerateAgreement(Event event) throws Exception {
+	public void onCreate$window_RegenerateAgreement(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -141,9 +141,8 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		ArrayList<WrongValueException> wve = new ArrayList<>();
@@ -197,9 +196,8 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * When user clicks on button "btnView" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnView(Event event) throws Exception {
+	public void onClick$btnView(Event event) {
 		logger.debug("Entering " + event.toString());
 		displayDocDetails(this.detail);
 		logger.debug("Leaving " + event.toString());
@@ -237,9 +235,8 @@ public class RegenerateAgreementCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * When user clicks on button "btnRegenerate" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnRegenerate(Event event) throws Exception {
+	public void onClick$btnRegenerate(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		if (MessageUtil.YES == MessageUtil.confirm(

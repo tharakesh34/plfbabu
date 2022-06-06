@@ -134,9 +134,8 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	 * selected FinanceMain object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_SelectFinReferenceDialog(Event event) throws Exception {
+	public void onCreate$window_SelectFinReferenceDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -310,7 +309,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 	/**
 	 * Opens the SelectFinanceTypeDialog window modal.
 	 */
-	private void showSelectFinanceTypeDialog() throws InterruptedException {
+	private void showSelectFinanceTypeDialog() {
 		logger.debug("Entering");
 		try {
 			// open the dialog in modal mode
@@ -321,7 +320,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$finReference(Event event) throws Exception {
+	public void onFulfill$finReference(Event event) {
 
 		Clients.clearWrongValue(this.finReference);
 		Object dataObject = finReference.getObject();
@@ -357,7 +356,7 @@ public class SelectFinReferenceDialogCtrl extends GFCBaseCtrl<FinanceDetail> {
 
 	}
 
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering");
 		doClearMessage();
 		this.finReference.setErrorMessage("");

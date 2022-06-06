@@ -107,7 +107,7 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 		Events.postEvent("onClientInfo", comp, Events.ON_CLIENT_INFO);
 	}
 
-	public void onCreate$outerIndexWindow(Event event) throws Exception {
+	public void onCreate$outerIndexWindow(Event event) {
 		logger.debug("Entering");
 
 		this.label_AppName.setValue(App.NAME);
@@ -135,7 +135,6 @@ public class IndexCtrl<T> extends GFCBaseCtrl<T> {
 	 * We use these values for calculating the count of rows in the listboxes. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	public void onClientInfo(ClientInfoEvent event) {
 		currentDesktopHeight.setValue(event.getDesktopHeight() - CONTENT_AREA_HEIGHT_OFFSET);

@@ -122,9 +122,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 * selected InterfaceMapping object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_InterfaceMappingDialog(Event event) throws Exception {
+	public void onCreate$window_InterfaceMappingDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -444,9 +443,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param ainterfaceMapping
-	 * @throws Exception
 	 */
-	public void doShowDialog(InterfaceMapping ainterfaceMapping) throws Exception {
+	public void doShowDialog(InterfaceMapping ainterfaceMapping) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -1376,10 +1374,8 @@ public class InterfaceMappingDialogCtrl extends GFCBaseCtrl<InterfaceMapping> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.interfaceMapping);
 	}
 

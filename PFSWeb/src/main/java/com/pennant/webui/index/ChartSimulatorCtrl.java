@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *																							*
- * FileName    		:  ChartCtrl.java                                                   * 	  
- *                                                                    						*
- * Author      		:  PENNANT TECHONOLOGIES              									*
- *                                                                  						*
- * Creation Date    :  03-05-2011    														*
- *                                                                  						*
- * Modified Date    :  31-04-2012    														*
- *                                                                  						*
- * Description 		:                                             							*
- *                                                                                          *
+ * * FileName : ChartCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 03-05-2011 * * Modified Date :
+ * 31-04-2012 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 31-04-2012       Pennant	                 0.1                                            * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 31-04-2012 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.index;
@@ -92,9 +74,8 @@ public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 	 * selected Nationality object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_chart_simulator(Event event) throws Exception {
+	public void onCreate$window_chart_simulator(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -148,7 +129,7 @@ public class ChartSimulatorCtrl extends GFCBaseCtrl<ChartDetail> {
 		try {
 			this.window_chart_simulator.onClose();
 			this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog.setVisible(true);
-			//This code is fix for fire fox .for code mirror became disable after any event .
+			// This code is fix for fire fox .for code mirror became disable after any event .
 			Codemirror remarks = (Codemirror) this.dashboardConfigurationDialogCtrl.window_DashboardConfigurationDialog
 					.getFellow("remarks");
 			remarks.setReadonly(false);

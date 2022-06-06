@@ -34,6 +34,7 @@ import com.pennant.backend.util.PennantConstants;
 import com.pennant.backend.util.PennantStaticListUtil;
 import com.pennant.eod.constants.EodConstants;
 import com.pennant.webui.util.GFCBaseCtrl;
+import com.pennanttech.pennapps.core.AppException;
 import com.pennanttech.pennapps.core.resource.Literal;
 import com.pennanttech.pennapps.core.util.DateUtil.DateFormat;
 import com.pennanttech.pennapps.web.util.MessageUtil;
@@ -104,10 +105,8 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 
 	/**
 	 * Start the process
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btn_Start(Event event) throws Exception {
+	public void onClick$btn_Start(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		String amzMonthEnd = doWriteComponentsToBean();
@@ -125,7 +124,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 			// Start amortization process
 			doStartAmortizationProcess(amzMonthEnd);
 
-		} catch (Exception e) {
+		} catch (AppException e) {
 
 			doReadOnly(false);
 			this.label_Status.setValue(Labels.getLabel("label_Failed"));
@@ -179,9 +178,8 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	/**
 	 * 
 	 * @param amzMonthEnd
-	 * @throws Exception
 	 */
-	public void doStartAmortizationProcess(String amzMonthEnd) throws Exception {
+	public void doStartAmortizationProcess(String amzMonthEnd) {
 		logger.debug(Literal.ENTERING);
 
 		// Application Deployment Date and AMZ Month End
@@ -201,7 +199,7 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 				this.label_Status.setValue(Labels.getLabel("label_NOFinances"));
 			}
 		} else {
-			throw new Exception(Labels.getLabel("error.unhandled"));
+			throw new AppException(Labels.getLabel("error.unhandled"));
 		}
 
 		logger.debug("Leaving");
@@ -212,9 +210,8 @@ public class IncomeAmortizationCtrl extends GFCBaseCtrl<CustEODEvent> {
 	 * 
 	 * @param startDate
 	 * @param monthEndDate
-	 * @throws Exception
 	 */
-	private int processAmortizationUsingThreads(Date startDate, Date monthEndDate) throws Exception {
+	private int processAmortizationUsingThreads(Date startDate, Date monthEndDate) {
 		logger.debug("Entering");
 
 		int finListSize = 0;
