@@ -1,43 +1,25 @@
 /**
  * Copyright 2011 - Pennant Technologies
  * 
- * This file is part of Pennant Java Application Framework and related Products. 
- * All components/modules/functions/classes/logic in this software, unless 
- * otherwise stated, the property of Pennant Technologies. 
+ * This file is part of Pennant Java Application Framework and related Products. All
+ * components/modules/functions/classes/logic in this software, unless otherwise stated, the property of Pennant
+ * Technologies.
  * 
- * Copyright and other intellectual property laws protect these materials. 
- * Reproduction or retransmission of the materials, in whole or in part, in any manner, 
- * without the prior written consent of the copyright holder, is a violation of 
- * copyright law.
+ * Copyright and other intellectual property laws protect these materials. Reproduction or retransmission of the
+ * materials, in whole or in part, in any manner, without the prior written consent of the copyright holder, is a
+ * violation of copyright law.
  */
 
 /**
  ********************************************************************************************
- *                                 FILE HEADER                                              *
+ * FILE HEADER *
  ********************************************************************************************
- *											    											*
- * FileName    		:  WIFinanceTypeSelectListCtrl.java                                     * 	  
- *                                                                    			    		*
- * Author      		:  PENNANT TECHONOLOGIES              				    				*
- *                                                                  			    		*
- * Creation Date    :  10-10-2011    							    						*
- *                                                                  			    		*
- * Modified Date    :  10-10-2011    							    						*
- *                                                                  			    		*
- * Description 		:                                             			    			*
- *                                                                                          *
+ * * FileName : WIFinanceTypeSelectListCtrl.java * * Author : PENNANT TECHONOLOGIES * * Creation Date : 10-10-2011 * *
+ * Modified Date : 10-10-2011 * * Description : * *
  ********************************************************************************************
- * Date             Author                   Version      Comments                          *
+ * Date Author Version Comments *
  ********************************************************************************************
- * 10-10-2011       Pennant	                 0.1                                        	* 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
- *                                                                                          * 
+ * 10-10-2011 Pennant 0.1 * * * * * * * * *
  ********************************************************************************************
  */
 package com.pennant.webui.financemanagement.bankorcorpcreditreview;
@@ -144,9 +126,8 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	 * selected FinanceType object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CreditRevSelectCategory(Event event) throws Exception {
+	public void onCreate$window_CreditRevSelectCategory(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		if (arguments.containsKey("creditApplicationReviewDialogCtrl")) {
@@ -171,9 +152,10 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 		fillComboBox(custCategory, "", PennantAppUtil.getcustCtgCodeList(), "");
 		fillComboBox(auditPeriod, "12", PennantStaticListUtil.getPeriodList(), "");
 		this.auditPeriod.setDisabled(true);
-		//		if (!this.auditYear.isReadonly()) {
-		//			this.auditYear.setConstraint(new IntValidator(4,Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), false));
-		//		}
+		// if (!this.auditYear.isReadonly()) {
+		// this.auditYear.setConstraint(new
+		// IntValidator(4,Labels.getLabel("label_CreditApplicationReviewDialog_auditPeriod.value"), false));
+		// }
 		this.customerCategoryRow.setVisible(false);
 		this.lovDescCustCIF.setVisible(true);
 		this.window_CreditRevSelectCategory.doModal();
@@ -287,8 +269,8 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 				this.lovDescCustCIF.setValue("");
 				this.custShrtName.setValue("");
 				this.auditYear.setText("");
-				//this.customerCategoryRow.setVisible(true);
-				//this.btnSearchCustCIF.setVisible(false);
+				// this.customerCategoryRow.setVisible(true);
+				// this.btnSearchCustCIF.setVisible(false);
 			}
 		}
 	}
@@ -296,8 +278,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 	/**
 	 * The Click event is raised when the Close Button control is clicked.
 	 * 
-	 * @param event
-	 *            An event sent to the event handler of a component.
+	 * @param event An event sent to the event handler of a component.
 	 */
 	public void onClick$btnClose(Event event) {
 		doClose(false);
@@ -453,7 +434,7 @@ public class CreditApplicationSelectCategoryCtrl extends GFCBaseCtrl<Customer> {
 			}
 		}
 
-		//Default yearly setting for Audit Year
+		// Default yearly setting for Audit Year
 		creditReviewDetail.setAuditPeriod(12);
 
 		if (wveList.size() > 0) {

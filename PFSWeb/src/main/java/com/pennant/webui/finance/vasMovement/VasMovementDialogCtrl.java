@@ -134,9 +134,8 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 * selected VasMovement object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_VasMovementDialog(Event event) throws Exception {
+	public void onCreate$window_VasMovementDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -401,9 +400,8 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVasMovement
-	 * @throws Exception
 	 */
-	public void doShowDialog(VasMovement aVasMovement) throws Exception {
+	public void doShowDialog(VasMovement aVasMovement) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -809,10 +807,8 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.vasMovement);
 	}
 
@@ -827,9 +823,8 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	 * when clicks on "btnNew_DetailsOfExpense"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNew_VasMovementDetail(Event event) throws Exception {
+	public void onClick$btnNew_VasMovementDetail(Event event) {
 		logger.debug("Entering " + event.toString());
 		VasMovementDetail vasMovementDetail = new VasMovementDetail();
 		vasMovementDetail.setVasMovementDetailId(0);
@@ -851,9 +846,8 @@ public class VasMovementDialogCtrl extends GFCBaseCtrl<VasMovement> {
 	/**
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onVasMovementDetailItemDoubleClicked(Event event) throws Exception {
+	public void onVasMovementDetailItemDoubleClicked(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		// get the selected invoiceHeader object

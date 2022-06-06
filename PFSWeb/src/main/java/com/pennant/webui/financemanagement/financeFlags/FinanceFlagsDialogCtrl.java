@@ -173,9 +173,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * selected FinanceFlags object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceFlagsDialog(ForwardEvent event) throws Exception {
+	public void onCreate$window_FinanceFlagsDialog(ForwardEvent event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -732,9 +731,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceFlags
-	 * @throws Exception
 	 */
-	private void doShowDialog() throws Exception {
+	private void doShowDialog() {
 		logger.debug("Entering");
 
 		try {
@@ -801,7 +799,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 		logger.debug("Leaving");
 	}
 
-	public void fillfinflags(FinanceMain details) throws Exception {
+	public void fillfinflags(FinanceMain details) {
 		logger.debug("Entering");
 		Clients.clearWrongValue(this.btnNew_FinFlagsDetail);
 		this.row1.setVisible(false);
@@ -1042,7 +1040,7 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	// *******************************************************************//
 
 	// Finance Flags Details
-	public void onClick$btnNew_FinFlagsDetail(Event event) throws Exception {
+	public void onClick$btnNew_FinFlagsDetail(Event event) {
 		logger.debug("Entering" + event.toString());
 		doClearMessage();
 		Clients.clearWrongValue(listBoxFinanceFlags);
@@ -1147,10 +1145,8 @@ public class FinanceFlagsDialogCtrl extends GFCBaseCtrl<FinanceFlag> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeFlag);
 	}
 

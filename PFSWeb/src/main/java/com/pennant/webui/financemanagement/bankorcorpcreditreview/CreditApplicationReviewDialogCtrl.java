@@ -211,7 +211,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 	// Component Events
 
-	public void onCreate$window_CreditApplicationReviewDialog(Event event) throws Exception {
+	public void onCreate$window_CreditApplicationReviewDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -356,13 +356,13 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onClick$button_addDetails(Event event) throws Exception {
+	public void onClick$button_addDetails(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (tabBoxIndexCenter.getSelectedPanel() != null) {
 			if ((Listbox) tabBoxIndexCenter.getSelectedPanel().getFirstChild().getChildren().get(0) != null
@@ -385,7 +385,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void addDetails(FinCreditRevSubCategory aFinCreditRevSubCategory) throws InterruptedException {
+	public void addDetails(FinCreditRevSubCategory aFinCreditRevSubCategory) {
 		final Map<String, Object> map = new HashMap<String, Object>();
 		map.put("finCreditRevSubCategory", aFinCreditRevSubCategory);
 		map.put("listOfFinCreditRevCategory", listOfFinCreditRevCategory);
@@ -665,7 +665,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void doShowDialog(FinCreditReviewDetails aCreditReviewDetails) throws Exception {
+	public void doShowDialog(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug("Entering");
 
 		if (customer != null) {
@@ -730,9 +730,8 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_CreditApplicationReviewDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
+
 		logger.debug("Leaving");
 	}
 
@@ -925,7 +924,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering");
 
 		final FinCreditReviewDetails aCreditReviewDetails = new FinCreditReviewDetails();
@@ -1165,7 +1164,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.creditReviewDetails);
 	}
 
@@ -1218,7 +1217,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		this.creditReviewSummaryList = creditReviewSummaryList;
 	}
 
-	public void setListDetails(FinCreditReviewDetails finCreditReviewDetails) throws InterruptedException {
+	public void setListDetails(FinCreditReviewDetails finCreditReviewDetails) {
 		logger.debug("Entering");
 		boolean isNewSubCategory = false;
 		List<FinCreditReviewSummary> listOfCreditReviewSummary = new ArrayList<FinCreditReviewSummary>();
@@ -1320,7 +1319,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void onFulfill$currencyType(Event event) throws Exception {
+	public void onFulfill$currencyType(Event event) {
 		logger.debug("Entering " + event.toString());
 
 		this.currencyType.setConstraint("");
@@ -1351,7 +1350,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void setTabs() throws Exception {
+	public void setTabs() {
 		logger.debug("Entering");
 
 		this.tabpanelsBoxIndexCenter.setId("tabpanelsBoxIndexCenter");
@@ -1397,7 +1396,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void onSelectRatiosTab(ForwardEvent event) throws Exception {
+	public void onSelectRatiosTab(ForwardEvent event) {
 		logger.debug("Entering");
 		Tabpanel tabpanel;
 		String ratioPanelId = "tabPanel_"
@@ -1879,7 +1878,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 
 	}
 
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		logger.debug("Entering" + event.toString());
 		/*
 		 * this.custCIF.clearErrorMessage();
@@ -1917,7 +1916,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving");
 	}
 
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) throws Exception {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
@@ -2113,7 +2112,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	}
 
 	@SuppressWarnings("unused")
-	public void render(FinCreditRevCategory fcrc, Listbox listbox) throws Exception {
+	public void render(FinCreditRevCategory fcrc, Listbox listbox) {
 		logger.debug("Entering");
 
 		Listitem item = null;
@@ -2284,7 +2283,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return newItem;
 	}
 
-	public void onClick$removeRecord(ForwardEvent event) throws Exception {
+	public void onClick$removeRecord(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem oldItem = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -2987,7 +2986,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void onAddListitem(ForwardEvent event) throws Exception {
+	public void onAddListitem(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		Listitem listitemOld = (Listitem) event.getOrigin().getTarget().getParent().getParent();
@@ -3022,7 +3021,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void setData(Map<String, BigDecimal> dataMap) throws Exception {
+	public void setData(Map<String, BigDecimal> dataMap) {
 		logger.debug("Entering");
 
 		engine.put("EXCHANGE", this.conversionRate.getValue());
@@ -3107,7 +3106,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		return formatedFormula;
 	}
 
-	public void onChange$auditedValue(ForwardEvent event) throws Exception {
+	public void onChange$auditedValue(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 
 		Listbox listbox = (Listbox) event.getOrigin().getTarget().getAttribute("ListBoxdata");
@@ -3153,7 +3152,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		}
 	}
 
-	public void onChange$conversionRate(ForwardEvent event) throws Exception {
+	public void onChange$conversionRate(ForwardEvent event) {
 		logger.debug(event + "Entering");
 		doClearMessage();
 
@@ -3174,7 +3173,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 		logger.debug(event + "Leaving");
 	}
 
-	public void refreshTabs() throws Exception {
+	public void refreshTabs() {
 
 		creditReviewSubCtgDetailsList.clear();
 		if (this.conversionRate.getValue().compareTo(BigDecimal.ZERO) == 0) {
@@ -3357,7 +3356,7 @@ public class CreditApplicationReviewDialogCtrl extends GFCBaseCtrl<FinCreditRevi
 	/*
 	 * Double Clicked Event For SubCategory Item
 	 */
-	public void onSubCategoryItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onSubCategoryItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		// get the selected Academic object
 		final Listitem item = (Listitem) event.getOrigin().getTarget();

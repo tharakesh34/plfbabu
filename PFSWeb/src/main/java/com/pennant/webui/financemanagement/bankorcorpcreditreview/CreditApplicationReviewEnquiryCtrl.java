@@ -272,9 +272,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_CreditApplicationReviewDialog(Event event) throws Exception {
+	public void onCreate$window_CreditApplicationReviewDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -557,10 +556,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * Writes the bean data to the components.<br>
 	 * 
 	 * @param aCreditReviewDetails (FinCreditReviewDetails)
-	 * @throws Exception
 	 */
-
-	public void doWriteBeanToComponents(FinCreditReviewDetails aCreditReviewDetails) throws Exception {
+	public void doWriteBeanToComponents(FinCreditReviewDetails aCreditReviewDetails) {
 		logger.debug("Entering");
 		this.custID.setValue(aCreditReviewDetails.getCustomerId());
 		this.custCIF.setValue(aCreditReviewDetails.getLovDescCustCIF() != null
@@ -649,15 +646,14 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * when the "save" button is clicked. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSave(Event event) throws Exception {
+	public void onClick$btnSave(Event event) {
 		logger.debug("Entering" + event.toString());
 		doSave();
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void doSave() throws Exception {
+	public void doSave() {
 		logger.debug("Entering ");
 		boolean isNew = false;
 		String tranType = "";
@@ -1010,11 +1006,9 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	}
 
 	/**
-	 * This method for setting the list of the tabs.<br>
-	 * 
-	 * @throws Exception
+	 * This method for setting the list of the tabs.
 	 */
-	public void setTabs(boolean isEnquiry) throws Exception {
+	public void setTabs(boolean isEnquiry) {
 		logger.debug("Entering");
 
 		if (isEnquiry) {
@@ -1127,9 +1121,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * 
 	 * @param categoryId
 	 * @param listbox
-	 * @throws Exception
 	 */
-	public void render(FinCreditRevCategory finCreditRevCategory, Listbox listbox) throws Exception {
+	public void render(FinCreditRevCategory finCreditRevCategory, Listbox listbox) {
 		logger.debug("Entering");
 		long categoryId = finCreditRevCategory.getCategoryId();
 		Listitem item = null;
@@ -1638,9 +1631,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * onChange get the customer Details
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onChange$custCIF(Event event) throws Exception {
+	public void onChange$custCIF(Event event) {
 		logger.debug("Entering" + event.toString());
 		this.custCIF.clearErrorMessage();
 
@@ -1752,10 +1744,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * To set the customer id from Customer filter
 	 * 
 	 * @param nCustomer
-	 * @throws InterruptedException
 	 */
-	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject)
-			throws InterruptedException {
+	public void doSetCustomer(Object nCustomer, JdbcSearchObject<Customer> newSearchObject) {
 		logger.debug("Entering");
 		final Customer aCustomer = (Customer) nCustomer;
 		this.custID.setValue(aCustomer.getCustID());
@@ -1773,9 +1763,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * If we close the dialog window. <br>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnClose(Event event) throws Exception {
+	public void onClick$btnClose(Event event) {
 		logger.debug("Entering" + event.toString());
 		if (isEnquiry) {
 			closeDialog();
@@ -1794,15 +1783,14 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * This method for selecting customer id from lov and after that setting sheet on bases of the customer type.<BR>
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnSearch(Event event) throws Exception {
+	public void onClick$btnSearch(Event event) {
 		logger.debug("Entering" + event.toString());
 		getSearch(true);
 		logger.debug("Leaving" + event.toString());
 	}
 
-	public void getSearch(boolean isEnquiry) throws Exception {
+	public void getSearch(boolean isEnquiry) {
 		ratioFlag = true;
 		if (this.tabpanelsBoxIndexCenter.getChildren().size() > 0) {
 			this.tabpanelsBoxIndexCenter.getChildren().clear();
@@ -1878,10 +1866,8 @@ public class CreditApplicationReviewEnquiryCtrl extends GFCBaseCtrl<FinCreditRev
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.finCreditReviewDetails);
 	}
 

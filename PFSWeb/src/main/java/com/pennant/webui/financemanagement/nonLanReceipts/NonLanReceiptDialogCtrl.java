@@ -287,9 +287,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * selected Rule object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_NonLanReceiptDialog(Event event) throws Exception {
+	public void onCreate$window_NonLanReceiptDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -577,9 +576,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param Receipt
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinReceiptHeader finReceiptHeader) throws Exception {
+	public void doShowDialog(FinReceiptHeader finReceiptHeader) {
 		logger.debug("Entering");
 
 		// set Read only mode accordingly if the object is new or not.
@@ -605,8 +603,6 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 		} catch (UiException e) {
 			logger.error("Exception: ", e);
 			this.window_NonLanReceiptDialog.onClose();
-		} catch (Exception e) {
-			throw e;
 		}
 		logger.debug("Leaving");
 	}
@@ -1021,13 +1017,12 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * Method for event of Changing Repayment Amount
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnReceipt(Event event) throws Exception {
+	public void onClick$btnReceipt(Event event) {
 		doSave();
 	}
 
-	public void doSave() throws WrongValueException, InterruptedException {
+	public void doSave() {
 		logger.debug("Entering");
 		try {
 			boolean recReject = false;
@@ -1124,10 +1119,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Process Repayment Details
-	 * 
-	 * @throws Exception
 	 */
-	private void doProcessReceipt() throws Exception {
+	private void doProcessReceipt() {
 		logger.debug("Entering");
 		if (this.userAction.getSelectedItem() != null) {
 			if ("Save".equalsIgnoreCase(this.userAction.getSelectedItem().getLabel())
@@ -1292,10 +1285,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 
 	/**
 	 * Method for Writing Data into Fields from Bean
-	 * 
-	 * @throws InterruptedException
 	 */
-	private void doWriteBeanToComponents() throws InterruptedException {
+	private void doWriteBeanToComponents() {
 		logger.debug("Entering");
 		FinReceiptHeader rch = receiptData.getReceiptHeader();
 
@@ -1965,9 +1956,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param afinanceMain
 	 * @param tranType
 	 * @return
-	 * @throws Exception
 	 */
-	protected boolean doProcess(FinReceiptData aReceiptData, String tranType) throws Exception {
+	protected boolean doProcess(FinReceiptData aReceiptData, String tranType) {
 		logger.debug("Entering");
 		boolean processCompleted = true;
 		AuditHeader auditHeader = null;
@@ -2052,9 +2042,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * @param auditHeader
 	 * @param method
 	 * @return
-	 * @throws Exception
 	 */
-	private boolean doSaveProcess(AuditHeader auditHeader, String method) throws Exception {
+	private boolean doSaveProcess(AuditHeader auditHeader, String method) {
 		logger.debug("Entering");
 		boolean processCompleted = false;
 		int retValue = PennantConstants.porcessOVERIDE;
@@ -2149,9 +2138,8 @@ public class NonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader> {
 	 * when user clicks on button "Notes"
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(receiptData.getReceiptHeader());
 	}
 

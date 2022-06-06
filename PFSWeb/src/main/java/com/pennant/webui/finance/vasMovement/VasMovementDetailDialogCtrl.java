@@ -120,9 +120,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	 * selected VasMovementDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_VasMovementDetailDialog(Event event) throws Exception {
+	public void onCreate$window_VasMovementDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -420,9 +419,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aVasMovementDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(VasMovementDetail aVasMovementDetail) throws Exception {
+	public void doShowDialog(VasMovementDetail aVasMovementDetail) {
 		logger.debug("Entering");
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -789,7 +787,7 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 		return auditHeader;
 	}
 
-	public void onClick$btnSearchVasRec(Event event) throws Exception {
+	public void onClick$btnSearchVasRec(Event event) {
 		logger.debug("Entering");
 
 		if (StringUtils.isEmpty(this.vasReference.getValue())) {
@@ -891,10 +889,8 @@ public class VasMovementDetailDialogCtrl extends GFCBaseCtrl<VasMovementDetail> 
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.vasMovement);
 	}
 

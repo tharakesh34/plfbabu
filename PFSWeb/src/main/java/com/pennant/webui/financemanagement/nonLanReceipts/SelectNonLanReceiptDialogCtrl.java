@@ -156,7 +156,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	}
 
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_SelectNonLanReceiptDialog(Event event) throws Exception {
+	public void onCreate$window_SelectNonLanReceiptDialog(Event event) {
 		logger.debug("Entering" + event.toString());
 
 		// Set the page level components.
@@ -286,15 +286,14 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 	 * When user clicks on button "btnProceed" button
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onClick$btnProceed(Event event) throws Exception {
+	public void onClick$btnProceed(Event event) {
 		logger.debug("Entering " + event.toString());
 		doProcess();
 		logger.debug("Leaving " + event.toString());
 	}
 
-	public void doProcess() throws Exception {
+	public void doProcess() {
 		logger.debug("Entering" + System.nanoTime());
 		doSetValidation();
 		doWriteComponentsToBean();
@@ -420,7 +419,7 @@ public class SelectNonLanReceiptDialogCtrl extends GFCBaseCtrl<FinReceiptHeader>
 
 	}
 
-	public void doWriteComponentsToBean() throws Exception {
+	public void doWriteComponentsToBean() {
 		logger.debug("Entering ");
 		doSetValidation();
 		ArrayList<WrongValueException> wve = new ArrayList<WrongValueException>();
