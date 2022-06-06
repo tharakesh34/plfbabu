@@ -60,7 +60,7 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 	protected Intbox intbox;
 	protected Button btnPreview;
 	protected Grid grid_Preview;
-	//protected Groupbox		gb_ckEditor;
+	// protected Groupbox gb_ckEditor;
 	protected Tab fieldTab;
 	protected Tab previewTab;
 	protected Div previewTabDiv;
@@ -87,10 +87,9 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 	 * selected TransactionEntry object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	public void onCreate$window_TemplatePreview(Event event) throws Exception {
+	public void onCreate$window_TemplatePreview(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -179,7 +178,7 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 	/**
 	 * Opens the SearchDialog window modal.
 	 */
-	private void showDialog() throws InterruptedException {
+	private void showDialog() {
 		logger.debug("Entering");
 		try {
 
@@ -323,7 +322,7 @@ public class TemplatePreviewCtrl extends GFCBaseCtrl<Object> {
 		return fieldValue;
 	}
 
-	private void setContent(Map<String, Object> model) throws InterruptedException {
+	private void setContent(Map<String, Object> model) {
 		logger.debug("Entering");
 		try {
 			StringTemplateLoader loader = new StringTemplateLoader();

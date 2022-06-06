@@ -97,9 +97,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	 * selected City object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_OCRDialog(Event event) throws Exception {
+	public void onCreate$window_OCRDialog(Event event) {
 		logger.debug(Literal.ENTERING);
 
 		// Set the page level components.
@@ -367,10 +366,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aOCRHeader
-	 * 
-	 * @throws Exception
 	 */
-	public void doShowDialog(OCRHeader aOCRHeader) throws Exception {
+	public void doShowDialog(OCRHeader aOCRHeader) {
 		logger.debug(Literal.ENTERING);
 
 		// set ReadOnly mode accordingly if the object is new or not.
@@ -829,10 +826,8 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	 * Get the window for entering Notes
 	 * 
 	 * @param event (Event)
-	 * 
-	 * @throws Exception
 	 */
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.ocrHeader);
 	}
 
@@ -984,7 +979,7 @@ public class OCRHeaderDialogCtrl extends GFCBaseCtrl<OCRHeader> {
 	}
 
 	// Double click OCR Deatils list
-	public void onOCRDetailItemDoubleClicked(Event event) throws Exception {
+	public void onOCRDetailItemDoubleClicked(Event event) {
 		logger.debug(Literal.ENTERING + event.toString());
 		final OCRHeader aOCRHeader = new OCRHeader();
 		BeanUtils.copyProperties(this.ocrHeader, aOCRHeader);

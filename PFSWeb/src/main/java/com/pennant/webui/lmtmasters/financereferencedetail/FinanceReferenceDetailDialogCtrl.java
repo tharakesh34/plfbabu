@@ -208,9 +208,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	 * selected FinanceReferenceDetail object in a Map.
 	 * 
 	 * @param event
-	 * @throws Exception
 	 */
-	public void onCreate$window_FinanceReferenceDetailDialog(Event event) throws Exception {
+	public void onCreate$window_FinanceReferenceDetailDialog(Event event) {
 		logger.debug("Entering");
 
 		// Set the page level components.
@@ -563,9 +562,8 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 	 * It checks if the dialog opens with a new or existing object and set the readOnly mode accordingly.
 	 * 
 	 * @param aFinanceReferenceDetail
-	 * @throws Exception
 	 */
-	public void doShowDialog(FinanceReference aFinanceReference) throws Exception {
+	public void doShowDialog(FinanceReference aFinanceReference) {
 		logger.debug("Entering");
 
 		try {
@@ -1303,7 +1301,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		}
 	}
 
-	public void onClick$btnNotes(Event event) throws Exception {
+	public void onClick$btnNotes(Event event) {
 		doShowNotes(this.financeReferenceDetail);
 	}
 
@@ -1469,7 +1467,7 @@ public class FinanceReferenceDetailDialogCtrl extends GFCBaseCtrl<FinanceReferen
 		callLinakgeZul(financeReferenceDetail, FinanceConstants.PROCEDT_FINANCETABS);
 	}
 
-	public void onCheckListItemDoubleClicked(ForwardEvent event) throws Exception {
+	public void onCheckListItemDoubleClicked(ForwardEvent event) {
 		logger.debug("Entering" + event.toString());
 		// Get the event target
 		Listitem item = (Listitem) event.getOrigin().getTarget();
